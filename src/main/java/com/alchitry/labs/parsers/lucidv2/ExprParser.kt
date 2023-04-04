@@ -836,7 +836,7 @@ class ExprParser(val errorListener: ErrorListener = dummyErrorListener) : LucidB
         // is constant if all operands are constant
         constant[ctx] = !ctx.expr().any { constant[it] != true }
 
-        val fid = ctx.FUNCTION_ID().text
+        val fid = ctx.FUNCTION_ID().text.substring(1) // remove $ from beginning
         val function = Function.values().firstOrNull { it.label == fid }
 
         if (function == null) {
