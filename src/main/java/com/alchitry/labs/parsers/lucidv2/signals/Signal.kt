@@ -4,7 +4,11 @@ import com.alchitry.labs.parsers.lucidv2.values.Value
 
 enum class SignalDirection {
     Read,
-    Write
+    Write,
+    Both;
+
+    val canRead: Boolean get() = this != Write
+    val canWrite: Boolean get() = this != Read
 }
 
 data class Signal(
