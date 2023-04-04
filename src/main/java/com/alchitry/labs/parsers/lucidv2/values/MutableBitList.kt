@@ -10,7 +10,7 @@ interface BitList : List<BitValue> {
     val signed: Boolean
 
     fun toBigInt(): BigInteger {
-        check(isNumber()) { "The value is not a number (it contains x and z values)" }
+        check(isNumber()) { "The value is not a number (it contains x, z, or u values)" }
         val bytes =
             ByteArray(ceil((size + if (signed) 0 else 1).toDouble() / 8.0).toInt()) // if not signed need extra 0 sign bit
         if (signed && msb == BitValue.B1) // sign extension
@@ -113,9 +113,12 @@ interface BitList : List<BitValue> {
         return value
     }
 
+    fun isDriven(): Boolean {
+        return none { it == BitValue.Bu }
+    }
+
     fun isNumber(): Boolean {
-        this.forEach { if (it != BitValue.B0 && it != BitValue.B1) return false }
-        return true
+        return none { !it.isNumber() }
     }
 
     fun isNegative(): Boolean = signed && msb == BitValue.B1

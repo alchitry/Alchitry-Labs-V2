@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.7.0"
+    kotlin("jvm") version "1.8.20"
     antlr
 }
 
@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     antlr("org.antlr:antlr4:4.10.1")
-    implementation("org.apache.commons:commons-text:1.9")
+    implementation("org.apache.commons:commons-text:1.10.0")
 
     testImplementation(kotlin("test"))
 }

@@ -3,8 +3,9 @@ package com.alchitry.labs.parsers.lucidv2.values
 enum class BitValue {
     B0,
     B1,
-    Bx,
-    Bz;
+    Bx, // used to specify unknown values (reads are ok)
+    Bz, // used to specify high-impedance (reads are errors, should only be used at top-level output)
+    Bu; // used to specify un-driven signals (reads are errors)
 
     infix fun or(b: BitValue): BitValue {
         if (this == B1 || b == B1) return B1
@@ -30,6 +31,7 @@ enum class BitValue {
             B1 -> '1'
             Bx -> 'x'
             Bz -> 'z'
+            Bu -> 'u'
         }
 
     infix fun nor(b: BitValue): BitValue {
@@ -54,13 +56,14 @@ enum class BitValue {
             B1 -> B0
             Bx -> Bx
             Bz -> Bx
+            Bu -> Bx
         }
     }
 
     fun isNumber(): Boolean {
         return when (this) {
             B0, B1 -> true
-            Bx, Bz -> false
+            Bx, Bz, Bu -> false
         }
     }
 
