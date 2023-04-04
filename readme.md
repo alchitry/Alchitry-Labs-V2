@@ -117,7 +117,8 @@ the `ParseTree`. For example, `2 + 2` would have `ExprNum` nodes with values of 
 
 The `constant` property is a boolean map specifying if the value at this node is a known constant. In the
 previous `2 + 2` example, every node would be true. It will be false if a value is from a signal that could change over
-time (like an input).
+time (like an input). This is again for error checking. Some functions, like `$clog2()`, can only be used with constant
+values as they must be computed at synthesis time.
 
 The `bounds` property is a map of `IntRange` used to keep track of the selected bits of an array.
 
