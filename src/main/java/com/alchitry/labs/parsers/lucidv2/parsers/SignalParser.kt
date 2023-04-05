@@ -26,7 +26,7 @@ class SignalParser(
         return null // TODO
     }
 
-    override fun exitDff_dec(ctx: LucidParser.Dff_decContext) {
+    override fun exitDffDec(ctx: LucidParser.DffDecContext) {
         val isSigned = ctx.SIGNED() != null
 
 

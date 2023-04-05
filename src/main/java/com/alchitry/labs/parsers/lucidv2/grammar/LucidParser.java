@@ -30,32 +30,31 @@ public class LucidParser extends Parser {
 		SIGNED=61, TYPE_ID=62, CONST_ID=63, SPACE_ID=64, FUNCTION_ID=65, BLOCK_COMMENT=66, 
 		COMMENT=67, WS=68;
 	public static final int
-		RULE_source = 0, RULE_global = 1, RULE_global_stat = 2, RULE_module = 3, 
-		RULE_param_list = 4, RULE_port_list = 5, RULE_param_dec = 6, RULE_port_dec = 7, 
-		RULE_input_dec = 8, RULE_output_dec = 9, RULE_inout_dec = 10, RULE_param_name = 11, 
-		RULE_param_constraint = 12, RULE_array_size = 13, RULE_struct_type = 14, 
-		RULE_struct_member_const = 15, RULE_struct_const = 16, RULE_module_body = 17, 
-		RULE_stat = 18, RULE_const_dec = 19, RULE_assign_block = 20, RULE_sig_con = 21, 
-		RULE_param_con = 22, RULE_type_dec = 23, RULE_dff_single = 24, RULE_sig_dec = 25, 
-		RULE_dff_dec = 26, RULE_fsm_dec = 27, RULE_fsm_states = 28, RULE_module_inst = 29, 
-		RULE_inst_cons = 30, RULE_con_list = 31, RULE_connection = 32, RULE_struct_member = 33, 
-		RULE_struct_dec = 34, RULE_always_block = 35, RULE_always_stat = 36, RULE_block = 37, 
-		RULE_assign_stat = 38, RULE_array_index = 39, RULE_bit_selector = 40, 
-		RULE_bit_selection = 41, RULE_signal = 42, RULE_case_stat = 43, RULE_case_elem = 44, 
-		RULE_if_stat = 45, RULE_else_stat = 46, RULE_repeat_stat = 47, RULE_function = 48, 
-		RULE_number = 49, RULE_expr = 50, RULE_name = 51, RULE_semi = 52;
+		RULE_source = 0, RULE_global = 1, RULE_globalStat = 2, RULE_module = 3, 
+		RULE_paramList = 4, RULE_portList = 5, RULE_paramDec = 6, RULE_portDec = 7, 
+		RULE_inputDec = 8, RULE_outputDec = 9, RULE_inoutDec = 10, RULE_paramName = 11, 
+		RULE_paramConstraint = 12, RULE_arraySize = 13, RULE_structType = 14, 
+		RULE_structMemberConst = 15, RULE_structConst = 16, RULE_moduleBody = 17, 
+		RULE_stat = 18, RULE_constDec = 19, RULE_assignBlock = 20, RULE_sigCon = 21, 
+		RULE_paramCon = 22, RULE_typeDec = 23, RULE_dffSingle = 24, RULE_sigDec = 25, 
+		RULE_dffDec = 26, RULE_fsmDec = 27, RULE_fsmStates = 28, RULE_moduleInst = 29, 
+		RULE_instCons = 30, RULE_conList = 31, RULE_connection = 32, RULE_structMember = 33, 
+		RULE_structDec = 34, RULE_alwaysBlock = 35, RULE_alwaysStat = 36, RULE_block = 37, 
+		RULE_assignStat = 38, RULE_arrayIndex = 39, RULE_bitSelector = 40, RULE_bitSelection = 41, 
+		RULE_signal = 42, RULE_caseStat = 43, RULE_caseElem = 44, RULE_ifStat = 45, 
+		RULE_elseStat = 46, RULE_repeatStat = 47, RULE_function = 48, RULE_number = 49, 
+		RULE_expr = 50, RULE_name = 51, RULE_semi = 52;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"source", "global", "global_stat", "module", "param_list", "port_list", 
-			"param_dec", "port_dec", "input_dec", "output_dec", "inout_dec", "param_name", 
-			"param_constraint", "array_size", "struct_type", "struct_member_const", 
-			"struct_const", "module_body", "stat", "const_dec", "assign_block", "sig_con", 
-			"param_con", "type_dec", "dff_single", "sig_dec", "dff_dec", "fsm_dec", 
-			"fsm_states", "module_inst", "inst_cons", "con_list", "connection", "struct_member", 
-			"struct_dec", "always_block", "always_stat", "block", "assign_stat", 
-			"array_index", "bit_selector", "bit_selection", "signal", "case_stat", 
-			"case_elem", "if_stat", "else_stat", "repeat_stat", "function", "number", 
-			"expr", "name", "semi"
+			"source", "global", "globalStat", "module", "paramList", "portList", 
+			"paramDec", "portDec", "inputDec", "outputDec", "inoutDec", "paramName", 
+			"paramConstraint", "arraySize", "structType", "structMemberConst", "structConst", 
+			"moduleBody", "stat", "constDec", "assignBlock", "sigCon", "paramCon", 
+			"typeDec", "dffSingle", "sigDec", "dffDec", "fsmDec", "fsmStates", "moduleInst", 
+			"instCons", "conList", "connection", "structMember", "structDec", "alwaysBlock", 
+			"alwaysStat", "block", "assignStat", "arrayIndex", "bitSelector", "bitSelection", 
+			"signal", "caseStat", "caseElem", "ifStat", "elseStat", "repeatStat", 
+			"function", "number", "expr", "name", "semi"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -237,11 +236,11 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public List<Global_statContext> global_stat() {
-			return getRuleContexts(Global_statContext.class);
+		public List<GlobalStatContext> globalStat() {
+			return getRuleContexts(GlobalStatContext.class);
 		}
-		public Global_statContext global_stat(int i) {
-			return getRuleContext(Global_statContext.class,i);
+		public GlobalStatContext globalStat(int i) {
+			return getRuleContext(GlobalStatContext.class,i);
 		}
 		public GlobalContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -327,7 +326,7 @@ public class LucidParser extends Parser {
 				{
 				{
 				setState(137);
-				global_stat();
+				globalStat();
 				}
 				}
 				setState(142);
@@ -364,35 +363,35 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Global_statContext extends ParserRuleContext {
-		public Struct_decContext struct_dec() {
-			return getRuleContext(Struct_decContext.class,0);
+	public static class GlobalStatContext extends ParserRuleContext {
+		public StructDecContext structDec() {
+			return getRuleContext(StructDecContext.class,0);
 		}
-		public Const_decContext const_dec() {
-			return getRuleContext(Const_decContext.class,0);
+		public ConstDecContext constDec() {
+			return getRuleContext(ConstDecContext.class,0);
 		}
-		public Global_statContext(ParserRuleContext parent, int invokingState) {
+		public GlobalStatContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_global_stat; }
+		@Override public int getRuleIndex() { return RULE_globalStat; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterGlobal_stat(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterGlobalStat(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitGlobal_stat(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitGlobalStat(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitGlobal_stat(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitGlobalStat(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Global_statContext global_stat() throws RecognitionException {
-		Global_statContext _localctx = new Global_statContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_global_stat);
+	public final GlobalStatContext globalStat() throws RecognitionException {
+		GlobalStatContext _localctx = new GlobalStatContext(_ctx, getState());
+		enterRule(_localctx, 4, RULE_globalStat);
 		try {
 			setState(153);
 			_errHandler.sync(this);
@@ -401,14 +400,14 @@ public class LucidParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(151);
-				struct_dec();
+				structDec();
 				}
 				break;
 			case T__18:
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(152);
-				const_dec();
+				constDec();
 				}
 				break;
 			default:
@@ -431,18 +430,18 @@ public class LucidParser extends Parser {
 		public NameContext name() {
 			return getRuleContext(NameContext.class,0);
 		}
-		public Port_listContext port_list() {
-			return getRuleContext(Port_listContext.class,0);
+		public PortListContext portList() {
+			return getRuleContext(PortListContext.class,0);
 		}
-		public Module_bodyContext module_body() {
-			return getRuleContext(Module_bodyContext.class,0);
+		public ModuleBodyContext moduleBody() {
+			return getRuleContext(ModuleBodyContext.class,0);
 		}
 		public List<TerminalNode> NL() { return getTokens(LucidParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Param_listContext param_list() {
-			return getRuleContext(Param_listContext.class,0);
+		public ParamListContext paramList() {
+			return getRuleContext(ParamListContext.class,0);
 		}
 		public ModuleContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -511,7 +510,7 @@ public class LucidParser extends Parser {
 			if (_la==T__4) {
 				{
 				setState(169);
-				param_list();
+				paramList();
 				}
 			}
 
@@ -530,7 +529,7 @@ public class LucidParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(178);
-			port_list();
+			portList();
 			setState(182);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -546,7 +545,7 @@ public class LucidParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(185);
-			module_body();
+			moduleBody();
 			}
 		}
 		catch (RecognitionException re) {
@@ -561,39 +560,39 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Param_listContext extends ParserRuleContext {
-		public List<Param_decContext> param_dec() {
-			return getRuleContexts(Param_decContext.class);
+	public static class ParamListContext extends ParserRuleContext {
+		public List<ParamDecContext> paramDec() {
+			return getRuleContexts(ParamDecContext.class);
 		}
-		public Param_decContext param_dec(int i) {
-			return getRuleContext(Param_decContext.class,i);
+		public ParamDecContext paramDec(int i) {
+			return getRuleContext(ParamDecContext.class,i);
 		}
 		public List<TerminalNode> NL() { return getTokens(LucidParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Param_listContext(ParserRuleContext parent, int invokingState) {
+		public ParamListContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_param_list; }
+		@Override public int getRuleIndex() { return RULE_paramList; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterParam_list(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterParamList(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitParam_list(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitParamList(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitParam_list(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitParamList(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Param_listContext param_list() throws RecognitionException {
-		Param_listContext _localctx = new Param_listContext(_ctx, getState());
-		enterRule(_localctx, 8, RULE_param_list);
+	public final ParamListContext paramList() throws RecognitionException {
+		ParamListContext _localctx = new ParamListContext(_ctx, getState());
+		enterRule(_localctx, 8, RULE_paramList);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -615,7 +614,7 @@ public class LucidParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(194);
-			param_dec();
+			paramDec();
 			setState(198);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -653,7 +652,7 @@ public class LucidParser extends Parser {
 					_la = _input.LA(1);
 				}
 				setState(208);
-				param_dec();
+				paramDec();
 				setState(212);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
@@ -690,39 +689,39 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Port_listContext extends ParserRuleContext {
-		public List<Port_decContext> port_dec() {
-			return getRuleContexts(Port_decContext.class);
+	public static class PortListContext extends ParserRuleContext {
+		public List<PortDecContext> portDec() {
+			return getRuleContexts(PortDecContext.class);
 		}
-		public Port_decContext port_dec(int i) {
-			return getRuleContext(Port_decContext.class,i);
+		public PortDecContext portDec(int i) {
+			return getRuleContext(PortDecContext.class,i);
 		}
 		public List<TerminalNode> NL() { return getTokens(LucidParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Port_listContext(ParserRuleContext parent, int invokingState) {
+		public PortListContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_port_list; }
+		@Override public int getRuleIndex() { return RULE_portList; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterPort_list(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterPortList(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitPort_list(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitPortList(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitPort_list(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitPortList(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Port_listContext port_list() throws RecognitionException {
-		Port_listContext _localctx = new Port_listContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_port_list);
+	public final PortListContext portList() throws RecognitionException {
+		PortListContext _localctx = new PortListContext(_ctx, getState());
+		enterRule(_localctx, 10, RULE_portList);
 		int _la;
 		try {
 			int _alt;
@@ -747,7 +746,7 @@ public class LucidParser extends Parser {
 				_alt = getInterpreter().adaptivePredict(_input,18,_ctx);
 			}
 			setState(229);
-			port_dec();
+			portDec();
 			setState(233);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -787,7 +786,7 @@ public class LucidParser extends Parser {
 					_alt = getInterpreter().adaptivePredict(_input,20,_ctx);
 				}
 				setState(243);
-				port_dec();
+				portDec();
 				setState(247);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
@@ -824,46 +823,46 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Param_decContext extends ParserRuleContext {
-		public Param_nameContext param_name() {
-			return getRuleContext(Param_nameContext.class,0);
+	public static class ParamDecContext extends ParserRuleContext {
+		public ParamNameContext paramName() {
+			return getRuleContext(ParamNameContext.class,0);
 		}
 		public List<TerminalNode> NL() { return getTokens(LucidParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Param_constraintContext param_constraint() {
-			return getRuleContext(Param_constraintContext.class,0);
+		public ParamConstraintContext paramConstraint() {
+			return getRuleContext(ParamConstraintContext.class,0);
 		}
-		public Param_decContext(ParserRuleContext parent, int invokingState) {
+		public ParamDecContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_param_dec; }
+		@Override public int getRuleIndex() { return RULE_paramDec; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterParam_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterParamDec(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitParam_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitParamDec(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitParam_dec(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitParamDec(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Param_decContext param_dec() throws RecognitionException {
-		Param_decContext _localctx = new Param_decContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_param_dec);
+	public final ParamDecContext paramDec() throws RecognitionException {
+		ParamDecContext _localctx = new ParamDecContext(_ctx, getState());
+		enterRule(_localctx, 12, RULE_paramDec);
 		int _la;
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(257);
-			param_name();
+			paramName();
 			setState(261);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,23,_ctx);
@@ -902,7 +901,7 @@ public class LucidParser extends Parser {
 					_la = _input.LA(1);
 				}
 				setState(271);
-				param_constraint();
+				paramConstraint();
 				}
 			}
 
@@ -920,38 +919,38 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Port_decContext extends ParserRuleContext {
-		public Input_decContext input_dec() {
-			return getRuleContext(Input_decContext.class,0);
+	public static class PortDecContext extends ParserRuleContext {
+		public InputDecContext inputDec() {
+			return getRuleContext(InputDecContext.class,0);
 		}
-		public Output_decContext output_dec() {
-			return getRuleContext(Output_decContext.class,0);
+		public OutputDecContext outputDec() {
+			return getRuleContext(OutputDecContext.class,0);
 		}
-		public Inout_decContext inout_dec() {
-			return getRuleContext(Inout_decContext.class,0);
+		public InoutDecContext inoutDec() {
+			return getRuleContext(InoutDecContext.class,0);
 		}
-		public Port_decContext(ParserRuleContext parent, int invokingState) {
+		public PortDecContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_port_dec; }
+		@Override public int getRuleIndex() { return RULE_portDec; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterPort_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterPortDec(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitPort_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitPortDec(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitPort_dec(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitPortDec(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Port_decContext port_dec() throws RecognitionException {
-		Port_decContext _localctx = new Port_decContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_port_dec);
+	public final PortDecContext portDec() throws RecognitionException {
+		PortDecContext _localctx = new PortDecContext(_ctx, getState());
+		enterRule(_localctx, 14, RULE_portDec);
 		try {
 			setState(277);
 			_errHandler.sync(this);
@@ -960,21 +959,21 @@ public class LucidParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(274);
-				input_dec();
+				inputDec();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(275);
-				output_dec();
+				outputDec();
 				}
 				break;
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(276);
-				inout_dec();
+				inoutDec();
 				}
 				break;
 			}
@@ -991,7 +990,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Input_decContext extends ParserRuleContext {
+	public static class InputDecContext extends ParserRuleContext {
 		public NameContext name() {
 			return getRuleContext(NameContext.class,0);
 		}
@@ -1000,37 +999,37 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Struct_typeContext struct_type() {
-			return getRuleContext(Struct_typeContext.class,0);
+		public StructTypeContext structType() {
+			return getRuleContext(StructTypeContext.class,0);
 		}
-		public List<Array_sizeContext> array_size() {
-			return getRuleContexts(Array_sizeContext.class);
+		public List<ArraySizeContext> arraySize() {
+			return getRuleContexts(ArraySizeContext.class);
 		}
-		public Array_sizeContext array_size(int i) {
-			return getRuleContext(Array_sizeContext.class,i);
+		public ArraySizeContext arraySize(int i) {
+			return getRuleContext(ArraySizeContext.class,i);
 		}
-		public Input_decContext(ParserRuleContext parent, int invokingState) {
+		public InputDecContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_input_dec; }
+		@Override public int getRuleIndex() { return RULE_inputDec; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterInput_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterInputDec(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitInput_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitInputDec(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitInput_dec(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitInputDec(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Input_decContext input_dec() throws RecognitionException {
-		Input_decContext _localctx = new Input_decContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_input_dec);
+	public final InputDecContext inputDec() throws RecognitionException {
+		InputDecContext _localctx = new InputDecContext(_ctx, getState());
+		enterRule(_localctx, 16, RULE_inputDec);
 		int _la;
 		try {
 			int _alt;
@@ -1084,7 +1083,7 @@ public class LucidParser extends Parser {
 			if (_la==T__15) {
 				{
 				setState(295);
-				struct_type();
+				structType();
 				}
 			}
 
@@ -1116,7 +1115,7 @@ public class LucidParser extends Parser {
 					case T__13:
 						{
 						setState(305);
-						array_size();
+						arraySize();
 						}
 						break;
 					case NL:
@@ -1148,7 +1147,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Output_decContext extends ParserRuleContext {
+	public static class OutputDecContext extends ParserRuleContext {
 		public NameContext name() {
 			return getRuleContext(NameContext.class,0);
 		}
@@ -1157,37 +1156,37 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Struct_typeContext struct_type() {
-			return getRuleContext(Struct_typeContext.class,0);
+		public StructTypeContext structType() {
+			return getRuleContext(StructTypeContext.class,0);
 		}
-		public List<Array_sizeContext> array_size() {
-			return getRuleContexts(Array_sizeContext.class);
+		public List<ArraySizeContext> arraySize() {
+			return getRuleContexts(ArraySizeContext.class);
 		}
-		public Array_sizeContext array_size(int i) {
-			return getRuleContext(Array_sizeContext.class,i);
+		public ArraySizeContext arraySize(int i) {
+			return getRuleContext(ArraySizeContext.class,i);
 		}
-		public Output_decContext(ParserRuleContext parent, int invokingState) {
+		public OutputDecContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_output_dec; }
+		@Override public int getRuleIndex() { return RULE_outputDec; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterOutput_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterOutputDec(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitOutput_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitOutputDec(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitOutput_dec(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitOutputDec(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Output_decContext output_dec() throws RecognitionException {
-		Output_decContext _localctx = new Output_decContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_output_dec);
+	public final OutputDecContext outputDec() throws RecognitionException {
+		OutputDecContext _localctx = new OutputDecContext(_ctx, getState());
+		enterRule(_localctx, 18, RULE_outputDec);
 		int _la;
 		try {
 			int _alt;
@@ -1241,7 +1240,7 @@ public class LucidParser extends Parser {
 			if (_la==T__15) {
 				{
 				setState(328);
-				struct_type();
+				structType();
 				}
 			}
 
@@ -1273,7 +1272,7 @@ public class LucidParser extends Parser {
 					case T__13:
 						{
 						setState(338);
-						array_size();
+						arraySize();
 						}
 						break;
 					case NL:
@@ -1305,7 +1304,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Inout_decContext extends ParserRuleContext {
+	public static class InoutDecContext extends ParserRuleContext {
 		public NameContext name() {
 			return getRuleContext(NameContext.class,0);
 		}
@@ -1314,37 +1313,37 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Struct_typeContext struct_type() {
-			return getRuleContext(Struct_typeContext.class,0);
+		public StructTypeContext structType() {
+			return getRuleContext(StructTypeContext.class,0);
 		}
-		public List<Array_sizeContext> array_size() {
-			return getRuleContexts(Array_sizeContext.class);
+		public List<ArraySizeContext> arraySize() {
+			return getRuleContexts(ArraySizeContext.class);
 		}
-		public Array_sizeContext array_size(int i) {
-			return getRuleContext(Array_sizeContext.class,i);
+		public ArraySizeContext arraySize(int i) {
+			return getRuleContext(ArraySizeContext.class,i);
 		}
-		public Inout_decContext(ParserRuleContext parent, int invokingState) {
+		public InoutDecContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_inout_dec; }
+		@Override public int getRuleIndex() { return RULE_inoutDec; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterInout_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterInoutDec(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitInout_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitInoutDec(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitInout_dec(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitInoutDec(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Inout_decContext inout_dec() throws RecognitionException {
-		Inout_decContext _localctx = new Inout_decContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_inout_dec);
+	public final InoutDecContext inoutDec() throws RecognitionException {
+		InoutDecContext _localctx = new InoutDecContext(_ctx, getState());
+		enterRule(_localctx, 20, RULE_inoutDec);
 		int _la;
 		try {
 			int _alt;
@@ -1398,7 +1397,7 @@ public class LucidParser extends Parser {
 			if (_la==T__15) {
 				{
 				setState(361);
-				struct_type();
+				structType();
 				}
 			}
 
@@ -1430,7 +1429,7 @@ public class LucidParser extends Parser {
 					case T__13:
 						{
 						setState(371);
-						array_size();
+						arraySize();
 						}
 						break;
 					case NL:
@@ -1462,7 +1461,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Param_nameContext extends ParserRuleContext {
+	public static class ParamNameContext extends ParserRuleContext {
 		public NameContext name() {
 			return getRuleContext(NameContext.class,0);
 		}
@@ -1473,28 +1472,28 @@ public class LucidParser extends Parser {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public Param_nameContext(ParserRuleContext parent, int invokingState) {
+		public ParamNameContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_param_name; }
+		@Override public int getRuleIndex() { return RULE_paramName; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterParam_name(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterParamName(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitParam_name(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitParamName(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitParam_name(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitParamName(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Param_nameContext param_name() throws RecognitionException {
-		Param_nameContext _localctx = new Param_nameContext(_ctx, getState());
-		enterRule(_localctx, 22, RULE_param_name);
+	public final ParamNameContext paramName() throws RecognitionException {
+		ParamNameContext _localctx = new ParamNameContext(_ctx, getState());
+		enterRule(_localctx, 22, RULE_paramName);
 		int _la;
 		try {
 			int _alt;
@@ -1558,32 +1557,32 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Param_constraintContext extends ParserRuleContext {
+	public static class ParamConstraintContext extends ParserRuleContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public Param_constraintContext(ParserRuleContext parent, int invokingState) {
+		public ParamConstraintContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_param_constraint; }
+		@Override public int getRuleIndex() { return RULE_paramConstraint; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterParam_constraint(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterParamConstraint(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitParam_constraint(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitParamConstraint(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitParam_constraint(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitParamConstraint(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Param_constraintContext param_constraint() throws RecognitionException {
-		Param_constraintContext _localctx = new Param_constraintContext(_ctx, getState());
-		enterRule(_localctx, 24, RULE_param_constraint);
+	public final ParamConstraintContext paramConstraint() throws RecognitionException {
+		ParamConstraintContext _localctx = new ParamConstraintContext(_ctx, getState());
+		enterRule(_localctx, 24, RULE_paramConstraint);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -1603,7 +1602,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Array_sizeContext extends ParserRuleContext {
+	public static class ArraySizeContext extends ParserRuleContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -1611,28 +1610,28 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Array_sizeContext(ParserRuleContext parent, int invokingState) {
+		public ArraySizeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_array_size; }
+		@Override public int getRuleIndex() { return RULE_arraySize; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterArray_size(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterArraySize(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitArray_size(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitArraySize(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitArray_size(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitArraySize(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Array_sizeContext array_size() throws RecognitionException {
-		Array_sizeContext _localctx = new Array_sizeContext(_ctx, getState());
-		enterRule(_localctx, 26, RULE_array_size);
+	public final ArraySizeContext arraySize() throws RecognitionException {
+		ArraySizeContext _localctx = new ArraySizeContext(_ctx, getState());
+		enterRule(_localctx, 26, RULE_arraySize);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -1685,7 +1684,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Struct_typeContext extends ParserRuleContext {
+	public static class StructTypeContext extends ParserRuleContext {
 		public List<NameContext> name() {
 			return getRuleContexts(NameContext.class);
 		}
@@ -1696,28 +1695,28 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Struct_typeContext(ParserRuleContext parent, int invokingState) {
+		public StructTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_struct_type; }
+		@Override public int getRuleIndex() { return RULE_structType; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterStruct_type(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterStructType(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitStruct_type(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitStructType(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitStruct_type(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitStructType(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Struct_typeContext struct_type() throws RecognitionException {
-		Struct_typeContext _localctx = new Struct_typeContext(_ctx, getState());
-		enterRule(_localctx, 28, RULE_struct_type);
+	public final StructTypeContext structType() throws RecognitionException {
+		StructTypeContext _localctx = new StructTypeContext(_ctx, getState());
+		enterRule(_localctx, 28, RULE_structType);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -1814,7 +1813,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Struct_member_constContext extends ParserRuleContext {
+	public static class StructMemberConstContext extends ParserRuleContext {
 		public NameContext name() {
 			return getRuleContext(NameContext.class,0);
 		}
@@ -1825,28 +1824,28 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Struct_member_constContext(ParserRuleContext parent, int invokingState) {
+		public StructMemberConstContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_struct_member_const; }
+		@Override public int getRuleIndex() { return RULE_structMemberConst; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterStruct_member_const(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterStructMemberConst(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitStruct_member_const(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitStructMemberConst(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitStruct_member_const(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitStructMemberConst(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Struct_member_constContext struct_member_const() throws RecognitionException {
-		Struct_member_constContext _localctx = new Struct_member_constContext(_ctx, getState());
-		enterRule(_localctx, 30, RULE_struct_member_const);
+	public final StructMemberConstContext structMemberConst() throws RecognitionException {
+		StructMemberConstContext _localctx = new StructMemberConstContext(_ctx, getState());
+		enterRule(_localctx, 30, RULE_structMemberConst);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -1917,48 +1916,48 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Struct_constContext extends ParserRuleContext {
-		public Struct_typeContext struct_type() {
-			return getRuleContext(Struct_typeContext.class,0);
+	public static class StructConstContext extends ParserRuleContext {
+		public StructTypeContext structType() {
+			return getRuleContext(StructTypeContext.class,0);
 		}
-		public List<Struct_member_constContext> struct_member_const() {
-			return getRuleContexts(Struct_member_constContext.class);
+		public List<StructMemberConstContext> structMemberConst() {
+			return getRuleContexts(StructMemberConstContext.class);
 		}
-		public Struct_member_constContext struct_member_const(int i) {
-			return getRuleContext(Struct_member_constContext.class,i);
+		public StructMemberConstContext structMemberConst(int i) {
+			return getRuleContext(StructMemberConstContext.class,i);
 		}
 		public List<TerminalNode> NL() { return getTokens(LucidParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Struct_constContext(ParserRuleContext parent, int invokingState) {
+		public StructConstContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_struct_const; }
+		@Override public int getRuleIndex() { return RULE_structConst; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterStruct_const(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterStructConst(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitStruct_const(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitStructConst(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitStruct_const(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitStructConst(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Struct_constContext struct_const() throws RecognitionException {
-		Struct_constContext _localctx = new Struct_constContext(_ctx, getState());
-		enterRule(_localctx, 32, RULE_struct_const);
+	public final StructConstContext structConst() throws RecognitionException {
+		StructConstContext _localctx = new StructConstContext(_ctx, getState());
+		enterRule(_localctx, 32, RULE_structConst);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(472);
-			struct_type();
+			structType();
 			setState(476);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -1990,7 +1989,7 @@ public class LucidParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(486);
-			struct_member_const();
+			structMemberConst();
 			setState(490);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -2028,7 +2027,7 @@ public class LucidParser extends Parser {
 					_la = _input.LA(1);
 				}
 				setState(500);
-				struct_member_const();
+				structMemberConst();
 				setState(504);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
@@ -2065,7 +2064,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Module_bodyContext extends ParserRuleContext {
+	public static class ModuleBodyContext extends ParserRuleContext {
 		public List<StatContext> stat() {
 			return getRuleContexts(StatContext.class);
 		}
@@ -2076,28 +2075,28 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Module_bodyContext(ParserRuleContext parent, int invokingState) {
+		public ModuleBodyContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_module_body; }
+		@Override public int getRuleIndex() { return RULE_moduleBody; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterModule_body(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterModuleBody(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitModule_body(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitModuleBody(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitModule_body(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitModuleBody(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Module_bodyContext module_body() throws RecognitionException {
-		Module_bodyContext _localctx = new Module_bodyContext(_ctx, getState());
-		enterRule(_localctx, 34, RULE_module_body);
+	public final ModuleBodyContext moduleBody() throws RecognitionException {
+		ModuleBodyContext _localctx = new ModuleBodyContext(_ctx, getState());
+		enterRule(_localctx, 34, RULE_moduleBody);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -2159,8 +2158,8 @@ public class LucidParser extends Parser {
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class StatModuleInstContext extends StatContext {
-		public Module_instContext module_inst() {
-			return getRuleContext(Module_instContext.class,0);
+		public ModuleInstContext moduleInst() {
+			return getRuleContext(ModuleInstContext.class,0);
 		}
 		public StatModuleInstContext(StatContext ctx) { copyFrom(ctx); }
 		@Override
@@ -2179,8 +2178,8 @@ public class LucidParser extends Parser {
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class StatConstContext extends StatContext {
-		public Const_decContext const_dec() {
-			return getRuleContext(Const_decContext.class,0);
+		public ConstDecContext constDec() {
+			return getRuleContext(ConstDecContext.class,0);
 		}
 		public StatConstContext(StatContext ctx) { copyFrom(ctx); }
 		@Override
@@ -2199,8 +2198,8 @@ public class LucidParser extends Parser {
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class StatDFFContext extends StatContext {
-		public Dff_decContext dff_dec() {
-			return getRuleContext(Dff_decContext.class,0);
+		public DffDecContext dffDec() {
+			return getRuleContext(DffDecContext.class,0);
 		}
 		public StatDFFContext(StatContext ctx) { copyFrom(ctx); }
 		@Override
@@ -2219,8 +2218,8 @@ public class LucidParser extends Parser {
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class StatFSMContext extends StatContext {
-		public Fsm_decContext fsm_dec() {
-			return getRuleContext(Fsm_decContext.class,0);
+		public FsmDecContext fsmDec() {
+			return getRuleContext(FsmDecContext.class,0);
 		}
 		public StatFSMContext(StatContext ctx) { copyFrom(ctx); }
 		@Override
@@ -2239,8 +2238,8 @@ public class LucidParser extends Parser {
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class StatAlwaysContext extends StatContext {
-		public Always_blockContext always_block() {
-			return getRuleContext(Always_blockContext.class,0);
+		public AlwaysBlockContext alwaysBlock() {
+			return getRuleContext(AlwaysBlockContext.class,0);
 		}
 		public StatAlwaysContext(StatContext ctx) { copyFrom(ctx); }
 		@Override
@@ -2259,8 +2258,8 @@ public class LucidParser extends Parser {
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class StatStructContext extends StatContext {
-		public Struct_decContext struct_dec() {
-			return getRuleContext(Struct_decContext.class,0);
+		public StructDecContext structDec() {
+			return getRuleContext(StructDecContext.class,0);
 		}
 		public StatStructContext(StatContext ctx) { copyFrom(ctx); }
 		@Override
@@ -2279,8 +2278,8 @@ public class LucidParser extends Parser {
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class StatSigContext extends StatContext {
-		public Sig_decContext sig_dec() {
-			return getRuleContext(Sig_decContext.class,0);
+		public SigDecContext sigDec() {
+			return getRuleContext(SigDecContext.class,0);
 		}
 		public StatSigContext(StatContext ctx) { copyFrom(ctx); }
 		@Override
@@ -2299,8 +2298,8 @@ public class LucidParser extends Parser {
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class StatAssignContext extends StatContext {
-		public Assign_blockContext assign_block() {
-			return getRuleContext(Assign_blockContext.class,0);
+		public AssignBlockContext assignBlock() {
+			return getRuleContext(AssignBlockContext.class,0);
 		}
 		public StatAssignContext(StatContext ctx) { copyFrom(ctx); }
 		@Override
@@ -2330,7 +2329,7 @@ public class LucidParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(524);
-				const_dec();
+				constDec();
 				}
 				break;
 			case 2:
@@ -2338,7 +2337,7 @@ public class LucidParser extends Parser {
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(525);
-				sig_dec();
+				sigDec();
 				}
 				break;
 			case 3:
@@ -2346,7 +2345,7 @@ public class LucidParser extends Parser {
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(526);
-				fsm_dec();
+				fsmDec();
 				}
 				break;
 			case 4:
@@ -2354,7 +2353,7 @@ public class LucidParser extends Parser {
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(527);
-				dff_dec();
+				dffDec();
 				}
 				break;
 			case 5:
@@ -2362,7 +2361,7 @@ public class LucidParser extends Parser {
 				enterOuterAlt(_localctx, 5);
 				{
 				setState(528);
-				module_inst();
+				moduleInst();
 				}
 				break;
 			case 6:
@@ -2370,7 +2369,7 @@ public class LucidParser extends Parser {
 				enterOuterAlt(_localctx, 6);
 				{
 				setState(529);
-				assign_block();
+				assignBlock();
 				}
 				break;
 			case 7:
@@ -2378,7 +2377,7 @@ public class LucidParser extends Parser {
 				enterOuterAlt(_localctx, 7);
 				{
 				setState(530);
-				always_block();
+				alwaysBlock();
 				}
 				break;
 			case 8:
@@ -2386,7 +2385,7 @@ public class LucidParser extends Parser {
 				enterOuterAlt(_localctx, 8);
 				{
 				setState(531);
-				struct_dec();
+				structDec();
 				}
 				break;
 			}
@@ -2403,7 +2402,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Const_decContext extends ParserRuleContext {
+	public static class ConstDecContext extends ParserRuleContext {
 		public NameContext name() {
 			return getRuleContext(NameContext.class,0);
 		}
@@ -2417,28 +2416,28 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Const_decContext(ParserRuleContext parent, int invokingState) {
+		public ConstDecContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_const_dec; }
+		@Override public int getRuleIndex() { return RULE_constDec; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterConst_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterConstDec(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitConst_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitConstDec(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitConst_dec(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitConstDec(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Const_decContext const_dec() throws RecognitionException {
-		Const_decContext _localctx = new Const_decContext(_ctx, getState());
-		enterRule(_localctx, 38, RULE_const_dec);
+	public final ConstDecContext constDec() throws RecognitionException {
+		ConstDecContext _localctx = new ConstDecContext(_ctx, getState());
+		enterRule(_localctx, 38, RULE_constDec);
 		int _la;
 		try {
 			int _alt;
@@ -2526,66 +2525,66 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Assign_blockContext extends ParserRuleContext {
-		public Con_listContext con_list() {
-			return getRuleContext(Con_listContext.class,0);
+	public static class AssignBlockContext extends ParserRuleContext {
+		public ConListContext conList() {
+			return getRuleContext(ConListContext.class,0);
 		}
 		public List<TerminalNode> NL() { return getTokens(LucidParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public List<Dff_decContext> dff_dec() {
-			return getRuleContexts(Dff_decContext.class);
+		public List<DffDecContext> dffDec() {
+			return getRuleContexts(DffDecContext.class);
 		}
-		public Dff_decContext dff_dec(int i) {
-			return getRuleContext(Dff_decContext.class,i);
+		public DffDecContext dffDec(int i) {
+			return getRuleContext(DffDecContext.class,i);
 		}
-		public List<Fsm_decContext> fsm_dec() {
-			return getRuleContexts(Fsm_decContext.class);
+		public List<FsmDecContext> fsmDec() {
+			return getRuleContexts(FsmDecContext.class);
 		}
-		public Fsm_decContext fsm_dec(int i) {
-			return getRuleContext(Fsm_decContext.class,i);
+		public FsmDecContext fsmDec(int i) {
+			return getRuleContext(FsmDecContext.class,i);
 		}
-		public List<Module_instContext> module_inst() {
-			return getRuleContexts(Module_instContext.class);
+		public List<ModuleInstContext> moduleInst() {
+			return getRuleContexts(ModuleInstContext.class);
 		}
-		public Module_instContext module_inst(int i) {
-			return getRuleContext(Module_instContext.class,i);
+		public ModuleInstContext moduleInst(int i) {
+			return getRuleContext(ModuleInstContext.class,i);
 		}
-		public List<Assign_blockContext> assign_block() {
-			return getRuleContexts(Assign_blockContext.class);
+		public List<AssignBlockContext> assignBlock() {
+			return getRuleContexts(AssignBlockContext.class);
 		}
-		public Assign_blockContext assign_block(int i) {
-			return getRuleContext(Assign_blockContext.class,i);
+		public AssignBlockContext assignBlock(int i) {
+			return getRuleContext(AssignBlockContext.class,i);
 		}
-		public Assign_blockContext(ParserRuleContext parent, int invokingState) {
+		public AssignBlockContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_assign_block; }
+		@Override public int getRuleIndex() { return RULE_assignBlock; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterAssign_block(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterAssignBlock(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitAssign_block(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitAssignBlock(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitAssign_block(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitAssignBlock(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Assign_blockContext assign_block() throws RecognitionException {
-		Assign_blockContext _localctx = new Assign_blockContext(_ctx, getState());
-		enterRule(_localctx, 40, RULE_assign_block);
+	public final AssignBlockContext assignBlock() throws RecognitionException {
+		AssignBlockContext _localctx = new AssignBlockContext(_ctx, getState());
+		enterRule(_localctx, 40, RULE_assignBlock);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(564);
-			con_list();
+			conList();
 			setState(568);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -2613,25 +2612,25 @@ public class LucidParser extends Parser {
 				case 1:
 					{
 					setState(572);
-					dff_dec();
+					dffDec();
 					}
 					break;
 				case 2:
 					{
 					setState(573);
-					fsm_dec();
+					fsmDec();
 					}
 					break;
 				case 3:
 					{
 					setState(574);
-					module_inst();
+					moduleInst();
 					}
 					break;
 				case 4:
 					{
 					setState(575);
-					assign_block();
+					assignBlock();
 					}
 					break;
 				case 5:
@@ -2662,7 +2661,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Sig_conContext extends ParserRuleContext {
+	public static class SigConContext extends ParserRuleContext {
 		public NameContext name() {
 			return getRuleContext(NameContext.class,0);
 		}
@@ -2673,28 +2672,28 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Sig_conContext(ParserRuleContext parent, int invokingState) {
+		public SigConContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_sig_con; }
+		@Override public int getRuleIndex() { return RULE_sigCon; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterSig_con(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterSigCon(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitSig_con(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitSigCon(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitSig_con(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitSigCon(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Sig_conContext sig_con() throws RecognitionException {
-		Sig_conContext _localctx = new Sig_conContext(_ctx, getState());
-		enterRule(_localctx, 42, RULE_sig_con);
+	public final SigConContext sigCon() throws RecognitionException {
+		SigConContext _localctx = new SigConContext(_ctx, getState());
+		enterRule(_localctx, 42, RULE_sigCon);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -2765,7 +2764,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Param_conContext extends ParserRuleContext {
+	public static class ParamConContext extends ParserRuleContext {
 		public NameContext name() {
 			return getRuleContext(NameContext.class,0);
 		}
@@ -2777,28 +2776,28 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Param_conContext(ParserRuleContext parent, int invokingState) {
+		public ParamConContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_param_con; }
+		@Override public int getRuleIndex() { return RULE_paramCon; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterParam_con(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterParamCon(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitParam_con(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitParamCon(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitParam_con(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitParamCon(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Param_conContext param_con() throws RecognitionException {
-		Param_conContext _localctx = new Param_conContext(_ctx, getState());
-		enterRule(_localctx, 44, RULE_param_con);
+	public final ParamConContext paramCon() throws RecognitionException {
+		ParamConContext _localctx = new ParamConContext(_ctx, getState());
+		enterRule(_localctx, 44, RULE_paramCon);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -2903,42 +2902,42 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Type_decContext extends ParserRuleContext {
+	public static class TypeDecContext extends ParserRuleContext {
 		public NameContext name() {
 			return getRuleContext(NameContext.class,0);
 		}
-		public List<Array_sizeContext> array_size() {
-			return getRuleContexts(Array_sizeContext.class);
+		public List<ArraySizeContext> arraySize() {
+			return getRuleContexts(ArraySizeContext.class);
 		}
-		public Array_sizeContext array_size(int i) {
-			return getRuleContext(Array_sizeContext.class,i);
+		public ArraySizeContext arraySize(int i) {
+			return getRuleContext(ArraySizeContext.class,i);
 		}
 		public List<TerminalNode> NL() { return getTokens(LucidParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Type_decContext(ParserRuleContext parent, int invokingState) {
+		public TypeDecContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_type_dec; }
+		@Override public int getRuleIndex() { return RULE_typeDec; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterType_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterTypeDec(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitType_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitTypeDec(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitType_dec(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitTypeDec(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Type_decContext type_dec() throws RecognitionException {
-		Type_decContext _localctx = new Type_decContext(_ctx, getState());
-		enterRule(_localctx, 46, RULE_type_dec);
+	public final TypeDecContext typeDec() throws RecognitionException {
+		TypeDecContext _localctx = new TypeDecContext(_ctx, getState());
+		enterRule(_localctx, 46, RULE_typeDec);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
@@ -2957,7 +2956,7 @@ public class LucidParser extends Parser {
 					case T__13:
 						{
 						setState(636);
-						array_size();
+						arraySize();
 						}
 						break;
 					case NL:
@@ -2989,45 +2988,45 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Dff_singleContext extends ParserRuleContext {
+	public static class DffSingleContext extends ParserRuleContext {
 		public NameContext name() {
 			return getRuleContext(NameContext.class,0);
 		}
-		public List<Array_sizeContext> array_size() {
-			return getRuleContexts(Array_sizeContext.class);
+		public List<ArraySizeContext> arraySize() {
+			return getRuleContexts(ArraySizeContext.class);
 		}
-		public Array_sizeContext array_size(int i) {
-			return getRuleContext(Array_sizeContext.class,i);
+		public ArraySizeContext arraySize(int i) {
+			return getRuleContext(ArraySizeContext.class,i);
 		}
 		public List<TerminalNode> NL() { return getTokens(LucidParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Inst_consContext inst_cons() {
-			return getRuleContext(Inst_consContext.class,0);
+		public InstConsContext instCons() {
+			return getRuleContext(InstConsContext.class,0);
 		}
-		public Dff_singleContext(ParserRuleContext parent, int invokingState) {
+		public DffSingleContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_dff_single; }
+		@Override public int getRuleIndex() { return RULE_dffSingle; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterDff_single(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterDffSingle(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitDff_single(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitDffSingle(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitDff_single(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitDffSingle(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Dff_singleContext dff_single() throws RecognitionException {
-		Dff_singleContext _localctx = new Dff_singleContext(_ctx, getState());
-		enterRule(_localctx, 48, RULE_dff_single);
+	public final DffSingleContext dffSingle() throws RecognitionException {
+		DffSingleContext _localctx = new DffSingleContext(_ctx, getState());
+		enterRule(_localctx, 48, RULE_dffSingle);
 		int _la;
 		try {
 			int _alt;
@@ -3047,7 +3046,7 @@ public class LucidParser extends Parser {
 					case T__13:
 						{
 						setState(644);
-						array_size();
+						arraySize();
 						}
 						break;
 					case NL:
@@ -3071,7 +3070,7 @@ public class LucidParser extends Parser {
 			if (_la==T__7) {
 				{
 				setState(651);
-				inst_cons();
+				instCons();
 				}
 			}
 
@@ -3089,12 +3088,12 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Sig_decContext extends ParserRuleContext {
-		public List<Type_decContext> type_dec() {
-			return getRuleContexts(Type_decContext.class);
+	public static class SigDecContext extends ParserRuleContext {
+		public List<TypeDecContext> typeDec() {
+			return getRuleContexts(TypeDecContext.class);
 		}
-		public Type_decContext type_dec(int i) {
-			return getRuleContext(Type_decContext.class,i);
+		public TypeDecContext typeDec(int i) {
+			return getRuleContext(TypeDecContext.class,i);
 		}
 		public SemiContext semi() {
 			return getRuleContext(SemiContext.class,0);
@@ -3104,31 +3103,31 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Struct_typeContext struct_type() {
-			return getRuleContext(Struct_typeContext.class,0);
+		public StructTypeContext structType() {
+			return getRuleContext(StructTypeContext.class,0);
 		}
-		public Sig_decContext(ParserRuleContext parent, int invokingState) {
+		public SigDecContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_sig_dec; }
+		@Override public int getRuleIndex() { return RULE_sigDec; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterSig_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterSigDec(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitSig_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitSigDec(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitSig_dec(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitSigDec(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Sig_decContext sig_dec() throws RecognitionException {
-		Sig_decContext _localctx = new Sig_decContext(_ctx, getState());
-		enterRule(_localctx, 50, RULE_sig_dec);
+	public final SigDecContext sigDec() throws RecognitionException {
+		SigDecContext _localctx = new SigDecContext(_ctx, getState());
+		enterRule(_localctx, 50, RULE_sigDec);
 		int _la;
 		try {
 			int _alt;
@@ -3182,7 +3181,7 @@ public class LucidParser extends Parser {
 			if (_la==T__15) {
 				{
 				setState(670);
-				struct_type();
+				structType();
 				}
 			}
 
@@ -3201,7 +3200,7 @@ public class LucidParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(679);
-			type_dec();
+			typeDec();
 			setState(696);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,96,_ctx);
@@ -3240,7 +3239,7 @@ public class LucidParser extends Parser {
 						_la = _input.LA(1);
 					}
 					setState(693);
-					type_dec();
+					typeDec();
 					}
 					} 
 				}
@@ -3264,12 +3263,12 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Dff_decContext extends ParserRuleContext {
-		public List<Dff_singleContext> dff_single() {
-			return getRuleContexts(Dff_singleContext.class);
+	public static class DffDecContext extends ParserRuleContext {
+		public List<DffSingleContext> dffSingle() {
+			return getRuleContexts(DffSingleContext.class);
 		}
-		public Dff_singleContext dff_single(int i) {
-			return getRuleContext(Dff_singleContext.class,i);
+		public DffSingleContext dffSingle(int i) {
+			return getRuleContext(DffSingleContext.class,i);
 		}
 		public SemiContext semi() {
 			return getRuleContext(SemiContext.class,0);
@@ -3279,31 +3278,31 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Struct_typeContext struct_type() {
-			return getRuleContext(Struct_typeContext.class,0);
+		public StructTypeContext structType() {
+			return getRuleContext(StructTypeContext.class,0);
 		}
-		public Dff_decContext(ParserRuleContext parent, int invokingState) {
+		public DffDecContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_dff_dec; }
+		@Override public int getRuleIndex() { return RULE_dffDec; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterDff_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterDffDec(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitDff_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitDffDec(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitDff_dec(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitDffDec(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Dff_decContext dff_dec() throws RecognitionException {
-		Dff_decContext _localctx = new Dff_decContext(_ctx, getState());
-		enterRule(_localctx, 52, RULE_dff_dec);
+	public final DffDecContext dffDec() throws RecognitionException {
+		DffDecContext _localctx = new DffDecContext(_ctx, getState());
+		enterRule(_localctx, 52, RULE_dffDec);
 		int _la;
 		try {
 			int _alt;
@@ -3357,7 +3356,7 @@ public class LucidParser extends Parser {
 			if (_la==T__15) {
 				{
 				setState(717);
-				struct_type();
+				structType();
 				}
 			}
 
@@ -3376,7 +3375,7 @@ public class LucidParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(726);
-			dff_single();
+			dffSingle();
 			setState(743);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,104,_ctx);
@@ -3415,7 +3414,7 @@ public class LucidParser extends Parser {
 						_la = _input.LA(1);
 					}
 					setState(740);
-					dff_single();
+					dffSingle();
 					}
 					} 
 				}
@@ -3439,12 +3438,12 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Fsm_decContext extends ParserRuleContext {
+	public static class FsmDecContext extends ParserRuleContext {
 		public NameContext name() {
 			return getRuleContext(NameContext.class,0);
 		}
-		public Fsm_statesContext fsm_states() {
-			return getRuleContext(Fsm_statesContext.class,0);
+		public FsmStatesContext fsmStates() {
+			return getRuleContext(FsmStatesContext.class,0);
 		}
 		public SemiContext semi() {
 			return getRuleContext(SemiContext.class,0);
@@ -3453,37 +3452,37 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public List<Array_sizeContext> array_size() {
-			return getRuleContexts(Array_sizeContext.class);
+		public List<ArraySizeContext> arraySize() {
+			return getRuleContexts(ArraySizeContext.class);
 		}
-		public Array_sizeContext array_size(int i) {
-			return getRuleContext(Array_sizeContext.class,i);
+		public ArraySizeContext arraySize(int i) {
+			return getRuleContext(ArraySizeContext.class,i);
 		}
-		public Inst_consContext inst_cons() {
-			return getRuleContext(Inst_consContext.class,0);
+		public InstConsContext instCons() {
+			return getRuleContext(InstConsContext.class,0);
 		}
-		public Fsm_decContext(ParserRuleContext parent, int invokingState) {
+		public FsmDecContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_fsm_dec; }
+		@Override public int getRuleIndex() { return RULE_fsmDec; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterFsm_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterFsmDec(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitFsm_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitFsmDec(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitFsm_dec(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitFsmDec(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Fsm_decContext fsm_dec() throws RecognitionException {
-		Fsm_decContext _localctx = new Fsm_decContext(_ctx, getState());
-		enterRule(_localctx, 54, RULE_fsm_dec);
+	public final FsmDecContext fsmDec() throws RecognitionException {
+		FsmDecContext _localctx = new FsmDecContext(_ctx, getState());
+		enterRule(_localctx, 54, RULE_fsmDec);
 		int _la;
 		try {
 			int _alt;
@@ -3519,7 +3518,7 @@ public class LucidParser extends Parser {
 					case T__13:
 						{
 						setState(756);
-						array_size();
+						arraySize();
 						}
 						break;
 					case NL:
@@ -3543,7 +3542,7 @@ public class LucidParser extends Parser {
 			if (_la==T__7) {
 				{
 				setState(763);
-				inst_cons();
+				instCons();
 				}
 			}
 
@@ -3594,7 +3593,7 @@ public class LucidParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(786);
-			fsm_states();
+			fsmStates();
 			setState(790);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -3627,7 +3626,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Fsm_statesContext extends ParserRuleContext {
+	public static class FsmStatesContext extends ParserRuleContext {
 		public List<NameContext> name() {
 			return getRuleContexts(NameContext.class);
 		}
@@ -3638,28 +3637,28 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Fsm_statesContext(ParserRuleContext parent, int invokingState) {
+		public FsmStatesContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_fsm_states; }
+		@Override public int getRuleIndex() { return RULE_fsmStates; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterFsm_states(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterFsmStates(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitFsm_states(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitFsmStates(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitFsm_states(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitFsmStates(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Fsm_statesContext fsm_states() throws RecognitionException {
-		Fsm_statesContext _localctx = new Fsm_statesContext(_ctx, getState());
-		enterRule(_localctx, 56, RULE_fsm_states);
+	public final FsmStatesContext fsmStates() throws RecognitionException {
+		FsmStatesContext _localctx = new FsmStatesContext(_ctx, getState());
+		enterRule(_localctx, 56, RULE_fsmStates);
 		int _la;
 		try {
 			int _alt;
@@ -3727,7 +3726,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Module_instContext extends ParserRuleContext {
+	public static class ModuleInstContext extends ParserRuleContext {
 		public List<NameContext> name() {
 			return getRuleContexts(NameContext.class);
 		}
@@ -3741,37 +3740,37 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public List<Array_sizeContext> array_size() {
-			return getRuleContexts(Array_sizeContext.class);
+		public List<ArraySizeContext> arraySize() {
+			return getRuleContexts(ArraySizeContext.class);
 		}
-		public Array_sizeContext array_size(int i) {
-			return getRuleContext(Array_sizeContext.class,i);
+		public ArraySizeContext arraySize(int i) {
+			return getRuleContext(ArraySizeContext.class,i);
 		}
-		public Inst_consContext inst_cons() {
-			return getRuleContext(Inst_consContext.class,0);
+		public InstConsContext instCons() {
+			return getRuleContext(InstConsContext.class,0);
 		}
-		public Module_instContext(ParserRuleContext parent, int invokingState) {
+		public ModuleInstContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_module_inst; }
+		@Override public int getRuleIndex() { return RULE_moduleInst; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterModule_inst(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterModuleInst(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitModule_inst(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitModuleInst(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitModule_inst(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitModuleInst(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Module_instContext module_inst() throws RecognitionException {
-		Module_instContext _localctx = new Module_instContext(_ctx, getState());
-		enterRule(_localctx, 58, RULE_module_inst);
+	public final ModuleInstContext moduleInst() throws RecognitionException {
+		ModuleInstContext _localctx = new ModuleInstContext(_ctx, getState());
+		enterRule(_localctx, 58, RULE_moduleInst);
 		int _la;
 		try {
 			int _alt;
@@ -3807,7 +3806,7 @@ public class LucidParser extends Parser {
 					case T__13:
 						{
 						setState(824);
-						array_size();
+						arraySize();
 						}
 						break;
 					case NL:
@@ -3831,7 +3830,7 @@ public class LucidParser extends Parser {
 			if (_la==T__7) {
 				{
 				setState(831);
-				inst_cons();
+				instCons();
 				}
 			}
 
@@ -3851,36 +3850,36 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Inst_consContext extends ParserRuleContext {
-		public Con_listContext con_list() {
-			return getRuleContext(Con_listContext.class,0);
+	public static class InstConsContext extends ParserRuleContext {
+		public ConListContext conList() {
+			return getRuleContext(ConListContext.class,0);
 		}
 		public List<TerminalNode> NL() { return getTokens(LucidParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Inst_consContext(ParserRuleContext parent, int invokingState) {
+		public InstConsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_inst_cons; }
+		@Override public int getRuleIndex() { return RULE_instCons; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterInst_cons(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterInstCons(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitInst_cons(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitInstCons(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitInst_cons(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitInstCons(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Inst_consContext inst_cons() throws RecognitionException {
-		Inst_consContext _localctx = new Inst_consContext(_ctx, getState());
-		enterRule(_localctx, 60, RULE_inst_cons);
+	public final InstConsContext instCons() throws RecognitionException {
+		InstConsContext _localctx = new InstConsContext(_ctx, getState());
+		enterRule(_localctx, 60, RULE_instCons);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -3902,7 +3901,7 @@ public class LucidParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(843);
-			con_list();
+			conList();
 			setState(847);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -3933,7 +3932,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Con_listContext extends ParserRuleContext {
+	public static class ConListContext extends ParserRuleContext {
 		public List<ConnectionContext> connection() {
 			return getRuleContexts(ConnectionContext.class);
 		}
@@ -3944,28 +3943,28 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Con_listContext(ParserRuleContext parent, int invokingState) {
+		public ConListContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_con_list; }
+		@Override public int getRuleIndex() { return RULE_conList; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterCon_list(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterConList(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitCon_list(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitConList(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitCon_list(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitConList(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Con_listContext con_list() throws RecognitionException {
-		Con_listContext _localctx = new Con_listContext(_ctx, getState());
-		enterRule(_localctx, 62, RULE_con_list);
+	public final ConListContext conList() throws RecognitionException {
+		ConListContext _localctx = new ConListContext(_ctx, getState());
+		enterRule(_localctx, 62, RULE_conList);
 		int _la;
 		try {
 			int _alt;
@@ -4034,11 +4033,11 @@ public class LucidParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ConnectionContext extends ParserRuleContext {
-		public Param_conContext param_con() {
-			return getRuleContext(Param_conContext.class,0);
+		public ParamConContext paramCon() {
+			return getRuleContext(ParamConContext.class,0);
 		}
-		public Sig_conContext sig_con() {
-			return getRuleContext(Sig_conContext.class,0);
+		public SigConContext sigCon() {
+			return getRuleContext(SigConContext.class,0);
 		}
 		public ConnectionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -4070,14 +4069,14 @@ public class LucidParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(872);
-				param_con();
+				paramCon();
 				}
 				break;
 			case T__16:
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(873);
-				sig_con();
+				sigCon();
 				}
 				break;
 			default:
@@ -4096,7 +4095,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Struct_memberContext extends ParserRuleContext {
+	public static class StructMemberContext extends ParserRuleContext {
 		public NameContext name() {
 			return getRuleContext(NameContext.class,0);
 		}
@@ -4105,37 +4104,37 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Struct_typeContext struct_type() {
-			return getRuleContext(Struct_typeContext.class,0);
+		public StructTypeContext structType() {
+			return getRuleContext(StructTypeContext.class,0);
 		}
-		public List<Array_sizeContext> array_size() {
-			return getRuleContexts(Array_sizeContext.class);
+		public List<ArraySizeContext> arraySize() {
+			return getRuleContexts(ArraySizeContext.class);
 		}
-		public Array_sizeContext array_size(int i) {
-			return getRuleContext(Array_sizeContext.class,i);
+		public ArraySizeContext arraySize(int i) {
+			return getRuleContext(ArraySizeContext.class,i);
 		}
-		public Struct_memberContext(ParserRuleContext parent, int invokingState) {
+		public StructMemberContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_struct_member; }
+		@Override public int getRuleIndex() { return RULE_structMember; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterStruct_member(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterStructMember(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitStruct_member(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitStructMember(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitStruct_member(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitStructMember(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Struct_memberContext struct_member() throws RecognitionException {
-		Struct_memberContext _localctx = new Struct_memberContext(_ctx, getState());
-		enterRule(_localctx, 66, RULE_struct_member);
+	public final StructMemberContext structMember() throws RecognitionException {
+		StructMemberContext _localctx = new StructMemberContext(_ctx, getState());
+		enterRule(_localctx, 66, RULE_structMember);
 		int _la;
 		try {
 			int _alt;
@@ -4189,7 +4188,7 @@ public class LucidParser extends Parser {
 			if (_la==T__15) {
 				{
 				setState(892);
-				struct_type();
+				structType();
 				}
 			}
 
@@ -4205,7 +4204,7 @@ public class LucidParser extends Parser {
 					case T__13:
 						{
 						setState(895);
-						array_size();
+						arraySize();
 						}
 						break;
 					case NL:
@@ -4237,15 +4236,15 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Struct_decContext extends ParserRuleContext {
+	public static class StructDecContext extends ParserRuleContext {
 		public NameContext name() {
 			return getRuleContext(NameContext.class,0);
 		}
-		public List<Struct_memberContext> struct_member() {
-			return getRuleContexts(Struct_memberContext.class);
+		public List<StructMemberContext> structMember() {
+			return getRuleContexts(StructMemberContext.class);
 		}
-		public Struct_memberContext struct_member(int i) {
-			return getRuleContext(Struct_memberContext.class,i);
+		public StructMemberContext structMember(int i) {
+			return getRuleContext(StructMemberContext.class,i);
 		}
 		public SemiContext semi() {
 			return getRuleContext(SemiContext.class,0);
@@ -4254,28 +4253,28 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Struct_decContext(ParserRuleContext parent, int invokingState) {
+		public StructDecContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_struct_dec; }
+		@Override public int getRuleIndex() { return RULE_structDec; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterStruct_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterStructDec(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitStruct_dec(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitStructDec(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitStruct_dec(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitStructDec(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Struct_decContext struct_dec() throws RecognitionException {
-		Struct_decContext _localctx = new Struct_decContext(_ctx, getState());
-		enterRule(_localctx, 68, RULE_struct_dec);
+	public final StructDecContext structDec() throws RecognitionException {
+		StructDecContext _localctx = new StructDecContext(_ctx, getState());
+		enterRule(_localctx, 68, RULE_structDec);
 		int _la;
 		try {
 			int _alt;
@@ -4332,7 +4331,7 @@ public class LucidParser extends Parser {
 				_alt = getInterpreter().adaptivePredict(_input,134,_ctx);
 			}
 			setState(923);
-			struct_member();
+			structMember();
 			setState(940);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,137,_ctx);
@@ -4373,7 +4372,7 @@ public class LucidParser extends Parser {
 						_alt = getInterpreter().adaptivePredict(_input,136,_ctx);
 					}
 					setState(937);
-					struct_member();
+					structMember();
 					}
 					} 
 				}
@@ -4413,7 +4412,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Always_blockContext extends ParserRuleContext {
+	public static class AlwaysBlockContext extends ParserRuleContext {
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
 		}
@@ -4421,28 +4420,28 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Always_blockContext(ParserRuleContext parent, int invokingState) {
+		public AlwaysBlockContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_always_block; }
+		@Override public int getRuleIndex() { return RULE_alwaysBlock; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterAlways_block(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterAlwaysBlock(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitAlways_block(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitAlwaysBlock(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitAlways_block(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitAlwaysBlock(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Always_blockContext always_block() throws RecognitionException {
-		Always_blockContext _localctx = new Always_blockContext(_ctx, getState());
-		enterRule(_localctx, 70, RULE_always_block);
+	public final AlwaysBlockContext alwaysBlock() throws RecognitionException {
+		AlwaysBlockContext _localctx = new AlwaysBlockContext(_ctx, getState());
+		enterRule(_localctx, 70, RULE_alwaysBlock);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -4479,43 +4478,23 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Always_statContext extends ParserRuleContext {
-		public Always_statContext(ParserRuleContext parent, int invokingState) {
+	public static class AlwaysStatContext extends ParserRuleContext {
+		public AlwaysStatContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_always_stat; }
+		@Override public int getRuleIndex() { return RULE_alwaysStat; }
 	 
-		public Always_statContext() { }
-		public void copyFrom(Always_statContext ctx) {
+		public AlwaysStatContext() { }
+		public void copyFrom(AlwaysStatContext ctx) {
 			super.copyFrom(ctx);
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
-	public static class AlwaysStatContext extends Always_statContext {
-		public Assign_statContext assign_stat() {
-			return getRuleContext(Assign_statContext.class,0);
+	public static class AlwaysIfContext extends AlwaysStatContext {
+		public IfStatContext ifStat() {
+			return getRuleContext(IfStatContext.class,0);
 		}
-		public AlwaysStatContext(Always_statContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterAlwaysStat(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitAlwaysStat(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitAlwaysStat(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class AlwaysIfContext extends Always_statContext {
-		public If_statContext if_stat() {
-			return getRuleContext(If_statContext.class,0);
-		}
-		public AlwaysIfContext(Always_statContext ctx) { copyFrom(ctx); }
+		public AlwaysIfContext(AlwaysStatContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterAlwaysIf(this);
@@ -4531,11 +4510,11 @@ public class LucidParser extends Parser {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
-	public static class AlwaysCaseContext extends Always_statContext {
-		public Case_statContext case_stat() {
-			return getRuleContext(Case_statContext.class,0);
+	public static class AlwaysCaseContext extends AlwaysStatContext {
+		public CaseStatContext caseStat() {
+			return getRuleContext(CaseStatContext.class,0);
 		}
-		public AlwaysCaseContext(Always_statContext ctx) { copyFrom(ctx); }
+		public AlwaysCaseContext(AlwaysStatContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterAlwaysCase(this);
@@ -4551,11 +4530,31 @@ public class LucidParser extends Parser {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
-	public static class AlwaysRepeatContext extends Always_statContext {
-		public Repeat_statContext repeat_stat() {
-			return getRuleContext(Repeat_statContext.class,0);
+	public static class AlwaysAssignContext extends AlwaysStatContext {
+		public AssignStatContext assignStat() {
+			return getRuleContext(AssignStatContext.class,0);
 		}
-		public AlwaysRepeatContext(Always_statContext ctx) { copyFrom(ctx); }
+		public AlwaysAssignContext(AlwaysStatContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterAlwaysAssign(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitAlwaysAssign(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitAlwaysAssign(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class AlwaysRepeatContext extends AlwaysStatContext {
+		public RepeatStatContext repeatStat() {
+			return getRuleContext(RepeatStatContext.class,0);
+		}
+		public AlwaysRepeatContext(AlwaysStatContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterAlwaysRepeat(this);
@@ -4571,9 +4570,9 @@ public class LucidParser extends Parser {
 		}
 	}
 
-	public final Always_statContext always_stat() throws RecognitionException {
-		Always_statContext _localctx = new Always_statContext(_ctx, getState());
-		enterRule(_localctx, 72, RULE_always_stat);
+	public final AlwaysStatContext alwaysStat() throws RecognitionException {
+		AlwaysStatContext _localctx = new AlwaysStatContext(_ctx, getState());
+		enterRule(_localctx, 72, RULE_alwaysStat);
 		try {
 			setState(965);
 			_errHandler.sync(this);
@@ -4581,11 +4580,11 @@ public class LucidParser extends Parser {
 			case TYPE_ID:
 			case CONST_ID:
 			case SPACE_ID:
-				_localctx = new AlwaysStatContext(_localctx);
+				_localctx = new AlwaysAssignContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(961);
-				assign_stat();
+				assignStat();
 				}
 				break;
 			case T__27:
@@ -4593,7 +4592,7 @@ public class LucidParser extends Parser {
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(962);
-				case_stat();
+				caseStat();
 				}
 				break;
 			case T__29:
@@ -4601,7 +4600,7 @@ public class LucidParser extends Parser {
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(963);
-				if_stat();
+				ifStat();
 				}
 				break;
 			case T__31:
@@ -4609,7 +4608,7 @@ public class LucidParser extends Parser {
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(964);
-				repeat_stat();
+				repeatStat();
 				}
 				break;
 			default:
@@ -4633,11 +4632,11 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public List<Always_statContext> always_stat() {
-			return getRuleContexts(Always_statContext.class);
+		public List<AlwaysStatContext> alwaysStat() {
+			return getRuleContexts(AlwaysStatContext.class);
 		}
-		public Always_statContext always_stat(int i) {
-			return getRuleContext(Always_statContext.class,i);
+		public AlwaysStatContext alwaysStat(int i) {
+			return getRuleContext(AlwaysStatContext.class,i);
 		}
 		public BlockContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -4695,7 +4694,7 @@ public class LucidParser extends Parser {
 					{
 					{
 					setState(974);
-					always_stat();
+					alwaysStat();
 					}
 					}
 					setState(979);
@@ -4729,7 +4728,7 @@ public class LucidParser extends Parser {
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(987);
-				always_stat();
+				alwaysStat();
 				}
 				break;
 			default:
@@ -4748,7 +4747,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Assign_statContext extends ParserRuleContext {
+	public static class AssignStatContext extends ParserRuleContext {
 		public SignalContext signal() {
 			return getRuleContext(SignalContext.class,0);
 		}
@@ -4762,28 +4761,28 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Assign_statContext(ParserRuleContext parent, int invokingState) {
+		public AssignStatContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_assign_stat; }
+		@Override public int getRuleIndex() { return RULE_assignStat; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterAssign_stat(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterAssignStat(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitAssign_stat(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitAssignStat(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitAssign_stat(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitAssignStat(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Assign_statContext assign_stat() throws RecognitionException {
-		Assign_statContext _localctx = new Assign_statContext(_ctx, getState());
-		enterRule(_localctx, 76, RULE_assign_stat);
+	public final AssignStatContext assignStat() throws RecognitionException {
+		AssignStatContext _localctx = new AssignStatContext(_ctx, getState());
+		enterRule(_localctx, 76, RULE_assignStat);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -4838,7 +4837,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Array_indexContext extends ParserRuleContext {
+	public static class ArrayIndexContext extends ParserRuleContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -4846,28 +4845,28 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Array_indexContext(ParserRuleContext parent, int invokingState) {
+		public ArrayIndexContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_array_index; }
+		@Override public int getRuleIndex() { return RULE_arrayIndex; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterArray_index(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterArrayIndex(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitArray_index(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitArrayIndex(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitArray_index(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitArrayIndex(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Array_indexContext array_index() throws RecognitionException {
-		Array_indexContext _localctx = new Array_indexContext(_ctx, getState());
-		enterRule(_localctx, 78, RULE_array_index);
+	public final ArrayIndexContext arrayIndex() throws RecognitionException {
+		ArrayIndexContext _localctx = new ArrayIndexContext(_ctx, getState());
+		enterRule(_localctx, 78, RULE_arrayIndex);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -4920,19 +4919,19 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Bit_selectorContext extends ParserRuleContext {
-		public Bit_selectorContext(ParserRuleContext parent, int invokingState) {
+	public static class BitSelectorContext extends ParserRuleContext {
+		public BitSelectorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_bit_selector; }
+		@Override public int getRuleIndex() { return RULE_bitSelector; }
 	 
-		public Bit_selectorContext() { }
-		public void copyFrom(Bit_selectorContext ctx) {
+		public BitSelectorContext() { }
+		public void copyFrom(BitSelectorContext ctx) {
 			super.copyFrom(ctx);
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
-	public static class BitSelectorConstContext extends Bit_selectorContext {
+	public static class BitSelectorConstContext extends BitSelectorContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
@@ -4943,7 +4942,7 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public BitSelectorConstContext(Bit_selectorContext ctx) { copyFrom(ctx); }
+		public BitSelectorConstContext(BitSelectorContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterBitSelectorConst(this);
@@ -4959,7 +4958,7 @@ public class LucidParser extends Parser {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
-	public static class BitSelectorFixWidthContext extends Bit_selectorContext {
+	public static class BitSelectorFixWidthContext extends BitSelectorContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
@@ -4970,7 +4969,7 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public BitSelectorFixWidthContext(Bit_selectorContext ctx) { copyFrom(ctx); }
+		public BitSelectorFixWidthContext(BitSelectorContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterBitSelectorFixWidth(this);
@@ -4986,9 +4985,9 @@ public class LucidParser extends Parser {
 		}
 	}
 
-	public final Bit_selectorContext bit_selector() throws RecognitionException {
-		Bit_selectorContext _localctx = new Bit_selectorContext(_ctx, getState());
-		enterRule(_localctx, 80, RULE_bit_selector);
+	public final BitSelectorContext bitSelector() throws RecognitionException {
+		BitSelectorContext _localctx = new BitSelectorContext(_ctx, getState());
+		enterRule(_localctx, 80, RULE_bitSelector);
 		int _la;
 		try {
 			setState(1090);
@@ -5176,42 +5175,42 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Bit_selectionContext extends ParserRuleContext {
-		public List<Array_indexContext> array_index() {
-			return getRuleContexts(Array_indexContext.class);
+	public static class BitSelectionContext extends ParserRuleContext {
+		public List<ArrayIndexContext> arrayIndex() {
+			return getRuleContexts(ArrayIndexContext.class);
 		}
-		public Array_indexContext array_index(int i) {
-			return getRuleContext(Array_indexContext.class,i);
+		public ArrayIndexContext arrayIndex(int i) {
+			return getRuleContext(ArrayIndexContext.class,i);
 		}
-		public Bit_selectorContext bit_selector() {
-			return getRuleContext(Bit_selectorContext.class,0);
+		public BitSelectorContext bitSelector() {
+			return getRuleContext(BitSelectorContext.class,0);
 		}
 		public List<TerminalNode> NL() { return getTokens(LucidParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Bit_selectionContext(ParserRuleContext parent, int invokingState) {
+		public BitSelectionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_bit_selection; }
+		@Override public int getRuleIndex() { return RULE_bitSelection; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterBit_selection(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterBitSelection(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitBit_selection(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitBitSelection(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitBit_selection(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitBitSelection(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Bit_selectionContext bit_selection() throws RecognitionException {
-		Bit_selectionContext _localctx = new Bit_selectionContext(_ctx, getState());
-		enterRule(_localctx, 82, RULE_bit_selection);
+	public final BitSelectionContext bitSelection() throws RecognitionException {
+		BitSelectionContext _localctx = new BitSelectionContext(_ctx, getState());
+		enterRule(_localctx, 82, RULE_bitSelection);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
@@ -5228,7 +5227,7 @@ public class LucidParser extends Parser {
 					case T__13:
 						{
 						setState(1092);
-						array_index();
+						arrayIndex();
 						}
 						break;
 					case NL:
@@ -5252,13 +5251,13 @@ public class LucidParser extends Parser {
 			case 1:
 				{
 				setState(1099);
-				array_index();
+				arrayIndex();
 				}
 				break;
 			case 2:
 				{
 				setState(1100);
-				bit_selector();
+				bitSelector();
 				}
 				break;
 			}
@@ -5287,11 +5286,11 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public List<Bit_selectionContext> bit_selection() {
-			return getRuleContexts(Bit_selectionContext.class);
+		public List<BitSelectionContext> bitSelection() {
+			return getRuleContexts(BitSelectionContext.class);
 		}
-		public Bit_selectionContext bit_selection(int i) {
-			return getRuleContext(Bit_selectionContext.class,i);
+		public BitSelectionContext bitSelection(int i) {
+			return getRuleContext(BitSelectionContext.class,i);
 		}
 		public SignalContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -5344,7 +5343,7 @@ public class LucidParser extends Parser {
 			case 1:
 				{
 				setState(1110);
-				bit_selection();
+				bitSelection();
 				}
 				break;
 			}
@@ -5409,7 +5408,7 @@ public class LucidParser extends Parser {
 					case 1:
 						{
 						setState(1133);
-						bit_selection();
+						bitSelection();
 						}
 						break;
 					}
@@ -5434,7 +5433,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Case_statContext extends ParserRuleContext {
+	public static class CaseStatContext extends ParserRuleContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -5442,34 +5441,34 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public List<Case_elemContext> case_elem() {
-			return getRuleContexts(Case_elemContext.class);
+		public List<CaseElemContext> caseElem() {
+			return getRuleContexts(CaseElemContext.class);
 		}
-		public Case_elemContext case_elem(int i) {
-			return getRuleContext(Case_elemContext.class,i);
+		public CaseElemContext caseElem(int i) {
+			return getRuleContext(CaseElemContext.class,i);
 		}
-		public Case_statContext(ParserRuleContext parent, int invokingState) {
+		public CaseStatContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_case_stat; }
+		@Override public int getRuleIndex() { return RULE_caseStat; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterCase_stat(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterCaseStat(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitCase_stat(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitCaseStat(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitCase_stat(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitCaseStat(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Case_statContext case_stat() throws RecognitionException {
-		Case_statContext _localctx = new Case_statContext(_ctx, getState());
-		enterRule(_localctx, 86, RULE_case_stat);
+	public final CaseStatContext caseStat() throws RecognitionException {
+		CaseStatContext _localctx = new CaseStatContext(_ctx, getState());
+		enterRule(_localctx, 86, RULE_caseStat);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -5570,7 +5569,7 @@ public class LucidParser extends Parser {
 				case FUNCTION_ID:
 					{
 					setState(1170);
-					case_elem();
+					caseElem();
 					}
 					break;
 				case NL:
@@ -5603,12 +5602,12 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Case_elemContext extends ParserRuleContext {
-		public List<Always_statContext> always_stat() {
-			return getRuleContexts(Always_statContext.class);
+	public static class CaseElemContext extends ParserRuleContext {
+		public List<AlwaysStatContext> alwaysStat() {
+			return getRuleContexts(AlwaysStatContext.class);
 		}
-		public Always_statContext always_stat(int i) {
-			return getRuleContext(Always_statContext.class,i);
+		public AlwaysStatContext alwaysStat(int i) {
+			return getRuleContext(AlwaysStatContext.class,i);
 		}
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -5617,28 +5616,28 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Case_elemContext(ParserRuleContext parent, int invokingState) {
+		public CaseElemContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_case_elem; }
+		@Override public int getRuleIndex() { return RULE_caseElem; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterCase_elem(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterCaseElem(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitCase_elem(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitCaseElem(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitCase_elem(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitCaseElem(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Case_elemContext case_elem() throws RecognitionException {
-		Case_elemContext _localctx = new Case_elemContext(_ctx, getState());
-		enterRule(_localctx, 88, RULE_case_elem);
+	public final CaseElemContext caseElem() throws RecognitionException {
+		CaseElemContext _localctx = new CaseElemContext(_ctx, getState());
+		enterRule(_localctx, 88, RULE_caseElem);
 		int _la;
 		try {
 			int _alt;
@@ -5711,7 +5710,7 @@ public class LucidParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(1196);
-			always_stat();
+			alwaysStat();
 			setState(1201);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,179,_ctx);
@@ -5729,7 +5728,7 @@ public class LucidParser extends Parser {
 					case SPACE_ID:
 						{
 						setState(1197);
-						always_stat();
+						alwaysStat();
 						}
 						break;
 					case NL:
@@ -5761,7 +5760,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class If_statContext extends ParserRuleContext {
+	public static class IfStatContext extends ParserRuleContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -5772,31 +5771,31 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Else_statContext else_stat() {
-			return getRuleContext(Else_statContext.class,0);
+		public ElseStatContext elseStat() {
+			return getRuleContext(ElseStatContext.class,0);
 		}
-		public If_statContext(ParserRuleContext parent, int invokingState) {
+		public IfStatContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_if_stat; }
+		@Override public int getRuleIndex() { return RULE_ifStat; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterIf_stat(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterIfStat(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitIf_stat(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitIfStat(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitIf_stat(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitIfStat(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final If_statContext if_stat() throws RecognitionException {
-		If_statContext _localctx = new If_statContext(_ctx, getState());
-		enterRule(_localctx, 90, RULE_if_stat);
+	public final IfStatContext ifStat() throws RecognitionException {
+		IfStatContext _localctx = new IfStatContext(_ctx, getState());
+		enterRule(_localctx, 90, RULE_ifStat);
 		int _la;
 		try {
 			int _alt;
@@ -5890,7 +5889,7 @@ public class LucidParser extends Parser {
 			case 1:
 				{
 				setState(1239);
-				else_stat();
+				elseStat();
 				}
 				break;
 			}
@@ -5908,7 +5907,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Else_statContext extends ParserRuleContext {
+	public static class ElseStatContext extends ParserRuleContext {
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
 		}
@@ -5916,28 +5915,28 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Else_statContext(ParserRuleContext parent, int invokingState) {
+		public ElseStatContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_else_stat; }
+		@Override public int getRuleIndex() { return RULE_elseStat; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterElse_stat(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterElseStat(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitElse_stat(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitElseStat(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitElse_stat(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitElseStat(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Else_statContext else_stat() throws RecognitionException {
-		Else_statContext _localctx = new Else_statContext(_ctx, getState());
-		enterRule(_localctx, 92, RULE_else_stat);
+	public final ElseStatContext elseStat() throws RecognitionException {
+		ElseStatContext _localctx = new ElseStatContext(_ctx, getState());
+		enterRule(_localctx, 92, RULE_elseStat);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -5974,7 +5973,7 @@ public class LucidParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Repeat_statContext extends ParserRuleContext {
+	public static class RepeatStatContext extends ParserRuleContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -5988,28 +5987,28 @@ public class LucidParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(LucidParser.NL, i);
 		}
-		public Repeat_statContext(ParserRuleContext parent, int invokingState) {
+		public RepeatStatContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_repeat_stat; }
+		@Override public int getRuleIndex() { return RULE_repeatStat; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterRepeat_stat(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterRepeatStat(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitRepeat_stat(this);
+			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitRepeatStat(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitRepeat_stat(this);
+			if ( visitor instanceof LucidVisitor ) return ((LucidVisitor<? extends T>)visitor).visitRepeatStat(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Repeat_statContext repeat_stat() throws RecognitionException {
-		Repeat_statContext _localctx = new Repeat_statContext(_ctx, getState());
-		enterRule(_localctx, 94, RULE_repeat_stat);
+	public final RepeatStatContext repeatStat() throws RecognitionException {
+		RepeatStatContext _localctx = new RepeatStatContext(_ctx, getState());
+		enterRule(_localctx, 94, RULE_repeatStat);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -6468,8 +6467,8 @@ public class LucidParser extends Parser {
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class ExprStructContext extends ExprContext {
-		public Struct_constContext struct_const() {
-			return getRuleContext(Struct_constContext.class,0);
+		public StructConstContext structConst() {
+			return getRuleContext(StructConstContext.class,0);
 		}
 		public ExprStructContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
@@ -6841,7 +6840,7 @@ public class LucidParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(1342);
-				struct_const();
+				structConst();
 				}
 				break;
 			case FUNCTION_ID:

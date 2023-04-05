@@ -9,7 +9,7 @@ internal class SignalParserTest {
     @Test
     fun testDffSimpleDeclaration() {
         val tester = LucidTester("dff testing")
-        tester.dff_dec() // parse
+        tester.dffDec() // parse
         val dSig = tester.sigParser.resolve("testing.d")
         val qSig = tester.sigParser.resolve("testing.q")
         assertNotNull(dSig, "DFF d signal was null!")

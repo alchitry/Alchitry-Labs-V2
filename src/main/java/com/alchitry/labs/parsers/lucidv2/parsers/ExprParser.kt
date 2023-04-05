@@ -132,11 +132,11 @@ class ExprParser(
         values[ctx] = value
     }
 
-    override fun exitParam_constraint(ctx: Param_constraintContext) {
+    override fun exitParamConstraint(ctx: ParamConstraintContext) {
         values[ctx.expr()]?.let { values[ctx] = it }
     }
 
-    override fun exitStruct_const(ctx: Struct_constContext) {
+    override fun exitStructConst(ctx: StructConstContext) {
         // TODO Struct constants
     }
 
@@ -145,7 +145,7 @@ class ExprParser(
     }
 
     override fun exitExprStruct(ctx: ExprStructContext) {
-        values[ctx.struct_const()]?.let { values[ctx] = it }
+        values[ctx.structConst()]?.let { values[ctx] = it }
     }
 
     override fun exitExprFunction(ctx: ExprFunctionContext) {

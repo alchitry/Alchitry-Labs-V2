@@ -20,7 +20,7 @@ class BitSelectionParser(
         resolver.bitSelection = this
     }
 
-    override fun resolve(ctx: Bit_selectionContext): List<IntRange> {
+    override fun resolve(ctx: BitSelectionContext): List<IntRange> {
         return ctx.children.mapNotNull {
             bounds[it]
         }
@@ -122,7 +122,7 @@ class BitSelectionParser(
             (startInt - widthInt + 1)..startInt
     }
 
-    override fun exitArray_index(ctx: Array_indexContext) {
+    override fun exitArrayIndex(ctx: ArrayIndexContext) {
         if (ctx.expr() == null) return
 
         val index = resolver.expr.resolve(ctx.expr()) ?: return

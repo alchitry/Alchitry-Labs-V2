@@ -7,101 +7,101 @@ package com.alchitry.labs.parsers.lucidv2.grammar;
 // starting rule
 source: (global | module | NL)* EOF;
 
-global: 'global' NL* name NL* '{' NL* global_stat* NL* '}';
+global: 'global' NL* name NL* '{' NL* globalStat* NL* '}';
 
-global_stat
-  : struct_dec 
-  | const_dec
+globalStat
+  : structDec
+  | constDec
   ;
 
-module: 'module' NL* name NL* param_list? NL* port_list NL* module_body;
+module: 'module' NL* name NL* paramList? NL* portList NL* moduleBody;
 
-param_list: '#(' NL* param_dec NL* (',' NL* param_dec NL*)* ')';
-port_list: '(' NL* port_dec NL* (',' NL* port_dec NL*)* ')';
+paramList: '#(' NL* paramDec NL* (',' NL* paramDec NL*)* ')';
+portList: '(' NL* portDec NL* (',' NL* portDec NL*)* ')';
 
-param_dec: param_name NL* (':' NL* param_constraint)?;
-port_dec: input_dec | output_dec | inout_dec;
+paramDec: paramName NL* (':' NL* paramConstraint)?;
+portDec: inputDec | outputDec | inoutDec;
 
-input_dec: SIGNED? NL* 'input' NL* struct_type? NL* name (array_size | NL)*;
-output_dec: SIGNED? NL* 'output' NL* struct_type? NL* name (array_size | NL)*;
-inout_dec: SIGNED? NL* 'inout' NL* struct_type? NL* name (array_size | NL)*;
+inputDec: SIGNED? NL* 'input' NL* structType? NL* name (arraySize | NL)*;
+outputDec: SIGNED? NL* 'output' NL* structType? NL* name (arraySize | NL)*;
+inoutDec: SIGNED? NL* 'inout' NL* structType? NL* name (arraySize | NL)*;
 
-param_name: name NL* ('=' NL* expr)?;
-param_constraint: expr;
+paramName: name NL* ('=' NL* expr)?;
+paramConstraint: expr;
 
-array_size: '[' NL* expr NL* ']';
-struct_type: '<' NL* name NL* ('.' NL* name NL*)* '>';
-struct_member_const: '.' name NL* '(' NL* expr NL* ')';
-struct_const: struct_type NL* '(' NL* struct_member_const NL* (',' NL* struct_member_const NL*)* ')';
+arraySize: '[' NL* expr NL* ']';
+structType: '<' NL* name NL* ('.' NL* name NL*)* '>';
+structMemberConst: '.' name NL* '(' NL* expr NL* ')';
+structConst: structType NL* '(' NL* structMemberConst NL* (',' NL* structMemberConst NL*)* ')';
 
-module_body: '{' (stat | NL)* '}';
+moduleBody: '{' (stat | NL)* '}';
 
 stat
-  : const_dec       #StatConst
-  | sig_dec         #StatSig
-  | fsm_dec         #StatFSM
-  | dff_dec         #StatDFF
-  | module_inst     #StatModuleInst
-  | assign_block    #StatAssign
-  | always_block    #StatAlways
-  | struct_dec      #StatStruct
+  : constDec       #StatConst
+  | sigDec         #StatSig
+  | fsmDec         #StatFSM
+  | dffDec         #StatDFF
+  | moduleInst     #StatModuleInst
+  | assignBlock    #StatAssign
+  | alwaysBlock    #StatAlways
+  | structDec      #StatStruct
   ;
 
-const_dec: 'const' NL* name NL* '=' NL* expr NL* semi;
+constDec: 'const' NL* name NL* '=' NL* expr NL* semi;
 
-assign_block: con_list NL* '{' (dff_dec | fsm_dec | module_inst | assign_block | NL)* '}';
-sig_con: '.' name NL* '(' NL* expr NL* ')';
-param_con: '#' name NL* '(' NL* (expr | REAL) NL* ')';
+assignBlock: conList NL* '{' (dffDec | fsmDec | moduleInst | assignBlock | NL)* '}';
+sigCon: '.' name NL* '(' NL* expr NL* ')';
+paramCon: '#' name NL* '(' NL* (expr | REAL) NL* ')';
 
-type_dec: name (array_size | NL)*;
-dff_single: name (array_size | NL)* inst_cons?;
+typeDec: name (arraySize | NL)*;
+dffSingle: name (arraySize | NL)* instCons?;
 
-sig_dec: SIGNED? NL* 'sig' NL* struct_type? NL* type_dec (NL* ',' NL* type_dec)* semi;
-dff_dec: SIGNED? NL* 'dff' NL* struct_type? NL* dff_single (NL* ',' NL* dff_single)* semi;
-fsm_dec: 'fsm' NL* name (array_size | NL)* inst_cons? NL* '=' NL* '{' NL* fsm_states NL* '}' semi;
-fsm_states: name (NL* ',' NL* name)*;
+sigDec: SIGNED? NL* 'sig' NL* structType? NL* typeDec (NL* ',' NL* typeDec)* semi;
+dffDec: SIGNED? NL* 'dff' NL* structType? NL* dffSingle (NL* ',' NL* dffSingle)* semi;
+fsmDec: 'fsm' NL* name (arraySize | NL)* instCons? NL* '=' NL* '{' NL* fsmStates NL* '}' semi;
+fsmStates: name (NL* ',' NL* name)*;
 
-module_inst: name NL* name (array_size | NL)* inst_cons? semi;
+moduleInst: name NL* name (arraySize | NL)* instCons? semi;
 
-inst_cons : '(' NL* con_list NL* ')';
-con_list  : connection (NL* ',' NL* connection)*;
-connection: param_con | sig_con;
+instCons : '(' NL* conList NL* ')';
+conList  : connection (NL* ',' NL* connection)*;
+connection: paramCon | sigCon;
 
-struct_member: SIGNED? NL* name NL* struct_type? (array_size | NL)*;
-struct_dec: 'struct' NL* name NL* '{' NL* struct_member (NL* ',' NL* struct_member)* NL* '}' semi;
+structMember: SIGNED? NL* name NL* structType? (arraySize | NL)*;
+structDec: 'struct' NL* name NL* '{' NL* structMember (NL* ',' NL* structMember)* NL* '}' semi;
 
-always_block: 'always' NL* block;
+alwaysBlock: 'always' NL* block;
 
-always_stat
-  : assign_stat     #AlwaysStat
-  | case_stat       #AlwaysCase
-  | if_stat         #AlwaysIf
-  | repeat_stat     #AlwaysRepeat
+alwaysStat
+  : assignStat     #AlwaysAssign
+  | caseStat       #AlwaysCase
+  | ifStat         #AlwaysIf
+  | repeatStat     #AlwaysRepeat
   ;
 
 block
-  : '{' NL* always_stat* NL* '}'
-  | always_stat          
+  : '{' NL* alwaysStat* NL* '}'
+  | alwaysStat
   ;
 
-assign_stat: signal NL* '=' NL* expr semi;
+assignStat: signal NL* '=' NL* expr semi;
 
-array_index: '[' NL* expr NL* ']';
-bit_selector
+arrayIndex: '[' NL* expr NL* ']';
+bitSelector
   : '[' NL* expr NL* ':' NL* expr NL* ']'            #BitSelectorConst
   | '[' NL* expr NL* ('+'|'-') NL* ':' NL* expr NL* ']'  #BitSelectorFixWidth
   ;
-bit_selection: (array_index | NL)* (array_index | bit_selector);
+bitSelection: (arrayIndex | NL)* (arrayIndex | bitSelector);
 
-signal: name NL* bit_selection? (NL* '.' NL* name NL* bit_selection?)*;
+signal: name NL* bitSelection? (NL* '.' NL* name NL* bitSelection?)*;
 
-case_stat: 'case' NL* '(' NL* expr NL* ')' NL* '{' (case_elem | NL)* '}';
-case_elem: (expr | 'default') NL* ':' NL* always_stat (always_stat | NL)*;
+caseStat: 'case' NL* '(' NL* expr NL* ')' NL* '{' (caseElem | NL)* '}';
+caseElem: (expr | 'default') NL* ':' NL* alwaysStat (alwaysStat | NL)*;
 
-if_stat: 'if' NL* '(' NL* expr NL* ')' NL* block NL* else_stat?;
-else_stat: 'else' NL* block;
+ifStat: 'if' NL* '(' NL* expr NL* ')' NL* block NL* elseStat?;
+elseStat: 'else' NL* block;
 
-repeat_stat: 'repeat' NL* '(' NL* expr NL* (':' NL* signal NL*) ')' NL* block;
+repeatStat: 'repeat' NL* '(' NL* expr NL* (':' NL* signal NL*) ')' NL* block;
 
 function: FUNCTION_ID NL* '(' NL* expr (NL* ',' NL* expr)* NL* ')';
 
@@ -110,7 +110,7 @@ number: HEX | BIN | DEC | INT | STRING;
 expr
   : signal                                          #ExprSignal
   | number                                          #ExprNum
-  | struct_const                                    #ExprStruct
+  | structConst                                    #ExprStruct
   | function                                        #ExprFunction
   | '(' NL* expr NL* ')'                            #ExprGroup
   | 'c{' NL* expr (NL* ',' NL* expr)* NL* '}'       #ExprConcat
