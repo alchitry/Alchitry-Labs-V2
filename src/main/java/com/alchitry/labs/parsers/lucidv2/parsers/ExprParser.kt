@@ -356,7 +356,7 @@ class ExprParser(
         }
 
         if (expr is UndefinedValue) {
-            values[ctx] = UndefinedValue(ctx.text, constant, expr.width, expr.signed)
+            values[ctx] = UndefinedValue(ctx.text, constant, expr.width)
             return
         }
 
@@ -404,7 +404,6 @@ class ExprParser(
 
         val op1Width = op1.signalWidth
         val op2Width = op2.signalWidth
-        val signed = op1.signed && op2.signed
 
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
             if (op1Width is SimpleWidth && op2Width is SimpleWidth)
@@ -412,11 +411,10 @@ class ExprParser(
                     UndefinedValue(
                         ctx.text,
                         constant,
-                        SimpleWidth(op1Width.size.coerceAtLeast(op2Width.size) + 1),
-                        signed
+                        SimpleWidth(op1Width.size.coerceAtLeast(op2Width.size) + 1)
                     )
             else
-                values[ctx] = UndefinedValue(ctx.text, constant, signed = signed)
+                values[ctx] = UndefinedValue(ctx.text, constant)
             return
         }
 
@@ -424,6 +422,8 @@ class ExprParser(
             error("One (or both) of the operands isn't a simple array. This shouldn't be possible.")
 
         val width = op1.bits.size.coerceAtLeast(op2.bits.size) + 1
+
+        val signed = op1.signed && op2.signed
 
         values[ctx] = when {
             !op1.isNumber() || !op2.isNumber() -> SimpleValue(MutableBitList(BitValue.Bx, width, signed), constant)
@@ -459,20 +459,20 @@ class ExprParser(
 
         val op1Width = op1.signalWidth
         val op2Width = op2.signalWidth
-        val signed = op1.signed && op2.signed
 
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
             if (op1Width is SimpleWidth && op2Width is SimpleWidth)
                 values[ctx] =
-                    UndefinedValue(ctx.text, constant, SimpleWidth(widthOfMult(op1Width.size, op2Width.size)), signed)
+                    UndefinedValue(ctx.text, constant, SimpleWidth(widthOfMult(op1Width.size, op2Width.size)))
             else
-                values[ctx] = UndefinedValue(ctx.text, constant, signed = signed)
+                values[ctx] = UndefinedValue(ctx.text, constant)
             return
         }
 
         if (op1 !is SimpleValue || op2 !is SimpleValue)
             error("One (or both) of the operands isn't a simple array. This shouldn't be possible.")
 
+        val signed = op1.signed && op2.signed
 
         values[ctx] = if (multOp) {
             val width = widthOfMult(op1.bits.size, op2.bits.size)
@@ -505,10 +505,10 @@ class ExprParser(
                 errorListener.reportError(it, ErrorStrings.SHIFT_MULTI_DIM)
             }) return
 
-        val isSigned = value.signed && (operand == ">>>" || operand == "<<<")
+
 
         if (shift is UndefinedValue) {
-            values[ctx] = UndefinedValue(ctx.text, constant, signed = isSigned)
+            values[ctx] = UndefinedValue(ctx.text, constant)
             return
         }
 
@@ -519,12 +519,14 @@ class ExprParser(
             if (vWidth is SimpleWidth) {
                 val w = if (operand == "<<" || operand == "<<<") vWidth.size + shift.bits.toBigInt()
                     .toInt() else vWidth.size
-                values[ctx] = UndefinedValue(ctx.text, constant, SimpleWidth(w), signed = isSigned)
+                values[ctx] = UndefinedValue(ctx.text, constant, SimpleWidth(w))
             } else
-                values[ctx] = UndefinedValue(ctx.text, constant, signed = isSigned)
+                values[ctx] = UndefinedValue(ctx.text, constant)
         }
 
         check(value is SimpleValue) { "Value is flat array but not SimpleValue or UndefinedValue" }
+
+        val isSigned = value.signed && (operand == ">>>" || operand == "<<<")
 
         if (!shift.bits.isNumber()) {
             values[ctx] = SimpleValue(MutableBitList(isSigned, value.size) { BitValue.Bx }, constant)
@@ -566,8 +568,6 @@ class ExprParser(
                     errorListener.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
                 }) return
 
-            val isSigned = op1.signed && op2.signed
-
             val op1Width = op1.signalWidth
             val op2Width = op2.signalWidth
 
@@ -576,9 +576,9 @@ class ExprParser(
                     errorListener.reportError(ctx.expr(1), ErrorStrings.OP_DIM_MISMATCH.format(operand))
                     return
                 }
-                values[ctx] = UndefinedValue(ctx.text, constant, op1Width, isSigned)
+                values[ctx] = UndefinedValue(ctx.text, constant, op1Width)
             } else {
-                values[ctx] = UndefinedValue(ctx.text, constant, signed = isSigned)
+                values[ctx] = UndefinedValue(ctx.text, constant)
             }
             return
         }
@@ -607,7 +607,7 @@ class ExprParser(
         val value = values[ctx.expr()] ?: return
 
         if (value is UndefinedValue) {
-            values[ctx] = UndefinedValue(ctx.text, constant, SimpleWidth(1), false)
+            values[ctx] = UndefinedValue(ctx.text, constant, SimpleWidth(1))
             return
         }
 
@@ -645,7 +645,7 @@ class ExprParser(
 
 
                 if (op1 is UndefinedValue || op2 is UndefinedValue) {
-                    values[ctx] = UndefinedValue(ctx.text,constant, SimpleWidth(1), false)
+                    values[ctx] = UndefinedValue(ctx.text,constant, SimpleWidth(1))
                     return
                 }
 
@@ -671,7 +671,7 @@ class ExprParser(
                     }) return
 
                 if (op1 is UndefinedValue || op2 is UndefinedValue) {
-                    values[ctx] = UndefinedValue(ctx.text,constant, SimpleWidth(1), false)
+                    values[ctx] = UndefinedValue(ctx.text,constant, SimpleWidth(1))
                     return
                 }
 
@@ -707,7 +707,7 @@ class ExprParser(
 
 
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
-            values[ctx] = UndefinedValue(ctx.text, constant, SimpleWidth(1), false)
+            values[ctx] = UndefinedValue(ctx.text, constant, SimpleWidth(1))
             return
         }
 
@@ -761,7 +761,7 @@ class ExprParser(
         }
 
         if (cond is UndefinedValue) {
-            values[ctx] = UndefinedValue(ctx.text, constant, width, op1.signed && op2.signed)
+            values[ctx] = UndefinedValue(ctx.text, constant, width)
             return
         }
 
@@ -967,7 +967,7 @@ class ExprParser(
             Function.SIGNED -> {
                 when (val arg = args[0]) {
                     is SimpleValue -> values[ctx] = SimpleValue(MutableBitList(true, arg), constant)
-                    is UndefinedValue -> values[ctx] = arg.copy(signed = true)
+                    is UndefinedValue -> values[ctx] = arg.copy()
                     else -> errorListener.reportError(ctx.expr(0), ErrorStrings.SIGNED_MULTI_DIM)
                 }
             }
@@ -975,7 +975,7 @@ class ExprParser(
             Function.UNSIGNED -> {
                 when (val arg = args[0]) {
                     is SimpleValue -> values[ctx] = SimpleValue(MutableBitList(false, arg), constant)
-                    is UndefinedValue -> values[ctx] = arg.copy(signed = false)
+                    is UndefinedValue -> values[ctx] = arg.copy()
                     else -> errorListener.reportError(ctx.expr(0), ErrorStrings.UNSIGNED_MULTI_DIM)
                 }
             }

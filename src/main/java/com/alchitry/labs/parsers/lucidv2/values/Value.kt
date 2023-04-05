@@ -4,7 +4,6 @@ import com.alchitry.labs.parsers.lucidv2.signals.StructType
 import java.math.BigInteger
 
 sealed class Value {
-    open val signed = false
     abstract val constant: Boolean
 
     fun isNumber(): Boolean {
@@ -172,7 +171,7 @@ sealed class Value {
                     bits.addAll(elementBits.asReversed())
                 }
             }
-            is UndefinedValue -> MutableBitList(BitValue.Bx, width.getBitCount(), signed)
+            is UndefinedValue -> MutableBitList(BitValue.Bx, width.getBitCount())
         }
     }
 
@@ -192,7 +191,7 @@ data class SimpleValue(
     val bits: BitList,
     override val constant: Boolean
 ) : Value(), List<BitValue> by bits {
-    override val signed: Boolean
+    val signed: Boolean
         get() = bits.signed
 
     fun toBigInt(): BigInteger = bits.toBigInt()
@@ -270,6 +269,5 @@ data class StructValue(
 data class UndefinedValue(
     val expression: String,
     override val constant: Boolean,
-    val width: SignalWidth = UndefinedSimpleWidth,
-    override val signed: Boolean = false
+    val width: SignalWidth = UndefinedSimpleWidth
 ) : Value()
