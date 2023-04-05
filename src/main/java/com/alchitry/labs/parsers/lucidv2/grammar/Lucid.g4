@@ -31,7 +31,7 @@ param_constraint: expr;
 
 array_size: '[' NL* expr NL* ']';
 struct_type: '<' NL* name NL* ('.' NL* name NL*)* '>';
-struct_member_const: name NL* '(' NL* expr NL* ')';
+struct_member_const: '.' name NL* '(' NL* expr NL* ')';
 struct_const: struct_type NL* '(' NL* struct_member_const NL* (',' NL* struct_member_const NL*)* ')';
 
 module_body: '{' (stat | NL)* '}';
@@ -50,8 +50,8 @@ stat
 const_dec: 'const' NL* name NL* '=' NL* expr NL* semi;
 
 assign_block: con_list NL* '{' (dff_dec | fsm_dec | module_inst | assign_block | NL)* '}';
-sig_con: '.' NL* name NL* '(' NL* expr NL* ')';
-param_con: '#' NL* name NL* '(' NL* (expr | REAL) NL* ')';
+sig_con: '.' name NL* '(' NL* expr NL* ')';
+param_con: '#' name NL* '(' NL* (expr | REAL) NL* ')';
 
 type_dec: name (array_size | NL)*;
 dff_single: name (array_size | NL)* inst_cons?;

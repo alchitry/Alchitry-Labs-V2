@@ -8,7 +8,7 @@ import kotlin.test.assertNotNull
 internal class SignalParserTest {
     @Test
     fun testDffSimpleDeclaration() {
-        val tester = LucidTester("dff testing;")
+        val tester = LucidTester("dff testing")
         tester.dff_dec() // parse
         val dSig = tester.sigParser.resolve("testing.d")
         val qSig = tester.sigParser.resolve("testing.q")

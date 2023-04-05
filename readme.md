@@ -124,3 +124,22 @@ The `bounds` property is a map of `IntRange` used to keep track of the selected 
 
 Finally, `ExprParser` also is responsible for providing warnings and errors as it parses to the
 provided `ErrorListener`.
+
+### Todo
+
+- [ ] Finish adding tests in `ExprParserTest`
+- [ ] Add checks whenever a value is read for `Bu` values. This can be done on `SimpleValue`
+  with `value.bits.isDriven()`.
+- [ ] Fetch signal values in `exitSignal` once `SignalParser` is complete
+- [ ] Add support for struct constants in `exitStruct_const` once a struct type parser is made
+
+## SignalParser
+
+The `SignalParser` is responsible for building and maintaining a list of signals with their corresponding current
+values.
+
+This includes the port signals on a module (`input`, `output`, and `inout` types), `dff`, `fsm`, and `sig` types. It
+also includes constant types from `const` or module parameters.
+
+`SignalParser` implements `SignalResolver` which provides the `resolve()` function. This function is intended to provide
+access to signals when external parsers (such as `ExprParser`) encounter a signal name.

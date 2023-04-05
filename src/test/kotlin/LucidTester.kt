@@ -1,6 +1,7 @@
-import com.alchitry.labs.parsers.lucidv2.ExprParser
-import com.alchitry.labs.parsers.lucidv2.SignalParser
-import com.alchitry.labs.parsers.lucidv2.SignalResolver
+import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.parsers.BitSelectionParser
+import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.parsers.ExprParser
+import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.parsers.SignalParser
+import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.resolvers.LucidResolver
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidLexer
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
 import org.antlr.v4.runtime.CharStreams
@@ -16,15 +17,21 @@ class LucidTester (text: String) :
 
     val errorCollector = ErrorCollector()
     val exprParser: ExprParser
+    val bitSelection: BitSelectionParser
     val sigParser: SignalParser
 
     init {
         (tokenStream.tokenSource as LucidLexer).addErrorListener(errorCollector)
         removeErrorListeners()
         addErrorListener(errorCollector)
-        exprParser = ExprParser(errorCollector)
+
+        val resolver = LucidResolver()
+
+        exprParser = ExprParser(errorCollector, resolver)
         addParseListener(exprParser)
-        sigParser = SignalParser(errorCollector)
+        bitSelection = BitSelectionParser(errorCollector, resolver)
+        addParseListener(bitSelection)
+        sigParser = SignalParser(errorCollector, resolver)
         addParseListener(sigParser)
     }
 

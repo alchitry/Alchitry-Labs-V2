@@ -124,7 +124,7 @@ interface BitList : List<BitValue> {
     fun isNegative(): Boolean = signed && msb == BitValue.B1
 
     fun toMutableBitArray(): MutableBitList = MutableBitList(this)
-    fun toSimpleValue(): SimpleValue = SimpleValue(this)
+    fun toSimpleValue(constant: Boolean): SimpleValue = SimpleValue(this, constant)
 
     override fun subList(fromIndex: Int, toIndex: Int): BitList
 

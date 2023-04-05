@@ -5,6 +5,7 @@ import java.math.BigInteger
 
 sealed class Value {
     open val signed = false
+    abstract val constant: Boolean
 
     fun isNumber(): Boolean {
         when (this) {
@@ -37,7 +38,7 @@ sealed class Value {
 
     fun invert(): Value {
         return when (this) {
-            is SimpleValue -> SimpleValue(bits.invert())
+            is SimpleValue -> SimpleValue(bits.invert(),constant)
             is ArrayValue -> ArrayValue((List(elements.size) { elements[it].invert() }))
             is StructValue -> StructValue(type, this.mapValues { (_, v) -> v.invert() }.toMutableMap())
             is UndefinedValue -> this
@@ -59,17 +60,17 @@ sealed class Value {
     }
 
     fun not(): SimpleValue {
-        return isTrueBit().not().toSimpleValue()
+        return isTrueBit().not().toSimpleValue(constant)
     }
 
     fun isTrue(): SimpleValue {
-        return isTrueBit().toSimpleValue()
+        return isTrueBit().toSimpleValue(constant)
     }
 
     infix fun and(other: Value): Value {
         check(other::class == this::class) { "And operator can't be used on different value types" }
         return when (this) {
-            is SimpleValue -> SimpleValue(bits and (other as SimpleValue).bits)
+            is SimpleValue -> SimpleValue(bits and (other as SimpleValue).bits, constant)
             is ArrayValue -> ArrayValue(List(elements.size) { elements[it] and (other as ArrayValue).elements[it] })
             is StructValue -> {
                 if (isComplete() && (other as StructValue).isComplete()) {
@@ -85,7 +86,7 @@ sealed class Value {
     infix fun or(other: Value): Value {
         check(other::class == this::class) { "Or operator can't be used on different value types" }
         return when (this) {
-            is SimpleValue -> SimpleValue(bits or (other as SimpleValue).bits)
+            is SimpleValue -> SimpleValue(bits or (other as SimpleValue).bits, constant)
             is ArrayValue -> ArrayValue(List(elements.size) { elements[it] or (other as ArrayValue).elements[it] })
             is StructValue -> {
                 if (isComplete() && (other as StructValue).isComplete()) {
@@ -101,7 +102,7 @@ sealed class Value {
     infix fun xor(other: Value): Value {
         check(other::class == this::class) { "Xor operator can't be used on different value types" }
         return when (this) {
-            is SimpleValue -> SimpleValue(bits xor (other as SimpleValue).bits)
+            is SimpleValue -> SimpleValue(bits xor (other as SimpleValue).bits, constant)
             is ArrayValue -> ArrayValue(List(elements.size) { elements[it] xor (other as ArrayValue).elements[it] })
             is StructValue -> {
                 if (isComplete() && (other as StructValue).isComplete()) {
@@ -119,7 +120,7 @@ sealed class Value {
     }
 
     infix fun isEqualTo(other: Value): SimpleValue {
-        return isNotEqualTo(other).lsb.not().toSimpleValue()
+        return isNotEqualTo(other).lsb.not().toSimpleValue(constant && other.constant)
     }
 
     private fun reduceOp(op: (BitList) -> BitValue): BitValue {
@@ -138,21 +139,21 @@ sealed class Value {
     }
 
     fun andReduce(): SimpleValue {
-        return reduceOp { it.reduce { a, b -> a and b } }.toSimpleValue()
+        return reduceOp { it.reduce { a, b -> a and b } }.toSimpleValue(constant)
     }
 
     fun orReduce(): SimpleValue {
-        return reduceOp { it.reduce { a, b -> a or b } }.toSimpleValue()
+        return reduceOp { it.reduce { a, b -> a or b } }.toSimpleValue(constant)
     }
 
     fun xorReduce(): SimpleValue {
-        return reduceOp { it.reduce { a, b -> a xor b } }.toSimpleValue()
+        return reduceOp { it.reduce { a, b -> a xor b } }.toSimpleValue(constant)
     }
 
     fun reverse(): Value {
         return when (this) {
             is ArrayValue -> ArrayValue(elements.reversed())
-            is SimpleValue -> SimpleValue(MutableBitList(signed, bits.reversed()))
+            is SimpleValue -> SimpleValue(MutableBitList(signed, bits.reversed()), constant)
             is StructValue -> error("reverse() can't be called on StructValues")
             is UndefinedValue -> if (signalWidth.isArray()) this else error("reverse() can't be called on UndefinedValues that aren't arrays")
         }
@@ -175,28 +176,32 @@ sealed class Value {
         }
     }
 
-    fun flatten(): SimpleValue = SimpleValue(getBits())
+    fun flatten(): SimpleValue = SimpleValue(getBits(), constant)
 }
 
 data class ArrayValue(
     val elements: List<Value>
-) : Value(), List<Value> by elements
+) : Value(), List<Value> by elements {
+    override val constant: Boolean
+        get() = all { it.constant }
+}
 
-fun BigInteger.toValue(): SimpleValue = SimpleValue(MutableBitList(this))
+fun BigInteger.toValue(constant: Boolean): SimpleValue = SimpleValue(MutableBitList(this), constant)
 
 data class SimpleValue(
-    val bits: BitList
+    val bits: BitList,
+    override val constant: Boolean
 ) : Value(), List<BitValue> by bits {
     override val signed: Boolean
         get() = bits.signed
 
     fun toBigInt(): BigInteger = bits.toBigInt()
 
-    fun resize(width: Int) = bits.resize(width).toSimpleValue()
+    fun resize(width: Int) = bits.resize(width).toSimpleValue(constant)
 
     /** Changes sign without changing bits */
     fun setSign(signed: Boolean): SimpleValue {
-        return SimpleValue(MutableBitList(signed, bits))
+        return SimpleValue(MutableBitList(signed, bits), constant)
     }
 
     infix fun isLessThan(other: SimpleValue): SimpleValue {
@@ -209,35 +214,35 @@ data class SimpleValue(
         val neg2 = signedOp && other.bits.isNegative()
 
         if (neg1 && !neg2) // negative < positive
-            return BitValue.B1.toSimpleValue()
+            return BitValue.B1.toSimpleValue(constant && other.constant)
 
         if (!neg1 && neg2) // positive !< negative
-            return BitValue.B0.toSimpleValue()
+            return BitValue.B0.toSimpleValue(constant && other.constant)
 
         // negative to negative or positive to positive can be directly compared
         for (i in op1.indices.reversed()) {
             if (!op1[i].isNumber() || !op2[i].isNumber())
-                return BitValue.Bx.toSimpleValue()
+                return BitValue.Bx.toSimpleValue(constant && other.constant)
 
             if (op1[i] == BitValue.B1 && op2[i] == BitValue.B0)
-                return BitValue.B0.toSimpleValue()
+                return BitValue.B0.toSimpleValue(constant && other.constant)
 
             if (op1[i] == BitValue.B0 && op2[i] == BitValue.B1)
-                return BitValue.B1.toSimpleValue()
+                return BitValue.B1.toSimpleValue(constant && other.constant)
         }
-        return BitValue.B0.toSimpleValue()
+        return BitValue.B0.toSimpleValue(constant && other.constant)
     }
 
     infix fun isGreaterThan(other: SimpleValue): SimpleValue {
-        return other.isLessThan(this).lsb.toSimpleValue()
+        return other.isLessThan(this).lsb.toSimpleValue(constant && other.constant)
     }
 
     infix fun isLessOrEqualTo(other: SimpleValue): SimpleValue {
-        return (isLessThan(other).lsb or isEqualTo(other).lsb).toSimpleValue()
+        return (isLessThan(other).lsb or isEqualTo(other).lsb).toSimpleValue(constant && other.constant)
     }
 
     infix fun isGreaterOrEqualTo(other: SimpleValue): SimpleValue {
-        return (isGreaterThan(other).lsb or isEqualTo(other).lsb).toSimpleValue()
+        return (isGreaterThan(other).lsb or isEqualTo(other).lsb).toSimpleValue(constant && other.constant)
     }
 
     fun toBoolean() = bits.isTrue() == BitValue.B1
@@ -250,9 +255,12 @@ data class StructValue(
     init {
         valueMap.keys.removeIf { !type.contains(it) }
         type.keys.forEach {
-            valueMap.putIfAbsent(it, UndefinedValue(it))
+            valueMap.putIfAbsent(it, UndefinedValue(it, constant))
         }
     }
+
+    override val constant: Boolean
+        get() = valueMap.values.all { it.constant }
 
     fun isComplete(): Boolean {
         return type.keys.all { this[it] !is UndefinedValue }
@@ -261,6 +269,7 @@ data class StructValue(
 
 data class UndefinedValue(
     val expression: String,
+    override val constant: Boolean,
     val width: SignalWidth = UndefinedSimpleWidth,
     override val signed: Boolean = false
 ) : Value()

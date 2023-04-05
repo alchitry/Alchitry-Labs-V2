@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    antlr("org.antlr:antlr4:4.10.1")
+    antlr("org.antlr:antlr4:4.12.0")
     implementation("org.apache.commons:commons-text:1.10.0")
 
     testImplementation(kotlin("test"))
@@ -24,5 +24,10 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }

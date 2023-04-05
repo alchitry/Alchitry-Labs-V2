@@ -1,4 +1,4 @@
-// Generated from Lucid.g4 by ANTLR 4.10.1
+// Generated from /home/justin/IdeaProjects/LucidParserV2/src/main/java/com/alchitry/labs/parsers/lucidv2/grammar/Lucid.g4 by ANTLR 4.12.0
 
 package com.alchitry.labs.parsers.lucidv2.grammar;
 
