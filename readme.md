@@ -51,7 +51,7 @@ class.
 `BitValue` are packed into `BitList` to make them hold more than one bit. `BitList` is basically a binary number that
 has some helper functions for manipulating the values such as `or`, `and`, and `xor`.
 
-The `BitList` interface also has a `signed` property to specify if the contained value is a signed representation (aka
+The `BitList` interface has a `signed` property to specify if the contained value is a signed representation (aka
 2's compliment).
 
 The class `MutableBitList` is a mutable implementation of the `BitList` interface and can be initialized in a few
@@ -90,6 +90,10 @@ can properly happen then.
 When possible, a known width can be set inside the `UndefinedValue` by passing in the `width` parameter. This is helpful
 for early error checking.
 
+The `Value` class has a property `constant` that is used to track if this value can change. It will be false if a value
+is from a signal that could change over time (like an input). This is for error checking. Some functions,
+like `$clog2()`, can only be used with constant values as they must be computed at synthesis time.
+
 #### SignalWidth
 
 The class `SignalWidth` is used to represent the width of a signal without an associated value. This is mainly used for
@@ -105,25 +109,21 @@ the default width for any module parameters.
 The `Value` class has as property `signalWidth` that will return the `SignalWidth` for the value. This value is
 typically computed from the `Value` directly except for `UndefinedValued` which simply uses its `width` property.
 
+## Parser/Resolver Relationship
+
+The code is currently broken into `Parser` classes that do the actual parsing and `Resolver` interfaces that provide
+access to the parsed content. This is done as in the future there will likely be multiple of the same type of `Resolver`
+that will be combined into a hierarchy.
+
+Each `Parser` also provides errors and warnings to the provided `ErrorListener`.
+
 ## ExprParser
 
 The `ExprParser` class is responsible for parsing any expressions. This is essentially any child of the `expr` rule in
 the Lucid grammar.
 
-The parser has four main outputs.
-
-The `values` property is a map of every computed `Value` at each node in
-the `ParseTree`. For example, `2 + 2` would have `ExprNum` nodes with values of 2 and a `ExprAddSub` node with value 4.
-
-The `constant` property is a boolean map specifying if the value at this node is a known constant. In the
-previous `2 + 2` example, every node would be true. It will be false if a value is from a signal that could change over
-time (like an input). This is again for error checking. Some functions, like `$clog2()`, can only be used with constant
-values as they must be computed at synthesis time.
-
-The `bounds` property is a map of `IntRange` used to keep track of the selected bits of an array.
-
-Finally, `ExprParser` also is responsible for providing warnings and errors as it parses to the
-provided `ErrorListener`.
+It provides a `Value` for any `ExprContext` via the `resolve()` function of the `ExprResolver` interface. For
+example, `2 + 2` would have `ExprNumContext` nodes with values of 2 and a `ExprAddSubContext` node with value 4.
 
 ### Todo
 
@@ -131,7 +131,15 @@ provided `ErrorListener`.
 - [ ] Add checks whenever a value is read for `Bu` values. This can be done on `SimpleValue`
   with `value.bits.isDriven()`.
 - [ ] Fetch signal values in `exitSignal` once `SignalParser` is complete
-- [ ] Add support for struct constants in `exitStruct_const` once a struct type parser is made
+- [ ] Add support for struct constants in `exitStructConst` once a struct type parser is made
+
+## BitSelectionParser
+
+The `BitSelectionParser` is responsible for parsing bit selections. These take the form of simple array indices
+like `[4]` or the more complex multi-bit selections like `[4:0]` or `[5+:3]`. These are provided via
+the `BitSelectionResolver` interface.
+
+Note that signal may have more than one bit selector so the `resolve()` function returns a list of all the selections.
 
 ## SignalParser
 
@@ -143,3 +151,9 @@ also includes constant types from `const` or module parameters.
 
 `SignalParser` implements `SignalResolver` which provides the `resolve()` function. This function is intended to provide
 access to signals when external parsers (such as `ExprParser`) encounter a signal name.
+
+### Todo
+
+I think the `resolve()` function for this should take in a `SignalContext` instead of the `String` (or maybe in
+addition). This would require providing a *partial* `Signal` though with the bits already selected. Maybe a `SubSignal`
+class is required.

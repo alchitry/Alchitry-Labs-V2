@@ -1,5 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.signals
 
+import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.signals.SignalSelection
 import com.alchitry.labs.parsers.lucidv2.values.Value
 
 enum class SignalDirection {
@@ -12,10 +13,14 @@ enum class SignalDirection {
 }
 
 data class Signal(
-    val fullName: String, // includes namespace or module name
-    val type: SignalType,
+    val name: String, // includes namespace or module name
     val direction: SignalDirection,
     val value: Value
 ) {
-    val name: String = fullName.split(".").last()
+    fun select(selection: SignalSelection) = SubSignal(this, selection)
 }
+
+data class SubSignal(
+    val signal: Signal,
+    val selection: SignalSelection
+)
