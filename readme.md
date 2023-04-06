@@ -76,7 +76,7 @@ struct in {
     wr_en,
     wr_mask[16]
   }
-  ```
+```
 
 This would define a struct with name `in`. The various components of it can be accessed with the
 syntax `SIGNAL_NAME.STRUCT_MEMBER` for example `SIGNAL_NAME.wr_en` to access the `wr_en` component.
@@ -157,3 +157,52 @@ access to signals when external parsers (such as `ExprParser`) encounter a signa
 I think the `resolve()` function for this should take in a `SignalContext` instead of the `String` (or maybe in
 addition). This would require providing a *partial* `Signal` though with the bits already selected. Maybe a `SubSignal`
 class is required.
+
+I added the `SignalSelection` class to represent the bits selected in a signal. I'm still not 100% sure how the signal
+names themselves should be represented. They need to be represented in a way that also makes adding auto-complete easy
+later. We will also need a list of each different type (`dff`, `fsm`, `sig`) to properly convert them to Verilog.
+
+Here are some examples that need to be covered.
+
+A `dff` has sub-signals `q` and `d`. One can be declared like this.
+
+`dff myDff`
+
+It could also be an array.
+
+`dff myDffArray[8]`
+
+It can also be a struct.
+
+`dff <struct_type> myDffStruct`
+
+Or an array of structs.
+
+`dff <struct_type> myDffArrayStruct[8]`
+
+If `struct_type` is defined as following, the different types can be access as below.
+
+```lucid
+  struct struct_type {
+    a[8]
+  }
+  ...
+  myDff.d = 1
+  myDffArray.d[5] = 1
+  myDffStruct.d.a[3] = 1
+  myDffArrayStruct.d[2].a[6] = 1
+```
+
+The `SignalSelection` class would hold the selectors (the things after `d` in the above example). For example, the last
+line would be
+
+```
+listOf<SignalSelector>(
+  SignalSelection.Bits(2..2), 
+  SignalSelection.Struct("a"),
+  SignalSelection.Bits(6..6)
+)
+```
+
+This could then be checked against the `Value` in the `Signal` `myDffArrayStruct.d` to see if it makes sense. I.e.
+the `Value` is made up of an `ArrayValue` followed by `StructValue` with a member `a` with type `SimpleValue`.

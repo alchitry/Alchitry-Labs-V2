@@ -1,6 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
-import com.alchitry.labs.parsers.lucidv2.signals.StructType
+import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.signals.StructType
 
 sealed class SignalWidth {
     /**
@@ -50,7 +50,7 @@ sealed class SignalWidth {
         return when (this) {
             is SimpleWidth -> true
             is ArrayWidth -> next.isDefined()
-            is StructWidth -> type.values.all { it.width.isDefined() }
+            is StructWidth -> type.values.all { it.isDefined() }
             is UndefinedSimpleWidth -> false
         }
     }
@@ -74,7 +74,7 @@ sealed class SignalWidth {
     fun getBitCount(): Int {
         return when (this) {
             is ArrayWidth -> size * next.getBitCount()
-            is StructWidth -> type.values.sumOf { it.width.getBitCount() }
+            is StructWidth -> type.values.sumOf { it.getBitCount() }
             UndefinedSimpleWidth -> error("getBitCount() can't be used when width isn't well defined")
             is SimpleWidth -> size
         }

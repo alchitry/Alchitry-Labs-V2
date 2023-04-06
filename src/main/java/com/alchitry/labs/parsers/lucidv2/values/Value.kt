@@ -1,6 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
-import com.alchitry.labs.parsers.lucidv2.signals.StructType
+import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.signals.StructType
 import java.math.BigInteger
 
 sealed class Value {
@@ -167,7 +167,7 @@ sealed class Value {
             is StructValue -> MutableBitList().also { bits ->
                 type.forEach { (key, value) ->
                     val elementBits =
-                        this[key]?.getBits() ?: MutableBitList(BitValue.Bx, value.width.getBitCount()) as List<BitValue>
+                        this[key]?.getBits() ?: MutableBitList(BitValue.Bx, value.getBitCount()) as List<BitValue>
                     bits.addAll(elementBits.asReversed())
                 }
             }
