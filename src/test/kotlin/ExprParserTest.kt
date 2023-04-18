@@ -1,3 +1,4 @@
+import com.alchitry.labs.Util
 import com.alchitry.labs.parsers.lucidv2.values.ArrayValue
 import com.alchitry.labs.parsers.lucidv2.values.MutableBitList
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
@@ -195,17 +196,166 @@ internal class ExprParserTest {
 
     @Test
     fun testMultiply() {
-        TODO()
+        var test = LucidTester("20 * 40")
+        var tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("800", 10, Util.widthOfMult(Util.minWidthNum(20), Util.minWidthNum(40))), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("20 * {40}")
+        test.expr()
+
+        assert(test.hasErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("{20} * {40}")
+        test.expr()
+
+        assert(test.hasErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$signed(20) * 40")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("800", 10, Util.widthOfMult(Util.minWidthNum(20), Util.minWidthNum(40))), true),
+            test.exprParser.resolve(tree)
+        )
+
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("-20 * -40")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(
+                MutableBitList(
+                    "800",
+                    10,
+                    Util.widthOfMult(Util.minWidthNum(20) + 1, Util.minWidthNum(40) + 1),
+                    signed = true
+                ), true
+            ),
+            test.exprParser.resolve(tree)
+        )
+
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
     }
 
     @Test
     fun testDivide() {
-        TODO()
+        var test = LucidTester("40 / 8")
+        var tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("5", 10, Util.minWidthNum(40)), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("40 / 5")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("8", 10, Util.minWidthNum(40)), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasWarnings) // should warn about non-power of 2 denominator
+        assert(test.hasNoSyntaxIssues)
     }
 
     @Test
     fun testShift() {
-        TODO()
+        var test = LucidTester("40 >> 3")
+        var tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("5", 10, Util.minWidthNum(40)), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("-8 >> 2")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("00110", 2, signed = false), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("-8 >>> 2")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("11110", 2, signed = true), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("8 << 1")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("16", 10, signed = false), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("-8 << 1")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("110000", 2, signed = false), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("8 <<< 1")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("16", 10, signed = false), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("-8 <<< 1")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("110000", 2, signed = true), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
     }
 
     @Test
@@ -240,11 +390,55 @@ internal class ExprParserTest {
 
     @Test
     fun testNegate() {
-        TODO()
+        var test = LucidTester("-20")
+        var tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("101100", 2, signed = true), true),
+            test.exprParser.resolve(tree)
+        )
+
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("--20")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("20", 10, Util.minWidthNum(20) + 2, signed = true), true),
+            test.exprParser.resolve(tree)
+        )
+
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
     }
 
     @Test
     fun testFunctions() {
-        TODO("Test all functions found in Function.kt")
+        var test = LucidTester("\$signed(20)")
+        var tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("20", 10, Util.minWidthNum(20), signed = true), true),
+            test.exprParser.resolve(tree)
+        )
+
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$signed(-20)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("101100", 2, signed = true), true),
+            test.exprParser.resolve(tree)
+        )
+
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
     }
 }

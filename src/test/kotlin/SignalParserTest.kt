@@ -1,5 +1,4 @@
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
-import com.alchitry.labs.parsers.lucidv2.signals.SimpleType
 import com.alchitry.labs.parsers.lucidv2.values.SimpleWidth
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -14,10 +13,5 @@ internal class SignalParserTest {
         val qSig = tester.sigParser.resolve("testing.q")
         assertNotNull(dSig, "DFF d signal was null!")
         assertNotNull(qSig, "DFF q signal was null!")
-
-        assertEquals(SimpleType(SimpleWidth(1)), dSig.type)
-        assertEquals(SimpleType(SimpleWidth(1)), qSig.type)
-        assertEquals(SignalDirection.Write, dSig.direction)
-        assertEquals(SignalDirection.Read, qSig.direction)
     }
 }

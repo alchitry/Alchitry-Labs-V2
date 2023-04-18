@@ -163,3 +163,7 @@ object ErrorStrings {
     const val STRUCT_CONST_MISSING_VALUE = "The member \"%s\" was not assigned"
     const val UNKNOWN_WIDTH = "The width of the \"%s\" couldn't be determined but is required!"
 }
+
+object WarningStrings {
+    const val DIVIDE_NOT_POW_2 = "The denominator isn't a constant power of 2. This operation can be very slow and may cause timing errors."
+}

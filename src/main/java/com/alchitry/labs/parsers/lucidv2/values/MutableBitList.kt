@@ -123,6 +123,9 @@ interface BitList : List<BitValue> {
 
     fun isNegative(): Boolean = signed && msb == BitValue.B1
 
+    /** Returns true if this BitList represents a number that is a power of 2. */
+    fun isPowerOf2(): Boolean = isNumber() && count { it == BitValue.B1 } <= 1
+
     fun toMutableBitArray(): MutableBitList = MutableBitList(this)
     fun toSimpleValue(constant: Boolean): SimpleValue = SimpleValue(this, constant)
 
@@ -190,6 +193,16 @@ class MutableBitList(override var signed: Boolean = false, width: Int = 0) : Arr
 
     constructor(bitList: BitList) : this(bitList.signed, bitList)
 
+    override fun equals(other: Any?): Boolean {
+        if (other !is BitList) return false
+        if (other.signed != signed) return false
+        return super.equals(other)
+    }
+
+    override fun hashCode(): Int {
+        return super.hashCode() * 31 + signed.hashCode()
+    }
+
     override fun subList(fromIndex: Int, toIndex: Int): MutableBitList {
         return MutableBitList(signed, super.subList(fromIndex, toIndex))
     }
@@ -204,6 +217,8 @@ class MutableBitList(override var signed: Boolean = false, width: Int = 0) : Arr
 
     private fun fromBigInt(bigInt: BigInteger, width: Int, signed: Boolean = bigInt.signum() == -1) {
         val bList = bigInt.toByteArray()
+
+        this.signed = signed
 
         for (i in 0 until width) {
             val idx = i / 8
@@ -226,7 +241,7 @@ class MutableBitList(override var signed: Boolean = false, width: Int = 0) : Arr
         this.signed = signed
         val strlower = str.lowercase()
         when (radix) {
-            10 -> fromBigInt(BigInteger(strlower), width)
+            10 -> fromBigInt(BigInteger(strlower), width, signed)
             16 -> {
                 var idx = 0
                 while (idx < width) {

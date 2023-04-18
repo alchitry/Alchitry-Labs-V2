@@ -6,6 +6,7 @@ import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.resolvers.LucidResolv
 import com.alchitry.labs.parsers.BigFunctions
 import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.errors.ErrorStrings
+import com.alchitry.labs.parsers.errors.WarningStrings
 import com.alchitry.labs.parsers.errors.dummyErrorListener
 import com.alchitry.labs.parsers.lucidv2.*
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
@@ -364,11 +365,11 @@ class ExprParser(
         expr as SimpleValue
 
         if (!expr.bits.isNumber()) {
-            values[ctx] = SimpleValue(MutableBitList(expr.signed, expr.size) { BitValue.Bx }, constant)
+            values[ctx] = SimpleValue(MutableBitList(true, expr.size+1) { BitValue.Bx }, constant)
             return
         }
 
-        values[ctx] = SimpleValue(MutableBitList(expr.bits.toBigInt().negate(), expr.size, expr.signed), constant)
+        values[ctx] = SimpleValue(MutableBitList(expr.bits.toBigInt().negate(), expr.size+1, true), constant)
         debug(ctx)
     }
 
@@ -473,19 +474,27 @@ class ExprParser(
             error("One (or both) of the operands isn't a simple array. This shouldn't be possible.")
 
         val signed = op1.signed && op2.signed
+        val op1Bits = MutableBitList(signed, op1.bits)
+        val op2Bits = MutableBitList(signed, op2.bits)
 
         values[ctx] = if (multOp) {
-            val width = widthOfMult(op1.bits.size, op2.bits.size)
+            val width = widthOfMult(op1Bits.size, op2Bits.size)
             if (!op1.isNumber() || !op2.isNumber())
                 SimpleValue(MutableBitList(BitValue.Bx, width, signed), constant)
             else
-                SimpleValue(MutableBitList(op1.bits.toBigInt().multiply(op2.bits.toBigInt()), width, signed), constant)
+                SimpleValue(MutableBitList(op1Bits.toBigInt().multiply(op2Bits.toBigInt()), width, signed), constant)
         } else {
-            val width = op1.bits.size
-            if (!op1.isNumber() || !op2.isNumber() || op2.bits.toBigInt() == BigInteger.ZERO)
+            val op2BigInt = op2Bits.toBigInt()
+
+            if (!op2.constant || !op2Bits.isPowerOf2()) {
+                errorListener.reportWarning(ctx.expr(1), WarningStrings.DIVIDE_NOT_POW_2)
+            }
+
+            val width = op1Bits.size
+            if (!op1.isNumber() || !op2.isNumber() || op2BigInt == BigInteger.ZERO)
                 SimpleValue(MutableBitList(BitValue.Bx, width, signed), constant)
             else
-                SimpleValue(MutableBitList(op1.bits.toBigInt().divide(op2.bits.toBigInt()), width, signed), constant)
+                SimpleValue(MutableBitList(op1Bits.toBigInt().divide(op2BigInt), width, signed), constant)
         }
         debug(ctx)
     }
@@ -504,8 +513,6 @@ class ExprParser(
         if (!checkFlat(*ctx.expr().toTypedArray()) {
                 errorListener.reportError(it, ErrorStrings.SHIFT_MULTI_DIM)
             }) return
-
-
 
         if (shift is UndefinedValue) {
             values[ctx] = UndefinedValue(ctx.text, constant)
