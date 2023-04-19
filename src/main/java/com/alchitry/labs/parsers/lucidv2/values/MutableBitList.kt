@@ -142,7 +142,7 @@ interface BitList : List<BitValue> {
             }
         } else {
             for (i in indices.reversed()) {
-                if (get(1) != BitValue.B0)
+                if (get(i) != BitValue.B0)
                     return i + 1 + if (signed) 1 else 0
             }
         }
@@ -157,7 +157,7 @@ class MutableBitList(override var signed: Boolean = false, width: Int = 0) : Arr
 
     constructor(str: String, radix: Int = 10, signed: Boolean = false) : this(signed, 0) {
         when (radix) {
-            10 -> fromBigInt(BigInteger(str))
+            10 -> fromBigInt(BigInteger(str), signed)
             16 -> set(str, 16, str.length * 4, signed)
             2 -> set(str, 2, str.length, signed)
             256 -> set(str, 256, str.length * 8, signed)
@@ -179,12 +179,8 @@ class MutableBitList(override var signed: Boolean = false, width: Int = 0) : Arr
         repeat(width) { add(value) }
     }
 
-    constructor(value: BigInteger) : this() {
-        fromBigInt(value)
-    }
-
-    constructor(value: BigInteger, width: Int, signed: Boolean = value.signum() == -1) : this(width = width) {
-        fromBigInt(value, width, signed)
+    constructor(value: BigInteger, signed: Boolean = value.signum() == -1, width: Int = value.minWidth(signed)) : this(width = width) {
+        fromBigInt(value, signed, width)
     }
 
     constructor(signed: Boolean, bits: List<BitValue>) : this(signed, bits.size) {
@@ -207,15 +203,9 @@ class MutableBitList(override var signed: Boolean = false, width: Int = 0) : Arr
         return MutableBitList(signed, super.subList(fromIndex, toIndex))
     }
 
-    private fun fromBigInt(bigInt: BigInteger) {
-        var w = bigInt.bitLength() // doesn't include sign bit
 
-        if (bigInt.signum() == -1) w++
-        w = w.coerceAtLeast(1)
-        fromBigInt(bigInt, w)
-    }
 
-    private fun fromBigInt(bigInt: BigInteger, width: Int, signed: Boolean = bigInt.signum() == -1) {
+    private fun fromBigInt(bigInt: BigInteger, signed: Boolean = bigInt.signum() == -1, width: Int = bigInt.minWidth(signed)) {
         val bList = bigInt.toByteArray()
 
         this.signed = signed
@@ -241,7 +231,7 @@ class MutableBitList(override var signed: Boolean = false, width: Int = 0) : Arr
         this.signed = signed
         val strlower = str.lowercase()
         when (radix) {
-            10 -> fromBigInt(BigInteger(strlower), width, signed)
+            10 -> fromBigInt(BigInteger(strlower), signed, width)
             16 -> {
                 var idx = 0
                 while (idx < width) {
@@ -321,3 +311,9 @@ val List<BitValue>.lsb get() = first()
 
 /** Most significant bit */
 val List<BitValue>.msb get() = last()
+
+private fun BigInteger.minWidth(signed: Boolean = signum() == -1): Int {
+    var w = bitLength() // doesn't include sign bit
+    if (signed) w++
+    return w.coerceAtLeast(1)
+}

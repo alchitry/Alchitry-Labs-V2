@@ -274,8 +274,10 @@ internal class ExprParserTest {
             test.exprParser.resolve(tree)
         )
         assert(test.hasNoErrors)
-        assert(test.hasWarnings) // should warn about non-power of 2 denominator
+        assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
+
+        // TODO: Check for warning with non-constant non-power 2 divisor
     }
 
     @Test
@@ -360,32 +362,361 @@ internal class ExprParserTest {
 
     @Test
     fun testBitwise() {
-        TODO()
+        var test = LucidTester("b1101 & b1001")
+        var tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("1001", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("b001101 & b1001")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("001001", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$signed(b001101) & \$signed(b1001)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("001001", 2, true), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("b1101 | b1001")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("1101", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("b101101 | b1010")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("101111", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$signed(b001101) | \$signed(b1001)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("111101", 2, true), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("b1101 ^ b1001")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("0100", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("b001101 ^ b1001")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("000100", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$signed(b001101) ^ \$signed(b1001)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("110100", 2, true), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
     }
 
     @Test
     fun testReduction() {
-        TODO()
+        var test = LucidTester("|b1001")
+        var tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("1", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("|b0000")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("0", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("&b1001")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("0", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("&b1111")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("1", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("&b1x01")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("x", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("^b1001")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("0", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("^b1011")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("1", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
     }
 
     @Test
     fun testCompare() {
-        TODO()
+        var test = LucidTester("10 < 4")
+        var tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("0", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("10 > 4")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("1", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("4 >= 10")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("0", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("10 >= 10")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("1", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("10 <= 4")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("0", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("10 <= 10")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("1", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
     }
 
     @Test
     fun testLogical() {
-        TODO()
+        var test = LucidTester("10 || 0")
+        var tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("1", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("0 || 0")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("0", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("10 && 0")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("0", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("10 && 4")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("1", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
     }
 
     @Test
     fun testTernary() {
-        TODO()
+        var test = LucidTester("10 ? 1 : 2")
+        var tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("1", 2, 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("10b0 ? 1 : 2")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("2", 10, 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
     }
 
     @Test
     fun testInvert() {
-        TODO()
+        var test = LucidTester("!10")
+        var tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("0", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("!0")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("1", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("~b101")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("010", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
     }
 
     @Test
@@ -421,7 +752,7 @@ internal class ExprParserTest {
         var tree = test.expr()
 
         assertEquals(
-            SimpleValue(MutableBitList("20", 10, Util.minWidthNum(20), signed = true), true),
+            SimpleValue(MutableBitList("20", 10, width = Util.minWidthNum(20), signed = true), true),
             test.exprParser.resolve(tree)
         )
 
@@ -434,6 +765,249 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("101100", 2, signed = true), true),
+            test.exprParser.resolve(tree)
+        )
+
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$clog2(7)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("3", 10), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$clog2(0)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("0", 10), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$clog2(1)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("0", 10), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$clog2(129)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("8", 10), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$pow(3,0)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("1", 10), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$pow(2,4)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("16", 10), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$reverse(b1100)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("0011", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$reverse({b1100, b0011})")
+        tree = test.expr()
+
+        assertEquals(
+            ArrayValue(
+                listOf(
+                    SimpleValue(MutableBitList("1100", 2), true),
+                    SimpleValue(MutableBitList("0011", 2), true)
+                )
+            ),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$flatten(b1100)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("1100", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$flatten({b1100, b0011})")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("11000011", 2), true),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        // TODO: Test flatten for structs
+
+        test = LucidTester("\$build(b1100, 2)")
+        tree = test.expr()
+
+        assertEquals(
+            ArrayValue(
+                listOf(
+                    SimpleValue(MutableBitList("00", 2), true),
+                    SimpleValue(MutableBitList("11", 2), true)
+                )
+            ),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$build(b11001001, 2, 2)")
+        tree = test.expr()
+
+        assertEquals(
+            ArrayValue(
+                listOf(
+                    ArrayValue(
+                        listOf(
+                            SimpleValue(MutableBitList("01", 2), true),
+                            SimpleValue(MutableBitList("10", 2), true)
+                        )
+                    ),
+                    ArrayValue(
+                        listOf(
+                            SimpleValue(MutableBitList("00", 2), true),
+                            SimpleValue(MutableBitList("11", 2), true)
+                        )
+                    )
+                )
+            ),
+            test.exprParser.resolve(tree)
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$unsigned(20)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("20", 10, signed = false), true),
+            test.exprParser.resolve(tree)
+        )
+
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$unsigned(\$signed(-20))")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("101100", 2, signed = false), true),
+            test.exprParser.resolve(tree)
+        )
+
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$cdiv(8, 3)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("3", 10, signed = false), true),
+            test.exprParser.resolve(tree)
+        )
+
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$cdiv(9, 3)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("3", 10, signed = false), true),
+            test.exprParser.resolve(tree)
+        )
+
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$cdiv(10, 3)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("4", 10, signed = false), true),
+            test.exprParser.resolve(tree)
+        )
+
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$resize(8, 3)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("8", 10, 3, signed = false), true),
+            test.exprParser.resolve(tree)
+        )
+
+        assert(test.hasNoErrors)
+        assert(test.hasWarnings) // should warn about truncation
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("\$resize(1, 3)")
+        tree = test.expr()
+
+        assertEquals(
+            SimpleValue(MutableBitList("1", 10, 3, signed = false), true),
             test.exprParser.resolve(tree)
         )
 

@@ -161,14 +161,14 @@ sealed class Value {
     private fun getBits(): BitList {
         return when (this) {
             is ArrayValue -> MutableBitList().also { bits ->
-                elements.asReversed().forEach { bits.addAll(it.getBits()) }
+                elements.forEach { bits.addAll(it.getBits()) }
             }
             is SimpleValue -> bits
             is StructValue -> MutableBitList().also { bits ->
                 type.forEach { (key, value) ->
                     val elementBits =
                         this[key]?.getBits() ?: MutableBitList(BitValue.Bx, value.getBitCount()) as List<BitValue>
-                    bits.addAll(elementBits.asReversed())
+                    bits.addAll(elementBits)
                 }
             }
             is UndefinedValue -> MutableBitList(BitValue.Bx, width.getBitCount())

@@ -369,7 +369,7 @@ class ExprParser(
             return
         }
 
-        values[ctx] = SimpleValue(MutableBitList(expr.bits.toBigInt().negate(), expr.size+1, true), constant)
+        values[ctx] = SimpleValue(MutableBitList(expr.bits.toBigInt().negate(), true, expr.size+1), constant)
         debug(ctx)
     }
 
@@ -429,12 +429,12 @@ class ExprParser(
         values[ctx] = when {
             !op1.isNumber() || !op2.isNumber() -> SimpleValue(MutableBitList(BitValue.Bx, width, signed), constant)
             operand == "+" -> SimpleValue(
-                MutableBitList(op1.bits.toBigInt().add(op2.bits.toBigInt()), width, signed),
+                MutableBitList(op1.bits.toBigInt().add(op2.bits.toBigInt()), signed, width),
                 constant
             )
 
             else -> SimpleValue(
-                MutableBitList(op1.bits.toBigInt().subtract(op2.bits.toBigInt()), width, signed),
+                MutableBitList(op1.bits.toBigInt().subtract(op2.bits.toBigInt()), signed, width),
                 constant
             )
         }
@@ -482,11 +482,11 @@ class ExprParser(
             if (!op1.isNumber() || !op2.isNumber())
                 SimpleValue(MutableBitList(BitValue.Bx, width, signed), constant)
             else
-                SimpleValue(MutableBitList(op1Bits.toBigInt().multiply(op2Bits.toBigInt()), width, signed), constant)
+                SimpleValue(MutableBitList(op1Bits.toBigInt().multiply(op2Bits.toBigInt()), signed, width), constant)
         } else {
             val op2BigInt = op2Bits.toBigInt()
 
-            if (!op2.constant || !op2Bits.isPowerOf2()) {
+            if (!constant && (!op2.constant || !op2Bits.isPowerOf2())) {
                 errorListener.reportWarning(ctx.expr(1), WarningStrings.DIVIDE_NOT_POW_2)
             }
 
@@ -494,7 +494,7 @@ class ExprParser(
             if (!op1.isNumber() || !op2.isNumber() || op2BigInt == BigInteger.ZERO)
                 SimpleValue(MutableBitList(BitValue.Bx, width, signed), constant)
             else
-                SimpleValue(MutableBitList(op1Bits.toBigInt().divide(op2BigInt), width, signed), constant)
+                SimpleValue(MutableBitList(op1Bits.toBigInt().divide(op2BigInt), signed, width), constant)
         }
         debug(ctx)
     }
@@ -842,7 +842,7 @@ class ExprParser(
                 }
                 val bigInt = arg.toBigInt()
                 if (bigInt == BigInteger.ZERO) {
-                    errorListener.reportError(ctx.expr(0), ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.expr(0).text))
+                    values[ctx] = SimpleValue(MutableBitList(BitValue.B0), constant)
                     return
                 }
                 values[ctx] = BigFunctions.ln(BigDecimal(bigInt), 32)
@@ -965,7 +965,7 @@ class ExprParser(
                             )
                         }
                     }
-                    return ArrayValue(root.asReversed())
+                    return ArrayValue(root)
                 }
 
                 values[ctx] = buildRecursive(value.bits, dims)
@@ -1049,7 +1049,7 @@ class ExprParser(
                         )
                         return
                     }
-                    if (value is SimpleValue && value.bits.minBits() < numBits) {
+                    if (value is SimpleValue && value.bits.minBits() > numBits) {
                         errorListener.reportWarning(
                             ctx.expr(0),
                             ErrorStrings.TRUNC_WARN.format(ctx.expr(1).text, size.toString())
