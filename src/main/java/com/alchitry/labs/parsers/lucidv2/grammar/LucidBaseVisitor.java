@@ -160,7 +160,7 @@ public class LucidBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitStatFSM(LucidParser.StatFSMContext ctx) { return visitChildren(ctx); }
+	@Override public T visitStatEnum(LucidParser.StatEnumContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -258,14 +258,7 @@ public class LucidBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitFsmDec(LucidParser.FsmDecContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitFsmStates(LucidParser.FsmStatesContext ctx) { return visitChildren(ctx); }
+	@Override public T visitEnumDec(LucidParser.EnumDecContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

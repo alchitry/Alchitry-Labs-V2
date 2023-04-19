@@ -127,7 +127,6 @@ example, `2 + 2` would have `ExprNumContext` nodes with values of 2 and a `ExprA
 
 ### Todo
 
-- [ ] Finish adding tests in `ExprParserTest`
 - [ ] Add checks whenever a value is read for `Bu` values. This can be done on `SimpleValue`
   with `value.bits.isDriven()`.
 - [ ] Fetch signal values in `exitSignal` once `SignalParser` is complete

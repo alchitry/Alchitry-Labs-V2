@@ -67,6 +67,6 @@ enum class BitValue {
         }
     }
 
-    fun toBitArray(): BitList = MutableBitList(this)
-    fun toSimpleValue(constant: Boolean): SimpleValue = SimpleValue(toBitArray(), constant)
+    fun toBitArray(signed: Boolean = false): BitList = MutableBitList(this, signed = signed)
+    fun toSimpleValue(constant: Boolean, signed: Boolean = false): SimpleValue = SimpleValue(toBitArray(signed), constant)
 }

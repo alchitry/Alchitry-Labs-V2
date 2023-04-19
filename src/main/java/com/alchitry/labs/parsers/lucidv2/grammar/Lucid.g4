@@ -39,7 +39,7 @@ moduleBody: '{' (stat | NL)* '}';
 stat
   : constDec       #StatConst
   | sigDec         #StatSig
-  | fsmDec         #StatFSM
+  | enumDec        #StatEnum
   | dffDec         #StatDFF
   | moduleInst     #StatModuleInst
   | assignBlock    #StatAssign
@@ -49,7 +49,7 @@ stat
 
 constDec: 'const' NL* name NL* '=' NL* expr NL* semi;
 
-assignBlock: conList NL* '{' (dffDec | fsmDec | moduleInst | assignBlock | NL)* '}';
+assignBlock: conList NL* '{' (dffDec | moduleInst | assignBlock | NL)* '}';
 sigCon: '.' name NL* '(' NL* expr NL* ')';
 paramCon: '#' name NL* '(' NL* (expr | REAL) NL* ')';
 
@@ -58,8 +58,7 @@ dffSingle: name (arraySize | NL)* instCons?;
 
 sigDec: SIGNED? NL* 'sig' NL* structType? NL* typeDec (NL* ',' NL* typeDec)* semi;
 dffDec: SIGNED? NL* 'dff' NL* structType? NL* dffSingle (NL* ',' NL* dffSingle)* semi;
-fsmDec: 'fsm' NL* name (arraySize | NL)* instCons? NL* '=' NL* '{' NL* fsmStates NL* '}' semi;
-fsmStates: name (NL* ',' NL* name)*;
+enumDec: 'enum' NL* name NL* '{' NL* name (NL* ',' NL* name)* NL* '}' semi;
 
 moduleInst: name NL* name (arraySize | NL)* instCons? semi;
 

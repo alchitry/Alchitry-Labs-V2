@@ -12,18 +12,31 @@ sealed class Value {
                 this.elements.forEach { if (!it.isNumber()) return false }
                 return true
             }
+
             is SimpleValue -> {
                 return this.bits.isNumber()
             }
+
             is StructValue -> {
                 this.values.forEach { if (!it.isNumber()) return false }
                 return true
             }
+
             is UndefinedValue -> {
                 return false
             }
         }
     }
+
+    /** Makes a copy of this Value that has the constant flag set as false. */
+    fun asMutable(): Value =
+        when (this) {
+            is ArrayValue -> this.copy(elements.map { it.asMutable() })
+            is SimpleValue -> this.copy(constant = false)
+            is StructValue -> this.copy(valueMap = mapValues { it.value.asMutable() }.toMutableMap())
+            is UndefinedValue -> this.copy(constant = false)
+        }
+
 
     val signalWidth: SignalWidth
         get() {
@@ -37,7 +50,7 @@ sealed class Value {
 
     fun invert(): Value {
         return when (this) {
-            is SimpleValue -> SimpleValue(bits.invert(),constant)
+            is SimpleValue -> SimpleValue(bits.invert(), constant)
             is ArrayValue -> ArrayValue((List(elements.size) { elements[it].invert() }))
             is StructValue -> StructValue(type, this.mapValues { (_, v) -> v.invert() }.toMutableMap())
             is UndefinedValue -> this
@@ -54,6 +67,7 @@ sealed class Value {
                 else
                     BitValue.Bx
             }
+
             is UndefinedValue -> BitValue.Bx
         }
     }
@@ -78,6 +92,7 @@ sealed class Value {
                     error("Both structs are not complete")
                 }
             }
+
             is UndefinedValue -> this
         }
     }
@@ -94,6 +109,7 @@ sealed class Value {
                     error("Both structs are not complete")
                 }
             }
+
             is UndefinedValue -> this
         }
     }
@@ -110,6 +126,7 @@ sealed class Value {
                     error("Both structs are not complete")
                 }
             }
+
             is UndefinedValue -> this
         }
     }
@@ -133,6 +150,7 @@ sealed class Value {
                     BitValue.Bx
                 }
             }
+
             is UndefinedValue -> BitValue.Bx
         }
     }
@@ -163,6 +181,7 @@ sealed class Value {
             is ArrayValue -> MutableBitList().also { bits ->
                 elements.forEach { bits.addAll(it.getBits()) }
             }
+
             is SimpleValue -> bits
             is StructValue -> MutableBitList().also { bits ->
                 type.forEach { (key, value) ->
@@ -171,6 +190,7 @@ sealed class Value {
                     bits.addAll(elementBits)
                 }
             }
+
             is UndefinedValue -> MutableBitList(BitValue.Bx, width.getBitCount())
         }
     }

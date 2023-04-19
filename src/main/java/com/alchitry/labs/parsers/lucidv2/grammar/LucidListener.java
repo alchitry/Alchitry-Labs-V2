@@ -214,17 +214,17 @@ public interface LucidListener extends ParseTreeListener {
 	 */
 	void exitStatSig(LucidParser.StatSigContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code StatFSM}
+	 * Enter a parse tree produced by the {@code StatEnum}
 	 * labeled alternative in {@link LucidParser#stat}.
 	 * @param ctx the parse tree
 	 */
-	void enterStatFSM(LucidParser.StatFSMContext ctx);
+	void enterStatEnum(LucidParser.StatEnumContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code StatFSM}
+	 * Exit a parse tree produced by the {@code StatEnum}
 	 * labeled alternative in {@link LucidParser#stat}.
 	 * @param ctx the parse tree
 	 */
-	void exitStatFSM(LucidParser.StatFSMContext ctx);
+	void exitStatEnum(LucidParser.StatEnumContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code StatDFF}
 	 * labeled alternative in {@link LucidParser#stat}.
@@ -366,25 +366,15 @@ public interface LucidListener extends ParseTreeListener {
 	 */
 	void exitDffDec(LucidParser.DffDecContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LucidParser#fsmDec}.
+	 * Enter a parse tree produced by {@link LucidParser#enumDec}.
 	 * @param ctx the parse tree
 	 */
-	void enterFsmDec(LucidParser.FsmDecContext ctx);
+	void enterEnumDec(LucidParser.EnumDecContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link LucidParser#fsmDec}.
+	 * Exit a parse tree produced by {@link LucidParser#enumDec}.
 	 * @param ctx the parse tree
 	 */
-	void exitFsmDec(LucidParser.FsmDecContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link LucidParser#fsmStates}.
-	 * @param ctx the parse tree
-	 */
-	void enterFsmStates(LucidParser.FsmStatesContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LucidParser#fsmStates}.
-	 * @param ctx the parse tree
-	 */
-	void exitFsmStates(LucidParser.FsmStatesContext ctx);
+	void exitEnumDec(LucidParser.EnumDecContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LucidParser#moduleInst}.
 	 * @param ctx the parse tree

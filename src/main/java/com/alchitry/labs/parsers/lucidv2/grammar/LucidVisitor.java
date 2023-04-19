@@ -135,12 +135,12 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStatSig(LucidParser.StatSigContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code StatFSM}
+	 * Visit a parse tree produced by the {@code StatEnum}
 	 * labeled alternative in {@link LucidParser#stat}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStatFSM(LucidParser.StatFSMContext ctx);
+	T visitStatEnum(LucidParser.StatEnumContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code StatDFF}
 	 * labeled alternative in {@link LucidParser#stat}.
@@ -225,17 +225,11 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDffDec(LucidParser.DffDecContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LucidParser#fsmDec}.
+	 * Visit a parse tree produced by {@link LucidParser#enumDec}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFsmDec(LucidParser.FsmDecContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#fsmStates}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFsmStates(LucidParser.FsmStatesContext ctx);
+	T visitEnumDec(LucidParser.EnumDecContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#moduleInst}.
 	 * @param ctx the parse tree

@@ -259,13 +259,13 @@ public class LucidBaseListener implements LucidListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStatFSM(LucidParser.StatFSMContext ctx) { }
+	@Override public void enterStatEnum(LucidParser.StatEnumContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStatFSM(LucidParser.StatFSMContext ctx) { }
+	@Override public void exitStatEnum(LucidParser.StatEnumContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -427,25 +427,13 @@ public class LucidBaseListener implements LucidListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFsmDec(LucidParser.FsmDecContext ctx) { }
+	@Override public void enterEnumDec(LucidParser.EnumDecContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFsmDec(LucidParser.FsmDecContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterFsmStates(LucidParser.FsmStatesContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitFsmStates(LucidParser.FsmStatesContext ctx) { }
+	@Override public void exitEnumDec(LucidParser.EnumDecContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

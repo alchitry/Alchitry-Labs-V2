@@ -12,15 +12,27 @@ enum class SignalDirection {
     val canWrite: Boolean get() = this != Read
 }
 
-data class Signal(
+class Signal(
     val name: String, // includes namespace or module name
     val direction: SignalDirection,
-    val value: Value
-) {
+    initialValue: Value
+): SignalOrParent {
     fun select(selection: SignalSelection) = SubSignal(this, selection)
+
+    var value: Value = initialValue
+        set(v) {
+            // TODO: Resize v if possible before complaining
+            check(field.signalWidth == v.signalWidth) { "Signal assigned value does not match its size!" }
+            field = v
+        }
 }
 
 data class SubSignal(
     val signal: Signal,
     val selection: SignalSelection
 )
+
+sealed interface SignalOrParent
+sealed interface SignalParent: SignalOrParent {
+    fun getSignal(name: String): Signal?
+}

@@ -5,14 +5,18 @@ import com.alchitry.labs.parsers.lucidv2.values.Value
 
 data class Dff(
     override val name: String,
-    override val init: Value,
+    val init: Value,
     val iob: Boolean = false,
-    override val clkCtx: ExprContext,
-    override val rstCtx: ExprContext?
-) : Named, SyncLogic {
-    override var value: Value = init
-        set(value) {
-            check(init.signalWidth == value.signalWidth) { "Dff assigned value does not match its size!" }
-            field = value
+    val clkCtx: ExprContext,
+    val rstCtx: ExprContext?
+) : Named, SignalParent {
+    val d = Signal("d", SignalDirection.Write, init.asMutable())
+    val q = Signal("q", SignalDirection.Read, init.asMutable())
+
+    override fun getSignal(name: String): Signal? =
+        when (name) {
+            "d" -> d
+            "q" -> q
+            else -> null
         }
 }
