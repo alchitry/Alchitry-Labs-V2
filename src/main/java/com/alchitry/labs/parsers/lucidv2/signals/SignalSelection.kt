@@ -1,4 +1,4 @@
-package com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.signals
+package com.alchitry.labs.parsers.lucidv2.signals
 
 typealias SignalSelection = List<SignalSelector>
 

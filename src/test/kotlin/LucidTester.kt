@@ -1,7 +1,7 @@
-import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.parsers.BitSelectionParser
-import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.parsers.ExprParser
-import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.parsers.SignalParser
-import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.resolvers.LucidResolver
+import com.alchitry.labs.parsers.lucidv2.parsers.BitSelectionParser
+import com.alchitry.labs.parsers.lucidv2.parsers.ExprParser
+import com.alchitry.labs.parsers.lucidv2.parsers.SignalParser
+import com.alchitry.labs.parsers.lucidv2.resolvers.LucidResolver
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidLexer
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
 import org.antlr.v4.runtime.CharStreams

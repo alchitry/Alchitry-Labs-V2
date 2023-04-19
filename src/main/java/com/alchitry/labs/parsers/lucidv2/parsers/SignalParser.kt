@@ -1,8 +1,8 @@
-package com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.parsers
+package com.alchitry.labs.parsers.lucidv2.parsers
 
-import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.resolvers.LucidResolver
-import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.resolvers.SignalResolver
-import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.signals.StructType
+import com.alchitry.labs.parsers.lucidv2.resolvers.LucidResolver
+import com.alchitry.labs.parsers.lucidv2.resolvers.SignalResolver
+import com.alchitry.labs.parsers.lucidv2.signals.StructType
 import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.errors.dummyErrorListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
@@ -89,7 +89,7 @@ class SignalParser(
             val resolvedClkCtx = clkCtx
 
             if (resolvedClkCtx != null) {
-                val dff = Dff(name, init, false, resolvedClkCtx, rstCtx)
+                val dff = Dff(name, init, resolvedClkCtx, rstCtx)
                 dffs[name] = dff
             } else {
                 // TODO: report missing clk

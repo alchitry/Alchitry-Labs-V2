@@ -1,4 +1,4 @@
-package com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.resolvers
+package com.alchitry.labs.parsers.lucidv2.resolvers
 
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.ExprContext
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue

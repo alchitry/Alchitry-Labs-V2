@@ -6,7 +6,6 @@ import com.alchitry.labs.parsers.lucidv2.values.Value
 data class Dff(
     override val name: String,
     val init: Value,
-    val iob: Boolean = false,
     val clkCtx: ExprContext,
     val rstCtx: ExprContext?
 ) : Named, SignalParent {

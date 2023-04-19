@@ -1,6 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.signals
 
-import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.signals.SignalSelection
+import com.alchitry.labs.parsers.lucidv2.signals.SignalSelection
 import com.alchitry.labs.parsers.lucidv2.values.Value
 
 enum class SignalDirection {

@@ -1,4 +1,4 @@
-package com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.resolvers
+package com.alchitry.labs.parsers.lucidv2.resolvers
 
 class LucidResolver {
     lateinit var expr: ExprResolver
