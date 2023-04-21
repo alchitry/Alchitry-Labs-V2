@@ -3,7 +3,7 @@ import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.values.MutableBitList
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -20,38 +20,18 @@ class DynamicExprTest {
 
         val dynamicExpr = DynamicExpr(exprCtx, test.parseContext)
 
-        var count = 0
-        runBlocking {
-            coroutineScope {
-                launch mainJob@{
-                    launch {
-                        repeat(10) {
-                            delay(100)
-                            if (!test.parseContext.scope.isActive) {
-                                this@coroutineScope.cancel("Error in context scope") // canceling here causes an error
-                            }
-                        }
-                        this@coroutineScope.cancel("Timed out")
-                    }
-                    launch {
-                        dynamicExpr.collect {
-                            when (count) {
-                                0 -> {
-                                    assertEquals(SimpleValue(MutableBitList("001", 2), false), it)
-                                    signal.value = SimpleValue(MutableBitList("011", 2), false)
-                                    count++
-                                }
+        runBlocking { test.parseContext.processQueue() }
 
-                                1 -> {
-                                    assertEquals(SimpleValue(MutableBitList("100", 2), false), it)
-                                    this@mainJob.cancel() // canceling here passes the test
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        assertEquals(SimpleValue(MutableBitList("001", 2), false), dynamicExpr.value)
+
+        signal.value = SimpleValue(MutableBitList("011", 2), false)
+        runBlocking { test.parseContext.processQueue() }
+
+        assertEquals(SimpleValue(MutableBitList("100", 2), false), dynamicExpr.value)
+
+        signal.value = SimpleValue(MutableBitList("111", 2), false)
+        runBlocking { test.parseContext.processQueue() }
+
+        assertEquals(SimpleValue(MutableBitList("000", 2), false), dynamicExpr.value)
     }
-
 }

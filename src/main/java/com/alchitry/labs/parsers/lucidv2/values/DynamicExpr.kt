@@ -2,6 +2,7 @@ package com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.values
 
 import com.alchitry.labs.onAnyChange
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.ExprContext
+import com.alchitry.labs.parsers.lucidv2.resolvers.Evaluable
 import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext
 import com.alchitry.labs.parsers.lucidv2.values.Value
 import kotlinx.coroutines.flow.FlowCollector
@@ -21,7 +22,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker
 class DynamicExpr(
     val expr: ExprContext,
     private val parseContext: LucidParseContext
-) {
+): Evaluable {
     private val mutableValueFlow =
         MutableStateFlow(parseContext.expr.resolve(expr) ?: error("Failed to resolve initial value for ${expr.text}"))
     val valueFlow = mutableValueFlow.asStateFlow()
@@ -39,14 +40,14 @@ class DynamicExpr(
         val dependencies = parseContext.expr.resolveDependencies(expr) ?: error("Failed to resolve dependencies for ${expr.text}")
         parseContext.scope.launch {
             onAnyChange(dependencies.map { it.valueFlow }) {
-                evaluate()
+                parseContext.queueEvaluation(this@DynamicExpr)
             }
         }
     }
 
     suspend fun collect(collector: FlowCollector<Value>): Nothing = mutableValueFlow.collect(collector)
 
-    private fun evaluate() {
+    override fun evaluate() {
         ParseTreeWalker.DEFAULT.walk(parseContext.expr, expr)
 
         val newValue = parseContext.expr.resolve(expr)
