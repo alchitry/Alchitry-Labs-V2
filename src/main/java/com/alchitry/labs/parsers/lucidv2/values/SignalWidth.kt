@@ -80,24 +80,13 @@ sealed class SignalWidth {
         }
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (other !is SignalWidth)
-            return false
-
-        return when (other) {
-            is ArrayWidth -> this is ArrayWidth && other.size == this.size && other.next == this.next
-            is StructWidth -> this is StructWidth && other.type == this.type
-            is SimpleWidth -> this is SimpleWidth && other.size == this.size
-            is UndefinedSimpleWidth -> false
+    /** Returns true if the other width can be scaled to match this width. */
+    fun canAssign(other: SignalWidth): Boolean =
+        when (this) {
+            is ArrayWidth, is StructWidth -> this == other
+            is SimpleWidth, UndefinedSimpleWidth -> other is SimpleWidth || other is UndefinedSimpleWidth
         }
-    }
 
-    fun shallowEquals(other: SignalWidth): Boolean {
-        return when (other) {
-            is ArrayWidth -> this is ArrayWidth && other.size == this.size
-            else -> other == this
-        }
-    }
 }
 
 data class SimpleWidth(
@@ -113,4 +102,8 @@ data class StructWidth(
     val type: StructType
 ) : SignalWidth()
 
-object UndefinedSimpleWidth : SignalWidth()
+object UndefinedSimpleWidth : SignalWidth() {
+    override fun equals(other: Any?): Boolean {
+        return false
+    }
+}

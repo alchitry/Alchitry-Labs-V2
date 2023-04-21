@@ -1,16 +1,15 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
 import com.alchitry.labs.Util.widthOfMult
-import com.alchitry.labs.parsers.lucidv2.resolvers.ExprResolver
-import com.alchitry.labs.parsers.lucidv2.resolvers.LucidResolver
+import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext
 import com.alchitry.labs.parsers.BigFunctions
 import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.errors.ErrorStrings
 import com.alchitry.labs.parsers.errors.WarningStrings
 import com.alchitry.labs.parsers.errors.dummyErrorListener
-import com.alchitry.labs.parsers.lucidv2.*
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
+import com.alchitry.labs.parsers.lucidv2.signals.*
 import com.alchitry.labs.parsers.lucidv2.values.*
 import com.alchitry.labs.parsers.lucidv2.values.Function
 import org.antlr.v4.runtime.ParserRuleContext
@@ -21,18 +20,18 @@ import java.math.BigInteger
 import java.math.RoundingMode
 import kotlin.math.absoluteValue
 
-
+/**
+ * Provides values for all ExprContext and also provides bit selection ranges for BitSelectionContext through
+ * the parent class BitSelectionParser.
+ */
 class ExprParser(
     private val errorListener: ErrorListener = dummyErrorListener,
-    private val resolver: LucidResolver
-) : LucidBaseListener(), ExprResolver {
+    private val parseContext: LucidParseContext
+) : BitSelectionParser(errorListener, parseContext) {
     private val values = mutableMapOf<ParseTree, Value>()
+    private val dependencies = mutableMapOf<ParseTree, Set<Signal>>()
 
-    init {
-        resolver.expr = this
-    }
-
-    override fun resolve(ctx: ExprContext): Value? {
+    fun resolve(ctx: ExprContext): Value? {
         return values[ctx]
     }
 
@@ -40,11 +39,155 @@ class ExprParser(
         errorListener.reportDebug(ctx, values[ctx].toString())
     }
 
+    /**
+     * Returns true if the value at this node doesn't need to be recalculated
+     */
+    private fun canSkip(ctx: ParseTree): Boolean {
+        val value = values[ctx] ?: return false
+        return value.constant
+    }
+
+    /**
+     * This will return true when all the expressions are flat. Aka they are all 1D arrays.
+     *
+     * The values themselves may be undefined.
+     */
+    fun checkFlat(vararg exprCtx: ExprContext, onError: (ExprContext) -> Unit): Boolean {
+        return exprCtx.map {
+            val op = resolve(it) ?: throw IllegalArgumentException("exprCtx wasn't defined")
+            if (op.signalWidth.isFlatArray()) {
+                true
+            } else {
+                onError(it)
+                false
+            }
+        }.all { it }
+    }
+
+    /**
+     * This will return true when all expressions are SimpleValues.
+     *
+     * This differs from checkFlat in that the values may not be undefined.
+     */
+    fun checkSimpleValue(vararg exprCtx: ExprContext, onError: (ExprContext) -> Unit): Boolean {
+        return exprCtx.map {
+            val op = resolve(it) ?: throw IllegalArgumentException("exprCtx wasn't defined")
+            if (op is SimpleValue) {
+                true
+            } else {
+                onError(it)
+                false
+            }
+        }.all { it }
+    }
+
+    /**
+     * checks that all expressions have the same widths or are flat arrays
+     */
+    fun checkFlatOrMatchingDims(vararg exprCtx: ExprContext, onError: (ExprContext) -> Unit): Boolean {
+        if (exprCtx.isEmpty())
+            return true
+
+        val first = resolve(exprCtx.first())?.signalWidth ?: throw IllegalArgumentException("exprCtx wasn't defined")
+
+        return exprCtx.map {
+            val op = resolve(it)?.signalWidth ?: throw IllegalArgumentException("exprCtx wasn't defined")
+            if (!((op.isFlatArray() && first.isFlatArray()) || op == first)) {
+                onError(it)
+                return@map false
+            }
+            return@map true
+        }.all { it }
+    }
+
+    /**
+     * Checks if any widths are undefined and if so, flags any non-flat widths as errors
+     */
+    fun checkUndefinedMatchingDims(
+        vararg exprCtx: ExprContext,
+        onError: (ExprContext) -> Unit
+    ): Boolean {
+        val widths =
+            exprCtx.map { resolve(it)?.signalWidth ?: throw IllegalArgumentException("exprCtx wasn't defined") }
+        val hasUndefinedWidth = widths.any { it is UndefinedSimpleWidth }
+        if (!hasUndefinedWidth)
+            return true
+
+        return !widths.mapIndexed { index, signalWidth ->
+            if (!signalWidth.isFlatArray()) {
+                onError(exprCtx[index])
+                true
+            } else {
+                false
+            }
+        }.any { it }
+    }
+
     override fun exitSignal(ctx: SignalContext) {
-        // TODO: Implement signals
+        val firstName = ctx.name().firstOrNull() ?: return
+        val signalOrParent = parseContext.resolveSignal(firstName.text)
+
+        if (signalOrParent == null) {
+            errorListener.reportError(ctx.name(0), "Failed to resolve signal $firstName")
+            return
+        }
+
+        val children = ctx.children.filter { it is NameContext || it is BitSelectionContext }
+        val usedChildren: Int
+
+        val signal = when (signalOrParent) {
+            is Signal -> {
+                usedChildren = 1
+                signalOrParent
+            }
+            is SignalParent -> {
+                usedChildren = 2
+                if (children.size < 2) {
+                    errorListener.reportError(ctx.name(0), "$firstName is not a signal and can't be accessed directly.")
+                    return
+                }
+                if (children[1] is BitSelectionContext) {
+                    errorListener.reportError(children[1] as ParserRuleContext, "$firstName is not an array.")
+                    return
+                }
+                val sig = signalOrParent.getSignal(children[1].text)
+                if (sig == null) {
+                    errorListener.reportError(
+                        children[1] as ParserRuleContext,
+                        "Failed to resolve signal $firstName.${children[1].text}"
+                    )
+                    return
+                }
+                sig
+            }
+        }
+
+        // add dependencies for all signals used in bit selection as well as this signal
+        dependencies[ctx] = mutableSetOf(signal).apply {
+            ctx.children.forEach { child ->
+                dependencies[child]?.let { addAll(it) }
+            }
+        }
+
+        val sigSelection = children.subList(usedChildren, children.size).flatMap { child ->
+            when (child) {
+                is NameContext -> listOf(SignalSelector.Struct(child.text) to child)
+                is BitSelectionContext -> resolve(child).map { SignalSelector.Bits(it.range) to it.ctx }
+                else -> error("Signal child was not a NameContext or BitSelectionContext")
+            }
+        }.toMap()
+
+        try {
+            values[ctx] = signal.select(sigSelection.keys.toList()).value.asMutable()
+        } catch (e: SignalSelectionException) {
+            errorListener.reportError(sigSelection[e.selector]!!, e.message!!)
+            return
+        }
     }
 
     override fun exitNumber(ctx: NumberContext) {
+        if (canSkip(ctx)) return
+
         val radix: Int
         val split: List<String>?
         when {
@@ -134,39 +277,58 @@ class ExprParser(
     }
 
     override fun exitParamConstraint(ctx: ParamConstraintContext) {
+        if (canSkip(ctx)) return
+
         values[ctx.expr()]?.let { values[ctx] = it }
+        dependencies[ctx.expr()]?.let { dependencies[ctx] = it }
     }
 
     override fun exitStructConst(ctx: StructConstContext) {
+        if (canSkip(ctx)) return
+
         // TODO Struct constants
     }
 
     override fun exitExprSignal(ctx: ExprSignalContext) {
+        if (canSkip(ctx)) return
         values[ctx.signal()]?.let { values[ctx] = it }
+        dependencies[ctx.signal()]?.let { dependencies[ctx] = it }
     }
 
     override fun exitExprStruct(ctx: ExprStructContext) {
+        if (canSkip(ctx)) return
         values[ctx.structConst()]?.let { values[ctx] = it }
+        dependencies[ctx.structConst()]?.let { dependencies[ctx] = it }
     }
 
     override fun exitExprFunction(ctx: ExprFunctionContext) {
+        if (canSkip(ctx)) return
         values[ctx.function()]?.let { values[ctx] = it }
+        dependencies[ctx.function()]?.let { dependencies[ctx] = it }
     }
 
     override fun exitExprNum(ctx: ExprNumContext) {
+        if (canSkip(ctx)) return
         values[ctx.number()]?.let { values[ctx] = it }
+        dependencies[ctx.number()]?.let { dependencies[ctx] = it }
     }
 
     override fun exitExprGroup(ctx: ExprGroupContext) {
+        if (canSkip(ctx)) return
         if (ctx.expr() == null)
             return
         values[ctx.expr()]?.let { values[ctx] = it }
+        dependencies[ctx.expr()]?.let { dependencies[ctx] = it }
     }
 
     // always returns an unsigned value
     override fun exitExprConcat(ctx: ExprConcatContext) {
-        if (ctx.expr().isEmpty())
-            return
+        if (canSkip(ctx)) return
+        if (ctx.expr().isEmpty()) return
+
+        dependencies[ctx] = mutableSetOf<Signal>().apply {
+            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+        }
 
         // is constant if all operands are constant
         val constant = ctx.expr().none { values[it]?.constant != true }
@@ -228,9 +390,9 @@ class ExprParser(
 
                 if (operands.any { it.first is UndefinedValue }) {
                     values[ctx] = if (definedWidth)
-                        UndefinedValue(ctx.text, constant, SimpleWidth(bitCount))
+                        UndefinedValue(constant, SimpleWidth(bitCount))
                     else
-                        UndefinedValue(ctx.text, constant)
+                        UndefinedValue(constant)
 
                     return
                 }
@@ -248,8 +410,14 @@ class ExprParser(
 
     // always returns an unsigned value
     override fun exitExprDup(ctx: ExprDupContext) {
+        if (canSkip(ctx)) return
+
         if (ctx.expr().size != 2)
             return
+
+        dependencies[ctx] = mutableSetOf<Signal>().apply {
+            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+        }
 
         val constant = values[ctx.expr(1)]?.constant == true
 
@@ -275,7 +443,7 @@ class ExprParser(
 
         // if the duplication value is undefined we have no idea what the width will be
         if (dupCount is UndefinedValue) {
-            values[ctx] = UndefinedValue(ctx.text, constant)
+            values[ctx] = UndefinedValue(constant)
             return
         }
 
@@ -291,7 +459,6 @@ class ExprParser(
 
         if (dupValue is UndefinedValue) {
             values[ctx] = UndefinedValue(
-                ctx.text,
                 constant,
                 width = when (valWidth) {
                     is ArrayWidth -> ArrayWidth(valWidth.size * dupTimes, valWidth.next)
@@ -319,8 +486,14 @@ class ExprParser(
     }
 
     override fun exitExprArray(ctx: ExprArrayContext) {
+        if (canSkip(ctx)) return
+
         if (ctx.expr().isEmpty())
             return
+
+        dependencies[ctx] = mutableSetOf<Signal>().apply {
+            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+        }
 
         val operands = mutableListOf<Pair<Value, ParserRuleContext>>()
         ctx.expr().forEach {
@@ -348,6 +521,10 @@ class ExprParser(
     }
 
     override fun exitExprNegate(ctx: ExprNegateContext) {
+        if (canSkip(ctx)) return
+
+        dependencies[ctx.expr()]?.let { dependencies[ctx] = it }
+
         val constant = values[ctx.expr()]?.constant == true
         val expr = values[ctx.expr()] ?: return
 
@@ -357,7 +534,7 @@ class ExprParser(
         }
 
         if (expr is UndefinedValue) {
-            values[ctx] = UndefinedValue(ctx.text, constant, expr.width)
+            values[ctx] = UndefinedValue(constant, expr.width)
             return
         }
 
@@ -365,16 +542,20 @@ class ExprParser(
         expr as SimpleValue
 
         if (!expr.bits.isNumber()) {
-            values[ctx] = SimpleValue(MutableBitList(true, expr.size+1) { BitValue.Bx }, constant)
+            values[ctx] = SimpleValue(MutableBitList(true, expr.size + 1) { BitValue.Bx }, constant)
             return
         }
 
-        values[ctx] = SimpleValue(MutableBitList(expr.bits.toBigInt().negate(), true, expr.size+1), constant)
+        values[ctx] = SimpleValue(MutableBitList(expr.bits.toBigInt().negate(), true, expr.size + 1), constant)
         debug(ctx)
     }
 
     override fun exitExprInvert(ctx: ExprInvertContext) {
+        if (canSkip(ctx)) return
+
         val expr = values[ctx.expr()] ?: return
+
+        dependencies[ctx.expr()]?.let { dependencies[ctx] = it }
 
         values[ctx] = if (ctx.getChild(0).text == "!") {
             expr.not()
@@ -385,8 +566,14 @@ class ExprParser(
     }
 
     override fun exitExprAddSub(ctx: ExprAddSubContext) {
+        if (canSkip(ctx)) return
+
         if (ctx.childCount != 3 || ctx.expr().size != 2)
             return
+
+        dependencies[ctx] = mutableSetOf<Signal>().apply {
+            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+        }
 
         // is constant if both operands are constant
         val constant = ctx.expr().none { values[it]?.constant != true }
@@ -410,12 +597,11 @@ class ExprParser(
             if (op1Width is SimpleWidth && op2Width is SimpleWidth)
                 values[ctx] =
                     UndefinedValue(
-                        ctx.text,
                         constant,
                         SimpleWidth(op1Width.size.coerceAtLeast(op2Width.size) + 1)
                     )
             else
-                values[ctx] = UndefinedValue(ctx.text, constant)
+                values[ctx] = UndefinedValue(constant)
             return
         }
 
@@ -441,7 +627,13 @@ class ExprParser(
     }
 
     override fun exitExprMultDiv(ctx: ExprMultDivContext) {
+        if (canSkip(ctx)) return
+
         if (ctx.childCount != 3 || ctx.expr().size != 2) return
+
+        dependencies[ctx] = mutableSetOf<Signal>().apply {
+            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+        }
 
         // is constant if both operands are constant
         val constant = ctx.expr().none { values[it]?.constant != true }
@@ -464,9 +656,9 @@ class ExprParser(
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
             if (op1Width is SimpleWidth && op2Width is SimpleWidth)
                 values[ctx] =
-                    UndefinedValue(ctx.text, constant, SimpleWidth(widthOfMult(op1Width.size, op2Width.size)))
+                    UndefinedValue(constant, SimpleWidth(widthOfMult(op1Width.size, op2Width.size)))
             else
-                values[ctx] = UndefinedValue(ctx.text, constant)
+                values[ctx] = UndefinedValue(constant)
             return
         }
 
@@ -500,7 +692,13 @@ class ExprParser(
     }
 
     override fun exitExprShift(ctx: ExprShiftContext) {
+        if (canSkip(ctx)) return
+
         if (ctx.childCount != 3 || ctx.expr().size != 2) return
+
+        dependencies[ctx] = mutableSetOf<Signal>().apply {
+            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+        }
 
         // is constant if both operands are constant
         val constant = ctx.expr().none { values[it]?.constant != true }
@@ -515,7 +713,7 @@ class ExprParser(
             }) return
 
         if (shift is UndefinedValue) {
-            values[ctx] = UndefinedValue(ctx.text, constant)
+            values[ctx] = UndefinedValue(constant)
             return
         }
 
@@ -526,9 +724,9 @@ class ExprParser(
             if (vWidth is SimpleWidth) {
                 val w = if (operand == "<<" || operand == "<<<") vWidth.size + shift.bits.toBigInt()
                     .toInt() else vWidth.size
-                values[ctx] = UndefinedValue(ctx.text, constant, SimpleWidth(w))
+                values[ctx] = UndefinedValue(constant, SimpleWidth(w))
             } else
-                values[ctx] = UndefinedValue(ctx.text, constant)
+                values[ctx] = UndefinedValue(constant)
         }
 
         check(value is SimpleValue) { "Value is flat array but not SimpleValue or UndefinedValue" }
@@ -556,7 +754,13 @@ class ExprParser(
     }
 
     override fun exitExprBitwise(ctx: ExprBitwiseContext) {
+        if (canSkip(ctx)) return
+
         if (ctx.childCount != 3 || ctx.expr().size != 2) return
+
+        dependencies[ctx] = mutableSetOf<Signal>().apply {
+            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+        }
 
         // is constant if all operands are constant
         val constant = ctx.expr().none { values[it]?.constant != true }
@@ -583,9 +787,9 @@ class ExprParser(
                     errorListener.reportError(ctx.expr(1), ErrorStrings.OP_DIM_MISMATCH.format(operand))
                     return
                 }
-                values[ctx] = UndefinedValue(ctx.text, constant, op1Width)
+                values[ctx] = UndefinedValue(constant, op1Width)
             } else {
-                values[ctx] = UndefinedValue(ctx.text, constant)
+                values[ctx] = UndefinedValue(constant)
             }
             return
         }
@@ -607,14 +811,18 @@ class ExprParser(
     }
 
     override fun exitExprReduction(ctx: ExprReductionContext) {
+        if (canSkip(ctx)) return
+
         if (ctx.childCount != 2 || ctx.expr() == null) return
+
+        dependencies[ctx.expr()]?.let { dependencies[ctx] = it }
 
         val constant = values[ctx.expr()]?.constant == true
 
         val value = values[ctx.expr()] ?: return
 
         if (value is UndefinedValue) {
-            values[ctx] = UndefinedValue(ctx.text, constant, SimpleWidth(1))
+            values[ctx] = UndefinedValue(constant, SimpleWidth(1))
             return
         }
 
@@ -636,7 +844,13 @@ class ExprParser(
     }
 
     override fun exitExprCompare(ctx: ExprCompareContext) {
+        if (canSkip(ctx)) return
+
         if (ctx.childCount != 3 || ctx.expr().size != 2) return
+
+        dependencies[ctx] = mutableSetOf<Signal>().apply {
+            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+        }
 
         // is constant if all operands are constant
         val constant = ctx.expr().none { values[it]?.constant != true }
@@ -652,7 +866,7 @@ class ExprParser(
 
 
                 if (op1 is UndefinedValue || op2 is UndefinedValue) {
-                    values[ctx] = UndefinedValue(ctx.text,constant, SimpleWidth(1))
+                    values[ctx] = UndefinedValue(constant, SimpleWidth(1))
                     return
                 }
 
@@ -678,7 +892,7 @@ class ExprParser(
                     }) return
 
                 if (op1 is UndefinedValue || op2 is UndefinedValue) {
-                    values[ctx] = UndefinedValue(ctx.text,constant, SimpleWidth(1))
+                    values[ctx] = UndefinedValue(constant, SimpleWidth(1))
                     return
                 }
 
@@ -698,7 +912,13 @@ class ExprParser(
     }
 
     override fun exitExprLogical(ctx: ExprLogicalContext) {
+        if (canSkip(ctx)) return
+
         if (ctx.childCount != 3 || ctx.expr().size != 2) return
+
+        dependencies[ctx] = mutableSetOf<Signal>().apply {
+            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+        }
 
         // is constant if all operands are constant
         val constant = ctx.expr().none { values[it]?.constant != true }
@@ -714,7 +934,7 @@ class ExprParser(
 
 
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
-            values[ctx] = UndefinedValue(ctx.text, constant, SimpleWidth(1))
+            values[ctx] = UndefinedValue(constant, SimpleWidth(1))
             return
         }
 
@@ -735,7 +955,13 @@ class ExprParser(
     }
 
     override fun exitExprTernary(ctx: ExprTernaryContext) {
+        if (canSkip(ctx)) return
+
         if (ctx.expr().size != 3) return
+
+        dependencies[ctx] = mutableSetOf<Signal>().apply {
+            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+        }
 
         // is constant if all operands are constant
         val constant = ctx.expr().none { values[it]?.constant != true }
@@ -768,7 +994,7 @@ class ExprParser(
         }
 
         if (cond is UndefinedValue) {
-            values[ctx] = UndefinedValue(ctx.text, constant, width)
+            values[ctx] = UndefinedValue(constant, width)
             return
         }
 
@@ -790,6 +1016,12 @@ class ExprParser(
     }
 
     override fun exitFunction(ctx: FunctionContext) {
+        if (canSkip(ctx)) return
+
+        dependencies[ctx] = mutableSetOf<Signal>().apply {
+            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+        }
+
         // is constant if all operands are constant
         val constant = ctx.expr().none { values[it]?.constant != true }
 

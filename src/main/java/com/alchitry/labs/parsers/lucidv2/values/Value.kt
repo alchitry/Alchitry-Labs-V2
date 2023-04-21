@@ -1,5 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
+import com.alchitry.labs.parsers.lucidv2.signals.SignalSelectionException
+import com.alchitry.labs.parsers.lucidv2.signals.SignalSelector
 import com.alchitry.labs.parsers.lucidv2.signals.StructType
 import java.math.BigInteger
 
@@ -196,6 +198,48 @@ sealed class Value {
     }
 
     fun flatten(): SimpleValue = SimpleValue(getBits(), constant)
+
+    /** Returns true if the other value can be scaled to match this value. */
+    fun canAssign(other: Value): Boolean = signalWidth.canAssign(other.signalWidth)
+
+    /** Resizes this Value to be the same width as the other value.
+     *  It may truncate values if other is smaller than this value.
+     */
+    fun resizeToMatch(other: Value): Value =
+        when (this) {
+            is ArrayValue -> {
+                if (signalWidth != other.signalWidth)
+                    error("Cannot resize ArrayValue to match other value")
+                this
+            }
+            is SimpleValue -> when (other) {
+                is ArrayValue -> error("Cannot resize SimpleValue to fit an ArrayValue")
+                is SimpleValue -> resize(other.size)
+                is StructValue -> error("Cannot resize SimpleValue to fit a StructValue")
+                is UndefinedValue -> UndefinedValue(constant = constant, width = other.width)
+            }
+            is StructValue -> {
+                if (signalWidth != other.signalWidth)
+                    error("Cannot resize StructValue to match other value")
+                this
+            }
+            is UndefinedValue -> copy(width = other.signalWidth)
+        }
+
+    fun select(selection: SignalSelector): Value =
+        when (selection) {
+            is SignalSelector.Bits -> when (this) {
+                is ArrayValue -> select(selection)
+                is SimpleValue -> select(selection)
+                is StructValue -> throw SignalSelectionException(selection, "Bit selection can't be used on a struct")
+                is UndefinedValue -> TODO()
+            }
+            is SignalSelector.Struct -> when (this) {
+                is ArrayValue, is SimpleValue -> throw SignalSelectionException(selection, "Arrays don't have struct members")
+                is StructValue -> select(selection)
+                is UndefinedValue -> TODO()
+            }
+        }
 }
 
 data class ArrayValue(
@@ -203,6 +247,17 @@ data class ArrayValue(
 ) : Value(), List<Value> by elements {
     override val constant: Boolean
         get() = all { it.constant }
+
+    fun select(selection: SignalSelector.Bits): Value {
+        try {
+            val newElements = elements.subList(selection.range.first, selection.range.last + 1)
+            if (newElements.size == 1)
+                return newElements.first()
+            return copy(elements = newElements)
+        } catch (e: IndexOutOfBoundsException) {
+            throw SignalSelectionException(selection, "Selection $selection is outside the bounds of [${elements.size-1}:0]")
+        }
+    }
 }
 
 fun BigInteger.toValue(constant: Boolean): SimpleValue = SimpleValue(MutableBitList(this), constant)
@@ -265,6 +320,15 @@ data class SimpleValue(
     }
 
     fun toBoolean() = bits.isTrue() == BitValue.B1
+
+    fun select(selection: SignalSelector.Bits): Value {
+        try {
+            val newBits = bits.subList(selection.range.first, selection.range.last + 1)
+            return copy(bits = newBits)
+        } catch (e: IndexOutOfBoundsException) {
+            throw SignalSelectionException(selection, "Selection $selection is outside the bounds of [${bits.size-1}:0]")
+        }
+    }
 }
 
 data class StructValue(
@@ -274,7 +338,7 @@ data class StructValue(
     init {
         valueMap.keys.removeIf { !type.contains(it) }
         type.keys.forEach {
-            valueMap.putIfAbsent(it, UndefinedValue(it, constant))
+            valueMap.putIfAbsent(it, UndefinedValue(constant))
         }
     }
 
@@ -284,10 +348,13 @@ data class StructValue(
     fun isComplete(): Boolean {
         return type.keys.all { this[it] !is UndefinedValue }
     }
+
+    fun select(selection: SignalSelector.Struct): Value {
+        return valueMap[selection.member] ?: throw SignalSelectionException(selection, "Member $selection is not part of the struct $type")
+    }
 }
 
 data class UndefinedValue(
-    val expression: String,
     override val constant: Boolean,
     val width: SignalWidth = UndefinedSimpleWidth
 ) : Value()

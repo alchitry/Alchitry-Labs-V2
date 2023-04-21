@@ -109,7 +109,7 @@ number: HEX | BIN | DEC | INT | STRING;
 expr
   : signal                                          #ExprSignal
   | number                                          #ExprNum
-  | structConst                                    #ExprStruct
+  | structConst                                     #ExprStruct
   | function                                        #ExprFunction
   | '(' NL* expr NL* ')'                            #ExprGroup
   | 'c{' NL* expr (NL* ',' NL* expr)* NL* '}'       #ExprConcat
@@ -129,7 +129,7 @@ expr
 
 name: TYPE_ID | CONST_ID | SPACE_ID;
 
-semi: NL+ | (NL* SEMICOLON NL*) | EOF;
+semi: NL+ | (NL* SEMICOLON);
 
 HEX: ([1-9][0-9]*)? 'h' ([0-9a-fA-FzZX]|('x' {_input.LA(1) != '{'}?))+;
 BIN: ([1-9][0-9]*)? 'b' ([0-1zZX]|('x' {_input.LA(1) != '{'}?))+;

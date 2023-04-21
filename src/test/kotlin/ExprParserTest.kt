@@ -1,8 +1,13 @@
 import com.alchitry.labs.Util
+import com.alchitry.labs.parsers.lucidv2.resolvers.SignalResolver
+import com.alchitry.labs.parsers.lucidv2.signals.Signal
+import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
+import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.values.ArrayValue
 import com.alchitry.labs.parsers.lucidv2.values.MutableBitList
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.test.Test
 
 internal class ExprParserTest {
@@ -10,42 +15,42 @@ internal class ExprParserTest {
     fun testNumbers() {
         var test = LucidTester("5b11011")
         var tree = test.expr()
-        assertEquals(SimpleValue(MutableBitList("11011", 2, 5), true), test.exprParser.resolve(tree))
+        assertEquals(SimpleValue(MutableBitList("11011", 2, 5), true), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("hFE01")
         tree = test.expr()
-        assertEquals(SimpleValue(MutableBitList("65025", 10, 16), true), test.exprParser.resolve(tree))
+        assertEquals(SimpleValue(MutableBitList("65025", 10, 16), true), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("8hFFF")
         tree = test.expr()
-        assertEquals(SimpleValue(MutableBitList("255", 10, 8), true), test.exprParser.resolve(tree))
+        assertEquals(SimpleValue(MutableBitList("255", 10, 8), true), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("152")
         tree = test.expr()
-        assertEquals(SimpleValue(MutableBitList("152", 10, 8), true), test.exprParser.resolve(tree))
+        assertEquals(SimpleValue(MutableBitList("152", 10, 8), true), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("0")
         tree = test.expr()
-        assertEquals(SimpleValue(MutableBitList("0", 10, 1), true), test.exprParser.resolve(tree))
+        assertEquals(SimpleValue(MutableBitList("0", 10, 1), true), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("20d12")
         tree = test.expr()
-        assertEquals(SimpleValue(MutableBitList("12", 10, 20), true), test.exprParser.resolve(tree))
+        assertEquals(SimpleValue(MutableBitList("12", 10, 20), true), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
@@ -55,7 +60,7 @@ internal class ExprParserTest {
     fun testAddition() {
         val test = LucidTester("5b1101 + 4b0010")
         val tree = test.expr()
-        assertEquals(SimpleValue(MutableBitList("1111", 2, 6), true), test.exprParser.resolve(tree))
+        assertEquals(SimpleValue(MutableBitList("1111", 2, 6), true), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
@@ -65,7 +70,7 @@ internal class ExprParserTest {
     fun testSubtraction() {
         val test = LucidTester("5b1101 - 4b0010")
         val tree = test.expr()
-        assertEquals(SimpleValue(MutableBitList("1011", 2, 6), true), test.exprParser.resolve(tree))
+        assertEquals(SimpleValue(MutableBitList("1011", 2, 6), true), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
@@ -75,21 +80,21 @@ internal class ExprParserTest {
     fun testConcat() {
         var test = LucidTester("c{b1101, b0010, 0}")
         var tree = test.expr()
-        assertEquals(SimpleValue(MutableBitList("110100100", 2, 9), true), test.exprParser.resolve(tree))
+        assertEquals(SimpleValue(MutableBitList("110100100", 2, 9), true), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("c{{b1101}, b0010, 0}")
         tree = test.expr()
-        assertEquals(null, test.exprParser.resolve(tree))
+        assertEquals(null, test.parseContext.expr.resolve(tree))
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("c{{b1101}, {b0010}, {0}}")
         tree = test.expr()
-        assertEquals(null, test.exprParser.resolve(tree))
+        assertEquals(null, test.parseContext.expr.resolve(tree))
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
@@ -104,7 +109,7 @@ internal class ExprParserTest {
                     SimpleValue(MutableBitList("1101", 2, 4), true)
                 )
             ),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -115,21 +120,21 @@ internal class ExprParserTest {
     fun testDup() {
         var test = LucidTester("2x{0}")
         var tree = test.expr()
-        assertEquals(SimpleValue(MutableBitList("00", 2, 2), true), test.exprParser.resolve(tree))
+        assertEquals(SimpleValue(MutableBitList("00", 2, 2), true), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("8x{2b10}")
         tree = test.expr()
-        assertEquals(SimpleValue(MutableBitList("1010101010101010", 2, 16), true), test.exprParser.resolve(tree))
+        assertEquals(SimpleValue(MutableBitList("1010101010101010", 2, 16), true), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("{8}x{2b10}")
         tree = test.expr()
-        assertEquals(null, test.exprParser.resolve(tree))
+        assertEquals(null, test.parseContext.expr.resolve(tree))
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
@@ -145,7 +150,7 @@ internal class ExprParserTest {
                     SimpleValue(MutableBitList("0", 2, 1), true),
                 )
             ),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -163,7 +168,7 @@ internal class ExprParserTest {
                     )
                 )
             ),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -172,7 +177,7 @@ internal class ExprParserTest {
         // values of different sizes = error
         test = LucidTester("{0, 2b10, 2b11}")
         tree = test.expr()
-        assertEquals(null, test.exprParser.resolve(tree))
+        assertEquals(null, test.parseContext.expr.resolve(tree))
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
@@ -187,7 +192,7 @@ internal class ExprParserTest {
                     SimpleValue(MutableBitList("00", 2, 2), true),
                 )
             ),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -201,7 +206,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("800", 10, Util.widthOfMult(Util.minWidthNum(20), Util.minWidthNum(40))), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -226,7 +231,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("800", 10, Util.widthOfMult(Util.minWidthNum(20), Util.minWidthNum(40))), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
 
         assert(test.hasNoErrors)
@@ -245,7 +250,7 @@ internal class ExprParserTest {
                     signed = true
                 ), true
             ),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
 
         assert(test.hasNoErrors)
@@ -260,7 +265,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("5", 10, Util.minWidthNum(40)), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -271,7 +276,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("8", 10, Util.minWidthNum(40)), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -287,7 +292,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("5", 10, Util.minWidthNum(40)), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -298,7 +303,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("00110", 2, signed = false), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -309,7 +314,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("11110", 2, signed = true), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -320,7 +325,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("16", 10, signed = false), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -331,7 +336,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("110000", 2, signed = false), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -342,7 +347,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("16", 10, signed = false), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -353,7 +358,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("110000", 2, signed = true), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -367,7 +372,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("1001", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -378,7 +383,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("001001", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -389,7 +394,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("001001", 2, true), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -400,7 +405,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("1101", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -411,7 +416,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("101111", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -422,7 +427,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("111101", 2, true), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -433,7 +438,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("0100", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -444,7 +449,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("000100", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -455,7 +460,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("110100", 2, true), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -469,7 +474,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("1", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -480,7 +485,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("0", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -491,7 +496,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("0", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -502,7 +507,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("1", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -513,7 +518,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("x", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -524,7 +529,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("0", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -535,7 +540,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("1", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -549,7 +554,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("0", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -560,7 +565,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("1", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -571,7 +576,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("0", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -582,7 +587,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("1", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -593,7 +598,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("0", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -604,7 +609,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("1", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -618,7 +623,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("1", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -629,7 +634,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("0", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -640,7 +645,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("0", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -651,7 +656,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("1", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -665,7 +670,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("1", 2, 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -676,7 +681,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("2", 10, 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -690,7 +695,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("0", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -701,7 +706,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("1", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -712,7 +717,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("010", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -726,7 +731,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("101100", 2, signed = true), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
 
         assert(test.hasNoErrors)
@@ -738,7 +743,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("20", 10, Util.minWidthNum(20) + 2, signed = true), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
 
         assert(test.hasNoErrors)
@@ -753,7 +758,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("20", 10, width = Util.minWidthNum(20), signed = true), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
 
         assert(test.hasNoErrors)
@@ -765,7 +770,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("101100", 2, signed = true), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
 
         assert(test.hasNoErrors)
@@ -777,7 +782,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("3", 10), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -788,7 +793,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("0", 10), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -799,7 +804,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("0", 10), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -810,7 +815,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("8", 10), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -821,7 +826,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("1", 10), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -832,7 +837,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("16", 10), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -843,7 +848,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("0011", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -859,7 +864,7 @@ internal class ExprParserTest {
                     SimpleValue(MutableBitList("0011", 2), true)
                 )
             ),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -870,7 +875,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("1100", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -881,7 +886,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("11000011", 2), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -899,7 +904,7 @@ internal class ExprParserTest {
                     SimpleValue(MutableBitList("11", 2), true)
                 )
             ),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -925,7 +930,7 @@ internal class ExprParserTest {
                     )
                 )
             ),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -936,7 +941,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("20", 10, signed = false), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
 
         assert(test.hasNoErrors)
@@ -948,7 +953,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("101100", 2, signed = false), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
 
         assert(test.hasNoErrors)
@@ -960,7 +965,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("3", 10, signed = false), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
 
         assert(test.hasNoErrors)
@@ -972,7 +977,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("3", 10, signed = false), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
 
         assert(test.hasNoErrors)
@@ -984,7 +989,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("4", 10, signed = false), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
 
         assert(test.hasNoErrors)
@@ -996,7 +1001,7 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("8", 10, 3, signed = false), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
 
         assert(test.hasNoErrors)
@@ -1008,10 +1013,46 @@ internal class ExprParserTest {
 
         assertEquals(
             SimpleValue(MutableBitList("1", 10, 3, signed = false), true),
-            test.exprParser.resolve(tree)
+            test.parseContext.expr.resolve(tree)
         )
 
         assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+    }
+
+    @Test
+    fun simpleSignalTest() {
+        val test = LucidTester("test[2]")
+        val signal = Signal("test", SignalDirection.Both, null, SimpleValue(MutableBitList("110", 2), false))
+        test.parseContext.testingSignalResolver = TestSignalResolver(signal)
+        val exprCtx = test.expr()
+
+        assert(test.hasNoIssues)
+
+        assertEquals(SimpleValue(MutableBitList("1", 2), false), test.parseContext.expr.resolve(exprCtx))
+    }
+
+    @Test
+    fun rangeSignalTest() {
+        val test = LucidTester("test[2:1]")
+        val signal = Signal("test", SignalDirection.Both, null, SimpleValue(MutableBitList("1010", 2), false))
+        test.parseContext.testingSignalResolver = TestSignalResolver(signal)
+        val exprCtx = test.expr()
+
+        assert(test.hasNoIssues)
+
+        assertEquals(SimpleValue(MutableBitList("01", 2), false), test.parseContext.expr.resolve(exprCtx))
+    }
+
+    @Test
+    fun rangeOutOfBoundsSignalTest() {
+        val test = LucidTester("test[9:1]")
+        val signal = Signal("test", SignalDirection.Both, null, SimpleValue(MutableBitList("1010", 2), false))
+        test.parseContext.testingSignalResolver = TestSignalResolver(signal)
+        val exprCtx = test.expr()
+
+        assert(test.hasErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
     }

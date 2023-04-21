@@ -15,6 +15,7 @@ repositories {
 dependencies {
     antlr("org.antlr:antlr4:4.12.0")
     implementation("org.apache.commons:commons-text:1.10.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-RC")
 
     testImplementation(kotlin("test"))
 }

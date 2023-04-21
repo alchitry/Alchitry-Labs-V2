@@ -1,3 +1,5 @@
+package com.alchitry.labs.com.alchitry.labs.parsers.lucidv2
+
 import com.alchitry.labs.parsers.errors.ErrorListener
 import org.antlr.v4.runtime.*
 import org.antlr.v4.runtime.atn.ATNConfigSet

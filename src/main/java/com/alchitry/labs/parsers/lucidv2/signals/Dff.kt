@@ -8,9 +8,9 @@ data class Dff(
     val init: Value,
     val clkCtx: ExprContext,
     val rstCtx: ExprContext?
-) : Named, SignalParent {
-    val d = Signal("d", SignalDirection.Write, init.asMutable())
-    val q = Signal("q", SignalDirection.Read, init.asMutable())
+) : SignalParent {
+    val d = Signal("d", SignalDirection.Write, this, init.asMutable())
+    val q = Signal("q", SignalDirection.Read, this, init.asMutable())
 
     override fun getSignal(name: String): Signal? =
         when (name) {
