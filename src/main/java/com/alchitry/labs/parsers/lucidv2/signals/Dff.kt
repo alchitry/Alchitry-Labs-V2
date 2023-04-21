@@ -1,13 +1,13 @@
 package com.alchitry.labs.parsers.lucidv2.signals
 
-import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.ExprContext
+import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.values.DynamicExpr
 import com.alchitry.labs.parsers.lucidv2.values.Value
 
 data class Dff(
     override val name: String,
     val init: Value,
-    val clkCtx: ExprContext,
-    val rstCtx: ExprContext?
+    val clk: DynamicExpr,
+    val rst: DynamicExpr?
 ) : SignalParent {
     val d = Signal("d", SignalDirection.Write, this, init.asMutable())
     val q = Signal("q", SignalDirection.Read, this, init.asMutable())

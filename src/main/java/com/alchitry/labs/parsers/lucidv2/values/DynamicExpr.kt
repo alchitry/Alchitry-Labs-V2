@@ -1,25 +1,14 @@
 package com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.values
 
-import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.onAnyChange
-import com.alchitry.labs.parsers.lucidv2.grammar.LucidLexer
-import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.ExprContext
-import com.alchitry.labs.parsers.lucidv2.parsers.BitSelectionParser
-import com.alchitry.labs.parsers.lucidv2.parsers.ExprParser
 import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext
-import com.alchitry.labs.parsers.lucidv2.resolvers.SignalResolver
-import com.alchitry.labs.parsers.lucidv2.signals.Signal
-import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.values.Value
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.launch
-import org.antlr.v4.runtime.CharStreams
-import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.tree.ParseTreeWalker
 
 /**
@@ -28,16 +17,13 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker
  *
  * @param expr is the expression to use to evaluate new values
  * @param parseContext is the context of the original parse
- * @param initialValue is the initial value to set
- * @param dependencies is the list of Signals whose change will cause a reevaluation of this expression
  */
 class DynamicExpr(
-    private val expr: ExprContext,
-    private val parseContext: LucidParseContext,
-    initialValue: Value,
-    dependencies: List<Signal>
+    val expr: ExprContext,
+    private val parseContext: LucidParseContext
 ) {
-    private val mutableValueFlow = MutableStateFlow(initialValue)
+    private val mutableValueFlow =
+        MutableStateFlow(parseContext.expr.resolve(expr) ?: error("Failed to resolve initial value for ${expr.text}"))
     val valueFlow = mutableValueFlow.asStateFlow()
 
     var value
@@ -50,6 +36,7 @@ class DynamicExpr(
         }
 
     init {
+        val dependencies = parseContext.expr.resolveDependencies(expr) ?: error("Failed to resolve dependencies for ${expr.text}")
         parseContext.scope.launch {
             onAnyChange(dependencies.map { it.valueFlow }) {
                 evaluate()

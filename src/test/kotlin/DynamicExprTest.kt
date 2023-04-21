@@ -1,8 +1,6 @@
 import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.values.DynamicExpr
-import com.alchitry.labs.parsers.lucidv2.resolvers.SignalResolver
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
-import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.values.MutableBitList
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
 import kotlinx.coroutines.*
@@ -20,7 +18,7 @@ class DynamicExprTest {
 
         val exprCtx = test.expr()
 
-        val dynamicExpr = DynamicExpr(exprCtx, test.parseContext, SimpleValue(MutableBitList("xxx", 2), false), listOf(signal))
+        val dynamicExpr = DynamicExpr(exprCtx, test.parseContext)
 
         var count = 0
         runBlocking {
@@ -39,9 +37,6 @@ class DynamicExprTest {
                         dynamicExpr.collect {
                             when (count) {
                                 0 -> {
-                                    if (!it.isNumber())
-                                        return@collect
-
                                     assertEquals(SimpleValue(MutableBitList("001", 2), false), it)
                                     signal.value = SimpleValue(MutableBitList("011", 2), false)
                                     count++

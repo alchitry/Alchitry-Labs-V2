@@ -1,15 +1,17 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
 import com.alchitry.labs.Util.widthOfMult
-import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext
 import com.alchitry.labs.parsers.BigFunctions
 import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.errors.ErrorStrings
 import com.alchitry.labs.parsers.errors.WarningStrings
 import com.alchitry.labs.parsers.errors.dummyErrorListener
-import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
-import com.alchitry.labs.parsers.lucidv2.signals.*
+import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext
+import com.alchitry.labs.parsers.lucidv2.signals.Signal
+import com.alchitry.labs.parsers.lucidv2.signals.SignalParent
+import com.alchitry.labs.parsers.lucidv2.signals.SignalSelectionException
+import com.alchitry.labs.parsers.lucidv2.signals.SignalSelector
 import com.alchitry.labs.parsers.lucidv2.values.*
 import com.alchitry.labs.parsers.lucidv2.values.Function
 import org.antlr.v4.runtime.ParserRuleContext
@@ -31,9 +33,8 @@ class ExprParser(
     private val values = mutableMapOf<ParseTree, Value>()
     private val dependencies = mutableMapOf<ParseTree, Set<Signal>>()
 
-    fun resolve(ctx: ExprContext): Value? {
-        return values[ctx]
-    }
+    fun resolve(ctx: ExprContext): Value? = values[ctx]
+    fun resolveDependencies(ctx: ExprContext): Set<Signal>? = dependencies[ctx]
 
     private fun debug(ctx: ParserRuleContext) {
         errorListener.reportDebug(ctx, values[ctx].toString())
@@ -185,8 +186,28 @@ class ExprParser(
         }
     }
 
+    override fun exitBitSelectorFixWidth(ctx: BitSelectorFixWidthContext) {
+        super.exitBitSelectorFixWidth(ctx)
+        dependencies[ctx] = mutableSetOf<Signal>().apply {
+            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+        }
+    }
+
+    override fun exitBitSelectorConst(ctx: BitSelectorConstContext) {
+        super.exitBitSelectorConst(ctx)
+        dependencies[ctx] = mutableSetOf<Signal>().apply {
+            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+        }
+    }
+
+    override fun exitArrayIndex(ctx: ArrayIndexContext) {
+        super.exitArrayIndex(ctx)
+        dependencies[ctx.expr()]?.let { dependencies[ctx] = it }
+    }
+
     override fun exitNumber(ctx: NumberContext) {
         if (canSkip(ctx)) return
+        dependencies[ctx] = emptySet()
 
         val radix: Int
         val split: List<String>?

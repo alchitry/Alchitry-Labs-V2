@@ -1,15 +1,16 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
-import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext
-import com.alchitry.labs.parsers.lucidv2.resolvers.SignalResolver
-import com.alchitry.labs.parsers.lucidv2.signals.StructType
+import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.values.DynamicExpr
 import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.errors.dummyErrorListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.ExprContext
+import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext
+import com.alchitry.labs.parsers.lucidv2.resolvers.SignalResolver
 import com.alchitry.labs.parsers.lucidv2.signals.Dff
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
+import com.alchitry.labs.parsers.lucidv2.signals.StructType
 import com.alchitry.labs.parsers.lucidv2.values.*
 import org.antlr.v4.runtime.tree.ParseTree
 
@@ -113,12 +114,15 @@ class SignalParser(
 
             val resolvedClkCtx = clkCtx
 
-            if (resolvedClkCtx != null) {
-                val dff = Dff(name, init, resolvedClkCtx, rstCtx)
-                dffs[name] = dff
-            } else {
+
+            if (resolvedClkCtx == null) {
                 errorListener.reportError(dffCtx, "Dff is missing connection to clk")
+                return
             }
+            val clk = DynamicExpr(resolvedClkCtx, resolver)
+            val rst = rstCtx?.let{ DynamicExpr(it, resolver) }
+            val dff = Dff(name, init, clk, rst)
+            dffs[name] = dff
         }
     }
 }
