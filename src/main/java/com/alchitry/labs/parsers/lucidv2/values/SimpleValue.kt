@@ -1,23 +1,20 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
-import com.alchitry.labs.parsers.lucidv2.signals.SignalSelectionException
-import com.alchitry.labs.parsers.lucidv2.signals.SignalSelector
 import java.math.BigInteger
 import java.util.*
 import kotlin.experimental.and
 import kotlin.experimental.or
 import kotlin.math.ceil
 
-data class SimpleValue(
-    val bits: List<Bit>,
+sealed class SimpleValue(
     override val constant: Boolean,
-    val signed: Boolean
-) : Value(), List<Bit> by bits {
-    constructor(constant: Boolean, signed: Boolean, size: Int, init: (Int) -> Bit) : this(
-        List(size, init),
-        constant,
-        signed
-    )
+    open val signed: Boolean
+) : Value() {
+    abstract val size: Int
+    abstract val msb: Bit
+    abstract val lsb: Bit
+    abstract val bits: List<Bit>
+    fun asBitListValue() = if (this is BitListValue) this else BitListValue(bits, constant, signed)
 
     fun toBigInt(): BigInteger {
         check(isNumber()) { "The value is not a number (it contains x, z, or u values)" }
@@ -27,7 +24,7 @@ data class SimpleValue(
             Arrays.fill(bytes, 255.toByte()) else Arrays.fill(bytes, 0.toByte())
         repeat(size) { i ->
             val idx: Int = i / 8
-            bytes[bytes.size - 1 - idx] = if (this[i] == Bit.B1)
+            bytes[bytes.size - 1 - idx] = if (bits[i] == Bit.B1)
                 bytes[bytes.size - 1 - idx] or (1 shl i % 8).toByte()
             else
                 bytes[bytes.size - 1 - idx] and (1 shl i % 8).inv().toByte()
@@ -41,7 +38,7 @@ data class SimpleValue(
 
     override fun isTrue(): BitValue {
         var hasX = false
-        this.forEach {
+        bits.forEach {
             if (it == Bit.B1)
                 return BitValue(Bit.B1, constant, false)
             else if (it == Bit.Bx || it == Bit.Bz)
@@ -50,28 +47,8 @@ data class SimpleValue(
         return BitValue(if (hasX) Bit.Bx else Bit.B0, constant, false)
     }
 
-    fun isDriven(): Boolean = none { it == Bit.Bu }
-    override fun isNumber(): Boolean = none { !it.isNumber() }
-
-    override fun asMutable(): SimpleValue = copy(constant = false)
-
-    override val signalWidth: SimpleWidth = SimpleWidth(bits.size)
-
-    override fun invert(): SimpleValue = copy(bits = bits.map { !it })
-
-    fun resize(width: Int, signExtend: Boolean = signed): SimpleValue {
-        if (width == size)
-            return copy(signed = signExtend)
-        if (width < size)
-            return SimpleValue(subList(0, width), signExtend, constant)
-        val extendBit = if (!signExtend && msb == Bit.B1) Bit.B0 else msb
-        val newBits = bits.toMutableList()
-        repeat(width - size) { newBits.add(extendBit) }
-        return SimpleValue(newBits, constant, signExtend)
-    }
-
-    /** Changes sign without changing bits */
-    fun setSign(signed: Boolean): SimpleValue = copy(signed = signed)
+    fun isDriven(): Boolean = bits.none { it == Bit.Bu }
+    override fun isNumber(): Boolean = bits.none { !it.isNumber() }
 
     fun isNegative(): Boolean = signed && msb == Bit.B1
 
@@ -79,8 +56,8 @@ data class SimpleValue(
         val longest = size.coerceAtLeast(other.size)
         val signedOp = signed && other.signed
         val constantOp = constant && other.constant
-        val op1 = setSign(signedOp).resize(longest)
-        val op2 = other.setSign(signedOp).resize(longest)
+        val op1 = asBitListValue().setSign(signedOp).resize(longest)
+        val op2 = other.asBitListValue().setSign(signedOp).resize(longest)
 
         val neg1 = signedOp && isNegative()
         val neg2 = signedOp && other.isNegative()
@@ -117,27 +94,13 @@ data class SimpleValue(
         return (isGreaterThan(other) or isEqualTo(other))
     }
 
-    fun toBoolean() = isTrue().bit == Bit.B1
-
-    fun select(selection: SignalSelector.Bits): Value {
-        try {
-            val newBits = bits.subList(selection.range.first, selection.range.last + 1)
-            return copy(bits = newBits)
-        } catch (e: IndexOutOfBoundsException) {
-            throw SignalSelectionException(
-                selection,
-                "Selection $selection is outside the bounds of [${bits.size - 1}:0]"
-            )
-        }
-    }
-
     private inline fun doOp(b: SimpleValue, crossinline op: (Bit, Bit) -> Bit): SimpleValue {
         val size = size.coerceAtLeast(b.size)
         val signedOp = signed && b.signed
         val constant = constant && b.constant
-        val op1 = resize(size, signedOp)
-        val op2 = b.resize(size, signedOp)
-        return SimpleValue(constant, signedOp, size) { i ->
+        val op1 = asBitListValue().resize(size, signedOp)
+        val op2 = b.asBitListValue().resize(size, signedOp)
+        return BitListValue(constant, signedOp, size) { i ->
             op(op1[i], op2[i])
         }
     }
@@ -166,33 +129,33 @@ data class SimpleValue(
         return doOp(b) { b1, b2 -> b1 xnor b2 }
     }
 
-    infix fun shl(n: Int): SimpleValue {
+    infix fun shl(n: Int): BitListValue {
         val bits = mutableListOf<Bit>()
         repeat(n) { bits.add(Bit.B0) }
-        bits.addAll(this)
-        return SimpleValue(bits, constant, signed)
+        bits.addAll(bits)
+        return BitListValue(bits, constant, signed)
     }
 
-    infix fun ushl(n: Int): SimpleValue {
+    infix fun ushl(n: Int): BitListValue {
         val bits = mutableListOf<Bit>()
         repeat(n) { bits.add(Bit.B0) }
-        bits.addAll(this)
-        return SimpleValue(bits, constant, false)
+        bits.addAll(bits)
+        return BitListValue(bits, constant, false)
     }
 
-    infix fun shr(n: Int): SimpleValue {
-        val bits = mutableListOf<Bit>()
-        bits.addAll(subList(n, size))
+    infix fun shr(n: Int): BitListValue {
+        val newBits = mutableListOf<Bit>()
+        newBits.addAll(bits.subList(n, size))
         val signBit = if (signed) msb else Bit.B0
-        repeat(n) { bits.add(signBit) }
-        return SimpleValue(bits, constant, signed)
+        repeat(n) { newBits.add(signBit) }
+        return BitListValue(newBits, constant, signed)
     }
 
-    infix fun ushr(n: Int): SimpleValue {
-        val bits = mutableListOf<Bit>()
-        bits.addAll(subList(n, size))
-        repeat(n) { bits.add(Bit.B0) }
-        return SimpleValue(bits, constant, signed)
+    infix fun ushr(n: Int): BitListValue {
+        val newBits = mutableListOf<Bit>()
+        newBits.addAll(bits.subList(n, size))
+        repeat(n) { newBits.add(Bit.B0) }
+        return BitListValue(newBits, constant, signed)
     }
 
     override fun toString(): String {
@@ -202,21 +165,11 @@ data class SimpleValue(
         if (signed)
             sb.append("signed ")
         sb.append('{')
-        for (i in this.indices.reversed()) {
-            val bv = this[i]
+        for (i in bits.indices.reversed()) {
+            val bv = bits[i]
             sb.append(bv.toString().substring(1))
         }
         sb.append('}')
         return sb.toString()
     }
-
-    override fun subList(fromIndex: Int, toIndex: Int): SimpleValue {
-        return SimpleValue(bits.subList(fromIndex, toIndex), constant, signed)
-    }
 }
-
-/** Least significant bit */
-val List<Bit>.lsb get() = first()
-
-/** Most significant bit */
-val List<Bit>.msb get() = last()

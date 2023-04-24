@@ -1,12 +1,12 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
-import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext
 import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.errors.dummyErrorListener
 import com.alchitry.labs.parsers.lucidv2.*
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
-import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
+import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext
+import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
 
@@ -51,8 +51,8 @@ open class BitSelectionParser(
                 errorListener.reportBitSelectionNotSimpleValue(it)
             }) return
 
-        max as SimpleValue
-        min as SimpleValue
+        max as BitListValue
+        min as BitListValue
 
         val maxNan = !max.isNumber()
         val minNan = !min.isNumber()
@@ -95,8 +95,8 @@ open class BitSelectionParser(
                 errorListener.reportBitSelectionNotSimpleValue(it)
             }) return
 
-        width as SimpleValue
-        start as SimpleValue
+        width as BitListValue
+        start as BitListValue
 
         if (!width.isNumber()) {
             errorListener.reportBitSelectorNotANumber(ctx.expr(1))
@@ -144,7 +144,7 @@ open class BitSelectionParser(
 
         val index = resolver.expr.resolve(ctx.expr()) ?: return
 
-        if (index !is SimpleValue) {
+        if (index !is BitListValue) {
             errorListener.reportBitSelectionNotSimpleValue(ctx.expr())
             return
         }

@@ -5,14 +5,14 @@ import kotlin.experimental.and
 import kotlin.math.log2
 import kotlin.math.roundToInt
 
-fun SimpleValue(
+fun BitListValue(
     str: String,
     radix: Int = 10,
     constant: Boolean,
     signed: Boolean,
     width: Int = log2(radix.toFloat()).roundToInt()
-): SimpleValue {
-    if (radix == 10) return SimpleValue(BigInteger(str), constant, signed)
+): BitListValue {
+    if (radix == 10) return BitListValue(BigInteger(str), constant, signed)
 
     val bits = mutableListOf<Bit>()
     val strLower = str.lowercase()
@@ -78,7 +78,7 @@ fun SimpleValue(
 
         else -> throw IllegalArgumentException("Radix must be 256, 16, 10, or 2")
     }
-    return SimpleValue(bits, constant, signed)
+    return BitListValue(bits, constant, signed)
 }
 
 private fun BigInteger.minWidth(signed: Boolean = signum() == -1): Int {
@@ -87,12 +87,12 @@ private fun BigInteger.minWidth(signed: Boolean = signum() == -1): Int {
     return w.coerceAtLeast(1)
 }
 
-fun SimpleValue(
+fun BitListValue(
     bigInt: BigInteger,
     constant: Boolean,
     signed: Boolean = bigInt.signum() == -1,
     width: Int = bigInt.minWidth(signed)
-): SimpleValue {
+): BitListValue {
     val bList = bigInt.toByteArray()
     val bits = mutableListOf<Bit>()
 
@@ -112,11 +112,11 @@ fun SimpleValue(
         }
     }
 
-    return SimpleValue(bits, constant, signed)
+    return BitListValue(bits, constant, signed)
 }
 
-fun SimpleValue(value: Long, width: Int, constant: Boolean, signed: Boolean): SimpleValue =
-    SimpleValue(constant, signed, width) {
+fun BitListValue(value: Long, width: Int, constant: Boolean, signed: Boolean): BitListValue =
+    BitListValue(constant, signed, width) {
         if ((value and (1 shr it).toLong()) != 0.toLong()) Bit.B1 else Bit.B0
     }
 

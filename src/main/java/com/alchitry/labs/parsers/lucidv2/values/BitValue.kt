@@ -1,10 +1,15 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
-data class BitValue(
+data class  BitValue(
     val bit: Bit,
     override val constant: Boolean,
-    val signed: Boolean
-) : Value() {
+    override val signed: Boolean
+) : SimpleValue(constant, signed) {
+    override val size: Int = 1
+    override val msb: Bit = bit
+    override val lsb: Bit = bit
+    override val bits: List<Bit> = listOf(bit)
+
     private fun doOp(other: BitValue, value: Bit) = BitValue(
         value,
         constant && other.constant,

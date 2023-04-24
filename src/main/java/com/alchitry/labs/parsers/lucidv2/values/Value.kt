@@ -77,9 +77,8 @@ sealed class Value {
     abstract fun isTrue(): BitValue
 
     infix fun and(other: Value): Value {
-        check(other::class == this::class) { "And operator can't be used on different value types" }
+        check(other::class == this::class || (this is SimpleValue && other is SimpleValue)) { "And operator can't be used on different value types" }
         return when (this) {
-            is BitValue -> this and (other as BitValue)
             is SimpleValue -> this and (other as SimpleValue)
             is ArrayValue -> ArrayValue(List(elements.size) { elements[it] and (other as ArrayValue).elements[it] })
             is StructValue -> {
@@ -95,9 +94,8 @@ sealed class Value {
     }
 
     infix fun or(other: Value): Value {
-        check(other::class == this::class) { "Or operator can't be used on different value types" }
+        check(other::class == this::class || (this is SimpleValue && other is SimpleValue)) { "Or operator can't be used on different value types" }
         return when (this) {
-            is BitValue -> this or (other as BitValue)
             is SimpleValue -> this or (other as SimpleValue)
             is ArrayValue -> ArrayValue(List(elements.size) { elements[it] or (other as ArrayValue).elements[it] })
             is StructValue -> {
@@ -113,9 +111,8 @@ sealed class Value {
     }
 
     infix fun xor(other: Value): Value {
-        check(other::class == this::class) { "Xor operator can't be used on different value types" }
+        check(other::class == this::class || (this is SimpleValue && other is SimpleValue)) { "Xor operator can't be used on different value types" }
         return when (this) {
-            is BitValue -> this xor (other as BitValue)
             is SimpleValue -> this xor (other as SimpleValue)
             is ArrayValue -> ArrayValue(List(elements.size) { elements[it] xor (other as ArrayValue).elements[it] })
             is StructValue -> {
@@ -140,7 +137,6 @@ sealed class Value {
 
     private fun reduceOp(op: (List<Bit>) -> Bit): Bit {
         return when (this) {
-            is BitValue -> op(listOf(bit))
             is SimpleValue -> op(bits)
             is ArrayValue -> op(elements.map { it.reduceOp(op) })
             is StructValue -> {
@@ -171,7 +167,7 @@ sealed class Value {
         return when (this) {
             is BitValue -> this
             is ArrayValue -> ArrayValue(elements.reversed())
-            is SimpleValue -> copy(bits.reversed())
+            is BitListValue -> copy(bits.reversed())
             is StructValue -> error("reverse() can't be called on StructValues")
             is UndefinedValue -> if (signalWidth.isArray()) this else error("reverse() can't be called on UndefinedValues that aren't arrays")
         }
@@ -179,17 +175,17 @@ sealed class Value {
 
     private fun getBits(): List<Bit> {
         return when (this) {
-            is BitValue -> listOf(bit)
             is ArrayValue -> elements.flatMap { it.getBits() }
             is SimpleValue -> bits
             is StructValue -> type.flatMap { (key, value) ->
                 this[key]?.getBits() ?: List(value.getBitCount()) { Bit.Bx }
             }
+
             is UndefinedValue -> List(width.getBitCount()) { Bit.Bx }
         }
     }
 
-    fun flatten(): SimpleValue = SimpleValue(getBits(), constant, false)
+    fun flatten(): BitListValue = BitListValue(getBits(), constant, false)
 
     /** Returns true if the other value can be scaled to match this value. */
     fun canAssign(other: Value): Boolean = signalWidth.canAssign(other.signalWidth)
@@ -208,14 +204,14 @@ sealed class Value {
             is BitValue -> when (other) {
                 is BitValue -> this
                 is ArrayValue -> error("Cannot resize SimpleValue to fit an ArrayValue")
-                is SimpleValue -> SimpleValue(listOf(bit), constant, signed).resize(other.size)
+                is BitListValue -> BitListValue(listOf(bit), constant, signed).resize(other.size)
                 is StructValue -> error("Cannot resize SimpleValue to fit a StructValue")
                 is UndefinedValue -> UndefinedValue(constant = constant, width = other.width)
             }
 
-            is SimpleValue -> when (other) {
+            is BitListValue -> when (other) {
                 is ArrayValue -> error("Cannot resize SimpleValue to fit an ArrayValue")
-                is SimpleValue -> resize(other.size)
+                is BitListValue -> resize(other.size)
                 is BitValue -> BitValue(lsb, constant, signed)
                 is StructValue -> error("Cannot resize SimpleValue to fit a StructValue")
                 is UndefinedValue -> UndefinedValue(constant = constant, width = other.width)
@@ -234,21 +230,21 @@ sealed class Value {
         when (selection) {
             is SignalSelector.Bits -> when (this) {
                 is ArrayValue -> select(selection)
-                is SimpleValue -> select(selection)
-                is StructValue -> throw SignalSelectionException(selection, "Bit selection can't be used on a struct")
+                is BitListValue -> select(selection)
+                is StructValue -> throw SignalSelectionException(selection, "Bit selection can't be used on a struct.")
                 is UndefinedValue -> TODO()
-                is BitValue -> TODO()
+                is BitValue -> throw SignalSelectionException(selection, "Bit selection can't be used on a single bit.")
             }
 
             is SignalSelector.Struct -> when (this) {
-                is ArrayValue, is SimpleValue -> throw SignalSelectionException(
+                is ArrayValue, is BitListValue -> throw SignalSelectionException(
                     selection,
-                    "Arrays don't have struct members"
+                    "Arrays don't have struct members."
                 )
 
                 is StructValue -> select(selection)
                 is UndefinedValue -> TODO()
-                is BitValue -> TODO()
+                is BitValue -> throw SignalSelectionException(selection, "Bits don't have struct members.")
             }
         }
 }

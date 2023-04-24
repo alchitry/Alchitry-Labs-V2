@@ -90,7 +90,7 @@ class ExprParser(
     fun checkSimpleValue(vararg exprCtx: ExprContext, onError: (ExprContext) -> Unit): Boolean {
         return exprCtx.map {
             val op = resolve(it) ?: throw IllegalArgumentException("exprCtx wasn't defined")
-            if (op is SimpleValue) {
+            if (op is BitListValue) {
                 true
             } else {
                 onError(it)
@@ -276,7 +276,7 @@ class ExprParser(
                         val elements = mutableListOf<Value>()
                         repeat(valueString.length) {
                             elements.add(
-                                SimpleValue(
+                                BitListValue(
                                     MutableBitList(
                                         valueString[it].code.toLong(),
                                         8
@@ -289,11 +289,11 @@ class ExprParser(
                     }
 
                     valueString.length == 1 -> {
-                        value = SimpleValue(MutableBitList(valueString[0].code.toLong(), 8), constant = true)
+                        value = BitListValue(MutableBitList(valueString[0].code.toLong(), 8), constant = true)
                     }
 
                     else -> {
-                        value = SimpleValue(MutableBitList(), constant = true)
+                        value = BitListValue(MutableBitList(), constant = true)
                         errorListener.reportError(ctx, ErrorStrings.STRING_CANNOT_BE_EMPTY)
                     }
                 }
@@ -304,9 +304,9 @@ class ExprParser(
 
         val unbound = MutableBitList(valueString, radix)
         val value = if (width != null) {
-            SimpleValue(MutableBitList(valueString, radix, width.toBigInt().intValueExact()), constant = true)
+            BitListValue(MutableBitList(valueString, radix, width.toBigInt().intValueExact()), constant = true)
         } else {
-            SimpleValue(unbound, constant = true)
+            BitListValue(unbound, constant = true)
         }
         if (value.bits.size < unbound.size) {
             errorListener.reportWarning(ctx, String.format(ErrorStrings.VALUE_TOO_BIG, ctx.text, value.bits.size))
@@ -408,7 +408,7 @@ class ExprParser(
                 values[ctx] = ArrayValue(valueList)
             }
 
-            is SimpleValue, is UndefinedValue -> {
+            is BitListValue, is UndefinedValue -> {
                 var bitCount = 0
                 var definedWidth = true
 
@@ -436,8 +436,8 @@ class ExprParser(
                 }
 
                 val bits = MutableBitList()
-                operands.asReversed().forEach { bits.addAll((it.first as SimpleValue).bits) }
-                values[ctx] = SimpleValue(bits, constant)
+                operands.asReversed().forEach { bits.addAll((it.first as BitListValue).bits) }
+                values[ctx] = BitListValue(bits, constant)
             }
 
             else -> {
@@ -485,8 +485,8 @@ class ExprParser(
             return
         }
 
-        assert(dupCount is SimpleValue) { "Duplication count is flat array but not a SimpleValue!" }
-        dupCount as SimpleValue
+        assert(dupCount is BitListValue) { "Duplication count is flat array but not a SimpleValue!" }
+        dupCount as BitListValue
 
         if (!dupCount.bits.isNumber()) {
             errorListener.reportError(ctx.expr(0), ErrorStrings.ARRAY_DUP_INDEX_NAN)
@@ -513,12 +513,12 @@ class ExprParser(
                 elements.addAll(dupValue.elements)
             }
             values[ctx] = ArrayValue(elements)
-        } else if (dupValue is SimpleValue) {
+        } else if (dupValue is BitListValue) {
             val bits = MutableBitList(dupValue.signed)
             repeat(dupTimes) {
                 bits.addAll(dupValue.bits)
             }
-            values[ctx] = SimpleValue(bits, constant)
+            values[ctx] = BitListValue(bits, constant)
         }
         debug(ctx)
     }
@@ -576,15 +576,15 @@ class ExprParser(
             return
         }
 
-        assert(expr is SimpleValue) { "Expression assumed to be SimpleValue" }
-        expr as SimpleValue
+        assert(expr is BitListValue) { "Expression assumed to be SimpleValue" }
+        expr as BitListValue
 
         if (!expr.isNumber()) {
-            values[ctx] = SimpleValue(MutableBitList(true, expr.size + 1) { Bit.Bx }, constant)
+            values[ctx] = BitListValue(MutableBitList(true, expr.size + 1) { Bit.Bx }, constant)
             return
         }
 
-        values[ctx] = SimpleValue(MutableBitList(expr.bits.toBigInt().negate(), true, expr.size + 1), constant)
+        values[ctx] = BitListValue(MutableBitList(expr.bits.toBigInt().negate(), true, expr.size + 1), constant)
         debug(ctx)
     }
 
@@ -643,7 +643,7 @@ class ExprParser(
             return
         }
 
-        if (op1 !is SimpleValue || op2 !is SimpleValue)
+        if (op1 !is BitListValue || op2 !is BitListValue)
             error("One (or both) of the operands isn't a simple array. This shouldn't be possible.")
 
         val width = op1.bits.size.coerceAtLeast(op2.bits.size) + 1
@@ -651,13 +651,13 @@ class ExprParser(
         val signed = op1.signed && op2.signed
 
         values[ctx] = when {
-            !op1.isNumber() || !op2.isNumber() -> SimpleValue(MutableBitList(Bit.Bx, width, signed), constant)
-            operand == "+" -> SimpleValue(
+            !op1.isNumber() || !op2.isNumber() -> BitListValue(MutableBitList(Bit.Bx, width, signed), constant)
+            operand == "+" -> BitListValue(
                 MutableBitList(op1.bits.toBigInt().add(op2.bits.toBigInt()), signed, width),
                 constant
             )
 
-            else -> SimpleValue(
+            else -> BitListValue(
                 MutableBitList(op1.bits.toBigInt().subtract(op2.bits.toBigInt()), signed, width),
                 constant
             )
@@ -700,7 +700,7 @@ class ExprParser(
             return
         }
 
-        if (op1 !is SimpleValue || op2 !is SimpleValue)
+        if (op1 !is BitListValue || op2 !is BitListValue)
             error("One (or both) of the operands isn't a simple array. This shouldn't be possible.")
 
         val signed = op1.signed && op2.signed
@@ -710,9 +710,9 @@ class ExprParser(
         values[ctx] = if (multOp) {
             val width = widthOfMult(op1Bits.size, op2Bits.size)
             if (!op1.isNumber() || !op2.isNumber())
-                SimpleValue(MutableBitList(Bit.Bx, width, signed), constant)
+                BitListValue(MutableBitList(Bit.Bx, width, signed), constant)
             else
-                SimpleValue(MutableBitList(op1Bits.toBigInt().multiply(op2Bits.toBigInt()), signed, width), constant)
+                BitListValue(MutableBitList(op1Bits.toBigInt().multiply(op2Bits.toBigInt()), signed, width), constant)
         } else {
             val op2BigInt = op2Bits.toBigInt()
 
@@ -722,9 +722,9 @@ class ExprParser(
 
             val width = op1Bits.size
             if (!op1.isNumber() || !op2.isNumber() || op2BigInt == BigInteger.ZERO)
-                SimpleValue(MutableBitList(Bit.Bx, width, signed), constant)
+                BitListValue(MutableBitList(Bit.Bx, width, signed), constant)
             else
-                SimpleValue(MutableBitList(op1Bits.toBigInt().divide(op2BigInt), signed, width), constant)
+                BitListValue(MutableBitList(op1Bits.toBigInt().divide(op2BigInt), signed, width), constant)
         }
         debug(ctx)
     }
@@ -755,7 +755,7 @@ class ExprParser(
             return
         }
 
-        check(shift is SimpleValue) { "Shift value is flat array but not SimpleValue or UndefinedValue" }
+        check(shift is BitListValue) { "Shift value is flat array but not SimpleValue or UndefinedValue" }
 
         if (value is UndefinedValue) {
             val vWidth = value.signalWidth
@@ -767,22 +767,22 @@ class ExprParser(
                 values[ctx] = UndefinedValue(constant)
         }
 
-        check(value is SimpleValue) { "Value is flat array but not SimpleValue or UndefinedValue" }
+        check(value is BitListValue) { "Value is flat array but not SimpleValue or UndefinedValue" }
 
         val isSigned = value.signed && (operand == ">>>" || operand == "<<<")
 
         if (!shift.bits.isNumber()) {
-            values[ctx] = SimpleValue(MutableBitList(isSigned, value.size) { Bit.Bx }, constant)
+            values[ctx] = BitListValue(MutableBitList(isSigned, value.size) { Bit.Bx }, constant)
             return
         }
 
         val shiftAmount = shift.bits.toBigInt().toInt()
 
         values[ctx] = when (operand) {
-            ">>" -> SimpleValue(value.bits ushr shiftAmount, constant)
-            ">>>" -> SimpleValue(value.bits shr shiftAmount, constant)
-            "<<" -> SimpleValue(value.bits ushl shiftAmount, constant)
-            "<<<" -> SimpleValue(value.bits shl shiftAmount, constant)
+            ">>" -> BitListValue(value.bits ushr shiftAmount, constant)
+            ">>>" -> BitListValue(value.bits shr shiftAmount, constant)
+            "<<" -> BitListValue(value.bits ushl shiftAmount, constant)
+            "<<<" -> BitListValue(value.bits shl shiftAmount, constant)
             else -> {
                 errorListener.reportError(ctx.getChild(ParserRuleContext::class.java, 1), "Unknown operator $operand")
                 return
@@ -912,8 +912,8 @@ class ExprParser(
                         errorListener.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
                     }) return
 
-                op1 as SimpleValue
-                op2 as SimpleValue
+                op1 as BitListValue
+                op2 as BitListValue
 
                 values[ctx] = when (operand) {
                     "<" -> op1 isLessThan op2
@@ -980,8 +980,8 @@ class ExprParser(
                 errorListener.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
             }) return
 
-        op1 as SimpleValue
-        op2 as SimpleValue
+        op1 as BitListValue
+        op2 as BitListValue
 
         values[ctx] = when (operand) {
             "||" -> op1.isTrue() or op2.isTrue()
@@ -1038,7 +1038,7 @@ class ExprParser(
 
         val value = if (cond.isTrue().lsb == Bit.B1) op1 else op2
         if (value.signalWidth != width) {
-            if (value !is SimpleValue || width !is SimpleWidth) {
+            if (value !is BitListValue || width !is SimpleWidth) {
                 errorListener.reportError(
                     ctx,
                     "BUG in exitExprTernary! Width of value couldn't be determined after passing checks!"
@@ -1103,7 +1103,7 @@ class ExprParser(
         when (function) {
             Function.CLOG2 -> {
                 val arg = args[0]
-                if (arg !is SimpleValue) {
+                if (arg !is BitListValue) {
                     errorListener.reportError(
                         ctx.expr(0),
                         ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(0).text, arg.toString())
@@ -1112,7 +1112,7 @@ class ExprParser(
                 }
                 val bigInt = arg.toBigInt()
                 if (bigInt == BigInteger.ZERO) {
-                    values[ctx] = SimpleValue(MutableBitList(Bit.B0), constant)
+                    values[ctx] = BitListValue(MutableBitList(Bit.B0), constant)
                     return
                 }
                 values[ctx] = BigFunctions.ln(BigDecimal(bigInt), 32)
@@ -1125,14 +1125,14 @@ class ExprParser(
             Function.POWER -> {
                 val arg1 = args[0]
                 val arg2 = args[1]
-                if (arg1 !is SimpleValue) {
+                if (arg1 !is BitListValue) {
                     errorListener.reportError(
                         ctx.expr(0),
                         ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(0).text, arg1.toString())
                     )
                     return
                 }
-                if (arg2 !is SimpleValue) {
+                if (arg2 !is BitListValue) {
                     errorListener.reportError(
                         ctx.expr(1),
                         ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(1).text, arg2.toString())
@@ -1167,12 +1167,12 @@ class ExprParser(
 
             Function.BUILD -> {
                 val value = args[0]
-                if (value !is SimpleValue) {
+                if (value !is BitListValue) {
                     errorListener.reportError(ctx.expr(0), ErrorStrings.BUILD_MULTI_DIM)
                     return
                 }
                 for (i in 1 until args.size) {
-                    if (!args[i].isNumber() || args[i] !is SimpleValue) {
+                    if (!args[i].isNumber() || args[i] !is BitListValue) {
                         errorListener.reportError(
                             ctx.expr(i),
                             ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(i).text, args[i].toString())
@@ -1182,7 +1182,7 @@ class ExprParser(
                 }
                 val dims = args.subList(1, args.size).mapIndexed { i, it ->
                     try {
-                        (it as SimpleValue).toBigInt().intValueExact()
+                        (it as BitListValue).toBigInt().intValueExact()
                     } catch (e: ArithmeticException) {
                         errorListener.reportError(
                             ctx.expr(i + 1),
@@ -1223,7 +1223,7 @@ class ExprParser(
                     check(step * d == vCt) { "Dimensions don't split evenly!" }
                     if (dims.size == 1) {
                         repeat(d) {
-                            root.add(SimpleValue(bits.subList(step * it, step * it + step), constant))
+                            root.add(BitListValue(bits.subList(step * it, step * it + step), constant))
                         }
                     } else {
                         repeat(d) {
@@ -1243,7 +1243,7 @@ class ExprParser(
 
             Function.SIGNED -> {
                 when (val arg = args[0]) {
-                    is SimpleValue -> values[ctx] = SimpleValue(MutableBitList(true, arg), constant)
+                    is BitListValue -> values[ctx] = BitListValue(MutableBitList(true, arg), constant)
                     is UndefinedValue -> values[ctx] = arg.copy()
                     else -> errorListener.reportError(ctx.expr(0), ErrorStrings.SIGNED_MULTI_DIM)
                 }
@@ -1251,7 +1251,7 @@ class ExprParser(
 
             Function.UNSIGNED -> {
                 when (val arg = args[0]) {
-                    is SimpleValue -> values[ctx] = SimpleValue(MutableBitList(false, arg), constant)
+                    is BitListValue -> values[ctx] = BitListValue(MutableBitList(false, arg), constant)
                     is UndefinedValue -> values[ctx] = arg.copy()
                     else -> errorListener.reportError(ctx.expr(0), ErrorStrings.UNSIGNED_MULTI_DIM)
                 }
@@ -1260,14 +1260,14 @@ class ExprParser(
             Function.CDIV -> {
                 val arg1 = args[0]
                 val arg2 = args[1]
-                if (arg1 !is SimpleValue) {
+                if (arg1 !is BitListValue) {
                     errorListener.reportError(
                         ctx.expr(0),
                         ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(0).text, arg1.toString())
                     )
                     return
                 }
-                if (arg2 !is SimpleValue) {
+                if (arg2 !is BitListValue) {
                     errorListener.reportError(
                         ctx.expr(1),
                         ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(1).text, arg2.toString())
@@ -1294,7 +1294,7 @@ class ExprParser(
             Function.RESIZE -> {
                 val value = args[0]
                 val size = args[1]
-                if (size.isNumber() && size is SimpleValue) {
+                if (size.isNumber() && size is BitListValue) {
                     val numBits = try {
                         size.toBigInt().intValueExact()
                     } catch (e: ArithmeticException) {
@@ -1319,14 +1319,14 @@ class ExprParser(
                         )
                         return
                     }
-                    if (value is SimpleValue && value.bits.minBits() > numBits) {
+                    if (value is BitListValue && value.bits.minBits() > numBits) {
                         errorListener.reportWarning(
                             ctx.expr(0),
                             ErrorStrings.TRUNC_WARN.format(ctx.expr(1).text, size.toString())
                         )
                     }
                     values[ctx] = when (value) {
-                        is SimpleValue -> value.resize(numBits)
+                        is BitListValue -> value.resize(numBits)
                         is UndefinedValue -> value.copy(width = SimpleWidth(numBits))
                         else -> error("Previous error checks failed. This shouldn't be reached!")
                     }

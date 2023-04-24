@@ -66,7 +66,7 @@ class SignalParser(
         if (!expr.constant)
             resolver.errorCollector.reportError(ctx, "Array sizes must be a constant value.")
 
-        if (expr !is SimpleValue || !expr.isNumber()) {
+        if (expr !is BitListValue || !expr.isNumber()) {
             resolver.errorCollector.reportError(ctx, "Array sizes must be a number.")
             return
         }
@@ -148,7 +148,7 @@ class SignalParser(
 
             val dims = dffCtx.arraySize()
                 .asReversed()
-                .mapNotNull { (resolver.expr.resolve(it.expr()) as? SimpleValue)?.toBigInt()?.intValueExact() }
+                .mapNotNull { (resolver.expr.resolve(it.expr()) as? BitListValue)?.toBigInt()?.intValueExact() }
 
             var clkCtx: ExprContext? = null
             var rstCtx: ExprContext? = null
@@ -166,7 +166,7 @@ class SignalParser(
                         when (paramName) {
                             "INIT" -> resolver.expr.resolve(param.expr())?.let {
                                 if (init.canAssign(it)) {
-                                    if (init is SimpleValue && it is SimpleValue && (init as SimpleValue).size < it.size) {
+                                    if (init is BitListValue && it is BitListValue && (init as BitListValue).size < it.size) {
                                         errorListener.reportWarning(
                                             param,
                                             "The initialization value is wider than the DFF and will be truncated."
