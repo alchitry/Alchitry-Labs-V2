@@ -1,7 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
-import com.alchitry.labs.Util.widthOfMult
 import com.alchitry.labs.parsers.BigFunctions
+import com.alchitry.labs.parsers.Util.widthOfMult
 import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.errors.ErrorStrings
 import com.alchitry.labs.parsers.errors.WarningStrings
@@ -20,7 +20,24 @@ import org.apache.commons.text.StringEscapeUtils
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
+import kotlin.ArithmeticException
+import kotlin.Boolean
+import kotlin.IllegalArgumentException
+import kotlin.IllegalStateException
+import kotlin.Int
+import kotlin.Pair
+import kotlin.String
+import kotlin.Unit
+import kotlin.apply
+import kotlin.assert
+import kotlin.check
+import kotlin.code
+import kotlin.error
+import kotlin.let
 import kotlin.math.absoluteValue
+import kotlin.repeat
+import kotlin.to
+import kotlin.toString
 
 /**
  * Provides values for all ExprContext and also provides bit selection ranges for BitSelectionContext through
@@ -562,7 +579,7 @@ class ExprParser(
         assert(expr is SimpleValue) { "Expression assumed to be SimpleValue" }
         expr as SimpleValue
 
-        if (!expr.bits.isNumber()) {
+        if (!expr.isNumber()) {
             values[ctx] = SimpleValue(MutableBitList(true, expr.size + 1) { Bit.Bx }, constant)
             return
         }

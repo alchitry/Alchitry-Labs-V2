@@ -1,6 +1,5 @@
-package com.alchitry.labs
+package com.alchitry.labs.parsers
 
-import com.alchitry.labs.parsers.BigFunctions
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode

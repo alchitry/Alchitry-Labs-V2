@@ -1,4 +1,4 @@
-package com.alchitry.labs
+package com.alchitry.labs.parsers
 
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow

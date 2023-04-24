@@ -16,7 +16,7 @@ sealed class SignalWidth {
     fun isSimpleArray(): Boolean {
         return when (this) {
             is ArrayWidth -> next.isSimpleArray()
-            is SimpleWidth -> true
+            is SimpleWidth, BitWidth -> true
             is UndefinedSimpleWidth -> true
             is StructWidth -> false
         }
@@ -26,7 +26,7 @@ sealed class SignalWidth {
      *  Returns true if this is JUST an array (no structs) and defined
      */
     fun isDefinedSimpleArray(): Boolean {
-        return (this is SimpleWidth || (this is ArrayWidth && next.isDefinedSimpleArray()))
+        return (this is SimpleWidth || this is BitWidth || (this is ArrayWidth && next.isDefinedSimpleArray()))
     }
 
     /**
@@ -48,7 +48,7 @@ sealed class SignalWidth {
      */
     fun isDefined(): Boolean {
         return when (this) {
-            is SimpleWidth -> true
+            is SimpleWidth, BitWidth -> true
             is ArrayWidth -> next.isDefined()
             is StructWidth -> type.values.all { it.isDefined() }
             is UndefinedSimpleWidth -> false
@@ -66,6 +66,8 @@ sealed class SignalWidth {
             } else if (array is SimpleWidth) {
                 dims.add(array.size)
                 break
+            } else if (array is BitWidth) {
+                break
             }
         }
         return dims
@@ -73,6 +75,7 @@ sealed class SignalWidth {
 
     fun getBitCount(): Int {
         return when (this) {
+            is BitWidth -> 1
             is ArrayWidth -> size * next.getBitCount()
             is StructWidth -> type.values.sumOf { it.getBitCount() }
             UndefinedSimpleWidth -> error("getBitCount() can't be used when width isn't well defined")
@@ -84,10 +87,12 @@ sealed class SignalWidth {
     fun canAssign(other: SignalWidth): Boolean =
         when (this) {
             is ArrayWidth, is StructWidth -> this == other
-            is SimpleWidth, UndefinedSimpleWidth -> other is SimpleWidth || other is UndefinedSimpleWidth
+            BitWidth, is SimpleWidth, UndefinedSimpleWidth -> other is BitWidth || other is SimpleWidth || other is UndefinedSimpleWidth
         }
 
 }
+
+object BitWidth: SignalWidth()
 
 data class SimpleWidth(
     val size: Int

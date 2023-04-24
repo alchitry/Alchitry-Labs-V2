@@ -1,6 +1,6 @@
 package com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.values
 
-import com.alchitry.labs.onAnyChange
+import com.alchitry.labs.com.alchitry.labs.parsers.onAnyChange
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.ExprContext
 import com.alchitry.labs.parsers.lucidv2.resolvers.Evaluable
 import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext

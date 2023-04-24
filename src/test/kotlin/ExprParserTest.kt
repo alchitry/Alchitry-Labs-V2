@@ -1,13 +1,10 @@
-import com.alchitry.labs.Util
-import com.alchitry.labs.parsers.lucidv2.resolvers.SignalResolver
+import com.alchitry.labs.com.alchitry.labs.parsers.Util
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
-import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.values.ArrayValue
 import com.alchitry.labs.parsers.lucidv2.values.MutableBitList
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.test.Test
 
 internal class ExprParserTest {

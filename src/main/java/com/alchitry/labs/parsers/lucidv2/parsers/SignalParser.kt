@@ -119,7 +119,7 @@ class SignalParser(
     }
 
     private fun filledArrayValue(bit: Bit, dims: List<Int>, signed: Boolean): Value {
-        if (dims.isEmpty()) return bit.toSimpleValue(true, signed)
+        if (dims.isEmpty()) return bit.toBitValue(true, signed)
 
         val base = MutableBitList(signed).also { list ->
             repeat(dims[0]) { list.add(bit) }
