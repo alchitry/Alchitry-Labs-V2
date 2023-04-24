@@ -30,7 +30,7 @@ paramName: name NL* ('=' NL* expr)?;
 paramConstraint: expr;
 
 arraySize: '[' NL* expr NL* ']';
-structType: '<' NL* name NL* ('.' NL* name NL*)* '>';
+structType: '<' NL* name NL* ('.' NL* name NL*)? '>';
 structMemberConst: '.' name NL* '(' NL* expr NL* ')';
 structConst: structType NL* '(' NL* structMemberConst NL* (',' NL* structMemberConst NL*)* ')';
 
@@ -100,7 +100,7 @@ caseElem: (expr | 'default') NL* ':' NL* alwaysStat (alwaysStat | NL)*;
 ifStat: 'if' NL* '(' NL* expr NL* ')' NL* block NL* elseStat?;
 elseStat: 'else' NL* block;
 
-repeatStat: 'repeat' NL* '(' NL* expr NL* (':' NL* signal NL*) ')' NL* block;
+repeatStat: 'repeat' NL* '(' NL* expr NL* (',' NL* signal NL*)? ')' NL* block;
 
 function: FUNCTION_ID NL* '(' NL* expr (NL* ',' NL* expr)* NL* ')';
 

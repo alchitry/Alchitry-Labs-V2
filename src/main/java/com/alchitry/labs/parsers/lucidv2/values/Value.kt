@@ -59,7 +59,7 @@ sealed class Value {
         }
     }
 
-    private fun isTrueBit(): BitValue {
+    private fun isTrueBit(): Bit {
         return when (this) {
             is SimpleValue -> bits.isTrue()
             is ArrayValue -> MutableBitList(false, elements.size) { elements[it].isTrueBit() }.isTrue()
@@ -67,10 +67,10 @@ sealed class Value {
                 if (isComplete())
                     MutableBitList().also { this.forEach { e -> it.add(e.value.isTrueBit()) } }.isTrue()
                 else
-                    BitValue.Bx
+                    Bit.Bx
             }
 
-            is UndefinedValue -> BitValue.Bx
+            is UndefinedValue -> Bit.Bx
         }
     }
 
@@ -141,7 +141,7 @@ sealed class Value {
         return isNotEqualTo(other).lsb.not().toSimpleValue(constant && other.constant)
     }
 
-    private fun reduceOp(op: (BitList) -> BitValue): BitValue {
+    private fun reduceOp(op: (BitList) -> Bit): Bit {
         return when (this) {
             is SimpleValue -> op(bits)
             is ArrayValue -> op(MutableBitList(false, elements.size) { elements[it].reduceOp(op) })
@@ -149,11 +149,11 @@ sealed class Value {
                 if (isComplete()) {
                     op(MutableBitList(false).also { it.addAll(this.map { (_, v) -> v.reduceOp(op) }) })
                 } else {
-                    BitValue.Bx
+                    Bit.Bx
                 }
             }
 
-            is UndefinedValue -> BitValue.Bx
+            is UndefinedValue -> Bit.Bx
         }
     }
 
@@ -188,12 +188,12 @@ sealed class Value {
             is StructValue -> MutableBitList().also { bits ->
                 type.forEach { (key, value) ->
                     val elementBits =
-                        this[key]?.getBits() ?: MutableBitList(BitValue.Bx, value.getBitCount()) as List<BitValue>
+                        this[key]?.getBits() ?: MutableBitList(Bit.Bx, value.getBitCount()) as List<Bit>
                     bits.addAll(elementBits)
                 }
             }
 
-            is UndefinedValue -> MutableBitList(BitValue.Bx, width.getBitCount())
+            is UndefinedValue -> MutableBitList(Bit.Bx, width.getBitCount())
         }
     }
 
@@ -265,7 +265,7 @@ fun BigInteger.toValue(constant: Boolean): SimpleValue = SimpleValue(MutableBitL
 data class SimpleValue(
     val bits: BitList,
     override val constant: Boolean
-) : Value(), List<BitValue> by bits {
+) : Value(), List<Bit> by bits {
     val signed: Boolean
         get() = bits.signed
 
@@ -288,23 +288,23 @@ data class SimpleValue(
         val neg2 = signedOp && other.bits.isNegative()
 
         if (neg1 && !neg2) // negative < positive
-            return BitValue.B1.toSimpleValue(constant && other.constant)
+            return Bit.B1.toSimpleValue(constant && other.constant)
 
         if (!neg1 && neg2) // positive !< negative
-            return BitValue.B0.toSimpleValue(constant && other.constant)
+            return Bit.B0.toSimpleValue(constant && other.constant)
 
         // negative to negative or positive to positive can be directly compared
         for (i in op1.indices.reversed()) {
             if (!op1[i].isNumber() || !op2[i].isNumber())
-                return BitValue.Bx.toSimpleValue(constant && other.constant)
+                return Bit.Bx.toSimpleValue(constant && other.constant)
 
-            if (op1[i] == BitValue.B1 && op2[i] == BitValue.B0)
-                return BitValue.B0.toSimpleValue(constant && other.constant)
+            if (op1[i] == Bit.B1 && op2[i] == Bit.B0)
+                return Bit.B0.toSimpleValue(constant && other.constant)
 
-            if (op1[i] == BitValue.B0 && op2[i] == BitValue.B1)
-                return BitValue.B1.toSimpleValue(constant && other.constant)
+            if (op1[i] == Bit.B0 && op2[i] == Bit.B1)
+                return Bit.B1.toSimpleValue(constant && other.constant)
         }
-        return BitValue.B0.toSimpleValue(constant && other.constant)
+        return Bit.B0.toSimpleValue(constant && other.constant)
     }
 
     infix fun isGreaterThan(other: SimpleValue): SimpleValue {
@@ -319,7 +319,7 @@ data class SimpleValue(
         return (isGreaterThan(other).lsb or isEqualTo(other).lsb).toSimpleValue(constant && other.constant)
     }
 
-    fun toBoolean() = bits.isTrue() == BitValue.B1
+    fun toBoolean() = bits.isTrue() == Bit.B1
 
     fun select(selection: SignalSelector.Bits): Value {
         try {

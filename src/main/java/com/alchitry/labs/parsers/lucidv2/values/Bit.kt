@@ -1,25 +1,25 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
-enum class BitValue {
+enum class Bit {
     B0,
     B1,
     Bx, // used to specify unknown values (reads are ok)
     Bz, // used to specify high-impedance (reads are errors, should only be used at top-level output)
     Bu; // used to specify un-driven signals (reads are errors)
 
-    infix fun or(b: BitValue): BitValue {
+    infix fun or(b: Bit): Bit {
         if (this == B1 || b == B1) return B1
         if (!isNumber() || !b.isNumber()) return Bx
         return B0
     }
 
-    infix fun and(b: BitValue): BitValue {
+    infix fun and(b: Bit): Bit {
         if (this == B1 && b == B1) return B1
         if (!isNumber() || !b.isNumber()) return Bx
         return B0
     }
 
-    infix fun xor(b: BitValue): BitValue {
+    infix fun xor(b: Bit): Bit {
         if (!isNumber() || !b.isNumber()) return Bx
         if (this == B1 != (b == B1)) return B1
         return B0
@@ -34,23 +34,23 @@ enum class BitValue {
             Bu -> 'u'
         }
 
-    infix fun nor(b: BitValue): BitValue {
+    infix fun nor(b: Bit): Bit {
         return or(b).not()
     }
 
-    infix fun nand(b: BitValue): BitValue {
+    infix fun nand(b: Bit): Bit {
         return and(b).not()
     }
 
-    infix fun xnor(b: BitValue): BitValue {
+    infix fun xnor(b: Bit): Bit {
         return xor(b).not()
     }
 
-    operator fun not(): BitValue {
+    operator fun not(): Bit {
         return invert()
     }
 
-    fun invert(): BitValue {
+    fun invert(): Bit {
         return when (this) {
             B0 -> B1
             B1 -> B0

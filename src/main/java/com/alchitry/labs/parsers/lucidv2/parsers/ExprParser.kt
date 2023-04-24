@@ -563,7 +563,7 @@ class ExprParser(
         expr as SimpleValue
 
         if (!expr.bits.isNumber()) {
-            values[ctx] = SimpleValue(MutableBitList(true, expr.size + 1) { BitValue.Bx }, constant)
+            values[ctx] = SimpleValue(MutableBitList(true, expr.size + 1) { Bit.Bx }, constant)
             return
         }
 
@@ -634,7 +634,7 @@ class ExprParser(
         val signed = op1.signed && op2.signed
 
         values[ctx] = when {
-            !op1.isNumber() || !op2.isNumber() -> SimpleValue(MutableBitList(BitValue.Bx, width, signed), constant)
+            !op1.isNumber() || !op2.isNumber() -> SimpleValue(MutableBitList(Bit.Bx, width, signed), constant)
             operand == "+" -> SimpleValue(
                 MutableBitList(op1.bits.toBigInt().add(op2.bits.toBigInt()), signed, width),
                 constant
@@ -693,7 +693,7 @@ class ExprParser(
         values[ctx] = if (multOp) {
             val width = widthOfMult(op1Bits.size, op2Bits.size)
             if (!op1.isNumber() || !op2.isNumber())
-                SimpleValue(MutableBitList(BitValue.Bx, width, signed), constant)
+                SimpleValue(MutableBitList(Bit.Bx, width, signed), constant)
             else
                 SimpleValue(MutableBitList(op1Bits.toBigInt().multiply(op2Bits.toBigInt()), signed, width), constant)
         } else {
@@ -705,7 +705,7 @@ class ExprParser(
 
             val width = op1Bits.size
             if (!op1.isNumber() || !op2.isNumber() || op2BigInt == BigInteger.ZERO)
-                SimpleValue(MutableBitList(BitValue.Bx, width, signed), constant)
+                SimpleValue(MutableBitList(Bit.Bx, width, signed), constant)
             else
                 SimpleValue(MutableBitList(op1Bits.toBigInt().divide(op2BigInt), signed, width), constant)
         }
@@ -755,7 +755,7 @@ class ExprParser(
         val isSigned = value.signed && (operand == ">>>" || operand == "<<<")
 
         if (!shift.bits.isNumber()) {
-            values[ctx] = SimpleValue(MutableBitList(isSigned, value.size) { BitValue.Bx }, constant)
+            values[ctx] = SimpleValue(MutableBitList(isSigned, value.size) { Bit.Bx }, constant)
             return
         }
 
@@ -1019,7 +1019,7 @@ class ExprParser(
             return
         }
 
-        val value = if (cond.isTrue().lsb == BitValue.B1) op1 else op2
+        val value = if (cond.isTrue().lsb == Bit.B1) op1 else op2
         if (value.signalWidth != width) {
             if (value !is SimpleValue || width !is SimpleWidth) {
                 errorListener.reportError(
@@ -1095,7 +1095,7 @@ class ExprParser(
                 }
                 val bigInt = arg.toBigInt()
                 if (bigInt == BigInteger.ZERO) {
-                    values[ctx] = SimpleValue(MutableBitList(BitValue.B0), constant)
+                    values[ctx] = SimpleValue(MutableBitList(Bit.B0), constant)
                     return
                 }
                 values[ctx] = BigFunctions.ln(BigDecimal(bigInt), 32)
