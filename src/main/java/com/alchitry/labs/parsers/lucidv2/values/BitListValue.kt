@@ -14,6 +14,12 @@ data class BitListValue(
         signed
     )
 
+    constructor(
+        bitValues: List<BitValue>,
+        constant: Boolean = bitValues.all { it.constant },
+        signed: Boolean = bitValues.all { it.signed }
+    ) : this(bitValues.map { it.bit }, constant, signed)
+
     override val lsb: Bit = bits.first()
     override val msb: Bit = bits.last()
 
@@ -22,6 +28,7 @@ data class BitListValue(
     override val signalWidth: SimpleWidth = SimpleWidth(bits.size)
 
     override fun invert(): BitListValue = copy(bits = bits.map { !it })
+    override fun reverse(): BitListValue = copy(bits = bits.reversed())
 
     fun resize(width: Int, signExtend: Boolean = signed): BitListValue {
         if (width == size)
@@ -38,8 +45,7 @@ data class BitListValue(
     fun setSign(signed: Boolean): BitListValue = copy(signed = signed)
 
 
-
-    fun select(selection: SignalSelector.Bits): Value {
+    fun selectBits(selection: SignalSelector.Bits): Value {
         try {
             val newBits = bits.subList(selection.range.first, selection.range.last + 1)
             return copy(bits = newBits)

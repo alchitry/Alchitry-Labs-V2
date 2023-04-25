@@ -27,6 +27,7 @@ data class  BitValue(
     override val signalWidth = BitWidth
 
     override fun invert() = copy(bit = !bit)
+    override fun reverse() = this
 
     override fun isTrue() = BitValue(
         when (bit) {

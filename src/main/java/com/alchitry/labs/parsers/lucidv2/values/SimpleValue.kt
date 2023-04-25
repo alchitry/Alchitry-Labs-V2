@@ -94,6 +94,29 @@ sealed class SimpleValue(
         return (isGreaterThan(other) or isEqualTo(other))
     }
 
+    override infix fun and(other: Value): Value {
+        require(other is SimpleValue) {"And can only be performed with another SimpleValue!"}
+        return and(other)
+    }
+
+    override infix fun or(other: Value): Value {
+        require(other is SimpleValue) {"Or can only be performed with another SimpleValue!"}
+        return or(other)
+    }
+
+    override infix fun xor(other: Value): Value {
+        require(other is SimpleValue) {"Xor can only be performed with another SimpleValue!"}
+        return xor(other)
+    }
+
+    override fun resizeToMatch(newWidth: SignalWidth): Value = when(newWidth) {
+        is ArrayWidth -> error("Cannot resize SimpleValue to fit ArrayValue!")
+        is SimpleWidth -> asBitListValue().resize(newWidth.size)
+        BitWidth -> BitValue(lsb, constant, signed)
+        is StructWidth -> error("Cannot resize SimpleValue to fit a StructValue!")
+        is UndefinedSimpleWidth -> UndefinedValue(constant, UndefinedSimpleWidth)
+    }
+
     private inline fun doOp(b: SimpleValue, crossinline op: (Bit, Bit) -> Bit): SimpleValue {
         val size = size.coerceAtLeast(b.size)
         val signedOp = signed && b.signed
