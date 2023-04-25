@@ -1,14 +1,15 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
+import com.alchitry.labs.parsers.SynchronizedSharedFlow
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.ExprContext
 import com.alchitry.labs.parsers.lucidv2.resolvers.Evaluable
 import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext
 import com.alchitry.labs.parsers.onAnyChange
-import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.getAndUpdate
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.antlr.v4.runtime.tree.ParseTreeWalker
 
 /**
@@ -21,32 +22,30 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker
 class DynamicExpr(
     val expr: ExprContext,
     private val parseContext: LucidParseContext
-): Evaluable {
-    private val mutableValueFlow =
-        MutableStateFlow(parseContext.expr.resolve(expr) ?: error("Failed to resolve initial value for ${expr.text}"))
-    val valueFlow = mutableValueFlow.asStateFlow()
+) : Evaluable {
+    private val mutableValueFlow = SynchronizedSharedFlow<Value>()
+    val valueFlow: Flow<Value> get() = mutableValueFlow.asFlow()
 
-    var value
-        get() = mutableValueFlow.value
-        set(v) {
-            mutableValueFlow.getAndUpdate {
-                require(it.signalWidth == v.signalWidth) { "DynamicExpr size has changed?!" }
-                v.resizeToMatch(it.signalWidth)
-            }
-        }
+    private val collectingFlow = MutableStateFlow(false)
+
+    var value: Value = parseContext.expr.resolve(expr) ?: error("Failed to resolve initial value for ${expr.text}")
+        private set
 
     init {
-        val dependencies = parseContext.expr.resolveDependencies(expr) ?: error("Failed to resolve dependencies for ${expr.text}")
+        val dependencies =
+            parseContext.expr.resolveDependencies(expr) ?: error("Failed to resolve dependencies for ${expr.text}")
         parseContext.scope.launch {
-            onAnyChange(dependencies.map { it.valueFlow }) {
+            onAnyChange(
+                dependencies.map { it.valueFlow },
+                onStarted = { collectingFlow.tryEmit(true) }
+            ) {
                 parseContext.queueEvaluation(this@DynamicExpr)
             }
         }
+        runBlocking { collectingFlow.first { true } } // TODO: Look into a more elegant solution to waiting for collection to start
     }
 
-    suspend fun collect(collector: FlowCollector<Value>): Nothing = mutableValueFlow.collect(collector)
-
-    override fun evaluate() {
+    override suspend fun evaluate() {
         ParseTreeWalker.DEFAULT.walk(parseContext.expr, expr)
 
         val newValue = parseContext.expr.resolve(expr)
@@ -59,5 +58,6 @@ class DynamicExpr(
         requireNotNull(newValue) { "Failed to produce a value for DynamicValue $expr" }
 
         value = newValue
+        mutableValueFlow.emit(newValue)
     }
 }

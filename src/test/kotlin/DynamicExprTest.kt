@@ -19,17 +19,19 @@ class DynamicExprTest {
 
         val dynamicExpr = DynamicExpr(exprCtx, test.parseContext)
 
-        runBlocking { test.parseContext.processQueue() }
-
         assertEquals(BitListValue("001", 2, constant = false, signed = false), dynamicExpr.value)
 
-        signal.value = BitListValue("011", 2, constant = false, signed = false)
-        runBlocking { test.parseContext.processQueue() }
+        runBlocking {
+            signal.set(BitListValue("011", 2, constant = false, signed = false))
+            test.parseContext.processQueue()
+        }
 
         assertEquals(BitListValue("100", 2, constant = false, signed = false), dynamicExpr.value)
 
-        signal.value = BitListValue("111", 2, constant = false, signed = false)
-        runBlocking { test.parseContext.processQueue() }
+        runBlocking {
+            signal.set(BitListValue("111", 2, constant = false, signed = false))
+            test.parseContext.processQueue()
+        }
 
         assertEquals(BitListValue("000", 2, constant = false, signed = false), dynamicExpr.value)
     }

@@ -13,7 +13,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 interface Evaluable {
-    fun evaluate()
+    suspend fun evaluate()
 }
 
 

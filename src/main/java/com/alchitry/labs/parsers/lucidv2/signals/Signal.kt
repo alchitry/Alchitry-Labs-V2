@@ -1,10 +1,10 @@
 package com.alchitry.labs.parsers.lucidv2.signals
 
+import com.alchitry.labs.parsers.SynchronizedSharedFlow
 import com.alchitry.labs.parsers.lucidv2.values.Value
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.getAndUpdate
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 enum class SignalDirection {
     Read,
@@ -20,25 +20,28 @@ class Signal(
     val direction: SignalDirection,
     val parent: SignalParent?,
     initialValue: Value
-): SignalOrParent {
+) : SignalOrParent {
     fun select(selection: SignalSelection) = SubSignal(this, selection)
 
-    private val mutableValueFlow = MutableStateFlow(initialValue)
-    val valueFlow = mutableValueFlow.asStateFlow()
+    private val mutableValueFlow = SynchronizedSharedFlow<Value>()
+    val valueFlow: Flow<Value> get() = mutableValueFlow.asFlow()
 
-    var value
-        get() = mutableValueFlow.value
-        set(v) {
-            mutableValueFlow.getAndUpdate {
-                check(it.canAssign(v)) { "Signal assigned value does not match its size!" }
-                v.resizeToMatch(it.signalWidth)
-            }
+    var value: Value = initialValue
+        private set
+
+    private val updateLock = Mutex()
+
+    suspend fun set(newValue: Value) {
+        updateLock.withLock {
+            check(value.canAssign(newValue)) { "Signal assigned value does not match its size!" }
+            val resizedValue = newValue.resizeToMatch(value.signalWidth)
+            value = resizedValue
+            mutableValueFlow.emit(resizedValue)
         }
-
-    suspend fun collect(collector: FlowCollector<Value>): Nothing = mutableValueFlow.collect(collector)
+    }
 }
 
-class SignalSelectionException(val selector: SignalSelector, message: String): Exception(message)
+class SignalSelectionException(val selector: SignalSelector, message: String) : Exception(message)
 
 data class SubSignal(
     val signal: Signal,
@@ -58,6 +61,7 @@ data class SubSignal(
 sealed interface SignalOrParent {
     val name: String
 }
-sealed interface SignalParent: SignalOrParent {
+
+sealed interface SignalParent : SignalOrParent {
     fun getSignal(name: String): Signal?
 }

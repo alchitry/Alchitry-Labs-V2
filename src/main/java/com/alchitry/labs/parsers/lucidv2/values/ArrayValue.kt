@@ -6,6 +6,12 @@ import com.alchitry.labs.parsers.lucidv2.signals.SignalSelector
 data class ArrayValue(
     val elements: List<Value>
 ) : Value(), List<Value> by elements {
+    init {
+        require(elements.none { it is BitValue }) { "ArrayValue should never have BitValue elements!" }
+        if (elements.isNotEmpty())
+            require(elements.all { value -> value::class == elements.first()::class }) { "ArrayValue elements must all be the same class!" }
+    }
+
     override val constant: Boolean
         get() = all { it.constant }
 
