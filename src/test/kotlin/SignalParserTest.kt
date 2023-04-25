@@ -40,7 +40,7 @@ internal class SignalParserTest {
 
         dSig as Signal
         qSig as Signal
-        assertEquals(BitListValue(MutableBitList("1",2), constant = false), qSig.value)
+        assertEquals(BitValue(Bit.B1,constant = false, signed = false), qSig.value)
 
         assert(tester.hasNoErrors)
         assert(tester.hasNoWarnings)
@@ -60,7 +60,7 @@ internal class SignalParserTest {
 
         dSig as Signal
         qSig as Signal
-        assertEquals(BitListValue(MutableBitList("111",2), constant = false), qSig.value)
+        assertEquals(BitListValue("111",2, constant = false, signed = false), qSig.value)
 
         assert(tester.hasNoErrors)
         assert(tester.hasWarnings)
@@ -102,7 +102,7 @@ internal class SignalParserTest {
             List(8) {
                 ArrayValue(
                     List(4) {
-                        BitListValue(MutableBitList("00",2), constant = false)
+                        BitListValue("00",2, constant = false, signed = false)
                     }
                 )
             }
@@ -133,7 +133,7 @@ internal class SignalParserTest {
             List(8) {
                 ArrayValue(
                     List(4) {
-                        BitListValue(MutableBitList("00",2, signed = true), constant = false)
+                        BitListValue("00",2, signed = true, constant = false)
                     }
                 )
             }

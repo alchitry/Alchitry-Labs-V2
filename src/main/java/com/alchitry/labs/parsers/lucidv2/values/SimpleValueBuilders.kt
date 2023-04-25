@@ -6,20 +6,32 @@ import kotlin.math.log2
 import kotlin.math.roundToInt
 
 fun BitListValue(
+    bitValues: List<BitValue>,
+    constant: Boolean = bitValues.all { it.constant },
+    signed: Boolean = bitValues.all { it.signed }
+) = BitListValue(bitValues.map { it.bit }, constant, signed)
+
+fun BitListValue(
     str: String,
     radix: Int = 10,
+    width: Int? = null,
     constant: Boolean,
-    signed: Boolean,
-    width: Int = log2(radix.toFloat()).roundToInt()
+    signed: Boolean
 ): BitListValue {
-    if (radix == 10) return BitListValue(BigInteger(str), constant, signed)
+    if (radix == 10)
+        return if (width != null)
+            BitListValue(BigInteger(str), constant, signed, width)
+        else
+            BitListValue(BigInteger(str), constant, signed)
+
+    val sigWidth = width ?: (str.length * log2(radix.toFloat()).roundToInt())
 
     val bits = mutableListOf<Bit>()
     val strLower = str.lowercase()
     when (radix) {
         16 -> {
             var idx = 0
-            while (idx < width) {
+            while (idx < sigWidth) {
                 val charIdx = idx / 4
                 val bitIdx = idx % 4
                 var c = '0'
@@ -44,7 +56,7 @@ fun BitListValue(
 
         2 -> {
             var idx = 0
-            while (idx < width) {
+            while (idx < sigWidth) {
                 var c = '0'
                 if (strLower.length > idx) c =
                     strLower[strLower.length - 1 - idx] else if (strLower[0] == 'x' || strLower[0] == 'z') c =
@@ -62,7 +74,7 @@ fun BitListValue(
 
         256 -> {
             var idx = 0
-            while (idx < width) {
+            while (idx < sigWidth) {
                 val charIdx = idx / 8
                 val bitIdx = idx % 8
                 var c = 0.toChar()
@@ -86,6 +98,12 @@ private fun BigInteger.minWidth(signed: Boolean = signum() == -1): Int {
     if (signed) w++
     return w.coerceAtLeast(1)
 }
+
+fun BigInteger.toBitListValue(
+    constant: Boolean,
+    signed: Boolean = signum() == -1,
+    width: Int = minWidth(signed)
+) = BitListValue(this, constant, signed, width)
 
 fun BitListValue(
     bigInt: BigInteger,
@@ -116,7 +134,7 @@ fun BitListValue(
 }
 
 fun BitListValue(value: Long, width: Int, constant: Boolean, signed: Boolean): BitListValue =
-    BitListValue(constant, signed, width) {
+    BitListValue(width, constant, signed) {
         if ((value and (1 shr it).toLong()) != 0.toLong()) Bit.B1 else Bit.B0
     }
 

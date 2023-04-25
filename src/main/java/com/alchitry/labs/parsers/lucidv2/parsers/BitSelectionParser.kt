@@ -6,6 +6,7 @@ import com.alchitry.labs.parsers.lucidv2.*
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext
+import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
@@ -59,7 +60,7 @@ open class BitSelectionParser(
         if (maxNan) errorListener.reportBitSelectorNotANumber(ctx.expr(0))
         if (minNan) errorListener.reportBitSelectorNotANumber(ctx.expr(1))
         if (maxNan || minNan) return
-        if (max.isLessThan(min).toBoolean()) {
+        if (max.isLessThan(min).bit == Bit.B1) {
             errorListener.reportBitSelectorOutOfOrder(ctx)
             return
         }

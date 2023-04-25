@@ -1,10 +1,9 @@
-package com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.values
+package com.alchitry.labs.parsers.lucidv2.values
 
-import com.alchitry.labs.com.alchitry.labs.parsers.onAnyChange
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.ExprContext
 import com.alchitry.labs.parsers.lucidv2.resolvers.Evaluable
 import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext
-import com.alchitry.labs.parsers.lucidv2.values.Value
+import com.alchitry.labs.parsers.onAnyChange
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,7 +31,7 @@ class DynamicExpr(
         set(v) {
             mutableValueFlow.getAndUpdate {
                 require(it.signalWidth == v.signalWidth) { "DynamicExpr size has changed?!" }
-                v.resizeToMatch(it)
+                v.resizeToMatch(it.signalWidth)
             }
         }
 

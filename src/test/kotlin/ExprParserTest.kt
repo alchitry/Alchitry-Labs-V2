@@ -1,9 +1,10 @@
-import com.alchitry.labs.com.alchitry.labs.parsers.Util
+import com.alchitry.labs.parsers.Util
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.values.ArrayValue
+import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
-import com.alchitry.labs.parsers.lucidv2.values.MutableBitList
+import com.alchitry.labs.parsers.lucidv2.values.BitValue
 import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.Test
 
@@ -12,42 +13,45 @@ internal class ExprParserTest {
     fun testNumbers() {
         var test = LucidTester("5b11011")
         var tree = test.expr()
-        assertEquals(BitListValue(MutableBitList("11011", 2, 5), true), test.parseContext.expr.resolve(tree))
+        assertEquals(BitListValue("11011", 2, 5, constant = true, signed = false), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("hFE01")
         tree = test.expr()
-        assertEquals(BitListValue(MutableBitList("65025", 10, 16), true), test.parseContext.expr.resolve(tree))
+        assertEquals(
+            BitListValue("65025", 10, 16, constant = true, signed = false),
+            test.parseContext.expr.resolve(tree)
+        )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("8hFFF")
         tree = test.expr()
-        assertEquals(BitListValue(MutableBitList("255", 10, 8), true), test.parseContext.expr.resolve(tree))
+        assertEquals(BitListValue("255", 10, 8, constant = true, signed = false), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("152")
         tree = test.expr()
-        assertEquals(BitListValue(MutableBitList("152", 10, 8), true), test.parseContext.expr.resolve(tree))
+        assertEquals(BitListValue("152", 10, 8, constant = true, signed = false), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("0")
         tree = test.expr()
-        assertEquals(BitListValue(MutableBitList("0", 10, 1), true), test.parseContext.expr.resolve(tree))
+        assertEquals(BitListValue("0", 10, 1, constant = true, signed = false), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("20d12")
         tree = test.expr()
-        assertEquals(BitListValue(MutableBitList("12", 10, 20), true), test.parseContext.expr.resolve(tree))
+        assertEquals(BitListValue("12", 10, 20, constant = true, signed = false), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
@@ -57,7 +61,7 @@ internal class ExprParserTest {
     fun testAddition() {
         val test = LucidTester("5b1101 + 4b0010")
         val tree = test.expr()
-        assertEquals(BitListValue(MutableBitList("1111", 2, 6), true), test.parseContext.expr.resolve(tree))
+        assertEquals(BitListValue("1111", 2, 6, constant = true, signed = false), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
@@ -67,7 +71,7 @@ internal class ExprParserTest {
     fun testSubtraction() {
         val test = LucidTester("5b1101 - 4b0010")
         val tree = test.expr()
-        assertEquals(BitListValue(MutableBitList("1011", 2, 6), true), test.parseContext.expr.resolve(tree))
+        assertEquals(BitListValue("1011", 2, 6, constant = true, signed = false), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
@@ -77,7 +81,10 @@ internal class ExprParserTest {
     fun testConcat() {
         var test = LucidTester("c{b1101, b0010, 0}")
         var tree = test.expr()
-        assertEquals(BitListValue(MutableBitList("110100100", 2, 9), true), test.parseContext.expr.resolve(tree))
+        assertEquals(
+            BitListValue("110100100", 2, 9, constant = true, signed = false),
+            test.parseContext.expr.resolve(tree)
+        )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
@@ -101,9 +108,9 @@ internal class ExprParserTest {
         assertEquals(
             ArrayValue(
                 listOf(
-                    BitListValue(MutableBitList("0000", 2, 4), true),
-                    BitListValue(MutableBitList("0010", 2, 4), true),
-                    BitListValue(MutableBitList("1101", 2, 4), true)
+                    BitListValue("0000", 2, 4, constant = true, signed = false),
+                    BitListValue("0010", 2, 4, constant = true, signed = false),
+                    BitListValue("1101", 2, 4, constant = true, signed = false)
                 )
             ),
             test.parseContext.expr.resolve(tree)
@@ -117,14 +124,17 @@ internal class ExprParserTest {
     fun testDup() {
         var test = LucidTester("2x{0}")
         var tree = test.expr()
-        assertEquals(BitListValue(MutableBitList("00", 2, 2), true), test.parseContext.expr.resolve(tree))
+        assertEquals(BitListValue("00", 2, 2, constant = true, signed = false), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("8x{2b10}")
         tree = test.expr()
-        assertEquals(BitListValue(MutableBitList("1010101010101010", 2, 16), true), test.parseContext.expr.resolve(tree))
+        assertEquals(
+            BitListValue("1010101010101010", 2, 16, constant = true, signed = false),
+            test.parseContext.expr.resolve(tree)
+        )
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
@@ -144,7 +154,7 @@ internal class ExprParserTest {
         assertEquals(
             ArrayValue(
                 listOf(
-                    BitListValue(MutableBitList("0", 2, 1), true),
+                    BitListValue("0", 2, 1, constant = true, signed = false),
                 )
             ),
             test.parseContext.expr.resolve(tree)
@@ -160,7 +170,7 @@ internal class ExprParserTest {
                 listOf(
                     ArrayValue(
                         listOf(
-                            BitListValue(MutableBitList("0", 2, 1), true),
+                            BitListValue("0", 2, 1, constant = true, signed = false),
                         )
                     )
                 )
@@ -184,9 +194,9 @@ internal class ExprParserTest {
         assertEquals(
             ArrayValue(
                 listOf(
-                    BitListValue(MutableBitList("10", 2, 2), true),
-                    BitListValue(MutableBitList("01", 2, 2), true),
-                    BitListValue(MutableBitList("00", 2, 2), true),
+                    BitListValue("10", 2, 2, constant = true, signed = false),
+                    BitListValue("01", 2, 2, constant = true, signed = false),
+                    BitListValue("00", 2, 2, constant = true, signed = false),
                 )
             ),
             test.parseContext.expr.resolve(tree)
@@ -202,7 +212,13 @@ internal class ExprParserTest {
         var tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("800", 10, Util.widthOfMult(Util.minWidthNum(20), Util.minWidthNum(40))), true),
+            BitListValue(
+                "800",
+                10,
+                Util.widthOfMult(Util.minWidthNum(20), Util.minWidthNum(40)),
+                constant = true,
+                signed = false
+            ),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -227,7 +243,13 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("800", 10, Util.widthOfMult(Util.minWidthNum(20), Util.minWidthNum(40))), true),
+            BitListValue(
+                "800",
+                10,
+                Util.widthOfMult(Util.minWidthNum(20), Util.minWidthNum(40)),
+                constant = true,
+                signed = false
+            ),
             test.parseContext.expr.resolve(tree)
         )
 
@@ -240,12 +262,11 @@ internal class ExprParserTest {
 
         assertEquals(
             BitListValue(
-                MutableBitList(
-                    "800",
-                    10,
-                    Util.widthOfMult(Util.minWidthNum(20) + 1, Util.minWidthNum(40) + 1),
-                    signed = true
-                ), true
+                "800",
+                10,
+                Util.widthOfMult(Util.minWidthNum(20) + 1, Util.minWidthNum(40) + 1),
+                constant = true,
+                signed = true
             ),
             test.parseContext.expr.resolve(tree)
         )
@@ -261,7 +282,7 @@ internal class ExprParserTest {
         var tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("5", 10, Util.minWidthNum(40)), true),
+            BitListValue("5", 10, Util.minWidthNum(40), constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -272,7 +293,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("8", 10, Util.minWidthNum(40)), true),
+            BitListValue("8", 10, Util.minWidthNum(40), constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -288,7 +309,7 @@ internal class ExprParserTest {
         var tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("5", 10, Util.minWidthNum(40)), true),
+            BitListValue("5", 10, Util.minWidthNum(40), constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -299,7 +320,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("00110", 2, signed = false), true),
+            BitListValue("00110", 2, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -310,7 +331,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("11110", 2, signed = true), true),
+            BitListValue("11110", 2, constant = true, signed = true),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -321,7 +342,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("16", 10, signed = false), true),
+            BitListValue("16", 10, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -332,7 +353,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("110000", 2, signed = false), true),
+            BitListValue("110000", 2, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -343,7 +364,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("16", 10, signed = false), true),
+            BitListValue("16", 10, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -354,7 +375,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("110000", 2, signed = true), true),
+            BitListValue("110000", 2, constant = true, signed = true),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -368,7 +389,7 @@ internal class ExprParserTest {
         var tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("1001", 2), true),
+            BitListValue("1001", 2, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -379,7 +400,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("001001", 2), true),
+            BitListValue("001001", 2, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -390,7 +411,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("001001", 2, true), true),
+            BitListValue("001001", 2, constant = true, signed = true),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -401,7 +422,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("1101", 2), true),
+            BitListValue("1101", 2, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -412,7 +433,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("101111", 2), true),
+            BitListValue("101111", 2, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -423,7 +444,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("111101", 2, true), true),
+            BitListValue("111101", 2, constant = true, signed = true),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -434,7 +455,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("0100", 2), true),
+            BitListValue("0100", 2, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -445,7 +466,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("000100", 2), true),
+            BitListValue("000100", 2, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -456,7 +477,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("110100", 2, true), true),
+            BitListValue("110100", 2, constant = true, signed = true),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -470,7 +491,7 @@ internal class ExprParserTest {
         var tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("1", 2), true),
+            BitValue(Bit.B1, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -481,7 +502,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("0", 2), true),
+            BitValue(Bit.B0, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -492,7 +513,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("0", 2), true),
+            BitValue(Bit.B0, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -503,7 +524,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("1", 2), true),
+            BitValue(Bit.B1, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -514,7 +535,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("x", 2), true),
+            BitValue(Bit.Bx, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -525,7 +546,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("0", 2), true),
+            BitValue(Bit.B0, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -536,7 +557,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("1", 2), true),
+            BitValue(Bit.B1, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -550,7 +571,7 @@ internal class ExprParserTest {
         var tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("0", 2), true),
+            BitValue(Bit.B0, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -561,7 +582,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("1", 2), true),
+            BitValue(Bit.B1, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -572,7 +593,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("0", 2), true),
+            BitValue(Bit.B0, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -583,7 +604,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("1", 2), true),
+            BitValue(Bit.B1, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -594,7 +615,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("0", 2), true),
+            BitValue(Bit.B0, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -605,7 +626,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("1", 2), true),
+            BitValue(Bit.B1, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -619,7 +640,7 @@ internal class ExprParserTest {
         var tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("1", 2), true),
+            BitValue(Bit.B1, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -630,7 +651,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("0", 2), true),
+            BitValue(Bit.B0, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -641,7 +662,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("0", 2), true),
+            BitValue(Bit.B0, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -652,7 +673,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("1", 2), true),
+            BitValue(Bit.B1, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -666,7 +687,7 @@ internal class ExprParserTest {
         var tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("1", 2, 2), true),
+            BitListValue("1", 2, 2, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -677,7 +698,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("2", 10, 2), true),
+            BitListValue("2", 10, 2, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -691,7 +712,7 @@ internal class ExprParserTest {
         var tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("0", 2), true),
+            BitValue(Bit.B0, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -702,7 +723,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("1", 2), true),
+            BitValue(Bit.B1, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -713,7 +734,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("010", 2), true),
+            BitListValue("010", 2, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -727,7 +748,7 @@ internal class ExprParserTest {
         var tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("101100", 2, signed = true), true),
+            BitListValue("101100", 2, constant = true, signed = true),
             test.parseContext.expr.resolve(tree)
         )
 
@@ -739,7 +760,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("20", 10, Util.minWidthNum(20) + 2, signed = true), true),
+            BitListValue("20", 10, Util.minWidthNum(20) + 2, signed = true, constant = true),
             test.parseContext.expr.resolve(tree)
         )
 
@@ -754,7 +775,7 @@ internal class ExprParserTest {
         var tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("20", 10, width = Util.minWidthNum(20), signed = true), true),
+            BitListValue("20", 10, width = Util.minWidthNum(20), signed = true, constant = true),
             test.parseContext.expr.resolve(tree)
         )
 
@@ -766,7 +787,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("101100", 2, signed = true), true),
+            BitListValue("101100", 2, constant = true, signed = true),
             test.parseContext.expr.resolve(tree)
         )
 
@@ -778,7 +799,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("3", 10), true),
+            BitListValue("3", 10, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -789,7 +810,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("0", 10), true),
+            BitValue(Bit.B0, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -800,7 +821,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("0", 10), true),
+            BitListValue("0", 10, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -811,7 +832,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("8", 10), true),
+            BitListValue("8", 10, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -822,7 +843,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("1", 10), true),
+            BitListValue("1", 10, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -833,7 +854,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("16", 10), true),
+            BitListValue("16", 10, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -844,7 +865,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("0011", 2), true),
+            BitListValue("0011", 2, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -857,8 +878,8 @@ internal class ExprParserTest {
         assertEquals(
             ArrayValue(
                 listOf(
-                    BitListValue(MutableBitList("1100", 2), true),
-                    BitListValue(MutableBitList("0011", 2), true)
+                    BitListValue("1100", 2, constant = true, signed = false),
+                    BitListValue("0011", 2, constant = true, signed = false)
                 )
             ),
             test.parseContext.expr.resolve(tree)
@@ -871,7 +892,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("1100", 2), true),
+            BitListValue("1100", 2, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -882,7 +903,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("11000011", 2), true),
+            BitListValue("11000011", 2, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -897,8 +918,8 @@ internal class ExprParserTest {
         assertEquals(
             ArrayValue(
                 listOf(
-                    BitListValue(MutableBitList("00", 2), true),
-                    BitListValue(MutableBitList("11", 2), true)
+                    BitListValue("00", 2, constant = true, signed = false),
+                    BitListValue("11", 2, constant = true, signed = false)
                 )
             ),
             test.parseContext.expr.resolve(tree)
@@ -915,14 +936,14 @@ internal class ExprParserTest {
                 listOf(
                     ArrayValue(
                         listOf(
-                            BitListValue(MutableBitList("01", 2), true),
-                            BitListValue(MutableBitList("10", 2), true)
+                            BitListValue("01", 2, constant = true, signed = false),
+                            BitListValue("10", 2, constant = true, signed = false)
                         )
                     ),
                     ArrayValue(
                         listOf(
-                            BitListValue(MutableBitList("00", 2), true),
-                            BitListValue(MutableBitList("11", 2), true)
+                            BitListValue("00", 2, constant = true, signed = false),
+                            BitListValue("11", 2, constant = true, signed = false)
                         )
                     )
                 )
@@ -937,7 +958,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("20", 10, signed = false), true),
+            BitListValue("20", 10, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
 
@@ -949,7 +970,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("101100", 2, signed = false), true),
+            BitListValue("101100", 2, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
 
@@ -961,7 +982,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("3", 10, signed = false), true),
+            BitListValue("3", 10, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
 
@@ -973,7 +994,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("3", 10, signed = false), true),
+            BitListValue("3", 10, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
 
@@ -985,7 +1006,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("4", 10, signed = false), true),
+            BitListValue("4", 10, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
 
@@ -997,7 +1018,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("8", 10, 3, signed = false), true),
+            BitListValue("8", 10, 3, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
 
@@ -1009,7 +1030,7 @@ internal class ExprParserTest {
         tree = test.expr()
 
         assertEquals(
-            BitListValue(MutableBitList("1", 10, 3, signed = false), true),
+            BitListValue("1", 10, 3, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
 
@@ -1021,31 +1042,31 @@ internal class ExprParserTest {
     @Test
     fun simpleSignalTest() {
         val test = LucidTester("test[2]")
-        val signal = Signal("test", SignalDirection.Both, null, BitListValue(MutableBitList("110", 2), false))
+        val signal = Signal("test", SignalDirection.Both, null, BitListValue("110", 2, constant = false, signed = false))
         test.parseContext.testingSignalResolver = TestSignalResolver(signal)
         val exprCtx = test.expr()
 
         assert(test.hasNoIssues)
 
-        assertEquals(BitListValue(MutableBitList("1", 2), false), test.parseContext.expr.resolve(exprCtx))
+        assertEquals(BitValue(Bit.B1, constant = false, signed = false), test.parseContext.expr.resolve(exprCtx))
     }
 
     @Test
     fun rangeSignalTest() {
         val test = LucidTester("test[2:1]")
-        val signal = Signal("test", SignalDirection.Both, null, BitListValue(MutableBitList("1010", 2), false))
+        val signal = Signal("test", SignalDirection.Both, null, BitListValue("1010", 2, constant = false, signed = false))
         test.parseContext.testingSignalResolver = TestSignalResolver(signal)
         val exprCtx = test.expr()
 
         assert(test.hasNoIssues)
 
-        assertEquals(BitListValue(MutableBitList("01", 2), false), test.parseContext.expr.resolve(exprCtx))
+        assertEquals(BitListValue("01", 2, constant = false, signed = false), test.parseContext.expr.resolve(exprCtx))
     }
 
     @Test
     fun rangeOutOfBoundsSignalTest() {
         val test = LucidTester("test[9:1]")
-        val signal = Signal("test", SignalDirection.Both, null, BitListValue(MutableBitList("1010", 2), false))
+        val signal = Signal("test", SignalDirection.Both, null, BitListValue("1010", 2, constant = false, signed = false))
         test.parseContext.testingSignalResolver = TestSignalResolver(signal)
         val exprCtx = test.expr()
 

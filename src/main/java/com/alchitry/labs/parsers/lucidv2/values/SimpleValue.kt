@@ -16,7 +16,7 @@ sealed class SimpleValue(
     abstract val bits: List<Bit>
     fun asBitListValue() = if (this is BitListValue) this else BitListValue(bits, constant, signed)
 
-    fun toBigInt(): BigInteger {
+    fun toBigInt(signed: Boolean = this.signed): BigInteger {
         check(isNumber()) { "The value is not a number (it contains x, z, or u values)" }
         val bytes =
             ByteArray(ceil((size + if (signed) 0 else 1).toDouble() / 8.0).toInt()) // if not signed need extra 0 sign bit
@@ -48,6 +48,8 @@ sealed class SimpleValue(
     }
 
     fun isDriven(): Boolean = bits.none { it == Bit.Bu }
+
+    /** returns true if the value is made up of only 1s and 0s */
     override fun isNumber(): Boolean = bits.none { !it.isNumber() }
 
     fun isNegative(): Boolean = signed && msb == Bit.B1
@@ -123,7 +125,7 @@ sealed class SimpleValue(
         val constant = constant && b.constant
         val op1 = asBitListValue().resize(size, signedOp)
         val op2 = b.asBitListValue().resize(size, signedOp)
-        return BitListValue(constant, signedOp, size) { i ->
+        return BitListValue(size, constant, signedOp) { i ->
             op(op1[i], op2[i])
         }
     }
@@ -153,17 +155,17 @@ sealed class SimpleValue(
     }
 
     infix fun shl(n: Int): BitListValue {
-        val bits = mutableListOf<Bit>()
-        repeat(n) { bits.add(Bit.B0) }
-        bits.addAll(bits)
-        return BitListValue(bits, constant, signed)
+        val newBits = mutableListOf<Bit>()
+        repeat(n) { newBits.add(Bit.B0) }
+        newBits.addAll(bits)
+        return BitListValue(newBits, constant, signed)
     }
 
     infix fun ushl(n: Int): BitListValue {
-        val bits = mutableListOf<Bit>()
-        repeat(n) { bits.add(Bit.B0) }
-        bits.addAll(bits)
-        return BitListValue(bits, constant, false)
+        val newBits = mutableListOf<Bit>()
+        repeat(n) { newBits.add(Bit.B0) }
+        newBits.addAll(bits)
+        return BitListValue(newBits, constant, false)
     }
 
     infix fun shr(n: Int): BitListValue {
@@ -178,7 +180,7 @@ sealed class SimpleValue(
         val newBits = mutableListOf<Bit>()
         newBits.addAll(bits.subList(n, size))
         repeat(n) { newBits.add(Bit.B0) }
-        return BitListValue(newBits, constant, signed)
+        return BitListValue(newBits, constant, false)
     }
 
     override fun toString(): String {
@@ -194,5 +196,25 @@ sealed class SimpleValue(
         }
         sb.append('}')
         return sb.toString()
+    }
+
+    fun isPowerOf2() = isNumber() && bits.count { it == Bit.B1 } == 1
+
+    /**
+     * Returns the minimum number of bits needed to represent this value
+     */
+    fun minBits(): Int {
+        if (isNegative()) {
+            for (i in bits.indices.reversed()) {
+                if (bits[i] != Bit.B1)
+                    return i + 2
+            }
+        } else {
+            for (i in bits.indices.reversed()) {
+                if (bits[i] != Bit.B0)
+                    return i + 1 + if (signed) 1 else 0
+            }
+        }
+        return 1
     }
 }

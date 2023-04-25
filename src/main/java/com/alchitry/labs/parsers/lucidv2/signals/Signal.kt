@@ -1,6 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.signals
 
-import com.alchitry.labs.parsers.lucidv2.values.*
+import com.alchitry.labs.parsers.lucidv2.values.Value
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,7 +31,7 @@ class Signal(
         set(v) {
             mutableValueFlow.getAndUpdate {
                 check(it.canAssign(v)) { "Signal assigned value does not match its size!" }
-                v.resizeToMatch(it)
+                v.resizeToMatch(it.signalWidth)
             }
         }
 

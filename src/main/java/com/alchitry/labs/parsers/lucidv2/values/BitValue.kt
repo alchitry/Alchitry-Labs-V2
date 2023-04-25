@@ -39,4 +39,16 @@ data class  BitValue(
         constant,
         false
     )
+
+    override fun toString(): String {
+        val sb = StringBuilder()
+        if (constant)
+            sb.append("const ")
+        if (signed)
+            sb.append("signed ")
+        sb.append('{')
+        sb.append(bit.toString().substring(1))
+        sb.append('}')
+        return sb.toString()
+    }
 }

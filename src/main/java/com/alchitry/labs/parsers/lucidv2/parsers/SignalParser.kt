@@ -1,6 +1,5 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
-import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.values.DynamicExpr
 import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.errors.dummyErrorListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
@@ -72,7 +71,7 @@ class SignalParser(
         }
 
         val size = try {
-            expr.bits.toBigInt().intValueExact()
+            expr.toBigInt().intValueExact()
         } catch (e: ArithmeticException) {
             resolver.errorCollector.reportError(ctx, "Array size must fit into an integer.")
             return
@@ -121,9 +120,7 @@ class SignalParser(
     private fun filledArrayValue(bit: Bit, dims: List<Int>, signed: Boolean): Value {
         if (dims.isEmpty()) return bit.toBitValue(true, signed)
 
-        val base = MutableBitList(signed).also { list ->
-            repeat(dims[0]) { list.add(bit) }
-        }.toSimpleValue(true)
+        val base = BitListValue(dims[0], true, signed) { bit }
 
         if (dims.size == 1) return base
 
@@ -172,7 +169,7 @@ class SignalParser(
                                             "The initialization value is wider than the DFF and will be truncated."
                                         )
                                     }
-                                    init = it.resizeToMatch(init)
+                                    init = it.resizeToMatch(init.signalWidth)
 
                                 } else {
                                     errorListener.reportError(
