@@ -326,26 +326,6 @@ public interface LucidListener extends ParseTreeListener {
 	 */
 	void exitParamCon(LucidParser.ParamConContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LucidParser#typeDec}.
-	 * @param ctx the parse tree
-	 */
-	void enterTypeDec(LucidParser.TypeDecContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LucidParser#typeDec}.
-	 * @param ctx the parse tree
-	 */
-	void exitTypeDec(LucidParser.TypeDecContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link LucidParser#dffSingle}.
-	 * @param ctx the parse tree
-	 */
-	void enterDffSingle(LucidParser.DffSingleContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LucidParser#dffSingle}.
-	 * @param ctx the parse tree
-	 */
-	void exitDffSingle(LucidParser.DffSingleContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link LucidParser#sigDec}.
 	 * @param ctx the parse tree
 	 */

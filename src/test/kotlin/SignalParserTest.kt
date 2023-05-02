@@ -1,6 +1,4 @@
-import com.alchitry.labs.parsers.lucidv2.signals.Dff
-import com.alchitry.labs.parsers.lucidv2.signals.Signal
-import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
+import com.alchitry.labs.parsers.lucidv2.signals.*
 import com.alchitry.labs.parsers.lucidv2.values.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -177,5 +175,28 @@ internal class SignalParserTest {
         assert(tester.hasErrors)
         assert(tester.hasNoWarnings)
         assert(tester.hasNoSyntaxIssues)
+    }
+
+    @Test
+    fun testDffSimpleStruct() {
+        val tester = LucidTester("""{
+            struct test { a, b[2][3], c[4] }
+            dff testing<test>(.clk(1))
+            }""".trimIndent())
+        tester.moduleBody()
+        assert(tester.hasNoIssues)
+
+        val struct = StructType(
+            "test", mutableMapOf(
+                "a" to StructMember("a", BitWidth, false),
+                "b" to StructMember("b", ArrayWidth(2, BitListWidth(3)), false),
+                "c" to StructMember("c", BitListWidth(4), false)
+            )
+        )
+
+        val dff = tester.parseContext.signal.resolve("testing")
+        dff as Dff
+
+        assertEquals(StructWidth(struct), dff.q.value.signalWidth)
     }
 }

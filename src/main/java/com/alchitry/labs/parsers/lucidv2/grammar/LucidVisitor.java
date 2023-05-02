@@ -201,18 +201,6 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParamCon(LucidParser.ParamConContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LucidParser#typeDec}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeDec(LucidParser.TypeDecContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#dffSingle}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDffSingle(LucidParser.DffSingleContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link LucidParser#sigDec}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

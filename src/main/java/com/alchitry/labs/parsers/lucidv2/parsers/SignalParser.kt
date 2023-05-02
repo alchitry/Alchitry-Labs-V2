@@ -167,6 +167,9 @@ class SignalParser(
 
     override fun exitDffDec(ctx: DffDecContext) {
         val signed = ctx.SIGNED() != null
+
+        val name = ctx.name().text
+
         val structType = ctx.structType()?.let {
             resolvedStructTypes[it].also { v ->
                 if (v == null)
@@ -177,106 +180,100 @@ class SignalParser(
             }
         }
 
-        ctx.dffSingle().forEach { dffCtx ->
-            val name = dffCtx.name().text
+        if (ctx.name().TYPE_ID() == null)
+            context.errorCollector.reportError(ctx.name(), "Dff names must start with a lowercase letter.")
 
-            if (dffCtx.name().TYPE_ID() == null)
-                context.errorCollector.reportError(dffCtx.name(), "Dff names must start with a lowercase letter.")
+        val dims = ctx.arraySize()
+            .asReversed()
+            .mapNotNull { (context.expr.resolve(it.expr()) as? BitListValue)?.toBigInt()?.intValueExact() }
 
-            val dims = dffCtx.arraySize()
-                .asReversed()
-                .mapNotNull { (context.expr.resolve(it.expr()) as? BitListValue)?.toBigInt()?.intValueExact() }
+        var clk: DynamicExpr? = null
+        var rst: DynamicExpr? = null
+        val width = buildSignalWidth(dims, structType)
+        var init: Value = width.getFilledValue(Bit.B0, true, signed)
 
-            var clk: DynamicExpr? = null
-            var rst: DynamicExpr? = null
-            val width = buildSignalWidth(dims, structType)
-            var init: Value = width.getFilledValue(Bit.B0, true, signed)
-            println("Width: $width")
-            println("init: ${init.signalWidth}")
+        val connectedSignals = mutableSetOf<String>()
+        val connectedParams = mutableSetOf<String>()
 
-            val connectedSignals = mutableSetOf<String>()
-            val connectedParams = mutableSetOf<String>()
+        val signalConnections = mutableListOf<Connection>()
+        val paramConnections = mutableListOf<Connection>()
 
-            val signalConnections = mutableListOf<Connection>()
-            val paramConnections = mutableListOf<Connection>()
-
-            dffCtx.instCons()?.connection()?.forEach { connection ->
-                connection.sigCon()?.let { sigCtx ->
-                    signalConnections.add(Connection(sigCtx.name(), DynamicExpr(sigCtx.expr(), context)))
-                }
-                connection.paramCon()?.let { paramCtx ->
-                    paramConnections.add(Connection(paramCtx.name(), DynamicExpr(paramCtx.expr(), context)))
-                }
+        ctx.instCons()?.connection()?.forEach { connection ->
+            connection.sigCon()?.let { sigCtx ->
+                signalConnections.add(Connection(sigCtx.name(), DynamicExpr(sigCtx.expr(), context)))
             }
-
-            assignmentBlocks.forEach { block ->
-                signalConnections.addAll(block.signals)
-                paramConnections.addAll(block.params)
+            connection.paramCon()?.let { paramCtx ->
+                paramConnections.add(Connection(paramCtx.name(), DynamicExpr(paramCtx.expr(), context)))
             }
+        }
 
-            paramConnections.forEach { param ->
-                val paramName = param.port
-                if (connectedParams.add(paramName)) {
-                    when (paramName) {
-                        "INIT" -> param.value.value.let {
-                            if (init.canAssign(it)) {
-                                if (init is SimpleValue && it is SimpleValue && (init as SimpleValue).size < it.size) {
-                                    context.errorCollector.reportWarning(
-                                        param.value.expr,
-                                        "The initialization value is wider than the DFF $name and will be truncated."
-                                    )
-                                }
-                                init = it.resizeToMatch(init.signalWidth)
-                            } else {
-                                context.errorCollector.reportError(
+        assignmentBlocks.forEach { block ->
+            signalConnections.addAll(block.signals)
+            paramConnections.addAll(block.params)
+        }
+
+        paramConnections.forEach { param ->
+            val paramName = param.port
+            if (connectedParams.add(paramName)) {
+                when (paramName) {
+                    "INIT" -> param.value.value.let {
+                        if (init.canAssign(it)) {
+                            if (init is SimpleValue && it is SimpleValue && (init as SimpleValue).size < it.size) {
+                                context.errorCollector.reportWarning(
                                     param.value.expr,
-                                    "The initialization value does not match the size of the DFF $name."
+                                    "The initialization value is wider than the DFF $name and will be truncated."
                                 )
                             }
+                            init = it.resizeToMatch(init.signalWidth)
+                        } else {
+                            context.errorCollector.reportError(
+                                param.value.expr,
+                                "The initialization value does not match the size of the DFF $name."
+                            )
                         }
-
-                        else -> context.errorCollector.reportError(
-                            param.value.expr,
-                            "DFFs don't have a parameter named $paramName."
-                        )
                     }
-                } else {
-                    context.errorCollector.reportError(
+
+                    else -> context.errorCollector.reportError(
                         param.value.expr,
-                        "The parameter $paramName has already been specified."
+                        "DFFs don't have a parameter named $paramName."
                     )
                 }
-
+            } else {
+                context.errorCollector.reportError(
+                    param.value.expr,
+                    "The parameter $paramName has already been specified."
+                )
             }
 
-            signalConnections.forEach { sig ->
-                val sigName = sig.port
-                if (connectedSignals.add(sigName)) {
-                    when (sigName) {
-                        "clk" -> clk = sig.value
-                        "rst" -> rst = sig.value
-                        else -> context.errorCollector.reportError(
-                            sig.value.expr,
-                            "DFFs don't have a signal named $sigName."
-                        )
-                    }
-                } else {
-                    context.errorCollector.reportError(
-                        sig.portCtx,
-                        "The signal $sigName has already been specified."
-                    )
-                }
-
-            }
-
-            val resolvedClk = clk
-
-            if (resolvedClk == null) {
-                context.errorCollector.reportError(dffCtx, "Dff is missing connection to clk.")
-                return
-            }
-            val dff = Dff(name, init, resolvedClk, rst)
-            dffs[name] = dff
         }
+
+        signalConnections.forEach { sig ->
+            val sigName = sig.port
+            if (connectedSignals.add(sigName)) {
+                when (sigName) {
+                    "clk" -> clk = sig.value
+                    "rst" -> rst = sig.value
+                    else -> context.errorCollector.reportError(
+                        sig.value.expr,
+                        "DFFs don't have a signal named $sigName."
+                    )
+                }
+            } else {
+                context.errorCollector.reportError(
+                    sig.portCtx,
+                    "The signal $sigName has already been specified."
+                )
+            }
+
+        }
+
+        val resolvedClk = clk
+
+        if (resolvedClk == null) {
+            context.errorCollector.reportError(ctx, "Dff is missing connection to clk.")
+            return
+        }
+        val dff = Dff(name, init, resolvedClk, rst)
+        dffs[name] = dff
     }
 }
