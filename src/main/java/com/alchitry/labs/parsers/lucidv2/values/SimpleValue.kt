@@ -113,7 +113,7 @@ sealed class SimpleValue(
 
     override fun resizeToMatch(newWidth: SignalWidth): Value = when(newWidth) {
         is ArrayWidth -> error("Cannot resize SimpleValue to fit ArrayValue!")
-        is SimpleWidth -> asBitListValue().resize(newWidth.size)
+        is BitListWidth -> asBitListValue().resize(newWidth.size)
         BitWidth -> BitValue(lsb, constant, signed)
         is StructWidth -> error("Cannot resize SimpleValue to fit a StructValue!")
         is UndefinedSimpleWidth -> UndefinedValue(constant, UndefinedSimpleWidth)

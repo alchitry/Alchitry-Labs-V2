@@ -1,6 +1,8 @@
+import com.alchitry.labs.parsers.lucidv2.signals.StructMember
 import com.alchitry.labs.parsers.lucidv2.signals.StructType
 import com.alchitry.labs.parsers.lucidv2.values.ArrayWidth
-import com.alchitry.labs.parsers.lucidv2.values.SimpleWidth
+import com.alchitry.labs.parsers.lucidv2.values.BitListWidth
+import com.alchitry.labs.parsers.lucidv2.values.BitWidth
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -13,11 +15,13 @@ class StructTest {
 
         assert(tester.hasNoIssues)
 
-        val expected = StructType("test", mutableMapOf(
-            "a" to SimpleWidth(1),
-            "b" to ArrayWidth(2, SimpleWidth(3)),
-            "c" to SimpleWidth(4)
-        ))
+        val expected = StructType(
+            "test", mutableMapOf(
+                "a" to StructMember("a", BitWidth, false),
+                "b" to StructMember("b", ArrayWidth(2, BitListWidth(3)), false),
+                "c" to StructMember("c", BitListWidth(4), false)
+            )
+        )
 
         assertEquals(expected, tester.parseContext.signal.resolveStructType("test"))
     }

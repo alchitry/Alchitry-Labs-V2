@@ -73,13 +73,13 @@ class BoundsParserTest {
     fun testArrayIndex() {
         var test = LucidTester("[5]")
         var tree = test.bitSelection()
-        assertEquals(listOf(5..5), test.parseContext.expr.resolve(tree).map{it.range})
         assert(test.hasNoIssues)
+        assertEquals(listOf(5..5), test.parseContext.expr.resolve(tree).map{it.range})
 
         test = LucidTester("[0]")
         tree = test.bitSelection()
-        assertEquals(listOf(0..0), test.parseContext.expr.resolve(tree).map{it.range})
         assert(test.hasNoIssues)
+        assertEquals(listOf(0..0), test.parseContext.expr.resolve(tree).map{it.range})
 
         test = LucidTester("[bx]")
         tree = test.bitSelection()

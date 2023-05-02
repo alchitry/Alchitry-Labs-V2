@@ -44,7 +44,14 @@ internal class ExprParserTest {
 
         test = LucidTester("0")
         tree = test.expr()
-        assertEquals(BitListValue("0", 10, 1, constant = true, signed = false), test.parseContext.expr.resolve(tree))
+        assertEquals(BitValue(Bit.B0, constant = true, signed = false), test.parseContext.expr.resolve(tree))
+        assert(test.hasNoErrors)
+        assert(test.hasNoWarnings)
+        assert(test.hasNoSyntaxIssues)
+
+        test = LucidTester("1")
+        tree = test.expr()
+        assertEquals(BitValue(Bit.B1, constant = true, signed = false), test.parseContext.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
@@ -638,72 +645,60 @@ internal class ExprParserTest {
     fun testLogical() {
         var test = LucidTester("10 || 0")
         var tree = test.expr()
+        assert(test.hasNoIssues)
 
         assertEquals(
             BitValue(Bit.B1, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
-        assert(test.hasNoErrors)
-        assert(test.hasNoWarnings)
-        assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("0 || 0")
         tree = test.expr()
+        assert(test.hasNoIssues)
 
         assertEquals(
             BitValue(Bit.B0, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
-        assert(test.hasNoErrors)
-        assert(test.hasNoWarnings)
-        assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("10 && 0")
         tree = test.expr()
+        assert(test.hasNoIssues)
 
         assertEquals(
             BitValue(Bit.B0, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
-        assert(test.hasNoErrors)
-        assert(test.hasNoWarnings)
-        assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("10 && 4")
         tree = test.expr()
+        assert(test.hasNoIssues)
 
         assertEquals(
             BitValue(Bit.B1, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
-        assert(test.hasNoErrors)
-        assert(test.hasNoWarnings)
-        assert(test.hasNoSyntaxIssues)
     }
 
     @Test
     fun testTernary() {
         var test = LucidTester("10 ? 1 : 2")
         var tree = test.expr()
+        assert(test.hasNoIssues)
 
         assertEquals(
             BitListValue("1", 2, 2, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
-        assert(test.hasNoErrors)
-        assert(test.hasNoWarnings)
-        assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("10b0 ? 1 : 2")
         tree = test.expr()
+        assert(test.hasNoIssues)
 
         assertEquals(
             BitListValue("2", 10, 2, constant = true, signed = false),
             test.parseContext.expr.resolve(tree)
         )
-        assert(test.hasNoErrors)
-        assert(test.hasNoWarnings)
-        assert(test.hasNoSyntaxIssues)
     }
 
     @Test

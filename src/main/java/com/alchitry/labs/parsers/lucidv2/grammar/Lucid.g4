@@ -51,7 +51,7 @@ constDec: 'const' NL* name NL* '=' NL* expr NL* semi;
 
 assignBlock: conList NL* '{' (dffDec | moduleInst | assignBlock | NL)* '}';
 sigCon: '.' name NL* '(' NL* expr NL* ')';
-paramCon: '#' name NL* '(' NL* (expr | REAL) NL* ')';
+paramCon: '#' name NL* '(' NL* expr NL* ')';
 
 typeDec: name (arraySize | NL)*;
 dffSingle: name (arraySize | NL)* instCons?;
@@ -62,7 +62,7 @@ enumDec: 'enum' NL* name NL* '{' NL* name (NL* ',' NL* name)* NL* '}' semi;
 
 moduleInst: name NL* name (arraySize | NL)* instCons? semi;
 
-instCons : '(' NL* conList NL* ')';
+instCons : '(' NL* connection (NL* ',' NL* connection)* NL* ')';
 conList  : connection (NL* ',' NL* connection)*;
 connection: paramCon | sigCon;
 
@@ -104,7 +104,7 @@ repeatStat: 'repeat' NL* '(' NL* expr NL* (',' NL* signal NL*)? ')' NL* block;
 
 function: FUNCTION_ID NL* '(' NL* expr (NL* ',' NL* expr)* NL* ')';
 
-number: HEX | BIN | DEC | INT | STRING;
+number: HEX | BIN | DEC | INT | STRING | REAL;
 
 expr
   : signal                                          #ExprSignal

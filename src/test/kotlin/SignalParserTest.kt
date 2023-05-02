@@ -40,7 +40,7 @@ internal class SignalParserTest {
 
         dSig as Signal
         qSig as Signal
-        assertEquals(BitValue(Bit.B1,constant = false, signed = false), qSig.value)
+        assertEquals(BitValue(Bit.B1, constant = false, signed = false), qSig.value)
 
         assert(tester.hasNoErrors)
         assert(tester.hasNoWarnings)
@@ -80,7 +80,7 @@ internal class SignalParserTest {
 
         dSig as Signal
         qSig as Signal
-        assertEquals(SimpleWidth(3), qSig.value.signalWidth)
+        assertEquals(BitListWidth(3), qSig.value.signalWidth)
 
         assert(tester.hasErrors)
         assert(tester.hasNoWarnings)
@@ -91,6 +91,7 @@ internal class SignalParserTest {
     fun testDffArray() {
         val tester = LucidTester("dff testing[8][4][2](.clk(1));")
         tester.dffDec() // parse
+        assert(tester.hasNoIssues)
         val dff = tester.parseContext.signal.resolve("testing")
 
         dff as Dff
@@ -112,16 +113,15 @@ internal class SignalParserTest {
         qSig as Signal
         assertEquals(initValue, qSig.value)
         assertEquals(initValue, dSig.value)
-
-        assert(tester.hasNoErrors)
-        assert(tester.hasNoWarnings)
-        assert(tester.hasNoSyntaxIssues)
     }
 
     @Test
     fun testSignedDffArray() {
         val tester = LucidTester("signed dff testing[8][4][2](.clk(1));")
         tester.dffDec() // parse
+
+        assert(tester.hasNoIssues)
+
         val dff = tester.parseContext.signal.resolve("testing")
 
         dff as Dff
@@ -144,7 +144,37 @@ internal class SignalParserTest {
         assertEquals(initValue, qSig.value)
         assertEquals(initValue, dSig.value)
 
-        assert(tester.hasNoErrors)
+
+    }
+
+    @Test
+    fun testAssignBlockSimple() {
+        val tester = LucidTester(".clk(1), .rst(0) { dff test; }")
+        tester.assignBlock()
+        assert(tester.hasNoIssues)
+
+        val dff = tester.parseContext.signal.resolve("test")
+
+        dff as Dff
+
+        assertEquals(BitValue(Bit.B1, constant = true, signed = false), dff.clk.value)
+        assertEquals(BitValue(Bit.B0, constant = true, signed = false), dff.rst?.value)
+    }
+
+    @Test
+    fun testDoubleAssign() {
+        val tester = LucidTester(".clk(1), .rst(0) { dff test(.clk(0)); }")
+        tester.assignBlock()
+        assert(tester.hasErrors)
+        assert(tester.hasNoWarnings)
+        assert(tester.hasNoSyntaxIssues)
+    }
+
+    @Test
+    fun testDoubleAssignBlocks() {
+        val tester = LucidTester(".clk(1) { .clk(0) { dff test; } }")
+        tester.assignBlock()
+        assert(tester.hasErrors)
         assert(tester.hasNoWarnings)
         assert(tester.hasNoSyntaxIssues)
     }

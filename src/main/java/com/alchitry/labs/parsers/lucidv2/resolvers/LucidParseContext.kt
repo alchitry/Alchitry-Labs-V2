@@ -3,6 +3,7 @@ package com.alchitry.labs.parsers.lucidv2.resolvers
 import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.parsers.ExprParser
+import com.alchitry.labs.parsers.lucidv2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs.parsers.lucidv2.parsers.SignalParser
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import kotlinx.coroutines.CoroutineScope
@@ -11,15 +12,16 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.antlr.v4.runtime.tree.ParseTree
 
 interface Evaluable {
     suspend fun evaluate()
+    suspend fun waitCollecting()
 }
 
-
 class LucidParseContext(val errorCollector: ErrorCollector) {
-    val expr = ExprParser(errorCollector, this)
-    val signal = SignalParser(errorCollector, this)
+    val expr = ExprParser(this)
+    val signal = SignalParser(this)
     //val struct = StructResolver(er)
     /** Used in tests to simulate a full parse. */
     var testingSignalResolver: SignalResolver? = null
@@ -28,9 +30,19 @@ class LucidParseContext(val errorCollector: ErrorCollector) {
     private val evaluationQueue: MutableSet<Evaluable> = LinkedHashSet()
     private val queueLock = Mutex()
 
+    private val listeners = listOf(
+        expr,
+        signal
+    )
+
+    private val evaluables = mutableListOf<Evaluable>()
+    fun addEvaluable(evaluable: Evaluable) = evaluables.add(evaluable)
+    suspend fun waitCollecting() { evaluables.forEach { it.waitCollecting() }}
+
+    fun walk(t: ParseTree) = ParseTreeMultiWalker.walk(listeners, t)
+
     fun addToParser(parser: LucidParser) {
-        parser.addParseListener(expr)
-        parser.addParseListener(signal)
+        listeners.forEach { parser.addParseListener(it) }
     }
 
     /**

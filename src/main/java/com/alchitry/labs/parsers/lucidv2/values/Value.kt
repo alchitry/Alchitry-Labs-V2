@@ -34,7 +34,7 @@ sealed class Value {
             is ArrayValue -> elements.flatMap { it.getBits() }
             is SimpleValue -> bits
             is StructValue -> type.flatMap { (key, value) ->
-                this[key]?.getBits() ?: List(value.getBitCount()) { Bit.Bx }
+                this[key]?.getBits() ?: List(value.width.getBitCount()) { Bit.Bx }
             }
             is UndefinedValue -> List(width.getBitCount()) { Bit.Bx }
         }

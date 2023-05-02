@@ -50,7 +50,7 @@ sealed class SignalWidth {
         return when (this) {
             is SimpleWidth, BitWidth -> true
             is ArrayWidth -> next.isDefined()
-            is StructWidth -> type.values.all { it.isDefined() }
+            is StructWidth -> type.values.all { it.width.isDefined() }
             is UndefinedSimpleWidth -> false
         }
     }
@@ -77,7 +77,7 @@ sealed class SignalWidth {
         return when (this) {
             is BitWidth -> 1
             is ArrayWidth -> size * next.getBitCount()
-            is StructWidth -> type.values.sumOf { it.getBitCount() }
+            is StructWidth -> type.values.sumOf { it.width.getBitCount() }
             UndefinedSimpleWidth -> error("getBitCount() can't be used when width isn't well defined")
             is SimpleWidth -> size
         }
@@ -90,25 +90,64 @@ sealed class SignalWidth {
             BitWidth, is SimpleWidth, UndefinedSimpleWidth -> other is BitWidth || other is SimpleWidth || other is UndefinedSimpleWidth
         }
 
+    /**
+     * Returns a value of this width filled with bit.
+     * @param bit is the value to fill the Value with
+     * @param constant if the resulting Value should be marked as constant
+     * @param signed if the resulting Value should be signed. This will be overwritten by structs that have explicit signs.
+     */
+    abstract fun getFilledValue(bit: Bit, constant: Boolean, signed: Boolean): Value
+
 }
 
-object BitWidth: SignalWidth()
+sealed class SimpleWidth : SignalWidth() {
+    abstract val size: Int
 
-data class SimpleWidth(
-    val size: Int
-) : SignalWidth()
+    override fun equals(other: Any?): Boolean {
+        if (other is SimpleWidth)
+            return size == other.size
+
+        return super.equals(other)
+    }
+
+    override fun hashCode(): Int {
+        return size
+    }
+}
+
+object BitWidth : SimpleWidth() {
+    override val size = 1
+    override fun getFilledValue(bit: Bit, constant: Boolean, signed: Boolean): BitValue =
+        BitValue(bit, constant, signed)
+}
+
+data class BitListWidth(
+    override val size: Int
+) : SimpleWidth() {
+    override fun getFilledValue(bit: Bit, constant: Boolean, signed: Boolean): BitListValue =
+        BitListValue(size, constant, signed) { bit }
+}
 
 data class ArrayWidth(
     val size: Int,
     val next: SignalWidth
-) : SignalWidth()
+) : SignalWidth() {
+    override fun getFilledValue(bit: Bit, constant: Boolean, signed: Boolean): ArrayValue =
+        ArrayValue(List(size) { next.getFilledValue(bit, constant, signed) })
+}
 
 data class StructWidth(
     val type: StructType
-) : SignalWidth()
+) : SignalWidth() {
+    override fun getFilledValue(bit: Bit, constant: Boolean, signed: Boolean): StructValue =
+        StructValue(type, type.mapValues { it.value.width.getFilledValue(bit, constant, it.value.signed) })
+}
 
 object UndefinedSimpleWidth : SignalWidth() {
     override fun equals(other: Any?): Boolean {
         return false
     }
+
+    override fun getFilledValue(bit: Bit, constant: Boolean, signed: Boolean): UndefinedValue =
+        UndefinedValue(constant, this)
 }

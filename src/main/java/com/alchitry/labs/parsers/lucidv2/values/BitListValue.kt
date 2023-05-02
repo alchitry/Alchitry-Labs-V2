@@ -19,7 +19,7 @@ data class BitListValue(
 
     override fun asMutable(): BitListValue = copy(constant = false)
 
-    override val signalWidth: SimpleWidth = SimpleWidth(bits.size)
+    override val signalWidth: SimpleWidth = BitListWidth(bits.size)
 
     override fun invert(): BitListValue = copy(bits = bits.map { !it })
     override fun reverse(): BitListValue = copy(bits = bits.reversed())
