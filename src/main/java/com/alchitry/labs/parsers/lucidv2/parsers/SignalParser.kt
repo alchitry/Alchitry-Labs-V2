@@ -159,7 +159,7 @@ class SignalParser(
         val offset = if (structType == null) 1 else 0
 
         repeat(dims.size - offset) {
-            lastWidth = ArrayWidth(dims[it + 1], lastWidth)
+            lastWidth = ArrayWidth(dims[it + offset], lastWidth)
         }
 
         return lastWidth

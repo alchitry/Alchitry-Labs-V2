@@ -199,4 +199,28 @@ internal class SignalParserTest {
 
         assertEquals(StructWidth(struct), dff.q.value.signalWidth)
     }
+
+    @Test
+    fun testDffStructArray() {
+        val tester = LucidTester("""{
+            struct test { a, b[2][3], c[4] }
+            dff testing<test>[6](.clk(1))
+            }""".trimIndent())
+        tester.moduleBody()
+        assert(tester.hasNoIssues)
+
+        val struct = StructType(
+            "test", mutableMapOf(
+                "a" to StructMember("a", BitWidth, false),
+                "b" to StructMember("b", ArrayWidth(2, BitListWidth(3)), false),
+                "c" to StructMember("c", BitListWidth(4), false)
+            )
+        )
+        val width = ArrayWidth(6, StructWidth(struct))
+
+        val dff = tester.parseContext.signal.resolve("testing")
+        dff as Dff
+
+        assertEquals(width, dff.q.value.signalWidth)
+    }
 }
