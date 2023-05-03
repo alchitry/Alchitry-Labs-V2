@@ -80,55 +80,15 @@ public interface LucidListener extends ParseTreeListener {
 	 */
 	void exitParamDec(LucidParser.ParamDecContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LucidParser#portDec}.
+	 * Enter a parse tree produced by {@link LucidParser#paramDefault}.
 	 * @param ctx the parse tree
 	 */
-	void enterPortDec(LucidParser.PortDecContext ctx);
+	void enterParamDefault(LucidParser.ParamDefaultContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link LucidParser#portDec}.
+	 * Exit a parse tree produced by {@link LucidParser#paramDefault}.
 	 * @param ctx the parse tree
 	 */
-	void exitPortDec(LucidParser.PortDecContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link LucidParser#inputDec}.
-	 * @param ctx the parse tree
-	 */
-	void enterInputDec(LucidParser.InputDecContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LucidParser#inputDec}.
-	 * @param ctx the parse tree
-	 */
-	void exitInputDec(LucidParser.InputDecContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link LucidParser#outputDec}.
-	 * @param ctx the parse tree
-	 */
-	void enterOutputDec(LucidParser.OutputDecContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LucidParser#outputDec}.
-	 * @param ctx the parse tree
-	 */
-	void exitOutputDec(LucidParser.OutputDecContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link LucidParser#inoutDec}.
-	 * @param ctx the parse tree
-	 */
-	void enterInoutDec(LucidParser.InoutDecContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LucidParser#inoutDec}.
-	 * @param ctx the parse tree
-	 */
-	void exitInoutDec(LucidParser.InoutDecContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link LucidParser#paramName}.
-	 * @param ctx the parse tree
-	 */
-	void enterParamName(LucidParser.ParamNameContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LucidParser#paramName}.
-	 * @param ctx the parse tree
-	 */
-	void exitParamName(LucidParser.ParamNameContext ctx);
+	void exitParamDefault(LucidParser.ParamDefaultContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LucidParser#paramConstraint}.
 	 * @param ctx the parse tree
@@ -139,6 +99,36 @@ public interface LucidListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitParamConstraint(LucidParser.ParamConstraintContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LucidParser#portDec}.
+	 * @param ctx the parse tree
+	 */
+	void enterPortDec(LucidParser.PortDecContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LucidParser#portDec}.
+	 * @param ctx the parse tree
+	 */
+	void exitPortDec(LucidParser.PortDecContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LucidParser#portDirection}.
+	 * @param ctx the parse tree
+	 */
+	void enterPortDirection(LucidParser.PortDirectionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LucidParser#portDirection}.
+	 * @param ctx the parse tree
+	 */
+	void exitPortDirection(LucidParser.PortDirectionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LucidParser#signalWidth}.
+	 * @param ctx the parse tree
+	 */
+	void enterSignalWidth(LucidParser.SignalWidthContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LucidParser#signalWidth}.
+	 * @param ctx the parse tree
+	 */
+	void exitSignalWidth(LucidParser.SignalWidthContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LucidParser#arraySize}.
 	 * @param ctx the parse tree

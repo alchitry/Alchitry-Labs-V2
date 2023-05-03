@@ -55,41 +55,35 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParamDec(LucidParser.ParamDecContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LucidParser#portDec}.
+	 * Visit a parse tree produced by {@link LucidParser#paramDefault}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPortDec(LucidParser.PortDecContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#inputDec}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitInputDec(LucidParser.InputDecContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#outputDec}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOutputDec(LucidParser.OutputDecContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#inoutDec}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitInoutDec(LucidParser.InoutDecContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#paramName}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitParamName(LucidParser.ParamNameContext ctx);
+	T visitParamDefault(LucidParser.ParamDefaultContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#paramConstraint}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitParamConstraint(LucidParser.ParamConstraintContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LucidParser#portDec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPortDec(LucidParser.PortDecContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LucidParser#portDirection}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPortDirection(LucidParser.PortDirectionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LucidParser#signalWidth}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSignalWidth(LucidParser.SignalWidthContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#arraySize}.
 	 * @param ctx the parse tree

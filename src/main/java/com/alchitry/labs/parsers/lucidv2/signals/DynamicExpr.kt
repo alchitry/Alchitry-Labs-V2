@@ -3,7 +3,9 @@ package com.alchitry.labs.parsers.lucidv2.signals
 import com.alchitry.labs.parsers.SynchronizedSharedFlow
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
+import com.alchitry.labs.parsers.lucidv2.context.SimpleInit
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.ExprContext
+import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs.parsers.lucidv2.values.Value
 import com.alchitry.labs.parsers.onAnyChange
 import kotlinx.coroutines.flow.Flow
@@ -20,15 +22,26 @@ import kotlinx.coroutines.launch
  */
 class DynamicExpr(
     val expr: ExprContext,
-    private val context: LucidModuleContext
+    private val context: LucidModuleContext,
+    widthConstraint: SignalWidth? = null
 ) : Evaluable {
     private val mutableValueFlow = SynchronizedSharedFlow<Value>()
     val valueFlow: Flow<Value> get() = mutableValueFlow.asFlow()
 
     private val collectingFlow = MutableStateFlow(false)
 
-    var value: Value = context.expr.resolve(expr) ?: error("Failed to resolve initial value for ${expr.text}")
+    var value: Value = context.expr.resolve(expr)?.let {
+        if (widthConstraint != null) {
+            if (!widthConstraint.canAssign(it.signalWidth))
+                error("Specified width is incompatible with the initial value!")
+            it.resizeToMatch(widthConstraint)
+        } else {
+            it
+        }
+    } ?: error("Failed to resolve initial value for ${expr.text}")
         private set
+
+    val width: SignalWidth = widthConstraint ?: value.signalWidth
 
     init {
         val dependencies =
@@ -44,10 +57,32 @@ class DynamicExpr(
         context.addEvaluable(this)
     }
 
+    fun asSignal(name: String): Signal {
+        return Signal(name, SignalDirection.Read, null, value).also { signal ->
+            val initializable = SimpleInit()
+            context.addInitializable(initializable)
+            context.project.scope.launch {
+                initializable.done()
+                valueFlow.collect {
+                    signal.set(it)
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns a DynamicExpr of the same expression but with a different width constraint.
+     */
+    fun constrain(width: SignalWidth): DynamicExpr {
+        if (this.width == width)
+            return this
+        return DynamicExpr(expr, context, width)
+    }
+
     /**
      * Suspends until the evaluator is collecting.
      */
-    override suspend fun waitCollecting() {
+    override suspend fun waitInit() {
         collectingFlow.first { true }
     }
 
@@ -63,7 +98,10 @@ class DynamicExpr(
 
         requireNotNull(newValue) { "Failed to produce a value for DynamicValue $expr" }
 
-        value = newValue
+        if (!width.canAssign(newValue.signalWidth))
+            error("Dynamic expression value attempted to change widths to something incompatible!")
+
+        value = newValue.resizeToMatch(width)
         mutableValueFlow.emit(newValue)
     }
 }

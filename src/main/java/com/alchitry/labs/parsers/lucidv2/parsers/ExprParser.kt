@@ -177,7 +177,7 @@ class ExprParser(
         }.toMap()
 
         try {
-            values[ctx] = signal.select(sigSelection.keys.toList()).value.asMutable()
+            values[ctx] = signal.select(sigSelection.keys.toList()).value
         } catch (e: SignalSelectionException) {
             context.errorCollector.reportError(sigSelection[e.selector]!!, e.message!!)
             return
@@ -919,8 +919,8 @@ class ExprParser(
                         context.errorCollector.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
                     }) return
 
-                op1 as BitListValue
-                op2 as BitListValue
+                op1 as SimpleValue
+                op2 as SimpleValue
 
                 values[ctx] = when (operand) {
                     "<" -> op1 isLessThan op2

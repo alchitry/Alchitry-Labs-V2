@@ -13,25 +13,106 @@ class SignalParser(
 ) : LucidBaseListener(), SignalResolver, StructResolver {
     private val dffs = mutableMapOf<String, Dff>()
 
-    private val structTypes = mutableMapOf<String, StructType>()
+    private val localStructType = mutableMapOf<String, StructType>()
+    private val structTypes = mutableMapOf<StructDecContext, StructType>()
     private val resolvedStructTypes = mutableMapOf<StructTypeContext, StructType>()
-
-    private val signalConnectionBlocks = mutableListOf<MutableMap<String, ExprContext>>()
-
+    private val signalWidths = mutableMapOf<SignalWidthContext, SignalWidth>()
     private val arraySizes = mutableMapOf<ArraySizeContext, Int>()
-
     private val assignmentBlocks = mutableListOf<AssignmentBlock>()
+
+    private val localParams = mutableMapOf<String, Signal>()
+
+    private var inModule = false
+    private var inParamDec = false
 
     /** Assumes the name is a simple name (no .'s) */
     override fun resolve(name: String): SignalOrParent? {
         dffs[name]?.let { return it }
-        // TODO: Add other names
+
+        // check the instance for a parameter value before resorting to the local version
+        context.instance?.parameters?.get(name)?.let { return it }
+        localParams[name]?.let { return it }
 
         return null
     }
 
-    fun resolveStructType(name: String): StructType? = structTypes[name]
+    fun resolveStructType(ctx: StructDecContext) = structTypes[ctx]
     override fun resolve(ctx: StructTypeContext): StructType? = resolvedStructTypes[ctx]
+    fun resolveSignalWidth(ctx: SignalWidthContext): SignalWidth? = signalWidths[ctx]
+
+    override fun enterParamDec(ctx: ParamDecContext) {
+        inParamDec = true
+    }
+
+    override fun exitParamDec(ctx: ParamDecContext) {
+        inParamDec = false
+    }
+
+    /**
+     * Build a local reference to the default value
+     */
+    override fun enterParamConstraint(ctx: ParamConstraintContext) {
+        val parent = ctx.parent
+        if (parent is ParamDecContext) {
+            val name = parent.name().text
+            val defaultValue = parent.paramDefault()?.expr()?.let { context.expr.resolve(it) } ?: UndefinedValue(true)
+            localParams[name] = Signal(name, SignalDirection.Read, null, defaultValue)
+        }
+    }
+
+    override fun exitParamConstraint(ctx: ParamConstraintContext) {
+        val value = context.expr.resolve(ctx.expr())
+        if (value?.isTrue()?.bit != Bit.B1) {
+            context.errorCollector.reportError(ctx, "Parameter constraint \"${ctx.text}\" failed!")
+        }
+    }
+
+    override fun enterModule(ctx: ModuleContext) {
+        inModule = true
+        localStructType.clear()
+    }
+
+    override fun exitModule(ctx: ModuleContext) {
+        inModule = false
+    }
+
+    override fun exitSignalWidth(ctx: SignalWidthContext) {
+        val dims = ctx.arraySize()
+            .asReversed()
+            .mapNotNull { (context.expr.resolve(it.expr()) as? BitListValue)?.toBigInt()?.intValueExact() }
+
+        val structType = ctx.structType()?.let {
+            resolvedStructTypes[it].also { v ->
+                if (v == null)
+                    context.errorCollector.reportError(
+                        ctx.structType(),
+                        "Failed to resolve struct type ${it.text}!"
+                    )
+            }
+        }
+
+        if (dims.isEmpty()) {
+            signalWidths[ctx] = structType?.let { StructWidth(it) } ?: BitWidth
+            return
+        }
+
+        val base = structType?.let { StructWidth(it) } ?: BitListWidth(dims[0])
+
+        if (dims.size == 1 && structType == null) {
+            signalWidths[ctx] = base
+            return
+        }
+
+        var lastWidth: SignalWidth = base
+
+        val offset = if (structType == null) 1 else 0
+
+        repeat(dims.size - offset) {
+            lastWidth = ArrayWidth(dims[it + offset], lastWidth)
+        }
+
+        signalWidths[ctx] = lastWidth
+    }
 
     override fun exitConList(ctx: ConListContext) {
         val signals = mutableListOf<Connection>()
@@ -68,13 +149,22 @@ class SignalParser(
     override fun exitStructType(ctx: StructTypeContext) {
         val name = ctx.name().firstOrNull()?.text ?: return
 
-        // TODO: Support global structs
-        if (ctx.name().size > 1) {
-            context.errorCollector.reportError(ctx.name().first(), "Global structs aren't supported yet...")
-            return
-        }
+        val type = if (ctx.name().size > 1) { // includes a . aka GlobalSpace.structName
+            val global = context.project.resolveGlobal(name)
+            if (global == null) {
+                context.errorCollector.reportError(ctx.name(0), "Couldn't find global namespace $name")
+                return
+            }
 
-        val type = structTypes[name]
+            if (ctx.name().size > 2) {
+                context.errorCollector.reportError(ctx.name(2), "Unknown extension to struct name.")
+                return
+            }
+
+            global.structs[ctx.name(1).text]
+        } else { // local struct
+            localStructType[name]
+        }
 
         if (type == null) {
             context.errorCollector.reportError(ctx.name(0), "Failed to find struct with name $name.")
@@ -127,24 +217,20 @@ class SignalParser(
                     "The struct member name $memberName must start with a lowercase letter."
                 )
 
-            val subStructType = structMemberContext.structType()?.let { resolvedStructTypes[it] }
-            val arraySizes = structMemberContext.arraySize().mapNotNull { arraySizes[it] }
+            val width = signalWidths[structMemberContext.signalWidth()]
 
-            var width = subStructType?.let { StructWidth(it) }
-                ?: arraySizes.lastOrNull()?.let { BitListWidth(it) }
-                ?: BitWidth
-
-            val lastIdx = arraySizes.size - if (subStructType != null) 0 else 1
-
-            if (lastIdx >= 0)
-                arraySizes.subList(0, lastIdx).asReversed().forEach {
-                    width = ArrayWidth(it, width)
-                }
+            if (width == null) {
+                context.errorCollector.reportError(structMemberContext.signalWidth(), "Failed to resolve signal width!")
+                return@forEach
+            }
 
             members[memberName] = StructMember(memberName, width, signed)
         }
 
-        structTypes[name] = StructType(name, members)
+        structTypes[ctx] = StructType(name, members).also {
+            if (inModule)
+                localStructType[name] = it
+        }
     }
 
     private fun buildSignalWidth(dims: List<Int>, structType: StructType?): SignalWidth {
@@ -170,26 +256,18 @@ class SignalParser(
 
         val name = ctx.name().text
 
-        val structType = ctx.structType()?.let {
-            resolvedStructTypes[it].also { v ->
-                if (v == null)
-                    context.errorCollector.reportError(
-                        ctx.structType(),
-                        "Failed to resolve struct type ${it.text}!"
-                    )
-            }
-        }
-
         if (ctx.name().TYPE_ID() == null)
             context.errorCollector.reportError(ctx.name(), "Dff names must start with a lowercase letter.")
 
-        val dims = ctx.arraySize()
-            .asReversed()
-            .mapNotNull { (context.expr.resolve(it.expr()) as? BitListValue)?.toBigInt()?.intValueExact() }
-
         var clk: DynamicExpr? = null
         var rst: DynamicExpr? = null
-        val width = buildSignalWidth(dims, structType)
+        val width = signalWidths[ctx.signalWidth()]
+
+        if (width == null) {
+            context.errorCollector.reportError(ctx.signalWidth(), "Failed to resolve signal width!")
+            return
+        }
+
         var init: Value = width.getFilledValue(Bit.B0, true, signed)
 
         val connectedSignals = mutableSetOf<String>()
@@ -251,7 +329,7 @@ class SignalParser(
             val sigName = sig.port
             if (connectedSignals.add(sigName)) {
                 when (sigName) {
-                    "clk" -> clk = sig.value
+                    "clk" -> clk = sig.value // TODO: Check width fits to single bit
                     "rst" -> rst = sig.value
                     else -> context.errorCollector.reportError(
                         sig.value.expr,
@@ -273,7 +351,28 @@ class SignalParser(
             context.errorCollector.reportError(ctx, "Dff is missing connection to clk.")
             return
         }
-        val dff = Dff(name, init, resolvedClk, rst)
+
+        val clkWidth = resolvedClk.value.signalWidth
+        if (!BitWidth.canAssign(clkWidth)) {
+            context.errorCollector.reportError(ctx, "The clk connection can't be reduced to a single bit.")
+            return
+        }
+
+        if (clkWidth != BitWidth) {
+            context.errorCollector.reportWarning(resolvedClk.expr, "The clk connection is wider than 1 bit and will be truncated.")
+        }
+
+        rst?.value?.signalWidth?.let { rstWidth ->
+            if (!BitWidth.canAssign(rstWidth)) {
+                context.errorCollector.reportError(ctx, "The rst connection can't be reduced to a single bit.")
+                return
+            }
+            if (rstWidth != BitWidth) {
+                context.errorCollector.reportWarning(resolvedClk.expr, "The rst connection is wider than 1 bit and will be truncated.")
+            }
+        }
+
+        val dff = Dff(name, init, resolvedClk.constrain(BitWidth), rst?.constrain(BitWidth))
         dffs[name] = dff
     }
 }

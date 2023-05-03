@@ -14,20 +14,19 @@ globalStat
   | constDec
   ;
 
-module: 'module' NL* name NL* paramList? NL* portList NL* moduleBody;
+module: 'module' name NL* paramList? NL* portList NL* moduleBody;
 
 paramList: '#(' NL* paramDec NL* (',' NL* paramDec NL*)* ')';
 portList: '(' NL* portDec NL* (',' NL* portDec NL*)* ')';
 
-paramDec: paramName NL* (':' NL* paramConstraint)?;
-portDec: inputDec | outputDec | inoutDec;
-
-inputDec: SIGNED? NL* 'input' NL* structType? NL* name (arraySize | NL)*;
-outputDec: SIGNED? NL* 'output' NL* structType? NL* name (arraySize | NL)*;
-inoutDec: SIGNED? NL* 'inout' NL* structType? NL* name (arraySize | NL)*;
-
-paramName: name NL* ('=' NL* expr)?;
+paramDec: name NL* ('=' NL* paramDefault)? NL* (':' NL* paramConstraint)?;
+paramDefault: expr;
 paramConstraint: expr;
+
+portDec: SIGNED? portDirection name signalWidth;
+portDirection: 'input'|'output'|'inout';
+
+signalWidth: arraySize* structType?;
 
 arraySize: '[' NL* expr NL* ']';
 structType: '<' NL* name NL* ('.' NL* name NL*)? '>';
@@ -53,17 +52,17 @@ assignBlock: conList NL* '{' (dffDec | moduleInst | assignBlock | NL)* '}';
 sigCon: '.' name NL* '(' NL* expr NL* ')';
 paramCon: '#' name NL* '(' NL* expr NL* ')';
 
-sigDec: SIGNED? 'sig' name structType? arraySize* semi;
-dffDec: SIGNED? 'dff' name structType? arraySize* instCons? semi;
+sigDec: SIGNED? 'sig' name signalWidth semi;
+dffDec: SIGNED? 'dff' name signalWidth instCons? semi;
 enumDec: 'enum' NL* name NL* '{' NL* name (NL* ',' NL* name)* NL* '}' semi;
 
-moduleInst: name NL* name (arraySize | NL)* instCons? semi;
+moduleInst: name NL* name arraySize* instCons? semi;
 
 instCons : '(' NL* connection (NL* ',' NL* connection)* NL* ')';
 conList  : connection (NL* ',' NL* connection)*;
 connection: paramCon | sigCon;
 
-structMember: SIGNED? NL* name NL* structType? (arraySize | NL)*;
+structMember: SIGNED? NL* name signalWidth;
 structDec: 'struct' NL* name NL* '{' NL* structMember (NL* ',' NL* structMember)* NL* '}' semi;
 
 alwaysBlock: 'always' NL* block;

@@ -5,7 +5,7 @@ import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 
-class LucidTester (text: String) :
+class LucidTester(text: String) :
     LucidParser(
         CommonTokenStream(
             LucidLexer(
@@ -13,7 +13,7 @@ class LucidTester (text: String) :
             ).also { it.removeErrorListeners() })
     ) {
 
-    val context = LucidModuleContext(ProjectContext())
+    val context = LucidModuleContext(ProjectContext(), null)
 
     init {
         (tokenStream.tokenSource as LucidLexer).addErrorListener(context.errorCollector)
@@ -23,27 +23,11 @@ class LucidTester (text: String) :
         context.addToParser(this)
     }
 
-    val hasNoIssues: Boolean get() = hasNoErrors && hasNoWarnings && hasNoSyntaxIssues
-
-    val hasNoErrors: Boolean get() {
-        context.errorCollector.errors.forEach {
-            println(it)
-        }
-        return context.errorCollector.errors.isEmpty()
-    }
-    val hasNoWarnings: Boolean get() {
-        context.errorCollector.warnings.forEach {
-            println(it)
-        }
-        return context.errorCollector.warnings.isEmpty()
-    }
-    val hasNoSyntaxIssues: Boolean get() {
-        context.errorCollector.syntaxIssues.forEach {
-            println(it)
-        }
-        return context.errorCollector.syntaxIssues.isEmpty()
-    }
-    val hasErrors: Boolean get() = context.errorCollector.errors.isNotEmpty()
-    val hasWarnings: Boolean get() = context.errorCollector.warnings.isNotEmpty()
-    val hasSyntaxIssues: Boolean get() = context.errorCollector.syntaxIssues.isNotEmpty()
+    val hasNoIssues: Boolean get() = context.errorCollector.hasNoIssues
+    val hasNoErrors: Boolean get() = context.errorCollector.hasNoErrors
+    val hasNoWarnings: Boolean get() = context.errorCollector.hasNoWarnings
+    val hasNoSyntaxIssues: Boolean get() = context.errorCollector.hasNoSyntaxIssues
+    val hasErrors: Boolean get() = context.errorCollector.hasErrors
+    val hasWarnings: Boolean get() = context.errorCollector.hasWarnings
+    val hasSyntaxIssues: Boolean get() = context.errorCollector.hasSyntaxIssues
 }

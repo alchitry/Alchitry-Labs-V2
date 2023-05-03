@@ -1,6 +1,5 @@
 package com.alchitry.labs.parsers.lucidv2.context
 
-interface Evaluable {
+interface Evaluable: Initializable {
     suspend fun evaluate()
-    suspend fun waitCollecting()
 }

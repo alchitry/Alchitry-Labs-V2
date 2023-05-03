@@ -19,7 +19,7 @@ class DynamicExprTest {
 
         val dynamicExpr = DynamicExpr(exprCtx, test.context)
 
-        runBlocking { test.context.waitCollecting() }
+        runBlocking { test.context.waitInit() }
 
         assertEquals(BitListValue("001", 2, constant = false, signed = false), dynamicExpr.value)
 

@@ -2,6 +2,7 @@ import com.alchitry.labs.parsers.lucidv2.signals.*
 import com.alchitry.labs.parsers.lucidv2.values.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 internal class SignalParserTest {
     @Test
@@ -23,6 +24,50 @@ internal class SignalParserTest {
         assert(tester.hasNoErrors)
         assert(tester.hasNoWarnings)
         assert(tester.hasNoSyntaxIssues)
+    }
+
+    @Test
+    fun testDffArrayClk() {
+        val tester = LucidTester("dff testing(.clk({1}));")
+        tester.dffDec() // parse
+        tester.context.signal.resolve("testing")
+
+        assert(tester.hasNoWarnings)
+        assert(tester.hasNoSyntaxIssues)
+        assert(tester.hasErrors)
+    }
+
+    @Test
+    fun testDffArrayRst() {
+        val tester = LucidTester("dff testing(.clk(1), .rst({1}));")
+        tester.dffDec() // parse
+        tester.context.signal.resolve("testing")
+
+        assert(tester.hasNoWarnings)
+        assert(tester.hasNoSyntaxIssues)
+        assert(tester.hasErrors)
+    }
+
+    @Test
+    fun testDffWideClk() {
+        val tester = LucidTester("dff testing(.clk(2b11));")
+        tester.dffDec() // parse
+        tester.context.signal.resolve("testing")
+
+        assert(tester.hasNoErrors)
+        assert(tester.hasNoSyntaxIssues)
+        assert(tester.hasWarnings)
+    }
+
+    @Test
+    fun testDffWideRst() {
+        val tester = LucidTester("dff testing(.clk(1), .rst(2b11));")
+        tester.dffDec() // parse
+        tester.context.signal.resolve("testing")
+
+        assert(tester.hasNoErrors)
+        assert(tester.hasNoSyntaxIssues)
+        assert(tester.hasWarnings)
     }
 
     @Test
@@ -58,7 +103,7 @@ internal class SignalParserTest {
 
         dSig as Signal
         qSig as Signal
-        assertEquals(BitListValue("111",2, constant = false, signed = false), qSig.value)
+        assertEquals(BitListValue("111", 2, constant = false, signed = false), qSig.value)
 
         assert(tester.hasNoErrors)
         assert(tester.hasWarnings)
@@ -101,7 +146,7 @@ internal class SignalParserTest {
             List(8) {
                 ArrayValue(
                     List(4) {
-                        BitListValue("00",2, constant = false, signed = false)
+                        BitListValue("00", 2, constant = false, signed = false)
                     }
                 )
             }
@@ -131,7 +176,7 @@ internal class SignalParserTest {
             List(8) {
                 ArrayValue(
                     List(4) {
-                        BitListValue("00",2, signed = true, constant = false)
+                        BitListValue("00", 2, signed = true, constant = false)
                     }
                 )
             }
@@ -179,11 +224,17 @@ internal class SignalParserTest {
 
     @Test
     fun testDffSimpleStruct() {
-        val tester = LucidTester("""{
+        val tester = LucidTester(
+            """
+            module myMod (
+            input a
+            ){
             struct test { a, b[2][3], c[4] }
             dff testing<test>(.clk(1))
-            }""".trimIndent())
-        tester.moduleBody()
+            }
+            """.trimIndent()
+        )
+        tester.source()
         assert(tester.hasNoIssues)
 
         val struct = StructType(
@@ -202,11 +253,17 @@ internal class SignalParserTest {
 
     @Test
     fun testDffStructArray() {
-        val tester = LucidTester("""{
-            struct test { a, b[2][3], c[4] }
-            dff testing<test>[6](.clk(1))
-            }""".trimIndent())
-        tester.moduleBody()
+        val tester = LucidTester(
+            """
+            module myMod (
+            input a
+            ){
+            struct test { a, b[2][3], c[4] };
+            dff testing[6]<test>(.clk(1));
+            }
+            """.trimIndent()
+        )
+        tester.source()
         assert(tester.hasNoIssues)
 
         val struct = StructType(
@@ -222,5 +279,78 @@ internal class SignalParserTest {
         dff as Dff
 
         assertEquals(width, dff.q.value.signalWidth)
+    }
+
+    @Test
+    fun testModuleTypeExtraction() {
+        val tester = LucidTester(
+            """
+            module myMod #(
+                MY_PARAM = 2 : MY_PARAM > 0
+            )(
+                input a,
+                output b
+            ){
+            }
+            """.trimIndent()
+        )
+        val ctx = tester.source()
+        assert(tester.hasNoIssues)
+
+        val param = Parameter(
+            "MY_PARAM",
+            BitListValue("2", 10, constant = true, signed = false),
+            ctx.module(0).paramList().paramDec(0).paramConstraint().expr()
+        )
+
+        assertEquals(param, tester.context.module.module?.parameters?.values?.first())
+    }
+
+    @Test
+    fun testBadParam() {
+        val tester = LucidTester(
+            """
+            module myMod #(
+                MY_PARAM = 2 : MY_PARAM > 3
+            )(
+                input a,
+                output b
+            ){
+            }
+            """.trimIndent()
+        )
+        tester.source()
+        assert(tester.hasNoSyntaxIssues)
+        assert(tester.hasNoWarnings)
+        assert(tester.hasErrors)
+    }
+
+    @Test
+    fun testGlobal() {
+        val tester = LucidTester(
+            """
+                global MyGlobal {
+                    const ONE = 1
+                }
+                module myMod (
+                    input a,
+                    output b
+                ){
+                    dff test(.clk(MyGlobal.ONE))
+                }
+            """.trimIndent()
+        )
+        tester.source()
+        assert(tester.hasNoIssues)
+
+        val global = tester.context.project.resolveGlobal("MyGlobal")
+        assertNotNull(global)
+        val const = global.getSignal("ONE")
+        assertNotNull(const)
+        assertEquals(BitValue(Bit.B1, constant = true, signed = false), const.value)
+
+        val dff = tester.context.signal.resolve("test")
+        dff as Dff
+        assertEquals(BitValue(Bit.B1, constant = true, signed = false), dff.clk.value)
     }
 }
