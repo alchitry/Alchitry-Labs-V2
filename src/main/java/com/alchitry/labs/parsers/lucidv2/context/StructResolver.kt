@@ -1,4 +1,4 @@
-package com.alchitry.labs.parsers.lucidv2.resolvers
+package com.alchitry.labs.parsers.lucidv2.context
 
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.StructTypeContext
 import com.alchitry.labs.parsers.lucidv2.signals.StructType

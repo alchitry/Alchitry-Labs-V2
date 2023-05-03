@@ -1,9 +1,9 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
 import com.alchitry.labs.parsers.lucidv2.*
+import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
-import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
 import org.antlr.v4.runtime.ParserRuleContext
@@ -18,7 +18,7 @@ data class BitSelection(
  * This class nests in ExprParse so that it is always run when ExprParser updates values
  */
 open class BitSelectionParser(
-    protected val context: LucidParseContext
+    protected val context: LucidModuleContext
 ) : LucidBaseListener() {
     private val bounds = mutableMapOf<ParseTree, BitSelection>()
 

@@ -4,9 +4,8 @@ import com.alchitry.labs.parsers.BigFunctions
 import com.alchitry.labs.parsers.Util.widthOfMult
 import com.alchitry.labs.parsers.errors.ErrorStrings
 import com.alchitry.labs.parsers.errors.WarningStrings
-
+import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
-import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalParent
 import com.alchitry.labs.parsers.lucidv2.signals.SignalSelectionException
@@ -26,7 +25,7 @@ import kotlin.math.absoluteValue
  * the parent class BitSelectionParser.
  */
 class ExprParser(
-    context: LucidParseContext
+    context: LucidModuleContext
 ) : BitSelectionParser(context) {
     private val values = mutableMapOf<ParseTree, Value>()
     private val dependencies = mutableMapOf<ParseTree, Set<Signal>>()

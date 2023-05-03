@@ -1,9 +1,9 @@
 package com.alchitry.labs.parsers.lucidv2.signals
 
 import com.alchitry.labs.parsers.SynchronizedSharedFlow
+import com.alchitry.labs.parsers.lucidv2.context.Evaluable
+import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.ExprContext
-import com.alchitry.labs.parsers.lucidv2.resolvers.Evaluable
-import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext
 import com.alchitry.labs.parsers.lucidv2.values.Value
 import com.alchitry.labs.parsers.onAnyChange
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
  */
 class DynamicExpr(
     val expr: ExprContext,
-    private val context: LucidParseContext
+    private val context: LucidModuleContext
 ) : Evaluable {
     private val mutableValueFlow = SynchronizedSharedFlow<Value>()
     val valueFlow: Flow<Value> get() = mutableValueFlow.asFlow()
@@ -33,12 +33,12 @@ class DynamicExpr(
     init {
         val dependencies =
             context.expr.resolveDependencies(expr) ?: error("Failed to resolve dependencies for ${expr.text}")
-        context.scope.launch {
+        context.project.scope.launch {
             onAnyChange(
                 dependencies.map { it.valueFlow },
                 onStarted = { collectingFlow.tryEmit(true) }
             ) {
-                context.queueEvaluation(this@DynamicExpr)
+                context.project.queueEvaluation(this@DynamicExpr)
             }
         }
         context.addEvaluable(this)

@@ -13,26 +13,26 @@ class DynamicExprTest {
 
         val signal = Signal("test", SignalDirection.Both, null, BitListValue("110", 2, constant = false, signed = false))
 
-        test.parseContext.testingSignalResolver = TestSignalResolver(signal)
+        test.context.testingSignalResolver = TestSignalResolver(signal)
 
         val exprCtx = test.expr()
 
-        val dynamicExpr = DynamicExpr(exprCtx, test.parseContext)
+        val dynamicExpr = DynamicExpr(exprCtx, test.context)
 
-        runBlocking { test.parseContext.waitCollecting() }
+        runBlocking { test.context.waitCollecting() }
 
         assertEquals(BitListValue("001", 2, constant = false, signed = false), dynamicExpr.value)
 
         runBlocking {
             signal.set(BitListValue("011", 2, constant = false, signed = false))
-            test.parseContext.processQueue()
+            test.context.project.processQueue()
         }
 
         assertEquals(BitListValue("100", 2, constant = false, signed = false), dynamicExpr.value)
 
         runBlocking {
             signal.set(BitListValue("111", 2, constant = false, signed = false))
-            test.parseContext.processQueue()
+            test.context.project.processQueue()
         }
 
         assertEquals(BitListValue("000", 2, constant = false, signed = false), dynamicExpr.value)

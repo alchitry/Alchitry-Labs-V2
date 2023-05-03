@@ -1,8 +1,5 @@
-import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.ErrorCollector
-import com.alchitry.labs.parsers.lucidv2.parsers.BitSelectionParser
-import com.alchitry.labs.parsers.lucidv2.parsers.ExprParser
-import com.alchitry.labs.parsers.lucidv2.parsers.SignalParser
-import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
+import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidLexer
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
 import org.antlr.v4.runtime.CharStreams
@@ -16,39 +13,37 @@ class LucidTester (text: String) :
             ).also { it.removeErrorListeners() })
     ) {
 
-    val errorCollector = ErrorCollector()
-    val parseContext: LucidParseContext
+    val context = LucidModuleContext(ProjectContext())
 
     init {
-        (tokenStream.tokenSource as LucidLexer).addErrorListener(errorCollector)
+        (tokenStream.tokenSource as LucidLexer).addErrorListener(context.errorCollector)
         removeErrorListeners()
-        addErrorListener(errorCollector)
+        addErrorListener(context.errorCollector)
 
-        parseContext = LucidParseContext(errorCollector)
-        parseContext.addToParser(this)
+        context.addToParser(this)
     }
 
     val hasNoIssues: Boolean get() = hasNoErrors && hasNoWarnings && hasNoSyntaxIssues
 
     val hasNoErrors: Boolean get() {
-        errorCollector.errors.forEach {
+        context.errorCollector.errors.forEach {
             println(it)
         }
-        return errorCollector.errors.isEmpty()
+        return context.errorCollector.errors.isEmpty()
     }
     val hasNoWarnings: Boolean get() {
-        errorCollector.warnings.forEach {
+        context.errorCollector.warnings.forEach {
             println(it)
         }
-        return errorCollector.warnings.isEmpty()
+        return context.errorCollector.warnings.isEmpty()
     }
     val hasNoSyntaxIssues: Boolean get() {
-        errorCollector.syntaxIssues.forEach {
+        context.errorCollector.syntaxIssues.forEach {
             println(it)
         }
-        return errorCollector.syntaxIssues.isEmpty()
+        return context.errorCollector.syntaxIssues.isEmpty()
     }
-    val hasErrors: Boolean get() = errorCollector.errors.isNotEmpty()
-    val hasWarnings: Boolean get() = errorCollector.warnings.isNotEmpty()
-    val hasSyntaxIssues: Boolean get() = errorCollector.syntaxIssues.isNotEmpty()
+    val hasErrors: Boolean get() = context.errorCollector.errors.isNotEmpty()
+    val hasWarnings: Boolean get() = context.errorCollector.warnings.isNotEmpty()
+    val hasSyntaxIssues: Boolean get() = context.errorCollector.syntaxIssues.isNotEmpty()
 }

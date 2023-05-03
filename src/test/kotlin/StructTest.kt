@@ -11,7 +11,7 @@ class StructTest {
     @Test
     fun basicStructDecTest() {
         val tester = LucidTester("struct test { a, b[2][3], c[4] };")
-        val ctx = tester.structDec()
+        tester.structDec()
 
         assert(tester.hasNoIssues)
 
@@ -23,6 +23,6 @@ class StructTest {
             )
         )
 
-        assertEquals(expected, tester.parseContext.signal.resolveStructType("test"))
+        assertEquals(expected, tester.context.signal.resolveStructType("test"))
     }
 }

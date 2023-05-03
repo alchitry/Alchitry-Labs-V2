@@ -8,7 +8,7 @@ internal class SignalParserTest {
     fun testDffSimpleDeclaration() {
         val tester = LucidTester("dff testing(.clk(1));")
         tester.dffDec() // parse
-        val dff = tester.parseContext.signal.resolve("testing")
+        val dff = tester.context.signal.resolve("testing")
 
         dff as Dff
 
@@ -29,7 +29,7 @@ internal class SignalParserTest {
     fun testDffInit() {
         val tester = LucidTester("dff testing(.clk(1), #INIT(1));")
         tester.dffDec() // parse
-        val dff = tester.parseContext.signal.resolve("testing")
+        val dff = tester.context.signal.resolve("testing")
 
         dff as Dff
 
@@ -49,7 +49,7 @@ internal class SignalParserTest {
     fun testDffInitTruncate() {
         val tester = LucidTester("dff testing[3](.clk(1), #INIT(15));")
         tester.dffDec() // parse
-        val dff = tester.parseContext.signal.resolve("testing")
+        val dff = tester.context.signal.resolve("testing")
 
         dff as Dff
 
@@ -69,7 +69,7 @@ internal class SignalParserTest {
     fun testDffInitDimMismatch() {
         val tester = LucidTester("dff testing[3](.clk(1), #INIT({15}));")
         tester.dffDec() // parse
-        val dff = tester.parseContext.signal.resolve("testing")
+        val dff = tester.context.signal.resolve("testing")
 
         dff as Dff
 
@@ -90,7 +90,7 @@ internal class SignalParserTest {
         val tester = LucidTester("dff testing[8][4][2](.clk(1));")
         tester.dffDec() // parse
         assert(tester.hasNoIssues)
-        val dff = tester.parseContext.signal.resolve("testing")
+        val dff = tester.context.signal.resolve("testing")
 
         dff as Dff
 
@@ -120,7 +120,7 @@ internal class SignalParserTest {
 
         assert(tester.hasNoIssues)
 
-        val dff = tester.parseContext.signal.resolve("testing")
+        val dff = tester.context.signal.resolve("testing")
 
         dff as Dff
 
@@ -151,7 +151,7 @@ internal class SignalParserTest {
         tester.assignBlock()
         assert(tester.hasNoIssues)
 
-        val dff = tester.parseContext.signal.resolve("test")
+        val dff = tester.context.signal.resolve("test")
 
         dff as Dff
 
@@ -194,7 +194,7 @@ internal class SignalParserTest {
             )
         )
 
-        val dff = tester.parseContext.signal.resolve("testing")
+        val dff = tester.context.signal.resolve("testing")
         dff as Dff
 
         assertEquals(StructWidth(struct), dff.q.value.signalWidth)
@@ -218,7 +218,7 @@ internal class SignalParserTest {
         )
         val width = ArrayWidth(6, StructWidth(struct))
 
-        val dff = tester.parseContext.signal.resolve("testing")
+        val dff = tester.context.signal.resolve("testing")
         dff as Dff
 
         assertEquals(width, dff.q.value.signalWidth)

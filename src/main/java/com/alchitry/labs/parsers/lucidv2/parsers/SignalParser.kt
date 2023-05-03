@@ -1,15 +1,15 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
+import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
+import com.alchitry.labs.parsers.lucidv2.context.SignalResolver
+import com.alchitry.labs.parsers.lucidv2.context.StructResolver
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
-import com.alchitry.labs.parsers.lucidv2.resolvers.LucidParseContext
-import com.alchitry.labs.parsers.lucidv2.resolvers.SignalResolver
-import com.alchitry.labs.parsers.lucidv2.resolvers.StructResolver
 import com.alchitry.labs.parsers.lucidv2.signals.*
 import com.alchitry.labs.parsers.lucidv2.values.*
 
 class SignalParser(
-    private val context: LucidParseContext
+    private val context: LucidModuleContext
 ) : LucidBaseListener(), SignalResolver, StructResolver {
     private val dffs = mutableMapOf<String, Dff>()
 
