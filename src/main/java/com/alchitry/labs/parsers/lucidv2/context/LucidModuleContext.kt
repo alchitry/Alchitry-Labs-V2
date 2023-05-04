@@ -27,13 +27,7 @@ class LucidModuleContext(val project: ProjectContext, val instance: ModuleInstan
     private val evaluables = mutableListOf<Evaluable>()
     fun addEvaluable(evaluable: Evaluable) {
         evaluables.add(evaluable)
-        addInitializable(evaluable)
     }
-
-    private val initializables = mutableListOf<Initializable>()
-    fun addInitializable(initializable: Initializable) = initializables.add(initializable)
-
-    suspend fun waitInit() { initializables.forEach { it.waitInit() }}
 
     fun walk(t: ParseTree) = ParseTreeMultiWalker.walk(listeners, t)
 

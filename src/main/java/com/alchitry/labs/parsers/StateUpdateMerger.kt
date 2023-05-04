@@ -1,7 +1,11 @@
 package com.alchitry.labs.parsers
 
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -27,22 +31,16 @@ class SynchronizedSharedFlow<T:Any> {
  * @param dependencies a list of StateFlows to merge
  * @param onChange a callback to trigger on any update to dependencies. This is guaranteed to not be called concurrently.
  */
-suspend fun onAnyChange(dependencies: List<Flow<*>>, onStarted: () -> Unit, onChange: suspend () -> Unit) =
+suspend fun onAnyChange(dependencies: List<Flow<*>>, onChange: suspend () -> Unit) =
     coroutineScope {
         val changeFlow = SynchronizedSharedFlow<Int>()
-        val countFlow = MutableStateFlow(0)
         val ct = AtomicInteger(0)
         dependencies.forEach {
-            launch {
-                countFlow.update { it + 1 }
+            launch(start = CoroutineStart.UNDISPATCHED) {
                 it.collect {
                     changeFlow.emit(ct.getAndIncrement())
                 }
             }
-        }
-        launch {
-            countFlow.first { it == dependencies.size }
-            onStarted()
         }
         changeFlow.collect {
             onChange()

@@ -288,7 +288,7 @@ internal class SignalParserTest {
             module myMod #(
                 MY_PARAM = 2 : MY_PARAM > 0
             )(
-                input a,
+                input a[2],
                 output b
             ){
             }
@@ -304,6 +304,12 @@ internal class SignalParserTest {
         )
 
         assertEquals(param, tester.context.module.module?.parameters?.values?.first())
+
+        val portA = Port("a", SignalDirection.Read, BitListWidth(2))
+        assertEquals(portA, tester.context.module.module?.ports?.get("a"))
+
+        val portB = Port("b", SignalDirection.Write, BitWidth)
+        assertEquals(portB, tester.context.module.module?.ports?.get("b"))
     }
 
     @Test

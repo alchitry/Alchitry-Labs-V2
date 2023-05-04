@@ -9,32 +9,33 @@ import kotlin.test.assertEquals
 class DynamicExprTest {
     @Test
     fun basicDynamicExpr() {
-        val test = LucidTester("~test")
+        repeat(30) {
+            val test = LucidTester("~test")
 
-        val signal = Signal("test", SignalDirection.Both, null, BitListValue("110", 2, constant = false, signed = false))
+            val signal =
+                Signal("test", SignalDirection.Both, null, BitListValue("110", 2, constant = false, signed = false))
 
-        test.context.testingSignalResolver = TestSignalResolver(signal)
+            test.context.testingSignalResolver = TestSignalResolver(signal)
 
-        val exprCtx = test.expr()
+            val exprCtx = test.expr()
 
-        val dynamicExpr = DynamicExpr(exprCtx, test.context)
+            val dynamicExpr = DynamicExpr(exprCtx, test.context)
 
-        runBlocking { test.context.waitInit() }
+            assertEquals(BitListValue("001", 2, constant = false, signed = false), dynamicExpr.value)
 
-        assertEquals(BitListValue("001", 2, constant = false, signed = false), dynamicExpr.value)
+            runBlocking {
+                signal.set(BitListValue("011", 2, constant = false, signed = false))
+                test.context.project.processQueue()
+            }
 
-        runBlocking {
-            signal.set(BitListValue("011", 2, constant = false, signed = false))
-            test.context.project.processQueue()
+            assertEquals(BitListValue("100", 2, constant = false, signed = false), dynamicExpr.value)
+
+            runBlocking {
+                signal.set(BitListValue("111", 2, constant = false, signed = false))
+                test.context.project.processQueue()
+            }
+
+            assertEquals(BitListValue("000", 2, constant = false, signed = false), dynamicExpr.value)
         }
-
-        assertEquals(BitListValue("100", 2, constant = false, signed = false), dynamicExpr.value)
-
-        runBlocking {
-            signal.set(BitListValue("111", 2, constant = false, signed = false))
-            test.context.project.processQueue()
-        }
-
-        assertEquals(BitListValue("000", 2, constant = false, signed = false), dynamicExpr.value)
     }
 }

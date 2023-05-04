@@ -1,5 +1,5 @@
 package com.alchitry.labs.parsers.lucidv2.context
 
-interface Evaluable: Initializable {
+interface Evaluable {
     suspend fun evaluate()
 }

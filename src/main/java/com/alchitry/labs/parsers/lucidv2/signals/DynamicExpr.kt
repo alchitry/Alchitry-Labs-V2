@@ -3,14 +3,12 @@ package com.alchitry.labs.parsers.lucidv2.signals
 import com.alchitry.labs.parsers.SynchronizedSharedFlow
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
-import com.alchitry.labs.parsers.lucidv2.context.SimpleInit
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.ExprContext
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs.parsers.lucidv2.values.Value
 import com.alchitry.labs.parsers.onAnyChange
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /**
@@ -28,8 +26,6 @@ class DynamicExpr(
     private val mutableValueFlow = SynchronizedSharedFlow<Value>()
     val valueFlow: Flow<Value> get() = mutableValueFlow.asFlow()
 
-    private val collectingFlow = MutableStateFlow(false)
-
     var value: Value = context.expr.resolve(expr)?.let {
         if (widthConstraint != null) {
             if (!widthConstraint.canAssign(it.signalWidth))
@@ -46,11 +42,8 @@ class DynamicExpr(
     init {
         val dependencies =
             context.expr.resolveDependencies(expr) ?: error("Failed to resolve dependencies for ${expr.text}")
-        context.project.scope.launch {
-            onAnyChange(
-                dependencies.map { it.valueFlow },
-                onStarted = { collectingFlow.tryEmit(true) }
-            ) {
+        context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+            onAnyChange(dependencies.map { it.valueFlow }) {
                 context.project.queueEvaluation(this@DynamicExpr)
             }
         }
@@ -59,10 +52,7 @@ class DynamicExpr(
 
     fun asSignal(name: String): Signal {
         return Signal(name, SignalDirection.Read, null, value).also { signal ->
-            val initializable = SimpleInit()
-            context.addInitializable(initializable)
-            context.project.scope.launch {
-                initializable.done()
+            context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
                 valueFlow.collect {
                     signal.set(it)
                 }
@@ -77,13 +67,6 @@ class DynamicExpr(
         if (this.width == width)
             return this
         return DynamicExpr(expr, context, width)
-    }
-
-    /**
-     * Suspends until the evaluator is collecting.
-     */
-    override suspend fun waitInit() {
-        collectingFlow.first { true }
     }
 
     override suspend fun evaluate() {

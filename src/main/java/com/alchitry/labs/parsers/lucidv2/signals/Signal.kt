@@ -1,8 +1,11 @@
 package com.alchitry.labs.parsers.lucidv2.signals
 
 import com.alchitry.labs.parsers.SynchronizedSharedFlow
+import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.values.Value
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -37,6 +40,14 @@ class Signal(
             val resizedValue = newValue.resizeToMatch(value.signalWidth)
             value = resizedValue
             mutableValueFlow.emit(resizedValue)
+        }
+    }
+
+    fun connect(sig: Signal, context: LucidModuleContext) {
+        context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+            sig.valueFlow.collect {
+
+            }
         }
     }
 }
