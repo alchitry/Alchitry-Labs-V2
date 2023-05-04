@@ -19,6 +19,8 @@ data class ArrayValue(
 
     override fun asMutable(): ArrayValue = copy(elements = elements.map { it.asMutable() })
 
+    override fun withSign(signed: Boolean): ArrayValue = copy(elements = elements.map{ it.withSign(signed) })
+
     override val signalWidth: ArrayWidth = ArrayWidth(elements.size, elements[0].signalWidth)
 
     override fun invert(): ArrayValue = copy(elements = elements.map { it.invert() })

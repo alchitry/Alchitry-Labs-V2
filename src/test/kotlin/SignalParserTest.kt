@@ -359,4 +359,50 @@ internal class SignalParserTest {
         dff as Dff
         assertEquals(BitValue(Bit.B1, constant = true, signed = false), dff.clk.value)
     }
+
+    @Test
+    fun testSimpleSig() {
+        val tester = LucidTester("""
+            module myMod (
+                input a
+            ) {
+                sig testSig;
+            }
+        """.trimIndent())
+        tester.source()
+        assert(tester.hasNoSyntaxIssues)
+        assert(tester.hasNoErrors)
+        // TODO: warn about unused signal
+        val sig = tester.context.resolveSignal("testSig")
+        sig as Signal
+        assertEquals(SignalDirection.Both, sig.direction)
+        assertEquals(BitValue(Bit.Bu, false, false), sig.value)
+        assertEquals(false, sig.signed)
+        assertEquals(null, sig.parent)
+        assertEquals(BitWidth, sig.width)
+    }
+
+    @Test
+    fun testArraySig() {
+        val tester = LucidTester("""
+            module myMod (
+                input a
+            ) {
+                sig testSig[8];
+            }
+        """.trimIndent())
+        tester.source()
+        assert(tester.hasNoSyntaxIssues)
+        assert(tester.hasNoErrors)
+        // TODO: warn about unused signal
+        val sig = tester.context.resolveSignal("testSig")
+        sig as Signal
+
+        val width = BitListWidth(8)
+        assertEquals(SignalDirection.Both, sig.direction)
+        assertEquals(width.filledWith(Bit.Bu, false, false), sig.value)
+        assertEquals(false, sig.signed)
+        assertEquals(null, sig.parent)
+        assertEquals(width, sig.width)
+    }
 }

@@ -18,6 +18,7 @@ data class BitListValue(
     override val msb: Bit = bits.last()
 
     override fun asMutable(): BitListValue = copy(constant = false)
+    override fun withSign(signed: Boolean): BitListValue = copy(signed = signed)
 
     override val signalWidth: SimpleWidth = BitListWidth(bits.size)
 
@@ -38,13 +39,13 @@ data class BitListValue(
     /** Changes sign without changing bits */
     fun setSign(signed: Boolean): BitListValue = copy(signed = signed)
 
-    fun getBit(idx: Int): BitValue = BitValue(bits[idx], constant, signed)
+    fun getBit(idx: Int): BitValue = BitValue(bits[idx], constant, false)
 
     fun selectBits(selection: SignalSelector.Bits): Value {
         try {
             val newBits = bits.subList(selection.range.first, selection.range.last + 1)
             if (newBits.size == 1)
-                return BitValue(newBits.first(), constant, signed)
+                return BitValue(newBits.first(), constant, false)
             return copy(bits = newBits)
         } catch (e: IndexOutOfBoundsException) {
             throw SignalSelectionException(
@@ -55,7 +56,7 @@ data class BitListValue(
     }
 
     override fun subList(fromIndex: Int, toIndex: Int): BitListValue {
-        return BitListValue(bits.subList(fromIndex, toIndex), constant, signed)
+        return BitListValue(bits.subList(fromIndex, toIndex), constant, false)
     }
 
     override fun toString(): String {

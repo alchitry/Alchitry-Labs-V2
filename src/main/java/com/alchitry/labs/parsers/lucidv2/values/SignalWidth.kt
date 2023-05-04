@@ -96,7 +96,7 @@ sealed class SignalWidth {
      * @param constant if the resulting Value should be marked as constant
      * @param signed if the resulting Value should be signed. This will be overwritten by structs that have explicit signs.
      */
-    abstract fun getFilledValue(bit: Bit, constant: Boolean, signed: Boolean): Value
+    abstract fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): Value
 
 }
 
@@ -117,14 +117,14 @@ sealed class SimpleWidth : SignalWidth() {
 
 object BitWidth : SimpleWidth() {
     override val size = 1
-    override fun getFilledValue(bit: Bit, constant: Boolean, signed: Boolean): BitValue =
+    override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): BitValue =
         BitValue(bit, constant, signed)
 }
 
 data class BitListWidth(
     override val size: Int
 ) : SimpleWidth() {
-    override fun getFilledValue(bit: Bit, constant: Boolean, signed: Boolean): BitListValue =
+    override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): BitListValue =
         BitListValue(size, constant, signed) { bit }
 }
 
@@ -132,15 +132,15 @@ data class ArrayWidth(
     val size: Int,
     val next: SignalWidth
 ) : SignalWidth() {
-    override fun getFilledValue(bit: Bit, constant: Boolean, signed: Boolean): ArrayValue =
-        ArrayValue(List(size) { next.getFilledValue(bit, constant, signed) })
+    override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): ArrayValue =
+        ArrayValue(List(size) { next.filledWith(bit, constant, signed) })
 }
 
 data class StructWidth(
     val type: StructType
 ) : SignalWidth() {
-    override fun getFilledValue(bit: Bit, constant: Boolean, signed: Boolean): StructValue =
-        StructValue(type, type.mapValues { it.value.width.getFilledValue(bit, constant, it.value.signed) })
+    override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): StructValue =
+        StructValue(type, type.mapValues { it.value.width.filledWith(bit, constant, it.value.signed) })
 }
 
 object UndefinedSimpleWidth : SignalWidth() {
@@ -148,6 +148,6 @@ object UndefinedSimpleWidth : SignalWidth() {
         return false
     }
 
-    override fun getFilledValue(bit: Bit, constant: Boolean, signed: Boolean): UndefinedValue =
+    override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): UndefinedValue =
         UndefinedValue(constant, this)
 }

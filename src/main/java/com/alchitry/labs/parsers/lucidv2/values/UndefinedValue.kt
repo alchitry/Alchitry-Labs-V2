@@ -7,6 +7,7 @@ data class UndefinedValue(
     override fun isNumber() = false
 
     override fun asMutable() = copy(constant = false)
+    override fun withSign(signed: Boolean) = this
 
     override val signalWidth = width
 

@@ -8,6 +8,7 @@ sealed class Value {
     abstract fun isNumber(): Boolean
     /** Makes a copy of this Value that has the constant flag set as false. */
     abstract fun asMutable(): Value
+    abstract fun withSign(signed: Boolean): Value
     abstract val signalWidth: SignalWidth
     abstract fun invert(): Value
     abstract fun isTrue(): BitValue
@@ -78,6 +79,8 @@ sealed class Value {
                 is BitValue -> throw SignalSelectionException(selection, "Bits don't have struct members.")
             }
         }
+
+
 }
 
 

@@ -20,6 +20,9 @@ data class StructValue(
 
     override fun asMutable(): StructValue = copy(valueMap = mapValues { it.value.asMutable() })
 
+    /** withSign() does nothing to struct values since the members have explicit signs */
+    override fun withSign(signed: Boolean) = this
+
     override val signalWidth: StructWidth = StructWidth(type)
 
     override fun invert(): StructValue = copy(valueMap = mapValues { it.value.invert() })

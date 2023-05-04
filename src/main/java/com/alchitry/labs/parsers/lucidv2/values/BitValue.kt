@@ -23,6 +23,7 @@ data class  BitValue(
     override fun isNumber(): Boolean = bit.isNumber()
 
     override fun asMutable() = copy(constant = false)
+    override fun withSign(signed: Boolean) = copy(signed = signed)
 
     override val signalWidth = BitWidth
 

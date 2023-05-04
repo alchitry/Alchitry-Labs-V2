@@ -13,6 +13,7 @@ class SignalParser(
     private val context: LucidModuleContext
 ) : LucidBaseListener(), SignalResolver, StructResolver {
     private val dffs = mutableMapOf<String, Dff>()
+    private val sigs = mutableMapOf<String, Signal>()
 
     private val localStructType = mutableMapOf<String, StructType>()
     private val structTypes = mutableMapOf<StructDecContext, StructType>()
@@ -30,6 +31,7 @@ class SignalParser(
     /** Assumes the name is a simple name (no .'s) */
     override fun resolve(name: String): SignalOrParent? {
         dffs[name]?.let { return it }
+        sigs[name]?.let { return it }
 
         // check the instance for a parameter value before resorting to the local version
         context.instance?.parameters?.get(name)?.let { return it }
@@ -304,22 +306,21 @@ class SignalParser(
         }
     }
 
-    private fun buildSignalWidth(dims: List<Int>, structType: StructType?): SignalWidth {
-        if (dims.isEmpty()) return structType?.let { StructWidth(it) } ?: BitWidth
+    override fun exitSigDec(ctx: SigDecContext) {
+        val signed = ctx.SIGNED() != null
+        val name = ctx.name().text
 
-        val base = structType?.let { StructWidth(it) } ?: BitListWidth(dims[0])
+        if (ctx.name().TYPE_ID() == null)
+            context.errorCollector.reportError(ctx.name(), "Sig names must start with a lowercase letter.")
 
-        if (dims.size == 1 && structType == null) return base
+        val width = signalWidths[ctx.signalWidth()]
 
-        var lastWidth: SignalWidth = base
-
-        val offset = if (structType == null) 1 else 0
-
-        repeat(dims.size - offset) {
-            lastWidth = ArrayWidth(dims[it + offset], lastWidth)
+        if (width == null) {
+            context.errorCollector.reportError(ctx.signalWidth(), "Failed to resolve signal width!")
+            return
         }
 
-        return lastWidth
+        sigs[name] = Signal(name, SignalDirection.Both, null, width.filledWith(Bit.Bu, false, signed), signed)
     }
 
     override fun exitDffDec(ctx: DffDecContext) {
@@ -339,7 +340,7 @@ class SignalParser(
             return
         }
 
-        var init: Value = width.getFilledValue(Bit.B0, true, signed)
+        var init: Value = width.filledWith(Bit.B0, true, signed)
 
         val connectedSignals = mutableSetOf<String>()
         val connectedParams = mutableSetOf<String>()
@@ -449,7 +450,7 @@ class SignalParser(
             }
         }
 
-        val dff = Dff(name, init, resolvedClk.constrain(BitWidth), rst?.constrain(BitWidth))
+        val dff = Dff(name, init, resolvedClk.constrain(BitWidth), rst?.constrain(BitWidth), signed)
         dffs[name] = dff
     }
 }

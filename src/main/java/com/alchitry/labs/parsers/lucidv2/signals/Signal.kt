@@ -4,6 +4,7 @@ import com.alchitry.labs.parsers.SynchronizedSharedFlow
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
+import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
 import com.alchitry.labs.parsers.lucidv2.values.Value
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.flow.Flow
@@ -22,14 +23,15 @@ class Signal(
     override val name: String, // includes namespace or module name
     override val direction: SignalDirection,
     val parent: SignalParent?,
-    initialValue: Value
+    initialValue: Value,
+    val signed: Boolean = initialValue is SimpleValue && initialValue.signed
 ) : SignalOrParent, SignalOrSubSignal {
     fun select(selection: SignalSelection) = SubSignal(this, selection)
 
     private val mutableValueFlow = SynchronizedSharedFlow<Value>()
     val valueFlow: Flow<Value> get() = mutableValueFlow.asFlow()
 
-    override var value: Value = initialValue
+    override var value: Value = initialValue.withSign(signed)
         private set
 
     override val width: SignalWidth = value.signalWidth
@@ -37,7 +39,7 @@ class Signal(
     override fun quietSet(v: Value) {
         require(value.canAssign(v)) { "Signal assigned value does not match its size!" }
         val resizedValue = v.resizeToMatch(value.signalWidth)
-        value = resizedValue
+        value = resizedValue.withSign(signed)
     }
 
     suspend fun publishChange() {
