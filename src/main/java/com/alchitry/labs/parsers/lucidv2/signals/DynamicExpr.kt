@@ -44,17 +44,17 @@ class DynamicExpr(
             context.expr.resolveDependencies(expr) ?: error("Failed to resolve dependencies for ${expr.text}")
         context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             onAnyChange(dependencies.map { it.valueFlow }) {
-                context.project.queueEvaluation(this@DynamicExpr)
+                context.queueEvaluation(this@DynamicExpr)
             }
         }
-        context.addEvaluable(this)
     }
 
     fun asSignal(name: String): Signal {
         return Signal(name, SignalDirection.Read, null, value).also { signal ->
+            val evaluable = Evaluable { signal.set(value) }
             context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
                 valueFlow.collect {
-                    signal.set(it)
+                    context.queueEvaluation(evaluable)
                 }
             }
         }

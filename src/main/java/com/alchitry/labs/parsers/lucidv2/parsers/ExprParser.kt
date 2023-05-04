@@ -7,9 +7,7 @@ import com.alchitry.labs.parsers.errors.WarningStrings
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
-import com.alchitry.labs.parsers.lucidv2.signals.SignalParent
-import com.alchitry.labs.parsers.lucidv2.signals.SignalSelectionException
-import com.alchitry.labs.parsers.lucidv2.signals.SignalSelector
+import com.alchitry.labs.parsers.lucidv2.signals.SubSignal
 import com.alchitry.labs.parsers.lucidv2.values.*
 import com.alchitry.labs.parsers.lucidv2.values.Function
 import org.antlr.v4.runtime.ParserRuleContext
@@ -119,69 +117,6 @@ class ExprParser(
                 false
             }
         }.any { it }
-    }
-
-    override fun exitSignal(ctx: SignalContext) {
-        val firstName = ctx.name().firstOrNull() ?: return
-        val signalOrParent = context.resolveSignal(firstName.text)
-
-        if (signalOrParent == null) {
-            context.errorCollector.reportError(ctx.name(0), "Failed to resolve signal $firstName")
-            return
-        }
-
-        val children = ctx.children.filter { it is NameContext || it is BitSelectionContext }
-        val usedChildren: Int
-
-        val signal = when (signalOrParent) {
-            is Signal -> {
-                usedChildren = 1
-                signalOrParent
-            }
-
-            is SignalParent -> {
-                usedChildren = 2
-                if (children.size < 2) {
-                    context.errorCollector.reportError(ctx.name(0), "$firstName is not a signal and can't be accessed directly.")
-                    return
-                }
-                if (children[1] is BitSelectionContext) {
-                    context.errorCollector.reportError(children[1] as ParserRuleContext, "$firstName is not an array.")
-                    return
-                }
-                val sig = signalOrParent.getSignal(children[1].text)
-                if (sig == null) {
-                    context.errorCollector.reportError(
-                        children[1] as ParserRuleContext,
-                        "Failed to resolve signal $firstName.${children[1].text}"
-                    )
-                    return
-                }
-                sig
-            }
-        }
-
-        // add dependencies for all signals used in bit selection as well as this signal
-        dependencies[ctx] = mutableSetOf(signal).apply {
-            ctx.children.forEach { child ->
-                dependencies[child]?.let { addAll(it) }
-            }
-        }
-
-        val sigSelection = children.subList(usedChildren, children.size).flatMap { child ->
-            when (child) {
-                is NameContext -> listOf(SignalSelector.Struct(child.text) to child)
-                is BitSelectionContext -> resolve(child).map { SignalSelector.Bits(it.range) to it.ctx }
-                else -> error("Signal child was not a NameContext or BitSelectionContext")
-            }
-        }.toMap()
-
-        try {
-            values[ctx] = signal.select(sigSelection.keys.toList()).value
-        } catch (e: SignalSelectionException) {
-            context.errorCollector.reportError(sigSelection[e.selector]!!, e.message!!)
-            return
-        }
     }
 
     override fun exitBitSelectorFixWidth(ctx: BitSelectorFixWidthContext) {
@@ -311,10 +246,35 @@ class ExprParser(
         // TODO Struct constants
     }
 
+    override fun exitBitSelection(ctx: BitSelectionContext) {
+        dependencies[ctx] = mutableSetOf<Signal>().apply {
+            ctx.children.forEach { c -> dependencies[c]?.let { addAll(it) } }
+        }
+    }
+
     override fun exitExprSignal(ctx: ExprSignalContext) {
         if (canSkip(ctx)) return
-        values[ctx.signal()]?.let { values[ctx] = it }
-        dependencies[ctx.signal()]?.let { dependencies[ctx] = it }
+
+        val signal = context.signal.resolve(ctx.signal()) ?: return
+
+        if (!signal.direction.canRead) {
+            context.errorCollector.reportError(ctx.signal(), "The signal ${ctx.signal().text}, can't be read!")
+            return
+        }
+
+        values[ctx] = signal.value
+
+        val parentSig = when (signal) {
+            is Signal -> signal
+            is SubSignal -> signal.parent
+        }
+
+        // add dependencies for all signals used in bit selection as well as this signal
+        dependencies[ctx] = mutableSetOf(parentSig).apply {
+            ctx.signal().bitSelection().forEach { child ->
+                dependencies[child]?.let { addAll(it) }
+            }
+        }
     }
 
     override fun exitExprStruct(ctx: ExprStructContext) {

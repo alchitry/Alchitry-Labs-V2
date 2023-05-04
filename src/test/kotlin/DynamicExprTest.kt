@@ -9,13 +9,13 @@ import kotlin.test.assertEquals
 class DynamicExprTest {
     @Test
     fun basicDynamicExpr() {
-        repeat(30) {
+        repeat(30) { // repeat to attempt to check for race conditions
             val test = LucidTester("~test")
 
             val signal =
                 Signal("test", SignalDirection.Both, null, BitListValue("110", 2, constant = false, signed = false))
 
-            test.context.testingSignalResolver = TestSignalResolver(signal)
+            test.context.localSignalResolver = TestSignalResolver(signal)
 
             val exprCtx = test.expr()
 

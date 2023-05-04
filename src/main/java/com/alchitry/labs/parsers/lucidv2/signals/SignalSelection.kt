@@ -8,7 +8,7 @@ sealed class SignalSelector {
             return if (range.first == range.last) {
                 "[${range.first}]"
             } else {
-                "[${range.last}:${range.first}"
+                "[${range.last}:${range.first}]"
             }
         }
     }

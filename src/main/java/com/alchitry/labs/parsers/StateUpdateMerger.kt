@@ -2,10 +2,7 @@ package com.alchitry.labs.parsers
 
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -16,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger
 class SynchronizedSharedFlow<T:Any> {
     private val mutableFlow = MutableSharedFlow<T?>()
 
-    fun asFlow(): Flow<T> = mutableFlow.filterNotNull()
+    fun asFlow(): Flow<T> = mutableFlow.filterNotNull().distinctUntilChanged()
 
     suspend fun collect(collector: FlowCollector<T>) = asFlow().collect(collector)
 

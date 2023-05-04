@@ -7,6 +7,7 @@ import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.*
 import com.alchitry.labs.parsers.lucidv2.values.*
+import org.antlr.v4.runtime.ParserRuleContext
 
 class SignalParser(
     private val context: LucidModuleContext
@@ -17,6 +18,7 @@ class SignalParser(
     private val structTypes = mutableMapOf<StructDecContext, StructType>()
     private val resolvedStructTypes = mutableMapOf<StructTypeContext, StructType>()
     private val signalWidths = mutableMapOf<SignalWidthContext, SignalWidth>()
+    private val signals = mutableMapOf<SignalContext, SignalOrSubSignal>()
     private val arraySizes = mutableMapOf<ArraySizeContext, Int>()
     private val assignmentBlocks = mutableListOf<AssignmentBlock>()
 
@@ -35,6 +37,8 @@ class SignalParser(
 
         return null
     }
+
+    fun resolve(sigCtx: SignalContext): SignalOrSubSignal? = signals[sigCtx]
 
     fun resolveStructType(ctx: StructDecContext) = structTypes[ctx]
     override fun resolve(ctx: StructTypeContext): StructType? = resolvedStructTypes[ctx]
@@ -74,6 +78,73 @@ class SignalParser(
 
     override fun exitModule(ctx: ModuleContext) {
         inModule = false
+    }
+
+    override fun exitSignal(ctx: SignalContext) {
+        val firstName = ctx.name().firstOrNull() ?: return
+        val signalOrParent = context.resolveSignal(firstName.text)
+
+        if (signalOrParent == null) {
+            context.errorCollector.reportError(ctx.name(0), "Failed to resolve signal $firstName")
+            return
+        }
+
+        val children = ctx.children.filter { it is NameContext || it is BitSelectionContext }
+        val usedChildren: Int
+
+        val signal = when (signalOrParent) {
+            is Signal -> {
+                usedChildren = 1
+                signalOrParent
+            }
+
+            is SignalParent -> {
+                usedChildren = 2
+                if (children.size < 2) {
+                    context.errorCollector.reportError(
+                        ctx.name(0),
+                        "$firstName is not a signal and can't be accessed directly."
+                    )
+                    return
+                }
+                if (children[1] is BitSelectionContext) {
+                    context.errorCollector.reportError(children[1] as ParserRuleContext, "$firstName is not an array.")
+                    return
+                }
+                val sig = signalOrParent.getSignal(children[1].text)
+                if (sig == null) {
+                    context.errorCollector.reportError(
+                        children[1] as ParserRuleContext,
+                        "Failed to resolve signal $firstName.${children[1].text}"
+                    )
+                    return
+                }
+                sig
+            }
+        }
+
+        val selectionMap = children.subList(usedChildren, children.size).flatMap { child ->
+            when (child) {
+                is NameContext -> listOf(SignalSelector.Struct(child.text) to child)
+                is BitSelectionContext -> context.expr.resolve(child).map { SignalSelector.Bits(it.range) to it.ctx }
+                else -> error("Signal child was not a NameContext or BitSelectionContext")
+            }
+        }.toMap()
+
+        val sigSelection = selectionMap.keys.toList()
+
+        val selectedSignal = if (sigSelection.isEmpty()) {
+            signal
+        } else {
+            try {
+                signal.select(sigSelection)
+            } catch (e: SignalSelectionException) {
+                context.errorCollector.reportError(selectionMap[e.selector]!!, e.message!!)
+                return
+            }
+        }
+
+        signals[ctx] = selectedSignal
     }
 
     override fun exitSignalWidth(ctx: SignalWidthContext) {
@@ -359,7 +430,10 @@ class SignalParser(
         }
 
         if (clkWidth != BitWidth) {
-            context.errorCollector.reportWarning(resolvedClk.expr, "The clk connection is wider than 1 bit and will be truncated.")
+            context.errorCollector.reportWarning(
+                resolvedClk.expr,
+                "The clk connection is wider than 1 bit and will be truncated."
+            )
         }
 
         rst?.value?.signalWidth?.let { rstWidth ->
@@ -368,7 +442,10 @@ class SignalParser(
                 return
             }
             if (rstWidth != BitWidth) {
-                context.errorCollector.reportWarning(resolvedClk.expr, "The rst connection is wider than 1 bit and will be truncated.")
+                context.errorCollector.reportWarning(
+                    resolvedClk.expr,
+                    "The rst connection is wider than 1 bit and will be truncated."
+                )
             }
         }
 

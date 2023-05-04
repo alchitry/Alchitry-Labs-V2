@@ -17,11 +17,39 @@ import org.antlr.v4.runtime.CommonTokenStream
 class ProjectContext {
     val scope = CoroutineScope(Dispatchers.Default)
     private val errors = mutableListOf<String>()
-    private val evaluationQueue: MutableSet<Evaluable> = LinkedHashSet()
-    private val queueLock = Mutex()
 
     private val globals = mutableMapOf<String, GlobalNamespace>()
     private val modules = mutableMapOf<String, Module>()
+
+    private val evaluationQueue = mutableMapOf<Evaluable, Mutex>()
+    private val queueLock = Mutex()
+
+    suspend fun queueEvaluation(evaluable: Evaluable, lock: Mutex) {
+        queueLock.withLock {
+            evaluationQueue[evaluable] = lock
+        }
+    }
+
+    suspend fun processQueue() {
+        repeat(1000) {
+            val items = queueLock.withLock {
+                if (evaluationQueue.isEmpty())
+                    return
+
+                evaluationQueue.toList().also {
+                    evaluationQueue.clear()
+                }
+            }
+            coroutineScope {
+                items.forEach { (block, lock) ->
+                    launch(Dispatchers.Default) {
+                        lock.withLock { block.evaluate() }
+                    }
+                }
+            }
+        }
+        error("Failed to clear the queue after 1000 iterations. There is likely a dependency loop.")
+    }
 
     fun addGlobal(globalNamespace: GlobalNamespace): Boolean =
         globals.putIfAbsent(globalNamespace.name, globalNamespace) == null
@@ -56,31 +84,4 @@ class ProjectContext {
     fun resolveSignal(name: String): SignalOrParent? = globals[name]
 
     fun resolveGlobal(name: String) = globals[name]
-
-    suspend fun queueEvaluation(evaluable: Evaluable) {
-        queueLock.withLock {
-            evaluationQueue.add(evaluable)
-        }
-    }
-
-    suspend fun processQueue() {
-        repeat(1000) {
-            val items = queueLock.withLock {
-                if (evaluationQueue.isEmpty())
-                    return
-
-                evaluationQueue.toList().also {
-                    evaluationQueue.clear()
-                }
-            }
-            coroutineScope {
-                items.forEach {
-                    launch(Dispatchers.Default) {
-                        it.evaluate()
-                    }
-                }
-            }
-        }
-        error("Failed to clear the queue after 1000 iterations. There is likely a dependency loop.")
-    }
 }
