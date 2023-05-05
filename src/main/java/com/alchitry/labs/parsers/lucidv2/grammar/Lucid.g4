@@ -16,10 +16,10 @@ globalStat
 
 module: 'module' name NL* paramList? NL* portList NL* moduleBody;
 
-paramList: '#(' NL* paramDec NL* (',' NL* paramDec NL*)* ')';
-portList: '(' NL* portDec NL* (',' NL* portDec NL*)* ')';
+paramList: '#(' NL* paramDec (NL* ',' NL* paramDec)* NL* ')';
+portList: '(' NL* portDec (NL* ',' NL* portDec)* NL* ')';
 
-paramDec: name NL* ('=' NL* paramDefault)? NL* (':' NL* paramConstraint)?;
+paramDec: name (NL* '=' NL* paramDefault)? (NL* ':' NL* paramConstraint)?;
 paramDefault: expr;
 paramConstraint: expr;
 
@@ -46,23 +46,23 @@ stat
   | structDec      #StatStruct
   ;
 
-constDec: 'const' NL* name NL* '=' NL* expr NL* semi;
+constDec: 'const' NL* name NL* '=' NL* expr semi;
 
 assignBlock: conList NL* '{' (dffDec | moduleInst | assignBlock | NL)* '}';
 sigCon: '.' name NL* '(' NL* expr NL* ')';
 paramCon: '#' name NL* '(' NL* expr NL* ')';
 
-sigDec: SIGNED? 'sig' name signalWidth semi;
-dffDec: SIGNED? 'dff' name signalWidth instCons? semi;
+sigDec: (SIGNED NL*)? 'sig' NL* name signalWidth semi;
+dffDec: (SIGNED NL*)? 'dff' NL* name signalWidth instCons? semi;
 enumDec: 'enum' NL* name NL* '{' NL* name (NL* ',' NL* name)* NL* '}' semi;
 
-moduleInst: name NL* name arraySize* instCons? semi;
+moduleInst: name NL* name (NL* arraySize)* (NL* instCons)? semi;
 
 instCons : '(' NL* connection (NL* ',' NL* connection)* NL* ')';
 conList  : connection (NL* ',' NL* connection)*;
 connection: paramCon | sigCon;
 
-structMember: SIGNED? NL* name signalWidth;
+structMember: (SIGNED NL*)? name signalWidth;
 structDec: 'struct' NL* name NL* '{' NL* structMember (NL* ',' NL* structMember)* NL* '}' semi;
 
 alwaysBlock: 'always' NL* block;
@@ -93,7 +93,7 @@ signal: name (NL* bitSelection)? (NL* '.' NL* name (NL* bitSelection)?)*;
 caseStat: 'case' NL* '(' NL* expr NL* ')' NL* '{' (caseElem | NL)* '}';
 caseElem: (expr | 'default') NL* ':' NL* alwaysStat (alwaysStat | NL)*;
 
-ifStat: 'if' NL* '(' NL* expr NL* ')' NL* block NL* elseStat?;
+ifStat: 'if' NL* '(' NL* expr NL* ')' NL* block (NL* elseStat)?;
 elseStat: 'else' NL* block;
 
 repeatStat: 'repeat' NL* '(' NL* expr NL* (',' NL* signal NL*)? ')' NL* block;
@@ -125,7 +125,7 @@ expr
 
 name: TYPE_ID | CONST_ID | SPACE_ID;
 
-semi: NL | SEMICOLON;
+semi: NL | (NL* SEMICOLON);
 
 HEX: ([1-9][0-9]*)? 'h' ([0-9a-fA-FzZX]|('x' {_input.LA(1) != '{'}?))+;
 BIN: ([1-9][0-9]*)? 'b' ([0-1zZX]|('x' {_input.LA(1) != '{'}?))+;
