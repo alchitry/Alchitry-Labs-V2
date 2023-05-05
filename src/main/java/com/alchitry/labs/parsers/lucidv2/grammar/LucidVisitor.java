@@ -320,63 +320,48 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBitSelection(LucidParser.BitSelectionContext ctx);
-
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#signal}.
-	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitSignal(LucidParser.SignalContext ctx);
-
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#caseStat}.
-	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitCaseStat(LucidParser.CaseStatContext ctx);
-
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#caseElem}.
-	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitCaseElem(LucidParser.CaseElemContext ctx);
-
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#caseBlock}.
-	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitCaseBlock(LucidParser.CaseBlockContext ctx);
-
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#ifStat}.
-	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitIfStat(LucidParser.IfStatContext ctx);
-
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#elseStat}.
-	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitElseStat(LucidParser.ElseStatContext ctx);
-
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#repeatStat}.
-	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitRepeatStat(LucidParser.RepeatStatContext ctx);
-
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#function}.
 	 * @param ctx the parse tree

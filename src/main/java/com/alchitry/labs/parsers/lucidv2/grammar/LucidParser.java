@@ -62,10 +62,11 @@ public class LucidParser extends Parser {
                 "expr", "name", "semi"
         };
     }
-	public static final String[] ruleNames = makeRuleNames();
 
-	private static String[] makeLiteralNames() {
-		return new String[]{
+    public static final String[] ruleNames = makeRuleNames();
+
+    private static String[] makeLiteralNames() {
+        return new String[]{
                 null, "'global'", "'{'", "'}'", "'module'", "'#('", "','", "')'", "'('",
                 "'='", "':'", "'input'", "'output'", "'inout'", "'['", "']'", "'<'",
                 "'.'", "'>'", "'const'", "'#'", "'sig'", "'dff'", "'enum'", "'struct'",
@@ -74,10 +75,10 @@ public class LucidParser extends Parser {
                 "'>>>'", "'|'", "'&'", "'^'", "'=='", "'!='", "'>='", "'<='", "'||'",
                 "'&&'", "'?'", null, null, null, null, null, null, "';'", null, "'signed'"
         };
-	}
+    }
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
-		return new String[]{
+        return new String[]{
                 null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null, null, null,
@@ -86,7 +87,7 @@ public class LucidParser extends Parser {
                 "SEMICOLON", "NL", "SIGNED", "TYPE_ID", "CONST_ID", "SPACE_ID", "FUNCTION_ID",
                 "BLOCK_COMMENT", "COMMENT", "WS"
         };
-	}
+    }
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -181,7 +182,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 0, RULE_source);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(105);
                 _errHandler.sync(this);
@@ -200,12 +201,12 @@ public class LucidParser extends Parser {
                                 setState(101);
                                 module();
                             }
-					break;
-				case NL: {
-                    setState(102);
-                    match(NL);
-                }
-                break;
+                            break;
+                            case NL: {
+                                setState(102);
+                                match(NL);
+                            }
+                            break;
                             default:
                                 throw new NoViableAltException(this);
                         }
@@ -268,8 +269,8 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 2, RULE_global);
 		int _la;
 		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
+            int _alt;
+            enterOuterAlt(_localctx, 1);
             {
                 setState(110);
                 match(T__0);
@@ -352,7 +353,7 @@ public class LucidParser extends Parser {
                 setState(143);
                 match(T__2);
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -398,23 +399,23 @@ public class LucidParser extends Parser {
 			setState(147);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case T__23:
-				enterOuterAlt(_localctx, 1);
-            {
-                setState(145);
-                structDec();
+                case T__23:
+                    enterOuterAlt(_localctx, 1);
+                {
+                    setState(145);
+                    structDec();
+                }
+                break;
+                case T__18:
+                    enterOuterAlt(_localctx, 2);
+                {
+                    setState(146);
+                    constDec();
+                }
+                break;
+                default:
+                    throw new NoViableAltException(this);
             }
-				break;
-			case T__18:
-				enterOuterAlt(_localctx, 2);
-            {
-                setState(146);
-                constDec();
-            }
-				break;
-			default:
-				throw new NoViableAltException(this);
-			}
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -469,8 +470,8 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 6, RULE_module);
 		int _la;
 		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
+            int _alt;
+            enterOuterAlt(_localctx, 1);
             {
                 setState(149);
                 match(T__3);
@@ -583,8 +584,8 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 8, RULE_paramList);
 		int _la;
 		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
+            int _alt;
+            enterOuterAlt(_localctx, 1);
             {
                 setState(175);
                 match(T__4);
@@ -667,7 +668,7 @@ public class LucidParser extends Parser {
                 setState(208);
                 match(T__6);
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -715,8 +716,8 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 10, RULE_portList);
 		int _la;
 		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
+            int _alt;
+            enterOuterAlt(_localctx, 1);
             {
                 setState(210);
                 match(T__7);
@@ -799,7 +800,7 @@ public class LucidParser extends Parser {
                 setState(243);
                 match(T__6);
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -850,7 +851,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 12, RULE_paramDec);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(245);
                 name();
@@ -930,10 +931,10 @@ public class LucidParser extends Parser {
                         setState(275);
                         paramConstraint();
                     }
-				break;
-			}
-			}
-		}
+                    break;
+                }
+            }
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -973,12 +974,12 @@ public class LucidParser extends Parser {
 		ParamDefaultContext _localctx = new ParamDefaultContext(_ctx, getState());
 		enterRule(_localctx, 14, RULE_paramDefault);
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(278);
                 expr(0);
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -1018,12 +1019,12 @@ public class LucidParser extends Parser {
 		ParamConstraintContext _localctx = new ParamConstraintContext(_ctx, getState());
 		enterRule(_localctx, 16, RULE_paramConstraint);
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(280);
                 expr(0);
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -1071,7 +1072,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 18, RULE_portDec);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(283);
                 _errHandler.sync(this);
@@ -1090,7 +1091,7 @@ public class LucidParser extends Parser {
                 setState(287);
                 signalWidth();
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -1128,7 +1129,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 20, RULE_portDirection);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(289);
                 _la = _input.LA(1);
@@ -1140,7 +1141,7 @@ public class LucidParser extends Parser {
                     consume();
                 }
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -1187,7 +1188,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 22, RULE_signalWidth);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(294);
                 _errHandler.sync(this);
@@ -1214,7 +1215,7 @@ public class LucidParser extends Parser {
                 }
 
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -1259,7 +1260,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 24, RULE_arraySize);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(300);
                 match(T__13);
@@ -1296,7 +1297,7 @@ public class LucidParser extends Parser {
                 setState(314);
                 match(T__14);
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -1344,7 +1345,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 26, RULE_structType);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(316);
                 match(T__15);
@@ -1421,7 +1422,7 @@ public class LucidParser extends Parser {
                 setState(346);
                 match(T__17);
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -1469,7 +1470,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 28, RULE_structMemberConst);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(348);
                 match(T__16);
@@ -1524,7 +1525,7 @@ public class LucidParser extends Parser {
                 setState(370);
                 match(T__6);
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -1575,7 +1576,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 30, RULE_structConst);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(372);
                 structType();
@@ -1672,7 +1673,7 @@ public class LucidParser extends Parser {
                 setState(412);
                 match(T__6);
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -1720,7 +1721,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 32, RULE_moduleBody);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(414);
                 match(T__1);
@@ -1741,18 +1742,18 @@ public class LucidParser extends Parser {
                             case T__23:
                             case T__24:
                             case SIGNED:
-				case TYPE_ID:
-				case CONST_ID:
-				case SPACE_ID: {
-                    setState(415);
-                    stat();
-                }
-					break;
-				case NL: {
-                    setState(416);
-                    match(NL);
-                }
-                break;
+                            case TYPE_ID:
+                            case CONST_ID:
+                            case SPACE_ID: {
+                                setState(415);
+                                stat();
+                            }
+                            break;
+                            case NL: {
+                                setState(416);
+                                match(NL);
+                            }
+                            break;
                             default:
                                 throw new NoViableAltException(this);
                         }
@@ -1776,24 +1777,34 @@ public class LucidParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
-	public static class StatContext extends ParserRuleContext {
-		public StatContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_stat; }
+    @SuppressWarnings("CheckReturnValue")
+    public static class StatContext extends ParserRuleContext {
+        public StatContext(ParserRuleContext parent, int invokingState) {
+            super(parent, invokingState);
+        }
 
-        public StatContext() { }
-		public void copyFrom(StatContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class StatModuleInstContext extends StatContext {
-		public ModuleInstContext moduleInst() {
-			return getRuleContext(ModuleInstContext.class,0);
-		}
-		public StatModuleInstContext(StatContext ctx) { copyFrom(ctx); }
+        @Override
+        public int getRuleIndex() {
+            return RULE_stat;
+        }
+
+        public StatContext() {
+        }
+
+        public void copyFrom(StatContext ctx) {
+            super.copyFrom(ctx);
+        }
+    }
+
+    @SuppressWarnings("CheckReturnValue")
+    public static class StatModuleInstContext extends StatContext {
+        public ModuleInstContext moduleInst() {
+            return getRuleContext(ModuleInstContext.class, 0);
+        }
+
+        public StatModuleInstContext(StatContext ctx) {
+            copyFrom(ctx);
+        }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterStatModuleInst(this);
@@ -1956,71 +1967,71 @@ public class LucidParser extends Parser {
 			setState(432);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,49,_ctx) ) {
-			case 1:
-				_localctx = new StatConstContext(_localctx);
-				enterOuterAlt(_localctx, 1);
-            {
-                setState(424);
-                constDec();
+                case 1:
+                    _localctx = new StatConstContext(_localctx);
+                    enterOuterAlt(_localctx, 1);
+                {
+                    setState(424);
+                    constDec();
+                }
+                break;
+                case 2:
+                    _localctx = new StatSigContext(_localctx);
+                    enterOuterAlt(_localctx, 2);
+                {
+                    setState(425);
+                    sigDec();
+                }
+                break;
+                case 3:
+                    _localctx = new StatEnumContext(_localctx);
+                    enterOuterAlt(_localctx, 3);
+                {
+                    setState(426);
+                    enumDec();
+                }
+                break;
+                case 4:
+                    _localctx = new StatDFFContext(_localctx);
+                    enterOuterAlt(_localctx, 4);
+                {
+                    setState(427);
+                    dffDec();
+                }
+                break;
+                case 5:
+                    _localctx = new StatModuleInstContext(_localctx);
+                    enterOuterAlt(_localctx, 5);
+                {
+                    setState(428);
+                    moduleInst();
+                }
+                break;
+                case 6:
+                    _localctx = new StatAssignContext(_localctx);
+                    enterOuterAlt(_localctx, 6);
+                {
+                    setState(429);
+                    assignBlock();
+                }
+                break;
+                case 7:
+                    _localctx = new StatAlwaysContext(_localctx);
+                    enterOuterAlt(_localctx, 7);
+                {
+                    setState(430);
+                    alwaysBlock();
+                }
+                break;
+                case 8:
+                    _localctx = new StatStructContext(_localctx);
+                    enterOuterAlt(_localctx, 8);
+                {
+                    setState(431);
+                    structDec();
+                }
+                break;
             }
-				break;
-			case 2:
-				_localctx = new StatSigContext(_localctx);
-				enterOuterAlt(_localctx, 2);
-            {
-                setState(425);
-                sigDec();
-            }
-				break;
-			case 3:
-				_localctx = new StatEnumContext(_localctx);
-				enterOuterAlt(_localctx, 3);
-            {
-                setState(426);
-                enumDec();
-            }
-				break;
-			case 4:
-				_localctx = new StatDFFContext(_localctx);
-				enterOuterAlt(_localctx, 4);
-            {
-                setState(427);
-                dffDec();
-            }
-				break;
-			case 5:
-				_localctx = new StatModuleInstContext(_localctx);
-				enterOuterAlt(_localctx, 5);
-            {
-                setState(428);
-                moduleInst();
-            }
-				break;
-			case 6:
-				_localctx = new StatAssignContext(_localctx);
-				enterOuterAlt(_localctx, 6);
-            {
-                setState(429);
-                assignBlock();
-            }
-				break;
-			case 7:
-				_localctx = new StatAlwaysContext(_localctx);
-				enterOuterAlt(_localctx, 7);
-            {
-                setState(430);
-                alwaysBlock();
-            }
-				break;
-			case 8:
-				_localctx = new StatStructContext(_localctx);
-				enterOuterAlt(_localctx, 8);
-            {
-                setState(431);
-                structDec();
-            }
-				break;
-			}
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -2072,7 +2083,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 36, RULE_constDec);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(434);
                 match(T__18);
@@ -2127,7 +2138,7 @@ public class LucidParser extends Parser {
                 setState(456);
                 semi();
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -2190,7 +2201,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 38, RULE_assignBlock);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(458);
                 conList();
@@ -2226,22 +2237,22 @@ public class LucidParser extends Parser {
                             break;
                             case TYPE_ID:
                             case CONST_ID:
-				case SPACE_ID: {
-                    setState(467);
-                    moduleInst();
-                }
-					break;
-				case T__16:
-				case T__19: {
-                    setState(468);
-                    assignBlock();
-                }
-					break;
-				case NL: {
-                    setState(469);
-                    match(NL);
-                }
-                break;
+                            case SPACE_ID: {
+                                setState(467);
+                                moduleInst();
+                            }
+                            break;
+                            case T__16:
+                            case T__19: {
+                                setState(468);
+                                assignBlock();
+                            }
+                            break;
+                            case NL: {
+                                setState(469);
+                                match(NL);
+                            }
+                            break;
                             default:
                                 throw new NoViableAltException(this);
                         }
@@ -2301,7 +2312,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 40, RULE_sigCon);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(477);
                 match(T__16);
@@ -2356,7 +2367,7 @@ public class LucidParser extends Parser {
                 setState(499);
                 match(T__6);
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -2404,7 +2415,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 42, RULE_paramCon);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(501);
                 match(T__19);
@@ -2459,7 +2470,7 @@ public class LucidParser extends Parser {
                 setState(523);
                 match(T__6);
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -2511,7 +2522,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 44, RULE_sigDec);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(532);
                 _errHandler.sync(this);
@@ -2615,7 +2626,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 46, RULE_dffDec);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(552);
                 _errHandler.sync(this);
@@ -2725,8 +2736,8 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 48, RULE_enumDec);
 		int _la;
 		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
+            int _alt;
+            enterOuterAlt(_localctx, 1);
             {
                 setState(568);
                 match(T__22);
@@ -2843,7 +2854,7 @@ public class LucidParser extends Parser {
                 setState(616);
                 semi();
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -2903,8 +2914,8 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 50, RULE_moduleInst);
 		int _la;
 		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
+            int _alt;
+            enterOuterAlt(_localctx, 1);
             {
                 setState(618);
                 name();
@@ -2980,7 +2991,7 @@ public class LucidParser extends Parser {
                 setState(647);
                 semi();
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -3028,8 +3039,8 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 52, RULE_instCons);
 		int _la;
 		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
+            int _alt;
+            enterOuterAlt(_localctx, 1);
             {
                 setState(649);
                 match(T__7);
@@ -3112,7 +3123,7 @@ public class LucidParser extends Parser {
                 setState(682);
                 match(T__6);
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -3160,8 +3171,8 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 54, RULE_conList);
 		int _la;
 		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
+            int _alt;
+            enterOuterAlt(_localctx, 1);
             {
                 setState(684);
                 connection();
@@ -3207,12 +3218,12 @@ public class LucidParser extends Parser {
                             }
                         }
                     }
-				setState(703);
-				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,88,_ctx);
-			}
-			}
-		}
+                    setState(703);
+                    _errHandler.sync(this);
+                    _alt = getInterpreter().adaptivePredict(_input, 88, _ctx);
+                }
+            }
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -3258,23 +3269,23 @@ public class LucidParser extends Parser {
 			setState(706);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case T__19:
-				enterOuterAlt(_localctx, 1);
-            {
-                setState(704);
-                paramCon();
+                case T__19:
+                    enterOuterAlt(_localctx, 1);
+                {
+                    setState(704);
+                    paramCon();
+                }
+                break;
+                case T__16:
+                    enterOuterAlt(_localctx, 2);
+                {
+                    setState(705);
+                    sigCon();
+                }
+                break;
+                default:
+                    throw new NoViableAltException(this);
             }
-				break;
-			case T__16:
-				enterOuterAlt(_localctx, 2);
-            {
-                setState(705);
-                sigCon();
-            }
-				break;
-			default:
-				throw new NoViableAltException(this);
-			}
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -3324,7 +3335,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 58, RULE_structMember);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(715);
                 _errHandler.sync(this);
@@ -3355,7 +3366,7 @@ public class LucidParser extends Parser {
                 setState(718);
                 signalWidth();
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -3409,8 +3420,8 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 60, RULE_structDec);
 		int _la;
 		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
+            int _alt;
+            enterOuterAlt(_localctx, 1);
             {
                 setState(720);
                 match(T__23);
@@ -3527,7 +3538,7 @@ public class LucidParser extends Parser {
                 setState(768);
                 semi();
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -3572,7 +3583,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 62, RULE_alwaysBlock);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(770);
                 match(T__24);
@@ -3593,7 +3604,7 @@ public class LucidParser extends Parser {
                 setState(777);
                 block();
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -3605,24 +3616,34 @@ public class LucidParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
-	public static class AlwaysStatContext extends ParserRuleContext {
-		public AlwaysStatContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_alwaysStat; }
+    @SuppressWarnings("CheckReturnValue")
+    public static class AlwaysStatContext extends ParserRuleContext {
+        public AlwaysStatContext(ParserRuleContext parent, int invokingState) {
+            super(parent, invokingState);
+        }
 
-        public AlwaysStatContext() { }
-		public void copyFrom(AlwaysStatContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class AlwaysIfContext extends AlwaysStatContext {
-		public IfStatContext ifStat() {
-			return getRuleContext(IfStatContext.class,0);
-		}
-		public AlwaysIfContext(AlwaysStatContext ctx) { copyFrom(ctx); }
+        @Override
+        public int getRuleIndex() {
+            return RULE_alwaysStat;
+        }
+
+        public AlwaysStatContext() {
+        }
+
+        public void copyFrom(AlwaysStatContext ctx) {
+            super.copyFrom(ctx);
+        }
+    }
+
+    @SuppressWarnings("CheckReturnValue")
+    public static class AlwaysIfContext extends AlwaysStatContext {
+        public IfStatContext ifStat() {
+            return getRuleContext(IfStatContext.class, 0);
+        }
+
+        public AlwaysIfContext(AlwaysStatContext ctx) {
+            copyFrom(ctx);
+        }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterAlwaysIf(this);
@@ -3705,43 +3726,43 @@ public class LucidParser extends Parser {
 			setState(783);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case TYPE_ID:
-			case CONST_ID:
-			case SPACE_ID:
-				_localctx = new AlwaysAssignContext(_localctx);
-				enterOuterAlt(_localctx, 1);
-            {
-                setState(779);
-                assignStat();
+                case TYPE_ID:
+                case CONST_ID:
+                case SPACE_ID:
+                    _localctx = new AlwaysAssignContext(_localctx);
+                    enterOuterAlt(_localctx, 1);
+                {
+                    setState(779);
+                    assignStat();
+                }
+                break;
+                case T__27:
+                    _localctx = new AlwaysCaseContext(_localctx);
+                    enterOuterAlt(_localctx, 2);
+                {
+                    setState(780);
+                    caseStat();
+                }
+                break;
+                case T__29:
+                    _localctx = new AlwaysIfContext(_localctx);
+                    enterOuterAlt(_localctx, 3);
+                {
+                    setState(781);
+                    ifStat();
+                }
+                break;
+                case T__31:
+                    _localctx = new AlwaysRepeatContext(_localctx);
+                    enterOuterAlt(_localctx, 4);
+                {
+                    setState(782);
+                    repeatStat();
+                }
+                break;
+                default:
+                    throw new NoViableAltException(this);
             }
-				break;
-			case T__27:
-				_localctx = new AlwaysCaseContext(_localctx);
-				enterOuterAlt(_localctx, 2);
-            {
-                setState(780);
-                caseStat();
-            }
-				break;
-			case T__29:
-				_localctx = new AlwaysIfContext(_localctx);
-				enterOuterAlt(_localctx, 3);
-            {
-                setState(781);
-                ifStat();
-            }
-				break;
-			case T__31:
-				_localctx = new AlwaysRepeatContext(_localctx);
-				enterOuterAlt(_localctx, 4);
-            {
-                setState(782);
-                repeatStat();
-            }
-				break;
-			default:
-				throw new NoViableAltException(this);
-			}
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -3825,29 +3846,29 @@ public class LucidParser extends Parser {
                                 throw new NoViableAltException(this);
                         }
                     }
-					setState(792);
-					_errHandler.sync(this);
-					_la = _input.LA(1);
-				}
+                    setState(792);
+                    _errHandler.sync(this);
+                    _la = _input.LA(1);
+                }
 				setState(793);
-				match(T__2);
+                match(T__2);
             }
-				break;
-			case T__27:
-			case T__29:
-			case T__31:
-			case TYPE_ID:
-			case CONST_ID:
-			case SPACE_ID:
-				enterOuterAlt(_localctx, 2);
-            {
-                setState(794);
-                alwaysStat();
+            break;
+                case T__27:
+                case T__29:
+                case T__31:
+                case TYPE_ID:
+                case CONST_ID:
+                case SPACE_ID:
+                    enterOuterAlt(_localctx, 2);
+                {
+                    setState(794);
+                    alwaysStat();
+                }
+                break;
+                default:
+                    throw new NoViableAltException(this);
             }
-				break;
-			default:
-				throw new NoViableAltException(this);
-			}
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -3899,7 +3920,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 68, RULE_assignStat);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(797);
                 signal();
@@ -3938,7 +3959,7 @@ public class LucidParser extends Parser {
                 setState(812);
                 semi();
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -3983,7 +4004,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 70, RULE_arrayIndex);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(814);
                 match(T__13);
@@ -4020,7 +4041,7 @@ public class LucidParser extends Parser {
                 setState(828);
                 match(T__14);
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -4032,24 +4053,32 @@ public class LucidParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
-	public static class BitSelectorContext extends ParserRuleContext {
-		public BitSelectorContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_bitSelector; }
+    @SuppressWarnings("CheckReturnValue")
+    public static class BitSelectorContext extends ParserRuleContext {
+        public BitSelectorContext(ParserRuleContext parent, int invokingState) {
+            super(parent, invokingState);
+        }
 
-        public BitSelectorContext() { }
-		public void copyFrom(BitSelectorContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class BitSelectorConstContext extends BitSelectorContext {
-		public List<ExprContext> expr() {
-			return getRuleContexts(ExprContext.class);
-		}
-		public ExprContext expr(int i) {
+        @Override
+        public int getRuleIndex() {
+            return RULE_bitSelector;
+        }
+
+        public BitSelectorContext() {
+        }
+
+        public void copyFrom(BitSelectorContext ctx) {
+            super.copyFrom(ctx);
+        }
+    }
+
+    @SuppressWarnings("CheckReturnValue")
+    public static class BitSelectorConstContext extends BitSelectorContext {
+        public List<ExprContext> expr() {
+            return getRuleContexts(ExprContext.class);
+        }
+
+        public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
 		public List<TerminalNode> NL() { return getTokens(LucidParser.NL); }
@@ -4178,103 +4207,103 @@ public class LucidParser extends Parser {
                     setState(858);
                     match(T__14);
                 }
-				break;
-			case 2:
-				_localctx = new BitSelectorFixWidthContext(_localctx);
-				enterOuterAlt(_localctx, 2);
-            {
-                setState(860);
-                match(T__13);
-                setState(864);
-                _errHandler.sync(this);
-                _la = _input.LA(1);
-                while (_la == NL) {
-                    {
-                        {
-                            setState(861);
-                            match(NL);
-                        }
-                    }
-                    setState(866);
+                break;
+                case 2:
+                    _localctx = new BitSelectorFixWidthContext(_localctx);
+                    enterOuterAlt(_localctx, 2);
+                {
+                    setState(860);
+                    match(T__13);
+                    setState(864);
                     _errHandler.sync(this);
                     _la = _input.LA(1);
-                }
-                setState(867);
-                expr(0);
-                setState(871);
-                _errHandler.sync(this);
-                _la = _input.LA(1);
-                while (_la == NL) {
-                    {
+                    while (_la == NL) {
                         {
-                            setState(868);
-                            match(NL);
+                            {
+                                setState(861);
+                                match(NL);
+                            }
                         }
+                        setState(866);
+                        _errHandler.sync(this);
+                        _la = _input.LA(1);
                     }
-                    setState(873);
+                    setState(867);
+                    expr(0);
+                    setState(871);
                     _errHandler.sync(this);
                     _la = _input.LA(1);
-                }
-                setState(874);
-                _la = _input.LA(1);
-                if (!(_la == T__25 || _la == T__26)) {
-                    _errHandler.recoverInline(this);
-                } else {
-                    if (_input.LA(1) == Token.EOF) matchedEOF = true;
-                    _errHandler.reportMatch(this);
-                    consume();
-                }
-                setState(878);
-                _errHandler.sync(this);
-                _la = _input.LA(1);
-                while (_la == NL) {
-                    {
+                    while (_la == NL) {
                         {
-                            setState(875);
-                            match(NL);
+                            {
+                                setState(868);
+                                match(NL);
+                            }
                         }
+                        setState(873);
+                        _errHandler.sync(this);
+                        _la = _input.LA(1);
                     }
-                    setState(880);
+                    setState(874);
+                    _la = _input.LA(1);
+                    if (!(_la == T__25 || _la == T__26)) {
+                        _errHandler.recoverInline(this);
+                    } else {
+                        if (_input.LA(1) == Token.EOF) matchedEOF = true;
+                        _errHandler.reportMatch(this);
+                        consume();
+                    }
+                    setState(878);
                     _errHandler.sync(this);
                     _la = _input.LA(1);
-                }
-                setState(881);
-                match(T__9);
-                setState(885);
-                _errHandler.sync(this);
-                _la = _input.LA(1);
-                while (_la == NL) {
-                    {
+                    while (_la == NL) {
                         {
-                            setState(882);
-                            match(NL);
+                            {
+                                setState(875);
+                                match(NL);
+                            }
                         }
+                        setState(880);
+                        _errHandler.sync(this);
+                        _la = _input.LA(1);
                     }
-                    setState(887);
+                    setState(881);
+                    match(T__9);
+                    setState(885);
                     _errHandler.sync(this);
                     _la = _input.LA(1);
-                }
-                setState(888);
-                expr(0);
-                setState(892);
-                _errHandler.sync(this);
-                _la = _input.LA(1);
-                while (_la == NL) {
-                    {
+                    while (_la == NL) {
                         {
-                            setState(889);
-                            match(NL);
+                            {
+                                setState(882);
+                                match(NL);
+                            }
                         }
+                        setState(887);
+                        _errHandler.sync(this);
+                        _la = _input.LA(1);
                     }
-                    setState(894);
+                    setState(888);
+                    expr(0);
+                    setState(892);
                     _errHandler.sync(this);
                     _la = _input.LA(1);
+                    while (_la == NL) {
+                        {
+                            {
+                                setState(889);
+                                match(NL);
+                            }
+                        }
+                        setState(894);
+                        _errHandler.sync(this);
+                        _la = _input.LA(1);
+                    }
+                    setState(895);
+                    match(T__14);
                 }
-                setState(895);
-                match(T__14);
+                break;
             }
-				break;
-			}
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -4325,8 +4354,8 @@ public class LucidParser extends Parser {
 		BitSelectionContext _localctx = new BitSelectionContext(_ctx, getState());
 		enterRule(_localctx, 74, RULE_bitSelection);
 		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
+            int _alt;
+            enterOuterAlt(_localctx, 1);
             {
                 setState(903);
                 _errHandler.sync(this);
@@ -4371,7 +4400,7 @@ public class LucidParser extends Parser {
                     break;
                 }
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -4425,8 +4454,8 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 76, RULE_signal);
 		int _la;
 		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
+            int _alt;
+            enterOuterAlt(_localctx, 1);
             {
                 setState(910);
                 name();
@@ -4522,12 +4551,12 @@ public class LucidParser extends Parser {
                             }
                         }
                     }
-				setState(947);
+                    setState(947);
                     _errHandler.sync(this);
                     _alt = getInterpreter().adaptivePredict(_input, 127, _ctx);
-			}
-			}
-		}
+                }
+            }
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -4578,7 +4607,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 78, RULE_caseStat);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(948);
                 match(T__27);
@@ -4663,27 +4692,27 @@ public class LucidParser extends Parser {
                             case T__34:
                             case T__35:
                             case T__42:
-				case T__43:
-				case T__44:
-				case HEX:
-				case BIN:
-				case DEC:
-				case REAL:
-				case INT:
-				case STRING:
-				case TYPE_ID:
-				case CONST_ID:
-				case SPACE_ID:
-				case FUNCTION_ID: {
-                    setState(977);
-                    caseElem();
-                }
-					break;
-				case NL: {
-                    setState(978);
-                    match(NL);
-                }
-                break;
+                            case T__43:
+                            case T__44:
+                            case HEX:
+                            case BIN:
+                            case DEC:
+                            case REAL:
+                            case INT:
+                            case STRING:
+                            case TYPE_ID:
+                            case CONST_ID:
+                            case SPACE_ID:
+                            case FUNCTION_ID: {
+                                setState(977);
+                                caseElem();
+                            }
+                            break;
+                            case NL: {
+                                setState(978);
+                                match(NL);
+                            }
+                            break;
                             default:
                                 throw new NoViableAltException(this);
                         }
@@ -4707,11 +4736,11 @@ public class LucidParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
-	public static class CaseElemContext extends ParserRuleContext {
-		public CaseBlockContext caseBlock() {
+    @SuppressWarnings("CheckReturnValue")
+    public static class CaseElemContext extends ParserRuleContext {
+        public CaseBlockContext caseBlock() {
             return getRuleContext(CaseBlockContext.class, 0);
-		}
+        }
 
         public ExprContext expr() {
             return getRuleContext(ExprContext.class, 0);
@@ -4724,16 +4753,23 @@ public class LucidParser extends Parser {
         public TerminalNode NL(int i) {
             return getToken(LucidParser.NL, i);
         }
-		public CaseElemContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_caseElem; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LucidListener ) ((LucidListener)listener).enterCaseElem(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
+
+        public CaseElemContext(ParserRuleContext parent, int invokingState) {
+            super(parent, invokingState);
+        }
+
+        @Override
+        public int getRuleIndex() {
+            return RULE_caseElem;
+        }
+
+        @Override
+        public void enterRule(ParseTreeListener listener) {
+            if (listener instanceof LucidListener) ((LucidListener) listener).enterCaseElem(this);
+        }
+
+        @Override
+        public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof LucidListener ) ((LucidListener)listener).exitCaseElem(this);
 		}
 		@Override
@@ -4748,7 +4784,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 80, RULE_caseElem);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(988);
                 _errHandler.sync(this);
@@ -4762,21 +4798,21 @@ public class LucidParser extends Parser {
                     case T__35:
                     case T__42:
                     case T__43:
-			case T__44:
-			case HEX:
-			case BIN:
-			case DEC:
-			case REAL:
-			case INT:
-			case STRING:
-			case TYPE_ID:
-			case CONST_ID:
-			case SPACE_ID:
-			case FUNCTION_ID: {
-                setState(986);
-                expr(0);
-            }
-            break;
+                    case T__44:
+                    case HEX:
+                    case BIN:
+                    case DEC:
+                    case REAL:
+                    case INT:
+                    case STRING:
+                    case TYPE_ID:
+                    case CONST_ID:
+                    case SPACE_ID:
+                    case FUNCTION_ID: {
+                        setState(986);
+                        expr(0);
+                    }
+                    break;
                     case T__28: {
                         setState(987);
                         match(T__28);
@@ -4814,11 +4850,11 @@ public class LucidParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
-	public static class CaseBlockContext extends ParserRuleContext {
-		public List<AlwaysStatContext> alwaysStat() {
-			return getRuleContexts(AlwaysStatContext.class);
-		}
+    @SuppressWarnings("CheckReturnValue")
+    public static class CaseBlockContext extends ParserRuleContext {
+        public List<AlwaysStatContext> alwaysStat() {
+            return getRuleContexts(AlwaysStatContext.class);
+        }
 
         public AlwaysStatContext alwaysStat(int i) {
             return getRuleContext(AlwaysStatContext.class, i);
@@ -4845,23 +4881,25 @@ public class LucidParser extends Parser {
         public void enterRule(ParseTreeListener listener) {
             if (listener instanceof LucidListener) ((LucidListener) listener).enterCaseBlock(this);
         }
-		@Override
-		public void exitRule(ParseTreeListener listener) {
+
+        @Override
+        public void exitRule(ParseTreeListener listener) {
             if (listener instanceof LucidListener) ((LucidListener) listener).exitCaseBlock(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+        }
+
+        @Override
+        public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
             if (visitor instanceof LucidVisitor) return ((LucidVisitor<? extends T>) visitor).visitCaseBlock(this);
             else return visitor.visitChildren(this);
-		}
-	}
+        }
+    }
 
 	public final CaseBlockContext caseBlock() throws RecognitionException {
 		CaseBlockContext _localctx = new CaseBlockContext(_ctx, getState());
 		enterRule(_localctx, 82, RULE_caseBlock);
 		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
+            int _alt;
+            enterOuterAlt(_localctx, 1);
             {
                 setState(1003);
                 _errHandler.sync(this);
@@ -4899,7 +4937,7 @@ public class LucidParser extends Parser {
                 setState(1006);
                 alwaysStat();
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -4950,7 +4988,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 84, RULE_ifStat);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(1008);
                 match(T__29);
@@ -5040,9 +5078,9 @@ public class LucidParser extends Parser {
                         elseStat();
                     }
                     break;
-			}
-			}
-		}
+                }
+            }
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -5087,7 +5125,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 86, RULE_elseStat);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(1046);
                 match(T__30);
@@ -5108,7 +5146,7 @@ public class LucidParser extends Parser {
                 setState(1053);
                 block();
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -5159,7 +5197,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 88, RULE_repeatStat);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(1055);
                 match(T__31);
@@ -5317,8 +5355,8 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 90, RULE_function);
 		int _la;
 		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
+            int _alt;
+            enterOuterAlt(_localctx, 1);
             {
                 setState(1101);
                 match(FUNCTION_ID);
@@ -5417,7 +5455,7 @@ public class LucidParser extends Parser {
                 setState(1141);
                 match(T__6);
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -5461,7 +5499,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 92, RULE_number);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(1143);
                 _la = _input.LA(1);
@@ -5473,7 +5511,7 @@ public class LucidParser extends Parser {
                     consume();
                 }
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -5485,24 +5523,32 @@ public class LucidParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
-	public static class ExprContext extends ParserRuleContext {
-		public ExprContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_expr; }
+    @SuppressWarnings("CheckReturnValue")
+    public static class ExprContext extends ParserRuleContext {
+        public ExprContext(ParserRuleContext parent, int invokingState) {
+            super(parent, invokingState);
+        }
 
-        public ExprContext() { }
-		public void copyFrom(ExprContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class ExprTernaryContext extends ExprContext {
-		public List<ExprContext> expr() {
-			return getRuleContexts(ExprContext.class);
-		}
-		public ExprContext expr(int i) {
+        @Override
+        public int getRuleIndex() {
+            return RULE_expr;
+        }
+
+        public ExprContext() {
+        }
+
+        public void copyFrom(ExprContext ctx) {
+            super.copyFrom(ctx);
+        }
+    }
+
+    @SuppressWarnings("CheckReturnValue")
+    public static class ExprTernaryContext extends ExprContext {
+        public List<ExprContext> expr() {
+            return getRuleContexts(ExprContext.class);
+        }
+
+        public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
 		public List<TerminalNode> NL() { return getTokens(LucidParser.NL); }
@@ -5957,8 +6003,8 @@ public class LucidParser extends Parser {
 		enterRecursionRule(_localctx, 94, RULE_expr, _p);
 		int _la;
 		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
+            int _alt;
+            enterOuterAlt(_localctx, 1);
             {
                 setState(1260);
                 _errHandler.sync(this);
@@ -5974,336 +6020,336 @@ public class LucidParser extends Parser {
                         signal();
                     }
                     break;
-			case HEX:
-			case BIN:
-			case DEC:
-			case REAL:
-			case INT:
-			case STRING: {
-                _localctx = new ExprNumContext(_localctx);
-                _ctx = _localctx;
-                _prevctx = _localctx;
-                setState(1147);
-                number();
-            }
-				break;
-			case T__15: {
-                _localctx = new ExprStructContext(_localctx);
-                _ctx = _localctx;
-                _prevctx = _localctx;
-                setState(1148);
-                structConst();
-            }
-				break;
-			case FUNCTION_ID: {
-                _localctx = new ExprFunctionContext(_localctx);
-                _ctx = _localctx;
-                _prevctx = _localctx;
-                setState(1149);
-                function();
-            }
-				break;
-			case T__7: {
-                _localctx = new ExprGroupContext(_localctx);
-                _ctx = _localctx;
-                _prevctx = _localctx;
-                setState(1150);
-                match(T__7);
-                setState(1154);
-                _errHandler.sync(this);
-                _la = _input.LA(1);
-                while (_la == NL) {
-                    {
-                        {
-                            setState(1151);
-                            match(NL);
-                        }
+                    case HEX:
+                    case BIN:
+                    case DEC:
+                    case REAL:
+                    case INT:
+                    case STRING: {
+                        _localctx = new ExprNumContext(_localctx);
+                        _ctx = _localctx;
+                        _prevctx = _localctx;
+                        setState(1147);
+                        number();
                     }
-                    setState(1156);
-                    _errHandler.sync(this);
-                    _la = _input.LA(1);
-                }
-                setState(1157);
-                expr(0);
-                setState(1161);
-                _errHandler.sync(this);
-                _la = _input.LA(1);
-                while (_la == NL) {
-                    {
-                        {
-                            setState(1158);
-                            match(NL);
-                        }
+                    break;
+                    case T__15: {
+                        _localctx = new ExprStructContext(_localctx);
+                        _ctx = _localctx;
+                        _prevctx = _localctx;
+                        setState(1148);
+                        structConst();
                     }
-                    setState(1163);
-                    _errHandler.sync(this);
-                    _la = _input.LA(1);
-                }
-                setState(1164);
-                match(T__6);
-            }
-				break;
-			case T__32: {
-                _localctx = new ExprConcatContext(_localctx);
-                _ctx = _localctx;
-                _prevctx = _localctx;
-                setState(1166);
-                match(T__32);
-                setState(1170);
-                _errHandler.sync(this);
-                _la = _input.LA(1);
-                while (_la == NL) {
-                    {
-                        {
-                            setState(1167);
-                            match(NL);
-                        }
+                    break;
+                    case FUNCTION_ID: {
+                        _localctx = new ExprFunctionContext(_localctx);
+                        _ctx = _localctx;
+                        _prevctx = _localctx;
+                        setState(1149);
+                        function();
                     }
-                    setState(1172);
-                    _errHandler.sync(this);
-                    _la = _input.LA(1);
-                }
-                setState(1173);
-                expr(0);
-                setState(1190);
-                _errHandler.sync(this);
-                _alt = getInterpreter().adaptivePredict(_input, 163, _ctx);
-                while (_alt != 2 && _alt != org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER) {
-                    if (_alt == 1) {
-                        {
+                    break;
+                    case T__7: {
+                        _localctx = new ExprGroupContext(_localctx);
+                        _ctx = _localctx;
+                        _prevctx = _localctx;
+                        setState(1150);
+                        match(T__7);
+                        setState(1154);
+                        _errHandler.sync(this);
+                        _la = _input.LA(1);
+                        while (_la == NL) {
                             {
-                                setState(1177);
-                                _errHandler.sync(this);
-                                _la = _input.LA(1);
-                                while (_la == NL) {
-                                    {
-                                        {
-                                            setState(1174);
-                                            match(NL);
-                                        }
-                                    }
-                                    setState(1179);
-                                    _errHandler.sync(this);
-                                    _la = _input.LA(1);
+                                {
+                                    setState(1151);
+                                    match(NL);
                                 }
-                                setState(1180);
-                                match(T__5);
-                                setState(1184);
-                                _errHandler.sync(this);
-                                _la = _input.LA(1);
-                                while (_la == NL) {
-                                    {
-                                        {
-                                            setState(1181);
-                                            match(NL);
-                                        }
-                                    }
-                                    setState(1186);
-                                    _errHandler.sync(this);
-                                    _la = _input.LA(1);
-                                }
-                                setState(1187);
-                                expr(0);
                             }
+                            setState(1156);
+                            _errHandler.sync(this);
+                            _la = _input.LA(1);
                         }
-                    }
-                    setState(1192);
-                    _errHandler.sync(this);
-                    _alt = getInterpreter().adaptivePredict(_input, 163, _ctx);
-                }
-                setState(1196);
-                _errHandler.sync(this);
-                _la = _input.LA(1);
-                while (_la == NL) {
-                    {
-                        {
-                            setState(1193);
-                            match(NL);
-                        }
-                    }
-                    setState(1198);
-                    _errHandler.sync(this);
-                    _la = _input.LA(1);
-                }
-                setState(1199);
-                match(T__2);
-            }
-				break;
-			case T__1: {
-                _localctx = new ExprArrayContext(_localctx);
-                _ctx = _localctx;
-                _prevctx = _localctx;
-                setState(1201);
-                match(T__1);
-                setState(1205);
-                _errHandler.sync(this);
-                _la = _input.LA(1);
-                while (_la == NL) {
-                    {
-                        {
-                            setState(1202);
-                            match(NL);
-                        }
-                    }
-                    setState(1207);
-                    _errHandler.sync(this);
-                    _la = _input.LA(1);
-                }
-                setState(1208);
-                expr(0);
-                setState(1225);
-                _errHandler.sync(this);
-                _alt = getInterpreter().adaptivePredict(_input, 168, _ctx);
-                while (_alt != 2 && _alt != org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER) {
-                    if (_alt == 1) {
-                        {
+                        setState(1157);
+                        expr(0);
+                        setState(1161);
+                        _errHandler.sync(this);
+                        _la = _input.LA(1);
+                        while (_la == NL) {
                             {
-                                setState(1212);
-                                _errHandler.sync(this);
-                                _la = _input.LA(1);
-                                while (_la == NL) {
-                                    {
-                                        {
-                                            setState(1209);
-                                            match(NL);
-                                        }
-                                    }
-                                    setState(1214);
-                                    _errHandler.sync(this);
-                                    _la = _input.LA(1);
+                                {
+                                    setState(1158);
+                                    match(NL);
                                 }
-                                setState(1215);
-                                match(T__5);
-                                setState(1219);
-                                _errHandler.sync(this);
-                                _la = _input.LA(1);
-                                while (_la == NL) {
-                                    {
-                                        {
-                                            setState(1216);
-                                            match(NL);
-                                        }
-                                    }
-                                    setState(1221);
-                                    _errHandler.sync(this);
-                                    _la = _input.LA(1);
-                                }
-                                setState(1222);
-                                expr(0);
                             }
+                            setState(1163);
+                            _errHandler.sync(this);
+                            _la = _input.LA(1);
                         }
+                        setState(1164);
+                        match(T__6);
                     }
-                    setState(1227);
-                    _errHandler.sync(this);
-                    _alt = getInterpreter().adaptivePredict(_input, 168, _ctx);
-                }
-                setState(1231);
-                _errHandler.sync(this);
-                _la = _input.LA(1);
-                while (_la == NL) {
-                    {
-                        {
-                            setState(1228);
-                            match(NL);
+                    break;
+                    case T__32: {
+                        _localctx = new ExprConcatContext(_localctx);
+                        _ctx = _localctx;
+                        _prevctx = _localctx;
+                        setState(1166);
+                        match(T__32);
+                        setState(1170);
+                        _errHandler.sync(this);
+                        _la = _input.LA(1);
+                        while (_la == NL) {
+                            {
+                                {
+                                    setState(1167);
+                                    match(NL);
+                                }
+                            }
+                            setState(1172);
+                            _errHandler.sync(this);
+                            _la = _input.LA(1);
                         }
-                    }
-                    setState(1233);
-                    _errHandler.sync(this);
-                    _la = _input.LA(1);
-                }
-                setState(1234);
-                match(T__2);
-            }
-				break;
-			case T__34:
-			case T__35: {
-                _localctx = new ExprInvertContext(_localctx);
-                _ctx = _localctx;
-                _prevctx = _localctx;
-                setState(1236);
-                _la = _input.LA(1);
-                if (!(_la == T__34 || _la == T__35)) {
-                    _errHandler.recoverInline(this);
-                } else {
-                    if (_input.LA(1) == Token.EOF) matchedEOF = true;
-                    _errHandler.reportMatch(this);
-                    consume();
-                }
-                setState(1240);
-                _errHandler.sync(this);
-                _la = _input.LA(1);
-                while (_la == NL) {
-                    {
-                        {
-                            setState(1237);
-                            match(NL);
+                        setState(1173);
+                        expr(0);
+                        setState(1190);
+                        _errHandler.sync(this);
+                        _alt = getInterpreter().adaptivePredict(_input, 163, _ctx);
+                        while (_alt != 2 && _alt != org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER) {
+                            if (_alt == 1) {
+                                {
+                                    {
+                                        setState(1177);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                        while (_la == NL) {
+                                            {
+                                                {
+                                                    setState(1174);
+                                                    match(NL);
+                                                }
+                                            }
+                                            setState(1179);
+                                            _errHandler.sync(this);
+                                            _la = _input.LA(1);
+                                        }
+                                        setState(1180);
+                                        match(T__5);
+                                        setState(1184);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                        while (_la == NL) {
+                                            {
+                                                {
+                                                    setState(1181);
+                                                    match(NL);
+                                                }
+                                            }
+                                            setState(1186);
+                                            _errHandler.sync(this);
+                                            _la = _input.LA(1);
+                                        }
+                                        setState(1187);
+                                        expr(0);
+                                    }
+                                }
+                            }
+                            setState(1192);
+                            _errHandler.sync(this);
+                            _alt = getInterpreter().adaptivePredict(_input, 163, _ctx);
                         }
-                    }
-                    setState(1242);
-                    _errHandler.sync(this);
-                    _la = _input.LA(1);
-                }
-                setState(1243);
-                expr(10);
-            }
-				break;
-			case T__26: {
-                _localctx = new ExprNegateContext(_localctx);
-                _ctx = _localctx;
-                _prevctx = _localctx;
-                setState(1244);
-                match(T__26);
-                setState(1248);
-                _errHandler.sync(this);
-                _la = _input.LA(1);
-                while (_la == NL) {
-                    {
-                        {
-                            setState(1245);
-                            match(NL);
+                        setState(1196);
+                        _errHandler.sync(this);
+                        _la = _input.LA(1);
+                        while (_la == NL) {
+                            {
+                                {
+                                    setState(1193);
+                                    match(NL);
+                                }
+                            }
+                            setState(1198);
+                            _errHandler.sync(this);
+                            _la = _input.LA(1);
                         }
+                        setState(1199);
+                        match(T__2);
                     }
-                    setState(1250);
-                    _errHandler.sync(this);
-                    _la = _input.LA(1);
-                }
-                setState(1251);
-                expr(9);
-            }
-				break;
-			case T__42:
-			case T__43:
-			case T__44: {
-                _localctx = new ExprReductionContext(_localctx);
-                _ctx = _localctx;
-                _prevctx = _localctx;
-                setState(1252);
-                _la = _input.LA(1);
-                if (!((((_la) & ~0x3f) == 0 && ((1L << _la) & 61572651155456L) != 0))) {
-                    _errHandler.recoverInline(this);
-                } else {
-                    if (_input.LA(1) == Token.EOF) matchedEOF = true;
-                    _errHandler.reportMatch(this);
-                    consume();
-                }
-                setState(1256);
-                _errHandler.sync(this);
-                _la = _input.LA(1);
-                while (_la == NL) {
-                    {
-                        {
-                            setState(1253);
-                            match(NL);
+                    break;
+                    case T__1: {
+                        _localctx = new ExprArrayContext(_localctx);
+                        _ctx = _localctx;
+                        _prevctx = _localctx;
+                        setState(1201);
+                        match(T__1);
+                        setState(1205);
+                        _errHandler.sync(this);
+                        _la = _input.LA(1);
+                        while (_la == NL) {
+                            {
+                                {
+                                    setState(1202);
+                                    match(NL);
+                                }
+                            }
+                            setState(1207);
+                            _errHandler.sync(this);
+                            _la = _input.LA(1);
                         }
+                        setState(1208);
+                        expr(0);
+                        setState(1225);
+                        _errHandler.sync(this);
+                        _alt = getInterpreter().adaptivePredict(_input, 168, _ctx);
+                        while (_alt != 2 && _alt != org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER) {
+                            if (_alt == 1) {
+                                {
+                                    {
+                                        setState(1212);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                        while (_la == NL) {
+                                            {
+                                                {
+                                                    setState(1209);
+                                                    match(NL);
+                                                }
+                                            }
+                                            setState(1214);
+                                            _errHandler.sync(this);
+                                            _la = _input.LA(1);
+                                        }
+                                        setState(1215);
+                                        match(T__5);
+                                        setState(1219);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                        while (_la == NL) {
+                                            {
+                                                {
+                                                    setState(1216);
+                                                    match(NL);
+                                                }
+                                            }
+                                            setState(1221);
+                                            _errHandler.sync(this);
+                                            _la = _input.LA(1);
+                                        }
+                                        setState(1222);
+                                        expr(0);
+                                    }
+                                }
+                            }
+                            setState(1227);
+                            _errHandler.sync(this);
+                            _alt = getInterpreter().adaptivePredict(_input, 168, _ctx);
+                        }
+                        setState(1231);
+                        _errHandler.sync(this);
+                        _la = _input.LA(1);
+                        while (_la == NL) {
+                            {
+                                {
+                                    setState(1228);
+                                    match(NL);
+                                }
+                            }
+                            setState(1233);
+                            _errHandler.sync(this);
+                            _la = _input.LA(1);
+                        }
+                        setState(1234);
+                        match(T__2);
                     }
-                    setState(1258);
-                    _errHandler.sync(this);
-                    _la = _input.LA(1);
-                }
-                setState(1259);
-                expr(4);
-            }
-            break;
+                    break;
+                    case T__34:
+                    case T__35: {
+                        _localctx = new ExprInvertContext(_localctx);
+                        _ctx = _localctx;
+                        _prevctx = _localctx;
+                        setState(1236);
+                        _la = _input.LA(1);
+                        if (!(_la == T__34 || _la == T__35)) {
+                            _errHandler.recoverInline(this);
+                        } else {
+                            if (_input.LA(1) == Token.EOF) matchedEOF = true;
+                            _errHandler.reportMatch(this);
+                            consume();
+                        }
+                        setState(1240);
+                        _errHandler.sync(this);
+                        _la = _input.LA(1);
+                        while (_la == NL) {
+                            {
+                                {
+                                    setState(1237);
+                                    match(NL);
+                                }
+                            }
+                            setState(1242);
+                            _errHandler.sync(this);
+                            _la = _input.LA(1);
+                        }
+                        setState(1243);
+                        expr(10);
+                    }
+                    break;
+                    case T__26: {
+                        _localctx = new ExprNegateContext(_localctx);
+                        _ctx = _localctx;
+                        _prevctx = _localctx;
+                        setState(1244);
+                        match(T__26);
+                        setState(1248);
+                        _errHandler.sync(this);
+                        _la = _input.LA(1);
+                        while (_la == NL) {
+                            {
+                                {
+                                    setState(1245);
+                                    match(NL);
+                                }
+                            }
+                            setState(1250);
+                            _errHandler.sync(this);
+                            _la = _input.LA(1);
+                        }
+                        setState(1251);
+                        expr(9);
+                    }
+                    break;
+                    case T__42:
+                    case T__43:
+                    case T__44: {
+                        _localctx = new ExprReductionContext(_localctx);
+                        _ctx = _localctx;
+                        _prevctx = _localctx;
+                        setState(1252);
+                        _la = _input.LA(1);
+                        if (!((((_la) & ~0x3f) == 0 && ((1L << _la) & 61572651155456L) != 0))) {
+                            _errHandler.recoverInline(this);
+                        } else {
+                            if (_input.LA(1) == Token.EOF) matchedEOF = true;
+                            _errHandler.reportMatch(this);
+                            consume();
+                        }
+                        setState(1256);
+                        _errHandler.sync(this);
+                        _la = _input.LA(1);
+                        while (_la == NL) {
+                            {
+                                {
+                                    setState(1253);
+                                    match(NL);
+                                }
+                            }
+                            setState(1258);
+                            _errHandler.sync(this);
+                            _la = _input.LA(1);
+                        }
+                        setState(1259);
+                        expr(4);
+                    }
+                    break;
                     default:
                         throw new NoViableAltException(this);
                 }
@@ -6365,370 +6411,377 @@ public class LucidParser extends Parser {
                                     setState(1276);
                                     expr(9);
                                 }
-						break;
-					case 2: {
-                        _localctx = new ExprAddSubContext(new ExprContext(_parentctx, _parentState));
-                        pushNewRecursionContext(_localctx, _startState, RULE_expr);
-                        setState(1277);
-                        if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
-                        setState(1281);
-                        _errHandler.sync(this);
-                        _la = _input.LA(1);
-                        while (_la == NL) {
-                            {
-                                {
-                                    setState(1278);
-                                    match(NL);
+                                break;
+                                case 2: {
+                                    _localctx = new ExprAddSubContext(new ExprContext(_parentctx, _parentState));
+                                    pushNewRecursionContext(_localctx, _startState, RULE_expr);
+                                    setState(1277);
+                                    if (!(precpred(_ctx, 7)))
+                                        throw new FailedPredicateException(this, "precpred(_ctx, 7)");
+                                    setState(1281);
+                                    _errHandler.sync(this);
+                                    _la = _input.LA(1);
+                                    while (_la == NL) {
+                                        {
+                                            {
+                                                setState(1278);
+                                                match(NL);
+                                            }
+                                        }
+                                        setState(1283);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                    }
+                                    setState(1284);
+                                    _la = _input.LA(1);
+                                    if (!(_la == T__25 || _la == T__26)) {
+                                        _errHandler.recoverInline(this);
+                                    } else {
+                                        if (_input.LA(1) == Token.EOF) matchedEOF = true;
+                                        _errHandler.reportMatch(this);
+                                        consume();
+                                    }
+                                    setState(1288);
+                                    _errHandler.sync(this);
+                                    _la = _input.LA(1);
+                                    while (_la == NL) {
+                                        {
+                                            {
+                                                setState(1285);
+                                                match(NL);
+                                            }
+                                        }
+                                        setState(1290);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                    }
+                                    setState(1291);
+                                    expr(8);
                                 }
-                            }
-                            setState(1283);
-                            _errHandler.sync(this);
-                            _la = _input.LA(1);
-                        }
-                        setState(1284);
-                        _la = _input.LA(1);
-                        if (!(_la == T__25 || _la == T__26)) {
-                            _errHandler.recoverInline(this);
-                        } else {
-                            if (_input.LA(1) == Token.EOF) matchedEOF = true;
-                            _errHandler.reportMatch(this);
-                            consume();
-                        }
-                        setState(1288);
-                        _errHandler.sync(this);
-                        _la = _input.LA(1);
-                        while (_la == NL) {
-                            {
-                                {
-                                    setState(1285);
-                                    match(NL);
+                                break;
+                                case 3: {
+                                    _localctx = new ExprShiftContext(new ExprContext(_parentctx, _parentState));
+                                    pushNewRecursionContext(_localctx, _startState, RULE_expr);
+                                    setState(1292);
+                                    if (!(precpred(_ctx, 6)))
+                                        throw new FailedPredicateException(this, "precpred(_ctx, 6)");
+                                    setState(1296);
+                                    _errHandler.sync(this);
+                                    _la = _input.LA(1);
+                                    while (_la == NL) {
+                                        {
+                                            {
+                                                setState(1293);
+                                                match(NL);
+                                            }
+                                        }
+                                        setState(1298);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                    }
+                                    setState(1299);
+                                    _la = _input.LA(1);
+                                    if (!((((_la) & ~0x3f) == 0 && ((1L << _la) & 8246337208320L) != 0))) {
+                                        _errHandler.recoverInline(this);
+                                    } else {
+                                        if (_input.LA(1) == Token.EOF) matchedEOF = true;
+                                        _errHandler.reportMatch(this);
+                                        consume();
+                                    }
+                                    setState(1303);
+                                    _errHandler.sync(this);
+                                    _la = _input.LA(1);
+                                    while (_la == NL) {
+                                        {
+                                            {
+                                                setState(1300);
+                                                match(NL);
+                                            }
+                                        }
+                                        setState(1305);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                    }
+                                    setState(1306);
+                                    expr(7);
                                 }
+                                break;
+                                case 4: {
+                                    _localctx = new ExprBitwiseContext(new ExprContext(_parentctx, _parentState));
+                                    pushNewRecursionContext(_localctx, _startState, RULE_expr);
+                                    setState(1307);
+                                    if (!(precpred(_ctx, 5)))
+                                        throw new FailedPredicateException(this, "precpred(_ctx, 5)");
+                                    setState(1311);
+                                    _errHandler.sync(this);
+                                    _la = _input.LA(1);
+                                    while (_la == NL) {
+                                        {
+                                            {
+                                                setState(1308);
+                                                match(NL);
+                                            }
+                                        }
+                                        setState(1313);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                    }
+                                    setState(1314);
+                                    _la = _input.LA(1);
+                                    if (!((((_la) & ~0x3f) == 0 && ((1L << _la) & 61572651155456L) != 0))) {
+                                        _errHandler.recoverInline(this);
+                                    } else {
+                                        if (_input.LA(1) == Token.EOF) matchedEOF = true;
+                                        _errHandler.reportMatch(this);
+                                        consume();
+                                    }
+                                    setState(1318);
+                                    _errHandler.sync(this);
+                                    _la = _input.LA(1);
+                                    while (_la == NL) {
+                                        {
+                                            {
+                                                setState(1315);
+                                                match(NL);
+                                            }
+                                        }
+                                        setState(1320);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                    }
+                                    setState(1321);
+                                    expr(6);
+                                }
+                                break;
+                                case 5: {
+                                    _localctx = new ExprCompareContext(new ExprContext(_parentctx, _parentState));
+                                    pushNewRecursionContext(_localctx, _startState, RULE_expr);
+                                    setState(1322);
+                                    if (!(precpred(_ctx, 3)))
+                                        throw new FailedPredicateException(this, "precpred(_ctx, 3)");
+                                    setState(1326);
+                                    _errHandler.sync(this);
+                                    _la = _input.LA(1);
+                                    while (_la == NL) {
+                                        {
+                                            {
+                                                setState(1323);
+                                                match(NL);
+                                            }
+                                        }
+                                        setState(1328);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                    }
+                                    setState(1329);
+                                    _la = _input.LA(1);
+                                    if (!((((_la) & ~0x3f) == 0 && ((1L << _la) & 1055531162992640L) != 0))) {
+                                        _errHandler.recoverInline(this);
+                                    } else {
+                                        if (_input.LA(1) == Token.EOF) matchedEOF = true;
+                                        _errHandler.reportMatch(this);
+                                        consume();
+                                    }
+                                    setState(1333);
+                                    _errHandler.sync(this);
+                                    _la = _input.LA(1);
+                                    while (_la == NL) {
+                                        {
+                                            {
+                                                setState(1330);
+                                                match(NL);
+                                            }
+                                        }
+                                        setState(1335);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                    }
+                                    setState(1336);
+                                    expr(4);
+                                }
+                                break;
+                                case 6: {
+                                    _localctx = new ExprLogicalContext(new ExprContext(_parentctx, _parentState));
+                                    pushNewRecursionContext(_localctx, _startState, RULE_expr);
+                                    setState(1337);
+                                    if (!(precpred(_ctx, 2)))
+                                        throw new FailedPredicateException(this, "precpred(_ctx, 2)");
+                                    setState(1341);
+                                    _errHandler.sync(this);
+                                    _la = _input.LA(1);
+                                    while (_la == NL) {
+                                        {
+                                            {
+                                                setState(1338);
+                                                match(NL);
+                                            }
+                                        }
+                                        setState(1343);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                    }
+                                    setState(1344);
+                                    _la = _input.LA(1);
+                                    if (!(_la == T__49 || _la == T__50)) {
+                                        _errHandler.recoverInline(this);
+                                    } else {
+                                        if (_input.LA(1) == Token.EOF) matchedEOF = true;
+                                        _errHandler.reportMatch(this);
+                                        consume();
+                                    }
+                                    setState(1348);
+                                    _errHandler.sync(this);
+                                    _la = _input.LA(1);
+                                    while (_la == NL) {
+                                        {
+                                            {
+                                                setState(1345);
+                                                match(NL);
+                                            }
+                                        }
+                                        setState(1350);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                    }
+                                    setState(1351);
+                                    expr(3);
+                                }
+                                break;
+                                case 7: {
+                                    _localctx = new ExprTernaryContext(new ExprContext(_parentctx, _parentState));
+                                    pushNewRecursionContext(_localctx, _startState, RULE_expr);
+                                    setState(1352);
+                                    if (!(precpred(_ctx, 1)))
+                                        throw new FailedPredicateException(this, "precpred(_ctx, 1)");
+                                    setState(1356);
+                                    _errHandler.sync(this);
+                                    _la = _input.LA(1);
+                                    while (_la == NL) {
+                                        {
+                                            {
+                                                setState(1353);
+                                                match(NL);
+                                            }
+                                        }
+                                        setState(1358);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                    }
+                                    setState(1359);
+                                    match(T__51);
+                                    setState(1363);
+                                    _errHandler.sync(this);
+                                    _la = _input.LA(1);
+                                    while (_la == NL) {
+                                        {
+                                            {
+                                                setState(1360);
+                                                match(NL);
+                                            }
+                                        }
+                                        setState(1365);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                    }
+                                    setState(1366);
+                                    expr(0);
+                                    setState(1370);
+                                    _errHandler.sync(this);
+                                    _la = _input.LA(1);
+                                    while (_la == NL) {
+                                        {
+                                            {
+                                                setState(1367);
+                                                match(NL);
+                                            }
+                                        }
+                                        setState(1372);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                    }
+                                    setState(1373);
+                                    match(T__9);
+                                    setState(1377);
+                                    _errHandler.sync(this);
+                                    _la = _input.LA(1);
+                                    while (_la == NL) {
+                                        {
+                                            {
+                                                setState(1374);
+                                                match(NL);
+                                            }
+                                        }
+                                        setState(1379);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                    }
+                                    setState(1380);
+                                    expr(2);
+                                }
+                                break;
+                                case 8: {
+                                    _localctx = new ExprDupContext(new ExprContext(_parentctx, _parentState));
+                                    pushNewRecursionContext(_localctx, _startState, RULE_expr);
+                                    setState(1382);
+                                    if (!(precpred(_ctx, 12)))
+                                        throw new FailedPredicateException(this, "precpred(_ctx, 12)");
+                                    setState(1386);
+                                    _errHandler.sync(this);
+                                    _la = _input.LA(1);
+                                    while (_la == NL) {
+                                        {
+                                            {
+                                                setState(1383);
+                                                match(NL);
+                                            }
+                                        }
+                                        setState(1388);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                    }
+                                    setState(1389);
+                                    match(T__33);
+                                    setState(1393);
+                                    _errHandler.sync(this);
+                                    _la = _input.LA(1);
+                                    while (_la == NL) {
+                                        {
+                                            {
+                                                setState(1390);
+                                                match(NL);
+                                            }
+                                        }
+                                        setState(1395);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                    }
+                                    setState(1396);
+                                    expr(0);
+                                    setState(1400);
+                                    _errHandler.sync(this);
+                                    _la = _input.LA(1);
+                                    while (_la == NL) {
+                                        {
+                                            {
+                                                setState(1397);
+                                                match(NL);
+                                            }
+                                        }
+                                        setState(1402);
+                                        _errHandler.sync(this);
+                                        _la = _input.LA(1);
+                                    }
+                                    setState(1403);
+                                    match(T__2);
+                                }
+                                break;
                             }
-                            setState(1290);
-                            _errHandler.sync(this);
-                            _la = _input.LA(1);
                         }
-                        setState(1291);
-                        expr(8);
                     }
-						break;
-					case 3: {
-                        _localctx = new ExprShiftContext(new ExprContext(_parentctx, _parentState));
-                        pushNewRecursionContext(_localctx, _startState, RULE_expr);
-                        setState(1292);
-                        if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
-                        setState(1296);
-                        _errHandler.sync(this);
-                        _la = _input.LA(1);
-                        while (_la == NL) {
-                            {
-                                {
-                                    setState(1293);
-                                    match(NL);
-                                }
-                            }
-                            setState(1298);
-                            _errHandler.sync(this);
-                            _la = _input.LA(1);
-                        }
-                        setState(1299);
-                        _la = _input.LA(1);
-                        if (!((((_la) & ~0x3f) == 0 && ((1L << _la) & 8246337208320L) != 0))) {
-                            _errHandler.recoverInline(this);
-                        } else {
-                            if (_input.LA(1) == Token.EOF) matchedEOF = true;
-                            _errHandler.reportMatch(this);
-                            consume();
-                        }
-                        setState(1303);
-                        _errHandler.sync(this);
-                        _la = _input.LA(1);
-                        while (_la == NL) {
-                            {
-                                {
-                                    setState(1300);
-                                    match(NL);
-                                }
-                            }
-                            setState(1305);
-                            _errHandler.sync(this);
-                            _la = _input.LA(1);
-                        }
-                        setState(1306);
-                        expr(7);
-                    }
-						break;
-					case 4: {
-                        _localctx = new ExprBitwiseContext(new ExprContext(_parentctx, _parentState));
-                        pushNewRecursionContext(_localctx, _startState, RULE_expr);
-                        setState(1307);
-                        if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
-                        setState(1311);
-                        _errHandler.sync(this);
-                        _la = _input.LA(1);
-                        while (_la == NL) {
-                            {
-                                {
-                                    setState(1308);
-                                    match(NL);
-                                }
-                            }
-                            setState(1313);
-                            _errHandler.sync(this);
-                            _la = _input.LA(1);
-                        }
-                        setState(1314);
-                        _la = _input.LA(1);
-                        if (!((((_la) & ~0x3f) == 0 && ((1L << _la) & 61572651155456L) != 0))) {
-                            _errHandler.recoverInline(this);
-                        } else {
-                            if (_input.LA(1) == Token.EOF) matchedEOF = true;
-                            _errHandler.reportMatch(this);
-                            consume();
-                        }
-                        setState(1318);
-                        _errHandler.sync(this);
-                        _la = _input.LA(1);
-                        while (_la == NL) {
-                            {
-                                {
-                                    setState(1315);
-                                    match(NL);
-                                }
-                            }
-                            setState(1320);
-                            _errHandler.sync(this);
-                            _la = _input.LA(1);
-                        }
-                        setState(1321);
-                        expr(6);
-                    }
-						break;
-					case 5: {
-                        _localctx = new ExprCompareContext(new ExprContext(_parentctx, _parentState));
-                        pushNewRecursionContext(_localctx, _startState, RULE_expr);
-                        setState(1322);
-                        if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
-                        setState(1326);
-                        _errHandler.sync(this);
-                        _la = _input.LA(1);
-                        while (_la == NL) {
-                            {
-                                {
-                                    setState(1323);
-                                    match(NL);
-                                }
-                            }
-                            setState(1328);
-                            _errHandler.sync(this);
-                            _la = _input.LA(1);
-                        }
-                        setState(1329);
-                        _la = _input.LA(1);
-                        if (!((((_la) & ~0x3f) == 0 && ((1L << _la) & 1055531162992640L) != 0))) {
-                            _errHandler.recoverInline(this);
-                        } else {
-                            if (_input.LA(1) == Token.EOF) matchedEOF = true;
-                            _errHandler.reportMatch(this);
-                            consume();
-                        }
-                        setState(1333);
-                        _errHandler.sync(this);
-                        _la = _input.LA(1);
-                        while (_la == NL) {
-                            {
-                                {
-                                    setState(1330);
-                                    match(NL);
-                                }
-                            }
-                            setState(1335);
-                            _errHandler.sync(this);
-                            _la = _input.LA(1);
-                        }
-                        setState(1336);
-                        expr(4);
-                    }
-						break;
-					case 6: {
-                        _localctx = new ExprLogicalContext(new ExprContext(_parentctx, _parentState));
-                        pushNewRecursionContext(_localctx, _startState, RULE_expr);
-                        setState(1337);
-                        if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
-                        setState(1341);
-                        _errHandler.sync(this);
-                        _la = _input.LA(1);
-                        while (_la == NL) {
-                            {
-                                {
-                                    setState(1338);
-                                    match(NL);
-                                }
-                            }
-                            setState(1343);
-                            _errHandler.sync(this);
-                            _la = _input.LA(1);
-                        }
-                        setState(1344);
-                        _la = _input.LA(1);
-                        if (!(_la == T__49 || _la == T__50)) {
-                            _errHandler.recoverInline(this);
-                        } else {
-                            if (_input.LA(1) == Token.EOF) matchedEOF = true;
-                            _errHandler.reportMatch(this);
-                            consume();
-                        }
-                        setState(1348);
-                        _errHandler.sync(this);
-                        _la = _input.LA(1);
-                        while (_la == NL) {
-                            {
-                                {
-                                    setState(1345);
-                                    match(NL);
-                                }
-                            }
-                            setState(1350);
-                            _errHandler.sync(this);
-                            _la = _input.LA(1);
-                        }
-                        setState(1351);
-                        expr(3);
-                    }
-						break;
-					case 7: {
-                        _localctx = new ExprTernaryContext(new ExprContext(_parentctx, _parentState));
-                        pushNewRecursionContext(_localctx, _startState, RULE_expr);
-                        setState(1352);
-                        if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
-                        setState(1356);
-                        _errHandler.sync(this);
-                        _la = _input.LA(1);
-                        while (_la == NL) {
-                            {
-                                {
-                                    setState(1353);
-                                    match(NL);
-                                }
-                            }
-                            setState(1358);
-                            _errHandler.sync(this);
-                            _la = _input.LA(1);
-                        }
-                        setState(1359);
-                        match(T__51);
-                        setState(1363);
-                        _errHandler.sync(this);
-                        _la = _input.LA(1);
-                        while (_la == NL) {
-                            {
-                                {
-                                    setState(1360);
-                                    match(NL);
-                                }
-                            }
-                            setState(1365);
-                            _errHandler.sync(this);
-                            _la = _input.LA(1);
-                        }
-                        setState(1366);
-                        expr(0);
-                        setState(1370);
-                        _errHandler.sync(this);
-                        _la = _input.LA(1);
-                        while (_la == NL) {
-                            {
-                                {
-                                    setState(1367);
-                                    match(NL);
-                                }
-                            }
-                            setState(1372);
-                            _errHandler.sync(this);
-                            _la = _input.LA(1);
-                        }
-                        setState(1373);
-                        match(T__9);
-                        setState(1377);
-                        _errHandler.sync(this);
-                        _la = _input.LA(1);
-                        while (_la == NL) {
-                            {
-                                {
-                                    setState(1374);
-                                    match(NL);
-                                }
-                            }
-                            setState(1379);
-                            _errHandler.sync(this);
-                            _la = _input.LA(1);
-                        }
-                        setState(1380);
-                        expr(2);
-                    }
-						break;
-					case 8: {
-                        _localctx = new ExprDupContext(new ExprContext(_parentctx, _parentState));
-                        pushNewRecursionContext(_localctx, _startState, RULE_expr);
-                        setState(1382);
-                        if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
-                        setState(1386);
-                        _errHandler.sync(this);
-                        _la = _input.LA(1);
-                        while (_la == NL) {
-                            {
-                                {
-                                    setState(1383);
-                                    match(NL);
-                                }
-                            }
-                            setState(1388);
-                            _errHandler.sync(this);
-                            _la = _input.LA(1);
-                        }
-                        setState(1389);
-                        match(T__33);
-                        setState(1393);
-                        _errHandler.sync(this);
-                        _la = _input.LA(1);
-                        while (_la == NL) {
-                            {
-                                {
-                                    setState(1390);
-                                    match(NL);
-                                }
-                            }
-                            setState(1395);
-                            _errHandler.sync(this);
-                            _la = _input.LA(1);
-                        }
-                        setState(1396);
-                        expr(0);
-                        setState(1400);
-                        _errHandler.sync(this);
-                        _la = _input.LA(1);
-                        while (_la == NL) {
-                            {
-                                {
-                                    setState(1397);
-                                    match(NL);
-                                }
-                            }
-                            setState(1402);
-                            _errHandler.sync(this);
-                            _la = _input.LA(1);
-                        }
-                        setState(1403);
-                        match(T__2);
-                    }
-                    break;
-                            }
-                        }
-                    }
-				setState(1409);
+                    setState(1409);
                     _errHandler.sync(this);
                     _alt = getInterpreter().adaptivePredict(_input, 194, _ctx);
-			}
+                }
 			}
 		}
 		catch (RecognitionException re) {
@@ -6771,7 +6824,7 @@ public class LucidParser extends Parser {
 		enterRule(_localctx, 96, RULE_name);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
+            enterOuterAlt(_localctx, 1);
             {
                 setState(1410);
                 _la = _input.LA(1);
@@ -6783,7 +6836,7 @@ public class LucidParser extends Parser {
                     consume();
                 }
             }
-		}
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -6857,10 +6910,10 @@ public class LucidParser extends Parser {
                         setState(1419);
                         match(SEMICOLON);
                     }
-				}
-				break;
-			}
-		}
+                }
+                break;
+            }
+        }
 		catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
@@ -6891,15 +6944,15 @@ public class LucidParser extends Parser {
 			return precpred(_ctx, 5);
 		case 4:
 			return precpred(_ctx, 3);
-		case 5:
-			return precpred(_ctx, 2);
-		case 6:
-			return precpred(_ctx, 1);
-		case 7:
-			return precpred(_ctx, 12);
-		}
-		return true;
-	}
+            case 5:
+                return precpred(_ctx, 2);
+            case 6:
+                return precpred(_ctx, 1);
+            case 7:
+                return precpred(_ctx, 12);
+        }
+        return true;
+    }
 
     public static final String _serializedATN =
             "\u0004\u0001D\u058f\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002" +
@@ -7863,10 +7916,11 @@ public class LucidParser extends Parser {
                     "\u0561\u056a\u0571\u0578\u057d\u057f\u0588\u058c";
     public static final ATN _ATN =
             new ATNDeserializer().deserialize(_serializedATN.toCharArray());
-	static {
-		_decisionToDFA = new DFA[_ATN.getNumberOfDecisions()];
-		for (int i = 0; i < _ATN.getNumberOfDecisions(); i++) {
-			_decisionToDFA[i] = new DFA(_ATN.getDecisionState(i), i);
-		}
-	}
+
+    static {
+        _decisionToDFA = new DFA[_ATN.getNumberOfDecisions()];
+        for (int i = 0; i < _ATN.getNumberOfDecisions(); i++) {
+            _decisionToDFA[i] = new DFA(_ATN.getDecisionState(i), i);
+        }
+    }
 }

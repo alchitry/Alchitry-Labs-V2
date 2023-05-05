@@ -4,6 +4,7 @@ import com.alchitry.labs.parsers.errors.ErrorListener
 import org.antlr.v4.runtime.*
 import org.antlr.v4.runtime.atn.ATNConfigSet
 import org.antlr.v4.runtime.dfa.DFA
+import org.antlr.v4.runtime.misc.Interval
 import org.antlr.v4.runtime.tree.TerminalNode
 import java.util.*
 
@@ -57,7 +58,8 @@ class ErrorCollector : ErrorListener, ANTLRErrorListener {
         ambigAlts: BitSet?,
         configs: ATNConfigSet?
     ) {
-        println("Syntax ambiguity at $startIndex to $stopIndex")
+        val text = recognizer?.tokenStream?.getText(Interval(startIndex, stopIndex))
+        syntaxIssues.add("Syntax ambiguity at: $text")
     }
 
     override fun reportAttemptingFullContext(
@@ -68,7 +70,8 @@ class ErrorCollector : ErrorListener, ANTLRErrorListener {
         conflictingAlts: BitSet?,
         configs: ATNConfigSet?
     ) {
-        println("Syntax attempting full context at $startIndex to $stopIndex")
+        //val text = recognizer?.tokenStream?.getText(Interval(startIndex, stopIndex))
+        //syntaxIssues.add("Syntax attempting full context at $startIndex to $stopIndex \"$text\"")
     }
 
     override fun reportContextSensitivity(
@@ -79,7 +82,7 @@ class ErrorCollector : ErrorListener, ANTLRErrorListener {
         prediction: Int,
         configs: ATNConfigSet?
     ) {
-        println("Syntax context sensitivity at $startIndex to $stopIndex")
+        //syntaxIssues.add("Syntax context sensitivity at $startIndex to $stopIndex")
     }
 
     val hasNoIssues: Boolean get() = hasNoSyntaxIssues && hasNoErrors && hasNoWarnings

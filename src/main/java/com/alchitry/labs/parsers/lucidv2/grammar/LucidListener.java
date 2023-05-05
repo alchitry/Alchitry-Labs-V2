@@ -542,70 +542,51 @@ public interface LucidListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void enterCaseStat(LucidParser.CaseStatContext ctx);
-
 	/**
 	 * Exit a parse tree produced by {@link LucidParser#caseStat}.
-	 *
 	 * @param ctx the parse tree
 	 */
 	void exitCaseStat(LucidParser.CaseStatContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link LucidParser#caseElem}.
-	 *
 	 * @param ctx the parse tree
 	 */
 	void enterCaseElem(LucidParser.CaseElemContext ctx);
-
 	/**
 	 * Exit a parse tree produced by {@link LucidParser#caseElem}.
-	 *
 	 * @param ctx the parse tree
 	 */
 	void exitCaseElem(LucidParser.CaseElemContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link LucidParser#caseBlock}.
-	 *
 	 * @param ctx the parse tree
 	 */
 	void enterCaseBlock(LucidParser.CaseBlockContext ctx);
-
 	/**
 	 * Exit a parse tree produced by {@link LucidParser#caseBlock}.
-	 *
 	 * @param ctx the parse tree
 	 */
 	void exitCaseBlock(LucidParser.CaseBlockContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link LucidParser#ifStat}.
-	 *
 	 * @param ctx the parse tree
 	 */
 	void enterIfStat(LucidParser.IfStatContext ctx);
-
 	/**
 	 * Exit a parse tree produced by {@link LucidParser#ifStat}.
-	 *
 	 * @param ctx the parse tree
 	 */
 	void exitIfStat(LucidParser.IfStatContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link LucidParser#elseStat}.
-	 *
 	 * @param ctx the parse tree
 	 */
 	void enterElseStat(LucidParser.ElseStatContext ctx);
-
 	/**
 	 * Exit a parse tree produced by {@link LucidParser#elseStat}.
-	 *
 	 * @param ctx the parse tree
 	 */
 	void exitElseStat(LucidParser.ElseStatContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link LucidParser#repeatStat}.
 	 * @param ctx the parse tree
