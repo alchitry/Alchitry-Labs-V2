@@ -19,16 +19,19 @@ class LucidModuleContext(
     always: AlwaysParser? = null,
     val localSignalResolver: SignalResolver? = null // Used in tests to simulate a full parse.
 ) {
+    val isEvaluating = evalContext != null
+
     val expr = expr?.withContext(this) ?: ExprParser(this)
     val signal = signal?.withContext(this) ?: SignalParser(this)
     val module = module?.withContext(this) ?: LucidModuleParser(this)
     val always = always?.withContext(this) ?: AlwaysParser(this)
 
+    // these run from last to first
     private val listeners = listOf<ParseTreeListener>(
-        this.expr,
-        this.signal,
+        this.always,
         this.module,
-        this.always
+        this.signal,
+        this.expr
     )
 
     fun withEvalContext(evalContext: Evaluable) = LucidModuleContext(

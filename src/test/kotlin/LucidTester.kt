@@ -14,7 +14,8 @@ class LucidTester(text: String, localSignalResolver: SignalResolver? = null) :
             ).also { it.removeErrorListeners() })
     ) {
 
-    val context = LucidModuleContext(ProjectContext(), null, localSignalResolver = localSignalResolver)
+    val project = ProjectContext()
+    val context = LucidModuleContext(project, null, localSignalResolver = localSignalResolver)
 
     init {
         (tokenStream.tokenSource as LucidLexer).addErrorListener(context.errorCollector)

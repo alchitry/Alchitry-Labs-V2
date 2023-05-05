@@ -260,7 +260,7 @@ class ExprParser(
         val signal = context.signal.resolve(ctx.signal()) ?: return
 
         if (!signal.direction.canRead) {
-            context.errorCollector.reportError(ctx.signal(), "The signal ${ctx.signal().text}, can't be read!")
+            context.errorCollector.reportError(ctx.signal(), "The signal ${ctx.signal().text} can't be read!")
             return
         }
 

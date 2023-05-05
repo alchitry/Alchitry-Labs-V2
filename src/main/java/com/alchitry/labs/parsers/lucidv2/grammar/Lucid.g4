@@ -88,7 +88,7 @@ bitSelector
   ;
 bitSelection: (arrayIndex | NL)* (arrayIndex | bitSelector);
 
-signal: name NL* bitSelection? (NL* '.' NL* name NL* bitSelection?)*;
+signal: name (NL* bitSelection)? (NL* '.' NL* name (NL* bitSelection)?)*;
 
 caseStat: 'case' NL* '(' NL* expr NL* ')' NL* '{' (caseElem | NL)* '}';
 caseElem: (expr | 'default') NL* ':' NL* alwaysStat (alwaysStat | NL)*;
@@ -125,7 +125,7 @@ expr
 
 name: TYPE_ID | CONST_ID | SPACE_ID;
 
-semi: NL+ | (NL* SEMICOLON);
+semi: NL | SEMICOLON;
 
 HEX: ([1-9][0-9]*)? 'h' ([0-9a-fA-FzZX]|('x' {_input.LA(1) != '{'}?))+;
 BIN: ([1-9][0-9]*)? 'b' ([0-1zZX]|('x' {_input.LA(1) != '{'}?))+;

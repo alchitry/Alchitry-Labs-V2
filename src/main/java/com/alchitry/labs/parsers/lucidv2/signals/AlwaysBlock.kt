@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 
 class AlwaysBlock(
     context: LucidModuleContext,
-    private val dependencies: List<Signal>,
+    dependencies: List<Signal>,
     private val alwaysBlockContext: AlwaysBlockContext
 ): Evaluable {
     private val context = context.withEvalContext(this)
@@ -29,5 +29,7 @@ class AlwaysBlock(
             context.errorCollector.errors.forEach { println(it) }
             error("Failed to evaluate always block!")
         }
+
+        context.always.processWriteQueue()
     }
 }

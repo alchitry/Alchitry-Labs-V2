@@ -16,7 +16,6 @@ import org.antlr.v4.runtime.CommonTokenStream
 
 class ProjectContext {
     val scope = CoroutineScope(Dispatchers.Default)
-    private val errors = mutableListOf<String>()
 
     private val globals = mutableMapOf<String, GlobalNamespace>()
     private val modules = mutableMapOf<String, Module>()

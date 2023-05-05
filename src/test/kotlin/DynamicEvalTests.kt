@@ -9,7 +9,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class DynamicExprTest {
+class DynamicEvalTests {
     @Test
     fun basicDynamicExpr() {
         repeat(30) { // repeat to attempt to check for race conditions
@@ -42,8 +42,8 @@ class DynamicExprTest {
 
     @Test
     fun signalContextTest() {
-        val evaluable = Evaluable {  }
-        val evaluable2 = Evaluable {  }
+        val evaluable = Evaluable { }
+        val evaluable2 = Evaluable { }
         val sig = Signal("test", SignalDirection.Both, null, BitValue(Bit.B1, false, false), false)
         sig.quietSet(BitValue(Bit.B0, false, false), evaluable)
 
@@ -58,5 +58,43 @@ class DynamicExprTest {
         assertEquals(BitValue(Bit.B0, false, false), sig.get(null))
         assertEquals(BitValue(Bit.B0, false, false), sig.get(evaluable2))
         assertEquals(BitValue(Bit.B0, false, false), sig.get(evaluable))
+    }
+
+    @Test
+    fun basicAlwaysEvalTest() {
+        val sig1 = Signal("sig1", SignalDirection.Write, null, BitValue(Bit.B0, constant = false, signed = false), false)
+        val sig2 = Signal("sig2", SignalDirection.Read, null, BitValue(Bit.B1, constant = false, signed = false), false)
+        val tester = LucidTester(
+            """
+            module testMod (
+                input a
+            ) {
+                always {
+                    sig1 = sig2
+                }
+            }
+        """.trimIndent(),
+            TestSignalResolver(sig1, sig2)
+        )
+
+        tester.source()
+        assert(tester.hasNoIssues)
+
+        assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.get(null))
+        assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig2.get(null))
+
+        runBlocking {
+            sig2.set(BitValue(Bit.B0, constant = false, signed = false))
+            assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.get(null))
+
+            tester.project.processQueue()
+            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.get(null))
+
+            sig2.set(BitValue(Bit.Bx, constant = false, signed = false))
+            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.get(null))
+
+            tester.project.processQueue()
+            assertEquals(BitValue(Bit.Bx, constant = false, signed = false), sig1.get(null))
+        }
     }
 }
