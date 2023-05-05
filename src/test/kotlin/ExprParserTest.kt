@@ -12,14 +12,14 @@ internal class ExprParserTest {
     @Test
     fun testNumbers() {
         var test = LucidTester("5b11011")
-        var tree = test.expr()
+        var tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("11011", 2, 5, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("hFE01")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assertEquals(
             BitListValue("65025", 10, 16, constant = true, signed = false),
             test.context.expr.resolve(tree)
@@ -29,35 +29,35 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("8hFFF")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("255", 10, 8, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("152")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("152", 10, 8, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("0")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitValue(Bit.B0, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("1")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitValue(Bit.B1, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("20d12")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("12", 10, 20, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -67,7 +67,7 @@ internal class ExprParserTest {
     @Test
     fun testAddition() {
         val test = LucidTester("5b1101 + 4b0010")
-        val tree = test.expr()
+        val tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("1111", 2, 6, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -77,7 +77,7 @@ internal class ExprParserTest {
     @Test
     fun testSubtraction() {
         val test = LucidTester("5b1101 - 4b0010")
-        val tree = test.expr()
+        val tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("1011", 2, 6, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
@@ -87,7 +87,7 @@ internal class ExprParserTest {
     @Test
     fun testConcat() {
         var test = LucidTester("c{b1101, b0010, 0}")
-        var tree = test.expr()
+        var tree = test.expr().also { test.context.walk(it) }
         assertEquals(
             BitListValue("110100100", 2, 9, constant = true, signed = false),
             test.context.expr.resolve(tree)
@@ -97,21 +97,21 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("c{{b1101}, b0010, 0}")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assertEquals(null, test.context.expr.resolve(tree))
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("c{{b1101}, {b0010}, {0}}")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assertEquals(null, test.context.expr.resolve(tree))
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("c{{b1101}, {b0010}, {4b0}}")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assertEquals(
             ArrayValue(
                 listOf(
@@ -130,14 +130,14 @@ internal class ExprParserTest {
     @Test
     fun testDup() {
         var test = LucidTester("2x{0}")
-        var tree = test.expr()
+        var tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("00", 2, 2, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("8x{2b10}")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assertEquals(
             BitListValue("1010101010101010", 2, 16, constant = true, signed = false),
             test.context.expr.resolve(tree)
@@ -147,7 +147,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("{8}x{2b10}")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assertEquals(null, test.context.expr.resolve(tree))
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
@@ -157,7 +157,7 @@ internal class ExprParserTest {
     @Test
     fun testArray() {
         var test = LucidTester("{0}")
-        var tree = test.expr()
+        var tree = test.expr().also { test.context.walk(it) }
         assertEquals(
             ArrayValue(
                 listOf(
@@ -171,7 +171,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("{{0}}")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assertEquals(
             ArrayValue(
                 listOf(
@@ -190,14 +190,14 @@ internal class ExprParserTest {
 
         // values of different sizes = error
         test = LucidTester("{0, 2b10, 2b11}")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assertEquals(null, test.context.expr.resolve(tree))
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("{b00,b01,b10}")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assertEquals(
             ArrayValue(
                 listOf(
@@ -216,7 +216,7 @@ internal class ExprParserTest {
     @Test
     fun testMultiply() {
         var test = LucidTester("20 * 40")
-        var tree = test.expr()
+        var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue(
@@ -233,21 +233,21 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("20 * {40}")
-        test.expr()
+        test.expr().also { test.context.walk(it) }
 
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("{20} * {40}")
-        test.expr()
+        test.expr().also { test.context.walk(it) }
 
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$signed(20) * 40")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue(
@@ -265,7 +265,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("-20 * -40")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue(
@@ -286,7 +286,7 @@ internal class ExprParserTest {
     @Test
     fun testDivide() {
         var test = LucidTester("40 / 8")
-        var tree = test.expr()
+        var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("5", 10, Util.minWidthNum(40), constant = true, signed = false),
@@ -297,7 +297,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("40 / 5")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("8", 10, Util.minWidthNum(40), constant = true, signed = false),
@@ -313,7 +313,7 @@ internal class ExprParserTest {
     @Test
     fun testShift() {
         var test = LucidTester("40 >> 3")
-        var tree = test.expr()
+        var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("5", 10, Util.minWidthNum(40), constant = true, signed = false),
@@ -324,7 +324,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("-8 >> 2")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("00110", 2, constant = true, signed = false),
@@ -335,7 +335,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("-8 >>> 2")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("11110", 2, constant = true, signed = true),
@@ -346,7 +346,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("8 << 1")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("16", 10, constant = true, signed = false),
@@ -357,7 +357,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("-8 << 1")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("110000", 2, constant = true, signed = false),
@@ -368,7 +368,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("8 <<< 1")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("16", 10, constant = true, signed = false),
@@ -379,7 +379,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("-8 <<< 1")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("110000", 2, constant = true, signed = true),
@@ -393,7 +393,7 @@ internal class ExprParserTest {
     @Test
     fun testBitwise() {
         var test = LucidTester("b1101 & b1001")
-        var tree = test.expr()
+        var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("1001", 2, constant = true, signed = false),
@@ -404,7 +404,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("b001101 & b1001")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("001001", 2, constant = true, signed = false),
@@ -415,7 +415,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$signed(b001101) & \$signed(b1001)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("001001", 2, constant = true, signed = true),
@@ -426,7 +426,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("b1101 | b1001")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("1101", 2, constant = true, signed = false),
@@ -437,7 +437,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("b101101 | b1010")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("101111", 2, constant = true, signed = false),
@@ -448,7 +448,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$signed(b001101) | \$signed(b1001)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("111101", 2, constant = true, signed = true),
@@ -459,7 +459,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("b1101 ^ b1001")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("0100", 2, constant = true, signed = false),
@@ -470,7 +470,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("b001101 ^ b1001")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("000100", 2, constant = true, signed = false),
@@ -481,7 +481,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$signed(b001101) ^ \$signed(b1001)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("110100", 2, constant = true, signed = true),
@@ -495,7 +495,7 @@ internal class ExprParserTest {
     @Test
     fun testReduction() {
         var test = LucidTester("|b1001")
-        var tree = test.expr()
+        var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitValue(Bit.B1, constant = true, signed = false),
@@ -506,7 +506,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("|b0000")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitValue(Bit.B0, constant = true, signed = false),
@@ -517,7 +517,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("&b1001")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitValue(Bit.B0, constant = true, signed = false),
@@ -528,7 +528,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("&b1111")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitValue(Bit.B1, constant = true, signed = false),
@@ -539,7 +539,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("&b1x01")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitValue(Bit.Bx, constant = true, signed = false),
@@ -550,7 +550,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("^b1001")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitValue(Bit.B0, constant = true, signed = false),
@@ -561,7 +561,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("^b1011")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitValue(Bit.B1, constant = true, signed = false),
@@ -575,7 +575,7 @@ internal class ExprParserTest {
     @Test
     fun testCompare() {
         var test = LucidTester("10 < 4")
-        var tree = test.expr()
+        var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitValue(Bit.B0, constant = true, signed = false),
@@ -586,7 +586,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("10 > 4")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitValue(Bit.B1, constant = true, signed = false),
@@ -597,7 +597,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("4 >= 10")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitValue(Bit.B0, constant = true, signed = false),
@@ -608,7 +608,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("10 >= 10")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitValue(Bit.B1, constant = true, signed = false),
@@ -619,7 +619,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("10 <= 4")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitValue(Bit.B0, constant = true, signed = false),
@@ -630,7 +630,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("10 <= 10")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitValue(Bit.B1, constant = true, signed = false),
@@ -644,7 +644,7 @@ internal class ExprParserTest {
     @Test
     fun testLogical() {
         var test = LucidTester("10 || 0")
-        var tree = test.expr()
+        var tree = test.expr().also { test.context.walk(it) }
         assert(test.hasNoIssues)
 
         assertEquals(
@@ -653,7 +653,7 @@ internal class ExprParserTest {
         )
 
         test = LucidTester("0 || 0")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assert(test.hasNoIssues)
 
         assertEquals(
@@ -662,7 +662,7 @@ internal class ExprParserTest {
         )
 
         test = LucidTester("10 && 0")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assert(test.hasNoIssues)
 
         assertEquals(
@@ -671,7 +671,7 @@ internal class ExprParserTest {
         )
 
         test = LucidTester("10 && 4")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assert(test.hasNoIssues)
 
         assertEquals(
@@ -683,7 +683,7 @@ internal class ExprParserTest {
     @Test
     fun testTernary() {
         var test = LucidTester("10 ? 1 : 2")
-        var tree = test.expr()
+        var tree = test.expr().also { test.context.walk(it) }
         assert(test.hasNoIssues)
 
         assertEquals(
@@ -692,7 +692,7 @@ internal class ExprParserTest {
         )
 
         test = LucidTester("10b0 ? 1 : 2")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
         assert(test.hasNoIssues)
 
         assertEquals(
@@ -704,7 +704,7 @@ internal class ExprParserTest {
     @Test
     fun testInvert() {
         var test = LucidTester("!10")
-        var tree = test.expr()
+        var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitValue(Bit.B0, constant = true, signed = false),
@@ -715,7 +715,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("!0")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitValue(Bit.B1, constant = true, signed = false),
@@ -726,7 +726,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("~b101")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("010", 2, constant = true, signed = false),
@@ -740,7 +740,7 @@ internal class ExprParserTest {
     @Test
     fun testNegate() {
         var test = LucidTester("-20")
-        var tree = test.expr()
+        var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("101100", 2, constant = true, signed = true),
@@ -752,7 +752,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("--20")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("20", 10, Util.minWidthNum(20) + 2, signed = true, constant = true),
@@ -767,7 +767,7 @@ internal class ExprParserTest {
     @Test
     fun testFunctions() {
         var test = LucidTester("\$signed(20)")
-        var tree = test.expr()
+        var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("20", 10, width = Util.minWidthNum(20), signed = true, constant = true),
@@ -779,7 +779,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$signed(-20)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("101100", 2, constant = true, signed = true),
@@ -791,7 +791,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$clog2(7)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("3", 10, constant = true, signed = false),
@@ -802,7 +802,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$clog2(0)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitValue(Bit.B0, constant = true, signed = false),
@@ -813,7 +813,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$clog2(1)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("0", 10, constant = true, signed = false),
@@ -824,7 +824,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$clog2(129)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("8", 10, constant = true, signed = false),
@@ -835,7 +835,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$pow(3,0)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("1", 10, constant = true, signed = false),
@@ -846,7 +846,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$pow(2,4)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("16", 10, constant = true, signed = false),
@@ -857,7 +857,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$reverse(b1100)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("0011", 2, constant = true, signed = false),
@@ -868,7 +868,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$reverse({b1100, b0011})")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             ArrayValue(
@@ -884,7 +884,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$flatten(b1100)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("1100", 2, constant = true, signed = false),
@@ -895,7 +895,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$flatten({b1100, b0011})")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("11000011", 2, constant = true, signed = false),
@@ -908,7 +908,7 @@ internal class ExprParserTest {
         // TODO: Test flatten for structs
 
         test = LucidTester("\$build(b1100, 2)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             ArrayValue(
@@ -924,7 +924,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$build(b11001001, 2, 2)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             ArrayValue(
@@ -950,7 +950,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$unsigned(20)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("20", 10, constant = true, signed = false),
@@ -962,7 +962,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$unsigned(\$signed(-20))")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("101100", 2, constant = true, signed = false),
@@ -974,7 +974,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$cdiv(8, 3)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("3", 10, constant = true, signed = false),
@@ -986,7 +986,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$cdiv(9, 3)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("3", 10, constant = true, signed = false),
@@ -998,7 +998,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$cdiv(10, 3)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("4", 10, constant = true, signed = false),
@@ -1010,7 +1010,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$resize(8, 3)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("8", 10, 3, constant = true, signed = false),
@@ -1022,7 +1022,7 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         test = LucidTester("\$resize(1, 3)")
-        tree = test.expr()
+        tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
             BitListValue("1", 10, 3, constant = true, signed = false),
@@ -1039,7 +1039,7 @@ internal class ExprParserTest {
         val signal =
             Signal("test", SignalDirection.Both, null, BitListValue("110", 2, constant = false, signed = false))
         val test = LucidTester("test[2]", localSignalResolver = TestSignalResolver(signal))
-        val exprCtx = test.expr()
+        val exprCtx = test.expr().also { test.context.walk(it) }
 
         assert(test.hasNoIssues)
 
@@ -1051,7 +1051,7 @@ internal class ExprParserTest {
         val signal =
             Signal("test", SignalDirection.Both, null, BitListValue("1010", 2, constant = false, signed = false))
         val test = LucidTester("test[2:1]", localSignalResolver = TestSignalResolver(signal))
-        val exprCtx = test.expr()
+        val exprCtx = test.expr().also { test.context.walk(it) }
 
         assert(test.hasNoIssues)
 
@@ -1063,7 +1063,7 @@ internal class ExprParserTest {
         val signal =
             Signal("test", SignalDirection.Both, null, BitListValue("1010", 2, constant = false, signed = false))
         val test = LucidTester("test[9:1]", localSignalResolver = TestSignalResolver(signal))
-        test.expr()
+        test.expr().also { test.context.walk(it) }
 
         assert(test.hasErrors)
         assert(test.hasNoWarnings)

@@ -11,7 +11,7 @@ class StructTest {
     @Test
     fun basicStructDecTest() {
         val tester = LucidTester("struct test { a, b[2][3], c[4] };")
-        val ctx = tester.structDec()
+        val ctx = tester.structDec().also { tester.context.walk(it) }
 
         assert(tester.hasNoIssues)
 

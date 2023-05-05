@@ -21,8 +21,6 @@ class LucidTester(text: String, localSignalResolver: SignalResolver? = null) :
         (tokenStream.tokenSource as LucidLexer).addErrorListener(context.errorCollector)
         removeErrorListeners()
         addErrorListener(context.errorCollector)
-
-        context.addToParser(this)
     }
 
     val hasNoIssues: Boolean get() = context.errorCollector.hasNoIssues

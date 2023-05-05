@@ -1,7 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.context
 
 import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.ErrorCollector
-import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.parsers.*
 import com.alchitry.labs.parsers.lucidv2.signals.ModuleInstance
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
@@ -26,12 +25,11 @@ class LucidModuleContext(
     val module = module?.withContext(this) ?: LucidModuleParser(this)
     val always = always?.withContext(this) ?: AlwaysParser(this)
 
-    // these run from last to first
     private val listeners = listOf<ParseTreeListener>(
-        this.always,
-        this.module,
+        this.expr,
         this.signal,
-        this.expr
+        this.module,
+        this.always
     )
 
     fun withEvalContext(evalContext: Evaluable) = LucidModuleContext(
@@ -48,10 +46,6 @@ class LucidModuleContext(
 
     fun walk(t: ParseTree, vararg extraListeners: ParseTreeListener) =
         ParseTreeMultiWalker.walk(listeners.toMutableList().apply { addAll(extraListeners.toList()) }, t)
-
-    fun addToParser(parser: LucidParser) {
-        listeners.forEach { parser.addParseListener(it) }
-    }
 
     /**
      * Searches all SignalParsers to resolve a signal name.

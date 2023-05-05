@@ -70,9 +70,9 @@ class ProjectContext {
         parser.removeErrorListeners()
         parser.addErrorListener(context.errorCollector)
 
-        context.addToParser(parser)
+        val tree = parser.source()
 
-        parser.source()
+        context.walk(tree)
 
         return context
     }

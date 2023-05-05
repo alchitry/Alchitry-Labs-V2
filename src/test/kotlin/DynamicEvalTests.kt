@@ -19,6 +19,7 @@ class DynamicEvalTests {
             val test = LucidTester("~test", localSignalResolver = TestSignalResolver(signal))
 
             val exprCtx = test.expr()
+            test.context.walk(exprCtx)
 
             val dynamicExpr = DynamicExpr(exprCtx, test.context)
 
@@ -77,7 +78,7 @@ class DynamicEvalTests {
             TestSignalResolver(sig1, sig2)
         )
 
-        tester.source()
+        tester.context.walk(tester.source())
         assert(tester.hasNoIssues)
 
         assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.get(null))

@@ -93,7 +93,7 @@ fun BitListValue(
     return BitListValue(bits, constant, signed)
 }
 
-private fun BigInteger.minWidth(signed: Boolean = signum() == -1): Int {
+fun BigInteger.minBits(signed: Boolean = signum() == -1): Int {
     var w = bitLength() // doesn't include sign bit
     if (signed) w++
     return w.coerceAtLeast(1)
@@ -102,14 +102,14 @@ private fun BigInteger.minWidth(signed: Boolean = signum() == -1): Int {
 fun BigInteger.toBitListValue(
     constant: Boolean,
     signed: Boolean = signum() == -1,
-    width: Int = minWidth(signed)
+    width: Int = minBits(signed)
 ) = BitListValue(this, constant, signed, width)
 
 fun BitListValue(
     bigInt: BigInteger,
     constant: Boolean,
     signed: Boolean = bigInt.signum() == -1,
-    width: Int = bigInt.minWidth(signed)
+    width: Int = bigInt.minBits(signed)
 ): BitListValue {
     val bList = bigInt.toByteArray()
     val bits = mutableListOf<Bit>()
@@ -138,3 +138,7 @@ fun BitListValue(value: Long, width: Int, constant: Boolean, signed: Boolean): B
         if ((value and (1 shr it).toLong()) != 0.toLong()) Bit.B1 else Bit.B0
     }
 
+fun BitListValue(value: Int, width: Int, constant: Boolean, signed: Boolean): BitListValue =
+    BitListValue(width, constant, signed) {
+        if ((value and (1 shr it)) != 0) Bit.B1 else Bit.B0
+    }
