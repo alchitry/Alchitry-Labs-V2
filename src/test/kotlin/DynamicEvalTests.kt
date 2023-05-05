@@ -81,6 +81,11 @@ class DynamicEvalTests {
         tester.context.walk(tester.source())
         assert(tester.hasNoIssues)
 
+        runBlocking {
+            tester.context.queueEval()
+            tester.project.processQueue()
+        }
+
         assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.get(null))
         assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig2.get(null))
 

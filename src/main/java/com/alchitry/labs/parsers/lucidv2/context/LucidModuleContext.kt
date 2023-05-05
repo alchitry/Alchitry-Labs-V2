@@ -15,7 +15,8 @@ class LucidModuleContext(
     expr: ExprParser? = null,
     signal: SignalParser? = null,
     module: LucidModuleParser? = null,
-    always: AlwaysParser? = null,
+    alwaysParser: AlwaysParser? = null,
+    alwaysEvaluator: AlwaysEvaluator? = null,
     val localSignalResolver: SignalResolver? = null // Used in tests to simulate a full parse.
 ) {
     val isEvaluating = evalContext != null
@@ -23,13 +24,20 @@ class LucidModuleContext(
     val expr = expr?.withContext(this) ?: ExprParser(this)
     val signal = signal?.withContext(this) ?: SignalParser(this)
     val module = module?.withContext(this) ?: LucidModuleParser(this)
-    val always = always?.withContext(this) ?: AlwaysParser(this)
+    val alwaysParser = alwaysParser?.withContext(this) ?: AlwaysParser(this)
+    val alwaysEvaluator = alwaysEvaluator?.withContext(this) ?: AlwaysEvaluator(this)
 
-    private val listeners = listOf<ParseTreeListener>(
+    private val parseListeners = listOf<ParseTreeListener>(
         this.expr,
         this.signal,
         this.module,
-        this.always
+        this.alwaysParser
+    )
+
+    private val evalListeners = listOf<ParseTreeListener>(
+        this.expr,
+        this.signal,
+        this.alwaysEvaluator
     )
 
     fun withEvalContext(evalContext: Evaluable) = LucidModuleContext(
@@ -40,12 +48,22 @@ class LucidModuleContext(
         expr,
         signal,
         module,
-        always,
+        alwaysParser,
+        alwaysEvaluator,
         localSignalResolver
     )
 
+    /**
+     * Queues always blocks for an initial evaluation.
+     */
+    suspend fun queueEval() {
+        alwaysParser.queueEval()
+    }
+
     fun walk(t: ParseTree, vararg extraListeners: ParseTreeListener) =
-        ParseTreeMultiWalker.walk(listeners.toMutableList().apply { addAll(extraListeners.toList()) }, t)
+        ParseTreeMultiWalker.walk(parseListeners.toMutableList().apply { addAll(extraListeners.toList()) }, t)
+
+    fun evalWalk(t: ParseTree) = EvalWalker.walk(evalListeners, t)
 
     /**
      * Searches all SignalParsers to resolve a signal name.

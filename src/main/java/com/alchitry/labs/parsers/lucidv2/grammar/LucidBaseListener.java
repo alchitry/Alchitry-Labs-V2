@@ -628,26 +628,53 @@ public class LucidBaseListener implements LucidListener {
 	@Override public void exitCaseStat(LucidParser.CaseStatContext ctx) { }
 	/**
 	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterCaseElem(LucidParser.CaseElemContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitCaseElem(LucidParser.CaseElemContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterIfStat(LucidParser.IfStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterCaseElem(LucidParser.CaseElemContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitCaseElem(LucidParser.CaseElemContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterCaseBlock(LucidParser.CaseBlockContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitCaseBlock(LucidParser.CaseBlockContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterIfStat(LucidParser.IfStatContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitIfStat(LucidParser.IfStatContext ctx) { }
 	/**

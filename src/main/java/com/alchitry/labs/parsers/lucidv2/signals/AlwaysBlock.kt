@@ -23,13 +23,13 @@ class AlwaysBlock(
     }
 
     override suspend fun evaluate() {
-        context.walk(alwaysBlockContext)
+        context.evalWalk(alwaysBlockContext)
 
         if (context.errorCollector.errors.isNotEmpty()) {
             context.errorCollector.errors.forEach { println(it) }
             error("Failed to evaluate always block!")
         }
 
-        context.always.processWriteQueue()
+        context.alwaysEvaluator.processWriteQueue()
     }
 }

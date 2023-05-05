@@ -5,36 +5,39 @@ import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.AlwaysBlock
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
-import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
+import com.alchitry.labs.parsers.lucidv2.values.SimpleWidth
 import com.alchitry.labs.parsers.lucidv2.values.minBits
 
+/**
+ * The job of the AlwaysParser is to parse out always blocks and check them for errors. The AlwaysEvaluator is
+ * responsible for the actual evaluation after the AlwaysParser has done the first pass.
+ */
 data class AlwaysParser(
-    private val context: LucidModuleContext
+    private val context: LucidModuleContext,
+    val alwaysBlocks: MutableList<AlwaysBlock> = mutableListOf()
 ) : LucidBaseListener() {
     fun withContext(context: LucidModuleContext) = copy(context = context)
 
-    private val writtenSignals = mutableSetOf<Signal>()
     private val dependencies = mutableSetOf<Signal>()
 
+    suspend fun queueEval() {
+        alwaysBlocks.forEach {
+            context.project.queueEvaluation(it)
+        }
+    }
+
     override fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
-        writtenSignals.clear()
+        check(!context.isEvaluating) { "AlwaysParser should never be run while evaluating!" }
         dependencies.clear()
     }
 
     override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
-        if (!context.isEvaluating) {
-            AlwaysBlock(context, dependencies.toList(), ctx)
-        }
+        alwaysBlocks.add(AlwaysBlock(context, dependencies.toList(), ctx))
     }
 
     override fun exitExprSignal(ctx: ExprSignalContext) {
         context.expr.resolveDependencies(ctx)?.let { dependencies.addAll(it) }
-    }
-
-    suspend fun processWriteQueue() {
-        writtenSignals.forEach { it.publish() }
-        writtenSignals.clear()
     }
 
     override fun exitAssignStat(ctx: AssignStatContext) {
@@ -54,32 +57,36 @@ data class AlwaysParser(
             return
         }
         // TODO: Warn about truncation
-
-        assignee.quietSet(newValue, context.evalContext)
-
-        writtenSignals.add(assignee.getSignal())
     }
 
-    override fun exitCaseStat(ctx: CaseStatContext?) {
-        // TODO
+    override fun exitCaseStat(ctx: CaseStatContext) {
+        val value = context.expr.resolve(ctx.expr()) ?: return
+
+        if (value !is SimpleValue) {
+            context.errorCollector.reportError(ctx.expr(), "Case statement's value must be a simple value.")
+            return
+        }
+
+        ctx.caseElem().forEach { caseElemContext ->
+            val exprCtx = caseElemContext.expr() ?: return@forEach
+            val condition = context.expr.resolve(exprCtx)
+            if (condition !is SimpleValue) {
+                context.errorCollector.reportError(ctx.expr(), "Case statement conditions must be simple values.")
+                return
+            }
+            if (!condition.constant) {
+                context.errorCollector.reportError(ctx.expr(), "Case statement conditions must be constant.")
+                return
+            }
+        }
     }
 
     override fun exitIfStat(ctx: IfStatContext) {
-        // TODO
-    }
+        val condition = context.expr.resolve(ctx.expr()) ?: return
 
-    override fun enterRepeatStat(ctx: RepeatStatContext) {
-        if (context.isEvaluating) {
-            val signal = context.signal.resolve(ctx.signal()) ?: return
-            if (signal !is SimpleValue) return
-            signal.quietSet(
-                BitListValue(
-                    value = 0,
-                    width = signal.bits.size,
-                    constant = false,
-                    signed = false
-                ), context.evalContext
-            )
+        if (condition !is SimpleValue) {
+            context.errorCollector.reportError(ctx.expr(), "If condition must be a simple value.")
+            return
         }
     }
 
@@ -109,33 +116,23 @@ data class AlwaysParser(
             return
         }
 
-        if (signal !is SimpleValue) {
-            context.errorCollector.reportError(ctx.signal(), "Repeat signal must be a simple value.")
+        if (signal !is Signal) {
+            context.errorCollector.reportError(ctx.signal(), "Repeat signal must be a full signal (no bit selections).")
             return
         }
 
-        val sigBitCount = signal.bits.size
+        val sigWidth = signal.width
+        if (sigWidth !is SimpleWidth) {
+            context.errorCollector.reportError(ctx.signal(), "Repeat signal must have a simple width.")
+            return
+        }
 
-        if ((count - 1).toBigInteger().minBits() > sigBitCount) {
+        if ((count - 1).toBigInteger().minBits() > sigWidth.size) {
             context.errorCollector.reportError(
                 ctx.signal(),
                 "The signal isn't wide enough to hold the max value of $count."
             )
             return
         }
-
-        if (context.isEvaluating)
-            repeat(count - 1) {
-                signal.quietSet(
-                    BitListValue(
-                        value = it + 1,
-                        width = signal.bits.size,
-                        constant = false,
-                        signed = false
-                    ),
-                    context.evalContext
-                )
-                context.walk(ctx.block())
-            }
     }
 }

@@ -75,7 +75,7 @@ alwaysStat
   ;
 
 block
-  : '{' NL* alwaysStat* NL* '}'
+  : '{' (NL | alwaysStat)* '}'
   | alwaysStat
   ;
 
@@ -91,7 +91,8 @@ bitSelection: (arrayIndex | NL)* (arrayIndex | bitSelector);
 signal: name (NL* bitSelection)? (NL* '.' NL* name (NL* bitSelection)?)*;
 
 caseStat: 'case' NL* '(' NL* expr NL* ')' NL* '{' (caseElem | NL)* '}';
-caseElem: (expr | 'default') NL* ':' NL* alwaysStat (alwaysStat | NL)*;
+caseElem: (expr | 'default') NL* ':' caseBlock;
+caseBlock: (alwaysStat | NL)* alwaysStat;
 
 ifStat: 'if' NL* '(' NL* expr NL* ')' NL* block (NL* elseStat)?;
 elseStat: 'else' NL* block;
