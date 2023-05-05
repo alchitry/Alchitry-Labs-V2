@@ -23,10 +23,12 @@ import kotlin.math.absoluteValue
  * the parent class BitSelectionParser.
  */
 class ExprParser(
-    context: LucidModuleContext
-) : BitSelectionParser(context) {
-    private val values = mutableMapOf<ParseTree, Value>()
-    private val dependencies = mutableMapOf<ParseTree, Set<Signal>>()
+    context: LucidModuleContext,
+    private val values: MutableMap<ParseTree, Value> = mutableMapOf(),
+    private val dependencies: MutableMap<ParseTree, Set<Signal>> = mutableMapOf(),
+    bounds: MutableMap<ParseTree, BitSelection> = mutableMapOf()
+) : BitSelectionParser(context, bounds) {
+    fun withContext(context: LucidModuleContext) = ExprParser(context, values, dependencies, bounds)
 
     fun resolve(ctx: ExprContext): Value? = values[ctx]
     fun resolveDependencies(ctx: ExprContext): Set<Signal>? = dependencies[ctx]
@@ -262,7 +264,7 @@ class ExprParser(
             return
         }
 
-        values[ctx] = signal.value
+        values[ctx] = signal.get(context.evalContext)
 
         val parentSig = when (signal) {
             is Signal -> signal

@@ -9,21 +9,20 @@ import com.alchitry.labs.parsers.lucidv2.signals.*
 import com.alchitry.labs.parsers.lucidv2.values.*
 import org.antlr.v4.runtime.ParserRuleContext
 
-class SignalParser(
-    private val context: LucidModuleContext
+data class SignalParser(
+    private val context: LucidModuleContext,
+    private val dffs: MutableMap<String, Dff> = mutableMapOf(),
+    private val sigs: MutableMap<String, Signal> = mutableMapOf(),
+    private val localStructType: MutableMap<String, StructType> = mutableMapOf(),
+    private val structTypes: MutableMap<StructDecContext, StructType> = mutableMapOf(),
+    private val resolvedStructTypes: MutableMap<StructTypeContext, StructType> = mutableMapOf(),
+    private val signalWidths: MutableMap<SignalWidthContext, SignalWidth> = mutableMapOf(),
+    private val signals: MutableMap<SignalContext, SignalOrSubSignal> = mutableMapOf(),
+    private val arraySizes: MutableMap<ArraySizeContext, Int> = mutableMapOf(),
+    private val assignmentBlocks: MutableList<AssignmentBlock> = mutableListOf(),
+    private val localParams: MutableMap<String, Signal> = mutableMapOf()
 ) : LucidBaseListener(), SignalResolver, StructResolver {
-    private val dffs = mutableMapOf<String, Dff>()
-    private val sigs = mutableMapOf<String, Signal>()
-
-    private val localStructType = mutableMapOf<String, StructType>()
-    private val structTypes = mutableMapOf<StructDecContext, StructType>()
-    private val resolvedStructTypes = mutableMapOf<StructTypeContext, StructType>()
-    private val signalWidths = mutableMapOf<SignalWidthContext, SignalWidth>()
-    private val signals = mutableMapOf<SignalContext, SignalOrSubSignal>()
-    private val arraySizes = mutableMapOf<ArraySizeContext, Int>()
-    private val assignmentBlocks = mutableListOf<AssignmentBlock>()
-
-    private val localParams = mutableMapOf<String, Signal>()
+    fun withContext(context: LucidModuleContext) = copy(context = context)
 
     private var inModule = false
     private var inParamDec = false

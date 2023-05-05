@@ -18,9 +18,9 @@ data class BitSelection(
  * This class nests in ExprParse so that it is always run when ExprParser updates values
  */
 open class BitSelectionParser(
-    protected val context: LucidModuleContext
+    protected val context: LucidModuleContext,
+    protected val bounds: MutableMap<ParseTree, BitSelection>
 ) : LucidBaseListener() {
-    private val bounds = mutableMapOf<ParseTree, BitSelection>()
 
     fun resolve(ctx: BitSelectionContext): List<BitSelection> {
         return ctx.children.mapNotNull {

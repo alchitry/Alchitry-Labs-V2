@@ -5,36 +5,42 @@ import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.parsers.*
 import com.alchitry.labs.parsers.lucidv2.signals.ModuleInstance
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
-import kotlinx.coroutines.sync.Mutex
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.ParseTreeListener
 
-class LucidModuleContext(val project: ProjectContext, val instance: ModuleInstance?) {
-    val errorCollector = ErrorCollector()
-    val expr = ExprParser(this)
-    val signal = SignalParser(this)
-    val module = LucidModuleParser(this)
-    val always = AlwaysParser(this)
-
-    /**
-     * This lock is used to ensure only one part of the module is evaluated at any time. By using a module wide
-     * lock, we can still get parallelism between modules.
-     *
-     * This lock is needed to prevent the reading of signals as they are being updated inside an always block.
-     *
-     * It could be possible to remove the need for this if every always block instance was sandboxed with its own
-     * LucidModuleContext.
-     */
-    private val moduleEvalLock = Mutex()
-
-    /** Used in tests to simulate a full parse. */
-    var localSignalResolver: SignalResolver? = null
+class LucidModuleContext(
+    val project: ProjectContext,
+    val instance: ModuleInstance?,
+    val evalContext: Evaluable? = null,
+    val errorCollector: ErrorCollector = ErrorCollector(),
+    expr: ExprParser? = null,
+    signal: SignalParser? = null,
+    module: LucidModuleParser? = null,
+    always: AlwaysParser? = null,
+    val localSignalResolver: SignalResolver? = null // Used in tests to simulate a full parse.
+) {
+    val expr = expr?.withContext(this) ?: ExprParser(this)
+    val signal = signal?.withContext(this) ?: SignalParser(this)
+    val module = module?.withContext(this) ?: LucidModuleParser(this)
+    val always = always?.withContext(this) ?: AlwaysParser(this)
 
     private val listeners = listOf<ParseTreeListener>(
+        this.expr,
+        this.signal,
+        this.module,
+        this.always
+    )
+
+    fun withEvalContext(evalContext: Evaluable) = LucidModuleContext(
+        project,
+        instance,
+        evalContext,
+        ErrorCollector(), // give each context its own error collector
         expr,
         signal,
         module,
-        always
+        always,
+        localSignalResolver
     )
 
     fun walk(t: ParseTree, vararg extraListeners: ParseTreeListener) =
@@ -52,9 +58,5 @@ class LucidModuleContext(val project: ProjectContext, val instance: ModuleInstan
         signal.resolve(name)?.let { return it }
 
         return project.resolveSignal(name)
-    }
-
-    suspend fun queueEvaluation(evaluable: Evaluable) {
-        project.queueEvaluation(evaluable, moduleEvalLock)
     }
 }

@@ -20,9 +20,10 @@ import kotlinx.coroutines.launch
  */
 class DynamicExpr(
     val expr: ExprContext,
-    private val context: LucidModuleContext,
+    context: LucidModuleContext,
     widthConstraint: SignalWidth? = null
 ) : Evaluable {
+    private val context = context.withEvalContext(this)
     private val mutableValueFlow = SynchronizedSharedFlow<Value>()
     val valueFlow: Flow<Value> get() = mutableValueFlow.asFlow()
 
@@ -44,7 +45,7 @@ class DynamicExpr(
             context.expr.resolveDependencies(expr) ?: error("Failed to resolve dependencies for ${expr.text}")
         context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             onAnyChange(dependencies.map { it.valueFlow }) {
-                context.queueEvaluation(this@DynamicExpr)
+                context.project.queueEvaluation(this@DynamicExpr)
             }
         }
     }
@@ -54,7 +55,7 @@ class DynamicExpr(
             val evaluable = Evaluable { signal.set(value) }
             context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
                 valueFlow.collect {
-                    context.queueEvaluation(evaluable)
+                    context.project.queueEvaluation(evaluable)
                 }
             }
         }

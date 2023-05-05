@@ -31,24 +31,42 @@ class Signal(
     private val mutableValueFlow = SynchronizedSharedFlow<Value>()
     val valueFlow: Flow<Value> get() = mutableValueFlow.asFlow()
 
-    override var value: Value = initialValue.withSign(signed)
-        private set
+    private var setEvalContext: Evaluable? = null
+    private var nextValue: Value? = null
+    private var value: Value = initialValue.withSign(signed)
+
+    override fun get(evalContext: Evaluable?): Value {
+        if (evalContext === setEvalContext)
+            return nextValue ?: value
+        return value
+    }
 
     override val width: SignalWidth = value.signalWidth
 
-    override fun quietSet(v: Value) {
-        require(value.canAssign(v)) { "Signal assigned value does not match its size!" }
-        val resizedValue = v.resizeToMatch(value.signalWidth)
-        value = resizedValue.withSign(signed)
+    override fun quietSet(v: Value, evalContext: Evaluable?) {
+        require(setEvalContext == null || evalContext === setEvalContext) { "Attempted to set signal from two different evalContext!" }
+        setEvalContext = evalContext
+        quietSet(v)
     }
 
-    suspend fun publishChange() {
-        mutableValueFlow.emit(value)
+    private fun quietSet(v: Value) {
+        require(value.canAssign(v)) { "Signal assigned value does not match its size!" }
+        val resizedValue = v.resizeToMatch(value.signalWidth)
+        nextValue = resizedValue.withSign(signed)
+    }
+
+    override suspend fun publish() {
+        nextValue?.let {
+            value = it
+            mutableValueFlow.emit(it)
+        }
+        nextValue = null
+        setEvalContext = null
     }
 
     override suspend fun set(v: Value) {
         quietSet(v)
-        publishChange()
+        publish()
     }
 
     /**
@@ -66,7 +84,7 @@ class Signal(
 
         context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             valueFlow.collect {
-                context.queueEvaluation(evaluable)
+                context.project.queueEvaluation(evaluable)
             }
         }
     }
@@ -78,41 +96,44 @@ data class SubSignal(
     val parent: Signal,
     val selection: SignalSelection
 ) : SignalOrSubSignal {
-    override val value: Value
-        get() {
-            var v = parent.value
-            selection.forEach {
-                v = v.select(it)
-            }
-            return v
+    override fun get(evalContext: Evaluable?): Value {
+        var v = parent.get(evalContext)
+        selection.forEach {
+            v = v.select(it)
         }
+        return v
+    }
 
-    override val width: SignalWidth = value.signalWidth
+    override val width: SignalWidth = get().signalWidth
 
     override val direction: SignalDirection
         get() = parent.direction
 
-    override fun quietSet(v: Value) {
-        require(value.signalWidth.canAssign(v.signalWidth)) {
+    /**
+     * Generates the full value for the parent signal with the value v applied to the selected portion of the signal.
+     */
+    private fun getFullValue(v: Value): Value {
+        require(get().signalWidth.canAssign(v.signalWidth)) {
             "Cannot set value $v to selected subsignal!"
         }
         TODO("Not yet implemented")
     }
 
-    override suspend fun set(v: Value) {
-        quietSet(v)
-        parent.publishChange()
-    }
+    override fun quietSet(v: Value, evalContext: Evaluable?) = parent.quietSet(getFullValue(v), evalContext)
+    override suspend fun set(v: Value) = parent.set(getFullValue(v))
+    override suspend fun publish() = parent.publish()
 }
 
 sealed interface SignalOrSubSignal {
-    val value: Value
+    fun get(evalContext: Evaluable? = null): Value
     suspend fun set(v: Value)
 
     /**
-     * Sets the value of this signal without publishing the change.
+     * Sets the value of this signal without publishing the change. This value will only be accessible when the same
+     * Evaluable is passed to the get() function until publish() is called.
      */
-    fun quietSet(v: Value)
+    fun quietSet(v: Value, evalContext: Evaluable?)
+    suspend fun publish()
     val direction: SignalDirection
     val width: SignalWidth
 

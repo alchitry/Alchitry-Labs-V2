@@ -6,9 +6,11 @@ import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.signals.*
 import com.alchitry.labs.parsers.lucidv2.values.Value
 
-class LucidModuleParser(private val context: LucidModuleContext) : LucidBaseListener() {
+data class LucidModuleParser(
+    private val context: LucidModuleContext,
     var module: Module? = null
-        private set
+) : LucidBaseListener() {
+    fun withContext(context: LucidModuleContext) = copy(context = context)
 
     override fun exitGlobal(ctx: LucidParser.GlobalContext) {
         val name = ctx.name().text

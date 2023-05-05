@@ -21,12 +21,12 @@ class ProjectContext {
     private val globals = mutableMapOf<String, GlobalNamespace>()
     private val modules = mutableMapOf<String, Module>()
 
-    private val evaluationQueue = mutableMapOf<Evaluable, Mutex>()
+    private val evaluationQueue = mutableSetOf<Evaluable>()
     private val queueLock = Mutex()
 
-    suspend fun queueEvaluation(evaluable: Evaluable, lock: Mutex) {
+    suspend fun queueEvaluation(evaluable: Evaluable) {
         queueLock.withLock {
-            evaluationQueue[evaluable] = lock
+            evaluationQueue.add(evaluable)
         }
     }
 
@@ -41,9 +41,9 @@ class ProjectContext {
                 }
             }
             coroutineScope {
-                items.forEach { (block, lock) ->
+                items.forEach {
                     launch(Dispatchers.Default) {
-                        lock.withLock { block.evaluate() }
+                        it.evaluate()
                     }
                 }
             }

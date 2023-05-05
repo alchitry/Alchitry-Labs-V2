@@ -1,11 +1,12 @@
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
+import com.alchitry.labs.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidLexer
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 
-class LucidTester(text: String) :
+class LucidTester(text: String, localSignalResolver: SignalResolver? = null) :
     LucidParser(
         CommonTokenStream(
             LucidLexer(
@@ -13,7 +14,7 @@ class LucidTester(text: String) :
             ).also { it.removeErrorListeners() })
     ) {
 
-    val context = LucidModuleContext(ProjectContext(), null)
+    val context = LucidModuleContext(ProjectContext(), null, localSignalResolver = localSignalResolver)
 
     init {
         (tokenStream.tokenSource as LucidLexer).addErrorListener(context.errorCollector)

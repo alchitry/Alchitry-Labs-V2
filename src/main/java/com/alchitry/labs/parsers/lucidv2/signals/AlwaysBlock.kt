@@ -8,14 +8,16 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 
 class AlwaysBlock(
-    private val context: LucidModuleContext,
+    context: LucidModuleContext,
     private val dependencies: List<Signal>,
     private val alwaysBlockContext: AlwaysBlockContext
 ): Evaluable {
+    private val context = context.withEvalContext(this)
+
     init {
         context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             onAnyChange(dependencies.map { it.valueFlow }) {
-                context.queueEvaluation(this@AlwaysBlock)
+                context.project.queueEvaluation(this@AlwaysBlock)
             }
         }
     }

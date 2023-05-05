@@ -83,7 +83,7 @@ internal class SignalParserTest {
 
         dSig as Signal
         qSig as Signal
-        assertEquals(BitValue(Bit.B1, constant = false, signed = false), qSig.value)
+        assertEquals(BitValue(Bit.B1, constant = false, signed = false), qSig.get(tester.context.evalContext))
 
         assert(tester.hasNoErrors)
         assert(tester.hasNoWarnings)
@@ -103,7 +103,7 @@ internal class SignalParserTest {
 
         dSig as Signal
         qSig as Signal
-        assertEquals(BitListValue("111", 2, constant = false, signed = false), qSig.value)
+        assertEquals(BitListValue("111", 2, constant = false, signed = false), qSig.get(tester.context.evalContext))
 
         assert(tester.hasNoErrors)
         assert(tester.hasWarnings)
@@ -123,7 +123,7 @@ internal class SignalParserTest {
 
         dSig as Signal
         qSig as Signal
-        assertEquals(BitListWidth(3), qSig.value.signalWidth)
+        assertEquals(BitListWidth(3), qSig.get(tester.context.evalContext).signalWidth)
 
         assert(tester.hasErrors)
         assert(tester.hasNoWarnings)
@@ -154,8 +154,8 @@ internal class SignalParserTest {
 
         dSig as Signal
         qSig as Signal
-        assertEquals(initValue, qSig.value)
-        assertEquals(initValue, dSig.value)
+        assertEquals(initValue, qSig.get(tester.context.evalContext))
+        assertEquals(initValue, dSig.get(tester.context.evalContext))
     }
 
     @Test
@@ -184,8 +184,8 @@ internal class SignalParserTest {
 
         dSig as Signal
         qSig as Signal
-        assertEquals(initValue, qSig.value)
-        assertEquals(initValue, dSig.value)
+        assertEquals(initValue, qSig.get(tester.context.evalContext))
+        assertEquals(initValue, dSig.get(tester.context.evalContext))
 
 
     }
@@ -248,7 +248,7 @@ internal class SignalParserTest {
         val dff = tester.context.signal.resolve("testing")
         dff as Dff
 
-        assertEquals(StructWidth(struct), dff.q.value.signalWidth)
+        assertEquals(StructWidth(struct), dff.q.get(tester.context.evalContext).signalWidth)
     }
 
     @Test
@@ -278,7 +278,7 @@ internal class SignalParserTest {
         val dff = tester.context.signal.resolve("testing")
         dff as Dff
 
-        assertEquals(width, dff.q.value.signalWidth)
+        assertEquals(width, dff.q.get(tester.context.evalContext).signalWidth)
     }
 
     @Test
@@ -353,7 +353,7 @@ internal class SignalParserTest {
         assertNotNull(global)
         val const = global.getSignal("ONE")
         assertNotNull(const)
-        assertEquals(BitValue(Bit.B1, constant = true, signed = false), const.value)
+        assertEquals(BitValue(Bit.B1, constant = true, signed = false), const.get(tester.context.evalContext))
 
         val dff = tester.context.signal.resolve("test")
         dff as Dff
@@ -376,7 +376,7 @@ internal class SignalParserTest {
         val sig = tester.context.resolveSignal("testSig")
         sig as Signal
         assertEquals(SignalDirection.Both, sig.direction)
-        assertEquals(BitValue(Bit.Bu, false, false), sig.value)
+        assertEquals(BitValue(Bit.Bu, false, false), sig.get(tester.context.evalContext))
         assertEquals(false, sig.signed)
         assertEquals(null, sig.parent)
         assertEquals(BitWidth, sig.width)
@@ -400,7 +400,7 @@ internal class SignalParserTest {
 
         val width = BitListWidth(8)
         assertEquals(SignalDirection.Both, sig.direction)
-        assertEquals(width.filledWith(Bit.Bu, false, false), sig.value)
+        assertEquals(width.filledWith(Bit.Bu, false, false), sig.get(tester.context.evalContext))
         assertEquals(false, sig.signed)
         assertEquals(null, sig.parent)
         assertEquals(width, sig.width)
