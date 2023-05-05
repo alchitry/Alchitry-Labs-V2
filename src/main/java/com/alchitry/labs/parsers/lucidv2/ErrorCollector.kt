@@ -57,7 +57,7 @@ class ErrorCollector : ErrorListener, ANTLRErrorListener {
         ambigAlts: BitSet?,
         configs: ATNConfigSet?
     ) {
-        syntaxIssues.add("Syntax ambiguity at $startIndex to $stopIndex")
+        println("Syntax ambiguity at $startIndex to $stopIndex")
     }
 
     override fun reportAttemptingFullContext(
@@ -68,7 +68,7 @@ class ErrorCollector : ErrorListener, ANTLRErrorListener {
         conflictingAlts: BitSet?,
         configs: ATNConfigSet?
     ) {
-        syntaxIssues.add("Syntax attempting full context at $startIndex to $stopIndex")
+        println("Syntax attempting full context at $startIndex to $stopIndex")
     }
 
     override fun reportContextSensitivity(
@@ -79,7 +79,7 @@ class ErrorCollector : ErrorListener, ANTLRErrorListener {
         prediction: Int,
         configs: ATNConfigSet?
     ) {
-        syntaxIssues.add("Syntax context sensitivity at $startIndex to $stopIndex")
+        println("Syntax context sensitivity at $startIndex to $stopIndex")
     }
 
     val hasNoIssues: Boolean get() = hasNoSyntaxIssues && hasNoErrors && hasNoWarnings

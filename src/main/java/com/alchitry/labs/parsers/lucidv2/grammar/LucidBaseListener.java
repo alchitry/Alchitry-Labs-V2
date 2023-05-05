@@ -618,16 +618,22 @@ public class LucidBaseListener implements LucidListener {
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterCaseStat(LucidParser.CaseStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitCaseStat(LucidParser.CaseStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
+     */
+    @Override
+    public void enterCaseStat(LucidParser.CaseStatContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitCaseStat(LucidParser.CaseStatContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
@@ -675,16 +681,22 @@ public class LucidBaseListener implements LucidListener {
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitIfStat(LucidParser.IfStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterElseStat(LucidParser.ElseStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
+     */
+    @Override
+    public void exitIfStat(LucidParser.IfStatContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterElseStat(LucidParser.ElseStatContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */

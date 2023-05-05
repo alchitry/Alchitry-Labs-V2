@@ -52,7 +52,7 @@ class Signal(
     private fun quietSet(v: Value) {
         require(value.canAssign(v)) { "Signal assigned value does not match its size!" }
         val resizedValue = v.resizeToMatch(value.signalWidth)
-        nextValue = resizedValue.withSign(signed)
+        nextValue = resizedValue.withSign(signed).asMutable()
     }
 
     override suspend fun publish() {

@@ -103,4 +103,57 @@ class DynamicEvalTests {
             assertEquals(BitValue(Bit.Bx, constant = false, signed = false), sig1.get(null))
         }
     }
+
+    @Test
+    fun testIfStatement() {
+        val sig1 =
+            Signal("sig1", SignalDirection.Write, null, BitValue(Bit.B0, constant = false, signed = false), false)
+        val sig2 = Signal("sig2", SignalDirection.Read, null, BitValue(Bit.B1, constant = false, signed = false), false)
+        val tester = LucidTester(
+            """
+            module testMod (
+                input a
+            ) {
+                always {
+                    if (sig2) 
+                        sig1 = 1
+                    else
+                        sig1 = 0
+                }
+            }
+        """.trimIndent(),
+            TestSignalResolver(sig1, sig2)
+        )
+
+        tester.context.walk(tester.source())
+        assert(tester.hasNoIssues)
+
+        runBlocking {
+            tester.context.queueEval()
+            tester.project.processQueue()
+        }
+
+        val alwaysBlock = tester.context.alwaysParser.alwaysBlocks.first()
+
+        assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.get(null))
+        assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig2.get(null))
+
+        runBlocking {
+            sig2.set(BitValue(Bit.B0, constant = false, signed = false))
+            assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.get(null))
+
+            tester.project.processQueue()
+            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.get(null))
+
+            assert(alwaysBlock.context.errorCollector.hasNoIssues)
+
+            sig2.set(BitValue(Bit.Bx, constant = false, signed = false))
+            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.get(null))
+
+            tester.project.processQueue()
+            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.get(null))
+
+            assert(alwaysBlock.context.errorCollector.hasWarnings) // warn about Bx value in if statement
+        }
+    }
 }

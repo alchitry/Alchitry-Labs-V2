@@ -12,7 +12,7 @@ class AlwaysBlock(
     dependencies: List<Signal>,
     private val alwaysBlockContext: AlwaysBlockContext
 ): Evaluable {
-    private val context = context.withEvalContext(this)
+    val context = context.withEvalContext(this)
 
     init {
         context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {

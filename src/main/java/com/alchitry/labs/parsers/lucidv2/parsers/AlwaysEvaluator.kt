@@ -52,7 +52,13 @@ data class AlwaysEvaluator(
 
     override fun exitIfStat(ctx: IfStatContext) {
         val condition = context.expr.resolve(ctx.expr()) as? SimpleValue ?: return
-        if (condition.isTrue().bit == Bit.B1) {
+        val truthBit = condition.isTrue().bit
+
+        if (!truthBit.isNumber()) {
+            context.errorCollector.reportWarning(ctx.expr(), "If condition evaluated to $truthBit!")
+        }
+
+        if (truthBit == Bit.B1) {
             context.evalWalk(ctx.block())
         } else {
             ctx.elseStat()?.block()?.let { context.evalWalk(it) }
