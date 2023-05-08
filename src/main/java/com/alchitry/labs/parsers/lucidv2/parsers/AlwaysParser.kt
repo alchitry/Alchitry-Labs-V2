@@ -56,7 +56,13 @@ data class AlwaysParser(
             )
             return
         }
-        // TODO: Warn about truncation
+
+        if (assignee.width.getBitCount() < newValue.signalWidth.getBitCount()) {
+            context.errorCollector.reportWarning(
+                ctx.expr(),
+                "This expression is wider than ${ctx.signal().text} and will be truncated."
+            )
+        }
     }
 
     override fun exitCaseStat(ctx: CaseStatContext) {

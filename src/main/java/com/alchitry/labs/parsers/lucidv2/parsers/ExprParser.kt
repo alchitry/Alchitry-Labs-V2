@@ -5,6 +5,7 @@ import com.alchitry.labs.parsers.Util.widthOfMult
 import com.alchitry.labs.parsers.errors.ErrorStrings
 import com.alchitry.labs.parsers.errors.WarningStrings
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
+import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SubSignal
@@ -22,13 +23,12 @@ import kotlin.math.absoluteValue
  * Provides values for all ExprContext and also provides bit selection ranges for BitSelectionContext through
  * the parent class BitSelectionParser.
  */
-class ExprParser(
-    context: LucidModuleContext,
+data class ExprParser(
+    private val context: LucidModuleContext,
     private val values: MutableMap<ParseTree, Value> = mutableMapOf(),
-    private val dependencies: MutableMap<ParseTree, Set<Signal>> = mutableMapOf(),
-    bounds: MutableMap<ParseTree, BitSelection> = mutableMapOf()
-) : BitSelectionParser(context, bounds) {
-    fun withContext(context: LucidModuleContext) = ExprParser(context, values, dependencies, bounds)
+    private val dependencies: MutableMap<ParseTree, Set<Signal>> = mutableMapOf()
+) : LucidBaseListener() {
+    fun withContext(context: LucidModuleContext) = copy(context = context)
 
     fun resolve(ctx: ExprContext): Value? = values[ctx]
     fun resolveDependencies(ctx: ExprContext): Set<Signal>? = dependencies[ctx]
@@ -122,21 +122,18 @@ class ExprParser(
     }
 
     override fun exitBitSelectorFixWidth(ctx: BitSelectorFixWidthContext) {
-        super.exitBitSelectorFixWidth(ctx)
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
     }
 
     override fun exitBitSelectorConst(ctx: BitSelectorConstContext) {
-        super.exitBitSelectorConst(ctx)
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
     }
 
     override fun exitArrayIndex(ctx: ArrayIndexContext) {
-        super.exitArrayIndex(ctx)
         dependencies[ctx.expr()]?.let { dependencies[ctx] = it }
     }
 

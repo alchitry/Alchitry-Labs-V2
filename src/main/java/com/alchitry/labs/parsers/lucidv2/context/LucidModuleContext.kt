@@ -13,6 +13,7 @@ class LucidModuleContext(
     val evalContext: Evaluable? = null,
     val errorCollector: ErrorCollector = ErrorCollector(),
     expr: ExprParser? = null,
+    bitSelection: BitSelectionParser? = null,
     signal: SignalParser? = null,
     module: LucidModuleParser? = null,
     alwaysParser: AlwaysParser? = null,
@@ -22,6 +23,7 @@ class LucidModuleContext(
     val isEvaluating = evalContext != null
 
     val expr = expr?.withContext(this) ?: ExprParser(this)
+    val bitSelection = bitSelection?.withContext(this) ?: BitSelectionParser(this)
     val signal = signal?.withContext(this) ?: SignalParser(this)
     val module = module?.withContext(this) ?: LucidModuleParser(this)
     val alwaysParser = alwaysParser?.withContext(this) ?: AlwaysParser(this)
@@ -29,6 +31,7 @@ class LucidModuleContext(
 
     private val parseListeners = listOf<ParseTreeListener>(
         this.expr,
+        this.bitSelection,
         this.signal,
         this.module,
         this.alwaysParser
@@ -46,6 +49,7 @@ class LucidModuleContext(
         evalContext,
         ErrorCollector(), // give each context its own error collector
         expr,
+        bitSelection,
         signal,
         module,
         alwaysParser,

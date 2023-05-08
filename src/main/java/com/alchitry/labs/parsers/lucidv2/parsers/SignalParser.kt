@@ -127,7 +127,9 @@ data class SignalParser(
         val selectionMap = children.subList(usedChildren, children.size).flatMap { child ->
             when (child) {
                 is NameContext -> listOf(SignalSelector.Struct(child.text) to child)
-                is BitSelectionContext -> context.expr.resolve(child).map { SignalSelector.Bits(it.range) to it.ctx }
+                is BitSelectionContext -> context.bitSelection.resolve(child)
+                    .map { SignalSelector.Bits(it.range) to it.ctx }
+
                 else -> error("Signal child was not a NameContext or BitSelectionContext")
             }
         }.toMap()
