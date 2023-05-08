@@ -111,7 +111,7 @@ data class ExprParser(
                         repeat(valueString.length) {
                             elements.add(
                                 BitListValue(
-                                    valueString[it].code.toLong(),
+                                    valueString[it].code,
                                     8,
                                     constant = true,
                                     signed = false
@@ -122,7 +122,7 @@ data class ExprParser(
                     }
 
                     valueString.length == 1 -> {
-                        value = BitListValue(valueString[0].code.toLong(), 8, constant = true, signed = false)
+                        value = BitListValue(valueString[0].code, 8, constant = true, signed = false)
                     }
 
                     else -> {
