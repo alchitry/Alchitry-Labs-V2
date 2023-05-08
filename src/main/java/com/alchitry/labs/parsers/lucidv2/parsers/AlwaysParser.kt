@@ -42,16 +42,19 @@ data class AlwaysParser(
     }
 
     override fun exitAssignStat(ctx: AssignStatContext) {
-        val assignee = context.signal.resolve(ctx.signal()) ?: return
+        val assignee = context.resolve(ctx.signal()) ?: return
 
         if (!assignee.direction.canWrite) {
-            context.errorCollector.reportError(ctx.signal(), "The signal ${ctx.signal().text} can't be written to.")
+            context.reportError(ctx.signal(), "The signal ${ctx.signal().text} can't be written to.")
             return
         }
-        val newValue = context.expr.resolve(ctx.expr()) ?: return
+
+        drivenSignals.add(assignee.getSignal())
+
+        val newValue = context.resolve(ctx.expr()) ?: return
 
         if (!assignee.width.canAssign(newValue.signalWidth)) {
-            context.errorCollector.reportError(
+            context.reportError(
                 ctx.expr(),
                 "This expression doesn't match the dimensions of signal ${ctx.signal().text}."
             )
@@ -59,7 +62,7 @@ data class AlwaysParser(
         }
 
         if (assignee.width.getBitCount() < newValue.signalWidth.getBitCount()) {
-            context.errorCollector.reportWarning(
+            context.reportWarning(
                 ctx.expr(),
                 "This expression is wider than ${ctx.signal().text} and will be truncated."
             )
@@ -98,8 +101,8 @@ data class AlwaysParser(
     }
 
     override fun exitRepeatStat(ctx: RepeatStatContext) {
-        val signal = context.signal.resolve(ctx.signal()) ?: return
-        val countValue = context.expr.resolve(ctx.expr()) ?: return
+        val signal = context.resolve(ctx.signal()) ?: return
+        val countValue = context.resolve(ctx.expr()) ?: return
 
         if (countValue !is SimpleValue || !countValue.isNumber()) {
             context.errorCollector.reportError(ctx.expr(), "Repeat count must be a number!")

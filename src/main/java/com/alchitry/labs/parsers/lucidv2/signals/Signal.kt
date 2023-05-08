@@ -2,7 +2,7 @@ package com.alchitry.labs.parsers.lucidv2.signals
 
 import com.alchitry.labs.parsers.SynchronizedSharedFlow
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
-import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
+import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
 import com.alchitry.labs.parsers.lucidv2.values.Value
@@ -17,6 +17,12 @@ enum class SignalDirection {
 
     val canRead: Boolean get() = this != Write
     val canWrite: Boolean get() = this != Read
+
+    fun flip(): SignalDirection = when (this) {
+        Read -> Write
+        Write -> Read
+        Both -> Both
+    }
 }
 
 class Signal(
@@ -72,19 +78,19 @@ class Signal(
     /**
      * Connects this signal's value to the provided signal.
      */
-    fun connect(sig: Signal, context: LucidModuleContext) {
+    fun connect(sig: Signal, context: ProjectContext) {
         require(sig.value.signalWidth.canAssign(value.signalWidth)) {
             "Cannot assign this signal's value to the provided signal!"
         }
-        context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+        context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             sig.set(value)
         }
 
         val evaluable = Evaluable { sig.set(value) }
 
-        context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+        context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             valueFlow.collect {
-                context.project.queueEvaluation(evaluable)
+                context.queueEvaluation(evaluable)
             }
         }
     }

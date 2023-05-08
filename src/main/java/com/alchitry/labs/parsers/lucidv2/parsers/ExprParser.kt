@@ -4,7 +4,7 @@ import com.alchitry.labs.parsers.BigFunctions
 import com.alchitry.labs.parsers.Util.widthOfMult
 import com.alchitry.labs.parsers.errors.ErrorStrings
 import com.alchitry.labs.parsers.errors.WarningStrings
-import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidExprContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
@@ -24,17 +24,17 @@ import kotlin.math.absoluteValue
  * the parent class BitSelectionParser.
  */
 data class ExprParser(
-    private val context: LucidModuleContext,
+    private val context: LucidExprContext,
     private val values: MutableMap<ParseTree, Value> = mutableMapOf(),
     private val dependencies: MutableMap<ParseTree, Set<Signal>> = mutableMapOf()
 ) : LucidBaseListener() {
-    fun withContext(context: LucidModuleContext) = copy(context = context)
+    fun withContext(context: LucidExprContext) = copy(context = context)
 
     fun resolve(ctx: ExprContext): Value? = values[ctx]
     fun resolveDependencies(ctx: ExprContext): Set<Signal>? = dependencies[ctx]
 
     private fun debug(ctx: ParserRuleContext) {
-        context.errorCollector.reportDebug(ctx, values[ctx].toString())
+        context.reportDebug(ctx, values[ctx].toString())
     }
 
     /**
@@ -43,82 +43,6 @@ data class ExprParser(
     private fun canSkip(ctx: ParseTree): Boolean {
         val value = values[ctx] ?: return false
         return value.constant
-    }
-
-    /**
-     * This will return true when all the expressions are flat. Aka they are all 1D arrays.
-     *
-     * The values themselves may be undefined.
-     */
-    fun checkFlat(vararg exprCtx: ExprContext, onError: (ExprContext) -> Unit): Boolean {
-        return exprCtx.map {
-            val op = resolve(it) ?: throw IllegalArgumentException("exprCtx wasn't defined")
-            if (op.signalWidth.isFlatArray()) {
-                true
-            } else {
-                onError(it)
-                false
-            }
-        }.all { it }
-    }
-
-    /**
-     * This will return true when all expressions are SimpleValues.
-     *
-     * This differs from checkFlat in that the values may not be undefined.
-     */
-    fun checkSimpleValue(vararg exprCtx: ExprContext, onError: (ExprContext) -> Unit): Boolean {
-        return exprCtx.map {
-            val op = resolve(it) ?: throw IllegalArgumentException("exprCtx wasn't defined")
-            if (op is SimpleValue) {
-                true
-            } else {
-                onError(it)
-                false
-            }
-        }.all { it }
-    }
-
-    /**
-     * checks that all expressions have the same widths or are flat arrays
-     */
-    fun checkFlatOrMatchingDims(vararg exprCtx: ExprContext, onError: (ExprContext) -> Unit): Boolean {
-        if (exprCtx.isEmpty())
-            return true
-
-        val first = resolve(exprCtx.first())?.signalWidth ?: throw IllegalArgumentException("exprCtx wasn't defined")
-
-        return exprCtx.map {
-            val op = resolve(it)?.signalWidth ?: throw IllegalArgumentException("exprCtx wasn't defined")
-            if (!((op.isFlatArray() && first.isFlatArray()) || op == first)) {
-                onError(it)
-                return@map false
-            }
-            return@map true
-        }.all { it }
-    }
-
-    /**
-     * Checks if any widths are undefined and if so, flags any non-flat widths as errors
-     */
-    fun checkUndefinedMatchingDims(
-        vararg exprCtx: ExprContext,
-        onError: (ExprContext) -> Unit
-    ): Boolean {
-        val widths =
-            exprCtx.map { resolve(it)?.signalWidth ?: throw IllegalArgumentException("exprCtx wasn't defined") }
-        val hasUndefinedWidth = widths.any { it is UndefinedSimpleWidth }
-        if (!hasUndefinedWidth)
-            return true
-
-        return !widths.mapIndexed { index, signalWidth ->
-            if (!signalWidth.isFlatArray()) {
-                onError(exprCtx[index])
-                true
-            } else {
-                false
-            }
-        }.any { it }
     }
 
     override fun exitBitSelectorFixWidth(ctx: BitSelectorFixWidthContext) {
@@ -169,7 +93,7 @@ data class ExprParser(
         val width: Int? = try {
             split?.first()?.let { if (it.isBlank()) null else it.toInt() }
         } catch (e: NumberFormatException) {
-            context.errorCollector.reportError(ctx, "Number width value of ${split?.first()} could not be parsed: ${e.message}")
+            context.reportError(ctx, "Number width value of ${split?.first()} could not be parsed: ${e.message}")
             return
         }
 
@@ -203,7 +127,7 @@ data class ExprParser(
 
                     else -> {
                         value = BitListValue(emptyList<Bit>(), constant = true, signed = false)
-                        context.errorCollector.reportError(ctx, ErrorStrings.STRING_CANNOT_BE_EMPTY)
+                        context.reportError(ctx, ErrorStrings.STRING_CANNOT_BE_EMPTY)
                     }
                 }
                 values[ctx] = value
@@ -220,7 +144,7 @@ data class ExprParser(
             unbound
         }
         if (value.bits.size < unbound.size) {
-            context.errorCollector.reportWarning(
+            context.reportWarning(
                 ctx,
                 "The value \"${ctx.text}\" is wider than ${value.bits.size} bits and it will be truncated"
             )
@@ -254,10 +178,10 @@ data class ExprParser(
     override fun exitExprSignal(ctx: ExprSignalContext) {
         if (canSkip(ctx)) return
 
-        val signal = context.signal.resolve(ctx.signal()) ?: return
+        val signal = context.resolve(ctx.signal()) ?: return
 
         if (!signal.direction.canRead) {
-            context.errorCollector.reportError(ctx.signal(), "The signal ${ctx.signal().text} can't be read!")
+            context.reportError(ctx.signal(), "The signal ${ctx.signal().text} can't be read!")
             return
         }
 
@@ -328,7 +252,7 @@ data class ExprParser(
         var error = false
 
         if (baseSigWidth is StructWidth) {
-            context.errorCollector.reportError(operands[0].second, "Concatenation can't be performed on structs")
+            context.reportError(operands[0].second, "Concatenation can't be performed on structs")
             return
         }
 
@@ -340,7 +264,7 @@ data class ExprParser(
                 operands.forEach {
                     val sigWidth = it.first.signalWidth
                     if (sigWidth !is ArrayWidth || sigWidth.next != (baseSigWidth as ArrayWidth).next) {
-                        context.errorCollector.reportError(
+                        context.reportError(
                             it.second,
                             "Each element in an array concatenation must have the same dimensions"
                         )
@@ -361,7 +285,7 @@ data class ExprParser(
                 operands.forEach {
                     val sigWidth = it.first.signalWidth
                     if (!sigWidth.isFlatArray()) {
-                        context.errorCollector.reportError(
+                        context.reportError(
                             it.second,
                             "Each element in an array concatenation must have the same dimensions"
                         )
@@ -412,19 +336,19 @@ data class ExprParser(
         val dupValue = values[ctx.expr(1)] ?: return
 
         if (values[ctx.expr(0)]?.constant != true) {
-            context.errorCollector.reportError(ctx.expr(0), "The expression \"${ctx.expr(0).text}\" must be constant")
+            context.reportError(ctx.expr(0), "The expression \"${ctx.expr(0).text}\" must be constant")
             return
         }
 
         val valWidth = dupValue.signalWidth
 
         if (!valWidth.isArray()) {
-            context.errorCollector.reportError(ctx.expr(0), "Duplication can't be performed on structs")
+            context.reportError(ctx.expr(0), "Duplication can't be performed on structs")
             return
         }
 
         if (!dupCount.signalWidth.isFlatArray()) {
-            context.errorCollector.reportError(ctx.expr(0), "The array duplication index must be one dimensional")
+            context.reportError(ctx.expr(0), "The array duplication index must be one dimensional")
             return
         }
 
@@ -438,14 +362,14 @@ data class ExprParser(
         dupCount as SimpleValue
 
         if (!dupCount.isNumber()) {
-            context.errorCollector.reportError(ctx.expr(0), "The array duplication index must be a number (no x or z values)")
+            context.reportError(ctx.expr(0), "The array duplication index must be a number (no x or z values)")
             return
         }
 
         val dupTimes = try {
             dupCount.toBigInt().intValueExact()
         } catch (e: java.lang.ArithmeticException) {
-            context.errorCollector.reportError(ctx.expr(0), "Duplication count is too big to fit into an integer!")
+            context.reportError(ctx.expr(0), "Duplication count is too big to fit into an integer!")
             return
         }
 
@@ -502,7 +426,7 @@ data class ExprParser(
         operands.forEach {
             if (it.first.signalWidth != firstDim) {
                 error = true
-                context.errorCollector.reportError(it.second, ErrorStrings.ARRAY_BUILDING_DIM_MISMATCH)
+                context.reportError(it.second, ErrorStrings.ARRAY_BUILDING_DIM_MISMATCH)
             }
         }
         if (error) return
@@ -526,7 +450,7 @@ data class ExprParser(
         val expr = values[ctx.expr()] ?: return
 
         if (!expr.signalWidth.isFlatArray()) {
-            context.errorCollector.reportError(ctx, ErrorStrings.NEG_MULTI_DIM)
+            context.reportError(ctx, ErrorStrings.NEG_MULTI_DIM)
             return
         }
 
@@ -580,8 +504,8 @@ data class ExprParser(
 
         val operand = ctx.getChild(1).text
 
-        if (!checkFlat(*ctx.expr().toTypedArray()) {
-                context.errorCollector.reportError(
+        if (!context.checkFlat(*ctx.expr().toTypedArray()) {
+                context.reportError(
                     it,
                     if (operand == "+") ErrorStrings.ADD_MULTI_DIM else ErrorStrings.SUB_MULTI_DIM
                 )
@@ -644,8 +568,8 @@ data class ExprParser(
 
         val multOp = ctx.getChild(1).text == "*"
 
-        if (!checkFlat(*ctx.expr().toTypedArray()) {
-                context.errorCollector.reportError(
+        if (!context.checkFlat(*ctx.expr().toTypedArray()) {
+                context.reportError(
                     it,
                     if (multOp) ErrorStrings.MUL_MULTI_DIM else ErrorStrings.DIV_MULTI_DIM
                 )
@@ -678,7 +602,7 @@ data class ExprParser(
             val op2BigInt = op2.toBigInt(signed)
 
             if (!constant && (!op2.constant || !op2.isPowerOf2())) {
-                context.errorCollector.reportWarning(ctx.expr(1), WarningStrings.DIVIDE_NOT_POW_2)
+                context.reportWarning(ctx.expr(1), WarningStrings.DIVIDE_NOT_POW_2)
             }
 
             val width = op1.size
@@ -707,8 +631,8 @@ data class ExprParser(
 
         val operand = ctx.getChild(1).text
 
-        if (!checkFlat(*ctx.expr().toTypedArray()) {
-                context.errorCollector.reportError(it, ErrorStrings.SHIFT_MULTI_DIM)
+        if (!context.checkFlat(*ctx.expr().toTypedArray()) {
+                context.reportError(it, ErrorStrings.SHIFT_MULTI_DIM)
             }) return
 
         if (shift is UndefinedValue) {
@@ -740,7 +664,7 @@ data class ExprParser(
         val shiftAmount = try {
             shift.toBigInt().intValueExact()
         } catch (e: java.lang.ArithmeticException) {
-            context.errorCollector.reportError(ctx.expr(1), "Shift amount didn't fit into an integer!")
+            context.reportError(ctx.expr(1), "Shift amount didn't fit into an integer!")
             return
         }
 
@@ -750,7 +674,7 @@ data class ExprParser(
             "<<" -> value ushl shiftAmount
             "<<<" -> value shl shiftAmount
             else -> {
-                context.errorCollector.reportError(ctx.getChild(ParserRuleContext::class.java, 1), "Unknown operator $operand")
+                context.reportError(ctx.getChild(ParserRuleContext::class.java, 1), "Unknown operator $operand")
                 return
             }
         }.let { if (!constant && it.constant) it.asMutable() else it }
@@ -774,13 +698,13 @@ data class ExprParser(
 
         val operand = ctx.getChild(1).text
 
-        if (!checkUndefinedMatchingDims(ctx.expr(0), ctx.expr(1)) {
-                context.errorCollector.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
+        if (!context.checkUndefinedMatchingDims(ctx.expr(0), ctx.expr(1)) {
+                context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
             }) return
 
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
-            if (!checkFlat(*ctx.expr().toTypedArray()) {
-                    context.errorCollector.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
+            if (!context.checkFlat(*ctx.expr().toTypedArray()) {
+                    context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
                 }) return
 
             val op1Width = op1.signalWidth
@@ -788,7 +712,7 @@ data class ExprParser(
 
             if (op1Width.isDefinedArray() && op2Width.isDefinedArray()) {
                 if (op1Width != op2Width) {
-                    context.errorCollector.reportError(ctx.expr(1), ErrorStrings.OP_DIM_MISMATCH.format(operand))
+                    context.reportError(ctx.expr(1), ErrorStrings.OP_DIM_MISMATCH.format(operand))
                     return
                 }
                 values[ctx] = UndefinedValue(constant, op1Width)
@@ -798,8 +722,8 @@ data class ExprParser(
             return
         }
 
-        if (!checkFlatOrMatchingDims(*ctx.expr().toTypedArray()) {
-                context.errorCollector.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
+        if (!context.checkFlatOrMatchingDims(*ctx.expr().toTypedArray()) {
+                context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
             }) return
 
         values[ctx] = when (operand) {
@@ -807,7 +731,7 @@ data class ExprParser(
             "|" -> op1 or op2
             "^" -> op1 xor op2
             else -> {
-                context.errorCollector.reportError(ctx.getChild(ParserRuleContext::class.java, 1), "Unknown operator $operand")
+                context.reportError(ctx.getChild(ParserRuleContext::class.java, 1), "Unknown operator $operand")
                 return
             }
         }
@@ -835,7 +759,7 @@ data class ExprParser(
             "|" -> value.orReduce()
             "^" -> value.xorReduce()
             else -> {
-                context.errorCollector.reportError(
+                context.reportError(
                     ctx.getChild(ParserRuleContext::class.java, 0),
                     "Unknown operator ${ctx.getChild(0).text}"
                 )
@@ -864,8 +788,8 @@ data class ExprParser(
 
         when (val operand = ctx.getChild(1).text) {
             "<", ">", "<=", ">=" -> {
-                if (!checkFlat(*ctx.expr().toTypedArray()) {
-                        context.errorCollector.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
+                if (!context.checkFlat(*ctx.expr().toTypedArray()) {
+                        context.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
                     }) return
 
 
@@ -874,8 +798,8 @@ data class ExprParser(
                     return
                 }
 
-                if (!checkSimpleValue(*ctx.expr().toTypedArray()) {
-                        context.errorCollector.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
+                if (!context.checkSimpleValue(*ctx.expr().toTypedArray()) {
+                        context.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
                     }) return
 
                 op1 as SimpleValue
@@ -891,8 +815,8 @@ data class ExprParser(
             }
 
             "==", "!=" -> {
-                if (!checkUndefinedMatchingDims(ctx.expr(0), ctx.expr(1)) {
-                        context.errorCollector.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
+                if (!context.checkUndefinedMatchingDims(ctx.expr(0), ctx.expr(1)) {
+                        context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
                     }) return
 
                 if (op1 is UndefinedValue || op2 is UndefinedValue) {
@@ -900,8 +824,8 @@ data class ExprParser(
                     return
                 }
 
-                if (!checkFlatOrMatchingDims(*ctx.expr().toTypedArray()) {
-                        context.errorCollector.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
+                if (!context.checkFlatOrMatchingDims(*ctx.expr().toTypedArray()) {
+                        context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
                     }) return
 
                 values[ctx] = when (operand) {
@@ -932,8 +856,8 @@ data class ExprParser(
 
         val operand = ctx.getChild(1).text
 
-        if (!checkFlat(*ctx.expr().toTypedArray()) {
-                context.errorCollector.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
+        if (!context.checkFlat(*ctx.expr().toTypedArray()) {
+                context.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
             }) return
 
 
@@ -942,8 +866,8 @@ data class ExprParser(
             return
         }
 
-        if (!checkSimpleValue(*ctx.expr().toTypedArray()) {
-                context.errorCollector.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
+        if (!context.checkSimpleValue(*ctx.expr().toTypedArray()) {
+                context.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
             }) return
 
         op1 as SimpleValue
@@ -978,12 +902,12 @@ data class ExprParser(
         val op2Width = op2.signalWidth
 
         if (!cond.signalWidth.isFlatArray()) {
-            context.errorCollector.reportError(ctx.expr(0), ErrorStrings.TERN_SELECTOR_MULTI_DIM)
+            context.reportError(ctx.expr(0), ErrorStrings.TERN_SELECTOR_MULTI_DIM)
             return
         }
 
-        if (!checkFlatOrMatchingDims(ctx.expr(1), ctx.expr(2)) {
-                context.errorCollector.reportError(it, ErrorStrings.OP_TERN_DIM_MISMATCH)
+        if (!context.checkFlatOrMatchingDims(ctx.expr(1), ctx.expr(2)) {
+                context.reportError(it, ErrorStrings.OP_TERN_DIM_MISMATCH)
             }) return
 
         val width = when {
@@ -992,7 +916,7 @@ data class ExprParser(
                 BitListWidth(op1Width.size.coerceAtLeast(op2Width.size))
 
             else -> {
-                context.errorCollector.reportError(ctx, ErrorStrings.UNKNOWN_WIDTH.format(ctx))
+                context.reportError(ctx, ErrorStrings.UNKNOWN_WIDTH.format(ctx))
                 return
             }
         }
@@ -1005,7 +929,7 @@ data class ExprParser(
         val value = if (cond.isTrue().lsb == Bit.B1) op1 else op2
         if (value.signalWidth != width) {
             if (value !is SimpleValue || width !is SimpleWidth) {
-                context.errorCollector.reportError(
+                context.reportError(
                     ctx,
                     "BUG in exitExprTernary! Width of value couldn't be determined after passing checks!"
                 )
@@ -1033,7 +957,7 @@ data class ExprParser(
         val function = Function.values().firstOrNull { it.label == fid }
 
         if (function == null) {
-            context.errorCollector.reportError(ctx.FUNCTION_ID(), ErrorStrings.UNKNOWN_FUNCTION.format(fid))
+            context.reportError(ctx.FUNCTION_ID(), ErrorStrings.UNKNOWN_FUNCTION.format(fid))
             return
         }
 
@@ -1041,7 +965,7 @@ data class ExprParser(
 
         if (function.argCount >= 0) {
             if (args.size != function.argCount) {
-                context.errorCollector.reportError(
+                context.reportError(
                     ctx.FUNCTION_ID(),
                     ErrorStrings.FUNCTION_ARG_COUNT.format(ctx.FUNCTION_ID().toString(), function.argCount)
                 )
@@ -1049,7 +973,7 @@ data class ExprParser(
             }
         } else {
             if (args.size < function.argCount.absoluteValue) {
-                context.errorCollector.reportError(
+                context.reportError(
                     ctx.FUNCTION_ID(),
                     String.format(
                         ErrorStrings.FUNCTION_MIN_ARG_COUNT,
@@ -1062,7 +986,7 @@ data class ExprParser(
         }
 
         if (function.constOnly && !constant) {
-            context.errorCollector.reportError(ctx.FUNCTION_ID(), ErrorStrings.CONST_FUNCTION.format(ctx.FUNCTION_ID().text))
+            context.reportError(ctx.FUNCTION_ID(), ErrorStrings.CONST_FUNCTION.format(ctx.FUNCTION_ID().text))
             return
         }
 
@@ -1070,7 +994,7 @@ data class ExprParser(
             Function.CLOG2 -> {
                 val arg = args[0]
                 if (arg !is SimpleValue) {
-                    context.errorCollector.reportError(
+                    context.reportError(
                         ctx.expr(0),
                         ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(0).text, arg.toString())
                     )
@@ -1092,14 +1016,14 @@ data class ExprParser(
                 val arg1 = args[0]
                 val arg2 = args[1]
                 if (arg1 !is SimpleValue) {
-                    context.errorCollector.reportError(
+                    context.reportError(
                         ctx.expr(0),
                         ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(0).text, arg1.toString())
                     )
                     return
                 }
                 if (arg2 !is SimpleValue) {
-                    context.errorCollector.reportError(
+                    context.reportError(
                         ctx.expr(1),
                         ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(1).text, arg2.toString())
                     )
@@ -1110,14 +1034,14 @@ data class ExprParser(
                 try {
                     values[ctx] = b1.pow(b2.intValueExact()).toBitListValue(constant)
                 } catch (e: ArithmeticException) {
-                    context.errorCollector.reportError(ctx.expr(1), ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.expr(1).text))
+                    context.reportError(ctx.expr(1), ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.expr(1).text))
                 }
             }
 
             Function.REVERSE -> {
                 val arg = args[0]
                 if (!arg.signalWidth.isArray()) {
-                    context.errorCollector.reportError(ctx.expr(0), ErrorStrings.FUNCTION_ARG_NOT_ARRAY.format(ctx.expr(0).text))
+                    context.reportError(ctx.expr(0), ErrorStrings.FUNCTION_ARG_NOT_ARRAY.format(ctx.expr(0).text))
                     return
                 }
                 values[ctx] = arg.reverse()
@@ -1125,7 +1049,7 @@ data class ExprParser(
 
             Function.FLATTEN -> {
                 if (!args[0].signalWidth.isDefined()) {
-                    context.errorCollector.reportError(ctx.expr(0), ErrorStrings.UNKNOWN_WIDTH.format(ctx.expr(0).text))
+                    context.reportError(ctx.expr(0), ErrorStrings.UNKNOWN_WIDTH.format(ctx.expr(0).text))
                     return
                 }
                 values[ctx] = args[0].flatten()
@@ -1134,12 +1058,12 @@ data class ExprParser(
             Function.BUILD -> {
                 val value = args[0]
                 if (value !is BitListValue) {
-                    context.errorCollector.reportError(ctx.expr(0), ErrorStrings.BUILD_MULTI_DIM)
+                    context.reportError(ctx.expr(0), ErrorStrings.BUILD_MULTI_DIM)
                     return
                 }
                 for (i in 1 until args.size) {
                     if (!args[i].isNumber() || args[i] !is BitListValue) {
-                        context.errorCollector.reportError(
+                        context.reportError(
                             ctx.expr(i),
                             ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(i).text, args[i].toString())
                         )
@@ -1150,7 +1074,7 @@ data class ExprParser(
                     try {
                         (it as BitListValue).toBigInt().intValueExact()
                     } catch (e: ArithmeticException) {
-                        context.errorCollector.reportError(
+                        context.reportError(
                             ctx.expr(i + 1),
                             ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.expr(i + 1).text)
                         )
@@ -1160,14 +1084,14 @@ data class ExprParser(
 
                 dims.forEachIndexed { i, dim ->
                     if (dim < 0) {
-                        context.errorCollector.reportError(
+                        context.reportError(
                             ctx.expr(i + 1),
                             ErrorStrings.FUNCTION_ARG_NEG.format(ctx.expr(i + 1).text)
                         )
                         return
                     }
                     if (dim == 0) {
-                        context.errorCollector.reportError(
+                        context.reportError(
                             ctx.expr(i + 1),
                             ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.expr(i + 1).text)
                         )
@@ -1177,7 +1101,7 @@ data class ExprParser(
                 val factor = dims.foldRight(1L) { dim, acc -> dim * acc }
 
                 if (value.size % factor != 0L) {
-                    context.errorCollector.reportError(ctx.expr(0), ErrorStrings.ARRAY_NOT_DIVISIBLE.format(ctx.expr(0).text))
+                    context.reportError(ctx.expr(0), ErrorStrings.ARRAY_NOT_DIVISIBLE.format(ctx.expr(0).text))
                     return
                 }
 
@@ -1212,7 +1136,7 @@ data class ExprParser(
                     is BitValue -> values[ctx] = arg.copy(signed = true)
                     is BitListValue -> values[ctx] = arg.copy(signed = true)
                     is UndefinedValue -> values[ctx] = arg.copy()
-                    else -> context.errorCollector.reportError(ctx.expr(0), ErrorStrings.SIGNED_MULTI_DIM)
+                    else -> context.reportError(ctx.expr(0), ErrorStrings.SIGNED_MULTI_DIM)
                 }
             }
 
@@ -1221,7 +1145,7 @@ data class ExprParser(
                     is BitValue -> values[ctx] = arg.copy(signed = false)
                     is BitListValue -> values[ctx] = arg.copy(signed = false)
                     is UndefinedValue -> values[ctx] = arg.copy()
-                    else -> context.errorCollector.reportError(ctx.expr(0), ErrorStrings.UNSIGNED_MULTI_DIM)
+                    else -> context.reportError(ctx.expr(0), ErrorStrings.UNSIGNED_MULTI_DIM)
                 }
             }
 
@@ -1229,14 +1153,14 @@ data class ExprParser(
                 val arg1 = args[0]
                 val arg2 = args[1]
                 if (arg1 !is SimpleValue) {
-                    context.errorCollector.reportError(
+                    context.reportError(
                         ctx.expr(0),
                         ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(0).text, arg1.toString())
                     )
                     return
                 }
                 if (arg2 !is SimpleValue) {
-                    context.errorCollector.reportError(
+                    context.reportError(
                         ctx.expr(1),
                         ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(1).text, arg2.toString())
                     )
@@ -1246,7 +1170,7 @@ data class ExprParser(
                 val b2 = arg2.toBigInt()
 
                 if (b2 == BigInteger.ZERO) {
-                    context.errorCollector.reportError(ctx.expr(1), ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.expr(1).text))
+                    context.reportError(ctx.expr(1), ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.expr(1).text))
                     return
                 }
 
@@ -1266,29 +1190,29 @@ data class ExprParser(
                     val numBits = try {
                         size.toBigInt().intValueExact()
                     } catch (e: ArithmeticException) {
-                        context.errorCollector.reportError(
+                        context.reportError(
                             ctx.expr(1),
                             ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.expr(1).text)
                         )
                         return
                     }
                     if (numBits < 0) {
-                        context.errorCollector.reportError(ctx.expr(1), ErrorStrings.FUNCTION_ARG_NEG.format(ctx.expr(1).text))
+                        context.reportError(ctx.expr(1), ErrorStrings.FUNCTION_ARG_NEG.format(ctx.expr(1).text))
                         return
                     }
                     if (numBits == 0) {
-                        context.errorCollector.reportError(ctx.expr(1), ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.expr(1).text))
+                        context.reportError(ctx.expr(1), ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.expr(1).text))
                         return
                     }
                     if (!value.signalWidth.isFlatArray()) {
-                        context.errorCollector.reportError(
+                        context.reportError(
                             ctx.expr(0),
                             ErrorStrings.FUNCTION_NOT_FLAT.format(ctx.FUNCTION_ID().text)
                         )
                         return
                     }
                     if (value is SimpleValue && value.minBits() > numBits) {
-                        context.errorCollector.reportWarning(
+                        context.reportWarning(
                             ctx.expr(0),
                             ErrorStrings.TRUNC_WARN.format(ctx.expr(1).text, size.toString())
                         )

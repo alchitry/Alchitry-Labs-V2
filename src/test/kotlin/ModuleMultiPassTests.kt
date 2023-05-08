@@ -24,9 +24,9 @@ class ModuleMultiPassTests {
                 }
             """.trimIndent()
         )
-        tester.fullParse()
+        val context = tester.fullParse()
 
-        val dff = tester.context.resolveSignal("test") as Dff
+        val dff = context.resolveSignal("test") as Dff
 
         assertEquals(BitValue(Bit.B1, true, false), dff.clk.value)
     }

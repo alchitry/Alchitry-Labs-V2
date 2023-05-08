@@ -1,5 +1,4 @@
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
-import com.alchitry.labs.parsers.lucidv2.parsers.ParseStage
 import com.alchitry.labs.parsers.lucidv2.signals.DynamicExpr
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
@@ -22,7 +21,6 @@ class DynamicEvalTests {
             val test =
                 SimpleLucidTester(
                     "~test",
-                    stage = ParseStage.ErrorCheck,
                     localSignalResolver = TestSignalResolver(signal)
                 )
 
@@ -81,7 +79,6 @@ class DynamicEvalTests {
                 sig1 = sig2
             }
             """.trimIndent(),
-            stage = ParseStage.ErrorCheck,
             TestSignalResolver(sig1, sig2)
         )
 
@@ -125,7 +122,6 @@ class DynamicEvalTests {
                     sig1 = 0
             }
             """.trimIndent(),
-            stage = ParseStage.ErrorCheck,
             TestSignalResolver(sig1, sig2)
         )
 

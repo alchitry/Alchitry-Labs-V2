@@ -26,8 +26,8 @@ data class AlwaysEvaluator(
     }
 
     override fun exitAssignStat(ctx: AssignStatContext) {
-        val assignee = context.signal.resolve(ctx.signal()) ?: return
-        val newValue = context.expr.resolve(ctx.expr()) ?: return
+        val assignee = context.resolve(ctx.signal()) ?: return
+        val newValue = context.resolve(ctx.expr()) ?: return
 
         assignee.quietSet(newValue, context.evalContext)
 
@@ -66,7 +66,7 @@ data class AlwaysEvaluator(
     }
 
     override fun exitRepeatStat(ctx: RepeatStatContext) {
-        val signal = context.signal.resolve(ctx.signal()) as? Signal ?: return
+        val signal = context.resolve(ctx.signal()) as? Signal ?: return
         val countValue = context.expr.resolve(ctx.expr()) as? SimpleValue ?: return
 
         val count = countValue.toBigInt().toInt()

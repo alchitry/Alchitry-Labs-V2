@@ -11,7 +11,7 @@ import com.alchitry.labs.parsers.lucidv2.signals.ModuleInstance
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 
-class SimpleLucidTester(text: String, stage: ParseStage, localSignalResolver: SignalResolver? = null) :
+class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = null) :
     LucidParser(
         CommonTokenStream(
             LucidLexer(
@@ -22,8 +22,8 @@ class SimpleLucidTester(text: String, stage: ParseStage, localSignalResolver: Si
     val project = ProjectContext()
     val context = LucidModuleContext(
         project,
-        stage,
-        ModuleInstance("testingInstance", Module("testModule", mapOf(), mapOf()), mapOf()),
+        ParseStage.ErrorCheck,
+        ModuleInstance(project, "top", Module("testModule", mapOf(), mapOf()), mapOf()),
         localSignalResolver = localSignalResolver
     )
 

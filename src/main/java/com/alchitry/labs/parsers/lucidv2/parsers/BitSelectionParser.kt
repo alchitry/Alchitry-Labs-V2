@@ -1,7 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
 import com.alchitry.labs.parsers.lucidv2.*
-import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidExprContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.values.Bit
@@ -18,10 +18,10 @@ data class BitSelection(
  * This class nests in ExprParse so that it is always run when ExprParser updates values
  */
 data class BitSelectionParser(
-    private val context: LucidModuleContext,
+    private val context: LucidExprContext,
     private val bounds: MutableMap<ParseTree, BitSelection> = mutableMapOf()
 ) : LucidBaseListener() {
-    fun withContext(context: LucidModuleContext) = copy(context = context)
+    fun withContext(context: LucidExprContext) = copy(context = context)
 
     fun resolve(ctx: BitSelectionContext): List<BitSelection> {
         return ctx.children.mapNotNull {
@@ -31,7 +31,7 @@ data class BitSelectionParser(
 
     private fun canSkip(ctx: ParserRuleContext): Boolean {
         bounds[ctx] ?: return false
-        return ctx.children.filterIsInstance(ExprContext::class.java).all { context.expr.resolve(it)?.constant == true }
+        return ctx.children.filterIsInstance(ExprContext::class.java).all { context.resolve(it)?.constant == true }
     }
 
     /* Bounds Section */
@@ -40,14 +40,14 @@ data class BitSelectionParser(
 
         if (ctx.expr().size != 2) return
 
-        val max = context.expr.resolve(ctx.expr(0)) ?: return
-        val min = context.expr.resolve(ctx.expr(1)) ?: return
+        val max = context.resolve(ctx.expr(0)) ?: return
+        val min = context.resolve(ctx.expr(1)) ?: return
 
-        if (!max.constant) context.errorCollector.reportExprNotConstant(ctx.expr(0))
-        if (!min.constant) context.errorCollector.reportExprNotConstant(ctx.expr(1))
+        if (!max.constant) context.reportExprNotConstant(ctx.expr(0))
+        if (!min.constant) context.reportExprNotConstant(ctx.expr(1))
 
-        if (!context.expr.checkSimpleValue(*ctx.expr().toTypedArray()) {
-                context.errorCollector.reportBitSelectionNotSimpleValue(it)
+        if (!context.checkSimpleValue(*ctx.expr().toTypedArray()) {
+                context.reportBitSelectionNotSimpleValue(it)
             }) return
 
         max as SimpleValue
@@ -55,23 +55,23 @@ data class BitSelectionParser(
 
         val maxNan = !max.isNumber()
         val minNan = !min.isNumber()
-        if (maxNan) context.errorCollector.reportBitSelectorNotANumber(ctx.expr(0))
-        if (minNan) context.errorCollector.reportBitSelectorNotANumber(ctx.expr(1))
+        if (maxNan) context.reportBitSelectorNotANumber(ctx.expr(0))
+        if (minNan) context.reportBitSelectorNotANumber(ctx.expr(1))
         if (maxNan || minNan) return
         if (max.isLessThan(min).bit == Bit.B1) {
-            context.errorCollector.reportBitSelectorOutOfOrder(ctx)
+            context.reportBitSelectorOutOfOrder(ctx)
             return
         }
         val maxInt: Int = try {
             max.toBigInt().intValueExact()
         } catch (e: ArithmeticException) {
-            context.errorCollector.reportArraySizeTooBig(ctx.expr(0))
+            context.reportArraySizeTooBig(ctx.expr(0))
             return
         }
         val minInt: Int = try {
             min.toBigInt().intValueExact()
         } catch (e: ArithmeticException) {
-            context.errorCollector.reportArraySizeTooBig(ctx.expr(1))
+            context.reportArraySizeTooBig(ctx.expr(1))
             return
         }
         bounds[ctx] = BitSelection(minInt..maxInt, ctx)
@@ -82,47 +82,47 @@ data class BitSelectionParser(
 
         if (ctx.expr().size != 2) return
 
-        val start = context.expr.resolve(ctx.expr(0)) ?: return
-        val width = context.expr.resolve(ctx.expr(1)) ?: return
+        val start = context.resolve(ctx.expr(0)) ?: return
+        val width = context.resolve(ctx.expr(1)) ?: return
 
         if (!width.constant) {
-            context.errorCollector.reportExprNotConstant(ctx.expr(1))
+            context.reportExprNotConstant(ctx.expr(1))
             return
         }
 
-        if (!context.expr.checkSimpleValue(*ctx.expr().toTypedArray()) {
-                context.errorCollector.reportBitSelectionNotSimpleValue(it)
+        if (!context.checkSimpleValue(*ctx.expr().toTypedArray()) {
+                context.reportBitSelectionNotSimpleValue(it)
             }) return
 
         width as SimpleValue
         start as SimpleValue
 
         if (!width.isNumber()) {
-            context.errorCollector.reportBitSelectorNotANumber(ctx.expr(1))
+            context.reportBitSelectorNotANumber(ctx.expr(1))
             return
         }
 
         if (!start.isNumber()) {
-            context.errorCollector.reportBitSelectorNotANumber(ctx.expr(0))
+            context.reportBitSelectorNotANumber(ctx.expr(0))
             return
         }
 
         val widthInt = try {
             width.toBigInt().intValueExact()
         } catch (e: ArithmeticException) {
-            context.errorCollector.reportArraySizeTooBig(ctx.expr(1))
+            context.reportArraySizeTooBig(ctx.expr(1))
             return
         }
 
         val startInt = try {
             start.toBigInt().intValueExact()
         } catch (e: ArithmeticException) {
-            context.errorCollector.reportArraySizeTooBig(ctx.expr(0))
+            context.reportArraySizeTooBig(ctx.expr(0))
             return
         }
 
         if (widthInt <= 0) {
-            context.errorCollector.reportBitSelectorZeroWidth(ctx.expr(1))
+            context.reportBitSelectorZeroWidth(ctx.expr(1))
             return
         }
 
@@ -141,22 +141,22 @@ data class BitSelectionParser(
 
         if (ctx.expr() == null) return
 
-        val index = context.expr.resolve(ctx.expr()) ?: return
+        val index = context.resolve(ctx.expr()) ?: return
 
         if (index !is SimpleValue) {
-            context.errorCollector.reportBitSelectionNotSimpleValue(ctx.expr())
+            context.reportBitSelectionNotSimpleValue(ctx.expr())
             return
         }
 
         if (!index.isNumber()) {
-            context.errorCollector.reportBitSelectorNotANumber(ctx.expr())
+            context.reportBitSelectorNotANumber(ctx.expr())
             return
         }
 
         val value = try {
             index.toBigInt().intValueExact()
         } catch (e: ArithmeticException) {
-            context.errorCollector.reportArraySizeTooBig(ctx.expr())
+            context.reportArraySizeTooBig(ctx.expr())
             return
         }
 

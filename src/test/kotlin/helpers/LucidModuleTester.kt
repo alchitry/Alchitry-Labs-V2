@@ -1,60 +1,70 @@
 package helpers
 
+import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.ErrorCollector
+import com.alchitry.labs.parsers.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidModuleTypeContext
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidLexer
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
+import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.SourceContext
 import com.alchitry.labs.parsers.lucidv2.parsers.ParseStage
+import com.alchitry.labs.parsers.lucidv2.signals.ModuleInstance
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
-import org.antlr.v4.runtime.tree.ParseTree
+import kotlin.test.assertNotNull
 
 class LucidModuleTester(val text: String) {
     val project = ProjectContext()
-    var context = LucidModuleContext(project, ParseStage.Globals, null)
 
-    val hasNoIssues: Boolean get() = context.errorCollector.hasNoIssues
-    val hasNoErrors: Boolean get() = context.errorCollector.hasNoErrors
-    val hasNoWarnings: Boolean get() = context.errorCollector.hasNoWarnings
-    val hasNoSyntaxIssues: Boolean get() = context.errorCollector.hasNoSyntaxIssues
-    val hasErrors: Boolean get() = context.errorCollector.hasErrors
-    val hasWarnings: Boolean get() = context.errorCollector.hasWarnings
-    val hasSyntaxIssues: Boolean get() = context.errorCollector.hasSyntaxIssues
-
-    fun parseText(): ParseTree {
+    fun parseText(errorCollector: ErrorCollector): SourceContext {
         val parser = LucidParser(
             CommonTokenStream(
                 LucidLexer(
                     CharStreams.fromString(text)
                 ).also { it.removeErrorListeners() })
         ).apply {
-            (tokenStream.tokenSource as LucidLexer).addErrorListener(this@LucidModuleTester.context.errorCollector)
+            (tokenStream.tokenSource as LucidLexer).addErrorListener(errorCollector)
             removeErrorListeners()
-            addErrorListener(this@LucidModuleTester.context.errorCollector)
+            addErrorListener(errorCollector)
         }
 
         return parser.source()
     }
 
-    fun fullParse() {
-        val tree = parseText()
-        assert(hasNoSyntaxIssues)
+    fun fullParse(): LucidModuleContext {
+        val errorCollector = ErrorCollector()
+        val tree = parseText(errorCollector)
+        assert(errorCollector.hasNoSyntaxIssues)
+
+        val globalContext = LucidGlobalContext(project, errorCollector)
+        globalContext.walk(tree)
+
+        assert(errorCollector.hasNoIssues)
+
+        val moduleTypeContext = LucidModuleTypeContext(project, errorCollector)
+        val module = moduleTypeContext.extract(tree)
+
+        assert(errorCollector.hasNoIssues)
+        assertNotNull(module)
+
+        val moduleInstance = ModuleInstance(project, "top", module, mapOf())
+
+        val moduleContext =
+            LucidModuleContext(project, ParseStage.ModuleInternals, moduleInstance, null, errorCollector)
 
         val stages = listOf(
-            ParseStage.Globals,
-            ParseStage.Modules,
             ParseStage.ModuleInternals,
             ParseStage.Drivers
         )
 
         stages.forEach {
-            context.stage = it
-            context.walk(tree)
+            moduleContext.stage = it
+            moduleContext.walk(tree)
 
-            if (it == ParseStage.Modules)
-                context = context.instantiate("testingInstance", mapOf())
-
-            assert(hasNoIssues)
+            assert(errorCollector.hasNoIssues)
         }
+
+        return moduleContext
     }
 }
