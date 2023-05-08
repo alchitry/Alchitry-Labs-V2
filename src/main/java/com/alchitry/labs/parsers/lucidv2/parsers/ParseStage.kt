@@ -5,5 +5,6 @@ enum class ParseStage {
     Modules, // module types
     ModuleInternals, // module internal (always blocks)
     Drivers, // check for driven signals
-    Evaluation // runtime
+    Evaluation, // runtime
+    ErrorCheck // IDE error check
 }

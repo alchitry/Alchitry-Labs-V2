@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.tree.ParseTree
 
 class LucidModuleTester(val text: String) {
     val project = ProjectContext()
-    val context = LucidModuleContext(project, ParseStage.Globals, null)
+    var context = LucidModuleContext(project, ParseStage.Globals, null)
 
     val hasNoIssues: Boolean get() = context.errorCollector.hasNoIssues
     val hasNoErrors: Boolean get() = context.errorCollector.hasNoErrors
@@ -50,6 +50,9 @@ class LucidModuleTester(val text: String) {
         stages.forEach {
             context.stage = it
             context.walk(tree)
+
+            if (it == ParseStage.Modules)
+                context = context.instantiate("testingInstance", mapOf())
 
             assert(hasNoIssues)
         }

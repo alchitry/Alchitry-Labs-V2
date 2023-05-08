@@ -49,6 +49,8 @@ data class ModuleParser(
         }
 
         ctx.portList().portDec().forEach { portCtx ->
+            val signed = portCtx.SIGNED() != null
+
             val portName = portCtx.name().text
             if (portCtx.name().TYPE_ID() == null) {
                 context.errorCollector.reportError(portCtx.name(), "Port names must start with a lowercase letter!")
@@ -73,7 +75,7 @@ data class ModuleParser(
                 return@forEach
             }
 
-            ports[portName] = Port(portName, direction, width)
+            ports[portName] = Port(portName, direction, width, signed)
         }
 
         module = Module(name, params, ports).also {

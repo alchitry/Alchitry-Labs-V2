@@ -22,7 +22,7 @@ class DynamicEvalTests {
             val test =
                 SimpleLucidTester(
                     "~test",
-                    stage = ParseStage.ModuleInternals,
+                    stage = ParseStage.ErrorCheck,
                     localSignalResolver = TestSignalResolver(signal)
                 )
 
@@ -71,23 +71,21 @@ class DynamicEvalTests {
 
     @Test
     fun basicAlwaysEvalTest() {
-        val sig1 = Signal("sig1", SignalDirection.Write, null, BitValue(Bit.B0, constant = false, signed = false), false)
+        val sig1 =
+            Signal("sig1", SignalDirection.Write, null, BitValue(Bit.B0, constant = false, signed = false), false)
         val sig2 = Signal("sig2", SignalDirection.Read, null, BitValue(Bit.B1, constant = false, signed = false), false)
+
         val tester = SimpleLucidTester(
             """
-            module testMod (
-                input a
-            ) {
-                always {
-                    sig1 = sig2
-                }
+            always {
+                sig1 = sig2
             }
-        """.trimIndent(),
-            stage = ParseStage.ModuleInternals,
+            """.trimIndent(),
+            stage = ParseStage.ErrorCheck,
             TestSignalResolver(sig1, sig2)
         )
 
-        tester.context.walk(tester.source())
+        tester.context.walk(tester.alwaysBlock())
         assert(tester.hasNoIssues)
 
         runBlocking {
@@ -120,22 +118,18 @@ class DynamicEvalTests {
         val sig2 = Signal("sig2", SignalDirection.Read, null, BitValue(Bit.B1, constant = false, signed = false), false)
         val tester = SimpleLucidTester(
             """
-            module testMod (
-                input a
-            ) {
-                always {
-                    if (sig2) 
-                        sig1 = 1
-                    else
-                        sig1 = 0
-                }
+            always {
+                if (sig2) 
+                    sig1 = 1
+                else
+                    sig1 = 0
             }
-        """.trimIndent(),
-            stage = ParseStage.ModuleInternals,
+            """.trimIndent(),
+            stage = ParseStage.ErrorCheck,
             TestSignalResolver(sig1, sig2)
         )
 
-        tester.context.walk(tester.source())
+        tester.context.walk(tester.alwaysBlock())
         assert(tester.hasNoIssues)
 
         runBlocking {

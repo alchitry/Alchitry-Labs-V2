@@ -9,7 +9,7 @@ import kotlin.test.assertNotNull
 internal class SignalParserTests {
     @Test
     fun testDffSimpleDeclaration() {
-        val tester = SimpleLucidTester("dff testing(.clk(1));", ParseStage.ModuleInternals)
+        val tester = SimpleLucidTester("dff testing(.clk(1));", ParseStage.ErrorCheck)
         tester.context.walk(tester.dffDec()) // parse
         val dff = tester.context.signal.resolve("testing")
 
@@ -30,7 +30,7 @@ internal class SignalParserTests {
 
     @Test
     fun testDffArrayClk() {
-        val tester = SimpleLucidTester("dff testing(.clk({1}));", ParseStage.ModuleInternals)
+        val tester = SimpleLucidTester("dff testing(.clk({1}));", ParseStage.ErrorCheck)
         tester.context.walk(tester.dffDec()) // parse
         tester.context.signal.resolve("testing")
 
@@ -41,7 +41,7 @@ internal class SignalParserTests {
 
     @Test
     fun testDffArrayRst() {
-        val tester = SimpleLucidTester("dff testing(.clk(1), .rst({1}));", ParseStage.ModuleInternals)
+        val tester = SimpleLucidTester("dff testing(.clk(1), .rst({1}));", ParseStage.ErrorCheck)
         tester.context.walk(tester.dffDec()) // parse
         tester.context.signal.resolve("testing")
 
@@ -52,7 +52,7 @@ internal class SignalParserTests {
 
     @Test
     fun testDffWideClk() {
-        val tester = SimpleLucidTester("dff testing(.clk(2b11));", ParseStage.ModuleInternals)
+        val tester = SimpleLucidTester("dff testing(.clk(2b11));", ParseStage.ErrorCheck)
         tester.context.walk(tester.dffDec()) // parse
         tester.context.signal.resolve("testing")
 
@@ -63,7 +63,7 @@ internal class SignalParserTests {
 
     @Test
     fun testDffWideRst() {
-        val tester = SimpleLucidTester("dff testing(.clk(1), .rst(2b11));", ParseStage.ModuleInternals)
+        val tester = SimpleLucidTester("dff testing(.clk(1), .rst(2b11));", ParseStage.ErrorCheck)
         tester.context.walk(tester.dffDec()) // parse
         tester.context.signal.resolve("testing")
 
@@ -74,7 +74,7 @@ internal class SignalParserTests {
 
     @Test
     fun testDffInit() {
-        val tester = SimpleLucidTester("dff testing(.clk(1), #INIT(1));", ParseStage.ModuleInternals)
+        val tester = SimpleLucidTester("dff testing(.clk(1), #INIT(1));", ParseStage.ErrorCheck)
         tester.context.walk(tester.dffDec()) // parse
         val dff = tester.context.signal.resolve("testing")
 
@@ -94,7 +94,7 @@ internal class SignalParserTests {
 
     @Test
     fun testDffInitTruncate() {
-        val tester = SimpleLucidTester("dff testing[3](.clk(1), #INIT(15));", ParseStage.ModuleInternals)
+        val tester = SimpleLucidTester("dff testing[3](.clk(1), #INIT(15));", ParseStage.ErrorCheck)
         tester.context.walk(tester.dffDec()) // parse
         val dff = tester.context.signal.resolve("testing")
 
@@ -114,7 +114,7 @@ internal class SignalParserTests {
 
     @Test
     fun testDffInitDimMismatch() {
-        val tester = SimpleLucidTester("dff testing[3](.clk(1), #INIT({15}));", ParseStage.ModuleInternals)
+        val tester = SimpleLucidTester("dff testing[3](.clk(1), #INIT({15}));", ParseStage.ErrorCheck)
         tester.context.walk(tester.dffDec()) // parse
         val dff = tester.context.signal.resolve("testing")
 
@@ -134,7 +134,7 @@ internal class SignalParserTests {
 
     @Test
     fun testDffArray() {
-        val tester = SimpleLucidTester("dff testing[8][4][2](.clk(1));", ParseStage.ModuleInternals)
+        val tester = SimpleLucidTester("dff testing[8][4][2](.clk(1));", ParseStage.ErrorCheck)
         tester.context.walk(tester.dffDec()) // parse
         assert(tester.hasNoIssues)
         val dff = tester.context.signal.resolve("testing")
@@ -162,7 +162,7 @@ internal class SignalParserTests {
 
     @Test
     fun testSignedDffArray() {
-        val tester = SimpleLucidTester("signed dff testing[8][4][2](.clk(1));", ParseStage.ModuleInternals)
+        val tester = SimpleLucidTester("signed dff testing[8][4][2](.clk(1));", ParseStage.ErrorCheck)
         tester.context.walk(tester.dffDec()) // parse
 
         assert(tester.hasNoIssues)
@@ -194,7 +194,7 @@ internal class SignalParserTests {
 
     @Test
     fun testAssignBlockSimple() {
-        val tester = SimpleLucidTester(".clk(1), .rst(0) { dff test; }", ParseStage.ModuleInternals)
+        val tester = SimpleLucidTester(".clk(1), .rst(0) { dff test; }", ParseStage.ErrorCheck)
         tester.context.walk(tester.assignBlock())
         assert(tester.hasNoIssues)
 
@@ -208,7 +208,7 @@ internal class SignalParserTests {
 
     @Test
     fun testDoubleAssign() {
-        val tester = SimpleLucidTester(".clk(1), .rst(0) { dff test(.clk(0)); }", ParseStage.ModuleInternals)
+        val tester = SimpleLucidTester(".clk(1), .rst(0) { dff test(.clk(0)); }", ParseStage.ErrorCheck)
         tester.context.walk(tester.assignBlock())
         assert(tester.hasErrors)
         assert(tester.hasNoWarnings)
@@ -217,7 +217,7 @@ internal class SignalParserTests {
 
     @Test
     fun testDoubleAssignBlocks() {
-        val tester = SimpleLucidTester(".clk(1) { .clk(0) { dff test; } }", ParseStage.ModuleInternals)
+        val tester = SimpleLucidTester(".clk(1) { .clk(0) { dff test; } }", ParseStage.ErrorCheck)
         tester.context.walk(tester.assignBlock())
         assert(tester.hasErrors)
         assert(tester.hasNoWarnings)
@@ -235,7 +235,7 @@ internal class SignalParserTests {
             dff testing<test>(.clk(1))
             }
             """.trimIndent(),
-            ParseStage.ModuleInternals
+            ParseStage.ErrorCheck
         )
         tester.context.walk(tester.source())
         assert(tester.hasNoIssues)
@@ -265,7 +265,7 @@ internal class SignalParserTests {
             dff testing[6]<test>(.clk(1));
             }
             """.trimIndent(),
-            ParseStage.ModuleInternals
+            ParseStage.ErrorCheck
         )
         tester.context.walk(tester.source())
         assert(tester.hasNoIssues)
@@ -310,10 +310,10 @@ internal class SignalParserTests {
 
         assertEquals(param, tester.context.module.module?.parameters?.values?.first())
 
-        val portA = Port("a", SignalDirection.Read, BitListWidth(2))
+        val portA = Port("a", SignalDirection.Read, BitListWidth(2), false)
         assertEquals(portA, tester.context.module.module?.ports?.get("a"))
 
-        val portB = Port("b", SignalDirection.Write, BitWidth)
+        val portB = Port("b", SignalDirection.Write, BitWidth, false)
         assertEquals(portB, tester.context.module.module?.ports?.get("b"))
     }
 
@@ -367,7 +367,7 @@ internal class SignalParserTests {
                 sig testSig;
             }
             """.trimIndent(),
-            ParseStage.ModuleInternals
+            ParseStage.ErrorCheck
         )
         tester.context.walk(tester.source())
         assert(tester.hasNoSyntaxIssues)
@@ -392,7 +392,7 @@ internal class SignalParserTests {
                 sig testSig[8];
             }
             """.trimIndent(),
-            ParseStage.ModuleInternals
+            ParseStage.ErrorCheck
         )
         tester.context.walk(tester.source())
         assert(tester.hasNoSyntaxIssues)

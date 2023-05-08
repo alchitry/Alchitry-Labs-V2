@@ -3,6 +3,7 @@ package com.alchitry.labs.parsers.lucidv2.context
 import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.parsers.*
 import com.alchitry.labs.parsers.lucidv2.signals.ModuleInstance
+import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.ParseTreeListener
@@ -26,11 +27,6 @@ class LucidModuleContext(
     val isInstantiated = instance != null
 
     var stage: ParseStage = stage
-        set(value) {
-            if (value == ParseStage.Evaluation)
-                checkNotNull(evalContext) { "evalContext must not be null when evaluating!" }
-            field = value
-        }
 
     val expr = expr?.withContext(this) ?: ExprParser(this)
     val bitSelection = bitSelection?.withContext(this) ?: BitSelectionParser(this)
@@ -78,6 +74,15 @@ class LucidModuleContext(
             this.signal,
             this.alwaysEvaluator
         )
+
+        ParseStage.ErrorCheck -> listOf<ParseTreeListener>(
+            this.expr,
+            this.bitSelection,
+            this.signal,
+            this.module,
+            this.alwaysParser,
+            this.signalDriver
+        )
     }
 
     private fun getFilter(): WalkerFilter = when (stage) {
@@ -86,19 +91,19 @@ class LucidModuleContext(
         ParseStage.ModuleInternals -> WalkerFilter.SkipGlobals
         ParseStage.Drivers -> WalkerFilter.SkipGlobals
         ParseStage.Evaluation -> WalkerFilter.join(WalkerFilter.SkipControlBlocks, WalkerFilter.SkipGlobals)
+        ParseStage.ErrorCheck -> WalkerFilter.None
     }
 
-    fun instantiate(instance: ModuleInstance): LucidModuleContext {
-        val newContext = LucidModuleContext(
+    fun instantiate(name: String, parameters: Map<String, Signal>): LucidModuleContext {
+        val moduleType = module.module ?: error("Tried to instantiate a module with a null module type!")
+
+        val instance = ModuleInstance(name, moduleType, parameters)
+
+        return LucidModuleContext(
             project,
             ParseStage.ModuleInternals,
-            instance,
-            module = module
+            instance
         )
-
-
-
-        return newContext
     }
 
     fun withEvalContext(evalContext: Evaluable) = LucidModuleContext(
@@ -125,12 +130,20 @@ class LucidModuleContext(
         alwaysParser.queueEval()
     }
 
-    fun walk(t: ParseTree, vararg extraListeners: ParseTreeListener) =
-        ParseTreeMultiWalker.walk(
+    fun walk(t: ParseTree, vararg extraListeners: ParseTreeListener) {
+        when (stage) {
+            ParseStage.ModuleInternals -> checkNotNull(instance) { "ModuleInternals pass requires instantiation!" }
+            ParseStage.Drivers -> checkNotNull(instance) { "Drivers pass requires instantiation!" }
+            ParseStage.Evaluation -> checkNotNull(instance) { "Evaluation pass requires instantiation!" }
+            else -> {}
+        }
+
+        return ParseTreeMultiWalker.walk(
             getListeners().toMutableList().apply { addAll(extraListeners.toList()) },
             t,
             getFilter()
         )
+    }
 
     /**
      * Searches all SignalParsers to resolve a signal name.

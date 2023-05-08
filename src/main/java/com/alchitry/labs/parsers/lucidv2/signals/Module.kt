@@ -11,5 +11,6 @@ data class Module(
 data class Port(
     val name: String,
     val direction: SignalDirection,
-    val width: SignalWidth
+    val width: SignalWidth,
+    val signed: Boolean
 )
