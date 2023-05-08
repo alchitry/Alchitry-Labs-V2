@@ -18,6 +18,7 @@ class LucidModuleContext(
     module: LucidModuleParser? = null,
     alwaysParser: AlwaysParser? = null,
     alwaysEvaluator: AlwaysEvaluator? = null,
+    signalDriver: SignalDriverParser? = null,
     val localSignalResolver: SignalResolver? = null // Used in tests to simulate a full parse.
 ) {
     val isEvaluating = evalContext != null
@@ -28,17 +29,20 @@ class LucidModuleContext(
     val module = module?.withContext(this) ?: LucidModuleParser(this)
     val alwaysParser = alwaysParser?.withContext(this) ?: AlwaysParser(this)
     val alwaysEvaluator = alwaysEvaluator?.withContext(this) ?: AlwaysEvaluator(this)
+    val signalDriver = signalDriver?.withContext(this) ?: SignalDriverParser(this)
 
     private val parseListeners = listOf<ParseTreeListener>(
         this.expr,
         this.bitSelection,
         this.signal,
         this.module,
-        this.alwaysParser
+        this.alwaysParser,
+        this.signalDriver
     )
 
     private val evalListeners = listOf<ParseTreeListener>(
         this.expr,
+        this.bitSelection,
         this.signal,
         this.alwaysEvaluator
     )
@@ -54,6 +58,7 @@ class LucidModuleContext(
         module,
         alwaysParser,
         alwaysEvaluator,
+        signalDriver,
         localSignalResolver
     )
 
@@ -67,7 +72,7 @@ class LucidModuleContext(
     fun walk(t: ParseTree, vararg extraListeners: ParseTreeListener) =
         ParseTreeMultiWalker.walk(parseListeners.toMutableList().apply { addAll(extraListeners.toList()) }, t)
 
-    fun evalWalk(t: ParseTree) = EvalWalker.walk(evalListeners, t)
+    fun evalWalk(t: ParseTree) = ParseTreeMultiWalker.walk(evalListeners, t, WalkerFilter.SkipControlBlocks)
 
     /**
      * Searches all SignalParsers to resolve a signal name.

@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.tree.*
  * Used to walk through a ParseTree with multiple listeners just like when doing the actual parse.
  */
 object ParseTreeMultiWalker {
-    fun walk(listeners: List<ParseTreeListener>, t: ParseTree) {
+    fun walk(listeners: List<ParseTreeListener>, t: ParseTree, filter: WalkerFilter = WalkerFilter.None) {
         if (t is ErrorNode) {
             for (listener in listeners) listener.visitErrorNode(t)
             return
@@ -19,10 +19,13 @@ object ParseTreeMultiWalker {
         val r = t as RuleNode
         enterRule(listeners, r)
         for (i in 0 until r.childCount) {
-            walk(listeners, r.getChild(i))
+            val child = r.getChild(i)
+            if (!filter.shouldSkip(r, child))
+                walk(listeners, child)
         }
         exitRule(listeners, r)
     }
+
 
     /**
      * The discovery of a rule node, involves sending two events: the generic [ParseTreeListener.enterEveryRule] and a [RuleContext]-specific event. First we
