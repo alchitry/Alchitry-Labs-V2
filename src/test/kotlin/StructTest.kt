@@ -1,3 +1,4 @@
+import com.alchitry.labs.parsers.lucidv2.parsers.ParseStage
 import com.alchitry.labs.parsers.lucidv2.signals.StructMember
 import com.alchitry.labs.parsers.lucidv2.signals.StructType
 import com.alchitry.labs.parsers.lucidv2.values.ArrayWidth
@@ -10,7 +11,7 @@ class StructTest {
 
     @Test
     fun basicStructDecTest() {
-        val tester = LucidTester("struct test { a, b[2][3], c[4] };")
+        val tester = LucidTester("struct test { a, b[2][3], c[4] };", ParseStage.Modules)
         val ctx = tester.structDec().also { tester.context.walk(it) }
 
         assert(tester.hasNoIssues)

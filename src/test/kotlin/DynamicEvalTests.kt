@@ -1,4 +1,5 @@
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
+import com.alchitry.labs.parsers.lucidv2.parsers.ParseStage
 import com.alchitry.labs.parsers.lucidv2.signals.DynamicExpr
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
@@ -16,7 +17,8 @@ class DynamicEvalTests {
             val signal =
                 Signal("test", SignalDirection.Both, null, BitListValue("110", 2, constant = false, signed = false))
 
-            val test = LucidTester("~test", localSignalResolver = TestSignalResolver(signal))
+            val test =
+                LucidTester("~test", stage = ParseStage.AlwaysIO, localSignalResolver = TestSignalResolver(signal))
 
             val exprCtx = test.expr()
             test.context.walk(exprCtx)
@@ -75,6 +77,7 @@ class DynamicEvalTests {
                 }
             }
         """.trimIndent(),
+            stage = ParseStage.AlwaysIO,
             TestSignalResolver(sig1, sig2)
         )
 
@@ -122,6 +125,7 @@ class DynamicEvalTests {
                 }
             }
         """.trimIndent(),
+            stage = ParseStage.AlwaysIO,
             TestSignalResolver(sig1, sig2)
         )
 

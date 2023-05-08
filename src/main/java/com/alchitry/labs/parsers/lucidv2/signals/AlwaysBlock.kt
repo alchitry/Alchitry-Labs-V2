@@ -9,21 +9,22 @@ import kotlinx.coroutines.launch
 
 class AlwaysBlock(
     context: LucidModuleContext,
-    dependencies: List<Signal>,
+    val dependencies: List<Signal>,
+    val drivenSignals: List<Signal>,
     private val alwaysBlockContext: AlwaysBlockContext
 ): Evaluable {
     val context = context.withEvalContext(this)
 
     init {
-        context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+        this.context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             onAnyChange(dependencies.map { it.valueFlow }) {
-                context.project.queueEvaluation(this@AlwaysBlock)
+                this@AlwaysBlock.context.project.queueEvaluation(this@AlwaysBlock)
             }
         }
     }
 
     override suspend fun evaluate() {
-        context.evalWalk(alwaysBlockContext)
+        context.walk(alwaysBlockContext)
 
         if (context.errorCollector.errors.isNotEmpty()) {
             context.errorCollector.errors.forEach { println(it) }

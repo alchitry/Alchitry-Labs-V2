@@ -20,6 +20,7 @@ data class AlwaysParser(
     fun withContext(context: LucidModuleContext) = copy(context = context)
 
     private val dependencies = mutableSetOf<Signal>()
+    private val drivenSignals = mutableSetOf<Signal>()
 
     suspend fun queueEval() {
         alwaysBlocks.forEach {
@@ -28,12 +29,12 @@ data class AlwaysParser(
     }
 
     override fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
-        check(!context.isEvaluating) { "AlwaysParser should never be run while evaluating!" }
         dependencies.clear()
+        drivenSignals.clear()
     }
 
     override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
-        alwaysBlocks.add(AlwaysBlock(context, dependencies.toList(), ctx))
+        alwaysBlocks.add(AlwaysBlock(context, dependencies.toList(), drivenSignals.toList(), ctx))
     }
 
     override fun exitExprSignal(ctx: ExprSignalContext) {

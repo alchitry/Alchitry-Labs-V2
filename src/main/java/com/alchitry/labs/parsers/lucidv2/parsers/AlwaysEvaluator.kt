@@ -16,7 +16,7 @@ data class AlwaysEvaluator(
     private val writtenSignals = mutableSetOf<Signal>()
 
     override fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
-        check(context.isEvaluating) { "The AlwaysEvaluator should only be used in evaluations!" }
+        check(context.stage == ParseStage.Evaluation) { "The AlwaysEvaluator should only be used in evaluations!" }
         writtenSignals.clear()
     }
 
@@ -39,12 +39,12 @@ data class AlwaysEvaluator(
         ctx.caseElem().forEach { elemCtx ->
             val exprCtx: ExprContext? = elemCtx.expr()
             if (exprCtx == null) { // default case
-                context.evalWalk(elemCtx.caseBlock())
+                context.walk(elemCtx.caseBlock())
                 return
             }
             val condition = context.expr.resolve(exprCtx) as? SimpleValue ?: return
             if ((condition isEqualTo value).bit == Bit.B1) {
-                context.evalWalk(elemCtx.caseBlock())
+                context.walk(elemCtx.caseBlock())
                 return
             }
         }
@@ -59,9 +59,9 @@ data class AlwaysEvaluator(
         }
 
         if (truthBit == Bit.B1) {
-            context.evalWalk(ctx.block())
+            context.walk(ctx.block())
         } else {
-            ctx.elseStat()?.block()?.let { context.evalWalk(it) }
+            ctx.elseStat()?.block()?.let { context.walk(it) }
         }
     }
 
@@ -71,18 +71,17 @@ data class AlwaysEvaluator(
 
         val count = countValue.toBigInt().toInt()
 
-        if (context.isEvaluating)
-            repeat(count) {
-                signal.quietSet(
-                    BitListValue(
-                        value = it,
-                        width = signal.width.getBitCount(),
-                        constant = false,
-                        signed = false
-                    ),
-                    context.evalContext
-                )
-                context.evalWalk(ctx.block())
-            }
+        repeat(count) {
+            signal.quietSet(
+                BitListValue(
+                    value = it,
+                    width = signal.width.getBitCount(),
+                    constant = false,
+                    signed = false
+                ),
+                context.evalContext
+            )
+            context.walk(ctx.block())
+        }
     }
 }
