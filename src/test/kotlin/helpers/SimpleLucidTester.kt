@@ -1,3 +1,5 @@
+package helpers
+
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.context.SignalResolver
@@ -7,7 +9,7 @@ import com.alchitry.labs.parsers.lucidv2.parsers.ParseStage
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 
-class LucidTester(text: String, stage: ParseStage, localSignalResolver: SignalResolver? = null) :
+class SimpleLucidTester(text: String, stage: ParseStage, localSignalResolver: SignalResolver? = null) :
     LucidParser(
         CommonTokenStream(
             LucidLexer(

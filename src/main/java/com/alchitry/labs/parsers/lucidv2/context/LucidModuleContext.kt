@@ -23,6 +23,8 @@ class LucidModuleContext(
     signalDriver: SignalDriverParser? = null,
     val localSignalResolver: SignalResolver? = null // Used in tests to simulate a full parse.
 ) {
+    val isInstantiated = instance != null
+
     var stage: ParseStage = stage
         set(value) {
             if (value == ParseStage.Evaluation)
@@ -54,7 +56,7 @@ class LucidModuleContext(
             this.module
         )
 
-        ParseStage.AlwaysIO -> listOf<ParseTreeListener>(
+        ParseStage.ModuleInternals -> listOf<ParseTreeListener>(
             this.expr,
             this.bitSelection,
             this.signal,
@@ -66,16 +68,6 @@ class LucidModuleContext(
             this.expr,
             this.bitSelection,
             this.signal,
-            this.module,
-            this.alwaysParser,
-            this.signalDriver
-        )
-
-        ParseStage.Instantiated -> listOf<ParseTreeListener>(
-            this.expr,
-            this.bitSelection,
-            this.signal,
-            this.module,
             this.alwaysParser,
             this.signalDriver
         )
@@ -91,10 +83,22 @@ class LucidModuleContext(
     private fun getFilter(): WalkerFilter = when (stage) {
         ParseStage.Globals -> WalkerFilter.GlobalsOnly
         ParseStage.Modules -> WalkerFilter.join(WalkerFilter.SkipModuleBodies, WalkerFilter.SkipGlobals)
-        ParseStage.AlwaysIO -> WalkerFilter.SkipGlobals
+        ParseStage.ModuleInternals -> WalkerFilter.SkipGlobals
         ParseStage.Drivers -> WalkerFilter.SkipGlobals
-        ParseStage.Instantiated -> WalkerFilter.SkipGlobals
         ParseStage.Evaluation -> WalkerFilter.join(WalkerFilter.SkipControlBlocks, WalkerFilter.SkipGlobals)
+    }
+
+    fun instantiate(instance: ModuleInstance): LucidModuleContext {
+        val newContext = LucidModuleContext(
+            project,
+            ParseStage.ModuleInternals,
+            instance,
+            module = module
+        )
+
+
+
+        return newContext
     }
 
     fun withEvalContext(evalContext: Evaluable) = LucidModuleContext(

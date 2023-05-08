@@ -4,14 +4,15 @@ import com.alchitry.labs.parsers.lucidv2.signals.StructType
 import com.alchitry.labs.parsers.lucidv2.values.ArrayWidth
 import com.alchitry.labs.parsers.lucidv2.values.BitListWidth
 import com.alchitry.labs.parsers.lucidv2.values.BitWidth
+import helpers.SimpleLucidTester
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class StructTest {
+class StructTests {
 
     @Test
     fun basicStructDecTest() {
-        val tester = LucidTester("struct test { a, b[2][3], c[4] };", ParseStage.Modules)
+        val tester = SimpleLucidTester("struct test { a, b[2][3], c[4] };", ParseStage.Modules)
         val ctx = tester.structDec().also { tester.context.walk(it) }
 
         assert(tester.hasNoIssues)

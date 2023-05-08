@@ -6,20 +6,22 @@ import com.alchitry.labs.parsers.lucidv2.values.ArrayValue
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.BitValue
+import helpers.SimpleLucidTester
+import helpers.TestSignalResolver
 import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.Test
 
-internal class ExprParserTest {
+internal class ExprParserTests {
     @Test
     fun testNumbers() {
-        var test = LucidTester("5b11011", ParseStage.AlwaysIO)
+        var test = SimpleLucidTester("5b11011", ParseStage.ModuleInternals)
         var tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("11011", 2, 5, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("hFE01", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("hFE01", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assertEquals(
             BitListValue("65025", 10, 16, constant = true, signed = false),
@@ -29,35 +31,35 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("8hFFF", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("8hFFF", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("255", 10, 8, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("152", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("152", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("152", 10, 8, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("0", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("0", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitValue(Bit.B0, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("1", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("1", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitValue(Bit.B1, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("20d12", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("20d12", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("12", 10, 20, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
@@ -67,7 +69,7 @@ internal class ExprParserTest {
 
     @Test
     fun testAddition() {
-        val test = LucidTester("5b1101 + 4b0010", ParseStage.AlwaysIO)
+        val test = SimpleLucidTester("5b1101 + 4b0010", ParseStage.ModuleInternals)
         val tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("1111", 2, 6, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
@@ -77,7 +79,7 @@ internal class ExprParserTest {
 
     @Test
     fun testSubtraction() {
-        val test = LucidTester("5b1101 - 4b0010", ParseStage.AlwaysIO)
+        val test = SimpleLucidTester("5b1101 - 4b0010", ParseStage.ModuleInternals)
         val tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("1011", 2, 6, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
@@ -87,7 +89,7 @@ internal class ExprParserTest {
 
     @Test
     fun testConcat() {
-        var test = LucidTester("c{b1101, b0010, 0}", ParseStage.AlwaysIO)
+        var test = SimpleLucidTester("c{b1101, b0010, 0}", ParseStage.ModuleInternals)
         var tree = test.expr().also { test.context.walk(it) }
         assertEquals(
             BitListValue("110100100", 2, 9, constant = true, signed = false),
@@ -97,21 +99,21 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("c{{b1101}, b0010, 0}", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("c{{b1101}, b0010, 0}", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assertEquals(null, test.context.expr.resolve(tree))
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("c{{b1101}, {b0010}, {0}}", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("c{{b1101}, {b0010}, {0}}", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assertEquals(null, test.context.expr.resolve(tree))
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("c{{b1101}, {b0010}, {4b0}}", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("c{{b1101}, {b0010}, {4b0}}", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assertEquals(
             ArrayValue(
@@ -130,14 +132,14 @@ internal class ExprParserTest {
 
     @Test
     fun testDup() {
-        var test = LucidTester("2x{0}", ParseStage.AlwaysIO)
+        var test = SimpleLucidTester("2x{0}", ParseStage.ModuleInternals)
         var tree = test.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("00", 2, 2, constant = true, signed = false), test.context.expr.resolve(tree))
         assert(test.hasNoErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("8x{2b10}", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("8x{2b10}", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assertEquals(
             BitListValue("1010101010101010", 2, 16, constant = true, signed = false),
@@ -147,7 +149,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("{8}x{2b10}", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("{8}x{2b10}", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assertEquals(null, test.context.expr.resolve(tree))
         assert(test.hasErrors)
@@ -157,7 +159,7 @@ internal class ExprParserTest {
 
     @Test
     fun testArray() {
-        var test = LucidTester("{0}", ParseStage.AlwaysIO)
+        var test = SimpleLucidTester("{0}", ParseStage.ModuleInternals)
         var tree = test.expr().also { test.context.walk(it) }
         assertEquals(
             ArrayValue(
@@ -171,7 +173,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("{{0}}", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("{{0}}", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assertEquals(
             ArrayValue(
@@ -190,14 +192,14 @@ internal class ExprParserTest {
         assert(test.hasNoSyntaxIssues)
 
         // values of different sizes = error
-        test = LucidTester("{0, 2b10, 2b11}", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("{0, 2b10, 2b11}", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assertEquals(null, test.context.expr.resolve(tree))
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("{b00,b01,b10}", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("{b00,b01,b10}", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assertEquals(
             ArrayValue(
@@ -216,7 +218,7 @@ internal class ExprParserTest {
 
     @Test
     fun testMultiply() {
-        var test = LucidTester("20 * 40", ParseStage.AlwaysIO)
+        var test = SimpleLucidTester("20 * 40", ParseStage.ModuleInternals)
         var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -233,21 +235,21 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("20 * {40}", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("20 * {40}", ParseStage.ModuleInternals)
         test.expr().also { test.context.walk(it) }
 
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("{20} * {40}", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("{20} * {40}", ParseStage.ModuleInternals)
         test.expr().also { test.context.walk(it) }
 
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$signed(20) * 40", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$signed(20) * 40", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -265,7 +267,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("-20 * -40", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("-20 * -40", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -286,7 +288,7 @@ internal class ExprParserTest {
 
     @Test
     fun testDivide() {
-        var test = LucidTester("40 / 8", ParseStage.AlwaysIO)
+        var test = SimpleLucidTester("40 / 8", ParseStage.ModuleInternals)
         var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -297,7 +299,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("40 / 5", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("40 / 5", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -313,7 +315,7 @@ internal class ExprParserTest {
 
     @Test
     fun testShift() {
-        var test = LucidTester("40 >> 3", ParseStage.AlwaysIO)
+        var test = SimpleLucidTester("40 >> 3", ParseStage.ModuleInternals)
         var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -324,7 +326,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("-8 >> 2", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("-8 >> 2", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -335,7 +337,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("-8 >>> 2", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("-8 >>> 2", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -346,7 +348,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("8 << 1", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("8 << 1", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -357,7 +359,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("-8 << 1", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("-8 << 1", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -368,7 +370,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("8 <<< 1", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("8 <<< 1", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -379,7 +381,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("-8 <<< 1", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("-8 <<< 1", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -393,7 +395,7 @@ internal class ExprParserTest {
 
     @Test
     fun testBitwise() {
-        var test = LucidTester("b1101 & b1001", ParseStage.AlwaysIO)
+        var test = SimpleLucidTester("b1101 & b1001", ParseStage.ModuleInternals)
         var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -404,7 +406,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("b001101 & b1001", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("b001101 & b1001", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -415,7 +417,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$signed(b001101) & \$signed(b1001)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$signed(b001101) & \$signed(b1001)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -426,7 +428,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("b1101 | b1001", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("b1101 | b1001", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -437,7 +439,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("b101101 | b1010", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("b101101 | b1010", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -448,7 +450,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$signed(b001101) | \$signed(b1001)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$signed(b001101) | \$signed(b1001)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -459,7 +461,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("b1101 ^ b1001", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("b1101 ^ b1001", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -470,7 +472,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("b001101 ^ b1001", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("b001101 ^ b1001", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -481,7 +483,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$signed(b001101) ^ \$signed(b1001)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$signed(b001101) ^ \$signed(b1001)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -495,7 +497,7 @@ internal class ExprParserTest {
 
     @Test
     fun testReduction() {
-        var test = LucidTester("|b1001", ParseStage.AlwaysIO)
+        var test = SimpleLucidTester("|b1001", ParseStage.ModuleInternals)
         var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -506,7 +508,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("|b0000", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("|b0000", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -517,7 +519,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("&b1001", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("&b1001", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -528,7 +530,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("&b1111", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("&b1111", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -539,7 +541,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("&b1x01", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("&b1x01", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -550,7 +552,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("^b1001", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("^b1001", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -561,7 +563,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("^b1011", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("^b1011", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -575,7 +577,7 @@ internal class ExprParserTest {
 
     @Test
     fun testCompare() {
-        var test = LucidTester("10 < 4", ParseStage.AlwaysIO)
+        var test = SimpleLucidTester("10 < 4", ParseStage.ModuleInternals)
         var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -586,7 +588,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("10 > 4", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("10 > 4", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -597,7 +599,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("4 >= 10", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("4 >= 10", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -608,7 +610,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("10 >= 10", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("10 >= 10", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -619,7 +621,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("10 <= 4", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("10 <= 4", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -630,7 +632,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("10 <= 10", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("10 <= 10", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -644,7 +646,7 @@ internal class ExprParserTest {
 
     @Test
     fun testLogical() {
-        var test = LucidTester("10 || 0", ParseStage.AlwaysIO)
+        var test = SimpleLucidTester("10 || 0", ParseStage.ModuleInternals)
         var tree = test.expr().also { test.context.walk(it) }
         assert(test.hasNoIssues)
 
@@ -653,7 +655,7 @@ internal class ExprParserTest {
             test.context.expr.resolve(tree)
         )
 
-        test = LucidTester("0 || 0", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("0 || 0", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assert(test.hasNoIssues)
 
@@ -662,7 +664,7 @@ internal class ExprParserTest {
             test.context.expr.resolve(tree)
         )
 
-        test = LucidTester("10 && 0", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("10 && 0", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assert(test.hasNoIssues)
 
@@ -671,7 +673,7 @@ internal class ExprParserTest {
             test.context.expr.resolve(tree)
         )
 
-        test = LucidTester("10 && 4", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("10 && 4", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assert(test.hasNoIssues)
 
@@ -683,7 +685,7 @@ internal class ExprParserTest {
 
     @Test
     fun testTernary() {
-        var test = LucidTester("10 ? 1 : 2", ParseStage.AlwaysIO)
+        var test = SimpleLucidTester("10 ? 1 : 2", ParseStage.ModuleInternals)
         var tree = test.expr().also { test.context.walk(it) }
         assert(test.hasNoIssues)
 
@@ -692,7 +694,7 @@ internal class ExprParserTest {
             test.context.expr.resolve(tree)
         )
 
-        test = LucidTester("10b0 ? 1 : 2", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("10b0 ? 1 : 2", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
         assert(test.hasNoIssues)
 
@@ -704,7 +706,7 @@ internal class ExprParserTest {
 
     @Test
     fun testInvert() {
-        var test = LucidTester("!10", ParseStage.AlwaysIO)
+        var test = SimpleLucidTester("!10", ParseStage.ModuleInternals)
         var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -715,7 +717,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("!0", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("!0", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -726,7 +728,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("~b101", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("~b101", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -740,7 +742,7 @@ internal class ExprParserTest {
 
     @Test
     fun testNegate() {
-        var test = LucidTester("-20", ParseStage.AlwaysIO)
+        var test = SimpleLucidTester("-20", ParseStage.ModuleInternals)
         var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -752,7 +754,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("--20", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("--20", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -767,7 +769,7 @@ internal class ExprParserTest {
 
     @Test
     fun testFunctions() {
-        var test = LucidTester("\$signed(20)", ParseStage.AlwaysIO)
+        var test = SimpleLucidTester("\$signed(20)", ParseStage.ModuleInternals)
         var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -779,7 +781,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$signed(-20)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$signed(-20)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -791,7 +793,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$clog2(7)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$clog2(7)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -802,7 +804,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$clog2(0)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$clog2(0)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -813,7 +815,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$clog2(1)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$clog2(1)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -824,7 +826,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$clog2(129)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$clog2(129)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -835,7 +837,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$pow(3,0)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$pow(3,0)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -846,7 +848,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$pow(2,4)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$pow(2,4)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -857,7 +859,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$reverse(b1100)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$reverse(b1100)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -868,7 +870,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$reverse({b1100, b0011})", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$reverse({b1100, b0011})", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -884,7 +886,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$flatten(b1100)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$flatten(b1100)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -895,7 +897,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$flatten({b1100, b0011})", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$flatten({b1100, b0011})", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -908,7 +910,7 @@ internal class ExprParserTest {
 
         // TODO: Test flatten for structs
 
-        test = LucidTester("\$build(b1100, 2)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$build(b1100, 2)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -924,7 +926,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$build(b11001001, 2, 2)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$build(b11001001, 2, 2)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -950,7 +952,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$unsigned(20)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$unsigned(20)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -962,7 +964,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$unsigned(\$signed(-20))", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$unsigned(\$signed(-20))", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -974,7 +976,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$cdiv(8, 3)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$cdiv(8, 3)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -986,7 +988,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$cdiv(9, 3)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$cdiv(9, 3)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -998,7 +1000,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$cdiv(10, 3)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$cdiv(10, 3)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -1010,7 +1012,7 @@ internal class ExprParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$resize(8, 3)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$resize(8, 3)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -1022,7 +1024,7 @@ internal class ExprParserTest {
         assert(test.hasWarnings) // should warn about truncation
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("\$resize(1, 3)", ParseStage.AlwaysIO)
+        test = SimpleLucidTester("\$resize(1, 3)", ParseStage.ModuleInternals)
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
@@ -1039,7 +1041,8 @@ internal class ExprParserTest {
     fun simpleSignalTest() {
         val signal =
             Signal("test", SignalDirection.Both, null, BitListValue("110", 2, constant = false, signed = false))
-        val test = LucidTester("test[2]", ParseStage.AlwaysIO, localSignalResolver = TestSignalResolver(signal))
+        val test =
+            SimpleLucidTester("test[2]", ParseStage.ModuleInternals, localSignalResolver = TestSignalResolver(signal))
         val exprCtx = test.expr().also { test.context.walk(it) }
 
         assert(test.hasNoIssues)
@@ -1051,7 +1054,8 @@ internal class ExprParserTest {
     fun rangeSignalTest() {
         val signal =
             Signal("test", SignalDirection.Both, null, BitListValue("1010", 2, constant = false, signed = false))
-        val test = LucidTester("test[2:1]", ParseStage.AlwaysIO, localSignalResolver = TestSignalResolver(signal))
+        val test =
+            SimpleLucidTester("test[2:1]", ParseStage.ModuleInternals, localSignalResolver = TestSignalResolver(signal))
         val exprCtx = test.expr().also { test.context.walk(it) }
 
         assert(test.hasNoIssues)
@@ -1063,7 +1067,8 @@ internal class ExprParserTest {
     fun rangeOutOfBoundsSignalTest() {
         val signal =
             Signal("test", SignalDirection.Both, null, BitListValue("1010", 2, constant = false, signed = false))
-        val test = LucidTester("test[9:1]", ParseStage.AlwaysIO, localSignalResolver = TestSignalResolver(signal))
+        val test =
+            SimpleLucidTester("test[9:1]", ParseStage.ModuleInternals, localSignalResolver = TestSignalResolver(signal))
         test.expr().also { test.context.walk(it) }
 
         assert(test.hasErrors)

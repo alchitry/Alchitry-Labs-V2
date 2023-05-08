@@ -6,6 +6,8 @@ import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.BitValue
+import helpers.SimpleLucidTester
+import helpers.TestSignalResolver
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -18,7 +20,11 @@ class DynamicEvalTests {
                 Signal("test", SignalDirection.Both, null, BitListValue("110", 2, constant = false, signed = false))
 
             val test =
-                LucidTester("~test", stage = ParseStage.AlwaysIO, localSignalResolver = TestSignalResolver(signal))
+                SimpleLucidTester(
+                    "~test",
+                    stage = ParseStage.ModuleInternals,
+                    localSignalResolver = TestSignalResolver(signal)
+                )
 
             val exprCtx = test.expr()
             test.context.walk(exprCtx)
@@ -67,7 +73,7 @@ class DynamicEvalTests {
     fun basicAlwaysEvalTest() {
         val sig1 = Signal("sig1", SignalDirection.Write, null, BitValue(Bit.B0, constant = false, signed = false), false)
         val sig2 = Signal("sig2", SignalDirection.Read, null, BitValue(Bit.B1, constant = false, signed = false), false)
-        val tester = LucidTester(
+        val tester = SimpleLucidTester(
             """
             module testMod (
                 input a
@@ -77,7 +83,7 @@ class DynamicEvalTests {
                 }
             }
         """.trimIndent(),
-            stage = ParseStage.AlwaysIO,
+            stage = ParseStage.ModuleInternals,
             TestSignalResolver(sig1, sig2)
         )
 
@@ -112,7 +118,7 @@ class DynamicEvalTests {
         val sig1 =
             Signal("sig1", SignalDirection.Write, null, BitValue(Bit.B0, constant = false, signed = false), false)
         val sig2 = Signal("sig2", SignalDirection.Read, null, BitValue(Bit.B1, constant = false, signed = false), false)
-        val tester = LucidTester(
+        val tester = SimpleLucidTester(
             """
             module testMod (
                 input a
@@ -125,7 +131,7 @@ class DynamicEvalTests {
                 }
             }
         """.trimIndent(),
-            stage = ParseStage.AlwaysIO,
+            stage = ParseStage.ModuleInternals,
             TestSignalResolver(sig1, sig2)
         )
 

@@ -2,7 +2,6 @@ package com.alchitry.labs.parsers.lucidv2.parsers
 
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.context.SignalResolver
-import com.alchitry.labs.parsers.lucidv2.context.StructResolver
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.*
@@ -21,7 +20,7 @@ data class SignalParser(
     private val arraySizes: MutableMap<ArraySizeContext, Int> = mutableMapOf(),
     private val assignmentBlocks: MutableList<AssignmentBlock> = mutableListOf(),
     private val localParams: MutableMap<String, Signal> = mutableMapOf()
-) : LucidBaseListener(), SignalResolver, StructResolver {
+) : LucidBaseListener(), SignalResolver {
     fun withContext(context: LucidModuleContext) = copy(context = context)
 
     private var inModule = false
@@ -42,7 +41,7 @@ data class SignalParser(
     fun resolve(sigCtx: SignalContext): SignalOrSubSignal? = signals[sigCtx]
 
     fun resolveStructType(ctx: StructDecContext) = structTypes[ctx]
-    override fun resolve(ctx: StructTypeContext): StructType? = resolvedStructTypes[ctx]
+    fun resolve(ctx: StructTypeContext): StructType? = resolvedStructTypes[ctx]
     fun resolveSignalWidth(ctx: SignalWidthContext): SignalWidth? = signalWidths[ctx]
 
     override fun enterParamDec(ctx: ParamDecContext) {

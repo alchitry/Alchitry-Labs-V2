@@ -1,23 +1,24 @@
 import com.alchitry.labs.parsers.lucidv2.parsers.ParseStage
+import helpers.SimpleLucidTester
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class BoundsParserTest {
+class BoundsParserTests {
     @Test
     fun testBitSelectorConst() {
-        var test = LucidTester("[0:0]", ParseStage.Modules)
+        var test = SimpleLucidTester("[0:0]", ParseStage.Modules)
         var tree = test.bitSelection()
         test.context.walk(tree)
         assertEquals(listOf(0..0), test.context.bitSelection.resolve(tree).map { it.range })
         assert(test.hasNoIssues)
 
-        test = LucidTester("[5:0]", ParseStage.Modules)
+        test = SimpleLucidTester("[5:0]", ParseStage.Modules)
         tree = test.bitSelection()
         test.context.walk(tree)
         assertEquals(listOf(0..5), test.context.bitSelection.resolve(tree).map { it.range })
         assert(test.hasNoIssues)
 
-        test = LucidTester("[0:5]", ParseStage.Modules)
+        test = SimpleLucidTester("[0:5]", ParseStage.Modules)
         tree = test.bitSelection()
         test.context.walk(tree)
         assertEquals(emptyList<IntRange>(), test.context.bitSelection.resolve(tree).map { it.range })
@@ -25,7 +26,7 @@ class BoundsParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("[bx0:5]", ParseStage.Modules)
+        test = SimpleLucidTester("[bx0:5]", ParseStage.Modules)
         tree = test.bitSelection()
         test.context.walk(tree)
         assertEquals(emptyList<IntRange>(), test.context.bitSelection.resolve(tree).map { it.range })
@@ -33,13 +34,13 @@ class BoundsParserTest {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = LucidTester("[[0:5]", ParseStage.Modules)
+        test = SimpleLucidTester("[[0:5]", ParseStage.Modules)
         tree = test.bitSelection()
         test.context.walk(tree)
         assertEquals(emptyList<IntRange>(), test.context.bitSelection.resolve(tree).map { it.range })
         assert(test.hasSyntaxIssues)
 
-        test = LucidTester("[1321612161321613216354132465162316516546546516513246:0]", ParseStage.Modules)
+        test = SimpleLucidTester("[1321612161321613216354132465162316516546546516513246:0]", ParseStage.Modules)
         tree = test.bitSelection()
         test.context.walk(tree)
         assertEquals(emptyList<IntRange>(), test.context.bitSelection.resolve(tree).map { it.range })
@@ -50,31 +51,31 @@ class BoundsParserTest {
 
     @Test
     fun testBitSelectorFixedWidth() {
-        var test = LucidTester("[0+:5]", ParseStage.Modules)
+        var test = SimpleLucidTester("[0+:5]", ParseStage.Modules)
         var tree = test.bitSelection()
         test.context.walk(tree)
         assertEquals(listOf(0..4), test.context.bitSelection.resolve(tree).map { it.range })
         assert(test.hasNoIssues)
 
-        test = LucidTester("[5-:5]", ParseStage.Modules)
+        test = SimpleLucidTester("[5-:5]", ParseStage.Modules)
         tree = test.bitSelection()
         test.context.walk(tree)
         assertEquals(listOf(1..5), test.context.bitSelection.resolve(tree).map { it.range })
         assert(test.hasNoIssues)
 
-        test = LucidTester("[5-:2]", ParseStage.Modules)
+        test = SimpleLucidTester("[5-:2]", ParseStage.Modules)
         tree = test.bitSelection()
         test.context.walk(tree)
         assertEquals(listOf(4..5), test.context.bitSelection.resolve(tree).map { it.range })
         assert(test.hasNoIssues)
 
-        test = LucidTester("[5+:0]", ParseStage.Modules)
+        test = SimpleLucidTester("[5+:0]", ParseStage.Modules)
         tree = test.bitSelection()
         test.context.walk(tree)
         assertEquals(emptyList<IntRange>(), test.context.bitSelection.resolve(tree).map { it.range })
         assert(test.hasErrors)
 
-        test = LucidTester("[bx+:0]", ParseStage.Modules)
+        test = SimpleLucidTester("[bx+:0]", ParseStage.Modules)
         tree = test.bitSelection()
         test.context.walk(tree)
         assertEquals(emptyList<IntRange>(), test.context.bitSelection.resolve(tree).map { it.range })
@@ -83,19 +84,19 @@ class BoundsParserTest {
 
     @Test
     fun testArrayIndex() {
-        var test = LucidTester("[5]", ParseStage.Modules)
+        var test = SimpleLucidTester("[5]", ParseStage.Modules)
         var tree = test.bitSelection()
         test.context.walk(tree)
         assert(test.hasNoIssues)
         assertEquals(listOf(5..5), test.context.bitSelection.resolve(tree).map { it.range })
 
-        test = LucidTester("[0]", ParseStage.Modules)
+        test = SimpleLucidTester("[0]", ParseStage.Modules)
         tree = test.bitSelection()
         test.context.walk(tree)
         assert(test.hasNoIssues)
         assertEquals(listOf(0..0), test.context.bitSelection.resolve(tree).map { it.range })
 
-        test = LucidTester("[bx]", ParseStage.Modules)
+        test = SimpleLucidTester("[bx]", ParseStage.Modules)
         tree = test.bitSelection()
         test.context.walk(tree)
         assertEquals(emptyList<IntRange>(), test.context.bitSelection.resolve(tree).map { it.range })

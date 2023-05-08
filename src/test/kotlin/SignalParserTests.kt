@@ -1,14 +1,15 @@
 import com.alchitry.labs.parsers.lucidv2.parsers.ParseStage
 import com.alchitry.labs.parsers.lucidv2.signals.*
 import com.alchitry.labs.parsers.lucidv2.values.*
+import helpers.SimpleLucidTester
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-internal class SignalParserTest {
+internal class SignalParserTests {
     @Test
     fun testDffSimpleDeclaration() {
-        val tester = LucidTester("dff testing(.clk(1));", ParseStage.AlwaysIO)
+        val tester = SimpleLucidTester("dff testing(.clk(1));", ParseStage.ModuleInternals)
         tester.context.walk(tester.dffDec()) // parse
         val dff = tester.context.signal.resolve("testing")
 
@@ -29,7 +30,7 @@ internal class SignalParserTest {
 
     @Test
     fun testDffArrayClk() {
-        val tester = LucidTester("dff testing(.clk({1}));", ParseStage.AlwaysIO)
+        val tester = SimpleLucidTester("dff testing(.clk({1}));", ParseStage.ModuleInternals)
         tester.context.walk(tester.dffDec()) // parse
         tester.context.signal.resolve("testing")
 
@@ -40,7 +41,7 @@ internal class SignalParserTest {
 
     @Test
     fun testDffArrayRst() {
-        val tester = LucidTester("dff testing(.clk(1), .rst({1}));", ParseStage.AlwaysIO)
+        val tester = SimpleLucidTester("dff testing(.clk(1), .rst({1}));", ParseStage.ModuleInternals)
         tester.context.walk(tester.dffDec()) // parse
         tester.context.signal.resolve("testing")
 
@@ -51,7 +52,7 @@ internal class SignalParserTest {
 
     @Test
     fun testDffWideClk() {
-        val tester = LucidTester("dff testing(.clk(2b11));", ParseStage.AlwaysIO)
+        val tester = SimpleLucidTester("dff testing(.clk(2b11));", ParseStage.ModuleInternals)
         tester.context.walk(tester.dffDec()) // parse
         tester.context.signal.resolve("testing")
 
@@ -62,7 +63,7 @@ internal class SignalParserTest {
 
     @Test
     fun testDffWideRst() {
-        val tester = LucidTester("dff testing(.clk(1), .rst(2b11));", ParseStage.AlwaysIO)
+        val tester = SimpleLucidTester("dff testing(.clk(1), .rst(2b11));", ParseStage.ModuleInternals)
         tester.context.walk(tester.dffDec()) // parse
         tester.context.signal.resolve("testing")
 
@@ -73,7 +74,7 @@ internal class SignalParserTest {
 
     @Test
     fun testDffInit() {
-        val tester = LucidTester("dff testing(.clk(1), #INIT(1));", ParseStage.AlwaysIO)
+        val tester = SimpleLucidTester("dff testing(.clk(1), #INIT(1));", ParseStage.ModuleInternals)
         tester.context.walk(tester.dffDec()) // parse
         val dff = tester.context.signal.resolve("testing")
 
@@ -93,7 +94,7 @@ internal class SignalParserTest {
 
     @Test
     fun testDffInitTruncate() {
-        val tester = LucidTester("dff testing[3](.clk(1), #INIT(15));", ParseStage.AlwaysIO)
+        val tester = SimpleLucidTester("dff testing[3](.clk(1), #INIT(15));", ParseStage.ModuleInternals)
         tester.context.walk(tester.dffDec()) // parse
         val dff = tester.context.signal.resolve("testing")
 
@@ -113,7 +114,7 @@ internal class SignalParserTest {
 
     @Test
     fun testDffInitDimMismatch() {
-        val tester = LucidTester("dff testing[3](.clk(1), #INIT({15}));", ParseStage.AlwaysIO)
+        val tester = SimpleLucidTester("dff testing[3](.clk(1), #INIT({15}));", ParseStage.ModuleInternals)
         tester.context.walk(tester.dffDec()) // parse
         val dff = tester.context.signal.resolve("testing")
 
@@ -133,7 +134,7 @@ internal class SignalParserTest {
 
     @Test
     fun testDffArray() {
-        val tester = LucidTester("dff testing[8][4][2](.clk(1));", ParseStage.AlwaysIO)
+        val tester = SimpleLucidTester("dff testing[8][4][2](.clk(1));", ParseStage.ModuleInternals)
         tester.context.walk(tester.dffDec()) // parse
         assert(tester.hasNoIssues)
         val dff = tester.context.signal.resolve("testing")
@@ -161,7 +162,7 @@ internal class SignalParserTest {
 
     @Test
     fun testSignedDffArray() {
-        val tester = LucidTester("signed dff testing[8][4][2](.clk(1));", ParseStage.AlwaysIO)
+        val tester = SimpleLucidTester("signed dff testing[8][4][2](.clk(1));", ParseStage.ModuleInternals)
         tester.context.walk(tester.dffDec()) // parse
 
         assert(tester.hasNoIssues)
@@ -193,7 +194,7 @@ internal class SignalParserTest {
 
     @Test
     fun testAssignBlockSimple() {
-        val tester = LucidTester(".clk(1), .rst(0) { dff test; }", ParseStage.AlwaysIO)
+        val tester = SimpleLucidTester(".clk(1), .rst(0) { dff test; }", ParseStage.ModuleInternals)
         tester.context.walk(tester.assignBlock())
         assert(tester.hasNoIssues)
 
@@ -207,7 +208,7 @@ internal class SignalParserTest {
 
     @Test
     fun testDoubleAssign() {
-        val tester = LucidTester(".clk(1), .rst(0) { dff test(.clk(0)); }", ParseStage.AlwaysIO)
+        val tester = SimpleLucidTester(".clk(1), .rst(0) { dff test(.clk(0)); }", ParseStage.ModuleInternals)
         tester.context.walk(tester.assignBlock())
         assert(tester.hasErrors)
         assert(tester.hasNoWarnings)
@@ -216,7 +217,7 @@ internal class SignalParserTest {
 
     @Test
     fun testDoubleAssignBlocks() {
-        val tester = LucidTester(".clk(1) { .clk(0) { dff test; } }", ParseStage.AlwaysIO)
+        val tester = SimpleLucidTester(".clk(1) { .clk(0) { dff test; } }", ParseStage.ModuleInternals)
         tester.context.walk(tester.assignBlock())
         assert(tester.hasErrors)
         assert(tester.hasNoWarnings)
@@ -225,7 +226,7 @@ internal class SignalParserTest {
 
     @Test
     fun testDffSimpleStruct() {
-        val tester = LucidTester(
+        val tester = SimpleLucidTester(
             """
             module myMod (
             input a
@@ -234,7 +235,7 @@ internal class SignalParserTest {
             dff testing<test>(.clk(1))
             }
             """.trimIndent(),
-            ParseStage.AlwaysIO
+            ParseStage.ModuleInternals
         )
         tester.context.walk(tester.source())
         assert(tester.hasNoIssues)
@@ -255,7 +256,7 @@ internal class SignalParserTest {
 
     @Test
     fun testDffStructArray() {
-        val tester = LucidTester(
+        val tester = SimpleLucidTester(
             """
             module myMod (
             input a
@@ -264,7 +265,7 @@ internal class SignalParserTest {
             dff testing[6]<test>(.clk(1));
             }
             """.trimIndent(),
-            ParseStage.AlwaysIO
+            ParseStage.ModuleInternals
         )
         tester.context.walk(tester.source())
         assert(tester.hasNoIssues)
@@ -286,7 +287,7 @@ internal class SignalParserTest {
 
     @Test
     fun testModuleTypeExtraction() {
-        val tester = LucidTester(
+        val tester = SimpleLucidTester(
             """
             module myMod #(
                 MY_PARAM = 2 : MY_PARAM > 0
@@ -318,7 +319,7 @@ internal class SignalParserTest {
 
     @Test
     fun testBadParam() {
-        val tester = LucidTester(
+        val tester = SimpleLucidTester(
             """
             module myMod #(
                 MY_PARAM = 2 : MY_PARAM > 3
@@ -338,7 +339,7 @@ internal class SignalParserTest {
 
     @Test
     fun testGlobal() {
-        val tester = LucidTester(
+        val tester = SimpleLucidTester(
             """
                 global MyGlobal {
                     const ONE = 1
@@ -358,7 +359,7 @@ internal class SignalParserTest {
 
     @Test
     fun testSimpleSig() {
-        val tester = LucidTester(
+        val tester = SimpleLucidTester(
             """
             module myMod (
                 input a
@@ -366,7 +367,7 @@ internal class SignalParserTest {
                 sig testSig;
             }
             """.trimIndent(),
-            ParseStage.AlwaysIO
+            ParseStage.ModuleInternals
         )
         tester.context.walk(tester.source())
         assert(tester.hasNoSyntaxIssues)
@@ -383,7 +384,7 @@ internal class SignalParserTest {
 
     @Test
     fun testArraySig() {
-        val tester = LucidTester(
+        val tester = SimpleLucidTester(
             """
             module myMod (
                 input a
@@ -391,7 +392,7 @@ internal class SignalParserTest {
                 sig testSig[8];
             }
             """.trimIndent(),
-            ParseStage.AlwaysIO
+            ParseStage.ModuleInternals
         )
         tester.context.walk(tester.source())
         assert(tester.hasNoSyntaxIssues)
