@@ -135,10 +135,10 @@ fun BitListValue(
 
 fun BitListValue(value: Long, width: Int, constant: Boolean, signed: Boolean): BitListValue =
     BitListValue(width, constant, signed) {
-        if ((value and (1 shr it).toLong()) != 0.toLong()) Bit.B1 else Bit.B0
+        if ((value and (1 shl it).toLong()) != 0.toLong()) Bit.B1 else Bit.B0
     }
 
 fun BitListValue(value: Int, width: Int, constant: Boolean, signed: Boolean): BitListValue =
     BitListValue(width, constant, signed) {
-        if ((value and (1 shr it)) != 0) Bit.B1 else Bit.B0
+        if ((value and (1 shl it)) != 0) Bit.B1 else Bit.B0
     }

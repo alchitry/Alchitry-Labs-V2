@@ -166,7 +166,45 @@ data class ExprParser(
     override fun exitStructConst(ctx: StructConstContext) {
         if (canSkip(ctx)) return
 
-        // TODO Struct constants
+        val type = context.resolve(ctx.structType()) ?: return
+
+        val members = mutableMapOf<String, Value>()
+
+        ctx.structMemberConst().forEach { memberCtx ->
+            val name = memberCtx.name().text
+            val member = type[name]
+            if (member == null) {
+                context.reportError(memberCtx.name(), "The member $name doesn't belong to the struct ${type.name}.")
+                return
+            }
+
+            val value = values[memberCtx.expr()] ?: return
+
+            if (!member.width.canAssign(value.signalWidth)) {
+                context.reportError(memberCtx.expr(), "The member $name width does not match this expression.")
+                return
+            }
+
+            if (value is SimpleValue && value.signalWidth.getBitCount() > member.width.getBitCount()) {
+                context.reportWarning(
+                    memberCtx.expr(),
+                    "The member $name has fewer bits than this expression. It will be truncated."
+                )
+            }
+
+            members[name] = if (value is SimpleValue) value.resizeToMatch(member.width) else value
+        }
+
+        val missingKeys = type.keys.toMutableList().apply { removeAll(members.keys) }
+        if (missingKeys.isNotEmpty()) {
+            context.reportError(
+                ctx,
+                "The following members are missing from the struct: ${missingKeys.joinToString(", ")}."
+            )
+            return
+        }
+
+        values[ctx] = StructValue(type, members)
     }
 
     override fun exitBitSelection(ctx: BitSelectionContext) {

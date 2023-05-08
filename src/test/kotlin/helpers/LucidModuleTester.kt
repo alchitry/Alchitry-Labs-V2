@@ -32,6 +32,17 @@ class LucidModuleTester(val text: String) {
         return parser.source()
     }
 
+    fun globalParse() {
+        val errorCollector = ErrorCollector()
+        val tree = parseText(errorCollector)
+        assert(errorCollector.hasNoSyntaxIssues)
+
+        val globalContext = LucidGlobalContext(project, errorCollector)
+        globalContext.walk(tree)
+
+        assert(errorCollector.hasNoIssues)
+    }
+
     fun fullParse(): LucidModuleContext {
         val errorCollector = ErrorCollector()
         val tree = parseText(errorCollector)
