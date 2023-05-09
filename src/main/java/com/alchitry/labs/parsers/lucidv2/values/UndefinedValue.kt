@@ -1,5 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
+import com.alchitry.labs.parsers.lucidv2.signals.SignalSelector
+
 data class UndefinedValue(
     override val constant: Boolean,
     val width: SignalWidth = UndefinedSimpleWidth
@@ -43,7 +45,11 @@ data class UndefinedValue(
         if (width.isArray()) this else error("reverse() can't be called on UndefinedValues that aren't arrays.")
 
     override fun resizeToMatch(newWidth: SignalWidth): UndefinedValue {
-        check(width.canAssign(newWidth)) {"UndefinedValue width $width could not be resized to new width of $newWidth!"}
+        check(width.canAssign(newWidth)) { "UndefinedValue width $width could not be resized to new width of $newWidth!" }
         return copy(width = newWidth)
+    }
+
+    override fun write(selection: List<SignalSelector>, newValue: Value): Value {
+        error("Write isn't supported on undefined values!")
     }
 }

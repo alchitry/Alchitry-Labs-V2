@@ -17,10 +17,9 @@ data class AlwaysParser(
     private val context: LucidModuleContext,
     val alwaysBlocks: MutableList<AlwaysBlock> = mutableListOf()
 ) : LucidBaseListener() {
-    fun withContext(context: LucidModuleContext) = copy(context = context)
-
     private val dependencies = mutableSetOf<Signal>()
     private val drivenSignals = mutableSetOf<Signal>()
+    private val previouslyDrivenSignals = mutableSetOf<Signal>()
 
     suspend fun queueEval() {
         alwaysBlocks.forEach {
@@ -34,6 +33,7 @@ data class AlwaysParser(
     }
 
     override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
+        previouslyDrivenSignals.addAll(drivenSignals)
         alwaysBlocks.add(AlwaysBlock(context, dependencies.toList(), drivenSignals.toList(), ctx))
     }
 
@@ -46,6 +46,14 @@ data class AlwaysParser(
 
         if (!assignee.direction.canWrite) {
             context.reportError(ctx.signal(), "The signal ${ctx.signal().text} can't be written to.")
+            return
+        }
+
+        if (previouslyDrivenSignals.contains(assignee)) {
+            context.reportError(
+                ctx.signal(),
+                "The signal ${ctx.signal().text} already has a driver so it can't be driven by this always block."
+            )
             return
         }
 

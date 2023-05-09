@@ -31,6 +31,8 @@ data class ModuleParser(
 
     override fun exitParamConstraint(ctx: LucidParser.ParamConstraintContext) {
         val value = context.resolve(ctx.expr())
+        if (value is UndefinedValue)
+            return
         if (value?.isTrue()?.bit != Bit.B1) {
             context.reportError(ctx, "Parameter constraint \"${ctx.text}\" failed!")
         }

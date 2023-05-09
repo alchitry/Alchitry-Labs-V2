@@ -80,7 +80,7 @@ sealed class Value {
             }
         }
 
-
+    abstract fun write(selection: List<SignalSelector>, newValue: Value): Value
 }
 
 

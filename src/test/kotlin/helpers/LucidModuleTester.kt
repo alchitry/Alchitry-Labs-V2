@@ -9,6 +9,7 @@ import com.alchitry.labs.parsers.lucidv2.grammar.LucidLexer
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.SourceContext
 import com.alchitry.labs.parsers.lucidv2.parsers.ParseStage
+import com.alchitry.labs.parsers.lucidv2.signals.Module
 import com.alchitry.labs.parsers.lucidv2.signals.ModuleInstance
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
@@ -32,10 +33,11 @@ class LucidModuleTester(val text: String) {
         return parser.source()
     }
 
-    fun globalParse() {
-        val errorCollector = ErrorCollector()
-        val tree = parseText(errorCollector)
-        assert(errorCollector.hasNoSyntaxIssues)
+    fun globalParse(
+        errorCollector: ErrorCollector = ErrorCollector(),
+        tree: SourceContext = parseText(errorCollector)
+    ) {
+        assert(errorCollector.hasNoIssues)
 
         val globalContext = LucidGlobalContext(project, errorCollector)
         globalContext.walk(tree)
@@ -43,14 +45,10 @@ class LucidModuleTester(val text: String) {
         assert(errorCollector.hasNoIssues)
     }
 
-    fun fullParse(): LucidModuleContext {
-        val errorCollector = ErrorCollector()
-        val tree = parseText(errorCollector)
-        assert(errorCollector.hasNoSyntaxIssues)
-
-        val globalContext = LucidGlobalContext(project, errorCollector)
-        globalContext.walk(tree)
-
+    fun moduleTypeParse(
+        errorCollector: ErrorCollector = ErrorCollector(),
+        tree: SourceContext = parseText(errorCollector)
+    ): Module {
         assert(errorCollector.hasNoIssues)
 
         val moduleTypeContext = LucidModuleTypeContext(project, errorCollector)
@@ -58,6 +56,15 @@ class LucidModuleTester(val text: String) {
 
         assert(errorCollector.hasNoIssues)
         assertNotNull(module)
+        return module
+    }
+
+    fun fullParse(): LucidModuleContext {
+        val errorCollector = ErrorCollector()
+        val tree = parseText(errorCollector)
+
+        globalParse(errorCollector, tree)
+        val module = moduleTypeParse(errorCollector, tree)
 
         val moduleInstance = ModuleInstance(project, "top", module, mapOf())
 

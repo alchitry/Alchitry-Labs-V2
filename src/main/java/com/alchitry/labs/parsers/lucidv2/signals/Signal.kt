@@ -118,15 +118,17 @@ data class SubSignal(
     /**
      * Generates the full value for the parent signal with the value v applied to the selected portion of the signal.
      */
-    private fun getFullValue(v: Value): Value {
+    private fun getFullValue(v: Value, evalContext: Evaluable?): Value {
         require(get().signalWidth.canAssign(v.signalWidth)) {
             "Cannot set value $v to selected subsignal!"
         }
-        TODO("Not yet implemented")
+        return parent.get(evalContext).write(selection, v.resizeToMatch(width))
     }
 
-    override fun quietSet(v: Value, evalContext: Evaluable?) = parent.quietSet(getFullValue(v), evalContext)
-    override suspend fun set(v: Value) = parent.set(getFullValue(v))
+    override fun quietSet(v: Value, evalContext: Evaluable?) =
+        parent.quietSet(getFullValue(v, evalContext), evalContext)
+
+    override suspend fun set(v: Value) = parent.set(getFullValue(v, null))
     override suspend fun publish() = parent.publish()
 }
 

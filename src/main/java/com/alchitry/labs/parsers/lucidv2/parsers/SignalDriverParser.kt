@@ -10,7 +10,6 @@ import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 data class SignalDriverParser(
     private val context: LucidModuleContext
 ) : LucidBaseListener() {
-    fun withContext(context: LucidModuleContext) = copy(context = context)
 
 
 }

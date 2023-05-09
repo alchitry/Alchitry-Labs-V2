@@ -1,6 +1,8 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
-data class  BitValue(
+import com.alchitry.labs.parsers.lucidv2.signals.SignalSelector
+
+data class BitValue(
     val bit: Bit,
     override val constant: Boolean,
     override val signed: Boolean
@@ -51,5 +53,11 @@ data class  BitValue(
         sb.append(bit.toString().substring(1))
         sb.append('}')
         return sb.toString()
+    }
+
+    override fun write(selection: List<SignalSelector>, newValue: Value): BitValue {
+        require(selection.isEmpty()) { "Attempted to select further than a single bit!" }
+        require(newValue is BitValue) { "Attempted to write a value other than a single bit to a BitValue!" }
+        return copy(bit = newValue.bit)
     }
 }

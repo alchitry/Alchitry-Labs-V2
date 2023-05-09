@@ -12,8 +12,6 @@ data class StructParser(
     private val resolvedStructTypes: MutableMap<StructTypeContext, StructType> = mutableMapOf(),
     private val localStructType: MutableMap<String, StructType> = mutableMapOf()
 ) : LucidBaseListener() {
-    fun withContext(context: LucidExprContext) = copy(context = context)
-
     fun resolveStruct(name: String) = localStructType[name]
     fun resolve(structTypeContext: StructTypeContext) = resolvedStructTypes[structTypeContext]
     fun resolve(structDecContext: StructDecContext) = structTypes[structDecContext]

@@ -73,4 +73,54 @@ data class BitListValue(
         sb.append('}')
         return sb.toString()
     }
+
+    override fun write(selection: List<SignalSelector>, newValue: Value): BitListValue {
+        if (selection.isEmpty()) {
+            require(newValue is BitListValue && newValue.signalWidth == signalWidth) {
+                "Attempted to assign an incompatible type to the BitListValue!"
+            }
+            return copy(bits = newValue.bits)
+        }
+
+        require(selection.size == 1) {
+            "Selection contains more than one selector for a BitListValue!"
+        }
+
+        when (val selector = selection.first()) {
+            is SignalSelector.Bits -> {
+                val selectedCt = selector.range.last - selector.range.first + 1
+                if (selectedCt == 1) {
+                    require(newValue is BitValue) {
+                        "Attempted to assign a value other an single bit to a single bit in a BitListValue!"
+                    }
+                    return copy(
+                        bits = List(bits.size) {
+                            if (selector.range.contains(it))
+                                newValue.bit
+                            else
+                                bits[it]
+                        }
+                    )
+
+                } else {
+                    require(newValue is BitListValue) {
+                        "Attempted to assign a value other than a BitListValue to multiple elements in a BitListValue!"
+                    }
+                    require(newValue.bits.size == selectedCt) {
+                        "Selected bit count doesn't match the newValue bit count!"
+                    }
+                    return copy(
+                        bits = List(bits.size) {
+                            if (selector.range.contains(it))
+                                newValue.bits[it - selector.range.first]
+                            else
+                                bits[it]
+                        }
+                    )
+                }
+            }
+
+            is SignalSelector.Struct -> error("Attempted to used struct selection on BitListValue!")
+        }
+    }
 }

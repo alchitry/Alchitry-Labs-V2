@@ -15,8 +15,6 @@ data class TypesParser(
     private val arraySizes: MutableMap<ArraySizeContext, Int> = mutableMapOf(),
     private val assignmentBlocks: MutableList<AssignmentBlock> = mutableListOf()
 ) : LucidBaseListener(), SignalResolver {
-    fun withContext(context: LucidModuleContext) = copy(context = context)
-
     /** Assumes the name is a simple name (no .'s) */
     override fun resolve(name: String): SignalOrParent? {
         dffs[name]?.let { return it }

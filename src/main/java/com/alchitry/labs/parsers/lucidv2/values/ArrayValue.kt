@@ -65,4 +65,39 @@ data class ArrayValue(
             )
         }
     }
+
+    override fun write(selection: List<SignalSelector>, newValue: Value): ArrayValue {
+        if (selection.isEmpty()) {
+            if (newValue !is ArrayValue || newValue.signalWidth != signalWidth) {
+                error("Incompatible newValue width!")
+            }
+            return newValue
+        }
+        when (val selector = selection.first()) {
+            is SignalSelector.Bits -> {
+                val selectedCt = selector.range.last - selector.range.first + 1
+                if (selectedCt == 1) {
+                    return copy(elements = List(elements.size) {
+                        if (it == selector.range.first)
+                            elements[it].write(selection.subList(1, selection.size), newValue)
+                        else
+                            elements[it]
+                    })
+                } else {
+                    if (newValue !is ArrayValue)
+                        error("Selection is multiple elements but newValue is not an ArrayValue!")
+                    if (newValue.elements.size != selectedCt)
+                        error("The selection size doesn't match the newValue size!")
+                    return copy(elements = List(elements.size) {
+                        if (selector.range.contains(it))
+                            newValue.elements[it - selector.range.first]
+                        else
+                            elements[it]
+                    })
+                }
+            }
+
+            is SignalSelector.Struct -> error("Can't use struct selection on an array!")
+        }
+    }
 }

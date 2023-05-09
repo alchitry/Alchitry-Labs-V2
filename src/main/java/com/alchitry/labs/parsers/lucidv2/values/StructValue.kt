@@ -31,17 +31,17 @@ data class StructValue(
 
     override infix fun and(other: Value): StructValue {
         require(other is StructValue && other.type == type) { "And on a StructValue can only be performed between another StructValue of the same type!" }
-        return copy(valueMap = mapValues { (k,v) -> v and (other[k]!!) })
+        return copy(valueMap = mapValues { (k, v) -> v and (other[k]!!) })
     }
 
     override infix fun or(other: Value): StructValue {
         require(other is StructValue && other.type == type) { "Or on a StructValue can only be performed between another StructValue of the same type!" }
-        return copy(valueMap = mapValues { (k,v) -> v or (other[k]!!) })
+        return copy(valueMap = mapValues { (k, v) -> v or (other[k]!!) })
     }
 
     override infix fun xor(other: Value): StructValue {
         require(other is StructValue && other.type == type) { "Xor on a StructValue can only be performed between another StructValue of the same type!" }
-        return copy(valueMap = mapValues { (k,v) -> v xor (other[k]!!) })
+        return copy(valueMap = mapValues { (k, v) -> v xor (other[k]!!) })
     }
 
     override fun reverse() = error("reverse() can't be called on StructValues!")
@@ -57,5 +57,26 @@ data class StructValue(
             selection,
             "Member $selection is not part of the struct $type"
         )
+    }
+
+    override fun write(selection: List<SignalSelector>, newValue: Value): StructValue {
+        if (selection.isEmpty()) {
+            require(newValue is StructValue && newValue.signalWidth == signalWidth) {
+                "Attempted to write an incompatible value to a StructValue!"
+            }
+            return newValue
+        }
+        when (val selector = selection.first()) {
+            is SignalSelector.Bits -> error("Attempted to select bits on a StructValue!")
+            is SignalSelector.Struct -> {
+                require(type.containsKey(selector.member)) { "Member $selector is not part of the struct $type" }
+                return copy(valueMap = valueMap.mapValues { (k, v) ->
+                    if (k == selector.member)
+                        v.write(selection.subList(1, selection.size), newValue)
+                    else
+                        v
+                })
+            }
+        }
     }
 }

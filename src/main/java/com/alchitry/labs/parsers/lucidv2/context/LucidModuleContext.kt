@@ -25,14 +25,18 @@ class LucidModuleContext(
     signalDriver: SignalDriverParser? = null,
     val localSignalResolver: SignalResolver? = null // Used in tests to simulate a full parse.
 ) : LucidExprContext, ErrorListener by errorCollector {
+
+    // These will be run multiple times during evaluation, so they need their context updated
     val expr = expr?.withContext(this) ?: ExprParser(this)
     val bitSelection = bitSelection?.withContext(this) ?: BitSelectionParser(this)
-    val types = types?.withContext(this) ?: TypesParser(this)
-    val struct = struct?.withContext(this) ?: StructParser(this)
     val signal = signal?.withContext(this) ?: SignalParser(this)
-    val alwaysParser = alwaysParser?.withContext(this) ?: AlwaysParser(this)
     val alwaysEvaluator = alwaysEvaluator?.withContext(this) ?: AlwaysEvaluator(this)
-    val signalDriver = signalDriver?.withContext(this) ?: SignalDriverParser(this)
+
+    // These won't be re-run during evaluation, so they don't need their context updated
+    val types = types ?: TypesParser(this)
+    val struct = struct ?: StructParser(this)
+    val alwaysParser = alwaysParser ?: AlwaysParser(this)
+    val signalDriver = signalDriver ?: SignalDriverParser(this)
 
     private fun getListeners() = when (stage) {
         ParseStage.ModuleInternals -> listOf<ParseTreeListener>(
@@ -101,20 +105,13 @@ class LucidModuleContext(
         alwaysParser.queueEval()
     }
 
-    fun walk(t: ParseTree, vararg extraListeners: ParseTreeListener) {
-        when (stage) {
-            ParseStage.ModuleInternals -> checkNotNull(instance) { "ModuleInternals pass requires instantiation!" }
-            ParseStage.Drivers -> checkNotNull(instance) { "Drivers pass requires instantiation!" }
-            ParseStage.Evaluation -> checkNotNull(instance) { "Evaluation pass requires instantiation!" }
-            else -> {}
-        }
-
-        return ParseTreeMultiWalker.walk(
+    fun walk(t: ParseTree, vararg extraListeners: ParseTreeListener) =
+        ParseTreeMultiWalker.walk(
             getListeners().toMutableList().apply { addAll(extraListeners.toList()) },
             t,
             getFilter()
         )
-    }
+
 
     override fun resolve(exprCtx: ExprContext) = expr.resolve(exprCtx)
 
