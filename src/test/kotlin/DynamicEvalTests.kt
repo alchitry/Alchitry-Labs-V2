@@ -133,7 +133,7 @@ class DynamicEvalTests {
             tester.project.processQueue()
         }
 
-        val alwaysBlock = tester.context.alwaysParser.alwaysBlocks.first()
+        val alwaysBlock = tester.context.alwaysParser.alwaysBlocks.values.first()
 
         assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.get(null))
         assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig2.get(null))

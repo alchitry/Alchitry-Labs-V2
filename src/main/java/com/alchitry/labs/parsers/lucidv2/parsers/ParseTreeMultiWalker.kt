@@ -21,7 +21,7 @@ object ParseTreeMultiWalker {
         for (i in 0 until r.childCount) {
             val child = r.getChild(i)
             if (!filter.shouldSkip(r, child))
-                walk(listeners, child)
+                walk(listeners, child, filter)
         }
         exitRule(listeners, r)
     }

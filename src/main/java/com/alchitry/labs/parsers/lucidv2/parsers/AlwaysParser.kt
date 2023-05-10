@@ -15,14 +15,14 @@ import com.alchitry.labs.parsers.lucidv2.values.minBits
  */
 data class AlwaysParser(
     private val context: LucidModuleContext,
-    val alwaysBlocks: MutableList<AlwaysBlock> = mutableListOf()
+    val alwaysBlocks: MutableMap<AlwaysBlockContext, AlwaysBlock> = mutableMapOf()
 ) : LucidBaseListener() {
     private val dependencies = mutableSetOf<Signal>()
     private val drivenSignals = mutableSetOf<Signal>()
     private val previouslyDrivenSignals = mutableSetOf<Signal>()
 
     suspend fun queueEval() {
-        alwaysBlocks.forEach {
+        alwaysBlocks.values.forEach {
             context.project.queueEvaluation(it)
         }
     }
@@ -34,7 +34,7 @@ data class AlwaysParser(
 
     override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
         previouslyDrivenSignals.addAll(drivenSignals)
-        alwaysBlocks.add(AlwaysBlock(context, dependencies.toList(), drivenSignals.toList(), ctx))
+        alwaysBlocks[ctx] = AlwaysBlock(context, dependencies.toList(), drivenSignals.toList(), ctx)
     }
 
     override fun exitExprSignal(ctx: ExprSignalContext) {

@@ -59,17 +59,22 @@ class LucidModuleTester(val text: String) {
         return module
     }
 
-    fun fullParse(): LucidModuleContext {
-        val errorCollector = ErrorCollector()
-        val tree = parseText(errorCollector)
+    /**
+     * Performs a full parse on the file.
+     * @param errorCollector if null, the function will automatically check for errors. If provided, you should check
+     * for errors after calling this function.
+     */
+    fun fullParse(errorCollector: ErrorCollector? = ErrorCollector()): LucidModuleContext {
+        val errors = errorCollector ?: ErrorCollector()
+        val tree = parseText(errors)
 
-        globalParse(errorCollector, tree)
-        val module = moduleTypeParse(errorCollector, tree)
+        globalParse(errors, tree)
+        val module = moduleTypeParse(errors, tree)
 
         val moduleInstance = ModuleInstance(project, "top", module, mapOf())
 
         val moduleContext =
-            LucidModuleContext(project, ParseStage.ModuleInternals, moduleInstance, null, errorCollector)
+            LucidModuleContext(project, ParseStage.ModuleInternals, moduleInstance, null, errors)
 
         val stages = listOf(
             ParseStage.ModuleInternals,
@@ -80,7 +85,8 @@ class LucidModuleTester(val text: String) {
             moduleContext.stage = it
             moduleContext.walk(tree)
 
-            assert(errorCollector.hasNoIssues)
+            if (errorCollector == null)
+                assert(errors.hasNoIssues)
         }
 
         return moduleContext
