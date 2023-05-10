@@ -68,8 +68,7 @@ class LucidModuleContext(
             this.struct,
             this.signal,
             this.types,
-            this.alwaysParser,
-            this.signalDriver
+            this.alwaysParser
         )
     }
 

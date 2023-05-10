@@ -91,6 +91,8 @@ class LucidModuleTester(val text: String) {
             if (errorCollector == null) {
                 assert(errors.hasNoIssues)
             }
+            if (errors.hasErrors)
+                return moduleContext
         }
 
         return moduleContext

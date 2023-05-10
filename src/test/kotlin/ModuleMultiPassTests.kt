@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class ModuleMultiPassTests {
-
     @Test
     fun testGlobalUse() {
         val tester = LucidModuleTester(
