@@ -23,7 +23,7 @@ paramDec: name (NL* '=' NL* paramDefault)? (NL* ':' NL* paramConstraint)?;
 paramDefault: expr;
 paramConstraint: expr;
 
-portDec: (SIGNED NL*)? portDirection NL* name NL* signalWidth;
+portDec: (SIGNED NL*)? portDirection NL* name signalWidth;
 portDirection: 'input'|'output'|'inout';
 
 signalWidth: arraySize* structType?;
@@ -52,8 +52,8 @@ assignBlock: conList NL* '{' (dffDec | moduleInst | assignBlock | NL)* '}';
 sigCon: '.' name NL* '(' NL* expr NL* ')';
 paramCon: '#' name NL* '(' NL* expr NL* ')';
 
-sigDec: (SIGNED NL*)? 'sig' NL* name NL* signalWidth semi;
-dffDec: (SIGNED NL*)? 'dff' NL* name NL* signalWidth (NL* instCons)? semi;
+sigDec: (SIGNED NL*)? 'sig' NL* name signalWidth semi;
+dffDec: (SIGNED NL*)? 'dff' NL* name signalWidth (NL* instCons)? semi;
 enumDec: 'enum' NL* name NL* '{' NL* name (NL* ',' NL* name)* NL* '}' semi;
 
 moduleInst: name NL* name (NL* arraySize)* (NL* instCons)? semi;
@@ -97,7 +97,7 @@ caseBlock: (alwaysStat | NL)* alwaysStat;
 ifStat: 'if' NL* '(' NL* expr NL* ')' NL* block (NL* elseStat)?;
 elseStat: 'else' NL* block;
 
-repeatStat: 'repeat' NL* '(' NL* expr NL* (',' NL* signal NL*)? ')' NL* block;
+repeatStat: 'repeat' NL* '(' NL* name NL* ',' NL* expr NL* ')' NL* block;
 
 function: FUNCTION_ID NL* '(' NL* expr (NL* ',' NL* expr)* NL* ')';
 

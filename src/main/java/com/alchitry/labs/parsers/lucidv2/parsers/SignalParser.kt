@@ -1,25 +1,53 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
 import com.alchitry.labs.parsers.lucidv2.context.LucidExprContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.*
 import com.alchitry.labs.parsers.lucidv2.values.*
 import org.antlr.v4.runtime.ParserRuleContext
 
+fun ParserRuleContext.firstParentOrNull(condition: (ParserRuleContext) -> Boolean): ParserRuleContext? {
+    var context = this.getParent() ?: return null
+    while (!condition(context)) {
+        context = context.getParent() ?: return null
+    }
+    return context
+}
+
 data class SignalParser(
     private val context: LucidExprContext,
     private val signals: MutableMap<SignalContext, SignalOrSubSignal> = mutableMapOf(),
-    private val signalWidths: MutableMap<SignalWidthContext, SignalWidth> = mutableMapOf()
+    private val signalWidths: MutableMap<SignalWidthContext, SignalWidth> = mutableMapOf(),
+    private val localRepeatSignals: MutableMap<String, Signal> = mutableMapOf()
 ) : LucidBaseListener() {
     fun withContext(context: LucidExprContext) = copy(context = context)
 
     fun resolve(sigCtx: SignalContext): SignalOrSubSignal? = signals[sigCtx]
     fun resolve(ctx: SignalWidthContext): SignalWidth? = signalWidths[ctx]
 
+    override fun enterRepeatStat(ctx: RepeatStatContext) {
+        if (context is LucidModuleContext) {
+            val alwaysParent = (ctx.firstParentOrNull { it is AlwaysBlockContext }
+                ?: error("Repeat statement without an AlwaysBlock parent?")) as AlwaysBlockContext
+
+            val repeatSignals = context.alwaysParser.alwaysBlocks[alwaysParent]?.repeatSignals
+                ?: error("AlwaysParser missing always block!")
+            val newSig = repeatSignals[ctx.block()] ?: error("Missing repeat signal for repeat block!")
+            localRepeatSignals[newSig.name] = newSig
+        }
+    }
+
+    override fun exitRepeatStat(ctx: RepeatStatContext) {
+        if (context is LucidModuleContext) {
+            localRepeatSignals.remove(ctx.name().text)
+        }
+    }
+
     override fun exitSignal(ctx: SignalContext) {
         val firstName = ctx.name().firstOrNull() ?: return
-        val signalOrParent = context.resolveSignal(firstName.text)
+        val signalOrParent = localRepeatSignals[firstName.text] ?: context.resolveSignal(firstName.text)
 
         if (signalOrParent == null) {
             context.reportError(ctx.name(0), "Failed to resolve signal ${firstName.text}")

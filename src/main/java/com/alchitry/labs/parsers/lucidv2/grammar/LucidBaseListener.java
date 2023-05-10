@@ -598,16 +598,21 @@ public class LucidBaseListener implements LucidListener {
 	@Override public void enterBitSelection(LucidParser.BitSelectionContext ctx) { }
 	/**
 	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitBitSelection(LucidParser.BitSelectionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSignal(LucidParser.SignalContext ctx) { }
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitBitSelection(LucidParser.BitSelectionContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterSignal(LucidParser.SignalContext ctx) {
+    }
 
     /**
      * {@inheritDoc}
@@ -716,16 +721,20 @@ public class LucidBaseListener implements LucidListener {
     @Override
     public void enterRepeatStat(LucidParser.RepeatStatContext ctx) {
     }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitRepeatStat(LucidParser.RepeatStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitRepeatStat(LucidParser.RepeatStatContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void enterFunction(LucidParser.FunctionContext ctx) { }
 	/**

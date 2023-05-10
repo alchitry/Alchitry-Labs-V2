@@ -5,8 +5,9 @@ import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.AlwaysBlock
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
+import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
+import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
-import com.alchitry.labs.parsers.lucidv2.values.SimpleWidth
 import com.alchitry.labs.parsers.lucidv2.values.minBits
 
 /**
@@ -20,6 +21,7 @@ data class AlwaysParser(
     private val dependencies = mutableSetOf<Signal>()
     private val drivenSignals = mutableSetOf<Signal>()
     private val previouslyDrivenSignals = mutableSetOf<Signal>()
+    private val repeatSignals = mutableMapOf<BlockContext, Signal>()
 
     suspend fun queueEval() {
         alwaysBlocks.values.forEach {
@@ -34,7 +36,7 @@ data class AlwaysParser(
 
     override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
         previouslyDrivenSignals.addAll(drivenSignals)
-        alwaysBlocks[ctx] = AlwaysBlock(context, dependencies.toList(), drivenSignals.toList(), ctx)
+        alwaysBlocks[ctx] = AlwaysBlock(context, dependencies.toList(), drivenSignals.toList(), repeatSignals, ctx)
     }
 
     override fun exitExprSignal(ctx: ExprSignalContext) {
@@ -108,8 +110,19 @@ data class AlwaysParser(
         }
     }
 
-    override fun exitRepeatStat(ctx: RepeatStatContext) {
-        val signal = context.resolve(ctx.signal()) ?: return
+    override fun enterRepeatStat(ctx: RepeatStatContext) {
+        val sigName = ctx.name().text
+
+        if (ctx.name().TYPE_ID() == null) {
+            context.reportError(ctx.name(), "Repeat variable name must start with a lowercase letter.")
+            return
+        }
+
+        if (context.resolveSignal(sigName) != null) {
+            context.reportError(ctx.name(), "The name $sigName is already in use!")
+            return
+        }
+
         val countValue = context.resolve(ctx.expr()) ?: return
 
         if (countValue !is SimpleValue || !countValue.isNumber()) {
@@ -134,23 +147,17 @@ data class AlwaysParser(
             return
         }
 
-        if (signal !is Signal) {
-            context.errorCollector.reportError(ctx.signal(), "Repeat signal must be a full signal (no bit selections).")
-            return
-        }
+        val sigWidth = (count - 1).toBigInteger().minBits()
 
-        val sigWidth = signal.width
-        if (sigWidth !is SimpleWidth) {
-            context.errorCollector.reportError(ctx.signal(), "Repeat signal must have a simple width.")
-            return
-        }
-
-        if ((count - 1).toBigInteger().minBits() > sigWidth.size) {
-            context.errorCollector.reportError(
-                ctx.signal(),
-                "The signal isn't wide enough to hold the max value of $count."
+        repeatSignals[ctx.block()] = Signal(
+            sigName,
+            SignalDirection.Read,
+            null,
+            BitListValue(
+                0, sigWidth,
+                constant = false,
+                signed = false
             )
-            return
-        }
+        )
     }
 }

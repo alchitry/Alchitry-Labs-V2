@@ -14,10 +14,16 @@ data class AlwaysEvaluator(
     fun withContext(context: LucidModuleContext) = copy(context = context)
 
     private val writtenSignals = mutableSetOf<Signal>()
+    private var alwaysBlock: AlwaysBlockContext? = null
 
     override fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
         check(context.stage == ParseStage.Evaluation) { "The AlwaysEvaluator should only be used in evaluations!" }
         writtenSignals.clear()
+        alwaysBlock = ctx
+    }
+
+    override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
+        alwaysBlock = null
     }
 
     suspend fun processWriteQueue() {
@@ -66,7 +72,7 @@ data class AlwaysEvaluator(
     }
 
     override fun exitRepeatStat(ctx: RepeatStatContext) {
-        val signal = context.resolve(ctx.signal()) as? Signal ?: return
+        val signal = context.alwaysParser.alwaysBlocks[alwaysBlock]?.repeatSignals?.get(ctx.block()) ?: return
         val countValue = context.expr.resolve(ctx.expr()) as? SimpleValue ?: return
 
         val count = countValue.toBigInt().toInt()

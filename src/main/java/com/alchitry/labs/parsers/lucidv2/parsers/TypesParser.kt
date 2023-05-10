@@ -95,7 +95,6 @@ data class TypesParser(
             return
         }
 
-        println("Adding signal named $name")
         sigs[name] = Signal(name, SignalDirection.Both, null, width.filledWith(Bit.Bu, false, signed), signed)
     }
 
