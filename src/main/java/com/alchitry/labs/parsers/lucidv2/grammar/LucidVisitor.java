@@ -353,26 +353,40 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#elseStat}.
 	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitElseStat(LucidParser.ElseStatContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#repeatStat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitRepeatStat(LucidParser.RepeatStatContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#function}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunction(LucidParser.FunctionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#number}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
+     * @return the visitor result
+     */
+    T visitElseStat(LucidParser.ElseStatContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#repeatStat}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitRepeatStat(LucidParser.RepeatStatContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#repeatBlock}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitRepeatBlock(LucidParser.RepeatBlockContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#function}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitFunction(LucidParser.FunctionContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#number}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
 	T visitNumber(LucidParser.NumberContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ExprTernary}

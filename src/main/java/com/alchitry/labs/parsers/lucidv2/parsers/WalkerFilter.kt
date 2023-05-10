@@ -28,7 +28,11 @@ interface WalkerFilter {
 
         val SkipControlBlocks = object : WalkerFilter {
             override fun shouldSkip(parent: RuleNode, child: ParseTree): Boolean {
-                return (child is BlockContext || child is CaseBlockContext)
+                return (
+                        (child is BlockContext && parent !is RepeatBlockContext)
+                                || child is CaseBlockContext
+                                || child is RepeatBlockContext
+                        )
                         && parent !is AlwaysBlockContext
             }
         }

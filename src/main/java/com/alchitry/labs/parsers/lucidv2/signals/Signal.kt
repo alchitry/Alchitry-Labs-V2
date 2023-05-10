@@ -102,13 +102,7 @@ data class SubSignal(
     val parent: Signal,
     val selection: SignalSelection
 ) : SignalOrSubSignal {
-    override fun get(evalContext: Evaluable?): Value {
-        var v = parent.get(evalContext)
-        selection.forEach {
-            v = v.select(it)
-        }
-        return v
-    }
+    override fun get(evalContext: Evaluable?): Value = parent.get(evalContext).select(selection)
 
     override val width: SignalWidth = get().signalWidth
 

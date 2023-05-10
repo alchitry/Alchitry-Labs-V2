@@ -97,7 +97,8 @@ caseBlock: (alwaysStat | NL)* alwaysStat;
 ifStat: 'if' NL* '(' NL* expr NL* ')' NL* block (NL* elseStat)?;
 elseStat: 'else' NL* block;
 
-repeatStat: 'repeat' NL* '(' NL* name NL* ',' NL* expr NL* ')' NL* block;
+repeatStat: 'repeat' NL* '(' NL* name NL* ',' NL* expr NL* ')' NL* repeatBlock;
+repeatBlock: block;
 
 function: FUNCTION_ID NL* '(' NL* expr (NL* ',' NL* expr)* NL* ')';
 

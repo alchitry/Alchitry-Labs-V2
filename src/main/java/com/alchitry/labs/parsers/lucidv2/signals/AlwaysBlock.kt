@@ -3,7 +3,7 @@ package com.alchitry.labs.parsers.lucidv2.signals
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.AlwaysBlockContext
-import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.BlockContext
+import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.RepeatStatContext
 import com.alchitry.labs.parsers.onAnyChange
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
@@ -12,7 +12,7 @@ class AlwaysBlock(
     context: LucidModuleContext,
     val dependencies: List<Signal>,
     val drivenSignals: List<Signal>,
-    val repeatSignals: Map<BlockContext, Signal>,
+    val repeatSignals: Map<RepeatStatContext, Signal>,
     private val alwaysBlockContext: AlwaysBlockContext
 ): Evaluable {
     val context = context.withEvalContext(this)

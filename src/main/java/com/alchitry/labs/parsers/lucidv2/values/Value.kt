@@ -1,5 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
+import com.alchitry.labs.parsers.lucidv2.signals.SignalSelection
 import com.alchitry.labs.parsers.lucidv2.signals.SignalSelectionException
 import com.alchitry.labs.parsers.lucidv2.signals.SignalSelector
 
@@ -57,6 +58,14 @@ sealed class Value {
 
     /** Returns true if the other value can be scaled to match this value. */
     fun canAssign(other: Value): Boolean = signalWidth.canAssign(other.signalWidth)
+
+    fun select(selection: SignalSelection): Value {
+        var v = this
+        selection.forEach {
+            v = v.select(it)
+        }
+        return v
+    }
 
     fun select(selection: SignalSelector): Value =
         when (selection) {

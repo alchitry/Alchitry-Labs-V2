@@ -72,7 +72,7 @@ data class AlwaysEvaluator(
     }
 
     override fun exitRepeatStat(ctx: RepeatStatContext) {
-        val signal = context.alwaysParser.alwaysBlocks[alwaysBlock]?.repeatSignals?.get(ctx.block()) ?: return
+        val signal = context.alwaysParser.alwaysBlocks[alwaysBlock]?.repeatSignals?.get(ctx) ?: return
         val countValue = context.expr.resolve(ctx.expr()) as? SimpleValue ?: return
 
         val count = countValue.toBigInt().toInt()
@@ -87,7 +87,7 @@ data class AlwaysEvaluator(
                 ),
                 context.evalContext
             )
-            context.walk(ctx.block())
+            context.walk(ctx.repeatBlock())
         }
     }
 }

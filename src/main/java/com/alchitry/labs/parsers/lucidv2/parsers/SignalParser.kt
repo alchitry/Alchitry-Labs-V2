@@ -27,22 +27,22 @@ data class SignalParser(
     fun resolve(sigCtx: SignalContext): SignalOrSubSignal? = signals[sigCtx]
     fun resolve(ctx: SignalWidthContext): SignalWidth? = signalWidths[ctx]
 
-    override fun enterRepeatStat(ctx: RepeatStatContext) {
+    override fun enterRepeatBlock(ctx: RepeatBlockContext) {
+        val repCtx = ctx.getParent() as RepeatStatContext
         if (context is LucidModuleContext) {
             val alwaysParent = (ctx.firstParentOrNull { it is AlwaysBlockContext }
                 ?: error("Repeat statement without an AlwaysBlock parent?")) as AlwaysBlockContext
 
-            val repeatSignals = context.alwaysParser.alwaysBlocks[alwaysParent]?.repeatSignals
-                ?: error("AlwaysParser missing always block!")
-            val newSig = repeatSignals[ctx.block()] ?: error("Missing repeat signal for repeat block!")
+            val repeatSignals =
+                context.alwaysParser.alwaysBlocks[alwaysParent]?.repeatSignals ?: context.alwaysParser.repeatSignals
+            val newSig = repeatSignals[repCtx] ?: error("Missing repeat signal for repeat block!")
             localRepeatSignals[newSig.name] = newSig
         }
     }
 
-    override fun exitRepeatStat(ctx: RepeatStatContext) {
-        if (context is LucidModuleContext) {
-            localRepeatSignals.remove(ctx.name().text)
-        }
+    override fun exitRepeatBlock(ctx: RepeatBlockContext) {
+        val repCtx = ctx.getParent() as RepeatStatContext
+        localRepeatSignals.remove(repCtx.name().text)
     }
 
     override fun exitSignal(ctx: SignalContext) {

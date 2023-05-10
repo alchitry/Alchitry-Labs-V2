@@ -64,11 +64,13 @@ class LucidModuleTester(val text: String) {
      * @param errorCollector if null, the function will automatically check for errors. If provided, you should check
      * for errors after calling this function.
      */
-    fun fullParse(errorCollector: ErrorCollector? = ErrorCollector()): LucidModuleContext {
+    fun fullParse(errorCollector: ErrorCollector? = null): LucidModuleContext {
         val errors = errorCollector ?: ErrorCollector()
         val tree = parseText(errors)
 
+        println("Starting global pass...")
         globalParse(errors, tree)
+        println("Starting module type pass...")
         val module = moduleTypeParse(errors, tree)
 
         val moduleInstance = ModuleInstance(project, "top", module, mapOf())
@@ -82,11 +84,13 @@ class LucidModuleTester(val text: String) {
         )
 
         stages.forEach {
+            println("Starting $it pass...")
             moduleContext.stage = it
             moduleContext.walk(tree)
 
-            if (errorCollector == null)
+            if (errorCollector == null) {
                 assert(errors.hasNoIssues)
+            }
         }
 
         return moduleContext

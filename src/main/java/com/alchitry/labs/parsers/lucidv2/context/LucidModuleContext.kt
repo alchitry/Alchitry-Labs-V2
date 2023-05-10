@@ -43,10 +43,9 @@ class LucidModuleContext(
             this.expr,
             this.bitSelection,
             this.struct,
-            this.signal,
             this.types,
             this.alwaysParser,
-            this.signalDriver
+            this.signal
         )
 
         ParseStage.Drivers -> listOf<ParseTreeListener>(

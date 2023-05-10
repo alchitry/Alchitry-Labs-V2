@@ -21,7 +21,7 @@ data class AlwaysParser(
     private val dependencies = mutableSetOf<Signal>()
     private val drivenSignals = mutableSetOf<Signal>()
     private val previouslyDrivenSignals = mutableSetOf<Signal>()
-    private val repeatSignals = mutableMapOf<BlockContext, Signal>()
+    val repeatSignals = mutableMapOf<RepeatStatContext, Signal>()
 
     suspend fun queueEval() {
         alwaysBlocks.values.forEach {
@@ -32,6 +32,7 @@ data class AlwaysParser(
     override fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
         dependencies.clear()
         drivenSignals.clear()
+        repeatSignals.clear()
     }
 
     override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
@@ -110,46 +111,47 @@ data class AlwaysParser(
         }
     }
 
-    override fun enterRepeatStat(ctx: RepeatStatContext) {
-        val sigName = ctx.name().text
+    override fun enterRepeatBlock(ctx: RepeatBlockContext) {
+        val repCtx = ctx.getParent() as RepeatStatContext
+        val sigName = repCtx.name().text
 
-        if (ctx.name().TYPE_ID() == null) {
-            context.reportError(ctx.name(), "Repeat variable name must start with a lowercase letter.")
+        if (repCtx.name().TYPE_ID() == null) {
+            context.reportError(repCtx.name(), "Repeat variable name must start with a lowercase letter.")
             return
         }
 
         if (context.resolveSignal(sigName) != null) {
-            context.reportError(ctx.name(), "The name $sigName is already in use!")
+            context.reportError(repCtx.name(), "The name $sigName is already in use!")
             return
         }
 
-        val countValue = context.resolve(ctx.expr()) ?: return
+        val countValue = context.resolve(repCtx.expr()) ?: println("Missing countValue from repeat statement!")
 
         if (countValue !is SimpleValue || !countValue.isNumber()) {
-            context.errorCollector.reportError(ctx.expr(), "Repeat count must be a number!")
+            context.errorCollector.reportError(repCtx.expr(), "Repeat count must be a number!")
             return
         }
 
         if (!countValue.constant) {
-            context.errorCollector.reportError(ctx.expr(), "Repeat count must be constant!")
+            context.errorCollector.reportError(repCtx.expr(), "Repeat count must be constant!")
             return
         }
 
         val count = try {
             countValue.toBigInt().intValueExact()
         } catch (e: ArithmeticException) {
-            context.errorCollector.reportError(ctx.expr(), "Repeat count doesn't fit in an integer.")
+            context.errorCollector.reportError(repCtx.expr(), "Repeat count doesn't fit in an integer.")
             return
         }
 
         if (count < 1) {
-            context.errorCollector.reportError(ctx.expr(), "Repeat count must be greater than 0.")
+            context.errorCollector.reportError(repCtx.expr(), "Repeat count must be greater than 0.")
             return
         }
 
         val sigWidth = (count - 1).toBigInteger().minBits()
 
-        repeatSignals[ctx.block()] = Signal(
+        repeatSignals[repCtx] = Signal(
             sigName,
             SignalDirection.Read,
             null,

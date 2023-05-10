@@ -20,10 +20,16 @@ data class SignalDriverParser(
     private val signalStack = mutableListOf<MutableMap<Signal, Value>>()
     private val signals: MutableMap<Signal, Value> get() = signalStack.last()
 
+    private var expectedDrivers: Map<String, Signal>? = null
+
+    override fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
+        expectedDrivers = (context.alwaysParser.alwaysBlocks[ctx]?.drivenSignals
+            ?: error("Failed to resolve always block!")).associateBy { it.name }
+    }
+
     override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
         val drivenMap = drivenSignals[ctx.block()] ?: error("Missing always block signals!")
-        val expected = context.alwaysParser.alwaysBlocks[ctx]?.drivenSignals ?: error("Failed to resolve always block!")
-        expected.forEach { signal ->
+        expectedDrivers?.values?.forEach { signal ->
             val driven = drivenMap[signal]
             if (driven == null) {
                 context.reportError(
@@ -37,6 +43,28 @@ data class SignalDriverParser(
                     ctx,
                     "The signal ${signal.name} was only partially driven. Bits marked as 0 weren't driven: $driven"
                 )
+            }
+        }
+        expectedDrivers = null
+    }
+
+    override fun exitExprSignal(ctx: ExprSignalContext) {
+        val sig = context.resolve(ctx.signal()) ?: return
+        val fullSig = sig.getSignal()
+        val expected = expectedDrivers ?: return
+        if (expected.contains(fullSig.name)) { // should be driving this signal
+            val drivenValue = signalStack.firstNotNullOfOrNull { it[fullSig] }
+            if (drivenValue == null) {
+                context.reportError(ctx, "This signal can't be read before it is written!")
+                return
+            }
+            val selectedValue = when (sig) {
+                is Signal -> drivenValue
+                is SubSignal -> drivenValue.select(sig.selection)
+            }
+            if (selectedValue.andReduce().bit != Bit.B1) {
+                context.reportError(ctx, "This portion of the signal can't be read before it is written!")
+                return
             }
         }
     }
@@ -70,7 +98,7 @@ data class SignalDriverParser(
     }
 
     override fun exitRepeatStat(ctx: RepeatStatContext) {
-        drivenSignals[ctx.block()]?.let { signals.putAll(it) }
+        drivenSignals[ctx.repeatBlock().block()]?.let { signals.putAll(it) }
     }
 
     override fun exitIfStat(ctx: IfStatContext) {

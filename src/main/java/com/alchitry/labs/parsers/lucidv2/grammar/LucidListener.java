@@ -588,26 +588,47 @@ public interface LucidListener extends ParseTreeListener {
 	 */
 	void exitElseStat(LucidParser.ElseStatContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LucidParser#repeatStat}.
-	 * @param ctx the parse tree
-	 */
-	void enterRepeatStat(LucidParser.RepeatStatContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LucidParser#repeatStat}.
-	 * @param ctx the parse tree
-	 */
-	void exitRepeatStat(LucidParser.RepeatStatContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link LucidParser#function}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunction(LucidParser.FunctionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LucidParser#function}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunction(LucidParser.FunctionContext ctx);
-	/**
+     * Enter a parse tree produced by {@link LucidParser#repeatStat}.
+     * @param ctx the parse tree
+     */
+    void enterRepeatStat(LucidParser.RepeatStatContext ctx);
+
+    /**
+     * Exit a parse tree produced by {@link LucidParser#repeatStat}.
+     *
+     * @param ctx the parse tree
+     */
+    void exitRepeatStat(LucidParser.RepeatStatContext ctx);
+
+    /**
+     * Enter a parse tree produced by {@link LucidParser#repeatBlock}.
+     *
+     * @param ctx the parse tree
+     */
+    void enterRepeatBlock(LucidParser.RepeatBlockContext ctx);
+
+    /**
+     * Exit a parse tree produced by {@link LucidParser#repeatBlock}.
+     *
+     * @param ctx the parse tree
+     */
+    void exitRepeatBlock(LucidParser.RepeatBlockContext ctx);
+
+    /**
+     * Enter a parse tree produced by {@link LucidParser#function}.
+     *
+     * @param ctx the parse tree
+     */
+    void enterFunction(LucidParser.FunctionContext ctx);
+
+    /**
+     * Exit a parse tree produced by {@link LucidParser#function}.
+     *
+     * @param ctx the parse tree
+     */
+    void exitFunction(LucidParser.FunctionContext ctx);
+
+    /**
 	 * Enter a parse tree produced by {@link LucidParser#number}.
 	 * @param ctx the parse tree
 	 */
