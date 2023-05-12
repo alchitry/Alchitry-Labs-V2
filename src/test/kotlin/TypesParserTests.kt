@@ -1,4 +1,8 @@
-import com.alchitry.labs.parsers.lucidv2.signals.*
+import com.alchitry.labs.parsers.lucidv2.signals.Signal
+import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
+import com.alchitry.labs.parsers.lucidv2.types.Dff
+import com.alchitry.labs.parsers.lucidv2.types.StructMember
+import com.alchitry.labs.parsers.lucidv2.types.StructType
 import com.alchitry.labs.parsers.lucidv2.values.*
 import helpers.SimpleLucidTester
 import kotlin.test.Test
@@ -83,7 +87,7 @@ internal class TypesParserTests {
 
         dSig as Signal
         qSig as Signal
-        assertEquals(BitValue(Bit.B1, constant = false, signed = false), qSig.get(tester.context.evalContext))
+        assertEquals(BitValue(Bit.B1, constant = false, signed = false), qSig.read(tester.context.evalContext))
 
         assert(tester.hasNoErrors)
         assert(tester.hasNoWarnings)
@@ -103,7 +107,7 @@ internal class TypesParserTests {
 
         dSig as Signal
         qSig as Signal
-        assertEquals(BitListValue("111", 2, constant = false, signed = false), qSig.get(tester.context.evalContext))
+        assertEquals(BitListValue("111", 2, constant = false, signed = false), qSig.read(tester.context.evalContext))
 
         assert(tester.hasNoErrors)
         assert(tester.hasWarnings)
@@ -123,7 +127,7 @@ internal class TypesParserTests {
 
         dSig as Signal
         qSig as Signal
-        assertEquals(BitListWidth(3), qSig.get(tester.context.evalContext).signalWidth)
+        assertEquals(BitListWidth(3), qSig.read(tester.context.evalContext).signalWidth)
 
         assert(tester.hasErrors)
         assert(tester.hasNoWarnings)
@@ -154,8 +158,8 @@ internal class TypesParserTests {
 
         dSig as Signal
         qSig as Signal
-        assertEquals(initValue, qSig.get(tester.context.evalContext))
-        assertEquals(initValue, dSig.get(tester.context.evalContext))
+        assertEquals(initValue, qSig.read(tester.context.evalContext))
+        assertEquals(initValue, dSig.read(tester.context.evalContext))
     }
 
     @Test
@@ -184,8 +188,8 @@ internal class TypesParserTests {
 
         dSig as Signal
         qSig as Signal
-        assertEquals(initValue, qSig.get(tester.context.evalContext))
-        assertEquals(initValue, dSig.get(tester.context.evalContext))
+        assertEquals(initValue, qSig.read(tester.context.evalContext))
+        assertEquals(initValue, dSig.read(tester.context.evalContext))
 
 
     }
@@ -248,7 +252,7 @@ internal class TypesParserTests {
         val dff = tester.context.types.resolve("testing")
         dff as Dff
 
-        assertEquals(StructWidth(struct), dff.q.get(tester.context.evalContext).signalWidth)
+        assertEquals(StructWidth(struct), dff.q.read(tester.context.evalContext).signalWidth)
     }
 
     @Test
@@ -278,7 +282,7 @@ internal class TypesParserTests {
         val dff = tester.context.types.resolve("testing")
         dff as Dff
 
-        assertEquals(width, dff.q.get(tester.context.evalContext).signalWidth)
+        assertEquals(width, dff.q.read(tester.context.evalContext).signalWidth)
     }
 
     @Test
@@ -318,7 +322,7 @@ internal class TypesParserTests {
         val sig = tester.context.resolveSignal("testSig")
         sig as Signal
         assertEquals(SignalDirection.Both, sig.direction)
-        assertEquals(BitValue(Bit.Bu, false, false), sig.get(tester.context.evalContext))
+        assertEquals(BitValue(Bit.Bu, false, false), sig.read(tester.context.evalContext))
         assertEquals(false, sig.signed)
         assertEquals(null, sig.parent)
         assertEquals(BitWidth, sig.width)
@@ -344,7 +348,7 @@ internal class TypesParserTests {
 
         val width = BitListWidth(8)
         assertEquals(SignalDirection.Both, sig.direction)
-        assertEquals(width.filledWith(Bit.Bu, false, false), sig.get(tester.context.evalContext))
+        assertEquals(width.filledWith(Bit.Bu, false, false), sig.read(tester.context.evalContext))
         assertEquals(false, sig.signed)
         assertEquals(null, sig.parent)
         assertEquals(width, sig.width)

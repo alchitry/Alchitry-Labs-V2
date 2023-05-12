@@ -25,6 +25,13 @@ data class BitListValue(
     override fun invert(): BitListValue = copy(bits = bits.map { !it })
     override fun reverse(): BitListValue = copy(bits = bits.reversed())
 
+    override fun where(bit: Bit) = copy(bits = bits.map { if (it == bit) Bit.B1 else Bit.B0 })
+
+    override fun replace(mask: Value, bit: Bit): Value {
+        require(mask is BitListValue && mask.bits.size == bits.size)
+        return copy(bits = bits.mapIndexed { index, v -> if (mask[index] == Bit.B1) bit else v })
+    }
+
     fun resize(width: Int, signExtend: Boolean = signed): BitListValue {
         if (width == size)
             return copy(signed = signExtend)

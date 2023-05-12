@@ -3,10 +3,10 @@ package com.alchitry.labs.parsers.lucidv2.parsers
 import com.alchitry.labs.parsers.lucidv2.context.LucidExprContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
-import com.alchitry.labs.parsers.lucidv2.signals.GlobalNamespace
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
-import com.alchitry.labs.parsers.lucidv2.signals.StructType
+import com.alchitry.labs.parsers.lucidv2.types.GlobalNamespace
+import com.alchitry.labs.parsers.lucidv2.types.StructType
 
 class GlobalParser(
     private val context: LucidExprContext
@@ -70,7 +70,7 @@ class GlobalParser(
                 "Global names must start with an uppercase letter and contain at least one lowercase letter."
             )
 
-        val global = GlobalNamespace(name, constants.mapValues { it.value.get(null) }, structs)
+        val global = GlobalNamespace(name, constants.mapValues { it.value.read(null) }, structs)
         if (!context.project.addGlobal(global)) {
             context.reportError(ctx.name(), "The global name $name has already been used.")
             return

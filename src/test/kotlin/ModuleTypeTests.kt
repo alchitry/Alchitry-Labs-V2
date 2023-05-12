@@ -1,8 +1,8 @@
 import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.ErrorCollector
-import com.alchitry.labs.parsers.lucidv2.signals.Module
-import com.alchitry.labs.parsers.lucidv2.signals.Parameter
-import com.alchitry.labs.parsers.lucidv2.signals.Port
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
+import com.alchitry.labs.parsers.lucidv2.types.Module
+import com.alchitry.labs.parsers.lucidv2.types.Parameter
+import com.alchitry.labs.parsers.lucidv2.types.Port
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.BitListWidth
 import com.alchitry.labs.parsers.lucidv2.values.BitWidth

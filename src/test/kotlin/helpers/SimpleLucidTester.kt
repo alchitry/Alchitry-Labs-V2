@@ -6,8 +6,8 @@ import com.alchitry.labs.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidLexer
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.parsers.ParseStage
-import com.alchitry.labs.parsers.lucidv2.signals.Module
-import com.alchitry.labs.parsers.lucidv2.signals.ModuleInstance
+import com.alchitry.labs.parsers.lucidv2.types.Module
+import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 

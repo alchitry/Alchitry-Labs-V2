@@ -1,8 +1,8 @@
 package com.alchitry.labs.parsers.lucidv2.context
 
-import com.alchitry.labs.parsers.lucidv2.signals.GlobalNamespace
-import com.alchitry.labs.parsers.lucidv2.signals.Module
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
+import com.alchitry.labs.parsers.lucidv2.types.GlobalNamespace
+import com.alchitry.labs.parsers.lucidv2.types.Module
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope

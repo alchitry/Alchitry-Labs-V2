@@ -52,7 +52,7 @@ class DynamicExpr(
 
     fun asSignal(name: String): Signal {
         return Signal(name, SignalDirection.Read, null, value).also { signal ->
-            val evaluable = Evaluable { signal.set(value) }
+            val evaluable = Evaluable { signal.write(value) }
             context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
                 valueFlow.collect {
                     context.project.queueEvaluation(evaluable)

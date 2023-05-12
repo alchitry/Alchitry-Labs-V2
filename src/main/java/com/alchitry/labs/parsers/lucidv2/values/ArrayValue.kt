@@ -19,13 +19,20 @@ data class ArrayValue(
 
     override fun asMutable(): ArrayValue = copy(elements = elements.map { it.asMutable() })
 
-    override fun withSign(signed: Boolean): ArrayValue = copy(elements = elements.map{ it.withSign(signed) })
+    override fun withSign(signed: Boolean): ArrayValue = copy(elements = elements.map { it.withSign(signed) })
 
     override val signalWidth: ArrayWidth = ArrayWidth(elements.size, elements[0].signalWidth)
 
     override fun invert(): ArrayValue = copy(elements = elements.map { it.invert() })
 
     override fun isTrue(): BitValue = BitListValue(elements.map { it.isTrue() }, signed = false).isTrue()
+
+    override fun where(bit: Bit) = copy(elements = elements.map { it.where(bit) })
+
+    override fun replace(mask: Value, bit: Bit): ArrayValue {
+        require(mask is ArrayValue && mask.elements.size == elements.size)
+        return copy(elements = elements.mapIndexed { index, value -> value.replace(mask[index], bit) })
+    }
 
     override fun and(other: Value): ArrayValue {
         require(other is ArrayValue) { "ArrayValue can only be and'd with another ArrayValue!" }

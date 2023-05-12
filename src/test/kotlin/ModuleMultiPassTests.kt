@@ -1,5 +1,5 @@
-import com.alchitry.labs.parsers.lucidv2.signals.Dff
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
+import com.alchitry.labs.parsers.lucidv2.types.Dff
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.BitValue
@@ -61,7 +61,7 @@ class ModuleMultiPassTests {
             tester.project.processQueue()
         }
 
-        assertEquals(BitListValue(1 + 2 + 3 + 4, 16, signed = false, constant = false), testSig.get(null))
+        assertEquals(BitListValue(1 + 2 + 3 + 4, 16, signed = false, constant = false), testSig.read(null))
     }
 
     @Test
@@ -94,6 +94,6 @@ class ModuleMultiPassTests {
             tester.project.processQueue()
         }
 
-        assertEquals(BitValue(Bit.B1, signed = false, constant = false), testSig.get(null))
+        assertEquals(BitValue(Bit.B1, signed = false, constant = false), testSig.read(null))
     }
 }

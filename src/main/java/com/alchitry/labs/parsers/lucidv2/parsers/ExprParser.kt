@@ -223,7 +223,7 @@ data class ExprParser(
             return
         }
 
-        values[ctx] = signal.get(context.evalContext)
+        values[ctx] = signal.read(context.evalContext)
 
         val parentSig = when (signal) {
             is Signal -> signal

@@ -1,9 +1,10 @@
-package com.alchitry.labs.parsers.lucidv2.signals
+package com.alchitry.labs.parsers.lucidv2.types
 
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.AlwaysBlockContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.RepeatStatContext
+import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.onAnyChange
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch

@@ -1,8 +1,8 @@
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
-import com.alchitry.labs.parsers.lucidv2.signals.Dff
 import com.alchitry.labs.parsers.lucidv2.signals.DynamicExpr
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
+import com.alchitry.labs.parsers.lucidv2.types.Dff
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.BitValue
@@ -33,14 +33,14 @@ class DynamicEvalTests {
             assertEquals(BitListValue("001", 2, constant = false, signed = false), dynamicExpr.value)
 
             runBlocking {
-                signal.set(BitListValue("011", 2, constant = false, signed = false))
+                signal.write(BitListValue("011", 2, constant = false, signed = false))
                 test.context.project.processQueue()
             }
 
             assertEquals(BitListValue("100", 2, constant = false, signed = false), dynamicExpr.value)
 
             runBlocking {
-                signal.set(BitListValue("111", 2, constant = false, signed = false))
+                signal.write(BitListValue("111", 2, constant = false, signed = false))
                 test.context.project.processQueue()
             }
 
@@ -68,19 +68,19 @@ class DynamicEvalTests {
         val dff = Dff(test.project, "myDff", b0, clkExpr, null, false)
 
         runBlocking {
-            dff.d.set(b1)
-            clk.set(b1)
+            dff.d.write(b1)
+            clk.write(b1)
             test.project.processQueue()
-            assertEquals(b1, dff.q.get(null))
+            assertEquals(b1, dff.q.read(null))
 
-            clk.set(b0)
-            dff.d.set(b0)
+            clk.write(b0)
+            dff.d.write(b0)
             test.project.processQueue()
-            assertEquals(b1, dff.q.get(null))
+            assertEquals(b1, dff.q.read(null))
 
-            clk.set(b1)
+            clk.write(b1)
             test.project.processQueue()
-            assertEquals(b0, dff.q.get(null))
+            assertEquals(b0, dff.q.read(null))
         }
     }
 
@@ -89,19 +89,19 @@ class DynamicEvalTests {
         val evaluable = Evaluable { }
         val evaluable2 = Evaluable { }
         val sig = Signal("test", SignalDirection.Both, null, BitValue(Bit.B1, false, false), false)
-        sig.quietSet(BitValue(Bit.B0, false, false), evaluable)
+        sig.quietWrite(BitValue(Bit.B0, false, false), evaluable)
 
-        assertEquals(BitValue(Bit.B1, false, false), sig.get(null))
-        assertEquals(BitValue(Bit.B1, false, false), sig.get(evaluable2))
-        assertEquals(BitValue(Bit.B0, false, false), sig.get(evaluable))
+        assertEquals(BitValue(Bit.B1, false, false), sig.read(null))
+        assertEquals(BitValue(Bit.B1, false, false), sig.read(evaluable2))
+        assertEquals(BitValue(Bit.B0, false, false), sig.read(evaluable))
 
         runBlocking {
             sig.publish()
         }
 
-        assertEquals(BitValue(Bit.B0, false, false), sig.get(null))
-        assertEquals(BitValue(Bit.B0, false, false), sig.get(evaluable2))
-        assertEquals(BitValue(Bit.B0, false, false), sig.get(evaluable))
+        assertEquals(BitValue(Bit.B0, false, false), sig.read(null))
+        assertEquals(BitValue(Bit.B0, false, false), sig.read(evaluable2))
+        assertEquals(BitValue(Bit.B0, false, false), sig.read(evaluable))
     }
 
     @Test
@@ -127,21 +127,21 @@ class DynamicEvalTests {
             tester.project.processQueue()
         }
 
-        assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.get(null))
-        assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig2.get(null))
+        assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.read(null))
+        assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig2.read(null))
 
         runBlocking {
-            sig2.set(BitValue(Bit.B0, constant = false, signed = false))
-            assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.get(null))
+            sig2.write(BitValue(Bit.B0, constant = false, signed = false))
+            assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.read(null))
 
             tester.project.processQueue()
-            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.get(null))
+            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
 
-            sig2.set(BitValue(Bit.Bx, constant = false, signed = false))
-            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.get(null))
+            sig2.write(BitValue(Bit.Bx, constant = false, signed = false))
+            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
 
             tester.project.processQueue()
-            assertEquals(BitValue(Bit.Bx, constant = false, signed = false), sig1.get(null))
+            assertEquals(BitValue(Bit.Bx, constant = false, signed = false), sig1.read(null))
         }
     }
 
@@ -172,23 +172,23 @@ class DynamicEvalTests {
 
         val alwaysBlock = tester.context.alwaysParser.alwaysBlocks.values.first()
 
-        assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.get(null))
-        assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig2.get(null))
+        assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.read(null))
+        assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig2.read(null))
 
         runBlocking {
-            sig2.set(BitValue(Bit.B0, constant = false, signed = false))
-            assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.get(null))
+            sig2.write(BitValue(Bit.B0, constant = false, signed = false))
+            assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.read(null))
 
             tester.project.processQueue()
-            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.get(null))
+            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
 
             assert(alwaysBlock.context.errorCollector.hasNoIssues)
 
-            sig2.set(BitValue(Bit.Bx, constant = false, signed = false))
-            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.get(null))
+            sig2.write(BitValue(Bit.Bx, constant = false, signed = false))
+            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
 
             tester.project.processQueue()
-            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.get(null))
+            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
 
             assert(alwaysBlock.context.errorCollector.hasWarnings) // warn about Bx value in if statement
         }

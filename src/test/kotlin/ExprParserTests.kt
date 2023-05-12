@@ -540,7 +540,7 @@ internal class ExprParserTests {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
 
-        test = SimpleLucidTester("&b1x01")
+        test = SimpleLucidTester("&b1x11")
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(

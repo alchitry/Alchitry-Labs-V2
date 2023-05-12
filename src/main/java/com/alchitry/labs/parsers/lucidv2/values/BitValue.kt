@@ -22,6 +22,12 @@ data class BitValue(
     infix fun or(other: BitValue) = doOp(other, bit or other.bit)
     infix fun xor(other: BitValue) = doOp(other, bit xor other.bit)
 
+    override fun where(bit: Bit) = copy(bit = if (this.bit == bit) Bit.B1 else Bit.B0)
+    override fun replace(mask: Value, bit: Bit): Value {
+        require(mask is BitValue)
+        return copy(bit = if (mask.bit == Bit.B1) bit else this.bit)
+    }
+
     override fun isNumber(): Boolean = bit.isNumber()
 
     override fun asMutable() = copy(constant = false)

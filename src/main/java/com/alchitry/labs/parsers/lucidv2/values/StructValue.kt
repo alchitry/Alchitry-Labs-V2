@@ -2,7 +2,7 @@ package com.alchitry.labs.parsers.lucidv2.values
 
 import com.alchitry.labs.parsers.lucidv2.signals.SignalSelectionException
 import com.alchitry.labs.parsers.lucidv2.signals.SignalSelector
-import com.alchitry.labs.parsers.lucidv2.signals.StructType
+import com.alchitry.labs.parsers.lucidv2.types.StructType
 
 data class StructValue(
     val type: StructType,
@@ -26,6 +26,12 @@ data class StructValue(
     override val signalWidth: StructWidth = StructWidth(type)
 
     override fun invert(): StructValue = copy(valueMap = mapValues { it.value.invert() })
+
+    override fun where(bit: Bit) = copy(valueMap = mapValues { it.value.where(bit) })
+    override fun replace(mask: Value, bit: Bit): Value {
+        require(mask is StructValue && mask.type == type)
+        return copy(valueMap = mapValues { it.value.replace(mask[it.key]!!, bit) })
+    }
 
     override fun isTrue(): BitValue = BitListValue(values.map { it.isTrue() }, signed = false).isTrue()
 

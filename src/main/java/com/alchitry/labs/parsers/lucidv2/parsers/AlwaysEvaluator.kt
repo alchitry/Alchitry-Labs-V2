@@ -35,7 +35,7 @@ data class AlwaysEvaluator(
         val assignee = context.resolve(ctx.signal()) ?: return
         val newValue = context.resolve(ctx.expr()) ?: return
 
-        assignee.quietSet(newValue, context.evalContext)
+        assignee.quietWrite(newValue, context.evalContext)
 
         writtenSignals.add(assignee.getSignal())
     }
@@ -78,7 +78,7 @@ data class AlwaysEvaluator(
         val count = countValue.toBigInt().toInt()
 
         repeat(count) {
-            signal.quietSet(
+            signal.quietWrite(
                 BitListValue(
                     value = it,
                     width = signal.width.getBitCount(),

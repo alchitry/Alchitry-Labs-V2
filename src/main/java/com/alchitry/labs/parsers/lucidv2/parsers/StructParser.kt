@@ -3,8 +3,8 @@ package com.alchitry.labs.parsers.lucidv2.parsers
 import com.alchitry.labs.parsers.lucidv2.context.LucidExprContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
-import com.alchitry.labs.parsers.lucidv2.signals.StructMember
-import com.alchitry.labs.parsers.lucidv2.signals.StructType
+import com.alchitry.labs.parsers.lucidv2.types.StructMember
+import com.alchitry.labs.parsers.lucidv2.types.StructType
 
 data class StructParser(
     private val context: LucidExprContext,

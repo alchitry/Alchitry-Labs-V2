@@ -1,6 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
-import com.alchitry.labs.parsers.lucidv2.signals.StructType
+import com.alchitry.labs.parsers.lucidv2.types.StructType
 
 sealed class SignalWidth {
     /**

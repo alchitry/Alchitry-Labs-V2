@@ -43,3 +43,6 @@ suspend fun onAnyChange(dependencies: List<Flow<*>>, onChange: suspend () -> Uni
             onChange()
         }
     }
+
+suspend fun onAnyChange(vararg dependencies: Flow<*>, onChange: suspend () -> Unit) =
+    onAnyChange(dependencies.toList(), onChange)

@@ -9,14 +9,14 @@ enum class Bit {
 
     infix fun or(b: Bit): Bit {
         if (this == B1 || b == B1) return B1
-        if (!isNumber() || !b.isNumber()) return Bx
-        return B0
+        if (this == B0 && b == B0) return B0
+        return Bx
     }
 
     infix fun and(b: Bit): Bit {
         if (this == B1 && b == B1) return B1
-        if (!isNumber() || !b.isNumber()) return Bx
-        return B0
+        if (this == B0 || b == B0) return B0
+        return Bx
     }
 
     infix fun xor(b: Bit): Bit {

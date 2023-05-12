@@ -17,6 +17,9 @@ data class UndefinedValue(
 
     override fun isTrue() = BitValue(Bit.Bx, constant, false)
 
+    override fun where(bit: Bit) = width.filledWith(Bit.B0, constant, false)
+    override fun replace(mask: Value, bit: Bit) = this
+
     override infix fun and(other: Value): Value = when (other) {
         is ArrayValue -> TODO()
         is BitListValue -> TODO()

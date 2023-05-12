@@ -7,6 +7,7 @@ import com.alchitry.labs.parsers.lucidv2.signals.SignalSelector
 sealed class Value {
     abstract val constant: Boolean
     abstract fun isNumber(): Boolean
+
     /** Makes a copy of this Value that has the constant flag set as false. */
     abstract fun asMutable(): Value
     abstract fun withSign(signed: Boolean): Value
@@ -16,6 +17,16 @@ sealed class Value {
     abstract infix fun and(other: Value): Value
     abstract infix fun or(other: Value): Value
     abstract infix fun xor(other: Value): Value
+
+    /**
+     * Returns a same sized Value with B1 where the bits match the given bit and B0 everywhere else.
+     */
+    abstract fun where(bit: Bit): Value
+
+    /**
+     * Replaces all bits in the mask where B1 with bit.
+     */
+    abstract fun replace(mask: Value, bit: Bit): Value
 
     /** Resizes this Value to be the same width as the other value.
      *  It may truncate values if other is smaller than this value.
