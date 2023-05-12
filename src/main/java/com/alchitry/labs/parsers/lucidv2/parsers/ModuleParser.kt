@@ -13,11 +13,10 @@ import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.UndefinedValue
 
 data class ModuleParser(
-    private val context: LucidExprContext,
-    var module: Module? = null,
-    private val localParams: MutableMap<String, Signal> = mutableMapOf()
+    private val context: LucidExprContext
 ) : LucidBaseListener(), SignalResolver {
-    fun withContext(context: LucidExprContext) = copy(context = context)
+    var module: Module? = null
+    private val localParams: MutableMap<String, Signal> = mutableMapOf()
 
     override fun resolve(name: String) = localParams[name]
 
@@ -106,7 +105,7 @@ data class ModuleParser(
             ports[portName] = Port(portName, direction, width, signed)
         }
 
-        module = Module(name, params, ports).also {
+        module = Module(name, params, ports, ctx).also {
             if (!context.project.addModule(it)) {
                 context.reportError(ctx.name(), "A module with name $name already exists!")
             }

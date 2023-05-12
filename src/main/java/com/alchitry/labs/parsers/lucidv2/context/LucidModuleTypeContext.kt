@@ -1,7 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.context
 
-import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.errors.ErrorListener
+import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.SourceContext
 import com.alchitry.labs.parsers.lucidv2.parsers.*

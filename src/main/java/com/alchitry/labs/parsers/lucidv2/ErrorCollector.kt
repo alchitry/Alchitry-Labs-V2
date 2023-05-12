@@ -1,10 +1,9 @@
-package com.alchitry.labs.com.alchitry.labs.parsers.lucidv2
+package com.alchitry.labs.parsers.lucidv2
 
 import com.alchitry.labs.parsers.errors.ErrorListener
 import org.antlr.v4.runtime.*
 import org.antlr.v4.runtime.atn.ATNConfigSet
 import org.antlr.v4.runtime.dfa.DFA
-import org.antlr.v4.runtime.misc.Interval
 import org.antlr.v4.runtime.tree.TerminalNode
 import java.util.*
 
@@ -15,27 +14,27 @@ class ErrorCollector : ErrorListener, ANTLRErrorListener {
     val syntaxIssues = mutableListOf<String>()
 
     override fun reportError(node: TerminalNode, message: String) {
-        errors.add("${node.text}: $message")
+        errors.add("Error at line ${node.symbol.line} offset ${node.symbol.charPositionInLine}: $message")
     }
 
     override fun reportError(ctx: ParserRuleContext, message: String) {
-        errors.add("${ctx.text}: $message")
+        errors.add("Error at line ${ctx.start.line} offset ${ctx.start.charPositionInLine}: $message")
     }
 
     override fun reportWarning(node: TerminalNode, message: String) {
-        warnings.add("${node.text}: $message")
+        warnings.add("Warning at line ${node.symbol.line} offset ${node.symbol.charPositionInLine}: $message")
     }
 
     override fun reportWarning(ctx: ParserRuleContext, message: String) {
-        warnings.add("${ctx.text}: $message")
+        warnings.add("Warning at line ${ctx.start.line} offset ${ctx.start.charPositionInLine}: $message")
     }
 
     override fun reportDebug(node: TerminalNode, message: String) {
-        debugs.add("${node.text}: $message")
+        debugs.add("Debug at line ${node.symbol.line} offset ${node.symbol.charPositionInLine}: $message")
     }
 
     override fun reportDebug(ctx: ParserRuleContext, message: String) {
-        debugs.add("${ctx.text}: $message")
+        debugs.add("Debug at line ${ctx.start.line} offset ${ctx.start.charPositionInLine}: $message")
     }
 
     override fun syntaxError(
@@ -46,7 +45,7 @@ class ErrorCollector : ErrorListener, ANTLRErrorListener {
         msg: String?,
         e: RecognitionException?
     ) {
-        syntaxIssues.add("Syntax error: $msg")
+        syntaxIssues.add("Syntax error at line: $line offset: $charPositionInLine - $msg")
     }
 
     override fun reportAmbiguity(
@@ -58,8 +57,8 @@ class ErrorCollector : ErrorListener, ANTLRErrorListener {
         ambigAlts: BitSet?,
         configs: ATNConfigSet?
     ) {
-        val text = recognizer?.tokenStream?.getText(Interval(startIndex, stopIndex))
-        syntaxIssues.add("Syntax ambiguity at: $text")
+        val token = recognizer?.tokenStream?.get(startIndex)
+        syntaxIssues.add("Syntax ambiguity at line: ${token?.line} offset: ${token?.charPositionInLine}")
     }
 
     override fun reportAttemptingFullContext(

@@ -9,22 +9,109 @@ import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.types.Dff
+import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
 import com.alchitry.labs.parsers.lucidv2.values.*
 
 data class TypesParser(
-    private val context: LucidModuleContext,
-    private val dffs: MutableMap<String, Dff> = mutableMapOf(),
-    private val sigs: MutableMap<String, Signal> = mutableMapOf(),
-
-    private val arraySizes: MutableMap<ArraySizeContext, Int> = mutableMapOf(),
-    private val assignmentBlocks: MutableList<AssignmentBlock> = mutableListOf()
+    private val context: LucidModuleContext
 ) : LucidBaseListener(), SignalResolver {
+    private val dffs = mutableMapOf<String, Dff>()
+    private val sigs = mutableMapOf<String, Signal>()
+    private val moduleInstances = mutableMapOf<String, ModuleInstance>()
+    private val arraySizes = mutableMapOf<ArraySizeContext, Int>()
+    private val assignmentBlocks = mutableListOf<AssignmentBlock>()
+
     /** Assumes the name is a simple name (no .'s) */
     override fun resolve(name: String): SignalOrParent? {
         dffs[name]?.let { return it }
         sigs[name]?.let { return it }
+        moduleInstances[name]?.let { return it }
 
         return null
+    }
+
+    override fun exitModuleInst(ctx: ModuleInstContext) {
+        val moduleTypeName = ctx.name(0)?.text ?: return
+        val moduleInstanceName = ctx.name(1)?.text ?: return
+
+        val moduleType = context.project.resolveModuleType(moduleTypeName)
+
+        if (moduleType == null) {
+            context.reportError(ctx.name(0), "Module with name $moduleTypeName could not be resolved.")
+            return
+        }
+
+        if (ctx.name(1).TYPE_ID() == null) {
+            context.reportError(ctx.name(1), "Module instance names must start with a lowercase letter.")
+            return
+        }
+
+        if (context.resolveSignal(moduleInstanceName) != null) {
+            context.reportError(ctx.name(1), "The name $moduleInstanceName is already in use.")
+            return
+        }
+
+        if (ctx.arraySize().isNotEmpty())
+            TODO("Module arrays aren't supported yet!")
+
+        val signalConnections = mutableListOf<Connection>()
+        val paramConnections = mutableListOf<Connection>()
+
+        ctx.instCons()?.connection()?.forEach { connection ->
+            connection.sigCon()?.let { sigCtx ->
+                signalConnections.add(Connection(sigCtx.name(), DynamicExpr(sigCtx.expr(), context)))
+            }
+            connection.paramCon()?.let { paramCtx ->
+                paramConnections.add(Connection(paramCtx.name(), DynamicExpr(paramCtx.expr(), context)))
+            }
+        }
+
+        assignmentBlocks.forEach { block ->
+            signalConnections.addAll(block.signals)
+            paramConnections.addAll(block.params)
+        }
+
+        val providedParams = paramConnections.map { it.port }
+        val moduleParams = moduleType.parameters.values.map { it.name }
+        val requiredParams = moduleType.parameters.values.mapNotNull { v -> v.default?.let { v.name } }
+
+        val extraParams = providedParams.filter { !moduleParams.contains(it) }
+        val missingParams = requiredParams.filter { !providedParams.contains(it) }
+
+        if (missingParams.isNotEmpty()) {
+            context.reportError(ctx, "Missing required parameters: ${missingParams.joinToString(", ")}")
+            return
+        }
+
+        if (extraParams.isNotEmpty()) {
+            context.reportError(
+                ctx,
+                "This module doesn't have these provided parameters: ${missingParams.joinToString(", ")}"
+            )
+            return
+        }
+
+        val instParams = paramConnections.associate { it.port to it.value.value }
+
+        val instance = ModuleInstance(moduleInstanceName, context.project, context.instance, moduleType, instParams)
+
+        if (!instance.checkParameters()) {
+            val sb = StringBuilder("Module instance $moduleInstanceName parameters failed their constraint checks:")
+            instance.context.errorCollector.errors.forEach { sb.append("\n    ").append(it) }
+
+            context.reportError(ctx, sb.toString())
+            return
+        }
+
+        if (!instance.initialWalk()) {
+            val sb = StringBuilder("Module instance $moduleInstanceName contains errors:")
+            instance.context.errorCollector.errors.forEach { sb.append("\n    ").append(it) }
+
+            context.reportError(ctx, sb.toString())
+            return
+        }
+
+        moduleInstances[instance.name] = instance
     }
 
     override fun exitConList(ctx: ConListContext) {
@@ -34,7 +121,7 @@ data class TypesParser(
             connectionContext.sigCon()?.let { sigCtx ->
                 val name = sigCtx.name().text
                 if (assignmentBlocks.any { block -> block.signals.any { it.port == name } })
-                    context.errorCollector.reportError(
+                    context.reportError(
                         sigCtx.name(),
                         "The signal $name has already been assigned!"
                     )
@@ -44,7 +131,7 @@ data class TypesParser(
             connectionContext.paramCon()?.let { paramCtx ->
                 val name = paramCtx.name().text
                 if (assignmentBlocks.any { block -> block.params.any { it.port == name } })
-                    context.errorCollector.reportError(
+                    context.reportError(
                         paramCtx.name(),
                         "The parameter $name has already been assigned!"
                     )
@@ -62,22 +149,22 @@ data class TypesParser(
     override fun exitArraySize(ctx: ArraySizeContext) {
         val expr = context.expr.resolve(ctx.expr())
         if (expr == null) {
-            context.errorCollector.reportError(ctx, "Array size expression couldn't be resolved.")
+            context.reportError(ctx, "Array size expression couldn't be resolved.")
             return
         }
 
         if (!expr.constant)
-            context.errorCollector.reportError(ctx, "Array sizes must be a constant value.")
+            context.reportError(ctx, "Array sizes must be a constant value.")
 
         if (expr !is BitListValue || !expr.isNumber()) {
-            context.errorCollector.reportError(ctx, "Array sizes must be a number.")
+            context.reportError(ctx, "Array sizes must be a number.")
             return
         }
 
         val size = try {
             expr.toBigInt().intValueExact()
         } catch (e: ArithmeticException) {
-            context.errorCollector.reportError(ctx, "Array size must fit into an integer.")
+            context.reportError(ctx, "Array size must fit into an integer.")
             return
         }
 
@@ -90,12 +177,12 @@ data class TypesParser(
         val name = ctx.name().text
 
         if (ctx.name().TYPE_ID() == null)
-            context.errorCollector.reportError(ctx.name(), "Sig names must start with a lowercase letter.")
+            context.reportError(ctx.name(), "Sig names must start with a lowercase letter.")
 
         val width = context.resolve(ctx.signalWidth())
 
         if (width == null) {
-            context.errorCollector.reportError(ctx.signalWidth(), "Failed to resolve signal width!")
+            context.reportError(ctx.signalWidth(), "Failed to resolve signal width!")
             return
         }
 
@@ -108,14 +195,14 @@ data class TypesParser(
         val name = ctx.name().text
 
         if (ctx.name().TYPE_ID() == null)
-            context.errorCollector.reportError(ctx.name(), "Dff names must start with a lowercase letter.")
+            context.reportError(ctx.name(), "Dff names must start with a lowercase letter.")
 
         var clk: DynamicExpr? = null
         var rst: DynamicExpr? = null
         val width = context.resolve(ctx.signalWidth())
 
         if (width == null) {
-            context.errorCollector.reportError(ctx.signalWidth(), "Failed to resolve signal width!")
+            context.reportError(ctx.signalWidth(), "Failed to resolve signal width!")
             return
         }
 
@@ -148,27 +235,27 @@ data class TypesParser(
                     "INIT" -> param.value.value.let {
                         if (init.canAssign(it)) {
                             if (init is SimpleValue && it is SimpleValue && (init as SimpleValue).size < it.size) {
-                                context.errorCollector.reportWarning(
+                                context.reportWarning(
                                     param.value.expr,
                                     "The initialization value is wider than the DFF $name and will be truncated."
                                 )
                             }
                             init = it.resizeToMatch(init.signalWidth)
                         } else {
-                            context.errorCollector.reportError(
+                            context.reportError(
                                 param.value.expr,
                                 "The initialization value does not match the size of the DFF $name."
                             )
                         }
                     }
 
-                    else -> context.errorCollector.reportError(
+                    else -> context.reportError(
                         param.value.expr,
                         "DFFs don't have a parameter named $paramName."
                     )
                 }
             } else {
-                context.errorCollector.reportError(
+                context.reportError(
                     param.value.expr,
                     "The parameter $paramName has already been specified."
                 )
@@ -182,13 +269,13 @@ data class TypesParser(
                 when (sigName) {
                     "clk" -> clk = sig.value // TODO: Check width fits to single bit
                     "rst" -> rst = sig.value
-                    else -> context.errorCollector.reportError(
+                    else -> context.reportError(
                         sig.value.expr,
                         "DFFs don't have a signal named $sigName."
                     )
                 }
             } else {
-                context.errorCollector.reportError(
+                context.reportError(
                     sig.portCtx,
                     "The signal $sigName has already been specified."
                 )
@@ -199,18 +286,18 @@ data class TypesParser(
         val resolvedClk = clk
 
         if (resolvedClk == null) {
-            context.errorCollector.reportError(ctx, "Dff is missing connection to clk.")
+            context.reportError(ctx, "Dff is missing connection to clk.")
             return
         }
 
         val clkWidth = resolvedClk.value.signalWidth
         if (!BitWidth.canAssign(clkWidth)) {
-            context.errorCollector.reportError(ctx, "The clk connection can't be reduced to a single bit.")
+            context.reportError(ctx, "The clk connection can't be reduced to a single bit.")
             return
         }
 
         if (clkWidth != BitWidth) {
-            context.errorCollector.reportWarning(
+            context.reportWarning(
                 resolvedClk.expr,
                 "The clk connection is wider than 1 bit and will be truncated."
             )
@@ -218,11 +305,11 @@ data class TypesParser(
 
         rst?.value?.signalWidth?.let { rstWidth ->
             if (!BitWidth.canAssign(rstWidth)) {
-                context.errorCollector.reportError(ctx, "The rst connection can't be reduced to a single bit.")
+                context.reportError(ctx, "The rst connection can't be reduced to a single bit.")
                 return
             }
             if (rstWidth != BitWidth) {
-                context.errorCollector.reportWarning(
+                context.reportWarning(
                     resolvedClk.expr,
                     "The rst connection is wider than 1 bit and will be truncated."
                 )

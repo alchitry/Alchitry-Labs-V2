@@ -58,4 +58,6 @@ class ProjectContext {
     fun resolveSignal(name: String): SignalOrParent? = globals[name]
 
     fun resolveGlobal(name: String) = globals[name]
+
+    fun resolveModuleType(name: String): Module? = modules[name]
 }

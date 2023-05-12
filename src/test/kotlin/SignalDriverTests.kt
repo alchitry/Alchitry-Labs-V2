@@ -1,4 +1,4 @@
-import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.ErrorCollector
+import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import helpers.LucidModuleTester
 import org.junit.jupiter.api.Test
 

@@ -1,6 +1,6 @@
 package helpers
 
-import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.ErrorCollector
+import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleTypeContext
@@ -73,10 +73,10 @@ class LucidModuleTester(val text: String) {
         println("Starting module type pass...")
         val module = moduleTypeParse(errors, tree)
 
-        val moduleInstance = ModuleInstance(project, "top", module, mapOf())
+        val moduleInstance = ModuleInstance("top", project, null, module, mapOf())
 
         val moduleContext =
-            LucidModuleContext(project, ParseStage.ModuleInternals, moduleInstance, null, errors)
+            LucidModuleContext(project, moduleInstance, ParseStage.ModuleInternals, null, errors)
 
         val stages = listOf(
             ParseStage.ModuleInternals,

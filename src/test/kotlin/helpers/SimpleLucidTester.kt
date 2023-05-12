@@ -22,8 +22,14 @@ class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = nul
     val project = ProjectContext()
     val context = LucidModuleContext(
         project,
+        ModuleInstance(
+            "top",
+            project,
+            null,
+            Module("testModule", mapOf(), mapOf(), ModuleContext(null, 0)),
+            mapOf()
+        ),
         ParseStage.ErrorCheck,
-        ModuleInstance(project, "top", Module("testModule", mapOf(), mapOf()), mapOf()),
         localSignalResolver = localSignalResolver
     )
 

@@ -1,4 +1,4 @@
-import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.ErrorCollector
+import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.types.Module
 import com.alchitry.labs.parsers.lucidv2.types.Parameter
@@ -59,7 +59,8 @@ class ModuleTypeTests {
                     "rst" to Port("rst", SignalDirection.Read, BitWidth, true),
                     "count" to Port("count", SignalDirection.Write, BitListWidth(8), false),
                     "test" to Port("test", SignalDirection.Both, BitWidth, false)
-                )
+                ),
+                tree.module(0)
             ),
             module
         )

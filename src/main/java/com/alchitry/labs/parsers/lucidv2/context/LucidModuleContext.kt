@@ -1,18 +1,19 @@
 package com.alchitry.labs.parsers.lucidv2.context
 
-import com.alchitry.labs.com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.errors.ErrorListener
+import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.parsers.*
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
+import com.alchitry.labs.parsers.lucidv2.values.Bit
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.ParseTreeListener
 
 class LucidModuleContext(
     override val project: ProjectContext,
-    var stage: ParseStage = ParseStage.ModuleInternals,
     val instance: ModuleInstance,
+    var stage: ParseStage = ParseStage.ModuleInternals,
     override val evalContext: Evaluable? = null,
     val errorCollector: ErrorCollector = ErrorCollector(),
     expr: ExprParser? = null,
@@ -25,7 +26,6 @@ class LucidModuleContext(
     signalDriver: SignalDriverParser? = null,
     val localSignalResolver: SignalResolver? = null // Used in tests to simulate a full parse.
 ) : LucidExprContext, ErrorListener by errorCollector {
-
     // These will be run multiple times during evaluation, so they need their context updated
     val expr = expr?.withContext(this) ?: ExprParser(this)
     val bitSelection = bitSelection?.withContext(this) ?: BitSelectionParser(this)
@@ -81,8 +81,8 @@ class LucidModuleContext(
 
     fun withEvalContext(evalContext: Evaluable) = LucidModuleContext(
         project,
-        ParseStage.Evaluation,
         instance,
+        ParseStage.Evaluation,
         evalContext,
         ErrorCollector(), // give each context its own error collector
         expr,
@@ -103,13 +103,31 @@ class LucidModuleContext(
         alwaysParser.queueEval()
     }
 
-    fun walk(t: ParseTree, vararg extraListeners: ParseTreeListener) =
-        ParseTreeMultiWalker.walk(
-            getListeners().toMutableList().apply { addAll(extraListeners.toList()) },
-            t,
-            getFilter()
-        )
+    fun initialWalk(t: ParseTree): Boolean {
+        stage = ParseStage.ModuleInternals
+        walk(t)
+        if (!errorCollector.hasNoErrors)
+            return false
+        stage = ParseStage.Drivers
+        walk(t)
+        return errorCollector.hasNoErrors
+    }
 
+    fun walk(t: ParseTree) = ParseTreeMultiWalker.walk(getListeners(), t, getFilter())
+
+    fun checkParameters(): Boolean {
+        stage = ParseStage.Evaluation
+        instance.module.parameters.values.forEach { param ->
+            param.constraint?.let {
+                walk(it)
+                if (resolve(it)?.isTrue()?.bit != Bit.B1) {
+                    errorCollector.reportError(it, "Parameter constraint failed for ${param.name}.")
+                    return false
+                }
+            }
+        }
+        return true
+    }
 
     override fun resolve(exprCtx: ExprContext) = expr.resolve(exprCtx)
 

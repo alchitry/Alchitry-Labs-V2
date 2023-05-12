@@ -1,23 +1,30 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
+import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.signals.SignalParent
 import com.alchitry.labs.parsers.lucidv2.values.Bit
+import com.alchitry.labs.parsers.lucidv2.values.Value
 
 class ModuleInstance(
-    private val context: ProjectContext,
     override val name: String,
+    private val project: ProjectContext,
+    override val parent: ModuleInstance?,
     val module: Module,
-    parameters: Map<String, Signal>
+    parameters: Map<String, Value>
 ) : SignalParent {
-    override val parent: SignalParent? = null
+    val context = LucidModuleContext(project, this)
+
+    fun checkParameters() = context.checkParameters()
+    fun initialWalk() = context.initialWalk(module.context)
+
     private val inouts = module.ports.mapNotNull { (_, port) ->
         if (port.direction != SignalDirection.Both)
             null
         else
-            Inout(port.name, context, this, port.width, port.signed)
+            Inout(port.name, project, this, port.width, port.signed)
     }.associateBy { it.name }
 
     private val ports: Map<String, Signal> = module.ports.mapValues { (_, port) ->
@@ -41,12 +48,12 @@ class ModuleInstance(
     }
 
     // Use the provided parameters or the default value from the module is it is missing
-    private val parameters = module.parameters.mapValues { (name, param) ->
-        parameters[name] ?: Signal(
+    val parameters = module.parameters.mapValues { (name, param) ->
+        Signal(
             name,
             SignalDirection.Read,
             this,
-            param.default ?: error("Missing module parameter!")
+            parameters[name] ?: param.default ?: error("Missing module parameter!")
         )
     }
 
@@ -56,8 +63,8 @@ class ModuleInstance(
             val external = externalPorts[portName] ?: error("Missing port $portName!")
 
             when (internal.direction) {
-                SignalDirection.Read -> external.connect(internal, context)
-                SignalDirection.Write -> internal.connect(external, context)
+                SignalDirection.Read -> external.connect(internal, project)
+                SignalDirection.Write -> internal.connect(external, project)
                 else -> {}
             }
         }
