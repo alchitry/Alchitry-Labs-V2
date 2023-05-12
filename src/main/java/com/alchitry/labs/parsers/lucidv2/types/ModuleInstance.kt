@@ -13,21 +13,21 @@ class ModuleInstance(
     parameters: Map<String, Signal>
 ) : SignalParent {
     override val parent: SignalParent? = null
-    val inouts = module.ports.mapNotNull { (_, port) ->
+    private val inouts = module.ports.mapNotNull { (_, port) ->
         if (port.direction != SignalDirection.Both)
             null
         else
             Inout(port.name, context, this, port.width, port.signed)
     }.associateBy { it.name }
 
-    val ports: Map<String, Signal> = module.ports.mapValues { (_, port) ->
+    private val ports: Map<String, Signal> = module.ports.mapValues { (_, port) ->
         if (port.direction == SignalDirection.Both)
             inouts[port.name]?.internal ?: error("Missing inout for port ${port.name}! This should be impossible!")
         else
             Signal(port.name, port.direction, null, port.width.filledWith(Bit.Bu, false, port.signed), port.signed)
     }
 
-    val externalPorts: Map<String, Signal> = module.ports.mapValues { (_, port) ->
+    private val externalPorts: Map<String, Signal> = module.ports.mapValues { (_, port) ->
         if (port.direction == SignalDirection.Both)
             inouts[port.name]?.external ?: error("Missing inout for port ${port.name}! This should be impossible!")
         else
@@ -41,7 +41,7 @@ class ModuleInstance(
     }
 
     // Use the provided parameters or the default value from the module is it is missing
-    val parameters = module.parameters.mapValues { (name, param) ->
+    private val parameters = module.parameters.mapValues { (name, param) ->
         parameters[name] ?: Signal(
             name,
             SignalDirection.Read,
