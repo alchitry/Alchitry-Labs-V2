@@ -24,7 +24,7 @@ class ModuleInstance(
         if (port.direction == SignalDirection.Both)
             inouts[port.name]?.internal ?: error("Missing inout for port ${port.name}! This should be impossible!")
         else
-            Signal(port.name, port.direction, null, port.width.filledWith(Bit.Bu, false, port.signed), port.signed)
+            Signal(port.name, port.direction, null, port.width.filledWith(Bit.Bx, false, port.signed), port.signed)
     }
 
     private val externalPorts: Map<String, Signal> = module.ports.mapValues { (_, port) ->
@@ -35,7 +35,7 @@ class ModuleInstance(
                 port.name,
                 port.direction.flip(),
                 this,
-                port.width.filledWith(Bit.Bu, false, port.signed),
+                port.width.filledWith(Bit.Bx, false, port.signed),
                 port.signed
             )
     }

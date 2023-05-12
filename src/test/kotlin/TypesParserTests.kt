@@ -322,7 +322,7 @@ internal class TypesParserTests {
         val sig = tester.context.resolveSignal("testSig")
         sig as Signal
         assertEquals(SignalDirection.Both, sig.direction)
-        assertEquals(BitValue(Bit.Bu, false, false), sig.read(tester.context.evalContext))
+        assertEquals(BitValue(Bit.Bx, false, false), sig.read(tester.context.evalContext))
         assertEquals(false, sig.signed)
         assertEquals(null, sig.parent)
         assertEquals(BitWidth, sig.width)
@@ -348,7 +348,7 @@ internal class TypesParserTests {
 
         val width = BitListWidth(8)
         assertEquals(SignalDirection.Both, sig.direction)
-        assertEquals(width.filledWith(Bit.Bu, false, false), sig.read(tester.context.evalContext))
+        assertEquals(width.filledWith(Bit.Bx, false, false), sig.read(tester.context.evalContext))
         assertEquals(false, sig.signed)
         assertEquals(null, sig.parent)
         assertEquals(width, sig.width)

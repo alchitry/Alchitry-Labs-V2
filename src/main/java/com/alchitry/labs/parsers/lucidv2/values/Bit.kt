@@ -4,8 +4,7 @@ enum class Bit {
     B0,
     B1,
     Bx, // used to specify unknown values (reads are ok)
-    Bz, // used to specify high-impedance (reads are errors, should only be used at top-level output)
-    Bu; // used to specify un-driven signals (reads are errors)
+    Bz; // used to specify high-impedance (reads are errors, should only be used at top-level output)
 
     infix fun or(b: Bit): Bit {
         if (this == B1 || b == B1) return B1
@@ -31,7 +30,6 @@ enum class Bit {
             B1 -> '1'
             Bx -> 'x'
             Bz -> 'z'
-            Bu -> 'u'
         }
 
     infix fun nor(b: Bit): Bit {
@@ -56,14 +54,13 @@ enum class Bit {
             B1 -> B0
             Bx -> Bx
             Bz -> Bx
-            Bu -> Bx
         }
     }
 
     fun isNumber(): Boolean {
         return when (this) {
             B0, B1 -> true
-            Bx, Bz, Bu -> false
+            Bx, Bz -> false
         }
     }
 

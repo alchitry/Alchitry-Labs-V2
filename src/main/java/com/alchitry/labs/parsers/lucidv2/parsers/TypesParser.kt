@@ -99,7 +99,7 @@ data class TypesParser(
             return
         }
 
-        sigs[name] = Signal(name, SignalDirection.Both, null, width.filledWith(Bit.Bu, false, signed), signed)
+        sigs[name] = Signal(name, SignalDirection.Both, null, width.filledWith(Bit.Bx, false, signed), signed)
     }
 
     override fun exitDffDec(ctx: DffDecContext) {

@@ -47,8 +47,6 @@ sealed class SimpleValue(
         return BitValue(if (hasX) Bit.Bx else Bit.B0, constant, false)
     }
 
-    fun isDriven(): Boolean = bits.none { it == Bit.Bu }
-
     /** returns true if the value is made up of only 1s and 0s */
     override fun isNumber(): Boolean = bits.none { !it.isNumber() }
 

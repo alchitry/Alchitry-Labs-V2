@@ -43,7 +43,6 @@ data class BitValue(
             Bit.B0 -> Bit.B0
             Bit.B1 -> Bit.B1
             Bit.Bx, Bit.Bz -> Bit.Bx
-            Bit.Bu -> Bit.Bu
         },
         constant,
         false
