@@ -1,4 +1,5 @@
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
+import com.alchitry.labs.parsers.lucidv2.signals.Dff
 import com.alchitry.labs.parsers.lucidv2.signals.DynamicExpr
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
@@ -44,6 +45,42 @@ class DynamicEvalTests {
             }
 
             assertEquals(BitListValue("000", 2, constant = false, signed = false), dynamicExpr.value)
+        }
+    }
+
+    @Test
+    fun dffTest() {
+        val b0 = BitValue(Bit.B0, false, false)
+        val b1 = BitValue(Bit.B1, false, false)
+
+        val clk = Signal("clk", SignalDirection.Read, null, b0, false)
+
+        val test =
+            SimpleLucidTester(
+                "clk",
+                localSignalResolver = TestSignalResolver(clk)
+            )
+
+        val exprCtx = test.expr()
+        test.context.walk(exprCtx)
+        val clkExpr = DynamicExpr(exprCtx, test.context)
+
+        val dff = Dff(test.project, "myDff", b0, clkExpr, null, false)
+
+        runBlocking {
+            dff.d.set(b1)
+            clk.set(b1)
+            test.project.processQueue()
+            assertEquals(b1, dff.q.get(null))
+
+            clk.set(b0)
+            dff.d.set(b0)
+            test.project.processQueue()
+            assertEquals(b1, dff.q.get(null))
+
+            clk.set(b1)
+            test.project.processQueue()
+            assertEquals(b0, dff.q.get(null))
         }
     }
 

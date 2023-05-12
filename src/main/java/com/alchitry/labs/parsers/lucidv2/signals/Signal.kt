@@ -163,5 +163,5 @@ sealed interface SignalParent : SignalOrParent {
      * @param name the name of the signal to retrieve
      * @return the signal or null if it couldn't be found
      */
-    fun getSignal(name: String): Signal?
+    fun getSignal(name: String): SignalOrParent?
 }

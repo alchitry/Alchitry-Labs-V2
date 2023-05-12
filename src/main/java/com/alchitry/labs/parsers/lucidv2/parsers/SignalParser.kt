@@ -55,38 +55,37 @@ data class SignalParser(
         }
 
         val children = ctx.children.filter { it is NameContext || it is BitSelectionContext }
-        val usedChildren: Int
+        var usedChildren = 1
+        var currentSignalOrParent: SignalOrParent = signalOrParent
 
-        val signal = when (signalOrParent) {
-            is Signal -> {
-                usedChildren = 1
-                signalOrParent
+        while (currentSignalOrParent is SignalParent) {
+            if (children.size < usedChildren + 1) {
+                context.reportError(
+                    ctx.name(usedChildren),
+                    "${ctx.name(usedChildren).text} is not a signal and can't be accessed directly."
+                )
+                return
             }
-
-            is SignalParent -> {
-                usedChildren = 2
-                if (children.size < 2) {
-                    context.reportError(
-                        ctx.name(0),
-                        "$firstName is not a signal and can't be accessed directly."
-                    )
-                    return
-                }
-                if (children[1] is BitSelectionContext) {
-                    context.reportError(children[1] as ParserRuleContext, "${firstName.text} is not an array.")
-                    return
-                }
-                val sig = signalOrParent.getSignal(children[1].text)
-                if (sig == null) {
-                    context.reportError(
-                        children[1] as ParserRuleContext,
-                        "Failed to resolve signal $firstName.${children[1].text}"
-                    )
-                    return
-                }
-                sig
+            if (children[usedChildren] is BitSelectionContext) {
+                context.reportError(
+                    children[usedChildren] as ParserRuleContext,
+                    "${ctx.name(usedChildren).text} is not an array."
+                )
+                return
             }
+            val sig = currentSignalOrParent.getSignal(children[usedChildren].text)
+            if (sig == null) {
+                context.reportError(
+                    children[usedChildren] as ParserRuleContext,
+                    "Failed to resolve signal $firstName.${children[usedChildren].text}"
+                )
+                return
+            }
+            usedChildren += 1
+            currentSignalOrParent = sig
         }
+
+        val signal = currentSignalOrParent as Signal
 
         val selectionMap = children.subList(usedChildren, children.size).flatMap { child ->
             when (child) {

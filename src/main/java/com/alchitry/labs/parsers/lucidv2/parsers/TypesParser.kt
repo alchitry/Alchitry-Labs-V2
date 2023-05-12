@@ -225,7 +225,7 @@ data class TypesParser(
             }
         }
 
-        val dff = Dff(name, init, resolvedClk.constrain(BitWidth), rst?.constrain(BitWidth), signed)
+        val dff = Dff(context.project, name, init, resolvedClk.constrain(BitWidth), rst?.constrain(BitWidth), signed)
         dffs[name] = dff
     }
 }
