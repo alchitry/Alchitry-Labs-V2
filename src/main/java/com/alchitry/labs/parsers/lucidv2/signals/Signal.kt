@@ -16,11 +16,11 @@ open class Signal(
     override val parent: SignalParent?,
     initialValue: Value,
     val signed: Boolean = initialValue is SimpleValue && initialValue.signed
-) : SignalOrParent, SignalOrSubSignal {
+) : SignalOrSubSignal, SignalOrParent {
     fun select(selection: SignalSelection) = SubSignal(this, selection)
 
     private val mutableValueFlow = SynchronizedSharedFlow<Value>()
-    val valueFlow: Flow<Value> get() = mutableValueFlow.asFlow()
+    open val valueFlow: Flow<Value> get() = mutableValueFlow.asFlow()
 
     private var setEvalContext: Evaluable? = null
     private var nextValue: Value? = null
@@ -64,14 +64,14 @@ open class Signal(
      * Connects this signal's value to the provided signal.
      */
     fun connect(sig: Signal, context: ProjectContext) {
-        require(sig.read().signalWidth.canAssign(value.signalWidth)) {
+        require(sig.read().signalWidth.canAssign(read().signalWidth)) {
             "Cannot assign this signal's value to the provided signal!"
         }
         context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
-            sig.write(value)
+            sig.write(read())
         }
 
-        val evaluable = Evaluable { sig.write(value) }
+        val evaluable = Evaluable { sig.write(read()) }
 
         context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             valueFlow.collect {

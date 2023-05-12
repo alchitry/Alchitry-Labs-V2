@@ -1,14 +1,19 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
+import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.ProxySignal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs.parsers.lucidv2.values.Value
+import com.alchitry.labs.parsers.onAnyChange
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.launch
 
 class Inout(
     val name: String,
+    val context: ProjectContext,
     parent: ModuleInstance?,
     val width: SignalWidth,
     val signed: Boolean
@@ -31,6 +36,17 @@ class Inout(
         signed
     ) {
         generateValue(it)
+    }
+
+    // connect the write flows to the read flows
+    init {
+        context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+            onAnyChange(internal.writeFlow, external.writeFlow) {
+                val newValue = generateValue(null)
+                internal.updateRead(newValue)
+                external.updateRead(newValue)
+            }
+        }
     }
 
     /**
