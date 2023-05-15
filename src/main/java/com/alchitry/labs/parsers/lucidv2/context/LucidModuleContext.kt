@@ -110,7 +110,7 @@ class LucidModuleContext(
             return errorCollector.errors.toList()
         stage = ParseStage.Drivers
         walk(t)
-        if (!errorCollector.errors.isNotEmpty())
+        if (errorCollector.errors.isNotEmpty())
             return errorCollector.errors.toList()
         return null
     }

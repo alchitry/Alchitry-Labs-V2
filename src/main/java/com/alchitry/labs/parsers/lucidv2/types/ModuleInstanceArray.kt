@@ -1,11 +1,11 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
-import com.alchitry.labs.parsers.lucidv2.signals.*
-import com.alchitry.labs.parsers.lucidv2.values.ArrayWidth
-import com.alchitry.labs.parsers.lucidv2.values.Bit
-import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
-import com.alchitry.labs.parsers.lucidv2.values.Value
+import com.alchitry.labs.parsers.lucidv2.signals.Signal
+import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
+import com.alchitry.labs.parsers.lucidv2.signals.SignalParent
+import com.alchitry.labs.parsers.lucidv2.signals.SignalSelector
+import com.alchitry.labs.parsers.lucidv2.values.*
 
 sealed interface ModuleInstanceOrArray : SignalParent {
     fun removePort(name: String)
@@ -43,7 +43,10 @@ class ModuleInstanceArray(
         } else {
             var width: SignalWidth = port.width
             dimensions.asReversed().forEach {
-                width = ArrayWidth(it, width)
+                width = if (width is BitWidth)
+                    BitListWidth(it)
+                else
+                    ArrayWidth(it, width)
             }
             Signal(
                 port.name,
@@ -110,7 +113,7 @@ class ModuleInstanceArray(
 
     }
 
-    override fun getSignal(name: String): SignalOrParent? = externalPorts[name]
+    override fun getSignal(name: String) = externalPorts[name]
 }
 
 sealed interface ListOrModuleInstance

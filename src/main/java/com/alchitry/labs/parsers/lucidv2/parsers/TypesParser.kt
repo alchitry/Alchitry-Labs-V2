@@ -108,11 +108,11 @@ data class TypesParser(
             val instParams = localParamConnections.union(extParamConnections).associate { it.port to it.value.value }
             ModuleInstance(moduleInstanceName, context.project, context.instance, moduleType, instParams).apply {
                 checkParameters()?.let {
-                    context.reportError(ctx, it)
+                    this@TypesParser.context.reportError(ctx, it)
                     return
                 }
                 initialWalk()?.let {
-                    context.reportError(ctx, it)
+                    this@TypesParser.context.reportError(ctx, it)
                     return
                 }
             }
@@ -147,11 +147,11 @@ data class TypesParser(
                 localMap + extMap
             }.apply {
                 checkAllParameters()?.let {
-                    context.reportError(ctx, it)
+                    this@TypesParser.context.reportError(ctx, it)
                     return
                 }
                 initialWalkAll()?.let {
-                    context.reportError(ctx, it)
+                    this@TypesParser.context.reportError(ctx, it)
                     return
                 }
             }
