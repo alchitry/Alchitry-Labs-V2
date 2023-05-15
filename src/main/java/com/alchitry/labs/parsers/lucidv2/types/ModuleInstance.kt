@@ -73,8 +73,8 @@ class ModuleInstance(
             val external = externalPorts[portName] ?: error("Missing port $portName!")
 
             when (internal.direction) {
-                SignalDirection.Read -> external.connect(internal, project)
-                SignalDirection.Write -> internal.connect(external, project)
+                SignalDirection.Read -> external.connectTo(internal, project)
+                SignalDirection.Write -> internal.connectTo(external, project)
                 SignalDirection.Both -> {}
             }
         }

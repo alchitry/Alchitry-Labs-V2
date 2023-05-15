@@ -90,17 +90,15 @@ class ModuleInstanceArray(
         modules.forEachIndexed { index: List<Int>, moduleInstance: ModuleInstance ->
             val selection = index.map { SignalSelector.Bits(it) }
             module.ports.forEach { (_, port) ->
-                val subSig = externalPorts[port.name]?.select(selection) ?: error("Missing external port!")
+                val subSig =
+                    inouts[port.name]?.internal?.select(selection)
+                        ?: externalPorts[port.name]?.select(selection)
+                        ?: error("Missing external port!")
                 val modSig = moduleInstance.getSignal(port.name) ?: error("Missing module instance port!")
-                when (port.direction) {
-                    SignalDirection.Read -> subSig.connect(modSig, projectContext)
-                    SignalDirection.Write -> modSig.connect(subSig, projectContext)
-                    SignalDirection.Both -> {
-                        val inoutSig = inouts[port.name]?.internal?.select(selection) ?: error("Missing inout port!")
-                        inoutSig.connect(modSig, projectContext)
-                        modSig.connect(inoutSig, projectContext)
-                    }
-                }
+                if (port.direction.canRead)
+                    subSig.connectTo(modSig, projectContext)
+                if (port.direction.canWrite)
+                    modSig.connectTo(subSig, projectContext)
             }
         }
 

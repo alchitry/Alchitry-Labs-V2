@@ -32,8 +32,8 @@ sealed interface SignalOrSubSignal {
     /**
      * Connects this signal's value to the provided signal.
      */
-    fun connect(sig: SignalOrSubSignal, context: ProjectContext) {
-        require(sig.read().signalWidth.canAssign(read().signalWidth)) {
+    fun connectTo(sig: SignalOrSubSignal, context: ProjectContext) {
+        require(sig.width.canAssign(width)) {
             "Cannot assign this signal's value to the provided signal!"
         }
         context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
