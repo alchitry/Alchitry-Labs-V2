@@ -44,7 +44,11 @@ class ModuleInstance(
             Signal(port.name, port.direction, null, port.width.filledWith(Bit.Bx, false, port.signed), port.signed)
     }
 
-    private val externalPorts: Map<String, Signal> = module.ports.mapValues { (_, port) ->
+    override fun removePort(name: String) {
+        externalPorts.remove(name)
+    }
+
+    private val externalPorts: MutableMap<String, Signal> = module.ports.mapValues { (_, port) ->
         if (port.direction == SignalDirection.Both)
             inouts[port.name]?.external ?: error("Missing inout for port ${port.name}! This should be impossible!")
         else
@@ -55,7 +59,7 @@ class ModuleInstance(
                 port.width.filledWith(Bit.Bx, false, port.signed),
                 port.signed
             )
-    }
+    }.toMutableMap()
 
     // Use the provided parameters or the default value from the module is it is missing
     val parameters = module.parameters.mapValues { (name, param) ->

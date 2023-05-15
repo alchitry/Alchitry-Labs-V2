@@ -7,7 +7,9 @@ import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs.parsers.lucidv2.values.Value
 
-sealed interface ModuleInstanceOrArray : SignalParent
+sealed interface ModuleInstanceOrArray : SignalParent {
+    fun removePort(name: String)
+}
 
 class ModuleInstanceArray(
     override val name: String,
@@ -31,7 +33,11 @@ class ModuleInstanceArray(
         }
     }.associateBy { it.name }
 
-    private val externalPorts: Map<String, Signal> = module.ports.mapValues { (_, port) ->
+    override fun removePort(name: String) {
+        externalPorts.remove(name)
+    }
+
+    private val externalPorts: MutableMap<String, Signal> = module.ports.mapValues { (_, port) ->
         if (port.direction == SignalDirection.Both) {
             inouts[port.name]?.external ?: error("Missing inout for port ${port.name}! This should be impossible!")
         } else {
@@ -47,7 +53,7 @@ class ModuleInstanceArray(
                 port.signed
             )
         }
-    }
+    }.toMutableMap()
 
     private fun collectErrorsFor(block: (ModuleInstance) -> String?): String? {
         val sb = StringBuilder()
