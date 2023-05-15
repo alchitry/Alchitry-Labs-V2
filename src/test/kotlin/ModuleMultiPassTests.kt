@@ -3,7 +3,7 @@ import com.alchitry.labs.parsers.lucidv2.types.Dff
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.BitValue
-import helpers.LucidModuleTester
+import helpers.LucidTester
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 class ModuleMultiPassTests {
     @Test
     fun testGlobalUse() {
-        val tester = LucidModuleTester(
+        val tester = LucidTester(
             """
                 global MyGlobal {
                     const ONE = 1
@@ -26,7 +26,7 @@ class ModuleMultiPassTests {
                 }
             """.trimIndent()
         )
-        val context = tester.fullParse()
+        val context = tester.fullParse().context
 
         val dff = context.resolveSignal("test") as Dff
 
@@ -35,7 +35,7 @@ class ModuleMultiPassTests {
 
     @Test
     fun basicRepeatTest() {
-        val tester = LucidModuleTester(
+        val tester = LucidTester(
             """
                 module myModule (
                     input a
@@ -51,10 +51,8 @@ class ModuleMultiPassTests {
                 }
             """.trimIndent()
         )
-        val context = tester.fullParse()
+        val context = tester.fullParse().context
         val testSig = context.resolveSignal("endValue") as Signal
-
-        println("Starting eval...")
 
         runBlocking {
             context.queueEval()
@@ -66,7 +64,7 @@ class ModuleMultiPassTests {
 
     @Test
     fun doubleDriverTest() {
-        val tester = LucidModuleTester(
+        val tester = LucidTester(
             """
                 module myModule (
                     input a
@@ -84,10 +82,8 @@ class ModuleMultiPassTests {
                 }
             """.trimIndent()
         )
-        val context = tester.fullParse()
+        val context = tester.fullParse().context
         val testSig = context.resolveSignal("testB") as Signal
-
-        println("Starting eval...")
 
         runBlocking {
             context.queueEval()

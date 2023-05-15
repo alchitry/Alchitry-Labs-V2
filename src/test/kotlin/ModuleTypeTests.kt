@@ -6,7 +6,7 @@ import com.alchitry.labs.parsers.lucidv2.types.Port
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.BitListWidth
 import com.alchitry.labs.parsers.lucidv2.values.BitWidth
-import helpers.LucidModuleTester
+import helpers.LucidTester
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -14,7 +14,7 @@ class ModuleTypeTests {
 
     @Test
     fun basicModuleTest() {
-        val test = LucidModuleTester(
+        val test = LucidTester(
             """
                 module myModule #(
                     CLK_FREQ : CLK_FREQ > 0,
@@ -41,7 +41,7 @@ class ModuleTypeTests {
                     "CLK_FREQ" to Parameter(
                         "CLK_FREQ",
                         null,
-                        tree.module(0).paramList().paramDec(0).paramConstraint().expr()
+                        tree.first().module(0).paramList().paramDec(0).paramConstraint().expr()
                     ),
                     "MAX_CT" to Parameter(
                         "MAX_CT",
@@ -51,7 +51,7 @@ class ModuleTypeTests {
                     "NEG_TEST" to Parameter(
                         "NEG_TEST",
                         BitListValue((-100).toBigInteger(), true),
-                        tree.module(0).paramList().paramDec(2).paramConstraint().expr()
+                        tree.first().module(0).paramList().paramDec(2).paramConstraint().expr()
                     )
                 ),
                 mapOf(
@@ -60,9 +60,9 @@ class ModuleTypeTests {
                     "count" to Port("count", SignalDirection.Write, BitListWidth(8), false),
                     "test" to Port("test", SignalDirection.Both, BitWidth, false)
                 ),
-                tree.module(0)
+                tree.first().module(0)
             ),
-            module
+            module.first()
         )
     }
 

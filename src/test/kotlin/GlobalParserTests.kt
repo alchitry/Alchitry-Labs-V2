@@ -1,7 +1,7 @@
 import com.alchitry.labs.parsers.lucidv2.types.StructMember
 import com.alchitry.labs.parsers.lucidv2.types.StructType
 import com.alchitry.labs.parsers.lucidv2.values.*
-import helpers.LucidModuleTester
+import helpers.LucidTester
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -9,7 +9,7 @@ import kotlin.test.assertNotNull
 class GlobalParserTests {
     @Test
     fun simpleGlobalTest() {
-        val tester = LucidModuleTester(
+        val tester = LucidTester(
             """
                 global MyGlobal {
                     const ONE = 1
@@ -25,7 +25,7 @@ class GlobalParserTests {
 
     @Test
     fun selfRefGlobalTest() {
-        val tester = LucidModuleTester(
+        val tester = LucidTester(
             """
                 global MyGlobal {
                     const ONE = 1
@@ -42,7 +42,7 @@ class GlobalParserTests {
 
     @Test
     fun structGlobalTest() {
-        val tester = LucidModuleTester(
+        val tester = LucidTester(
             """
                 global MyGlobal {
                     struct rgb {
@@ -71,7 +71,7 @@ class GlobalParserTests {
 
     @Test
     fun structRefGlobalTest() {
-        val tester = LucidModuleTester(
+        val tester = LucidTester(
             """
                 global MyGlobal {
                     struct rgb {
@@ -110,7 +110,7 @@ class GlobalParserTests {
 
     @Test
     fun nestedStructGlobalTest() {
-        val tester = LucidModuleTester(
+        val tester = LucidTester(
             """
                 global MyGlobal {
                     struct rgb {

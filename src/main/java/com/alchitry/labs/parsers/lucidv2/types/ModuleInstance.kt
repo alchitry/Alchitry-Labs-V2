@@ -1,5 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
+import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
@@ -12,9 +13,10 @@ class ModuleInstance(
     private val project: ProjectContext,
     override val parent: ModuleInstance?,
     val module: Module,
-    parameters: Map<String, Value>
+    parameters: Map<String, Value>,
+    errorCollector: ErrorCollector = ErrorCollector()
 ) : ModuleInstanceOrArray, ListOrModuleInstance {
-    val context = LucidModuleContext(project, this)
+    val context = LucidModuleContext(project, this, errorCollector = errorCollector)
 
     fun checkParameters(): String? {
         val paramErrors = context.checkParameters() ?: return null

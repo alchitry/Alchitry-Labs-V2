@@ -1,11 +1,11 @@
 import com.alchitry.labs.parsers.lucidv2.ErrorCollector
-import helpers.LucidModuleTester
+import helpers.LucidTester
 import org.junit.jupiter.api.Test
 
 class SignalDriverTests {
     @Test
     fun basicDriverTest() {
-        val tester = LucidModuleTester(
+        val tester = LucidTester(
             """
                 module myModule (
                     input a
@@ -23,7 +23,7 @@ class SignalDriverTests {
 
     @Test
     fun basicPartialDrivenTest() {
-        val tester = LucidModuleTester(
+        val tester = LucidTester(
             """
                 module myModule (
                     input a
@@ -44,7 +44,7 @@ class SignalDriverTests {
 
     @Test
     fun multiPartialDrivenTest() {
-        val tester = LucidModuleTester(
+        val tester = LucidTester(
             """
                 module myModule (
                     input a
@@ -63,7 +63,7 @@ class SignalDriverTests {
 
     @Test
     fun basicIfPartialDrivenTest() {
-        val tester = LucidModuleTester(
+        val tester = LucidTester(
             """
                 module myModule (
                     input a
@@ -86,7 +86,7 @@ class SignalDriverTests {
 
     @Test
     fun basicIfCompleteDrivenTest() {
-        val tester = LucidModuleTester(
+        val tester = LucidTester(
             """
                 module myModule (
                     input a

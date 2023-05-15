@@ -106,11 +106,11 @@ class LucidModuleContext(
     fun initialWalk(t: ParseTree): List<String>? {
         stage = ParseStage.ModuleInternals
         walk(t)
-        if (!errorCollector.hasNoErrors)
+        if (errorCollector.errors.isNotEmpty())
             return errorCollector.errors.toList()
         stage = ParseStage.Drivers
         walk(t)
-        if (!errorCollector.hasNoErrors)
+        if (!errorCollector.errors.isNotEmpty())
             return errorCollector.errors.toList()
         return null
     }
