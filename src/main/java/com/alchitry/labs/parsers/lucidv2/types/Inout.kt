@@ -4,6 +4,7 @@ import com.alchitry.labs.parsers.lucidv2.context.Evaluable
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.ProxySignal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
+import com.alchitry.labs.parsers.lucidv2.signals.SignalParent
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs.parsers.lucidv2.values.Value
@@ -14,7 +15,7 @@ import kotlinx.coroutines.launch
 class Inout(
     val name: String,
     val context: ProjectContext,
-    parent: ModuleInstance?,
+    parent: SignalParent?,
     val width: SignalWidth,
     val signed: Boolean
 ) {

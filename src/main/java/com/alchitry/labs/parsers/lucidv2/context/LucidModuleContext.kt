@@ -103,30 +103,32 @@ class LucidModuleContext(
         alwaysParser.queueEval()
     }
 
-    fun initialWalk(t: ParseTree): Boolean {
+    fun initialWalk(t: ParseTree): List<String>? {
         stage = ParseStage.ModuleInternals
         walk(t)
         if (!errorCollector.hasNoErrors)
-            return false
+            return errorCollector.errors.toList()
         stage = ParseStage.Drivers
         walk(t)
-        return errorCollector.hasNoErrors
+        if (!errorCollector.hasNoErrors)
+            return errorCollector.errors.toList()
+        return null
     }
 
     fun walk(t: ParseTree) = ParseTreeMultiWalker.walk(getListeners(), t, getFilter())
 
-    fun checkParameters(): Boolean {
+    fun checkParameters(): List<String>? {
         stage = ParseStage.Evaluation
         instance.module.parameters.values.forEach { param ->
             param.constraint?.let {
                 walk(it)
                 if (resolve(it)?.isTrue()?.bit != Bit.B1) {
                     errorCollector.reportError(it, "Parameter constraint failed for ${param.name}.")
-                    return false
+                    return errorCollector.errors.toList()
                 }
             }
         }
-        return true
+        return null
     }
 
     override fun resolve(exprCtx: ExprContext) = expr.resolve(exprCtx)

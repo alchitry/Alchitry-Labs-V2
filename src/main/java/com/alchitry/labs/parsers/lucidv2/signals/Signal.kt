@@ -2,13 +2,10 @@ package com.alchitry.labs.parsers.lucidv2.signals
 
 import com.alchitry.labs.parsers.SynchronizedSharedFlow
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
-import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
 import com.alchitry.labs.parsers.lucidv2.values.Value
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 
 open class Signal(
     override val name: String, // includes namespace or module name
@@ -20,7 +17,7 @@ open class Signal(
     fun select(selection: SignalSelection) = SubSignal(this, selection)
 
     private val mutableValueFlow = SynchronizedSharedFlow<Value>()
-    open val valueFlow: Flow<Value> get() = mutableValueFlow.asFlow()
+    override val valueFlow: Flow<Value> get() = mutableValueFlow.asFlow()
 
     private var setEvalContext: Evaluable? = null
     private var nextValue: Value? = null
@@ -58,25 +55,5 @@ open class Signal(
     override suspend fun write(v: Value) {
         quietWrite(v)
         publish()
-    }
-
-    /**
-     * Connects this signal's value to the provided signal.
-     */
-    fun connect(sig: Signal, context: ProjectContext) {
-        require(sig.read().signalWidth.canAssign(read().signalWidth)) {
-            "Cannot assign this signal's value to the provided signal!"
-        }
-        context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
-            sig.write(read())
-        }
-
-        val evaluable = Evaluable { sig.write(read()) }
-
-        context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
-            valueFlow.collect {
-                context.queueEvaluation(evaluable)
-            }
-        }
     }
 }

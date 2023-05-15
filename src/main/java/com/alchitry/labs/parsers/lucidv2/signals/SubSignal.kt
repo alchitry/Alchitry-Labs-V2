@@ -3,6 +3,9 @@ package com.alchitry.labs.parsers.lucidv2.signals
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs.parsers.lucidv2.values.Value
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
 data class SubSignal(
     val parent: Signal,
@@ -14,6 +17,9 @@ data class SubSignal(
 
     override val direction: SignalDirection
         get() = parent.direction
+
+    override val valueFlow: Flow<Value>
+        get() = parent.valueFlow.map { it.select(selection) }.distinctUntilChanged()
 
     /**
      * Generates the full value for the parent signal with the value v applied to the selected portion of the signal.

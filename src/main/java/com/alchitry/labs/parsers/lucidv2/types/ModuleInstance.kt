@@ -4,7 +4,6 @@ import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
-import com.alchitry.labs.parsers.lucidv2.signals.SignalParent
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.Value
 
@@ -14,11 +13,22 @@ class ModuleInstance(
     override val parent: ModuleInstance?,
     val module: Module,
     parameters: Map<String, Value>
-) : SignalParent {
+) : ModuleInstanceOrArray, ListOrModuleInstance {
     val context = LucidModuleContext(project, this)
 
-    fun checkParameters() = context.checkParameters()
-    fun initialWalk() = context.initialWalk(module.context)
+    fun checkParameters(): String? {
+        val paramErrors = context.checkParameters() ?: return null
+        val sb = StringBuilder("Module instance $name parameters failed their constraint checks:")
+        paramErrors.forEach { sb.append("\n    ").append(it) }
+        return sb.toString()
+    }
+
+    fun initialWalk(): String? {
+        val walkErrors = context.initialWalk(module.context) ?: return null
+        val sb = StringBuilder("Module instance $name contains errors:")
+        walkErrors.forEach { sb.append("\n    ").append(it) }
+        return sb.toString()
+    }
 
     private val inouts = module.ports.mapNotNull { (_, port) ->
         if (port.direction != SignalDirection.Both)
@@ -65,7 +75,7 @@ class ModuleInstance(
             when (internal.direction) {
                 SignalDirection.Read -> external.connect(internal, project)
                 SignalDirection.Write -> internal.connect(external, project)
-                else -> {}
+                SignalDirection.Both -> {}
             }
         }
     }

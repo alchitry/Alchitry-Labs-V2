@@ -4,12 +4,11 @@ import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
-import com.alchitry.labs.parsers.lucidv2.signals.DynamicExpr
-import com.alchitry.labs.parsers.lucidv2.signals.Signal
-import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
-import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
+import com.alchitry.labs.parsers.lucidv2.signals.*
 import com.alchitry.labs.parsers.lucidv2.types.Dff
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
+import com.alchitry.labs.parsers.lucidv2.types.ModuleInstanceArray
+import com.alchitry.labs.parsers.lucidv2.types.ModuleInstanceOrArray
 import com.alchitry.labs.parsers.lucidv2.values.*
 
 data class TypesParser(
@@ -17,7 +16,7 @@ data class TypesParser(
 ) : LucidBaseListener(), SignalResolver {
     private val dffs = mutableMapOf<String, Dff>()
     private val sigs = mutableMapOf<String, Signal>()
-    private val moduleInstances = mutableMapOf<String, ModuleInstance>()
+    private val moduleInstances = mutableMapOf<String, ModuleInstanceOrArray>()
     private val arraySizes = mutableMapOf<ArraySizeContext, Int>()
     private val assignmentBlocks = mutableListOf<AssignmentBlock>()
 
@@ -51,27 +50,27 @@ data class TypesParser(
             return
         }
 
-        if (ctx.arraySize().isNotEmpty())
-            TODO("Module arrays aren't supported yet!")
+        val localSignalConnections = mutableListOf<Connection>()
+        val localParamConnections = mutableListOf<Connection>()
 
-        val signalConnections = mutableListOf<Connection>()
-        val paramConnections = mutableListOf<Connection>()
+        val extSignalConnections = mutableListOf<Connection>()
+        val extParamConnections = mutableListOf<Connection>()
 
         ctx.instCons()?.connection()?.forEach { connection ->
             connection.sigCon()?.let { sigCtx ->
-                signalConnections.add(Connection(sigCtx.name(), DynamicExpr(sigCtx.expr(), context)))
+                localSignalConnections.add(Connection(sigCtx.name(), DynamicExpr(sigCtx.expr(), context)))
             }
             connection.paramCon()?.let { paramCtx ->
-                paramConnections.add(Connection(paramCtx.name(), DynamicExpr(paramCtx.expr(), context)))
+                localParamConnections.add(Connection(paramCtx.name(), DynamicExpr(paramCtx.expr(), context)))
             }
         }
 
         assignmentBlocks.forEach { block ->
-            signalConnections.addAll(block.signals)
-            paramConnections.addAll(block.params)
+            extSignalConnections.addAll(block.signals)
+            extParamConnections.addAll(block.params)
         }
 
-        val providedParams = paramConnections.map { it.port }
+        val providedParams = localParamConnections.union(extParamConnections).map { it.port }
         val moduleParams = moduleType.parameters.values.map { it.name }
         val requiredParams = moduleType.parameters.values.mapNotNull { v -> v.default?.let { v.name } }
 
@@ -91,26 +90,74 @@ data class TypesParser(
             return
         }
 
-        val instParams = paramConnections.associate { it.port to it.value.value }
-
-        val instance = ModuleInstance(moduleInstanceName, context.project, context.instance, moduleType, instParams)
-
-        if (!instance.checkParameters()) {
-            val sb = StringBuilder("Module instance $moduleInstanceName parameters failed their constraint checks:")
-            instance.context.errorCollector.errors.forEach { sb.append("\n    ").append(it) }
-
-            context.reportError(ctx, sb.toString())
-            return
+        extParamConnections.forEach { param ->
+            if (!param.value.width.isFlat()) {
+                context.reportError(param.portCtx, "Parameter ${param.port} is not a simple value.")
+                return
+            }
         }
 
-        if (!instance.initialWalk()) {
-            val sb = StringBuilder("Module instance $moduleInstanceName contains errors:")
-            instance.context.errorCollector.errors.forEach { sb.append("\n    ").append(it) }
+        val instance = if (ctx.arraySize().isEmpty()) {
+            localParamConnections.forEach { param ->
+                if (!param.value.width.isFlat()) {
+                    context.reportError(param.portCtx, "Parameter ${param.port} is not a simple value.")
+                    return
+                }
+            }
 
-            context.reportError(ctx, sb.toString())
-            return
+            val instParams = localParamConnections.union(extParamConnections).associate { it.port to it.value.value }
+            ModuleInstance(moduleInstanceName, context.project, context.instance, moduleType, instParams).apply {
+                checkParameters()?.let {
+                    context.reportError(ctx, it)
+                    return
+                }
+                initialWalk()?.let {
+                    context.reportError(ctx, it)
+                    return
+                }
+            }
+        } else {
+            val dimensions = ctx.arraySize().map { arraySizes[it] ?: return }
+
+            localParamConnections.forEach { param ->
+                var width = param.value.width
+                dimensions.forEach {
+                    val curWidth = width
+                    if (curWidth !is ArrayWidth || curWidth.size != it) {
+                        context.reportError(
+                            param.portCtx,
+                            "The parameter ${param.port} does not match the dimensions of this module instance."
+                        )
+                        return
+                    }
+                    width = curWidth.next
+                }
+                if (!width.isFlat()) {
+                    context.reportError(param.portCtx, "Parameter ${param.port} does not index to a simple value.")
+                    return
+                }
+            }
+
+            ModuleInstanceArray(moduleInstanceName, context.project, context.instance, moduleType, dimensions) { idx ->
+                val selection = idx.map { SignalSelector.Bits(it) }
+                val localMap = localParamConnections.associate {
+                    it.port to it.value.value.select(selection)
+                }
+                val extMap = extParamConnections.associate { it.port to it.value.value }
+                localMap + extMap
+            }.apply {
+                checkAllParameters()?.let {
+                    context.reportError(ctx, it)
+                    return
+                }
+                initialWalkAll()?.let {
+                    context.reportError(ctx, it)
+                    return
+                }
+            }
         }
 
+        // TODO: connect signals
         moduleInstances[instance.name] = instance
     }
 

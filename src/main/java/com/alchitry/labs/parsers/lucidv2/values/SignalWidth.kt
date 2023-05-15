@@ -11,6 +11,13 @@ sealed class SignalWidth {
     }
 
     /**
+     * Returns true if this is a 1D array or a single bit
+     */
+    fun isFlat(): Boolean {
+        return this is SimpleWidth || this is BitWidth || this is UndefinedSimpleWidth
+    }
+
+    /**
      *  Returns true if this is JUST an array (no structs)
      */
     fun isSimpleArray(): Boolean {

@@ -6,6 +6,8 @@ class SignalSelectionException(val selector: SignalSelector, message: String) : 
 
 sealed class SignalSelector {
     data class Bits(val range: IntRange) : SignalSelector() {
+        constructor(bit: Int) : this(bit..bit)
+
         override fun toString(): String {
             return if (range.first == range.last) {
                 "[${range.first}]"
@@ -14,7 +16,8 @@ sealed class SignalSelector {
             }
         }
     }
-    data class Struct(val member: String): SignalSelector() {
+
+    data class Struct(val member: String) : SignalSelector() {
         override fun toString(): String {
             return member
         }

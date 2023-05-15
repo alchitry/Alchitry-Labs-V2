@@ -1,12 +1,18 @@
 package com.alchitry.labs.parsers.lucidv2.signals
 
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
+import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs.parsers.lucidv2.values.Value
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 sealed interface SignalOrSubSignal {
     fun read(evalContext: Evaluable? = null): Value
     suspend fun write(v: Value)
+
+    val valueFlow: Flow<Value>
 
     /**
      * Sets the value of this signal without publishing the change. This value will only be accessible when the same
@@ -23,4 +29,23 @@ sealed interface SignalOrSubSignal {
             is SubSignal -> parent
         }
 
+    /**
+     * Connects this signal's value to the provided signal.
+     */
+    fun connect(sig: SignalOrSubSignal, context: ProjectContext) {
+        require(sig.read().signalWidth.canAssign(read().signalWidth)) {
+            "Cannot assign this signal's value to the provided signal!"
+        }
+        context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+            sig.write(read())
+        }
+
+        val evaluable = Evaluable { sig.write(read()) }
+
+        context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+            valueFlow.collect {
+                context.queueEvaluation(evaluable)
+            }
+        }
+    }
 }
