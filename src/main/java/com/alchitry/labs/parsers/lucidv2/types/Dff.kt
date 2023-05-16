@@ -23,7 +23,7 @@ class Dff(
     override val parent: SignalParent? = null
     val d = Signal("d", SignalDirection.Write, this, init.asMutable(), signed)
     val q = Signal("q", SignalDirection.Read, this, init.asMutable(), signed)
-    private var lastClk: Bit = clk.value.flatten().lsb
+    private var lastClk: Bit? = null
 
     init {
         context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
@@ -42,10 +42,16 @@ class Dff(
 
     override suspend fun evaluate() {
         val clkValue = clk.value
+        val rstValue = rst?.value
         require(clkValue is SimpleValue) { "Dff clk was not a SimpleValue!" }
+        require(rstValue == null || rstValue is SimpleValue) { "Dff rst was not a SimpleValue!" }
         if (lastClk == Bit.B0 && clkValue.lsb == Bit.B1) { // rising edge
-            q.write(d.read())
-        } else if (!lastClk.isNumber() || !clkValue.isNumber()) {
+            if ((rstValue as? SimpleValue)?.lsb == Bit.B1) {
+                q.write(init)
+            } else {
+                q.write(d.read())
+            }
+        } else if (lastClk?.isNumber() == false || !clkValue.isNumber()) {
             q.write(q.width.filledWith(Bit.Bx, false, q.signed))
         }
         lastClk = clkValue.lsb

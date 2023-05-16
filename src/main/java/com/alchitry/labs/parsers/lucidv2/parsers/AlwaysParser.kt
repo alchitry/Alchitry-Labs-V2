@@ -37,7 +37,8 @@ data class AlwaysParser(
 
     override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
         previouslyDrivenSignals.addAll(drivenSignals)
-        alwaysBlocks[ctx] = AlwaysBlock(context, dependencies.toList(), drivenSignals.toList(), repeatSignals, ctx)
+        alwaysBlocks[ctx] =
+            AlwaysBlock(context, dependencies.toSet(), drivenSignals.toSet(), repeatSignals.toMap(), ctx)
     }
 
     override fun exitExprSignal(ctx: ExprSignalContext) {

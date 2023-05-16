@@ -68,19 +68,21 @@ class DynamicEvalTests {
         val dff = Dff(test.project, "myDff", b0, clkExpr, null, false)
 
         runBlocking {
+            clk.write(b0)
+            test.project.processQueue()
             dff.d.write(b1)
             clk.write(b1)
             test.project.processQueue()
-            assertEquals(b1, dff.q.read(null))
+            assertEquals(b1, dff.q.read())
 
             clk.write(b0)
             dff.d.write(b0)
             test.project.processQueue()
-            assertEquals(b1, dff.q.read(null))
+            assertEquals(b1, dff.q.read())
 
             clk.write(b1)
             test.project.processQueue()
-            assertEquals(b0, dff.q.read(null))
+            assertEquals(b0, dff.q.read())
         }
     }
 
@@ -123,7 +125,7 @@ class DynamicEvalTests {
         assert(tester.hasNoIssues)
 
         runBlocking {
-            tester.context.queueEval()
+            tester.context.initialize()
             tester.project.processQueue()
         }
 
@@ -166,7 +168,7 @@ class DynamicEvalTests {
         assert(tester.hasNoIssues)
 
         runBlocking {
-            tester.context.queueEval()
+            tester.context.initialize()
             tester.project.processQueue()
         }
 

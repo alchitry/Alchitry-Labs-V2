@@ -27,6 +27,7 @@ class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = nul
             project,
             null,
             Module("testModule", mapOf(), mapOf(), ModuleContext(null, 0)),
+            mapOf(),
             mapOf()
         ),
         ParseStage.ErrorCheck,

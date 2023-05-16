@@ -56,4 +56,16 @@ open class Signal(
         quietWrite(v)
         publish()
     }
+
+    fun fullName(): String {
+        val parts = mutableListOf<String>()
+        var current: SignalOrParent = this
+        parts.add(this.name)
+        while (current.parent != null) {
+            parts.add(current.parent!!.name)
+            current = current.parent!!
+        }
+        return parts.asReversed().joinToString(".")
+    }
+
 }

@@ -55,7 +55,7 @@ class ModuleMultiPassTests {
         val testSig = context.resolveSignal("endValue") as Signal
 
         runBlocking {
-            context.queueEval()
+            context.initialize()
             tester.project.processQueue()
         }
 
@@ -86,7 +86,7 @@ class ModuleMultiPassTests {
         val testSig = context.resolveSignal("testB") as Signal
 
         runBlocking {
-            context.queueEval()
+            context.initialize()
             tester.project.processQueue()
         }
 

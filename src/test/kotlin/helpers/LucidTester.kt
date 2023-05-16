@@ -73,7 +73,7 @@ class LucidTester(vararg val files: String) {
         globalParse(errors, tree)
         val module = moduleTypeParse(errors, tree)
 
-        val moduleInstance = ModuleInstance("top", project, null, module.first(), mapOf(), errors)
+        val moduleInstance = ModuleInstance("top", project, null, module.first(), mapOf(), mapOf(), errors)
 
         moduleInstance.initialWalk()
         if (errorCollector == null) {

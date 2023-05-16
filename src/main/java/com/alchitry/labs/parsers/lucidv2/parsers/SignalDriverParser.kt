@@ -20,28 +20,28 @@ data class SignalDriverParser(
     private val signalStack = mutableListOf<MutableMap<Signal, Value>>()
     private val signals: MutableMap<Signal, Value> get() = signalStack.last()
 
-    private var expectedDrivers: Map<String, Signal>? = null
+    private var expectedDrivers: Set<Signal>? = null
 
     override fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
         expectedDrivers = (context.alwaysParser.alwaysBlocks[ctx]?.drivenSignals
-            ?: error("Failed to resolve always block!")).associateBy { it.name }
+            ?: error("Failed to resolve always block!"))
     }
 
     override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
         val drivenMap = drivenSignals[ctx.block()] ?: error("Missing always block signals!")
-        expectedDrivers?.values?.forEach { signal ->
+        expectedDrivers?.forEach { signal ->
             val driven = drivenMap[signal]
             if (driven == null) {
                 context.reportError(
                     ctx,
-                    "The signal ${signal.name} was expected to be driven by this always block but it wasn't."
+                    "The signal \"${signal.fullName()}\" was expected to be driven by this always block but it wasn't."
                 )
                 return@forEach
             }
             if (driven.andReduce().bit != Bit.B1) {
                 context.reportError(
                     ctx,
-                    "The signal ${signal.name} was only partially driven. Bits marked as 0 weren't driven: $driven"
+                    "The signal \"${signal.fullName()}\" was only partially driven. Bits marked as 0 weren't driven: $driven"
                 )
             }
         }
@@ -52,10 +52,10 @@ data class SignalDriverParser(
         val sig = context.resolve(ctx.signal()) ?: return
         val fullSig = sig.getSignal()
         val expected = expectedDrivers ?: return
-        if (expected.contains(fullSig.name)) { // should be driving this signal
+        if (expected.contains(fullSig)) { // should be driving this signal
             val drivenValue = signalStack.firstNotNullOfOrNull { it[fullSig] }
             if (drivenValue == null) {
-                context.reportError(ctx, "This signal can't be read before it is written!")
+                context.reportError(ctx, "The signal \"${fullSig.fullName()}\" can't be read before it is written!")
                 return
             }
             val selectedValue = when (sig) {
@@ -63,7 +63,10 @@ data class SignalDriverParser(
                 is SubSignal -> drivenValue.select(sig.selection)
             }
             if (selectedValue.andReduce().bit != Bit.B1) {
-                context.reportError(ctx, "This portion of the signal can't be read before it is written!")
+                context.reportError(
+                    ctx,
+                    "This portion of the signal \"${fullSig.fullName()}\" can't be read before it is written!"
+                )
                 return
             }
         }

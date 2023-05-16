@@ -11,8 +11,8 @@ import kotlinx.coroutines.launch
 
 class AlwaysBlock(
     context: LucidModuleContext,
-    val dependencies: List<Signal>,
-    val drivenSignals: List<Signal>,
+    val dependencies: Set<Signal>,
+    val drivenSignals: Set<Signal>,
     val repeatSignals: Map<RepeatStatContext, Signal>,
     private val alwaysBlockContext: AlwaysBlockContext
 ): Evaluable {

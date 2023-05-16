@@ -29,6 +29,15 @@ data class TypesParser(
         return null
     }
 
+    fun getInstances(): List<ModuleInstance> {
+        return moduleInstances.values.flatMap { instOrArray ->
+            when (instOrArray) {
+                is ModuleInstance -> listOf(instOrArray)
+                is ModuleInstanceArray -> instOrArray.getAllInstances()
+            }
+        }
+    }
+
     override fun exitModuleInst(ctx: ModuleInstContext) {
         val moduleTypeName = ctx.name(0)?.text ?: return
         val moduleInstanceName = ctx.name(1)?.text ?: return
@@ -70,9 +79,43 @@ data class TypesParser(
             extParamConnections.addAll(block.params)
         }
 
+        localSignalConnections.forEach { local ->
+            if (extSignalConnections.any { it.port == local.port }) {
+                context.reportError(local.portCtx, "The port \"${local.port}\" has already been assigned!")
+                return
+            }
+        }
+
+        localParamConnections.forEach { local ->
+            if (extParamConnections.any { it.port == local.port }) {
+                context.reportError(local.portCtx, "The port \"${local.port}\" has already been assigned!")
+                return
+            }
+        }
+
+        val providedSignals = localSignalConnections.union(extSignalConnections).map { it.port }
+        val moduleSignals = moduleType.ports.filter { it.value.direction != SignalDirection.Write }.map { it.key }
+        val requiredSignals = moduleType.ports.filter { it.value.direction == SignalDirection.Both }
+            .map { it.key } // inouts must be assigned
+
+        val extraSignals = providedSignals.filter { !moduleSignals.contains(it) }
+        val missingSignals = requiredSignals.filter { !providedSignals.contains(it) }
+
+        if (missingSignals.isNotEmpty()) {
+            context.reportError(ctx, "Missing required signals: ${missingSignals.joinToString(", ")}")
+            return
+        }
+
+        if (extraSignals.isNotEmpty()) {
+            context.reportError(
+                ctx,
+                "The module \"${moduleTypeName}\" doesn't have these provided ports: ${extraSignals.joinToString(", ")}"
+            )
+        }
+
         val providedParams = localParamConnections.union(extParamConnections).map { it.port }
         val moduleParams = moduleType.parameters.values.map { it.name }
-        val requiredParams = moduleType.parameters.values.mapNotNull { v -> v.default?.let { v.name } }
+        val requiredParams = moduleType.parameters.values.mapNotNull { v -> if (v.default == null) v.name else null }
 
         val extraParams = providedParams.filter { !moduleParams.contains(it) }
         val missingParams = requiredParams.filter { !providedParams.contains(it) }
@@ -85,14 +128,52 @@ data class TypesParser(
         if (extraParams.isNotEmpty()) {
             context.reportError(
                 ctx,
-                "This module doesn't have these provided parameters: ${missingParams.joinToString(", ")}"
+                "The module \"${moduleTypeName}\" doesn't have these provided parameters: ${missingParams.joinToString(", ")}"
             )
             return
         }
 
         extParamConnections.forEach { param ->
             if (!param.value.width.isFlat()) {
-                context.reportError(param.portCtx, "Parameter ${param.port} is not a simple value.")
+                context.reportError(param.portCtx, "Parameter \"${param.port}\" is not a simple value.")
+                return
+            }
+        }
+
+        fun getSignals(list: List<Connection>): Map<Connection, Signal>? {
+            return list.associate { connection ->
+                val port = moduleType.ports[connection.port] ?: error("Missing expected port!")
+                if (port.direction == SignalDirection.Both) {
+                    val exprCtx = connection.value.expr
+                    // TODO: Support arrayed signals for arrayed module instances
+                    if (exprCtx !is ExprSignalContext) {
+                        context.reportError(exprCtx, "Inout ports must be directly connected to another inout.")
+                        return null
+                    }
+                    val otherSig = context.resolve(exprCtx.signal())
+                    if (otherSig !is Signal || otherSig.direction != SignalDirection.Both || otherSig.parent !is ModuleInstance) {
+                        context.reportError(exprCtx, "Inout ports must be directly connected to another inout.")
+                        return null
+                    }
+                    connection to otherSig
+                } else {
+                    connection to connection.value.asSignal(connection.value.expr.text)
+                }
+            }
+        }
+
+        val localSignals = getSignals(localSignalConnections) ?: return
+        val extSignals = getSignals(extSignalConnections) ?: return
+
+        val basicConnections = if (ctx.arraySize().isEmpty()) extSignals + localSignals else extSignals
+
+        basicConnections.forEach { (connection, signal) ->
+            val port = moduleType.ports[connection.port] ?: error("Missing expected port!")
+            if (!port.width.canAssign(signal.width)) {
+                context.reportError(
+                    connection.portCtx,
+                    "The width of \"${signal.name}\" does not match the width of port \"${port.name}\"."
+                )
                 return
             }
         }
@@ -100,13 +181,21 @@ data class TypesParser(
         val instance = if (ctx.arraySize().isEmpty()) {
             localParamConnections.forEach { param ->
                 if (!param.value.width.isFlat()) {
-                    context.reportError(param.portCtx, "Parameter ${param.port} is not a simple value.")
+                    context.reportError(param.portCtx, "Parameter \"${param.port}\" is not a simple value.")
                     return
                 }
             }
 
             val instParams = localParamConnections.union(extParamConnections).associate { it.port to it.value.value }
-            ModuleInstance(moduleInstanceName, context.project, context.instance, moduleType, instParams).apply {
+            val instPorts = localSignals.values.union(extSignals.values).associateBy { it.name }
+            ModuleInstance(
+                moduleInstanceName,
+                context.project,
+                context.instance,
+                moduleType,
+                instParams,
+                instPorts
+            ).apply {
                 checkParameters()?.let {
                     this@TypesParser.context.reportError(ctx, it)
                     return
@@ -118,6 +207,31 @@ data class TypesParser(
             }
         } else {
             val dimensions = ctx.arraySize().map { arraySizes[it] ?: return }
+
+            localSignals.forEach { (connection, signal) ->
+                val port = moduleType.ports[connection.port] ?: error("Missing expected port!")
+
+                var width = signal.width
+                dimensions.forEach {
+                    val curWidth = width
+                    if (curWidth !is ArrayWidth || curWidth.size != it) {
+                        context.reportError(
+                            connection.portCtx,
+                            "The signal \"${signal.name}\" does not match the dimensions of this module instance."
+                        )
+                        return
+                    }
+                    width = curWidth.next
+                }
+
+                if (!port.width.canAssign(width)) {
+                    context.reportError(
+                        connection.portCtx,
+                        "The width of \"${signal.name}\" does not match the width of port \"${port.name}\"."
+                    )
+                    return
+                }
+            }
 
             localParamConnections.forEach { param ->
                 var width = param.value.width
@@ -138,26 +252,54 @@ data class TypesParser(
                 }
             }
 
-            ModuleInstanceArray(moduleInstanceName, context.project, context.instance, moduleType, dimensions) { idx ->
-                val selection = idx.map { SignalSelector.Bits(it) }
-                val localMap = localParamConnections.associate {
-                    it.port to it.value.value.select(selection)
-                }
-                val extMap = extParamConnections.associate { it.port to it.value.value }
-                localMap + extMap
-            }.apply {
-                checkAllParameters()?.let {
-                    this@TypesParser.context.reportError(ctx, it)
-                    return
-                }
-                initialWalkAll()?.let {
-                    this@TypesParser.context.reportError(ctx, it)
+            // check for inouts in external connections
+            // this isn't allowed since it would require connecting the inout to multiple module instances
+            extSignals.forEach { (connection, _) ->
+                val port = moduleType.ports[connection.port] ?: error("Missing expected port!")
+                if (port.direction == SignalDirection.Both) {
+                    context.reportError(
+                        connection.portCtx,
+                        "Inouts cannot be assigned by connection blocks to arrayed module instances!"
+                    )
                     return
                 }
             }
+
+            ModuleInstanceArray(
+                moduleInstanceName,
+                context.project,
+                context.instance,
+                moduleType,
+                dimensions,
+                signalProvider = { idx ->
+                    val selection = idx.map { SignalSelector.Bits(it) }
+                    val localMap = localSignals.map { (connection, signal) ->
+                        connection.port to signal.select(selection)
+                    }.toMap()
+                    val extMap = extSignals.map { (connection, signal) -> connection.port to signal }.toMap()
+                    localMap + extMap
+                },
+                paramProvider = { idx ->
+                    val selection = idx.map { SignalSelector.Bits(it) }
+                    val localMap = localParamConnections.associate {
+                        it.port to it.value.value.select(selection)
+                    }
+                    val extMap = extParamConnections.associate { it.port to it.value.value }
+                    localMap + extMap
+                }
+            )
+                .apply {
+                    checkAllParameters()?.let {
+                        this@TypesParser.context.reportError(ctx, it)
+                        return
+                    }
+                    initialWalkAll()?.let {
+                        this@TypesParser.context.reportError(ctx, it)
+                        return
+                    }
+                }
         }
 
-        // TODO: connect signals
         moduleInstances[instance.name] = instance
     }
 
@@ -170,7 +312,7 @@ data class TypesParser(
                 if (assignmentBlocks.any { block -> block.signals.any { it.port == name } })
                     context.reportError(
                         sigCtx.name(),
-                        "The signal $name has already been assigned!"
+                        "The port \"$name\" has already been assigned!"
                     )
                 else
                     signals.add(Connection(sigCtx.name(), DynamicExpr(sigCtx.expr(), context)))
@@ -180,7 +322,7 @@ data class TypesParser(
                 if (assignmentBlocks.any { block -> block.params.any { it.port == name } })
                     context.reportError(
                         paramCtx.name(),
-                        "The parameter $name has already been assigned!"
+                        "The parameter \"$name\" has already been assigned!"
                     )
                 else
                     params.add(Connection(paramCtx.name(), DynamicExpr(paramCtx.expr(), context)))
@@ -284,7 +426,7 @@ data class TypesParser(
                             if (init is SimpleValue && it is SimpleValue && (init as SimpleValue).size < it.size) {
                                 context.reportWarning(
                                     param.value.expr,
-                                    "The initialization value is wider than the DFF $name and will be truncated."
+                                    "The initialization value is wider than the DFF \"$name\" and will be truncated."
                                 )
                             }
                             init = it.resizeToMatch(init.signalWidth)
@@ -298,13 +440,13 @@ data class TypesParser(
 
                     else -> context.reportError(
                         param.value.expr,
-                        "DFFs don't have a parameter named $paramName."
+                        "DFFs don't have a parameter named \"$paramName\"."
                     )
                 }
             } else {
                 context.reportError(
                     param.value.expr,
-                    "The parameter $paramName has already been specified."
+                    "The parameter \"$paramName\" has already been specified."
                 )
             }
 
@@ -318,13 +460,13 @@ data class TypesParser(
                     "rst" -> rst = sig.value
                     else -> context.reportError(
                         sig.value.expr,
-                        "DFFs don't have a signal named $sigName."
+                        "DFFs don't have a signal named \"$sigName\"."
                     )
                 }
             } else {
                 context.reportError(
                     sig.portCtx,
-                    "The signal $sigName has already been specified."
+                    "The signal \"$sigName\" has already been specified."
                 )
             }
 

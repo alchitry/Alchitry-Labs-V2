@@ -61,6 +61,16 @@ class DynamicExpr(
         }
     }
 
+    fun connectTo(signal: SignalOrSubSignal) {
+        require(signal.width.canAssign(width)) { "The provided signal's width doesn't match this DynamicExpr width!" }
+        val evaluable = Evaluable { signal.write(value) }
+        context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+            valueFlow.collect {
+                context.project.queueEvaluation(evaluable)
+            }
+        }
+    }
+
     /**
      * Returns a DynamicExpr of the same expression but with a different width constraint.
      */
