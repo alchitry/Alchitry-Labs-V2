@@ -9,6 +9,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 sealed interface SignalOrSubSignal {
+    /**
+     * Reads this signal and returns it's signal. It will return the public value if evalContext
+     * is null or doesn't match the quietWrite() evalContext. If the evalContext matches the
+     * evalContext provided when writing to quietWrite(), then it will return the private value that
+     * was last written.
+     */
     fun read(evalContext: Evaluable? = null): Value
     suspend fun write(v: Value)
 
@@ -19,6 +25,10 @@ sealed interface SignalOrSubSignal {
      * Evaluable is passed to the get() function until publish() is called.
      */
     fun quietWrite(v: Value, evalContext: Evaluable?)
+
+    /**
+     * Publishes a value written using quietWrite() to anyone listing for new values.
+     */
     suspend fun publish()
     val direction: SignalDirection
     val width: SignalWidth
@@ -36,6 +46,12 @@ sealed interface SignalOrSubSignal {
         require(sig.width.canAssign(width)) {
             "Cannot assign this signal's value to the provided signal!"
         }
+
+        if (sig is Signal) {
+            require(!sig.hasDriver) { "Signal \"${sig.name}\" already has a driver!" }
+            sig.hasDriver = true
+        }
+
         context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             sig.write(read())
         }

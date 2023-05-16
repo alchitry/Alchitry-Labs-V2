@@ -6,6 +6,7 @@ import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
 import com.alchitry.labs.parsers.lucidv2.values.Value
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.sync.Mutex
 
 open class Signal(
     override val name: String, // includes namespace or module name
@@ -22,6 +23,9 @@ open class Signal(
     private var setEvalContext: Evaluable? = null
     private var nextValue: Value? = null
     private var value: Value = initialValue.withSign(signed)
+
+    val subSignalLock = Mutex() // lock used by sub-signals during read-modify-write cycles
+    var hasDriver: Boolean = false
 
     override fun read(evalContext: Evaluable?): Value {
         if (evalContext === setEvalContext)

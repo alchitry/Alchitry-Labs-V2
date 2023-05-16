@@ -22,7 +22,7 @@ class Dff(
 ) : SignalParent, Evaluable {
     override val parent: SignalParent? = null
     val d = Signal("d", SignalDirection.Write, this, init.asMutable(), signed)
-    val q = Signal("q", SignalDirection.Read, this, init.asMutable(), signed)
+    val q = Signal("q", SignalDirection.Read, this, init.asMutable(), signed).also { it.hasDriver = true }
     private var lastClk: Bit? = null
 
     init {

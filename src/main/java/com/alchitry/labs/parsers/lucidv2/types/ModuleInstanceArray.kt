@@ -112,9 +112,9 @@ class ModuleInstanceArray(
                     inouts[name]?.internal?.select(selection)
                         ?: externalPorts[name]?.select(selection)
                         ?: error("Missing external port!")
-                if (port.direction.canRead)
-                    subSig.connectTo(port, projectContext)
                 if (port.direction.canWrite)
+                    subSig.connectTo(port, projectContext)
+                if (port.direction.canRead)
                     port.connectTo(subSig, projectContext)
             }
         }

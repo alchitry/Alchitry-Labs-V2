@@ -52,6 +52,7 @@ class DynamicExpr(
 
     fun asSignal(name: String): Signal {
         return Signal(name, SignalDirection.Read, null, value).also { signal ->
+            signal.hasDriver = true
             val evaluable = Evaluable { signal.write(value) }
             context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
                 valueFlow.collect {
@@ -63,6 +64,10 @@ class DynamicExpr(
 
     fun connectTo(signal: SignalOrSubSignal) {
         require(signal.width.canAssign(width)) { "The provided signal's width doesn't match this DynamicExpr width!" }
+        if (signal is Signal) {
+            require(!signal.hasDriver) { "The signal \"${signal.name}\" already has a driver!" }
+            signal.hasDriver = true
+        }
         val evaluable = Evaluable { signal.write(value) }
         context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             valueFlow.collect {
