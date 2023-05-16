@@ -45,7 +45,7 @@ class ProjectContext {
                 }
             }
         }
-        throw QueueExhaustionException("Failed to clear the queue after 1000 iterations. There is likely a dependency loop.")
+        throw QueueExhaustionException("Failed to resolve a stable state after 1000 iterations. There is likely a dependency loop.")
     }
 
     fun addGlobal(globalNamespace: GlobalNamespace): Boolean =
