@@ -10,6 +10,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
+class QueueExhaustionException(message: String) : IllegalStateException(message)
+
 class ProjectContext {
     val scope = CoroutineScope(Dispatchers.Default)
 
@@ -43,7 +45,7 @@ class ProjectContext {
                 }
             }
         }
-        error("Failed to clear the queue after 1000 iterations. There is likely a dependency loop.")
+        throw QueueExhaustionException("Failed to clear the queue after 1000 iterations. There is likely a dependency loop.")
     }
 
     fun addGlobal(globalNamespace: GlobalNamespace): Boolean =

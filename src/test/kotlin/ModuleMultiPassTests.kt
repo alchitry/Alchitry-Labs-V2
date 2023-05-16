@@ -1,3 +1,4 @@
+import com.alchitry.labs.parsers.lucidv2.context.QueueExhaustionException
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.types.Dff
 import com.alchitry.labs.parsers.lucidv2.values.Bit
@@ -91,5 +92,46 @@ class ModuleMultiPassTests {
         }
 
         assertEquals(BitValue(Bit.B1, signed = false, constant = false), testSig.read(null))
+    }
+
+    @Test
+    fun endlessLoopTest() {
+        val tester = LucidTester(
+            """
+                module myModule (
+                    input a
+                ) {
+                    sig testA
+                    sig testB
+                
+                    always {
+                        if (a)
+                            testB = ~testA
+                        else
+                            testB = 1
+                    }
+                    
+                    always {
+                        testA = testB
+                    }
+                }
+            """.trimIndent()
+        )
+        val top = tester.fullParse()
+
+        val context = top.context
+
+        runBlocking {
+            top.getSignal("a")!!.write(BitValue(Bit.B0, false, false))
+            context.initialize()
+            tester.project.processQueue()
+            top.getSignal("a")!!.write(BitValue(Bit.B1, false, false))
+            try {
+                tester.project.processQueue()
+                error("ProcessQueue should've thrown an error!")
+            } catch (_: QueueExhaustionException) {
+
+            }
+        }
     }
 }
