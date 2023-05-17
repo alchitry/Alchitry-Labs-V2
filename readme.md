@@ -1,4 +1,36 @@
-# Alchitry Parser V2
+# Lucid Parser V2
+
+## Background
+
+Lucid was first developed for the Mojo by Justin Rajewski when he was still in college. Its purpose was to provide an
+alternative to the heavy existing HDL languages to make simple things simple.
+
+The first attempt at creating a parser replied upon regex and some logic. It was a mess that was cleaned up with the
+discovery of ANTLR and real grammars.
+
+The goal for the original tools was to simply convert Lucid to Verilog. While writing that, some error checking started
+to get added.
+
+At first, only the widths of signals and expressions was being tracked. However, as time went on, custom Lucid functions
+were added which required values to actually be computed. These would be replaced with a constant value at translation
+time but the tools needed to be able to compute generic expressions. This was when
+[`CosntExprParser`](https://github.com/alchitry/Alchitry-Labs/blob/master/src/com/alchitry/labs/parsers/tools/lucid/ConstExprParser.java)
+was created.
+
+The scope of what was being parsed and what errors were being checked for kept increasing along with the tech debt.
+
+The result is the mess that is the Lucid V1 interpreter. There aren't well-defined responsibilities of each parser with
+many of them being redundant. This has led to some hard to fix bugs and many that are harder still to track down.
+
+This was the motivation for doing a full rewrite with lots of new features in mind.
+
+### Lucid V2 Goals
+
+* Easier to understand and maintain
+* Provide a Lucid simulator
+* Simplify un-necessary aspects of Lucid V1
+* Stability
+* Robust error checking - no errors means exported Verilog should build
 
 ## Tools Used
 
@@ -8,8 +40,6 @@
 * Gradle
 * Kotlin (manged in gradle script)
 * [Antlr 4](https://www.antlr.org/) ([Intellij Plugin](https://plugins.jetbrains.com/plugin/7358-antlr-v4))
-* Git
-* [Compose](https://www.jetbrains.com/lp/compose-desktop/) (for UI)
 
 ## Setup
 
@@ -19,51 +49,53 @@ versions of all libraries and Kotlin.
 You may want to install the Antlr plugin for syntax highlighting of the Lucid.g4 grammar. (File->Settings->Plugins)
 
 Once the gradle sync is done, you should be able to run the tests by opening the test file and clicking the green arrow
-in the code editor gutter.
+in the code editor gutter or right clicking on the test folder in the project tree and selecting "Run 'Tests in ...'"
 
-## Lucid Background
+## Lucid V1 Background
 
 * https://alchitry.com/lucid-reference
 * https://alchitry.com/lucid
 
-## Parser Overview
-
-The legacy code can be
+The legacy code for Lucid V1 can be
 found [here](https://github.com/alchitry/Alchitry-Labs/tree/master/src/com/alchitry/labs/parsers/tools/lucid).
 
-This code has many `LucidBaseListeners` that are all interdependent making it a bit of a mess. The new version is
-drastically different but some things may still be helpful as a reference.
+This code was originally written to simply check the width of signals to see if they matched but kept getting features
+bolted on, so now it is a bit of a mess. The new version is drastically different but some things may still be helpful
+as a reference.
 
-### Value Representation
+## The Grammar
 
-Lucid values of are made up of bits. Each bit can take one of five values. These are represented in the `BitValue`
-class.
+The grammar was written using ANTLR 4. ANTLR generates a parser that is capable of turning text into a meaningful
+tree representation that the parsers can then walk.
+
+See the Lucid.g4 file for the actual grammar.
+
+## Value Representation
+
+Lucid values of are made up of bits. Each bit can take one of five values. These are represented in the `Bit` class.
 
 `B0` and `B1` are the obvious 0 and 1 values.
 
 `Bx` is used when the value could be either 0 or 1 but we either don't care (when assigning it directly) or don't know
 (bad computation).
 
-`Bz` is used to represent high-impedance and should only ever be used by a top-level output.
+`Bz` is used to represent high-impedance and should only ever be used by a top-level output or inout.
 
-`Bu` is a special internally used value and is used to track when a signal hasn't been assigned a value.
+All values are packed into the `Value` class. This is a sealed (abstract) class that is made up of a few concrete
+classes. Every `Value` has the boolean property `constant` to designate if this value could change. This is for error
+checking. Some functions, like `$clog2()`, can only be used with constant values as they must be computed at synthesis
+time.
 
-`BitValue` are packed into `BitList` to make them hold more than one bit. `BitList` is basically a binary number that
-has some helper functions for manipulating the values such as `or`, `and`, and `xor`.
+The `SimpleValue` class is another sealed class that is used to represent binary values. The value can be made up of
+multiple bits via the `BitListValue` class or a single bit via the `BitValue` class. The `SimpleValue` class has a
+property `signed` that indicates if this value should be interpreted as 2's complement (negative numbers) or not.
 
-The `BitList` interface has a `signed` property to specify if the contained value is a signed representation (aka
-2's compliment).
-
-The class `MutableBitList` is a mutable implementation of the `BitList` interface and can be initialized in a few
-convent ways.
-
-Lucid supports four types of values which all extend the `Value` class.
-
-The most basic one is `SimpleValue` this is a value that basically just wraps a `BitList` and represents a single 1D
-array of bits.
+`SimpleValue` also has some helper functions for manipulating the values such as `or`, `and`, and `xor` as well as
+comparison like `isGreaterOrEqualTo`.
 
 `ArrayValue` is used to represent arrays. Each element in the array *must* be the same size. The elements themselves
-are `Value`s and could be another `ArrayValue` for even deeper arrays or `StructValue`.
+are `Value`s and could be another `ArrayValue` for even deeper arrays or `StructValue`. The elements should never be a
+`BitValue` though as an array of `BitValue` should be represented with `BitListValue`.
 
 `StructValue` is used to represent a key-value map of signals similar to a struct in C. The declaration looks like this.
 
@@ -90,118 +122,130 @@ can properly happen then.
 When possible, a known width can be set inside the `UndefinedValue` by passing in the `width` parameter. This is helpful
 for early error checking.
 
-The `Value` class has a property `constant` that is used to track if this value can change. It will be false if a value
-is from a signal that could change over time (like an input). This is for error checking. Some functions,
-like `$clog2()`, can only be used with constant values as they must be computed at synthesis time.
-
 #### SignalWidth
 
 The class `SignalWidth` is used to represent the width of a signal without an associated value. This is mainly used for
 error checking purposes.
 
-There are again four types that correspond to the four value types. `SimpleWidth`, `ArrayWidth`, `StructWidth`,
-and `UndefinedSimpleWidth`.
+There are matching types of `SignalWidth` for each corresponding `Value`. `SimpleWidth`, `BitWidth`, `BitListWidth`,
+`ArrayWidth`, `StructWidth`, and `UndefinedSimpleWidth`.
 
 `UndefinedSimpleWidth` is used to specify when we know a value is a 1D array of bits, but we don't know how many. This
-is
-the default width for any module parameters.
+is the default width for any module parameters.
 
 The `Value` class has as property `signalWidth` that will return the `SignalWidth` for the value. This value is
 typically computed from the `Value` directly except for `UndefinedValued` which simply uses its `width` property.
 
-## Parser/Resolver Relationship
+## Signals
 
-The code is currently broken into `Parser` classes that do the actual parsing and `Resolver` interfaces that provide
-access to the parsed content. This is done as in the future there will likely be multiple of the same type of `Resolver`
-that will be combined into a hierarchy.
+All the `Value` classes are immutable. To represent a changing value, the `Signal` class is used. This class is used
+for things like `sig` types as well as module ports. These can be _connected_ together so the value of one is fed into
+the next automatically during simulation.
 
-Each `Parser` also provides errors and warnings to the provided `ErrorListener`.
+A portion of a `Signal` can be selected with the `select()` function. This resulting `SubSignal` can be used to read
+and write the selected portion of its parent `Signal`. Most of the time, we don't care if we are using a `Signal` or a
+`SubSignal` so the sealed interface `SignalOrSubSignal` is used to encompass both types.
 
-## ExprParser
+`Signal`s resent their values though a `Flow` that can be monitored to know whenever its value changes. This is used to
+automatically queue up the evaluation of everything that depends on it.
 
-The `ExprParser` class is responsible for parsing any expressions. This is essentially any child of the `expr` rule in
-the Lucid grammar.
+### DynamicExpr
 
-It provides a `Value` for any `ExprContext` via the `resolve()` function of the `ExprResolver` interface. For
-example, `2 + 2` would have `ExprNumContext` nodes with values of 2 and a `ExprAddSubContext` node with value 4.
+`DynamicExpr` are used to represent a dynamic value that is connected to a port of a module instance. When a module is
+instantiated you may see something like this `modType myMod (.port(signal + 10))`. Here the expression `signal + 10`
+would be represented by a `DynamicExpr` and connected to the module's port, `port`.
 
-### Todo
+These will automatically queue themselves up for re-evaluation if any of their dependencies change.
 
-- [ ] Add checks whenever a value is read for `Bu` values. This can be done on `SimpleValue`
-  with `value.bits.isDriven()`.
-- [ ] Fetch signal values in `exitSignal` once `SignalParser` is complete
-- [ ] Add support for struct constants in `exitStructConst` once a struct type parser is made
+### SignalParent
 
-## BitSelectionParser
+Many objects are the parent to signals. For example, a module instance is a parent to the signals that make up its
+ports.
+A dff is a parent to its d and q signals. This is represented using the `SignalParent` interface.
 
-The `BitSelectionParser` is responsible for parsing bit selections. These take the form of simple array indices
-like `[4]` or the more complex multi-bit selections like `[4:0]` or `[5+:3]`. These are provided via
-the `BitSelectionResolver` interface.
+A `SignalParent` is responsible for providing its siblings via the `getSignal()` function. This function returns a
+`SignalOrParent`. This interface is a sealed interface encompassing the `Signal` class and `SignalParent` interface.
 
-Note that signal may have more than one bit selector so the `resolve()` function returns a list of all the selections.
+## Parser Overview
 
-## SignalParser
+The new parser is broken up into many small parsers that each perform a specific job.
 
-The `SignalParser` is responsible for building and maintaining a list of signals with their corresponding current
-values.
+These pieces are coordinated via the main `ProjectContext` and the sub `Lucid____Context` classes.
 
-This includes the port signals on a module (`input`, `output`, and `inout` types), `dff`, `fsm`, and `sig` types. It
-also includes constant types from `const` or module parameters.
+When a full project is going to be parsed, there are a few different passes that take place.
 
-`SignalParser` implements `SignalResolver` which provides the `resolve()` function. This function is intended to provide
-access to signals when external parsers (such as `ExprParser`) encounter a signal name.
+First, all the text is parsed by the ANTLR parser and turned into a useful tree representation.
 
-### Todo
+Next, all `global` declarations are parsed using the `LucidGlobalContext`.
 
-I think the `resolve()` function for this should take in a `SignalContext` instead of the `String` (or maybe in
-addition). This would require providing a *partial* `Signal` though with the bits already selected. Maybe a `SubSignal`
-class is required.
+The next pass is to pull out module types. A module type is defined in the `Module` class and has the name of the
+module as well as its parameters and ports. This is done via the `LucidModuleTypeContext`.
 
-I added the `SignalSelection` class to represent the bits selected in a signal. I'm still not 100% sure how the signal
-names themselves should be represented. They need to be represented in a way that also makes adding auto-complete easy
-later. We will also need a list of each different type (`dff`, `fsm`, `sig`) to properly convert them to Verilog.
+The next passes are all done using the same `LucidModuleContext` object. These are the `ModuleInternals` and `Drivers`
+passes. The `ModuleInternals` pass looks at all the internals of a module for things like signal declarations, always
+blocks, module instances, etc. The `Drivers` pass looks at the output of the `ModuleInternals` pass and checks that all
+signals that are expected to be driven are. It also gives warnings for unused signals.
 
-Here are some examples that need to be covered.
+These two passes start at the top-level module in the design and propagate down through the design for every
+instantiated module. They are not run on a per-file basis like the first two.
 
-A `dff` has sub-signals `q` and `d`. One can be declared like this.
+Finally, the last pass is the `Evaluation` pass. This is only run during simulation but each `AlwaysBlock` and
+`DynamicExpr` gets its own clone of the `LucidModuleContext` for its `Evaluation` pass.
 
-`dff myDff`
+### LucidExprContext
 
-It could also be an array.
+The `LucidExprContext` is an interface implemented by every context so that the basic expression parsers can be used.
+The four parses that require this are the `ExprParser`, `BitSelectionParser`, `SignalParser`, and `StructParser`.
 
-`dff myDffArray[8]`
+`ExprParser` is responsible for generating `Value`s for every Lucid expression. An expression could be as simple as
+a number or more complex like signals multiple together. Basically, if it falls under the `expr` rule in the Lucid
+grammar, the `ExprParser` is responsible for generating a `Value` for it.
 
-It can also be a struct.
+`BitSelectionParser` is responsible for generating integer ranges from `bitSelection` contexts. These show up in Lucid
+as stuff like `mySignal[5][4:0]` where `[5][4:0]` is a `bitSelection`.
 
-`dff <struct_type> myDffStruct`
+`SignalParser` is responsible for resolving signal names and signal widths. It mostly relies upon the other parsers to
+provide the `SignalOrParent` via the `resolveSignal()` function of the `LucidExprContext` but it takes the base signal
+and drills down into it when sub-signals are selected.
 
-Or an array of structs.
+Its main job is to provide the `resolve()` function that converts `SignalContext` to `SignalOrSubSignal`.
 
-`dff <struct_type> myDffArrayStruct[8]`
+Finally, `StructParser` is responsible for struct declarations and resolving struct types.
 
-If `struct_type` is defined as following, the different types can be access as below.
+### LucidGlobalContext and LucidModuleTypeContext
 
-```lucid
-  struct struct_type {
-    a[8]
-  }
-  ...
-  myDff.d = 1
-  myDffArray.d[5] = 1
-  myDffStruct.d.a[3] = 1
-  myDffArrayStruct.d[2].a[6] = 1
-```
+These two contexts are pretty simple and mostly rely upon the above parsers to parse out globals and module types
+respectively.
 
-The `SignalSelection` class would hold the selectors (the things after `d` in the above example). For example, the last
-line would be
+`GlobalParser` generates a `GlobalNamespace` for each global declaration.
 
-```
-listOf<SignalSelector>(
-  SignalSelection.Bits(2..2), 
-  SignalSelection.Struct("a"),
-  SignalSelection.Bits(6..6)
-)
-```
+`ModuleParser` generates a `Module` for each module declaration.
 
-This could then be checked against the `Value` in the `Signal` `myDffArrayStruct.d` to see if it makes sense. I.e.
-the `Value` is made up of an `ArrayValue` followed by `StructValue` with a member `a` with type `SimpleValue`.
+These are both fed to the `ProjectContext` for later use.
+
+### LucidModuleContext
+
+This context is really the most important one. It builds a model of the module instance and creates the necessary
+signals, always blocks, and dynamic expressions for it to be fully simulated.
+
+During the parse stages, it builds out all the internals using the `AlwaysParser` and `TypesParser`. It also checks that
+signal are properly driven with the `SignalDriverParser`.
+
+During the evaluation stage is uses the `AlwaysEvaluator` to evaluate always blocks as needed.
+
+## Evaluation
+
+Evaluation is broken up into _ticks_.
+
+Inside the `ProjectContext` there is an evaluation queue. During each tick, this queue is processed until empty in
+batches. The batched processing is used to detect endless loops in a bad design. Currently, each tick gets 1000
+iterations to resolve into a stable state.
+
+The two main `Evaluable`s are the `AlwayBlock` and `DynamicExpr`. Whenever one of the signals that these depend on
+changes, it queues itself up to be evaluated in the next batch. Each batch is represented as a `Set` so each
+`Evaluable` will only be evaluated at most once per batch.
+
+A tick is started by calling the `processQueue()` function of `ProjectContext`.
+
+Before simulation begins, the `initialize()` function should be called on the top-level module's `LucidModuleContext`.
+This will queue every `AlwaysBlock` for an initial evaluation.

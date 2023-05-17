@@ -1,6 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
-import com.alchitry.labs.parsers.lucidv2.context.LucidExprContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
@@ -9,7 +9,7 @@ import com.alchitry.labs.parsers.lucidv2.types.GlobalNamespace
 import com.alchitry.labs.parsers.lucidv2.types.StructType
 
 class GlobalParser(
-    private val context: LucidExprContext
+    private val context: LucidGlobalContext
 ) : LucidBaseListener() {
     private val constants = mutableMapOf<String, Signal>()
     private val structs = mutableMapOf<String, StructType>()
