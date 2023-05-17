@@ -84,10 +84,8 @@ class ModuleInstanceTests {
                     output count[8]
                 ) {
                     dff counter[8] (.clk(clk))
-                    sig fullSum[9]
                     always {
-                        fullSum = counter.q + 1
-                        counter.d = fullSum[7:0]
+                        counter.d = counter.q + 1
                         count = counter.q
                     }
                 }
@@ -145,11 +143,9 @@ class ModuleInstanceTests {
                     output count[8]
                 ) {
                     dff counter[8] (.clk(clk))
-                    sig fullSum[9]
                     
                     always {
-                        fullSum = counter.q + INC
-                        counter.d = fullSum[7:0]
+                        counter.d = counter.q + INC
                         count = counter.q
                     }
                 }

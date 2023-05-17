@@ -73,11 +73,20 @@ data class AlwaysParser(
             return
         }
 
-        if (assignee.width.getBitCount() < newValue.signalWidth.getBitCount()) {
-            context.reportWarning(
-                ctx.expr(),
-                "This expression is wider than ${ctx.signal().text} and will be truncated."
-            )
+        // only warn about truncation for certain types of expressions
+        if (
+            ctx.expr() is ExprSignalContext ||
+            ctx.expr() is ExprStructContext ||
+            ctx.expr() is ExprConcatContext ||
+            ctx.expr() is ExprDupContext ||
+            ctx.expr() is ExprArrayContext
+        ) {
+            if (assignee.width.getBitCount() < newValue.signalWidth.getBitCount()) {
+                context.reportWarning(
+                    ctx.expr(),
+                    "This expression is wider than ${ctx.signal().text} and will be truncated."
+                )
+            }
         }
     }
 

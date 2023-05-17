@@ -52,7 +52,7 @@ class ModuleMultiPassTests {
                         if (a) {}
                         endValue = 0
                         repeat(i, 5) {
-                            endValue = endValue[14:0] + i
+                            endValue = endValue + i
                         }
                     }
                 }
