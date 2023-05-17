@@ -1,5 +1,7 @@
 # Lucid Parser V2
 
+This code isn't intended to be used on its own and it will be incorporated into Alchitry Labs 2 in the future.
+
 ## Background
 
 Lucid was first developed for the Mojo by Justin Rajewski when he was still in college. Its purpose was to provide an
