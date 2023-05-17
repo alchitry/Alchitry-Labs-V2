@@ -43,6 +43,7 @@ class DynamicExpr(
     init {
         val dependencies =
             context.expr.resolveDependencies(expr) ?: error("Failed to resolve dependencies for ${expr.text}")
+        dependencies.forEach { it.isRead = true }
         context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             onAnyChange(dependencies.map { it.valueFlow }) {
                 context.project.queueEvaluation(this@DynamicExpr)

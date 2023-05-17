@@ -47,10 +47,12 @@ sealed interface SignalOrSubSignal {
             "Cannot assign this signal's value to the provided signal!"
         }
 
-        if (sig is Signal) {
+        // only check for drivers on full signals since sub-signal assignments will be done multiple times
+        if (sig is Signal)
             require(!sig.hasDriver) { "Signal \"${sig.name}\" already has a driver!" }
-            sig.hasDriver = true
-        }
+
+        getSignal().hasDriver = true
+        getSignal().isRead = true
 
         context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             sig.write(read())

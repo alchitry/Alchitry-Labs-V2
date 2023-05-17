@@ -25,7 +25,9 @@ open class Signal(
     private var value: Value = initialValue.withSign(signed)
 
     val subSignalLock = Mutex() // lock used by sub-signals during read-modify-write cycles
+
     var hasDriver: Boolean = false
+    var isRead: Boolean = false
 
     override fun read(evalContext: Evaluable?): Value {
         if (evalContext === setEvalContext)

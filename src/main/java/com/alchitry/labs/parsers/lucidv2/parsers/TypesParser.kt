@@ -14,9 +14,9 @@ import com.alchitry.labs.parsers.lucidv2.values.*
 data class TypesParser(
     private val context: LucidModuleContext
 ) : LucidBaseListener(), SignalResolver {
-    private val dffs = mutableMapOf<String, Dff>()
-    private val sigs = mutableMapOf<String, Signal>()
-    private val moduleInstances = mutableMapOf<String, ModuleInstanceOrArray>()
+    val dffs = mutableMapOf<String, Dff>()
+    val sigs = mutableMapOf<String, Signal>()
+    val moduleInstances = mutableMapOf<String, ModuleInstanceOrArray>()
     private val arraySizes = mutableMapOf<ArraySizeContext, Int>()
     private val assignmentBlocks = mutableListOf<AssignmentBlock>()
 

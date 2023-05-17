@@ -18,7 +18,10 @@ class ModuleInstanceTests {
                 ) {
                 
                     testModule myMod (.clk(clk))
-                
+                    
+                    always {
+                        if (myMod.a) { } // to remove unused signal warning
+                    }
                 }
             """.trimIndent(),
             """
@@ -47,6 +50,10 @@ class ModuleInstanceTests {
                 ) {
                     .clk(clk) {
                         testModule myMod[8]
+                    }
+                    
+                    always {
+                        if (myMod.a[0]) { } // to remove unused signal warning
                     }
                 }
             """.trimIndent(),

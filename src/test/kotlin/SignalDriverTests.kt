@@ -14,6 +14,9 @@ class SignalDriverTests {
                    
                     always {
                         test = 8b0;
+                        
+                        if (test) {} // to remove unused signal warning
+                        if (a) {}
                     }
                 }
             """.trimIndent()
@@ -32,6 +35,9 @@ class SignalDriverTests {
                    
                     always {
                         test[4:0] = 0;
+                        
+                        if (test) { } // to remove unused signal warning
+                        if (a) {}
                     }
                 }
             """.trimIndent()
@@ -54,6 +60,9 @@ class SignalDriverTests {
                     always {
                         test[4:0] = 0;
                         test[7:5] = 1;
+                        
+                        if (test) { } // to remove unused signal warning
+                        if (a) {}
                     }
                 }
             """.trimIndent()
@@ -74,6 +83,7 @@ class SignalDriverTests {
                         if (1) {
                             test = 0
                         }
+                        if (a) {}
                     }
                 }
             """.trimIndent()
@@ -81,7 +91,6 @@ class SignalDriverTests {
         val errorCollector = ErrorCollector()
         tester.fullParse(errorCollector)
         assert(errorCollector.hasErrors) // should complain about test being partially driven
-        assert(errorCollector.hasNoWarnings)
     }
 
     @Test
@@ -98,6 +107,9 @@ class SignalDriverTests {
                             test = a
                         else
                             test = 1
+                            
+                        if (test) {} // used to remove unread warnings
+                        if (a) {}
                     }
                 }
             """.trimIndent()

@@ -23,7 +23,12 @@ class ModuleMultiPassTests {
                 ) {
                 
                     dff test(.clk(MyGlobal.ONE))
-                
+                    
+                    always {
+                        test.d = 0
+                        if (test.q) {}
+                        if (a) {}
+                    }
                 }
             """.trimIndent()
         )
@@ -44,6 +49,7 @@ class ModuleMultiPassTests {
                     sig endValue[16]
                 
                     always {
+                        if (a) {}
                         endValue = 0
                         repeat(i, 5) {
                             endValue = endValue[14:0] + i
@@ -78,6 +84,9 @@ class ModuleMultiPassTests {
                     }
                     
                     always {
+                        if (testB) { } // to remove unused signal warning
+                        if (a) {}
+                        
                         testA = 1
                     }
                 }

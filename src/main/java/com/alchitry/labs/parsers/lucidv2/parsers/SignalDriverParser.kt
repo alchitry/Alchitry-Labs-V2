@@ -4,7 +4,10 @@ import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
+import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.signals.SubSignal
+import com.alchitry.labs.parsers.lucidv2.types.Dff
+import com.alchitry.labs.parsers.lucidv2.types.ModuleInstanceOrArray
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.Value
 import org.antlr.v4.runtime.tree.ParseTree
@@ -21,6 +24,107 @@ data class SignalDriverParser(
     private val signals: MutableMap<Signal, Value> get() = signalStack.last()
 
     private var expectedDrivers: Set<Signal>? = null
+
+    override fun exitPortDec(ctx: PortDecContext) {
+        val port =
+            context.resolveSignal(ctx.name().text) as? Signal ?: error("Unresolved port of name \"${ctx.name().text}\"")
+        when (port.direction) {
+            SignalDirection.Read ->
+                if (!port.isRead)
+                    context.reportWarning(ctx.name(), "The input \"${port.name}\" is never read.")
+
+            SignalDirection.Write ->
+                if (!port.hasDriver)
+                    context.reportError(ctx.name(), "The output \"${port.name}\" is never driven.")
+
+            SignalDirection.Both ->
+                when {
+                    !port.isRead && !port.hasDriver ->
+                        context.reportError(ctx.name(), "The inout \"${port.name}\" is not connected.")
+
+                    !port.isRead ->
+                        context.reportWarning(ctx.name(), "The inout \"${port.name}\" is never read.")
+
+                    !port.hasDriver ->
+                        context.reportError(ctx.name(), "The inout \"${port.name}\" is never driven!")
+                }
+        }
+    }
+
+    override fun exitSigDec(ctx: SigDecContext) {
+        val sig =
+            context.resolveSignal(ctx.name().text) as? Signal ?: error("Unresolved sig of name ${ctx.name().text}")
+        if (!sig.hasDriver && sig.isRead) {
+            context.reportError(ctx.name(), "The signal \"${sig.name}\" is read but doesn't have a driver!")
+            return
+        }
+        if (!sig.isRead) {
+            context.reportWarning(ctx.name(), "The signal \"${sig.name}\" is never read.")
+            return
+        }
+    }
+
+    override fun exitDffDec(ctx: DffDecContext) {
+        val dff = context.resolveSignal(ctx.name().text) as? Dff ?: error("Unresolved dff of name ${ctx.name().text}")
+        if (!dff.d.hasDriver) {
+            context.reportError(ctx.name(), "The d input of dff \"${dff.name}\" is never driven!")
+            return
+        }
+        if (!dff.q.isRead) {
+            context.reportWarning(ctx.name(), "The q output of the dff \"${dff.name}\" is never read.")
+            return
+        }
+    }
+
+    override fun exitModuleInst(ctx: ModuleInstContext) {
+        val nameNode = ctx.name(1) ?: return
+        val inst = context.resolveSignal(nameNode.text) as? ModuleInstanceOrArray
+            ?: error("Unresolved instance of name ${nameNode.text}")
+        inst.ports.values.forEach {
+            when (it.direction) {
+                SignalDirection.Read -> {
+                    if (!it.isRead) {
+                        context.reportWarning(
+                            nameNode,
+                            "Port \"${it.name}\" of module instance \"${nameNode.text}\" is never read."
+                        )
+                    }
+                }
+
+                SignalDirection.Write -> {
+                    if (!it.hasDriver) {
+                        context.reportError(
+                            nameNode,
+                            "Port \"${it.name}\" of module instance \"${nameNode.text}\" is never driven!"
+                        )
+                    }
+                }
+
+                SignalDirection.Both -> {
+                    when {
+                        !it.isRead && !it.hasDriver ->
+                            context.reportError(
+                                nameNode,
+                                "Port \"${it.name}\" of module instance \"${nameNode.text}\" is not connected!"
+                            )
+
+                        !it.isRead ->
+                            context.reportWarning(
+                                nameNode,
+                                "Port \"${it.name}\" of module instance \"${nameNode.text}\" is never read."
+                            )
+
+                        !it.hasDriver ->
+                            context.reportError(
+                                nameNode,
+                                "Port \"${it.name}\" of module instance \"${nameNode.text}\" is never driven!"
+                            )
+
+                    }
+                }
+            }
+        }
+    }
 
     override fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
         expectedDrivers = (context.alwaysParser.alwaysBlocks[ctx]?.drivenSignals

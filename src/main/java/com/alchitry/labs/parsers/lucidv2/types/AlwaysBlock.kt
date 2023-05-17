@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class AlwaysBlock(
     context: LucidModuleContext,
-    val dependencies: Set<Signal>,
+    dependencies: Set<Signal>,
     val drivenSignals: Set<Signal>,
     val repeatSignals: Map<RepeatStatContext, Signal>,
     private val alwaysBlockContext: AlwaysBlockContext
@@ -19,6 +19,8 @@ class AlwaysBlock(
     val context = context.withEvalContext(this)
 
     init {
+        dependencies.forEach { it.isRead = true }
+        drivenSignals.forEach { it.hasDriver = true }
         this.context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             onAnyChange(dependencies.map { it.valueFlow }) {
                 this@AlwaysBlock.context.project.queueEvaluation(this@AlwaysBlock)
