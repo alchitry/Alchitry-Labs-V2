@@ -20,7 +20,7 @@ data class BitListValue(
     override fun asMutable(): BitListValue = copy(constant = false)
     override fun withSign(signed: Boolean): BitListValue = copy(signed = signed)
 
-    override val signalWidth: SimpleWidth = BitListWidth(bits.size)
+    override val width: SimpleWidth = BitListWidth(bits.size)
 
     override fun invert(): BitListValue = copy(bits = bits.map { !it })
     override fun reverse(): BitListValue = copy(bits = bits.reversed())
@@ -83,7 +83,7 @@ data class BitListValue(
 
     override fun write(selection: List<SignalSelector>, newValue: Value): BitListValue {
         if (selection.isEmpty()) {
-            require(newValue is BitListValue && newValue.signalWidth == signalWidth) {
+            require(newValue is BitListValue && newValue.width == width) {
                 "Attempted to assign an incompatible type to the BitListValue!"
             }
             return copy(bits = newValue.bits)

@@ -14,7 +14,7 @@ data class SubSignal(
 ) : SignalOrSubSignal {
     override fun read(evalContext: Evaluable?): Value = parent.read(evalContext).select(selection)
 
-    override val width: SignalWidth = read().signalWidth
+    override val width: SignalWidth = read().width
 
     override val direction: SignalDirection
         get() = parent.direction
@@ -26,7 +26,7 @@ data class SubSignal(
      * Generates the full value for the parent signal with the value v applied to the selected portion of the signal.
      */
     private fun getFullValue(v: Value, evalContext: Evaluable?): Value {
-        require(width.canAssign(v.signalWidth)) {
+        require(width.canAssign(v.width)) {
             "Cannot set value $v to selected subsignal!"
         }
         return parent.read(evalContext).write(selection, v.resizeToMatch(width))

@@ -197,7 +197,8 @@ Finally, the last pass is the `Evaluation` pass. This is only run during simulat
 ### LucidExprContext
 
 The `LucidExprContext` is an interface implemented by every context so that the basic expression parsers can be used.
-The four parses that require this are the `ExprParser`, `BitSelectionParser`, `SignalParser`, and `StructParser`.
+The four parses that require this are the `ExprParser`, `BitSelectionParser`, `SignalParser`, `ConstantParser`,
+`EnumParser`, and `StructParser`.
 
 `ExprParser` is responsible for generating `Value`s for every Lucid expression. An expression could be as simple as
 a number or more complex like signals multiple together. Basically, if it falls under the `expr` rule in the Lucid
@@ -211,6 +212,8 @@ provide the `SignalOrParent` via the `resolveSignal()` function of the `LucidExp
 and drills down into it when sub-signals are selected.
 
 Its main job is to provide the `resolve()` function that converts `SignalContext` to `SignalOrSubSignal`.
+
+`ConstantParser` and `EnumParser` are responsible for constant and enum declarations respectively.
 
 Finally, `StructParser` is responsible for struct declarations and resolving struct types.
 

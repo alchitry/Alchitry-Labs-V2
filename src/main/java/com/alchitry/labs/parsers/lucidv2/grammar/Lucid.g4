@@ -12,6 +12,7 @@ global: 'global' NL* name NL* '{' NL* globalStat* NL* '}';
 globalStat
   : structDec
   | constDec
+  | enumDec
   ;
 
 module: 'module' name NL* paramList? NL* portList NL* moduleBody;

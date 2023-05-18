@@ -429,7 +429,7 @@ data class TypesParser(
                                     "The initialization value is wider than the DFF \"$name\" and will be truncated."
                                 )
                             }
-                            init = it.resizeToMatch(init.signalWidth)
+                            init = it.resizeToMatch(init.width)
                         } else {
                             context.reportError(
                                 param.value.expr,
@@ -479,7 +479,7 @@ data class TypesParser(
             return
         }
 
-        val clkWidth = resolvedClk.value.signalWidth
+        val clkWidth = resolvedClk.value.width
         if (!BitWidth.canAssign(clkWidth)) {
             context.reportError(ctx, "The clk connection can't be reduced to a single bit.")
             return
@@ -492,7 +492,7 @@ data class TypesParser(
             )
         }
 
-        rst?.value?.signalWidth?.let { rstWidth ->
+        rst?.value?.width?.let { rstWidth ->
             if (!BitWidth.canAssign(rstWidth)) {
                 context.reportError(ctx, "The rst connection can't be reduced to a single bit.")
                 return

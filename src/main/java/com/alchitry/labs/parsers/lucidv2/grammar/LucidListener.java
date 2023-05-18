@@ -578,17 +578,21 @@ public interface LucidListener extends ParseTreeListener {
 	 */
 	void exitIfStat(LucidParser.IfStatContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LucidParser#elseStat}.
-	 * @param ctx the parse tree
-	 */
-	void enterElseStat(LucidParser.ElseStatContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LucidParser#elseStat}.
-	 * @param ctx the parse tree
-	 */
-	void exitElseStat(LucidParser.ElseStatContext ctx);
-	/**
+     * Enter a parse tree produced by {@link LucidParser#elseStat}.
+     * @param ctx the parse tree
+     */
+    void enterElseStat(LucidParser.ElseStatContext ctx);
+
+    /**
+     * Exit a parse tree produced by {@link LucidParser#elseStat}.
+     *
+     * @param ctx the parse tree
+     */
+    void exitElseStat(LucidParser.ElseStatContext ctx);
+
+    /**
      * Enter a parse tree produced by {@link LucidParser#repeatStat}.
+     *
      * @param ctx the parse tree
      */
     void enterRepeatStat(LucidParser.RepeatStatContext ctx);
@@ -629,16 +633,20 @@ public interface LucidListener extends ParseTreeListener {
     void exitFunction(LucidParser.FunctionContext ctx);
 
     /**
-	 * Enter a parse tree produced by {@link LucidParser#number}.
-	 * @param ctx the parse tree
-	 */
-	void enterNumber(LucidParser.NumberContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LucidParser#number}.
-	 * @param ctx the parse tree
-	 */
-	void exitNumber(LucidParser.NumberContext ctx);
-	/**
+     * Enter a parse tree produced by {@link LucidParser#number}.
+     *
+     * @param ctx the parse tree
+     */
+    void enterNumber(LucidParser.NumberContext ctx);
+
+    /**
+     * Exit a parse tree produced by {@link LucidParser#number}.
+     *
+     * @param ctx the parse tree
+     */
+    void exitNumber(LucidParser.NumberContext ctx);
+
+    /**
 	 * Enter a parse tree produced by the {@code ExprTernary}
 	 * labeled alternative in {@link LucidParser#expr}.
 	 * @param ctx the parse tree

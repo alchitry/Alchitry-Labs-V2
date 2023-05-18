@@ -33,7 +33,7 @@ data class BitValue(
     override fun asMutable() = copy(constant = false)
     override fun withSign(signed: Boolean) = copy(signed = signed)
 
-    override val signalWidth = BitWidth
+    override val width = BitWidth
 
     override fun invert() = copy(bit = !bit)
     override fun reverse() = this

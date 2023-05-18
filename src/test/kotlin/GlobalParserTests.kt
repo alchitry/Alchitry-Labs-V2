@@ -20,7 +20,7 @@ class GlobalParserTests {
         val global = tester.project.resolveGlobal("MyGlobal")
 
         assertNotNull(global)
-        assertEquals(BitValue(Bit.B1, constant = true, signed = false), global.constants["ONE"])
+        assertEquals(BitValue(Bit.B1, constant = true, signed = false), global.constants["ONE"]?.value)
     }
 
     @Test
@@ -37,7 +37,7 @@ class GlobalParserTests {
         val global = tester.project.resolveGlobal("MyGlobal")
 
         assertNotNull(global)
-        assertEquals(BitListValue("10", 2, constant = true, signed = false), global.constants["TWO"])
+        assertEquals(BitListValue("10", 2, constant = true, signed = false), global.constants["TWO"]?.value)
     }
 
     @Test
@@ -105,7 +105,7 @@ class GlobalParserTests {
             )
         )
 
-        assertEquals(value, global.constants["BLUE"])
+        assertEquals(value, global.constants["BLUE"]?.value)
     }
 
     @Test

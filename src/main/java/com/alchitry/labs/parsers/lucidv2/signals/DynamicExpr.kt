@@ -29,7 +29,7 @@ class DynamicExpr(
 
     var value: Value = context.expr.resolve(expr)?.let {
         if (widthConstraint != null) {
-            if (!widthConstraint.canAssign(it.signalWidth))
+            if (!widthConstraint.canAssign(it.width))
                 error("Specified width is incompatible with the initial value!")
             it.resizeToMatch(widthConstraint)
         } else {
@@ -38,7 +38,7 @@ class DynamicExpr(
     } ?: error("Failed to resolve initial value for ${expr.text}")
         private set
 
-    val width: SignalWidth = widthConstraint ?: value.signalWidth
+    val width: SignalWidth = widthConstraint ?: value.width
 
     init {
         val dependencies =
@@ -98,7 +98,7 @@ class DynamicExpr(
 
         requireNotNull(newValue) { "Failed to produce a value for DynamicValue $expr" }
 
-        if (!width.canAssign(newValue.signalWidth))
+        if (!width.canAssign(newValue.width))
             error("Dynamic expression value attempted to change widths to something incompatible!")
 
         value = newValue.resizeToMatch(width)

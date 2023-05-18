@@ -27,8 +27,15 @@ data class StructParser(
     override fun exitStructDec(ctx: StructDecContext) {
         val name = ctx.name().text
 
-        if (ctx.name().TYPE_ID() == null)
-            context.reportError(ctx.name(), "The struct name $name must start with a lowercase letter.")
+        if (ctx.name().TYPE_ID() == null) {
+            context.reportError(ctx.name(), "The struct name \"$name\" must start with a lowercase letter.")
+            return
+        }
+
+        if (localStructType.containsKey(name)) {
+            context.reportError(ctx.name(), "The struct name \"${name}\" has already been used.")
+            return
+        }
 
         val members = mutableMapOf<String, StructMember>()
 

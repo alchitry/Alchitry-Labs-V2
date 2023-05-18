@@ -23,7 +23,7 @@ data class StructValue(
     /** withSign() does nothing to struct values since the members have explicit signs */
     override fun withSign(signed: Boolean) = this
 
-    override val signalWidth: StructWidth = StructWidth(type)
+    override val width: StructWidth = StructWidth(type)
 
     override fun invert(): StructValue = copy(valueMap = mapValues { it.value.invert() })
 
@@ -53,7 +53,7 @@ data class StructValue(
     override fun reverse() = error("reverse() can't be called on StructValues!")
 
     override fun resizeToMatch(newWidth: SignalWidth): StructValue {
-        require(newWidth == signalWidth) { "Cannot resize StructValue to match other value!" }
+        require(newWidth == width) { "Cannot resize StructValue to match other value!" }
         return this
     }
 
@@ -67,7 +67,7 @@ data class StructValue(
 
     override fun write(selection: List<SignalSelector>, newValue: Value): StructValue {
         if (selection.isEmpty()) {
-            require(newValue is StructValue && newValue.signalWidth == signalWidth) {
+            require(newValue is StructValue && newValue.width == width) {
                 "Attempted to write an incompatible value to a StructValue!"
             }
             return newValue

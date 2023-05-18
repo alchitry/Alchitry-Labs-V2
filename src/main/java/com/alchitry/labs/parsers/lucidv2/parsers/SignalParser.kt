@@ -35,7 +35,7 @@ data class SignalParser(
 
             val repeatSignals =
                 context.alwaysParser.alwaysBlocks[alwaysParent]?.repeatSignals ?: context.alwaysParser.repeatSignals
-            val newSig = repeatSignals[repCtx] ?: error("Missing repeat signal for repeat block!")
+            val newSig = repeatSignals[repCtx] ?: return//error("Missing repeat signal for repeat block!")
             localRepeatSignals[newSig.name] = newSig
         }
     }
@@ -50,7 +50,7 @@ data class SignalParser(
         val signalOrParent = localRepeatSignals[firstName.text] ?: context.resolveSignal(firstName.text)
 
         if (signalOrParent == null) {
-            context.reportError(ctx.name(0), "Failed to resolve signal ${firstName.text}")
+            context.reportError(ctx.name(0), "Failed to resolve signal \"${firstName.text}\"")
             return
         }
 
@@ -61,8 +61,8 @@ data class SignalParser(
         while (currentSignalOrParent is SignalParent) {
             if (children.size < usedChildren + 1) {
                 context.reportError(
-                    ctx.name(usedChildren),
-                    "${ctx.name(usedChildren).text} is not a signal and can't be accessed directly."
+                    ctx.name(usedChildren - 1),
+                    "${ctx.name(usedChildren - 1).text} is not a signal and can't be accessed directly."
                 )
                 return
             }

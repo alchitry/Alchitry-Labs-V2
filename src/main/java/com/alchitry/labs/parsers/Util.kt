@@ -14,7 +14,17 @@ object Util {
      * @return the minimum number of bits needed to represent i
      */
     fun minWidthNum(i: BigInteger): Int {
-        return if (i.compareTo(BigInteger.ZERO) != 0) BigFunctions.ln(BigDecimal(i), 10).divide(BigFunctions.LOG2, RoundingMode.HALF_UP).setScale(0, RoundingMode.FLOOR).toInt() + 1 else 1
+        return if (i.compareTo(BigInteger.ZERO) != 0) BigFunctions.ln(BigDecimal(i), 10)
+            .divide(BigFunctions.LOG2, RoundingMode.HALF_UP).setScale(0, RoundingMode.FLOOR).toInt() + 1 else 1
+    }
+
+    /**
+     * Returns the minimum number of bits needed to represent the provided value.
+     * @param i the value to calculate the minimum number of bits for
+     * @return the minimum number of bits needed to represent i
+     */
+    fun minWidthNum(i: Int): Int {
+        return if (i != 0) floor(ln(i.toDouble()) / ln(2.0)).toInt() + 1 else 1
     }
 
     /**

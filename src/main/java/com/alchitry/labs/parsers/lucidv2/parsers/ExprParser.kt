@@ -150,7 +150,7 @@ data class ExprParser(
             )
         }
 
-        if (value.signalWidth.size == 1)
+        if (value.width.size == 1)
             values[ctx] = value.getBit(0) // return BitValue instead of BitListValue
         else
             values[ctx] = value
@@ -180,12 +180,12 @@ data class ExprParser(
 
             val value = values[memberCtx.expr()] ?: return
 
-            if (!member.width.canAssign(value.signalWidth)) {
+            if (!member.width.canAssign(value.width)) {
                 context.reportError(memberCtx.expr(), "The member $name width does not match this expression.")
                 return
             }
 
-            if (value is SimpleValue && value.signalWidth.getBitCount() > member.width.getBitCount()) {
+            if (value is SimpleValue && value.width.getBitCount() > member.width.getBitCount()) {
                 context.reportWarning(
                     memberCtx.expr(),
                     "The member $name has fewer bits than this expression. It will be truncated."
@@ -286,7 +286,7 @@ data class ExprParser(
             return
 
         val base = operands[0].first
-        val baseSigWidth = base.signalWidth
+        val baseSigWidth = base.width
         var error = false
 
         if (baseSigWidth is StructWidth) {
@@ -300,7 +300,7 @@ data class ExprParser(
             is ArrayValue -> {
                 assert(baseSigWidth is ArrayWidth) { "The ArrayValue has a width that isn't an ArrayWidth" }
                 operands.forEach {
-                    val sigWidth = it.first.signalWidth
+                    val sigWidth = it.first.width
                     if (sigWidth !is ArrayWidth || sigWidth.next != (baseSigWidth as ArrayWidth).next) {
                         context.reportError(
                             it.second,
@@ -321,7 +321,7 @@ data class ExprParser(
                 var definedWidth = true
 
                 operands.forEach {
-                    val sigWidth = it.first.signalWidth
+                    val sigWidth = it.first.width
                     if (!sigWidth.isFlatArray()) {
                         context.reportError(
                             it.second,
@@ -378,14 +378,14 @@ data class ExprParser(
             return
         }
 
-        val valWidth = dupValue.signalWidth
+        val valWidth = dupValue.width
 
         if (!valWidth.isArray()) {
             context.reportError(ctx.expr(0), "Duplication can't be performed on structs")
             return
         }
 
-        if (!dupCount.signalWidth.isFlatArray()) {
+        if (!dupCount.width.isFlatArray()) {
             context.reportError(ctx.expr(0), "The array duplication index must be one dimensional")
             return
         }
@@ -458,11 +458,11 @@ data class ExprParser(
         if (operands.isEmpty())
             return
 
-        val firstDim = operands[0].first.signalWidth
+        val firstDim = operands[0].first.width
 
         var error = false
         operands.forEach {
-            if (it.first.signalWidth != firstDim) {
+            if (it.first.width != firstDim) {
                 error = true
                 context.reportError(it.second, ErrorStrings.ARRAY_BUILDING_DIM_MISMATCH)
             }
@@ -487,7 +487,7 @@ data class ExprParser(
         val constant = values[ctx.expr()]?.constant == true
         val expr = values[ctx.expr()] ?: return
 
-        if (!expr.signalWidth.isFlatArray()) {
+        if (!expr.width.isFlatArray()) {
             context.reportError(ctx, ErrorStrings.NEG_MULTI_DIM)
             return
         }
@@ -549,8 +549,8 @@ data class ExprParser(
                 )
             }) return
 
-        val op1Width = op1.signalWidth
-        val op2Width = op2.signalWidth
+        val op1Width = op1.width
+        val op2Width = op2.width
 
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
             if (op1Width is SimpleWidth && op2Width is SimpleWidth)
@@ -613,8 +613,8 @@ data class ExprParser(
                 )
             }) return
 
-        val op1Width = op1.signalWidth
-        val op2Width = op2.signalWidth
+        val op1Width = op1.width
+        val op2Width = op2.width
 
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
             if (op1Width is SimpleWidth && op2Width is SimpleWidth)
@@ -681,7 +681,7 @@ data class ExprParser(
         check(shift is SimpleValue) { "Shift value is flat array but not SimpleValue or UndefinedValue" }
 
         if (value is UndefinedValue) {
-            val vWidth = value.signalWidth
+            val vWidth = value.width
             if (vWidth is SimpleWidth) {
                 val w = if (operand == "<<" || operand == "<<<") vWidth.size + shift.toBigInt()
                     .toInt() else vWidth.size
@@ -745,8 +745,8 @@ data class ExprParser(
                     context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
                 }) return
 
-            val op1Width = op1.signalWidth
-            val op2Width = op2.signalWidth
+            val op1Width = op1.width
+            val op2Width = op2.width
 
             if (op1Width.isDefinedArray() && op2Width.isDefinedArray()) {
                 if (op1Width != op2Width) {
@@ -936,10 +936,10 @@ data class ExprParser(
         val op1 = values[ctx.expr(1)] ?: return
         val op2 = values[ctx.expr(2)] ?: return
 
-        val op1Width = op1.signalWidth
-        val op2Width = op2.signalWidth
+        val op1Width = op1.width
+        val op2Width = op2.width
 
-        if (!cond.signalWidth.isFlatArray()) {
+        if (!cond.width.isFlatArray()) {
             context.reportError(ctx.expr(0), ErrorStrings.TERN_SELECTOR_MULTI_DIM)
             return
         }
@@ -965,7 +965,7 @@ data class ExprParser(
         }
 
         val value = if (cond.isTrue().lsb == Bit.B1) op1 else op2
-        if (value.signalWidth != width) {
+        if (value.width != width) {
             if (value !is SimpleValue || width !is SimpleWidth) {
                 context.reportError(
                     ctx,
@@ -1078,7 +1078,7 @@ data class ExprParser(
 
             Function.REVERSE -> {
                 val arg = args[0]
-                if (!arg.signalWidth.isArray()) {
+                if (!arg.width.isArray()) {
                     context.reportError(ctx.expr(0), ErrorStrings.FUNCTION_ARG_NOT_ARRAY.format(ctx.expr(0).text))
                     return
                 }
@@ -1086,7 +1086,7 @@ data class ExprParser(
             }
 
             Function.FLATTEN -> {
-                if (!args[0].signalWidth.isDefined()) {
+                if (!args[0].width.isDefined()) {
                     context.reportError(ctx.expr(0), ErrorStrings.UNKNOWN_WIDTH.format(ctx.expr(0).text))
                     return
                 }
@@ -1242,7 +1242,7 @@ data class ExprParser(
                         context.reportError(ctx.expr(1), ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.expr(1).text))
                         return
                     }
-                    if (!value.signalWidth.isFlatArray()) {
+                    if (!value.width.isFlatArray()) {
                         context.reportError(
                             ctx.expr(0),
                             ErrorStrings.FUNCTION_NOT_FLAT.format(ctx.FUNCTION_ID().text)

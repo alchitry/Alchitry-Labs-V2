@@ -578,16 +578,20 @@ public class LucidBaseListener implements LucidListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitBitSelectorConst(LucidParser.BitSelectorConstContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterBitSelectorFixWidth(LucidParser.BitSelectorFixWidthContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterBitSelectorFixWidth(LucidParser.BitSelectorFixWidthContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
      */
     @Override
     public void exitBitSelectorFixWidth(LucidParser.BitSelectorFixWidthContext ctx) {
@@ -775,16 +779,21 @@ public class LucidBaseListener implements LucidListener {
 
     /**
      * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterNumber(LucidParser.NumberContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitNumber(LucidParser.NumberContext ctx) { }
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterNumber(LucidParser.NumberContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitNumber(LucidParser.NumberContext ctx) {
+    }
 	/**
 	 * {@inheritDoc}
 	 *

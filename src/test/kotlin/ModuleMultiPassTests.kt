@@ -1,6 +1,7 @@
 import com.alchitry.labs.parsers.lucidv2.context.QueueExhaustionException
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.types.Dff
+import com.alchitry.labs.parsers.lucidv2.types.EnumType
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.BitValue
@@ -47,11 +48,12 @@ class ModuleMultiPassTests {
                     input a
                 ) {
                     sig endValue[16]
+                    const REP_CT = 5
                 
                     always {
                         if (a) {}
                         endValue = 0
-                        repeat(i, 5) {
+                        repeat(i, REP_CT) {
                             endValue = endValue + i
                         }
                     }
@@ -142,5 +144,80 @@ class ModuleMultiPassTests {
 
             }
         }
+    }
+
+    @Test
+    fun enumTest() {
+        val tester = LucidTester(
+            """
+                module myModule (
+                    input a,
+                    output test[2]
+                ) {
+                    enum myFSM {
+                        IDLE,
+                        INIT,
+                        RUN,
+                        STOP
+                    }
+                
+                    always {
+                        if (a) {}
+                        test = myFSM.RUN
+                    }
+                }
+            """.trimIndent()
+        )
+        val top = tester.fullParse()
+        val context = top.context
+        val testSig = top.ports["test"]
+
+        runBlocking {
+            context.initialize()
+            tester.project.processQueue()
+        }
+
+        val enum = EnumType("myFSM", listOf("IDLE", "INIT", "RUN", "STOP"), null)
+
+        assertEquals(BitListValue(2, 2, signed = false, constant = false), testSig?.read())
+        assertEquals(enum, context.enum.resolve("myFSM"))
+    }
+
+    @Test
+    fun globalEnumTest() {
+        val tester = LucidTester(
+            """
+                module myModule (
+                    output test[2]
+                ) {
+                    always {
+                        test = Enums.myFSM.RUN
+                    }
+                }
+            """.trimIndent(),
+            """
+                global Enums {
+                    enum myFSM {
+                        IDLE,
+                        INIT,
+                        RUN,
+                        STOP
+                    }
+                }
+            """.trimIndent()
+        )
+        val top = tester.fullParse()
+        val context = top.context
+        val testSig = top.ports["test"]
+
+        runBlocking {
+            context.initialize()
+            tester.project.processQueue()
+        }
+
+        val enum = EnumType("myFSM", listOf("IDLE", "INIT", "RUN", "STOP"), tester.project.resolveGlobal("Enums"))
+
+        assertEquals(BitListValue(2, 2, signed = false, constant = false), testSig?.read())
+        assertEquals(enum, tester.project.resolveGlobal("Enums")?.enums?.values?.first())
     }
 }

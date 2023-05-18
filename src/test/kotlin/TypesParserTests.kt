@@ -127,7 +127,7 @@ internal class TypesParserTests {
 
         dSig as Signal
         qSig as Signal
-        assertEquals(BitListWidth(3), qSig.read(tester.context.evalContext).signalWidth)
+        assertEquals(BitListWidth(3), qSig.read(tester.context.evalContext).width)
 
         assert(tester.hasErrors)
         assert(tester.hasNoWarnings)
@@ -252,7 +252,7 @@ internal class TypesParserTests {
         val dff = tester.context.types.resolve("testing")
         dff as Dff
 
-        assertEquals(StructWidth(struct), dff.q.read(tester.context.evalContext).signalWidth)
+        assertEquals(StructWidth(struct), dff.q.read(tester.context.evalContext).width)
     }
 
     @Test
@@ -282,7 +282,7 @@ internal class TypesParserTests {
         val dff = tester.context.types.resolve("testing")
         dff as Dff
 
-        assertEquals(width, dff.q.read(tester.context.evalContext).signalWidth)
+        assertEquals(width, dff.q.read(tester.context.evalContext).width)
     }
 
     @Test

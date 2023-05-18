@@ -35,7 +35,7 @@ open class Signal(
         return value
     }
 
-    override val width: SignalWidth = value.signalWidth
+    override val width: SignalWidth = value.width
 
     override fun quietWrite(v: Value, evalContext: Evaluable?) {
         require(setEvalContext == null || evalContext === setEvalContext) { "Attempted to set signal from two different evalContext!" }
@@ -45,7 +45,7 @@ open class Signal(
 
     private fun quietWrite(v: Value) {
         require(value.canAssign(v)) { "Signal assigned value does not match its size!" }
-        val resizedValue = v.resizeToMatch(value.signalWidth)
+        val resizedValue = v.resizeToMatch(value.width)
         nextValue = resizedValue.withSign(signed).asMutable()
     }
 

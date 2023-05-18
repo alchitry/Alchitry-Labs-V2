@@ -16,7 +16,7 @@ fun LucidExprContext.checkFlat(
 ): Boolean {
     return exprCtx.map {
         val op = resolve(it) ?: throw IllegalArgumentException("exprCtx wasn't defined")
-        if (op.signalWidth.isFlatArray()) {
+        if (op.width.isFlatArray()) {
             true
         } else {
             onError(it)
@@ -55,10 +55,10 @@ fun LucidExprContext.checkFlatOrMatchingDims(
     if (exprCtx.isEmpty())
         return true
 
-    val first = resolve(exprCtx.first())?.signalWidth ?: throw IllegalArgumentException("exprCtx wasn't defined")
+    val first = resolve(exprCtx.first())?.width ?: throw IllegalArgumentException("exprCtx wasn't defined")
 
     return exprCtx.map {
-        val op = resolve(it)?.signalWidth ?: throw IllegalArgumentException("exprCtx wasn't defined")
+        val op = resolve(it)?.width ?: throw IllegalArgumentException("exprCtx wasn't defined")
         if (!((op.isFlatArray() && first.isFlatArray()) || op == first)) {
             onError(it)
             return@map false
@@ -75,7 +75,7 @@ fun LucidExprContext.checkUndefinedMatchingDims(
     onError: (LucidParser.ExprContext) -> Unit
 ): Boolean {
     val widths =
-        exprCtx.map { resolve(it)?.signalWidth ?: throw IllegalArgumentException("exprCtx wasn't defined") }
+        exprCtx.map { resolve(it)?.width ?: throw IllegalArgumentException("exprCtx wasn't defined") }
     val hasUndefinedWidth = widths.any { it is UndefinedSimpleWidth }
     if (!hasUndefinedWidth)
         return true

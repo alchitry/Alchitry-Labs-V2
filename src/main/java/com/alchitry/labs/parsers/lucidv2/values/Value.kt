@@ -1,17 +1,15 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
-import com.alchitry.labs.parsers.lucidv2.signals.SignalSelection
-import com.alchitry.labs.parsers.lucidv2.signals.SignalSelectionException
-import com.alchitry.labs.parsers.lucidv2.signals.SignalSelector
+import com.alchitry.labs.parsers.lucidv2.signals.*
+import com.alchitry.labs.parsers.lucidv2.types.Measurable
 
-sealed class Value {
+sealed class Value : Measurable {
     abstract val constant: Boolean
     abstract fun isNumber(): Boolean
 
     /** Makes a copy of this Value that has the constant flag set as false. */
     abstract fun asMutable(): Value
     abstract fun withSign(signed: Boolean): Value
-    abstract val signalWidth: SignalWidth
     abstract fun invert(): Value
     abstract fun isTrue(): BitValue
     abstract infix fun and(other: Value): Value
@@ -49,6 +47,7 @@ sealed class Value {
             is StructValue -> type.flatMap { (key, value) ->
                 this[key]?.getBits() ?: List(value.width.getBitCount()) { Bit.Bx }
             }
+
             is UndefinedValue -> List(width.getBitCount()) { Bit.Bx }
         }
     }
@@ -68,7 +67,7 @@ sealed class Value {
     fun flatten(): BitListValue = BitListValue(getBits(), constant, false)
 
     /** Returns true if the other value can be scaled to match this value. */
-    fun canAssign(other: Value): Boolean = signalWidth.canAssign(other.signalWidth)
+    fun canAssign(other: Value): Boolean = width.canAssign(other.width)
 
     fun select(selection: SignalSelection): Value {
         var v = this
@@ -101,6 +100,13 @@ sealed class Value {
         }
 
     abstract fun write(selection: List<SignalSelector>, newValue: Value): Value
+
+    fun asSignal(name: String, parent: SignalParent? = null) = Signal(
+        name,
+        SignalDirection.Read,
+        parent,
+        this
+    ).also { it.hasDriver = true }
 }
 
 

@@ -21,7 +21,7 @@ data class ArrayValue(
 
     override fun withSign(signed: Boolean): ArrayValue = copy(elements = elements.map { it.withSign(signed) })
 
-    override val signalWidth: ArrayWidth = ArrayWidth(elements.size, elements[0].signalWidth)
+    override val width: ArrayWidth = ArrayWidth(elements.size, elements[0].width)
 
     override fun invert(): ArrayValue = copy(elements = elements.map { it.invert() })
 
@@ -55,7 +55,7 @@ data class ArrayValue(
     override fun reverse() = ArrayValue(reversed())
 
     override fun resizeToMatch(newWidth: SignalWidth): ArrayValue {
-        require(signalWidth == newWidth) { "Cannot resize ArrayValue to match other value" }
+        require(width == newWidth) { "Cannot resize ArrayValue to match other value" }
         return this
     }
 
@@ -75,7 +75,7 @@ data class ArrayValue(
 
     override fun write(selection: List<SignalSelector>, newValue: Value): ArrayValue {
         if (selection.isEmpty()) {
-            if (newValue !is ArrayValue || newValue.signalWidth != signalWidth) {
+            if (newValue !is ArrayValue || newValue.width != width) {
                 error("Incompatible newValue width!")
             }
             return newValue

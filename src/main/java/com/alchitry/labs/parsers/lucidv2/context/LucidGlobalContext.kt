@@ -20,11 +20,15 @@ class LucidGlobalContext(
     private val struct = StructParser(this)
     private val signal = SignalParser(this)
     private val global = GlobalParser(this)
+    private val enum = EnumParser(this)
+    private val constant = ConstantParser(this)
 
     private val listeners = listOf<ParseTreeListener>(
         this.expr,
         this.bitSelection,
         this.struct,
+        this.enum,
+        this.constant,
         this.signal,
         this.global
     )
@@ -40,11 +44,15 @@ class LucidGlobalContext(
     override fun resolve(bitSelectionContext: LucidParser.BitSelectionContext) =
         bitSelection.resolve(bitSelectionContext)
 
+    override fun resolve(enumDecContext: LucidParser.EnumDecContext) = enum.resolve(enumDecContext)
+    override fun resolve(constDecContext: LucidParser.ConstDecContext) = constant.resolve(constDecContext)
+
     /**
      * Searches all SignalParsers to resolve a signal name.
      */
     override fun resolveSignal(name: String): SignalOrParent? {
-        global.resolveSignal(name)?.let { return it }
+        constant.resolve(name)?.let { return it }
+        enum.resolve(name)?.let { return it }
 
         return project.resolveSignal(name)
     }

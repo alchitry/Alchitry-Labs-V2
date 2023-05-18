@@ -6,6 +6,8 @@ import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.SourceContext
 import com.alchitry.labs.parsers.lucidv2.parsers.*
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
+import com.alchitry.labs.parsers.lucidv2.types.Constant
+import com.alchitry.labs.parsers.lucidv2.types.EnumType
 import com.alchitry.labs.parsers.lucidv2.types.Module
 import org.antlr.v4.runtime.tree.ParseTreeListener
 
@@ -44,6 +46,9 @@ class LucidModuleTypeContext(
     override fun resolve(signalWidthContext: LucidParser.SignalWidthContext) = signal.resolve(signalWidthContext)
     override fun resolve(structTypeContext: LucidParser.StructTypeContext) = struct.resolve(structTypeContext)
     override fun resolve(structDecContext: LucidParser.StructDecContext) = struct.resolve(structDecContext)
+    override fun resolve(enumDecContext: LucidParser.EnumDecContext): EnumType? = null
+    override fun resolve(constDecContext: LucidParser.ConstDecContext): Constant? = null
+
     override fun resolve(bitSelectionContext: LucidParser.BitSelectionContext) =
         bitSelection.resolve(bitSelectionContext)
 

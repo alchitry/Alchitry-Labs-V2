@@ -19,6 +19,8 @@ class LucidModuleContext(
     expr: ExprParser? = null,
     bitSelection: BitSelectionParser? = null,
     types: TypesParser? = null,
+    constant: ConstantParser? = null,
+    enum: EnumParser? = null,
     struct: StructParser? = null,
     signal: SignalParser? = null,
     alwaysParser: AlwaysParser? = null,
@@ -35,6 +37,8 @@ class LucidModuleContext(
     // These won't be re-run during evaluation, so they don't need their context updated
     val types = types ?: TypesParser(this)
     val struct = struct ?: StructParser(this)
+    val enum = enum ?: EnumParser(this)
+    val constant = constant ?: ConstantParser(this)
     val alwaysParser = alwaysParser ?: AlwaysParser(this)
     val signalDriver = signalDriver ?: SignalDriverParser(this)
 
@@ -43,6 +47,8 @@ class LucidModuleContext(
             this.expr,
             this.bitSelection,
             this.struct,
+            this.enum,
+            this.constant,
             this.types,
             this.alwaysParser,
             this.signal
@@ -66,6 +72,8 @@ class LucidModuleContext(
             this.expr,
             this.bitSelection,
             this.struct,
+            this.enum,
+            this.constant,
             this.signal,
             this.types,
             this.alwaysParser
@@ -88,6 +96,8 @@ class LucidModuleContext(
         expr,
         bitSelection,
         types,
+        constant,
+        enum,
         struct,
         signal,
         alwaysParser,
@@ -138,6 +148,8 @@ class LucidModuleContext(
     override fun resolve(signalWidthContext: SignalWidthContext) = signal.resolve(signalWidthContext)
     override fun resolve(structTypeContext: StructTypeContext) = struct.resolve(structTypeContext)
     override fun resolve(structDecContext: StructDecContext) = struct.resolve(structDecContext)
+    override fun resolve(enumDecContext: EnumDecContext) = enum.resolve(enumDecContext)
+    override fun resolve(constDecContext: ConstDecContext) = constant.resolve(constDecContext)
     override fun resolve(bitSelectionContext: BitSelectionContext) = bitSelection.resolve(bitSelectionContext)
 
     /**
@@ -146,6 +158,8 @@ class LucidModuleContext(
     override fun resolveSignal(name: String): SignalOrParent? {
         localSignalResolver?.resolve(name)?.let { return it }
         types.resolve(name)?.let { return it }
+        constant.resolve(name)?.let { return it }
+        enum.resolve(name)?.let { return it }
 
         instance.getInternalSignal(name)?.let { return it }
 

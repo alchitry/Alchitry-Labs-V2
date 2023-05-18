@@ -2,13 +2,13 @@ package com.alchitry.labs.parsers.lucidv2.signals
 
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
-import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
+import com.alchitry.labs.parsers.lucidv2.types.Measurable
 import com.alchitry.labs.parsers.lucidv2.values.Value
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-sealed interface SignalOrSubSignal {
+sealed interface SignalOrSubSignal : Measurable {
     /**
      * Reads this signal and returns it's signal. It will return the public value if evalContext
      * is null or doesn't match the quietWrite() evalContext. If the evalContext matches the
@@ -31,7 +31,6 @@ sealed interface SignalOrSubSignal {
      */
     suspend fun publish()
     val direction: SignalDirection
-    val width: SignalWidth
 
     fun getSignal(): Signal =
         when (this) {

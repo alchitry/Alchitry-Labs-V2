@@ -65,7 +65,7 @@ data class AlwaysParser(
 
         val newValue = context.resolve(ctx.expr()) ?: return
 
-        if (!assignee.width.canAssign(newValue.signalWidth)) {
+        if (!assignee.width.canAssign(newValue.width)) {
             context.reportError(
                 ctx.expr(),
                 "This expression doesn't match the dimensions of signal ${ctx.signal().text}."
@@ -81,7 +81,7 @@ data class AlwaysParser(
             ctx.expr() is ExprDupContext ||
             ctx.expr() is ExprArrayContext
         ) {
-            if (assignee.width.getBitCount() < newValue.signalWidth.getBitCount()) {
+            if (assignee.width.getBitCount() < newValue.width.getBitCount()) {
                 context.reportWarning(
                     ctx.expr(),
                     "This expression is wider than ${ctx.signal().text} and will be truncated."
@@ -135,7 +135,7 @@ data class AlwaysParser(
             return
         }
 
-        val countValue = context.resolve(repCtx.expr()) ?: println("Missing countValue from repeat statement!")
+        val countValue = context.resolve(repCtx.expr())
 
         if (countValue !is SimpleValue || !countValue.isNumber()) {
             context.errorCollector.reportError(repCtx.expr(), "Repeat count must be a number!")
