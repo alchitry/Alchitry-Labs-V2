@@ -53,7 +53,7 @@ assignBlock: conList NL* '{' (dffDec | moduleInst | assignBlock | NL)* '}';
 sigCon: '.' name NL* '(' NL* expr NL* ')';
 paramCon: '#' name NL* '(' NL* expr NL* ')';
 
-sigDec: (SIGNED NL*)? 'sig' NL* name signalWidth semi;
+sigDec: (SIGNED NL*)? 'sig' NL* name signalWidth (NL* '=' NL* expr)? semi;
 dffDec: (SIGNED NL*)? 'dff' NL* name signalWidth (NL* instCons)? semi;
 enumDec: 'enum' NL* name NL* '{' NL* name (NL* ',' NL* name)* NL* '}' semi;
 

@@ -1,6 +1,9 @@
 import com.alchitry.labs.parsers.lucidv2.ErrorCollector
+import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import helpers.LucidTester
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 
 class SignalDriverTests {
     @Test
@@ -22,6 +25,34 @@ class SignalDriverTests {
             """.trimIndent()
         )
         tester.fullParse()
+    }
+
+    @Test
+    fun doubleDriverTest() {
+        val tester = LucidTester(
+            """
+                module myModule (
+                    input a
+                ) {
+                    sig test[8]
+                    
+                    always {
+                        test = 8b1;
+                    }
+                   
+                    always {
+                        test = 8b0;
+                        
+                        if (test) {} // to remove unused signal warning
+                        if (a) {}
+                    }
+                }
+            """.trimIndent()
+        )
+        val errorCollector = ErrorCollector()
+        tester.fullParse(errorCollector)
+        assert(errorCollector.hasErrors)
+        assert(errorCollector.hasNoWarnings)
     }
 
     @Test
@@ -115,5 +146,78 @@ class SignalDriverTests {
             """.trimIndent()
         )
         tester.fullParse()
+    }
+
+    @Test
+    fun sigDirectAssignTest() {
+        val tester = LucidTester(
+            """
+                module myModule (
+                    input a,
+                    output b[8]
+                ) {
+                    sig test[8] = 12
+                   
+                    always {
+                        b = test
+                        if (a) {}
+                    }
+                }
+            """.trimIndent()
+        )
+        val top = tester.fullParse()
+
+        runBlocking {
+            top.context.initialize()
+            tester.project.processQueue()
+        }
+
+        assertEquals(BitListValue(12, 8, false, false), top.getSignal("b")?.read())
+    }
+
+    @Test
+    fun sigDirectAssignOverdriveTest() {
+        val tester = LucidTester(
+            """
+                module myModule (
+                    input a,
+                    output b[8]
+                ) {
+                    sig test[8] = 12
+                   
+                    always {
+                        test = a
+                        b = test
+                    }
+                }
+            """.trimIndent()
+        )
+        val errorCollector = ErrorCollector()
+        tester.fullParse(errorCollector)
+        assert(errorCollector.hasErrors)
+        assert(errorCollector.hasNoWarnings)
+    }
+
+    @Test
+    fun sigDirectAssignTruncationTest() {
+        val tester = LucidTester(
+            """
+                module myModule (
+                    input a,
+                    output b[8]
+                ) {
+                    sig test[8] = 9b0 // 9b0 is wider than 8 bits
+                   
+                    always {
+                        if (a) {}
+                        b = test
+                    }
+                }
+            """.trimIndent()
+        )
+        val errorCollector = ErrorCollector()
+        tester.fullParse(errorCollector)
+        assert(errorCollector.hasNoErrors)
+        assert(errorCollector.hasWarnings)
     }
 }

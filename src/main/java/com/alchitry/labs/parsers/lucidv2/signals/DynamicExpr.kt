@@ -69,6 +69,11 @@ class DynamicExpr(
             require(!signal.hasDriver) { "The signal \"${signal.name}\" already has a driver!" }
             signal.hasDriver = true
         }
+
+        context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+            signal.write(value)
+        }
+
         val evaluable = Evaluable { signal.write(value) }
         context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             valueFlow.collect {

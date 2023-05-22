@@ -81,7 +81,7 @@ data class AlwaysEvaluator(
             signal.quietWrite(
                 BitListValue(
                     value = it,
-                    width = signal.width.getBitCount(),
+                    width = signal.width.getBitCount() ?: error("Repeat signal has an undefined width!"),
                     constant = false,
                     signed = false
                 ),

@@ -20,7 +20,10 @@ class AlwaysBlock(
 
     init {
         dependencies.forEach { it.isRead = true }
-        drivenSignals.forEach { it.hasDriver = true }
+        drivenSignals.forEach {
+            require(!it.hasDriver) { "Signal \"${it.name}\" is already driven!" }
+            it.hasDriver = true
+        }
         this.context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             onAnyChange(dependencies.map { it.valueFlow }) {
                 this@AlwaysBlock.context.project.queueEvaluation(this@AlwaysBlock)

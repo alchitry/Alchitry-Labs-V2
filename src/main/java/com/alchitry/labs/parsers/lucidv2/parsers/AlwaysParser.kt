@@ -20,7 +20,6 @@ data class AlwaysParser(
 ) : LucidBaseListener() {
     private val dependencies = mutableSetOf<Signal>()
     private val drivenSignals = mutableSetOf<Signal>()
-    private val previouslyDrivenSignals = mutableSetOf<Signal>()
     val repeatSignals = mutableMapOf<RepeatStatContext, Signal>()
 
     suspend fun queueEval() {
@@ -36,7 +35,6 @@ data class AlwaysParser(
     }
 
     override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
-        previouslyDrivenSignals.addAll(drivenSignals)
         alwaysBlocks[ctx] =
             AlwaysBlock(context, dependencies.toSet(), drivenSignals.toSet(), repeatSignals.toMap(), ctx)
     }
@@ -49,14 +47,14 @@ data class AlwaysParser(
         val assignee = context.resolve(ctx.signal()) ?: return
 
         if (!assignee.direction.canWrite) {
-            context.reportError(ctx.signal(), "The signal ${ctx.signal().text} can't be written to.")
+            context.reportError(ctx.signal(), "The signal \"${ctx.signal().text}\" can't be written to.")
             return
         }
 
-        if (previouslyDrivenSignals.contains(assignee)) {
+        if (assignee.getSignal().hasDriver) {
             context.reportError(
                 ctx.signal(),
-                "The signal ${ctx.signal().text} already has a driver so it can't be driven by this always block."
+                "The signal \"${ctx.signal().text}\" already has a driver so it can't be driven by this always block."
             )
             return
         }
@@ -68,7 +66,7 @@ data class AlwaysParser(
         if (!assignee.width.canAssign(newValue.width)) {
             context.reportError(
                 ctx.expr(),
-                "This expression doesn't match the dimensions of signal ${ctx.signal().text}."
+                "This expression doesn't match the dimensions of signal \"${ctx.signal().text}\"."
             )
             return
         }
@@ -81,10 +79,10 @@ data class AlwaysParser(
             ctx.expr() is ExprDupContext ||
             ctx.expr() is ExprArrayContext
         ) {
-            if (assignee.width.getBitCount() < newValue.width.getBitCount()) {
+            if (assignee.width.willTruncate(newValue.width)) {
                 context.reportWarning(
                     ctx.expr(),
-                    "This expression is wider than ${ctx.signal().text} and will be truncated."
+                    "This expression is wider than \"${ctx.signal().text}\" and will be truncated."
                 )
             }
         }
@@ -131,7 +129,7 @@ data class AlwaysParser(
         }
 
         if (context.resolveSignal(sigName) != null) {
-            context.reportError(repCtx.name(), "The name $sigName is already in use!")
+            context.reportError(repCtx.name(), "The name \"$sigName\" is already in use!")
             return
         }
 

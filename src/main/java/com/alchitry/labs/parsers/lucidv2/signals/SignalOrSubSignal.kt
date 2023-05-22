@@ -50,7 +50,7 @@ sealed interface SignalOrSubSignal : Measurable {
         if (sig is Signal)
             require(!sig.hasDriver) { "Signal \"${sig.name}\" already has a driver!" }
 
-        getSignal().hasDriver = true
+        sig.getSignal().hasDriver = true
         getSignal().isRead = true
 
         context.scope.launch(start = CoroutineStart.UNDISPATCHED) {

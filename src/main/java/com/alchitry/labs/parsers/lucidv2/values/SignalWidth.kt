@@ -80,12 +80,12 @@ sealed class SignalWidth {
         return dims
     }
 
-    fun getBitCount(): Int {
+    fun getBitCount(): Int? {
         return when (this) {
             is BitWidth -> 1
-            is ArrayWidth -> size * next.getBitCount()
-            is StructWidth -> type.values.sumOf { it.width.getBitCount() }
-            UndefinedSimpleWidth -> error("getBitCount() can't be used when width isn't well defined")
+            is ArrayWidth -> size * (next.getBitCount() ?: return null)
+            is StructWidth -> type.values.sumOf { it.width.getBitCount() ?: return null }
+            UndefinedSimpleWidth -> null
             is SimpleWidth -> size
         }
     }
@@ -96,6 +96,15 @@ sealed class SignalWidth {
             is ArrayWidth, is StructWidth -> this == other
             BitWidth, is SimpleWidth, UndefinedSimpleWidth -> other is BitWidth || other is SimpleWidth || other is UndefinedSimpleWidth
         }
+
+    /** Returns true if bits of other will be dropped during an assignment. */
+    fun willTruncate(other: SignalWidth): Boolean {
+        return when (this) {
+            is ArrayWidth, is StructWidth -> false
+            BitWidth, is SimpleWidth, UndefinedSimpleWidth ->
+                (getBitCount() ?: return false) < (other.getBitCount() ?: return false)
+        }
+    }
 
     /**
      * Returns a value of this width filled with bit.

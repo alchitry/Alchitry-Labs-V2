@@ -559,34 +559,45 @@ public class LucidBaseListener implements LucidListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArrayIndex(LucidParser.ArrayIndexContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitArrayIndex(LucidParser.ArrayIndexContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterBitSelectorConst(LucidParser.BitSelectorConstContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitBitSelectorConst(LucidParser.BitSelectorConstContext ctx) { }
+	@Override
+	public void enterArrayIndex(LucidParser.ArrayIndexContext ctx) {
+	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    @Override
-    public void enterBitSelectorFixWidth(LucidParser.BitSelectorFixWidthContext ctx) {
-    }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override
+	public void exitArrayIndex(LucidParser.ArrayIndexContext ctx) {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override
+	public void enterBitSelectorConst(LucidParser.BitSelectorConstContext ctx) {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override
+	public void exitBitSelectorConst(LucidParser.BitSelectorConstContext ctx) {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override
+	public void enterBitSelectorFixWidth(LucidParser.BitSelectorFixWidthContext ctx) {
+	}
 
     /**
      * {@inheritDoc}
@@ -784,34 +795,44 @@ public class LucidBaseListener implements LucidListener {
      */
     @Override
     public void enterNumber(LucidParser.NumberContext ctx) {
-    }
+	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    @Override
-    public void exitNumber(LucidParser.NumberContext ctx) {
-    }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExprTernary(LucidParser.ExprTernaryContext ctx) { }
+	@Override
+	public void exitNumber(LucidParser.NumberContext ctx) {
+	}
+
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExprTernary(LucidParser.ExprTernaryContext ctx) { }
+	@Override
+	public void enterExprTernary(LucidParser.ExprTernaryContext ctx) {
+	}
+
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExprNum(LucidParser.ExprNumContext ctx) { }
+	@Override
+	public void exitExprTernary(LucidParser.ExprTernaryContext ctx) {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override
+	public void enterExprNum(LucidParser.ExprNumContext ctx) {
+	}
+
 	/**
 	 * {@inheritDoc}
 	 *

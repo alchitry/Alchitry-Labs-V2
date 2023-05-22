@@ -45,10 +45,12 @@ sealed class Value : Measurable {
             is ArrayValue -> elements.flatMap { it.getBits() }
             is SimpleValue -> bits
             is StructValue -> type.flatMap { (key, value) ->
-                this[key]?.getBits() ?: List(value.width.getBitCount()) { Bit.Bx }
+                this[key]?.getBits() ?: List(
+                    value.width.getBitCount() ?: error("Member of a struct has an undefined width!")
+                ) { Bit.Bx }
             }
 
-            is UndefinedValue -> List(width.getBitCount()) { Bit.Bx }
+            is UndefinedValue -> List(width.getBitCount() ?: 1) { Bit.Bx }
         }
     }
 

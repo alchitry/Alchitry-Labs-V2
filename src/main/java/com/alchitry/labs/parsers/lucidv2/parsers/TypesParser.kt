@@ -375,7 +375,36 @@ data class TypesParser(
             return
         }
 
-        sigs[name] = Signal(name, SignalDirection.Both, null, width.filledWith(Bit.Bx, false, signed), signed)
+        val signal = Signal(name, SignalDirection.Both, null, width.filledWith(Bit.Bx, false, signed), signed)
+
+        ctx.expr()?.let { expr ->
+            val value = context.resolve(expr)
+            if (value == null) {
+                context.reportError(ctx.expr(), "Failed to resolve signal assignment!")
+                return
+            }
+
+            val dynamicExpr = DynamicExpr(expr, context)
+
+            if (!signal.width.canAssign(dynamicExpr.width)) {
+                context.reportError(
+                    ctx.expr(),
+                    "Width of this expression isn't compatible with signal \"${signal.name}\"."
+                )
+                return
+            }
+
+            if (signal.width.willTruncate(dynamicExpr.width)) {
+                context.reportWarning(
+                    ctx.expr(),
+                    "The width of this expression is wider than the signal \"${signal.name}\" and will be truncated."
+                )
+            }
+
+            dynamicExpr.connectTo(signal)
+        }
+
+        sigs[name] = signal
     }
 
     override fun exitDffDec(ctx: DffDecContext) {

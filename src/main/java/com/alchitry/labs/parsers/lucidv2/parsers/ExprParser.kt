@@ -185,7 +185,7 @@ data class ExprParser(
                 return
             }
 
-            if (value is SimpleValue && value.width.getBitCount() > member.width.getBitCount()) {
+            if (member.width.willTruncate(value.width)) {
                 context.reportWarning(
                     memberCtx.expr(),
                     "The member $name has fewer bits than this expression. It will be truncated."
