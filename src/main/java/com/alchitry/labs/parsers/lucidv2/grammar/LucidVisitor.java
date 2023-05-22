@@ -338,81 +338,62 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitCaseElem(LucidParser.CaseElemContext ctx);
-
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#caseBlock}.
-	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitCaseBlock(LucidParser.CaseBlockContext ctx);
-
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#ifStat}.
-	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitIfStat(LucidParser.IfStatContext ctx);
-
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#elseStat}.
-	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitElseStat(LucidParser.ElseStatContext ctx);
-
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#repeatStat}.
-	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitRepeatStat(LucidParser.RepeatStatContext ctx);
-
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#repeatBlock}.
-	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitRepeatBlock(LucidParser.RepeatBlockContext ctx);
-
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#function}.
-	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitFunction(LucidParser.FunctionContext ctx);
-
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#number}.
-	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitNumber(LucidParser.NumberContext ctx);
-
 	/**
 	 * Visit a parse tree produced by the {@code ExprTernary}
 	 * labeled alternative in {@link LucidParser#expr}.
-	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitExprTernary(LucidParser.ExprTernaryContext ctx);
-
 	/**
 	 * Visit a parse tree produced by the {@code ExprNum}
 	 * labeled alternative in {@link LucidParser#expr}.
-	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitExprNum(LucidParser.ExprNumContext ctx);
-
 	/**
 	 * Visit a parse tree produced by the {@code ExprConcat}
 	 * labeled alternative in {@link LucidParser#expr}.

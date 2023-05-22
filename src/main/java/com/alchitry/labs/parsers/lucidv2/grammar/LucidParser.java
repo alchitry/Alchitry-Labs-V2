@@ -2586,7 +2586,6 @@ public class LucidParser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if (listener instanceof LucidListener) ((LucidListener) listener).enterSigDec(this);
 		}
-
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if (listener instanceof LucidListener) ((LucidListener) listener).exitSigDec(this);
