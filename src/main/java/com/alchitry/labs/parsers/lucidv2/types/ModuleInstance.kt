@@ -5,8 +5,12 @@ import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
+import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrSubSignal
-import com.alchitry.labs.parsers.lucidv2.values.Bit
+import com.alchitry.labs.parsers.lucidv2.types.ports.Inout
+import com.alchitry.labs.parsers.lucidv2.types.ports.Input
+import com.alchitry.labs.parsers.lucidv2.types.ports.InterfaceInstance
+import com.alchitry.labs.parsers.lucidv2.types.ports.Output
 import com.alchitry.labs.parsers.lucidv2.values.Value
 
 class ModuleInstance(
@@ -34,38 +38,29 @@ class ModuleInstance(
         return sb.toString()
     }
 
-    private val inouts = module.ports.mapNotNull { (_, port) ->
-        if (port.direction != SignalDirection.Both)
-            null
-        else
-            Inout(port.name, project, this, port.width, port.signed)
-    }.associateBy { it.name }
-
-    private val internalPorts: Map<String, Signal> = module.ports.mapValues { (_, port) ->
-        if (port.direction == SignalDirection.Both)
-            inouts[port.name]?.internal ?: error("Missing inout for port ${port.name}! This should be impossible!")
-        else
-            Signal(port.name, port.direction, null, port.width.filledWith(Bit.Bx, false, port.signed), port.signed)
+    val ports = module.ports.mapValues { (_, port) ->
+        port.instantiate(this, project)
     }
 
-    override fun removePort(name: String) {
-        externalPorts.remove(name)
-    }
+    override val internal: Map<String, SignalOrParent> = ports.mapValues { it.value.internal }
+    override val external: Map<String, SignalOrParent> = ports
+        .filter { !connections.contains(it.key) }
+        .mapValues { it.value.external }
 
-    override val ports get() = externalPorts.toMap()
-    private val externalPorts: MutableMap<String, Signal> =
-        module.ports.filter { !connections.contains(it.key) }.mapValues { (_, port) ->
-            if (port.direction == SignalDirection.Both)
-                inouts[port.name]?.external ?: error("Missing inout for port ${port.name}! This should be impossible!")
-            else
-                Signal(
-                    port.name,
-                    port.direction.flip(),
-                    this,
-                    port.width.filledWith(Bit.Bx, false, port.signed),
-                    port.signed
-                )
-        }.toMutableMap()
+    init {
+        connections.forEach { (name, sig) ->
+            when (val port = ports[name] ?: error("No matching port for given connection \"$name\"!")) {
+                is InterfaceInstance -> TODO()
+                is Inout -> {
+                    port.external.connectTo(sig, project)
+                    sig.connectTo(port.external, project)
+                }
+
+                is Input -> sig.connectTo(port.external, project)
+                is Output -> port.external.connectTo(sig, project)
+            }
+        }
+    }
 
     // Use the provided parameters or the default value from the module is it is missing
     val parameters = module.parameters.mapValues { (name, param) ->
@@ -77,25 +72,6 @@ class ModuleInstance(
         )
     }
 
-    init {
-        internalPorts.keys.forEach { portName ->
-            val internal = internalPorts[portName] ?: error("Missing port $portName!")
-            val external = connections[portName] ?: externalPorts[portName] ?: error("Missing port $portName!")
-
-            when (internal.direction) {
-                SignalDirection.Read -> external.connectTo(internal, project)
-                SignalDirection.Write -> internal.connectTo(external, project)
-                SignalDirection.Both -> {
-                    val inout = inouts[portName] ?: error("Missing expected inout!")
-                    if (connections.containsKey(portName)) { // if we are provided an inout to connect
-                        external.connectTo(inout.external, project)
-                        inout.external.connectTo(external, project)
-                    }
-                }
-            }
-        }
-    }
-
-    fun getInternalSignal(name: String) = internalPorts[name] ?: parameters[name]
-    override fun getSignal(name: String) = externalPorts[name]
+    fun getInternalSignal(name: String) = internal[name] ?: parameters[name]
+    override fun getSignal(name: String) = external[name]
 }

@@ -5,10 +5,7 @@ import com.alchitry.labs.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.*
-import com.alchitry.labs.parsers.lucidv2.types.Dff
-import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
-import com.alchitry.labs.parsers.lucidv2.types.ModuleInstanceArray
-import com.alchitry.labs.parsers.lucidv2.types.ModuleInstanceOrArray
+import com.alchitry.labs.parsers.lucidv2.types.*
 import com.alchitry.labs.parsers.lucidv2.values.*
 
 data class TypesParser(
@@ -94,8 +91,8 @@ data class TypesParser(
         }
 
         val providedSignals = localSignalConnections.union(extSignalConnections).map { it.port }
-        val moduleSignals = moduleType.ports.filter { it.value.direction != SignalDirection.Write }.map { it.key }
-        val requiredSignals = moduleType.ports.filter { it.value.direction == SignalDirection.Both }
+        val moduleSignals = moduleType.ports
+        val requiredSignals = moduleType.ports.filter { it.value.hasInout }
             .map { it.key } // inouts must be assigned
 
         val extraSignals = providedSignals.filter { !moduleSignals.contains(it) }
@@ -142,23 +139,28 @@ data class TypesParser(
 
         fun getSignals(list: List<Connection>): Map<Connection, Signal>? {
             return list.associate { connection ->
-                val port = moduleType.ports[connection.port] ?: error("Missing expected port!")
-                if (port.direction == SignalDirection.Both) {
-                    val exprCtx = connection.value.expr
-                    // TODO: Support arrayed signals for arrayed module instances
-                    if (exprCtx !is ExprSignalContext) {
-                        context.reportError(exprCtx, "Inout ports must be directly connected to another inout.")
-                        return null
+                when (val port = moduleType.ports[connection.port] ?: error("Missing expected port!")) {
+                    is Interface -> TODO()
+                    is Port -> {
+                        if (port.direction == SignalDirection.Both) {
+                            val exprCtx = connection.value.expr
+                            // TODO: Support arrayed signals for arrayed module instances
+                            if (exprCtx !is ExprSignalContext) {
+                                context.reportError(exprCtx, "Inout ports must be directly connected to another inout.")
+                                return null
+                            }
+                            val otherSig = context.resolve(exprCtx.signal())
+                            if (otherSig !is Signal || otherSig.direction != SignalDirection.Both || otherSig.parent !is ModuleInstance) {
+                                context.reportError(exprCtx, "Inout ports must be directly connected to another inout.")
+                                return null
+                            }
+                            connection to otherSig
+                        } else {
+                            connection to connection.value.asSignal(connection.value.expr.text)
+                        }
                     }
-                    val otherSig = context.resolve(exprCtx.signal())
-                    if (otherSig !is Signal || otherSig.direction != SignalDirection.Both || otherSig.parent !is ModuleInstance) {
-                        context.reportError(exprCtx, "Inout ports must be directly connected to another inout.")
-                        return null
-                    }
-                    connection to otherSig
-                } else {
-                    connection to connection.value.asSignal(connection.value.expr.text)
                 }
+
             }
         }
 
@@ -168,14 +170,19 @@ data class TypesParser(
         val basicConnections = if (ctx.arraySize().isEmpty()) extSignals + localSignals else extSignals
 
         basicConnections.forEach { (connection, signal) ->
-            val port = moduleType.ports[connection.port] ?: error("Missing expected port!")
-            if (!port.width.canAssign(signal.width)) {
-                context.reportError(
-                    connection.portCtx,
-                    "The width of \"${signal.name}\" does not match the width of port \"${port.name}\"."
-                )
-                return
+            when (val port = moduleType.ports[connection.port] ?: error("Missing expected port!")) {
+                is Interface -> TODO()
+                is Port -> {
+                    if (!port.width.canAssign(signal.width)) {
+                        context.reportError(
+                            connection.portCtx,
+                            "The width of \"${signal.name}\" does not match the width of port \"${port.name}\"."
+                        )
+                        return
+                    }
+                }
             }
+
         }
 
         val instance = if (ctx.arraySize().isEmpty()) {
@@ -209,27 +216,30 @@ data class TypesParser(
             val dimensions = ctx.arraySize().map { arraySizes[it] ?: return }
 
             localSignals.forEach { (connection, signal) ->
-                val port = moduleType.ports[connection.port] ?: error("Missing expected port!")
+                when (val port = moduleType.ports[connection.port] ?: error("Missing expected port!")) {
+                    is Interface -> TODO()
+                    is Port -> {
+                        var width = signal.width
+                        dimensions.forEach {
+                            val curWidth = width
+                            if (curWidth !is ArrayWidth || curWidth.size != it) {
+                                context.reportError(
+                                    connection.portCtx,
+                                    "The signal \"${signal.name}\" does not match the dimensions of this module instance."
+                                )
+                                return
+                            }
+                            width = curWidth.next
+                        }
 
-                var width = signal.width
-                dimensions.forEach {
-                    val curWidth = width
-                    if (curWidth !is ArrayWidth || curWidth.size != it) {
-                        context.reportError(
-                            connection.portCtx,
-                            "The signal \"${signal.name}\" does not match the dimensions of this module instance."
-                        )
-                        return
+                        if (!port.width.canAssign(width)) {
+                            context.reportError(
+                                connection.portCtx,
+                                "The width of \"${signal.name}\" does not match the width of port \"${port.name}\"."
+                            )
+                            return
+                        }
                     }
-                    width = curWidth.next
-                }
-
-                if (!port.width.canAssign(width)) {
-                    context.reportError(
-                        connection.portCtx,
-                        "The width of \"${signal.name}\" does not match the width of port \"${port.name}\"."
-                    )
-                    return
                 }
             }
 
@@ -256,7 +266,7 @@ data class TypesParser(
             // this isn't allowed since it would require connecting the inout to multiple module instances
             extSignals.forEach { (connection, _) ->
                 val port = moduleType.ports[connection.port] ?: error("Missing expected port!")
-                if (port.direction == SignalDirection.Both) {
+                if (port.hasInout) {
                     context.reportError(
                         connection.portCtx,
                         "Inouts cannot be assigned by connection blocks to arrayed module instances!"

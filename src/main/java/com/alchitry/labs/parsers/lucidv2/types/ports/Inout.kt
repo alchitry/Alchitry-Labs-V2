@@ -1,4 +1,4 @@
-package com.alchitry.labs.parsers.lucidv2.types
+package com.alchitry.labs.parsers.lucidv2.types.ports
 
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
@@ -13,26 +13,26 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 
 class Inout(
-    val name: String,
-    val context: ProjectContext,
+    override val name: String,
+    context: ProjectContext,
     parent: SignalParent?,
-    val width: SignalWidth,
-    val signed: Boolean
-) {
-    val internal = ProxySignal(
+    override val width: SignalWidth,
+    override val signed: Boolean
+) : PortInstance {
+    override val internal = ProxySignal(
         name,
         SignalDirection.Both,
-        null, // internal signal has no parent
+        parent,
         width.filledWith(Bit.Bz, false, signed),
         signed
     ) {
         generateValue(it)
     }
 
-    val external = ProxySignal(
+    override val external = ProxySignal(
         name,
         SignalDirection.Both,
-        parent, // external signal parent is the moduleInstance
+        parent,
         width.filledWith(Bit.Bz, false, signed),
         signed
     ) {

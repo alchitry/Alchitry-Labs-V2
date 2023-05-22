@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    antlr("org.antlr:antlr4:4.12.0")
+    antlr("org.antlr:antlr4:4.13.0")
     implementation("org.apache.commons:commons-text:1.10.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
 

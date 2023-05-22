@@ -36,6 +36,10 @@ class GlobalParser(
         context.resolve(ctx)?.let { enums[it.name] = it }
     }
 
+    override fun exitInterfaceDec(ctx: InterfaceDecContext) {
+
+    }
+
     override fun exitGlobal(ctx: GlobalContext) {
         val name = ctx.name().text
         if (ctx.name().SPACE_ID() == null)

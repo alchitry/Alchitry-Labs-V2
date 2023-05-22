@@ -57,7 +57,9 @@ sealed interface SignalOrSubSignal : Measurable {
             sig.write(read())
         }
 
-        val evaluable = Evaluable { sig.write(read()) }
+        val evaluable = Evaluable {
+            sig.write(read())
+        }
 
         context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             valueFlow.collect {

@@ -1,4 +1,4 @@
-// Generated from /home/justin/IdeaProjects/LucidParserV2/src/main/java/com/alchitry/labs/parsers/lucidv2/grammar/Lucid.g4 by ANTLR 4.12.0
+// Generated from /home/justin/IdeaProjects/LucidParserV2/src/main/java/com/alchitry/labs/parsers/lucidv2/grammar/Lucid.g4 by ANTLR 4.13.0
 
 package com.alchitry.labs.parsers.lucidv2.grammar;
 
@@ -41,26 +41,53 @@ public class LucidBaseListener implements LucidListener {
 	/**
 	 * {@inheritDoc}
 	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterGlobalStat(LucidParser.GlobalStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitGlobalStat(LucidParser.GlobalStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterModule(LucidParser.ModuleContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterGlobalStat(LucidParser.GlobalStatContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitGlobalStat(LucidParser.GlobalStatContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterInterfaceDec(LucidParser.InterfaceDecContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitInterfaceDec(LucidParser.InterfaceDecContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterModule(LucidParser.ModuleContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
 	@Override public void exitModule(LucidParser.ModuleContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -541,315 +568,322 @@ public class LucidBaseListener implements LucidListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBlock(LucidParser.BlockContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAssignStat(LucidParser.AssignStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void exitAssignStat(LucidParser.AssignStatContext ctx) {
-	}
+	@Override public void exitBlock(LucidParser.BlockContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void enterArrayIndex(LucidParser.ArrayIndexContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterAssignStat(LucidParser.AssignStatContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void exitArrayIndex(LucidParser.ArrayIndexContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitAssignStat(LucidParser.AssignStatContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void enterBitSelectorConst(LucidParser.BitSelectorConstContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterArrayIndex(LucidParser.ArrayIndexContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void exitBitSelectorConst(LucidParser.BitSelectorConstContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitArrayIndex(LucidParser.ArrayIndexContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void enterBitSelectorFixWidth(LucidParser.BitSelectorFixWidthContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterBitSelectorConst(LucidParser.BitSelectorConstContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void exitBitSelectorFixWidth(LucidParser.BitSelectorFixWidthContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitBitSelectorConst(LucidParser.BitSelectorConstContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void enterBitSelection(LucidParser.BitSelectionContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterBitSelectorFixWidth(LucidParser.BitSelectorFixWidthContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void exitBitSelection(LucidParser.BitSelectionContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitBitSelectorFixWidth(LucidParser.BitSelectorFixWidthContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void enterSignal(LucidParser.SignalContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterBitSelection(LucidParser.BitSelectionContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void exitSignal(LucidParser.SignalContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitBitSelection(LucidParser.BitSelectionContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void enterCaseStat(LucidParser.CaseStatContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterSignal(LucidParser.SignalContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void exitCaseStat(LucidParser.CaseStatContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitSignal(LucidParser.SignalContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void enterCaseElem(LucidParser.CaseElemContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterCaseStat(LucidParser.CaseStatContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void exitCaseElem(LucidParser.CaseElemContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitCaseStat(LucidParser.CaseStatContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void enterCaseBlock(LucidParser.CaseBlockContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterCaseElem(LucidParser.CaseElemContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void exitCaseBlock(LucidParser.CaseBlockContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitCaseElem(LucidParser.CaseElemContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void enterIfStat(LucidParser.IfStatContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterCaseBlock(LucidParser.CaseBlockContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void exitIfStat(LucidParser.IfStatContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitCaseBlock(LucidParser.CaseBlockContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void enterElseStat(LucidParser.ElseStatContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterIfStat(LucidParser.IfStatContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void exitElseStat(LucidParser.ElseStatContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitIfStat(LucidParser.IfStatContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void enterRepeatStat(LucidParser.RepeatStatContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterElseStat(LucidParser.ElseStatContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void exitRepeatStat(LucidParser.RepeatStatContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitElseStat(LucidParser.ElseStatContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void enterRepeatBlock(LucidParser.RepeatBlockContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterRepeatStat(LucidParser.RepeatStatContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void exitRepeatBlock(LucidParser.RepeatBlockContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitRepeatStat(LucidParser.RepeatStatContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void enterFunction(LucidParser.FunctionContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterRepeatBlock(LucidParser.RepeatBlockContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void exitFunction(LucidParser.FunctionContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitRepeatBlock(LucidParser.RepeatBlockContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void enterNumber(LucidParser.NumberContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterFunction(LucidParser.FunctionContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void exitNumber(LucidParser.NumberContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitFunction(LucidParser.FunctionContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void enterExprTernary(LucidParser.ExprTernaryContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterNumber(LucidParser.NumberContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void exitExprTernary(LucidParser.ExprTernaryContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitNumber(LucidParser.NumberContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void enterExprNum(LucidParser.ExprNumContext ctx) {
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterExprTernary(LucidParser.ExprTernaryContext ctx) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override
-	public void exitExprNum(LucidParser.ExprNumContext ctx) {
-	}
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterExprConcat(LucidParser.ExprConcatContext ctx) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitExprTernary(LucidParser.ExprTernaryContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterExprNum(LucidParser.ExprNumContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitExprNum(LucidParser.ExprNumContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterExprConcat(LucidParser.ExprConcatContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

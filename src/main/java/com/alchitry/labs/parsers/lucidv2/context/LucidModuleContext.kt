@@ -112,6 +112,7 @@ class LucidModuleContext(
     suspend fun initialize() {
         alwaysParser.queueEval()
         types.getInstances().forEach { it.context.initialize() }
+        project.initialize()
     }
 
     fun initialWalk(t: ParseTree): List<String>? {

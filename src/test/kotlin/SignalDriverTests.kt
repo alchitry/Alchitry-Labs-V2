@@ -1,4 +1,5 @@
 import com.alchitry.labs.parsers.lucidv2.ErrorCollector
+import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import helpers.LucidTester
 import kotlinx.coroutines.runBlocking
@@ -169,10 +170,9 @@ class SignalDriverTests {
 
         runBlocking {
             top.context.initialize()
-            tester.project.processQueue()
         }
 
-        assertEquals(BitListValue(12, 8, false, false), top.getSignal("b")?.read())
+        assertEquals(BitListValue(12, 8, false, false), (top.getSignal("b") as Signal).read())
     }
 
     @Test

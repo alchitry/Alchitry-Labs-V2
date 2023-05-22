@@ -126,7 +126,6 @@ class DynamicEvalTests {
 
         runBlocking {
             tester.context.initialize()
-            tester.project.processQueue()
         }
 
         assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.read(null))
@@ -169,7 +168,6 @@ class DynamicEvalTests {
 
         runBlocking {
             tester.context.initialize()
-            tester.project.processQueue()
         }
 
         val alwaysBlock = tester.context.alwaysParser.alwaysBlocks.values.first()

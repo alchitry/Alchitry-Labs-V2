@@ -1,4 +1,4 @@
-// Generated from /home/justin/IdeaProjects/LucidParserV2/src/main/java/com/alchitry/labs/parsers/lucidv2/grammar/Lucid.g4 by ANTLR 4.12.0
+// Generated from /home/justin/IdeaProjects/LucidParserV2/src/main/java/com/alchitry/labs/parsers/lucidv2/grammar/Lucid.g4 by ANTLR 4.13.0
 
 package com.alchitry.labs.parsers.lucidv2.grammar;
 
@@ -30,26 +30,47 @@ public interface LucidListener extends ParseTreeListener {
 	 */
 	void exitGlobal(LucidParser.GlobalContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LucidParser#globalStat}.
-	 * @param ctx the parse tree
-	 */
-	void enterGlobalStat(LucidParser.GlobalStatContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LucidParser#globalStat}.
-	 * @param ctx the parse tree
-	 */
-	void exitGlobalStat(LucidParser.GlobalStatContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link LucidParser#module}.
-	 * @param ctx the parse tree
-	 */
-	void enterModule(LucidParser.ModuleContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LucidParser#module}.
-	 * @param ctx the parse tree
-	 */
-	void exitModule(LucidParser.ModuleContext ctx);
-	/**
+     * Enter a parse tree produced by {@link LucidParser#globalStat}.
+     * @param ctx the parse tree
+     */
+    void enterGlobalStat(LucidParser.GlobalStatContext ctx);
+
+    /**
+     * Exit a parse tree produced by {@link LucidParser#globalStat}.
+     *
+     * @param ctx the parse tree
+     */
+    void exitGlobalStat(LucidParser.GlobalStatContext ctx);
+
+    /**
+     * Enter a parse tree produced by {@link LucidParser#interfaceDec}.
+     *
+     * @param ctx the parse tree
+     */
+    void enterInterfaceDec(LucidParser.InterfaceDecContext ctx);
+
+    /**
+     * Exit a parse tree produced by {@link LucidParser#interfaceDec}.
+     *
+     * @param ctx the parse tree
+     */
+    void exitInterfaceDec(LucidParser.InterfaceDecContext ctx);
+
+    /**
+     * Enter a parse tree produced by {@link LucidParser#module}.
+     *
+     * @param ctx the parse tree
+     */
+    void enterModule(LucidParser.ModuleContext ctx);
+
+    /**
+     * Exit a parse tree produced by {@link LucidParser#module}.
+     *
+     * @param ctx the parse tree
+     */
+    void exitModule(LucidParser.ModuleContext ctx);
+
+    /**
 	 * Enter a parse tree produced by {@link LucidParser#paramList}.
 	 * @param ctx the parse tree
 	 */

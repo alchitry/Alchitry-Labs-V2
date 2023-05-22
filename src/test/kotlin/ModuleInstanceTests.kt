@@ -38,7 +38,7 @@ class ModuleInstanceTests {
 
         val top = tester.fullParse()
         val myModInst = top.context.types.resolve("myMod") as ModuleInstance
-        assertEquals(SignalDirection.Read, myModInst.getSignal("a")?.direction)
+        assertEquals(SignalDirection.Read, (myModInst.getSignal("a") as? Signal)?.direction)
     }
 
     @Test
@@ -104,7 +104,6 @@ class ModuleInstanceTests {
 
         runBlocking {
             top.context.initialize()
-            project.processQueue()
 
             (0..255).forEach {
                 assertEquals(BitListValue(it, 8, false, false), count.read())
@@ -164,7 +163,6 @@ class ModuleInstanceTests {
 
         runBlocking {
             top.context.initialize()
-            project.processQueue()
 
             (0..127).forEach {
                 assertEquals(BitListValue(it * 2, 8, false, false), count.read())

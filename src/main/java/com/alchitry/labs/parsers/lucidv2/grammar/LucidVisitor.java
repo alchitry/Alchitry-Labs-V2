@@ -1,4 +1,4 @@
-// Generated from /home/justin/IdeaProjects/LucidParserV2/src/main/java/com/alchitry/labs/parsers/lucidv2/grammar/Lucid.g4 by ANTLR 4.12.0
+// Generated from /home/justin/IdeaProjects/LucidParserV2/src/main/java/com/alchitry/labs/parsers/lucidv2/grammar/Lucid.g4 by ANTLR 4.13.0
 
 package com.alchitry.labs.parsers.lucidv2.grammar;
 
@@ -21,26 +21,40 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#global}.
 	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitGlobal(LucidParser.GlobalContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#globalStat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitGlobalStat(LucidParser.GlobalStatContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#module}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitModule(LucidParser.ModuleContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#paramList}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
+     * @return the visitor result
+     */
+    T visitGlobal(LucidParser.GlobalContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#globalStat}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitGlobalStat(LucidParser.GlobalStatContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#interfaceDec}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitInterfaceDec(LucidParser.InterfaceDecContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#module}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitModule(LucidParser.ModuleContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#paramList}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
 	T visitParamList(LucidParser.ParamListContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#portList}.

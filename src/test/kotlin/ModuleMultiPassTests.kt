@@ -65,7 +65,6 @@ class ModuleMultiPassTests {
 
         runBlocking {
             context.initialize()
-            tester.project.processQueue()
         }
 
         assertEquals(BitListValue(1 + 2 + 3 + 4, 16, signed = false, constant = false), testSig.read(null))
@@ -99,7 +98,6 @@ class ModuleMultiPassTests {
 
         runBlocking {
             context.initialize()
-            tester.project.processQueue()
         }
 
         assertEquals(BitValue(Bit.B1, signed = false, constant = false), testSig.read(null))
@@ -133,10 +131,9 @@ class ModuleMultiPassTests {
         val context = top.context
 
         runBlocking {
-            top.getSignal("a")!!.write(BitValue(Bit.B0, false, false))
+            (top.getSignal("a") as Signal).write(BitValue(Bit.B0, false, false))
             context.initialize()
-            tester.project.processQueue()
-            top.getSignal("a")!!.write(BitValue(Bit.B1, false, false))
+            (top.getSignal("a") as Signal).write(BitValue(Bit.B1, false, false))
             try {
                 tester.project.processQueue()
                 error("ProcessQueue should've thrown an error!")
@@ -170,11 +167,10 @@ class ModuleMultiPassTests {
         )
         val top = tester.fullParse()
         val context = top.context
-        val testSig = top.ports["test"]
+        val testSig = top.ports["test"]?.external as? Signal
 
         runBlocking {
             context.initialize()
-            tester.project.processQueue()
         }
 
         val enum = EnumType("myFSM", listOf("IDLE", "INIT", "RUN", "STOP"), null)
@@ -208,16 +204,15 @@ class ModuleMultiPassTests {
         )
         val top = tester.fullParse()
         val context = top.context
-        val testSig = top.ports["test"]
+        val testSig = top.ports["test"]?.external as Signal
 
         runBlocking {
             context.initialize()
-            tester.project.processQueue()
         }
 
         val enum = EnumType("myFSM", listOf("IDLE", "INIT", "RUN", "STOP"), tester.project.resolveGlobal("Enums"))
 
-        assertEquals(BitListValue(2, 2, signed = false, constant = false), testSig?.read())
+        assertEquals(BitListValue(2, 2, signed = false, constant = false), testSig.read())
         assertEquals(enum, tester.project.resolveGlobal("Enums")?.enums?.values?.first())
     }
 }

@@ -21,6 +21,15 @@ class ProjectContext {
     private val evaluationQueue = mutableSetOf<Evaluable>()
     private val queueLock = Mutex()
 
+    var initializing: Boolean = false
+        private set
+
+    suspend fun initialize() {
+        initializing = true
+        processQueue()
+        initializing = false
+    }
+
     suspend fun queueEvaluation(evaluable: Evaluable) {
         queueLock.withLock {
             evaluationQueue.add(evaluable)

@@ -1,5 +1,5 @@
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
-import com.alchitry.labs.parsers.lucidv2.types.Inout
+import com.alchitry.labs.parsers.lucidv2.types.ports.Inout
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.BitListWidth
 import kotlinx.coroutines.CoroutineStart

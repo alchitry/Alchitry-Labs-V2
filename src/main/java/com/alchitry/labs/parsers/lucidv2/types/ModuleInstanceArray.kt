@@ -2,11 +2,14 @@ package com.alchitry.labs.parsers.lucidv2.types
 
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.*
+import com.alchitry.labs.parsers.lucidv2.types.ports.Inout
+import com.alchitry.labs.parsers.lucidv2.types.ports.Input
+import com.alchitry.labs.parsers.lucidv2.types.ports.Output
 import com.alchitry.labs.parsers.lucidv2.values.*
 
 sealed interface ModuleInstanceOrArray : SignalParent {
-    fun removePort(name: String)
-    val ports: Map<String, Signal>
+    val internal: Map<String, SignalOrParent>
+    val external: Map<String, SignalOrParent>
 }
 
 class ModuleInstanceArray(
@@ -28,28 +31,9 @@ class ModuleInstanceArray(
         return instances
     }
 
-    private val inouts = module.ports.mapNotNull { (_, port) ->
-        if (port.direction != SignalDirection.Both) {
-            null
-        } else {
-            var width: SignalWidth = port.width
-            dimensions.asReversed().forEach {
-                width = ArrayWidth(it, width)
-            }
-            Inout(port.name, projectContext, this, width, port.signed)
-        }
-    }.associateBy { it.name }
-
-    override fun removePort(name: String) {
-        externalPorts.remove(name)
-    }
-
-    override val ports get() = externalPorts.toMap()
-    private val externalPorts: MutableMap<String, Signal> =
-        module.ports.filter { !signalProvider(dimensions.map { 0 }).containsKey(it.key) }.mapValues { (_, port) ->
-            if (port.direction == SignalDirection.Both) {
-                inouts[port.name]?.external ?: error("Missing inout for port ${port.name}! This should be impossible!")
-            } else {
+    private val ports = module.ports.mapValues { (_, port) ->
+        when (port) {
+            is Port -> {
                 var width: SignalWidth = port.width
                 dimensions.asReversed().forEach {
                     width = if (width is BitWidth)
@@ -57,15 +41,21 @@ class ModuleInstanceArray(
                     else
                         ArrayWidth(it, width)
                 }
-                Signal(
-                    port.name,
-                    port.direction.flip(),
-                    this,
-                    width.filledWith(Bit.Bx, false, port.signed),
-                    port.signed
-                )
+                when (port.direction) {
+                    SignalDirection.Read -> Input(port.name, projectContext, this, width, port.signed)
+                    SignalDirection.Write -> Output(port.name, projectContext, this, width, port.signed)
+                    SignalDirection.Both -> Inout(port.name, projectContext, this, width, port.signed)
+                }
             }
-        }.toMutableMap()
+
+            is Interface -> error("Interfaces can't be used with module arrays!")
+        }
+    }
+
+    override val internal: Map<String, SignalOrParent> = ports.mapValues { it.value.internal }
+    override val external = ports
+        .filter { !signalProvider(dimensions.map { 0 }).containsKey(it.key) }
+        .mapValues { it.value.external }
 
     private fun collectErrorsFor(block: (ModuleInstance) -> String?): String? {
         val sb = StringBuilder()
@@ -107,11 +97,9 @@ class ModuleInstanceArray(
 
         modules.forEachIndexed { index: List<Int>, moduleInstance: ModuleInstance ->
             val selection = index.map { SignalSelector.Bits(it) }
-            moduleInstance.ports.forEach { (name, port) ->
-                val subSig =
-                    inouts[name]?.internal?.select(selection)
-                        ?: externalPorts[name]?.select(selection)
-                        ?: error("Missing external port!")
+            moduleInstance.external.forEach { (name, port) ->
+                check(port is Signal) { "Interfaces can't be used with module arrays!" }
+                val subSig = (internal[name] as? Signal)?.select(selection) ?: error("Missing port \"$name\"!")
                 if (port.direction.canWrite)
                     subSig.connectTo(port, projectContext)
                 if (port.direction.canRead)
@@ -121,7 +109,7 @@ class ModuleInstanceArray(
 
     }
 
-    override fun getSignal(name: String) = externalPorts[name]
+    override fun getSignal(name: String) = external[name]
 }
 
 sealed interface ListOrModuleInstance
