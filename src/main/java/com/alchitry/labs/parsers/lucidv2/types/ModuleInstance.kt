@@ -5,11 +5,9 @@ import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
-import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrSubSignal
 import com.alchitry.labs.parsers.lucidv2.types.ports.Inout
 import com.alchitry.labs.parsers.lucidv2.types.ports.Input
-import com.alchitry.labs.parsers.lucidv2.types.ports.InterfaceInstance
 import com.alchitry.labs.parsers.lucidv2.types.ports.Output
 import com.alchitry.labs.parsers.lucidv2.values.Value
 
@@ -42,15 +40,14 @@ class ModuleInstance(
         port.instantiate(this, project)
     }
 
-    override val internal: Map<String, SignalOrParent> = ports.mapValues { it.value.internal }
-    override val external: Map<String, SignalOrParent> = ports
+    override val internal: Map<String, Signal> = ports.mapValues { it.value.internal }
+    override val external: Map<String, Signal> = ports
         .filter { !connections.contains(it.key) }
         .mapValues { it.value.external }
 
     init {
         connections.forEach { (name, sig) ->
             when (val port = ports[name] ?: error("No matching port for given connection \"$name\"!")) {
-                is InterfaceInstance -> TODO()
                 is Inout -> {
                     port.external.connectTo(sig, project)
                     sig.connectTo(port.external, project)

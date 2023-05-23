@@ -13,10 +13,7 @@ globalStat
   : structDec
   | constDec
   | enumDec
-  | interfaceDec
   ;
-
-interfaceDec: 'interface' NL* name NL* '{' NL* portDec (NL* ',' NL* portDec)* NL* '}' semi;
 
 module: 'module' NL* name NL* paramList? NL* portList NL* moduleBody;
 

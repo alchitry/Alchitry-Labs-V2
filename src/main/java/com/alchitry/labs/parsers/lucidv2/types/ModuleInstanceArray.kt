@@ -8,8 +8,8 @@ import com.alchitry.labs.parsers.lucidv2.types.ports.Output
 import com.alchitry.labs.parsers.lucidv2.values.*
 
 sealed interface ModuleInstanceOrArray : SignalParent {
-    val internal: Map<String, SignalOrParent>
-    val external: Map<String, SignalOrParent>
+    val internal: Map<String, Signal>
+    val external: Map<String, Signal>
 }
 
 class ModuleInstanceArray(
@@ -32,27 +32,21 @@ class ModuleInstanceArray(
     }
 
     private val ports = module.ports.mapValues { (_, port) ->
-        when (port) {
-            is Port -> {
-                var width: SignalWidth = port.width
-                dimensions.asReversed().forEach {
-                    width = if (width is BitWidth)
-                        BitListWidth(it)
-                    else
-                        ArrayWidth(it, width)
-                }
-                when (port.direction) {
-                    SignalDirection.Read -> Input(port.name, projectContext, this, width, port.signed)
-                    SignalDirection.Write -> Output(port.name, projectContext, this, width, port.signed)
-                    SignalDirection.Both -> Inout(port.name, projectContext, this, width, port.signed)
-                }
-            }
-
-            is Interface -> error("Interfaces can't be used with module arrays!")
+        var width: SignalWidth = port.width
+        dimensions.asReversed().forEach {
+            width = if (width is BitWidth)
+                BitListWidth(it)
+            else
+                ArrayWidth(it, width)
+        }
+        when (port.direction) {
+            SignalDirection.Read -> Input(port.name, projectContext, this, width, port.signed)
+            SignalDirection.Write -> Output(port.name, projectContext, this, width, port.signed)
+            SignalDirection.Both -> Inout(port.name, projectContext, this, width, port.signed)
         }
     }
 
-    override val internal: Map<String, SignalOrParent> = ports.mapValues { it.value.internal }
+    override val internal: Map<String, Signal> = ports.mapValues { it.value.internal }
     override val external = ports
         .filter { !signalProvider(dimensions.map { 0 }).containsKey(it.key) }
         .mapValues { it.value.external }
@@ -98,8 +92,7 @@ class ModuleInstanceArray(
         modules.forEachIndexed { index: List<Int>, moduleInstance: ModuleInstance ->
             val selection = index.map { SignalSelector.Bits(it) }
             moduleInstance.external.forEach { (name, port) ->
-                check(port is Signal) { "Interfaces can't be used with module arrays!" }
-                val subSig = (internal[name] as? Signal)?.select(selection) ?: error("Missing port \"$name\"!")
+                val subSig = internal[name]?.select(selection) ?: error("Missing port \"$name\"!")
                 if (port.direction.canWrite)
                     subSig.connectTo(port, projectContext)
                 if (port.direction.canRead)

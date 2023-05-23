@@ -20,35 +20,32 @@ public class LucidBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitSource(LucidParser.SourceContext ctx) { return visitChildren(ctx); }
+	@Override
+	public T visitSource(LucidParser.SourceContext ctx) {
+		return visitChildren(ctx);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitGlobal(LucidParser.GlobalContext ctx) { return visitChildren(ctx); }
+	@Override
+	public T visitGlobal(LucidParser.GlobalContext ctx) {
+		return visitChildren(ctx);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override
-    public T visitGlobalStat(LucidParser.GlobalStatContext ctx) {
-        return visitChildren(ctx);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override
-    public T visitInterfaceDec(LucidParser.InterfaceDecContext ctx) {
-        return visitChildren(ctx);
-    }
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override
+	public T visitGlobalStat(LucidParser.GlobalStatContext ctx) {
+		return visitChildren(ctx);
+	}
 
     /**
      * {@inheritDoc}
@@ -63,36 +60,46 @@ public class LucidBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 
     /**
      * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override
-    public T visitParamList(LucidParser.ParamListContext ctx) {
-        return visitChildren(ctx);
-    }
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override
+	public T visitParamList(LucidParser.ParamListContext ctx) {
+		return visitChildren(ctx);
+	}
 
-    /**
-     * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitPortList(LucidParser.PortListContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitParamDec(LucidParser.ParamDecContext ctx) { return visitChildren(ctx); }
+	@Override
+	public T visitPortList(LucidParser.PortListContext ctx) {
+		return visitChildren(ctx);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitParamDefault(LucidParser.ParamDefaultContext ctx) { return visitChildren(ctx); }
+	@Override
+	public T visitParamDec(LucidParser.ParamDecContext ctx) {
+		return visitChildren(ctx);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override
+	public T visitParamDefault(LucidParser.ParamDefaultContext ctx) {
+		return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -288,45 +295,61 @@ public class LucidBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitConnection(LucidParser.ConnectionContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitStructMember(LucidParser.StructMemberContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitStructDec(LucidParser.StructDecContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitAlwaysBlock(LucidParser.AlwaysBlockContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitAlwaysAssign(LucidParser.AlwaysAssignContext ctx) { return visitChildren(ctx);
-    }
+	@Override public T visitConnection(LucidParser.ConnectionContext ctx) { return visitChildren(ctx);
+	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override
-    public T visitAlwaysCase(LucidParser.AlwaysCaseContext ctx) {
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override
+	public T visitStructMember(LucidParser.StructMemberContext ctx) {
+		return visitChildren(ctx);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override
+	public T visitStructDec(LucidParser.StructDecContext ctx) {
+		return visitChildren(ctx);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override
+	public T visitAlwaysBlock(LucidParser.AlwaysBlockContext ctx) {
+		return visitChildren(ctx);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override
+	public T visitAlwaysAssign(LucidParser.AlwaysAssignContext ctx) {
+		return visitChildren(ctx);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override
+	public T visitAlwaysCase(LucidParser.AlwaysCaseContext ctx) {
         return visitChildren(ctx);
     }
 
@@ -579,32 +602,40 @@ public class LucidBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override
-    public T visitExprInvert(LucidParser.ExprInvertContext ctx) {
-        return visitChildren(ctx);
-    }
+	public T visitExprInvert(LucidParser.ExprInvertContext ctx) {
+		return visitChildren(ctx);
+	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override
-    public T visitExprStruct(LucidParser.ExprStructContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExprArray(LucidParser.ExprArrayContext ctx) { return visitChildren(ctx); }
+	@Override
+	public T visitExprStruct(LucidParser.ExprStructContext ctx) {
+		return visitChildren(ctx);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExprShift(LucidParser.ExprShiftContext ctx) { return visitChildren(ctx); }
+	@Override
+	public T visitExprArray(LucidParser.ExprArrayContext ctx) {
+		return visitChildren(ctx);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override
+	public T visitExprShift(LucidParser.ExprShiftContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

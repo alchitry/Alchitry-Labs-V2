@@ -9,18 +9,16 @@ import com.alchitry.labs.parsers.lucidv2.types.ports.Output
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 
 data class Port(
-    override val name: String,
+    val name: String,
     val direction: SignalDirection,
     val width: SignalWidth,
     val signed: Boolean
-) : PortOrInterface {
-    override val hasInout: Boolean = direction == SignalDirection.Both
+) {
+    val isInout: Boolean = direction == SignalDirection.Both
 
-    override fun instantiate(parent: SignalParent?, project: ProjectContext) = when (direction) {
+    fun instantiate(parent: SignalParent?, project: ProjectContext) = when (direction) {
         SignalDirection.Read -> Input(name, project, parent, width, signed)
         SignalDirection.Write -> Output(name, project, parent, width, signed)
         SignalDirection.Both -> Inout(name, project, parent, width, signed)
     }
-
-    override fun flip() = copy(direction = direction.flip())
 }
