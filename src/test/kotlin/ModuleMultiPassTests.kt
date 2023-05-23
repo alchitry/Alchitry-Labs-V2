@@ -167,7 +167,7 @@ class ModuleMultiPassTests {
         )
         val top = tester.fullParse()
         val context = top.context
-        val testSig = top.ports["test"]?.external as? Signal
+        val testSig = top.ports["test"]?.external
 
         runBlocking {
             context.initialize()

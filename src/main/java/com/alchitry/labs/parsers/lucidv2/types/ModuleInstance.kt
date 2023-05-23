@@ -6,9 +6,6 @@ import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrSubSignal
-import com.alchitry.labs.parsers.lucidv2.types.ports.Inout
-import com.alchitry.labs.parsers.lucidv2.types.ports.Input
-import com.alchitry.labs.parsers.lucidv2.types.ports.Output
 import com.alchitry.labs.parsers.lucidv2.values.Value
 
 class ModuleInstance(
@@ -47,15 +44,11 @@ class ModuleInstance(
 
     init {
         connections.forEach { (name, sig) ->
-            when (val port = ports[name] ?: error("No matching port for given connection \"$name\"!")) {
-                is Inout -> {
-                    port.external.connectTo(sig, project)
-                    sig.connectTo(port.external, project)
-                }
-
-                is Input -> sig.connectTo(port.external, project)
-                is Output -> port.external.connectTo(sig, project)
-            }
+            val port = ports[name]?.external ?: error("No matching port for given connection \"$name\"!")
+            if (port.direction.canWrite)
+                sig.connectTo(port, project)
+            if (port.direction.canRead)
+                port.connectTo(sig, project)
         }
     }
 

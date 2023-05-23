@@ -38,7 +38,7 @@ class ModuleInstanceTests {
 
         val top = tester.fullParse()
         val myModInst = top.context.types.resolve("myMod") as ModuleInstance
-        assertEquals(SignalDirection.Read, (myModInst.getSignal("a") as? Signal)?.direction)
+        assertEquals(SignalDirection.Read, myModInst.getSignal("a")?.direction)
     }
 
     @Test
