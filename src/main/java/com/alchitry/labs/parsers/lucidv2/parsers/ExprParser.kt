@@ -17,7 +17,7 @@ import org.apache.commons.text.StringEscapeUtils
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
-import kotlin.math.absoluteValue
+import kotlin.math.*
 
 /**
  * Provides values for all ExprContext and also provides bit selection ranges for BitSelectionContext through
@@ -985,11 +985,11 @@ data class ExprParser(
         if (canSkip(ctx)) return
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
-            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+            ctx.functionExpr().forEach { c -> c.expr()?.let { expr -> dependencies[expr]?.let { addAll(it) } } }
         }
 
         // is constant if all operands are constant
-        val constant = ctx.expr().none { values[it]?.constant != true }
+        val constant = ctx.functionExpr().all { c -> c.expr()?.let { values[it]?.constant == true } ?: true }
 
         val fid = ctx.FUNCTION_ID().text.substring(1) // remove $ from beginning
         val function = Function.values().firstOrNull { it.label == fid }
@@ -999,7 +999,22 @@ data class ExprParser(
             return
         }
 
-        val args = ctx.expr().map { values[it] ?: return }
+        val args = ctx.functionExpr().map { expr ->
+            if (expr.expr() != null) {
+                FunctionArg.ValueArg(values[expr.expr()] ?: return)
+            } else if (expr.REAL() != null) {
+                expr.REAL().text.toDoubleOrNull().let {
+                    if (it == null) {
+                        context.reportError(expr, "Failed to parse real number \"${expr.REAL().text}\"!")
+                        return
+                    }
+                    FunctionArg.RealArg(it)
+                }
+
+            } else {
+                return
+            }
+        }
 
         if (function.argCount >= 0) {
             if (args.size != function.argCount) {
@@ -1028,23 +1043,149 @@ data class ExprParser(
             return
         }
 
+        fun checkNoReal(): List<Value>? {
+            args.forEachIndexed { index, functionArg ->
+                if (functionArg is FunctionArg.RealArg) {
+                    context.reportError(
+                        ctx.functionExpr(index),
+                        "Arguments for \"\$${function.label}()\" can't be real numbers."
+                    )
+                    return null
+                }
+            }
+            return args.map { (it as FunctionArg.ValueArg).value }
+        }
+
         when (function) {
             Function.WIDTH -> {
-                val arg = args[0]
+                val valArgs = checkNoReal() ?: return
+                val arg = valArgs[0]
                 val width = arg.width
                 if (!width.isSimpleArray()) {
-                    context.reportError(ctx.expr(0), "The function widthOf() can't be used on structs.")
+                    context.reportError(ctx.functionExpr(0), "The function widthOf() can't be used on structs.")
                     return
                 }
                 values[ctx] = width.toValue()
             }
 
+            Function.FIXEDPOINT, Function.CFIXEDPOINT, Function.FFIXEDPOINT -> {
+                val width = when (val w = args[1]) {
+                    is FunctionArg.RealArg -> {
+                        context.reportError(ctx.functionExpr(1), "The width value can't be real number.")
+                        return
+                    }
+
+                    is FunctionArg.ValueArg -> {
+                        if (w.value is UndefinedValue) {
+                            values[ctx] = UndefinedValue(true)
+                            return
+                        }
+                        if (w.value !is SimpleValue) {
+                            context.reportError(ctx.functionExpr(1), "The width value must be a simple value.")
+                            return
+                        }
+                        try {
+                            w.value.toBigInt().intValueExact()
+                        } catch (e: ArithmeticException) {
+                            context.reportError(ctx.functionExpr(1), "The width value doesn't fit into an integer!")
+                            return
+                        }
+                    }
+                }
+
+                val fractionalWidth = when (val w = args[2]) {
+                    is FunctionArg.RealArg -> {
+                        context.reportError(ctx.functionExpr(2), "The width value can't be real number.")
+                        return
+                    }
+
+                    is FunctionArg.ValueArg -> {
+                        if (w.value is UndefinedValue) {
+                            values[ctx] = UndefinedValue(true, BitListWidth(width))
+                            return
+                        }
+                        if (w.value !is SimpleValue) {
+                            context.reportError(ctx.functionExpr(2), "The width value must be a simple value.")
+                            return
+                        }
+                        try {
+                            w.value.toBigInt().intValueExact()
+                        } catch (e: ArithmeticException) {
+                            context.reportError(ctx.functionExpr(2), "The width value doesn't fit into an integer!")
+                            return
+                        }
+                    }
+                }
+
+                if (width <= 0) {
+                    context.reportError(ctx.functionExpr(1), "The width value must be greater than 0.")
+                    return
+                }
+
+                if (fractionalWidth < 0) {
+                    context.reportError(ctx.functionExpr(2), "The fractional width must be greater or equal to 0.")
+                }
+
+                if (fractionalWidth > width) {
+                    context.reportError(
+                        ctx.functionExpr(2),
+                        "The partial width must be less than or equal to the total width."
+                    )
+                    return
+                }
+
+                val value = when (val a = args[0]) {
+                    is FunctionArg.RealArg -> a.value
+                    is FunctionArg.ValueArg -> {
+                        if (a.value is UndefinedValue) {
+                            values[ctx] = UndefinedValue(true, BitListWidth(width))
+                            return
+                        }
+                        if (a.value !is SimpleValue) {
+                            context.reportError(ctx.functionExpr(0), "The value must be a simple value.")
+                            return
+                        }
+                        a.value.toBigInt().toDouble().also {
+                            if (!it.isFinite()) {
+                                context.reportError(ctx.functionExpr(0), "The value doesn't fit into a double!")
+                                return
+                            }
+                        }
+                    }
+                }
+
+                val adjustedValue = value * 2.0.pow(fractionalWidth)
+
+                val cValue = ceil(adjustedValue)
+                val fValue = floor(adjustedValue)
+
+                val cError = abs(adjustedValue - cValue)
+                val fError = abs(adjustedValue - fValue)
+
+                val bigInt = when (function) {
+                    Function.FIXEDPOINT -> if (cError < fError) cValue else fValue
+                    Function.CFIXEDPOINT -> cValue
+                    Function.FFIXEDPOINT -> fValue
+                    else -> error("Impossible value for function!")
+                }.toBigDecimal().toBigInteger()
+
+                if (bigInt.minBits() > width) {
+                    context.reportWarning(
+                        ctx.functionExpr(0),
+                        "This value is bigger than can fit in the specified width. It will be truncated!"
+                    )
+                }
+
+                values[ctx] = BitListValue(bigInt, constant = true, width = width)
+            }
+
             Function.CLOG2 -> {
-                val arg = args[0]
+                val valArgs = checkNoReal() ?: return
+                val arg = valArgs[0]
                 if (arg !is SimpleValue) {
                     context.reportError(
-                        ctx.expr(0),
-                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(0).text, arg.toString())
+                        ctx.functionExpr(0),
+                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(0).text, arg.toString())
                     )
                     return
                 }
@@ -1061,19 +1202,20 @@ data class ExprParser(
             }
 
             Function.POWER -> {
-                val arg1 = args[0]
-                val arg2 = args[1]
+                val valArgs = checkNoReal() ?: return
+                val arg1 = valArgs[0]
+                val arg2 = valArgs[1]
                 if (arg1 !is SimpleValue) {
                     context.reportError(
-                        ctx.expr(0),
-                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(0).text, arg1.toString())
+                        ctx.functionExpr(0),
+                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(0).text, arg1.toString())
                     )
                     return
                 }
                 if (arg2 !is SimpleValue) {
                     context.reportError(
-                        ctx.expr(1),
-                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(1).text, arg2.toString())
+                        ctx.functionExpr(1),
+                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(1).text, arg2.toString())
                     )
                     return
                 }
@@ -1082,49 +1224,61 @@ data class ExprParser(
                 try {
                     values[ctx] = b1.pow(b2.intValueExact()).toBitListValue(constant)
                 } catch (e: ArithmeticException) {
-                    context.reportError(ctx.expr(1), ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.expr(1).text))
+                    context.reportError(
+                        ctx.functionExpr(1),
+                        ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.functionExpr(1).text)
+                    )
                 }
             }
 
             Function.REVERSE -> {
-                val arg = args[0]
+                val valArgs = checkNoReal() ?: return
+                val arg = valArgs[0]
                 if (!arg.width.isArray()) {
-                    context.reportError(ctx.expr(0), ErrorStrings.FUNCTION_ARG_NOT_ARRAY.format(ctx.expr(0).text))
+                    context.reportError(
+                        ctx.functionExpr(0),
+                        ErrorStrings.FUNCTION_ARG_NOT_ARRAY.format(ctx.functionExpr(0).text)
+                    )
                     return
                 }
                 values[ctx] = arg.reverse()
             }
 
             Function.FLATTEN -> {
-                if (!args[0].width.isDefined()) {
-                    context.reportError(ctx.expr(0), ErrorStrings.UNKNOWN_WIDTH.format(ctx.expr(0).text))
+                val valArgs = checkNoReal() ?: return
+                if (!valArgs[0].width.isDefined()) {
+                    context.reportError(
+                        ctx.functionExpr(0),
+                        ErrorStrings.UNKNOWN_WIDTH.format(ctx.functionExpr(0).text)
+                    )
                     return
                 }
-                values[ctx] = args[0].flatten()
+                values[ctx] = valArgs[0].flatten()
             }
 
             Function.BUILD -> {
-                val value = args[0]
+                val valArgs = checkNoReal() ?: return
+                val value = valArgs[0]
                 if (value !is BitListValue) {
-                    context.reportError(ctx.expr(0), ErrorStrings.BUILD_MULTI_DIM)
+                    context.reportError(ctx.functionExpr(0), ErrorStrings.BUILD_MULTI_DIM)
                     return
                 }
-                for (i in 1 until args.size) {
-                    if (!args[i].isNumber() || args[i] !is BitListValue) {
+                for (i in 1 until valArgs.size) {
+                    if (!valArgs[i].isNumber() || valArgs[i] !is BitListValue) {
                         context.reportError(
-                            ctx.expr(i),
-                            ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(i).text, args[i].toString())
+                            ctx.functionExpr(i),
+                            ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(i).text, valArgs[i].toString())
                         )
                         return
                     }
                 }
-                val dims = args.subList(1, args.size).mapIndexed { i, it ->
+                val dims = valArgs.subList(1, valArgs.size).mapIndexed { i, it ->
                     try {
                         (it as BitListValue).toBigInt().intValueExact()
                     } catch (e: ArithmeticException) {
                         context.reportError(
-                            ctx.expr(i + 1),
-                            ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.expr(i + 1).text)
+                            ctx.functionExpr(i + 1),
+                            ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.functionExpr(i + 1).text)
                         )
                         return
                     }
@@ -1133,15 +1287,15 @@ data class ExprParser(
                 dims.forEachIndexed { i, dim ->
                     if (dim < 0) {
                         context.reportError(
-                            ctx.expr(i + 1),
-                            ErrorStrings.FUNCTION_ARG_NEG.format(ctx.expr(i + 1).text)
+                            ctx.functionExpr(i + 1),
+                            ErrorStrings.FUNCTION_ARG_NEG.format(ctx.functionExpr(i + 1).text)
                         )
                         return
                     }
                     if (dim == 0) {
                         context.reportError(
-                            ctx.expr(i + 1),
-                            ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.expr(i + 1).text)
+                            ctx.functionExpr(i + 1),
+                            ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.functionExpr(i + 1).text)
                         )
                         return
                     }
@@ -1149,7 +1303,10 @@ data class ExprParser(
                 val factor = dims.foldRight(1L) { dim, acc -> dim * acc }
 
                 if (value.size % factor != 0L) {
-                    context.reportError(ctx.expr(0), ErrorStrings.ARRAY_NOT_DIVISIBLE.format(ctx.expr(0).text))
+                    context.reportError(
+                        ctx.functionExpr(0),
+                        ErrorStrings.ARRAY_NOT_DIVISIBLE.format(ctx.functionExpr(0).text)
+                    )
                     return
                 }
 
@@ -1180,37 +1337,40 @@ data class ExprParser(
             }
 
             Function.SIGNED -> {
-                when (val arg = args[0]) {
+                val valArgs = checkNoReal() ?: return
+                when (val arg = valArgs[0]) {
                     is BitValue -> values[ctx] = arg.copy(signed = true)
                     is BitListValue -> values[ctx] = arg.copy(signed = true)
                     is UndefinedValue -> values[ctx] = arg.copy()
-                    else -> context.reportError(ctx.expr(0), ErrorStrings.SIGNED_MULTI_DIM)
+                    else -> context.reportError(ctx.functionExpr(0), ErrorStrings.SIGNED_MULTI_DIM)
                 }
             }
 
             Function.UNSIGNED -> {
-                when (val arg = args[0]) {
+                val valArgs = checkNoReal() ?: return
+                when (val arg = valArgs[0]) {
                     is BitValue -> values[ctx] = arg.copy(signed = false)
                     is BitListValue -> values[ctx] = arg.copy(signed = false)
                     is UndefinedValue -> values[ctx] = arg.copy()
-                    else -> context.reportError(ctx.expr(0), ErrorStrings.UNSIGNED_MULTI_DIM)
+                    else -> context.reportError(ctx.functionExpr(0), ErrorStrings.UNSIGNED_MULTI_DIM)
                 }
             }
 
             Function.CDIV -> {
-                val arg1 = args[0]
-                val arg2 = args[1]
+                val valArgs = checkNoReal() ?: return
+                val arg1 = valArgs[0]
+                val arg2 = valArgs[1]
                 if (arg1 !is SimpleValue) {
                     context.reportError(
-                        ctx.expr(0),
-                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(0).text, arg1.toString())
+                        ctx.functionExpr(0),
+                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(0).text, arg1.toString())
                     )
                     return
                 }
                 if (arg2 !is SimpleValue) {
                     context.reportError(
-                        ctx.expr(1),
-                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.expr(1).text, arg2.toString())
+                        ctx.functionExpr(1),
+                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(1).text, arg2.toString())
                     )
                     return
                 }
@@ -1218,7 +1378,10 @@ data class ExprParser(
                 val b2 = arg2.toBigInt()
 
                 if (b2 == BigInteger.ZERO) {
-                    context.reportError(ctx.expr(1), ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.expr(1).text))
+                    context.reportError(
+                        ctx.functionExpr(1),
+                        ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.functionExpr(1).text)
+                    )
                     return
                 }
 
@@ -1232,37 +1395,44 @@ data class ExprParser(
             }
 
             Function.RESIZE -> {
-                val value = args[0]
-                val size = args[1]
+                val valArgs = checkNoReal() ?: return
+                val value = valArgs[0]
+                val size = valArgs[1]
                 if (size.isNumber() && size is BitListValue) {
                     val numBits = try {
                         size.toBigInt().intValueExact()
                     } catch (e: ArithmeticException) {
                         context.reportError(
-                            ctx.expr(1),
-                            ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.expr(1).text)
+                            ctx.functionExpr(1),
+                            ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.functionExpr(1).text)
                         )
                         return
                     }
                     if (numBits < 0) {
-                        context.reportError(ctx.expr(1), ErrorStrings.FUNCTION_ARG_NEG.format(ctx.expr(1).text))
+                        context.reportError(
+                            ctx.functionExpr(1),
+                            ErrorStrings.FUNCTION_ARG_NEG.format(ctx.functionExpr(1).text)
+                        )
                         return
                     }
                     if (numBits == 0) {
-                        context.reportError(ctx.expr(1), ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.expr(1).text))
+                        context.reportError(
+                            ctx.functionExpr(1),
+                            ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.functionExpr(1).text)
+                        )
                         return
                     }
                     if (!value.width.isFlatArray()) {
                         context.reportError(
-                            ctx.expr(0),
+                            ctx.functionExpr(0),
                             ErrorStrings.FUNCTION_NOT_FLAT.format(ctx.FUNCTION_ID().text)
                         )
                         return
                     }
                     if (value is SimpleValue && value.minBits() > numBits) {
                         context.reportWarning(
-                            ctx.expr(0),
-                            ErrorStrings.TRUNC_WARN.format(ctx.expr(1).text, size.toString())
+                            ctx.functionExpr(0),
+                            ErrorStrings.TRUNC_WARN.format(ctx.functionExpr(1).text, size.toString())
                         )
                     }
                     values[ctx] = when (value) {

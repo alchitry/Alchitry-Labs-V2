@@ -10,5 +10,13 @@ enum class Function(val label: String, val argCount: Int, val constOnly: Boolean
     UNSIGNED("unsigned", 1, false),
     CDIV("cdiv", 2, true),
     RESIZE("resize", 2, true),
-    WIDTH("widthOf", 1, false)
+    WIDTH("widthOf", 1, false),
+    FIXEDPOINT("fixedPoint", 3, true),
+    CFIXEDPOINT("cFixedPoint", 3, true),
+    FFIXEDPOINT("fFixedPoint", 3, true)
+}
+
+sealed class FunctionArg {
+    class ValueArg(val value: Value) : FunctionArg()
+    class RealArg(val value: Double) : FunctionArg()
 }

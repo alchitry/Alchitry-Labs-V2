@@ -101,9 +101,10 @@ elseStat: 'else' NL* block;
 repeatStat: 'repeat' NL* '(' NL* name NL* ',' NL* expr NL* ')' NL* repeatBlock;
 repeatBlock: block;
 
-function: FUNCTION_ID NL* '(' NL* expr (NL* ',' NL* expr)* NL* ')';
+function: FUNCTION_ID NL* '(' NL* functionExpr (NL* ',' NL* functionExpr)* NL* ')';
+functionExpr: expr | REAL;
 
-number: HEX | BIN | DEC | INT | STRING | REAL;
+number: HEX | BIN | DEC | INT | STRING;
 
 expr
   : signal                                          #ExprSignal

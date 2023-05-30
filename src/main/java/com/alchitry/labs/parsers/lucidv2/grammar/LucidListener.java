@@ -14,39 +14,33 @@ public interface LucidListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void enterSource(LucidParser.SourceContext ctx);
-
 	/**
 	 * Exit a parse tree produced by {@link LucidParser#source}.
-	 *
 	 * @param ctx the parse tree
 	 */
 	void exitSource(LucidParser.SourceContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link LucidParser#global}.
-	 *
 	 * @param ctx the parse tree
 	 */
 	void enterGlobal(LucidParser.GlobalContext ctx);
-
 	/**
 	 * Exit a parse tree produced by {@link LucidParser#global}.
-	 *
 	 * @param ctx the parse tree
-	 */
-	void exitGlobal(LucidParser.GlobalContext ctx);
+     */
+    void exitGlobal(LucidParser.GlobalContext ctx);
 
-	/**
-	 * Enter a parse tree produced by {@link LucidParser#globalStat}.
-	 *
-	 * @param ctx the parse tree
-	 */
-	void enterGlobalStat(LucidParser.GlobalStatContext ctx);
+    /**
+     * Enter a parse tree produced by {@link LucidParser#globalStat}.
+     *
+     * @param ctx the parse tree
+     */
+    void enterGlobalStat(LucidParser.GlobalStatContext ctx);
 
-	/**
-	 * Exit a parse tree produced by {@link LucidParser#globalStat}.
-	 *
-	 * @param ctx the parse tree
+    /**
+     * Exit a parse tree produced by {@link LucidParser#globalStat}.
+     *
+     * @param ctx the parse tree
      */
     void exitGlobalStat(LucidParser.GlobalStatContext ctx);
 
@@ -54,40 +48,33 @@ public interface LucidListener extends ParseTreeListener {
      * Enter a parse tree produced by {@link LucidParser#module}.
      *
      * @param ctx the parse tree
-	 */
-	void enterModule(LucidParser.ModuleContext ctx);
+     */
+    void enterModule(LucidParser.ModuleContext ctx);
 
-	/**
-	 * Exit a parse tree produced by {@link LucidParser#module}.
-	 *
-	 * @param ctx the parse tree
-	 */
-	void exitModule(LucidParser.ModuleContext ctx);
+    /**
+     * Exit a parse tree produced by {@link LucidParser#module}.
+     *
+     * @param ctx the parse tree
+     */
+    void exitModule(LucidParser.ModuleContext ctx);
 
-	/**
-	 * Enter a parse tree produced by {@link LucidParser#paramList}.
-	 *
-	 * @param ctx the parse tree
+    /**
+     * Enter a parse tree produced by {@link LucidParser#paramList}.
+     * @param ctx the parse tree
 	 */
 	void enterParamList(LucidParser.ParamListContext ctx);
-
 	/**
 	 * Exit a parse tree produced by {@link LucidParser#paramList}.
-	 *
 	 * @param ctx the parse tree
 	 */
 	void exitParamList(LucidParser.ParamListContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link LucidParser#portList}.
-	 *
 	 * @param ctx the parse tree
 	 */
 	void enterPortList(LucidParser.PortListContext ctx);
-
 	/**
 	 * Exit a parse tree produced by {@link LucidParser#portList}.
-	 *
 	 * @param ctx the parse tree
 	 */
 	void exitPortList(LucidParser.PortListContext ctx);
@@ -628,25 +615,46 @@ public interface LucidListener extends ParseTreeListener {
 	 * Exit a parse tree produced by {@link LucidParser#repeatBlock}.
 	 * @param ctx the parse tree
 	 */
-	void exitRepeatBlock(LucidParser.RepeatBlockContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link LucidParser#function}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunction(LucidParser.FunctionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LucidParser#function}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunction(LucidParser.FunctionContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link LucidParser#number}.
-	 * @param ctx the parse tree
-	 */
-	void enterNumber(LucidParser.NumberContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LucidParser#number}.
-	 * @param ctx the parse tree
+    void exitRepeatBlock(LucidParser.RepeatBlockContext ctx);
+
+    /**
+     * Enter a parse tree produced by {@link LucidParser#function}.
+     *
+     * @param ctx the parse tree
+     */
+    void enterFunction(LucidParser.FunctionContext ctx);
+
+    /**
+     * Exit a parse tree produced by {@link LucidParser#function}.
+     *
+     * @param ctx the parse tree
+     */
+    void exitFunction(LucidParser.FunctionContext ctx);
+
+    /**
+     * Enter a parse tree produced by {@link LucidParser#functionExpr}.
+     *
+     * @param ctx the parse tree
+     */
+    void enterFunctionExpr(LucidParser.FunctionExprContext ctx);
+
+    /**
+     * Exit a parse tree produced by {@link LucidParser#functionExpr}.
+     *
+     * @param ctx the parse tree
+     */
+    void exitFunctionExpr(LucidParser.FunctionExprContext ctx);
+
+    /**
+     * Enter a parse tree produced by {@link LucidParser#number}.
+     *
+     * @param ctx the parse tree
+     */
+    void enterNumber(LucidParser.NumberContext ctx);
+
+    /**
+     * Exit a parse tree produced by {@link LucidParser#number}.
+     * @param ctx the parse tree
 	 */
 	void exitNumber(LucidParser.NumberContext ctx);
 	/**

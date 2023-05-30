@@ -1074,4 +1074,85 @@ internal class ExprParserTests {
         assert(test.hasNoWarnings)
         assert(test.hasNoSyntaxIssues)
     }
+
+    @Test
+    fun fixedPointTest() {
+        val test =
+            SimpleLucidTester("\$fixedPoint(3.14, 8, 4)")
+        val expr = test.expr().also { test.context.walk(it) }
+
+        assert(test.hasNoIssues)
+
+        val value = test.context.resolve(expr)
+
+        assertEquals(
+            BitListValue(50, 8, true, false),
+            value
+        )
+    }
+
+    @Test
+    fun fixedPointIntTest() {
+        val test =
+            SimpleLucidTester("\$fixedPoint(10, 8, 4)")
+        val expr = test.expr().also { test.context.walk(it) }
+
+        assert(test.hasNoIssues)
+
+        val value = test.context.resolve(expr)
+
+        assertEquals(
+            BitListValue(160, 8, true, false),
+            value
+        )
+    }
+
+    @Test
+    fun fixedPointOverflowTest() {
+        val test =
+            SimpleLucidTester("\$fixedPoint(300.14, 8, 4)")
+        val expr = test.expr().also { test.context.walk(it) }
+
+        assert(test.hasNoErrors)
+        assert(test.hasWarnings)
+
+        val value = test.context.resolve(expr)
+
+        assertEquals(
+            BitListValue(194, 8, true, false),
+            value
+        )
+    }
+
+    @Test
+    fun cFixedPointTest() {
+        val test =
+            SimpleLucidTester("\$cFixedPoint(3.14, 8, 4)")
+        val expr = test.expr().also { test.context.walk(it) }
+
+        assert(test.hasNoIssues)
+
+        val value = test.context.resolve(expr)
+
+        assertEquals(
+            BitListValue(51, 8, true, false),
+            value
+        )
+    }
+
+    @Test
+    fun fFixedPointTest() {
+        val test =
+            SimpleLucidTester("\$fFixedPoint(3.16, 8, 4)")
+        val expr = test.expr().also { test.context.walk(it) }
+
+        assert(test.hasNoIssues)
+
+        val value = test.context.resolve(expr)
+
+        assertEquals(
+            BitListValue(50, 8, true, false),
+            value
+        )
+    }
 }
