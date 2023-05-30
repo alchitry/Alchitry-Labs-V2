@@ -1,5 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
+import com.alchitry.labs.parsers.Util
 import com.alchitry.labs.parsers.lucidv2.types.StructType
 
 sealed class SignalWidth {
@@ -62,22 +63,48 @@ sealed class SignalWidth {
         }
     }
 
-    fun getDimensions(): List<Int> {
-        require(isDefinedSimpleArray()) { "getDimensions can only be called on arrays" }
+    /**
+     * Returns a Value whose elements match the dimensions of this width.
+     */
+    fun toValue(): Value {
+        require(isDefinedSimpleArray()) { "toValue() can only be called on arrays" }
         val dims = mutableListOf<Int>()
         var array: SignalWidth = this
         while (true) {
-            if (array is ArrayWidth) {
-                dims.add(array.size)
-                array = array.next
-            } else if (array is SimpleWidth) {
-                dims.add(array.size)
-                break
-            } else if (array is BitWidth) {
-                break
+            when (array) {
+                is ArrayWidth -> {
+                    dims.add(array.size)
+                    array = array.next
+                }
+
+                is BitListWidth -> {
+                    dims.add(array.size)
+                    break
+                }
+
+                is BitWidth -> {
+                    check(dims.isEmpty()) { "Found a BitWidth inside an array!" }
+                    dims.add(1)
+                    break
+                }
+
+                is StructWidth -> error("toValue() doesn't work on structs!")
+                UndefinedSimpleWidth -> {
+                    dims.add(-1)
+                    break
+                }
             }
         }
-        return dims
+
+        check(dims.isNotEmpty()) { "Failed to get any dimensions for this width!" }
+
+        if (dims.size == 1) {
+            return BitListValue(dims.first(), constant = true, signed = false)
+        }
+
+        val width = Util.minWidthNum(dims.max())
+
+        return ArrayValue(dims.map { BitListValue(it, width, constant = true, signed = false) })
     }
 
     fun getBitCount(): Int? {
@@ -113,7 +140,6 @@ sealed class SignalWidth {
      * @param signed if the resulting Value should be signed. This will be overwritten by structs that have explicit signs.
      */
     abstract fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): Value
-
 }
 
 sealed class SimpleWidth : SignalWidth() {

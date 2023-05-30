@@ -157,9 +157,13 @@ class ModuleMultiPassTests {
                         RUN,
                         STOP
                     }
+                    
+                    sig w[2] = myFSM.WIDTH
+                    sig t[2] = ${"$"}widthOf(myFSM.IDLE)
                 
                     always {
                         if (a) {}
+                        if (w == t) {}
                         test = myFSM.RUN
                     }
                 }
@@ -173,10 +177,20 @@ class ModuleMultiPassTests {
             context.initialize()
         }
 
-        val enum = EnumType("myFSM", listOf("IDLE", "INIT", "RUN", "STOP"), null)
+        val enum = EnumType("myFSM", setOf("IDLE", "INIT", "RUN", "STOP"), null)
 
         assertEquals(BitListValue(2, 2, signed = false, constant = false), testSig?.read())
         assertEquals(enum, context.enum.resolve("myFSM"))
+
+        assertEquals(
+            BitListValue(2, 2, constant = false, signed = false),
+            (context.resolveSignal("w") as? Signal)?.read()
+        )
+
+        assertEquals(
+            BitListValue(2, 2, constant = false, signed = false),
+            (context.resolveSignal("t") as? Signal)?.read()
+        )
     }
 
     @Test
@@ -210,7 +224,7 @@ class ModuleMultiPassTests {
             context.initialize()
         }
 
-        val enum = EnumType("myFSM", listOf("IDLE", "INIT", "RUN", "STOP"), tester.project.resolveGlobal("Enums"))
+        val enum = EnumType("myFSM", setOf("IDLE", "INIT", "RUN", "STOP"), tester.project.resolveGlobal("Enums"))
 
         assertEquals(BitListValue(2, 2, signed = false, constant = false), testSig.read())
         assertEquals(enum, tester.project.resolveGlobal("Enums")?.enums?.values?.first())

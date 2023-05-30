@@ -1029,6 +1029,16 @@ data class ExprParser(
         }
 
         when (function) {
+            Function.WIDTH -> {
+                val arg = args[0]
+                val width = arg.width
+                if (!width.isSimpleArray()) {
+                    context.reportError(ctx.expr(0), "The function widthOf() can't be used on structs.")
+                    return
+                }
+                values[ctx] = width.toValue()
+            }
+
             Function.CLOG2 -> {
                 val arg = args[0]
                 if (arg !is SimpleValue) {

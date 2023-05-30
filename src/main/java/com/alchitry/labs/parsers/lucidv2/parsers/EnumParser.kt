@@ -41,14 +41,25 @@ data class EnumParser(
 
         val membersCtx = ctx.name().subList(1, ctx.name().size)
 
+        val memberSet = mutableSetOf<String>()
+
         membersCtx.forEach { mCtx ->
-            if (mCtx.CONST_ID() == null) {
+            val member = mCtx.CONST_ID()?.text
+            if (member == null) {
                 context.reportError(mCtx, "Enum member names must be all uppercase letters an underscores.")
+                return
+            }
+            if (member == "WIDTH") {
+                context.reportError(mCtx, "The name \"WIDTH\" is a reserved name for enums.")
+                return
+            }
+            if (!memberSet.add(member)) {
+                context.reportError(mCtx, "The name \"$member\" has already been defined.")
                 return
             }
         }
 
-        enumTypes[ctx] = EnumType(nameCtx.text, membersCtx.map { it.text }, null)
+        enumTypes[ctx] = EnumType(nameCtx.text, memberSet, null)
             .also { localEnumType[nameCtx.text] = it }
     }
 }

@@ -9,5 +9,6 @@ enum class Function(val label: String, val argCount: Int, val constOnly: Boolean
     SIGNED("signed", 1, false),
     UNSIGNED("unsigned", 1, false),
     CDIV("cdiv", 2, true),
-    RESIZE("resize", 2, true)
+    RESIZE("resize", 2, true),
+    WIDTH("widthOf", 1, false)
 }
