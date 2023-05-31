@@ -1,6 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
-import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
@@ -16,16 +16,13 @@ import com.alchitry.labs.parsers.lucidv2.values.minBits
  * responsible for the actual evaluation after the AlwaysParser has done the first pass.
  */
 data class BlockParser(
-    private val context: LucidModuleContext,
+    private val context: LucidBlockContext,
     val alwaysBlocks: MutableMap<AlwaysBlockContext, AlwaysBlock> = mutableMapOf(),
     val testBlocks: MutableMap<TestBlockContext, TestBlock> = mutableMapOf()
 ) : LucidBaseListener() {
     private val dependencies = mutableSetOf<Signal>()
     private val drivenSignals = mutableSetOf<Signal>()
     val repeatSignals = mutableMapOf<RepeatStatContext, Signal>()
-
-    var inTestBlock = false
-    var inAlwaysBlock = false
 
     suspend fun queueEval() {
         alwaysBlocks.values.forEach {
@@ -41,23 +38,35 @@ data class BlockParser(
 
     override fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
         enterBlock()
-        inAlwaysBlock = true
+
+        if (ctx.firstParentOrNull { it is ModuleContext } == null) {
+            context.reportError(ctx, "Always blocks can only be used in modules!")
+        }
     }
 
     override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
-        inAlwaysBlock = false
         alwaysBlocks[ctx] =
             AlwaysBlock(context, dependencies.toSet(), drivenSignals.toSet(), repeatSignals.toMap(), ctx)
     }
 
     override fun enterTestBlock(ctx: TestBlockContext) {
-        inTestBlock = true
         enterBlock()
+
+        if (ctx.firstParentOrNull { it is TestBenchContext } == null) {
+            context.reportError(ctx, "Test blocks can only be used in test benches!")
+        }
     }
 
     override fun exitTestBlock(ctx: TestBlockContext) {
-        inTestBlock = false
-        testBlocks[ctx] = TestBlock(context, dependencies.toSet(), drivenSignals.toSet(), repeatSignals.toMap(), ctx)
+        val name = ctx.name().text
+
+        if (ctx.name().TYPE_ID() == null) {
+            context.reportError(ctx.name(), "Test names must start with a lowercase letter.")
+            return
+        }
+
+        testBlocks[ctx] =
+            TestBlock(name, context, dependencies.toSet(), drivenSignals.toSet(), repeatSignals.toMap(), ctx)
     }
 
     override fun exitExprSignal(ctx: ExprSignalContext) {

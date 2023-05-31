@@ -6,13 +6,16 @@ import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.parsers.*
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
+import com.alchitry.labs.parsers.lucidv2.types.TestAbortedException
+import com.alchitry.labs.parsers.lucidv2.types.TestOrModuleInstance
 import com.alchitry.labs.parsers.lucidv2.values.Bit
+import kotlinx.coroutines.runBlocking
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.ParseTreeListener
 
-class LucidModuleContext(
+class LucidBlockContext(
     override val project: ProjectContext,
-    val instance: ModuleInstance,
+    val instance: TestOrModuleInstance,
     var stage: ParseStage = ParseStage.ModuleInternals,
     override val evalContext: Evaluable? = null,
     val errorCollector: ErrorCollector = ErrorCollector(),
@@ -23,23 +26,39 @@ class LucidModuleContext(
     enum: EnumParser? = null,
     struct: StructParser? = null,
     signal: SignalParser? = null,
-    alwaysParser: BlockParser? = null,
-    alwaysEvaluator: AlwaysEvaluator? = null,
+    blockParser: BlockParser? = null,
+    blockEvaluator: BlockEvaluator? = null,
     signalDriver: SignalDriverParser? = null,
     val localSignalResolver: SignalResolver? = null // Used in tests to simulate a full parse.
 ) : LucidExprContext, ErrorListener by errorCollector {
+
+    override fun tick() {
+        if (stage != ParseStage.Evaluation)
+            return
+        runBlocking {
+            blockEvaluator.processWriteQueue()
+            project.processQueue()
+        }
+    }
+
+    override fun abortTest() {
+        if (stage != ParseStage.Evaluation)
+            return
+        throw TestAbortedException()
+    }
+
     // These will be run multiple times during evaluation, so they need their context updated
     val expr = expr?.withContext(this) ?: ExprParser(this)
     val bitSelection = bitSelection?.withContext(this) ?: BitSelectionParser(this)
     val signal = signal?.withContext(this) ?: SignalParser(this)
-    val alwaysEvaluator = alwaysEvaluator?.withContext(this) ?: AlwaysEvaluator(this)
+    val blockEvaluator = blockEvaluator?.withContext(this) ?: BlockEvaluator(this)
 
     // These won't be re-run during evaluation, so they don't need their context updated
     val types = types ?: TypesParser(this)
     val struct = struct ?: StructParser(this)
     val enum = enum ?: EnumParser(this)
     val constant = constant ?: ConstantParser(this)
-    val alwaysParser = alwaysParser ?: BlockParser(this)
+    val blockParser = blockParser ?: BlockParser(this)
     val signalDriver = signalDriver ?: SignalDriverParser(this)
 
     private fun getListeners() = when (stage) {
@@ -50,7 +69,7 @@ class LucidModuleContext(
             this.enum,
             this.constant,
             this.types,
-            this.alwaysParser,
+            this.blockParser,
             this.signal
         )
 
@@ -65,7 +84,7 @@ class LucidModuleContext(
             this.expr,
             this.bitSelection,
             this.signal,
-            this.alwaysEvaluator
+            this.blockEvaluator
         )
 
         ParseStage.ErrorCheck -> listOf<ParseTreeListener>(
@@ -76,7 +95,7 @@ class LucidModuleContext(
             this.constant,
             this.signal,
             this.types,
-            this.alwaysParser
+            this.blockParser
         )
     }
 
@@ -87,7 +106,7 @@ class LucidModuleContext(
         ParseStage.ErrorCheck -> WalkerFilter.SkipGlobals
     }
 
-    fun withEvalContext(evalContext: Evaluable) = LucidModuleContext(
+    fun withEvalContext(evalContext: Evaluable) = LucidBlockContext(
         project,
         instance,
         ParseStage.Evaluation,
@@ -100,8 +119,8 @@ class LucidModuleContext(
         enum,
         struct,
         signal,
-        alwaysParser,
-        alwaysEvaluator,
+        blockParser,
+        blockEvaluator,
         signalDriver,
         localSignalResolver
     )
@@ -110,7 +129,7 @@ class LucidModuleContext(
      * Queues always blocks for an initial evaluation.
      */
     suspend fun initialize() {
-        alwaysParser.queueEval()
+        blockParser.queueEval()
         types.getInstances().forEach { it.context.initialize() }
         project.initialize()
     }
@@ -130,6 +149,8 @@ class LucidModuleContext(
     fun walk(t: ParseTree) = ParseTreeMultiWalker.walk(getListeners(), t, getFilter())
 
     fun checkParameters(): List<String>? {
+        val instance = (instance as? ModuleInstance)
+            ?: error("checkParameters() can only be called on contexts with a ModuleInstance!")
         stage = ParseStage.Evaluation
         instance.module.parameters.values.forEach { param ->
             param.constraint?.let {
@@ -162,7 +183,7 @@ class LucidModuleContext(
         constant.resolve(name)?.let { return it }
         enum.resolve(name)?.let { return it }
 
-        instance.getInternalSignal(name)?.let { return it }
+        (instance as? ModuleInstance)?.getInternalSignal(name)?.let { return it }
 
         return project.resolveSignal(name)
     }

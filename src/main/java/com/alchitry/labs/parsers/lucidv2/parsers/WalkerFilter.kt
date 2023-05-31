@@ -34,6 +34,7 @@ interface WalkerFilter {
                                 || child is RepeatBlockContext
                         )
                         && parent !is AlwaysBlockContext
+                        && parent !is TestBlockContext
             }
         }
 
@@ -45,7 +46,13 @@ interface WalkerFilter {
 
         val GlobalsOnly = object : WalkerFilter {
             override fun shouldSkip(parent: RuleNode, child: ParseTree): Boolean {
-                return child is ModuleContext
+                return child is ModuleContext || child is TestBenchContext
+            }
+        }
+
+        val TestBenchesOnly = object : WalkerFilter {
+            override fun shouldSkip(parent: RuleNode, child: ParseTree): Boolean {
+                return child is ModuleContext || child is GlobalContext
             }
         }
     }

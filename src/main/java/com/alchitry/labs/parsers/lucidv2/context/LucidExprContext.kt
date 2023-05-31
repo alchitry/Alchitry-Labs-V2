@@ -26,4 +26,7 @@ interface LucidExprContext : ErrorListener {
     fun resolveGlobal(name: String): GlobalNamespace?
     val evalContext: Evaluable?
     val project: ProjectContext
+
+    fun tick()
+    fun abortTest()
 }

@@ -114,14 +114,16 @@ class DynamicEvalTests {
 
         val tester = SimpleLucidTester(
             """
-            always {
-                sig1 = sig2
-            }
+                module myMod () {
+                    always {
+                        sig1 = sig2
+                    }
+                }
             """.trimIndent(),
             TestSignalResolver(sig1, sig2)
         )
 
-        tester.context.walk(tester.alwaysBlock())
+        tester.context.walk(tester.module())
         assert(tester.hasNoIssues)
 
         runBlocking {
@@ -153,24 +155,26 @@ class DynamicEvalTests {
         val sig2 = Signal("sig2", SignalDirection.Read, null, BitValue(Bit.B1, constant = false, signed = false), false)
         val tester = SimpleLucidTester(
             """
-            always {
-                if (sig2) 
-                    sig1 = 1
-                else
-                    sig1 = 0
-            }
+                module myMod () {
+                    always {
+                        if (sig2) 
+                            sig1 = 1
+                        else
+                            sig1 = 0
+                    }
+                }
             """.trimIndent(),
             TestSignalResolver(sig1, sig2)
         )
 
-        tester.context.walk(tester.alwaysBlock())
+        tester.context.walk(tester.module())
         assert(tester.hasNoIssues)
 
         runBlocking {
             tester.context.initialize()
         }
 
-        val alwaysBlock = tester.context.alwaysParser.alwaysBlocks.values.first()
+        val alwaysBlock = tester.context.blockParser.alwaysBlocks.values.first()
 
         assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.read(null))
         assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig2.read(null))

@@ -28,6 +28,8 @@ data class ExprParser(
     private val values: MutableMap<ParseTree, Value> = mutableMapOf(),
     private val dependencies: MutableMap<ParseTree, Set<Signal>> = mutableMapOf()
 ) : LucidBaseListener() {
+    private var inTestBlock = false
+
     fun withContext(context: LucidExprContext) = copy(context = context)
 
     fun resolve(ctx: ExprContext): Value? = values[ctx]
@@ -43,6 +45,14 @@ data class ExprParser(
     private fun canSkip(ctx: ParseTree): Boolean {
         val value = values[ctx] ?: return false
         return value.constant
+    }
+
+    override fun enterTestBlock(ctx: TestBlockContext) {
+        inTestBlock = true
+    }
+
+    override fun exitTestBlock(ctx: TestBlockContext) {
+        inTestBlock = false
     }
 
     override fun exitBitSelectorFixWidth(ctx: BitSelectorFixWidthContext) {
@@ -1043,6 +1053,14 @@ data class ExprParser(
             return
         }
 
+        if (function.testOnly && !inTestBlock) {
+            context.reportError(
+                ctx.FUNCTION_ID(),
+                "The function \"\$${function.label}\" can only be used in test or function blocks."
+            )
+            return
+        }
+
         fun checkNoReal(): List<Value>? {
             args.forEachIndexed { index, functionArg ->
                 if (functionArg is FunctionArg.RealArg) {
@@ -1442,6 +1460,20 @@ data class ExprParser(
                     }
                 }
             }
+
+            Function.TICK -> context.tick()
+            Function.ASSERT -> {
+                val passed = when (val arg = args[0]) {
+                    is FunctionArg.RealArg -> arg.value > 0.0
+                    is FunctionArg.ValueArg -> arg.value.isTrue().bit == Bit.B1
+                }
+                if (!passed) {
+                    context.reportError(ctx, "Assert failed: \"${ctx.functionExpr(0).text}\"")
+                    context.abortTest()
+                }
+            }
+
+            Function.CALL -> TODO()
         }
         debug(ctx)
     }

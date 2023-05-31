@@ -2,7 +2,7 @@ package com.alchitry.labs.parsers.lucidv2.signals
 
 import com.alchitry.labs.parsers.SynchronizedSharedFlow
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
-import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.ExprContext
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs.parsers.lucidv2.values.Value
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
  */
 class DynamicExpr(
     val expr: ExprContext,
-    context: LucidModuleContext,
+    context: LucidBlockContext,
     widthConstraint: SignalWidth? = null
 ) : Evaluable {
     private val context = context.withEvalContext(this)

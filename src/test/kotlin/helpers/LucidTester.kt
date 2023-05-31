@@ -3,12 +3,14 @@ package helpers
 import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleTypeContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidLexer
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.SourceContext
 import com.alchitry.labs.parsers.lucidv2.types.Module
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
+import kotlinx.coroutines.runBlocking
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 
@@ -46,6 +48,20 @@ class LucidTester(vararg val files: String) {
         }
     }
 
+    private fun testBenchParse(
+        errorCollector: ErrorCollector = ErrorCollector(),
+        tree: List<SourceContext> = parseText(errorCollector)
+    ) {
+        assert(errorCollector.hasNoIssues)
+
+        tree.forEach {
+            val testBenchContext = LucidTestBenchContext(project, errorCollector)
+            testBenchContext.walk(it)
+
+            assert(errorCollector.hasNoIssues)
+        }
+    }
+
     fun moduleTypeParse(
         errorCollector: ErrorCollector = ErrorCollector(),
         tree: List<SourceContext> = parseText(errorCollector)
@@ -71,9 +87,9 @@ class LucidTester(vararg val files: String) {
         val tree = parseText(errors)
 
         globalParse(errors, tree)
-        val module = moduleTypeParse(errors, tree)
+        val modules = moduleTypeParse(errors, tree)
 
-        val moduleInstance = ModuleInstance("top", project, null, module.first(), mapOf(), mapOf(), errors)
+        val moduleInstance = ModuleInstance("top", project, null, modules.first(), mapOf(), mapOf(), errors)
 
         moduleInstance.initialWalk()
         if (errorCollector == null) {
@@ -81,5 +97,27 @@ class LucidTester(vararg val files: String) {
         }
 
         return moduleInstance
+    }
+
+    fun runTestBenches(errorCollector: ErrorCollector? = null) {
+        val errors = errorCollector ?: ErrorCollector()
+        val tree = parseText(errors)
+
+        globalParse(errors, tree)
+        moduleTypeParse(errors, tree)
+        testBenchParse(errors, tree)
+
+        val testBenches = project.getTestBenches()
+
+        testBenches.forEach { testBench ->
+            testBench.initialWalk()
+            val tests = testBench.getTestBlocks()
+            runBlocking {
+                tests.forEach {
+                    testBench.runTest(it.name)
+                    assert(it.context.errorCollector.hasNoIssues)
+                }
+            }
+        }
     }
 }

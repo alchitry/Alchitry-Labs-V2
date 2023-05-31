@@ -9,12 +9,11 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  * by {@link LucidParser}.
  *
  * @param <T> The return type of the visit operation. Use {@link Void} for
- * operations with no return type.
+ *            operations with no return type.
  */
 public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
     /**
      * Visit a parse tree produced by {@link LucidParser#source}.
-     *
      * @param ctx the parse tree
      * @return the visitor result
      */
@@ -22,7 +21,6 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 
     /**
      * Visit a parse tree produced by {@link LucidParser#global}.
-     *
      * @param ctx the parse tree
      * @return the visitor result
      */
@@ -30,7 +28,6 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 
     /**
      * Visit a parse tree produced by {@link LucidParser#globalStat}.
-     *
      * @param ctx the parse tree
      * @return the visitor result
      */
@@ -38,7 +35,6 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 
     /**
      * Visit a parse tree produced by {@link LucidParser#module}.
-     *
      * @param ctx the parse tree
      * @return the visitor result
      */
@@ -46,7 +42,6 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 
     /**
      * Visit a parse tree produced by {@link LucidParser#testBench}.
-     *
      * @param ctx the parse tree
      * @return the visitor result
      */
@@ -54,7 +49,6 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 
     /**
      * Visit a parse tree produced by {@link LucidParser#paramList}.
-     *
      * @param ctx the parse tree
      * @return the visitor result
      */
@@ -62,7 +56,6 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 
     /**
      * Visit a parse tree produced by {@link LucidParser#portList}.
-     *
      * @param ctx the parse tree
      * @return the visitor result
      */
@@ -70,20 +63,21 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 
     /**
      * Visit a parse tree produced by {@link LucidParser#paramDec}.
-     *
      * @param ctx the parse tree
      * @return the visitor result
      */
-	T visitParamDec(LucidParser.ParamDecContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#paramDefault}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitParamDefault(LucidParser.ParamDefaultContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#paramConstraint}.
-	 * @param ctx the parse tree
+    T visitParamDec(LucidParser.ParamDecContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#paramDefault}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitParamDefault(LucidParser.ParamDefaultContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#paramConstraint}.
+     * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitParamConstraint(LucidParser.ParamConstraintContext ctx);
@@ -168,18 +162,22 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 	 * labeled alternative in {@link LucidParser#stat}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
-	 */
-	T visitStatModuleInst(LucidParser.StatModuleInstContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code StatAssign}
-	 * labeled alternative in {@link LucidParser#stat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStatAssign(LucidParser.StatAssignContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code StatAlways}
+     */
+    T visitStatModuleInst(LucidParser.StatModuleInstContext ctx);
+
+    /**
+     * Visit a parse tree produced by the {@code StatAssign}
      * labeled alternative in {@link LucidParser#stat}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitStatAssign(LucidParser.StatAssignContext ctx);
+
+    /**
+     * Visit a parse tree produced by the {@code StatAlways}
+     * labeled alternative in {@link LucidParser#stat}.
+     *
      * @param ctx the parse tree
      * @return the visitor result
      */
@@ -219,16 +217,19 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
      * @return the visitor result
      */
     T visitConstDec(LucidParser.ConstDecContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#assignBlock}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAssignBlock(LucidParser.AssignBlockContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#sigCon}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#assignBlock}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitAssignBlock(LucidParser.AssignBlockContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#sigCon}.
+     * @param ctx the parse tree
+     * @return the visitor result
 	 */
 	T visitSigCon(LucidParser.SigConContext ctx);
 	/**
@@ -261,20 +262,26 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitModuleInst(LucidParser.ModuleInstContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#instCons}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitInstCons(LucidParser.InstConsContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#conList}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitConList(LucidParser.ConListContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#connection}.
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#instCons}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitInstCons(LucidParser.InstConsContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#conList}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitConList(LucidParser.ConListContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#connection}.
+     *
      * @param ctx the parse tree
      * @return the visitor result
      */
@@ -295,6 +302,14 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
      * @return the visitor result
      */
     T visitStructDec(LucidParser.StructDecContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#functionArg}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitFunctionArg(LucidParser.FunctionArgContext ctx);
 
     /**
      * Visit a parse tree produced by {@link LucidParser#functionBlock}.
@@ -319,34 +334,49 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
      * @return the visitor result
      */
     T visitAlwaysBlock(LucidParser.AlwaysBlockContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code AlwaysAssign}
-	 * labeled alternative in {@link LucidParser#alwaysStat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAlwaysAssign(LucidParser.AlwaysAssignContext ctx);
+
+    /**
+     * Visit a parse tree produced by the {@code AlwaysAssign}
+     * labeled alternative in {@link LucidParser#alwaysStat}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitAlwaysAssign(LucidParser.AlwaysAssignContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code AlwaysCase}
 	 * labeled alternative in {@link LucidParser#alwaysStat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAlwaysCase(LucidParser.AlwaysCaseContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code AlwaysIf}
-	 * labeled alternative in {@link LucidParser#alwaysStat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAlwaysIf(LucidParser.AlwaysIfContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code AlwaysRepeat}
-	 * labeled alternative in {@link LucidParser#alwaysStat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAlwaysRepeat(LucidParser.AlwaysRepeatContext ctx);
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitAlwaysCase(LucidParser.AlwaysCaseContext ctx);
+
+    /**
+     * Visit a parse tree produced by the {@code AlwaysIf}
+     * labeled alternative in {@link LucidParser#alwaysStat}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitAlwaysIf(LucidParser.AlwaysIfContext ctx);
+
+    /**
+     * Visit a parse tree produced by the {@code AlwaysRepeat}
+     * labeled alternative in {@link LucidParser#alwaysStat}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitAlwaysRepeat(LucidParser.AlwaysRepeatContext ctx);
+
+    /**
+     * Visit a parse tree produced by the {@code AlwaysFunction}
+     * labeled alternative in {@link LucidParser#alwaysStat}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitAlwaysFunction(LucidParser.AlwaysFunctionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#block}.
 	 * @param ctx the parse tree
@@ -387,28 +417,34 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBitSelection(LucidParser.BitSelectionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#signal}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSignal(LucidParser.SignalContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#caseStat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCaseStat(LucidParser.CaseStatContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#caseElem}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCaseElem(LucidParser.CaseElemContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#caseBlock}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCaseBlock(LucidParser.CaseBlockContext ctx);
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitSignal(LucidParser.SignalContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#caseStat}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitCaseStat(LucidParser.CaseStatContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#caseElem}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitCaseElem(LucidParser.CaseElemContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#caseBlock}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitCaseBlock(LucidParser.CaseBlockContext ctx);
 
     /**
      * Visit a parse tree produced by {@link LucidParser#ifStat}.
@@ -468,8 +504,8 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 
     /**
      * Visit a parse tree produced by the {@code ExprTernary}
-     * labeled alternative in {@link LucidParser#expr}.
-     * @param ctx the parse tree
+	 * labeled alternative in {@link LucidParser#expr}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitExprTernary(LucidParser.ExprTernaryContext ctx);

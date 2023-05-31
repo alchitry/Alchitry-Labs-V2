@@ -1,6 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
-import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
@@ -17,7 +17,7 @@ import org.antlr.v4.runtime.tree.ParseTree
  * This is responsible for checking that all the bits of signals that are expected to be driven are driven.
  */
 data class SignalDriverParser(
-    private val context: LucidModuleContext
+    private val context: LucidBlockContext
 ) : LucidBaseListener() {
     private val drivenSignals = mutableMapOf<ParseTree, Map<Signal, Value>>()
     private val signalStack = mutableListOf<MutableMap<Signal, Value>>()
@@ -128,7 +128,7 @@ data class SignalDriverParser(
     }
 
     override fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
-        expectedDrivers = (context.alwaysParser.alwaysBlocks[ctx]?.drivenSignals
+        expectedDrivers = (context.blockParser.alwaysBlocks[ctx]?.drivenSignals
             ?: error("Failed to resolve always block!"))
     }
 

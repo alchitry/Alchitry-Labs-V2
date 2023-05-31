@@ -1,7 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
 import com.alchitry.labs.parsers.lucidv2.ErrorCollector
-import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
@@ -16,8 +16,8 @@ class ModuleInstance(
     parameters: Map<String, Value>,
     connections: Map<String, SignalOrSubSignal>,
     errorCollector: ErrorCollector = ErrorCollector()
-) : ModuleInstanceOrArray, ListOrModuleInstance {
-    val context = LucidModuleContext(project, this, errorCollector = errorCollector)
+) : ModuleInstanceOrArray, ListOrModuleInstance, TestOrModuleInstance {
+    val context = LucidBlockContext(project, this, errorCollector = errorCollector)
 
     fun checkParameters(): String? {
         val paramErrors = context.checkParameters() ?: return null

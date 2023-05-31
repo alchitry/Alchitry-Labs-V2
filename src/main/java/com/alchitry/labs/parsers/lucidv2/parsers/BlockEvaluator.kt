@@ -1,6 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
-import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
@@ -8,22 +8,33 @@ import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
 
-data class AlwaysEvaluator(
-    private val context: LucidModuleContext
+data class BlockEvaluator(
+    private val context: LucidBlockContext
 ) : LucidBaseListener() {
-    fun withContext(context: LucidModuleContext) = copy(context = context)
+    fun withContext(context: LucidBlockContext) = copy(context = context)
 
     private val writtenSignals = mutableSetOf<Signal>()
     private var alwaysBlock: AlwaysBlockContext? = null
+    private var testBlock: TestBlockContext? = null
 
     override fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
-        check(context.stage == ParseStage.Evaluation) { "The AlwaysEvaluator should only be used in evaluations!" }
+        check(context.stage == ParseStage.Evaluation) { "The BlockEvaluator should only be used in evaluations!" }
         writtenSignals.clear()
         alwaysBlock = ctx
     }
 
     override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
         alwaysBlock = null
+    }
+
+    override fun enterTestBlock(ctx: TestBlockContext) {
+        check(context.stage == ParseStage.Evaluation) { "The BlockEvaluator should only be used in evaluations!" }
+        writtenSignals.clear()
+        testBlock = ctx
+    }
+
+    override fun exitTestBlock(ctx: TestBlockContext) {
+        testBlock = null
     }
 
     suspend fun processWriteQueue() {
@@ -72,7 +83,7 @@ data class AlwaysEvaluator(
     }
 
     override fun exitRepeatStat(ctx: RepeatStatContext) {
-        val signal = context.alwaysParser.alwaysBlocks[alwaysBlock]?.repeatSignals?.get(ctx)
+        val signal = context.blockParser.alwaysBlocks[alwaysBlock]?.repeatSignals?.get(ctx)
         val countValue = context.expr.resolve(ctx.expr()) as? SimpleValue ?: return
 
         val count = countValue.toBigInt().toInt()

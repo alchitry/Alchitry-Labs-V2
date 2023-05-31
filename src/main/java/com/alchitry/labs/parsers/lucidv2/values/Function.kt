@@ -1,6 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
-enum class Function(val label: String, val argCount: Int, val constOnly: Boolean) {
+enum class Function(val label: String, val argCount: Int, val constOnly: Boolean, val testOnly: Boolean = false) {
     CLOG2("clog2", 1, true),
     POWER("pow", 2, true),
     REVERSE("reverse", 1, true),
@@ -13,7 +13,10 @@ enum class Function(val label: String, val argCount: Int, val constOnly: Boolean
     WIDTH("widthOf", 1, false),
     FIXEDPOINT("fixedPoint", 3, true),
     CFIXEDPOINT("cFixedPoint", 3, true),
-    FFIXEDPOINT("fFixedPoint", 3, true)
+    FFIXEDPOINT("fFixedPoint", 3, true),
+    TICK("tick", 0, constOnly = false, testOnly = true),
+    ASSERT("assert", 1, constOnly = false, testOnly = true),
+    CALL("call", -1, constOnly = false, testOnly = true)
 }
 
 sealed class FunctionArg {

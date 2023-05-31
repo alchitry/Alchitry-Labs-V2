@@ -19,7 +19,7 @@ module: 'module' NL* name NL* paramList? NL* portList NL* moduleBody;
 testBench: 'testBench' NL* name NL* moduleBody;
 
 paramList: '#(' NL* paramDec (NL* ',' NL* paramDec)* NL* ')';
-portList: '(' NL* portDec (NL* ',' NL* portDec)* NL* ')';
+portList: '(' (NL* portDec (NL* ',' NL* portDec)*)? NL* ')';
 
 paramDec: name (NL* '=' NL* paramDefault)? (NL* ':' NL* paramConstraint)?;
 paramDefault: expr;
@@ -69,7 +69,8 @@ connection: paramCon | sigCon;
 structMember: (SIGNED NL*)? name signalWidth;
 structDec: 'struct' NL* name NL* '{' NL* structMember (NL* ',' NL* structMember)* NL* '}' semi;
 
-functionBlock: 'fun' NL* name NL* block;
+functionArg: name signalWidth;
+functionBlock: 'fun' NL* name NL* '(' (NL* functionArg (NL* ',' NL* functionArg)*)? NL* ')' block;
 testBlock: 'test' NL* name NL* block;
 
 alwaysBlock: 'always' NL* block;
@@ -79,6 +80,7 @@ alwaysStat
   | caseStat       #AlwaysCase
   | ifStat         #AlwaysIf
   | repeatStat     #AlwaysRepeat
+  | function       #AlwaysFunction
   ;
 
 block
@@ -107,7 +109,7 @@ elseStat: 'else' NL* block;
 repeatStat: 'repeat' NL* '(' NL* expr NL* (',' NL* name NL*)? ')' NL* repeatBlock;
 repeatBlock: block;
 
-function: FUNCTION_ID NL* '(' NL* functionExpr (NL* ',' NL* functionExpr)* NL* ')';
+function: FUNCTION_ID NL* '(' (NL* functionExpr (NL* ',' NL* functionExpr)*)? NL* ')';
 functionExpr: expr | REAL;
 
 number: HEX | BIN | DEC | INT | STRING;

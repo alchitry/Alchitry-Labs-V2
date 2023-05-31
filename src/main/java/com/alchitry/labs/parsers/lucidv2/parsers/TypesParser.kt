@@ -1,6 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
-import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
@@ -12,7 +12,7 @@ import com.alchitry.labs.parsers.lucidv2.types.ModuleInstanceOrArray
 import com.alchitry.labs.parsers.lucidv2.values.*
 
 data class TypesParser(
-    private val context: LucidModuleContext
+    private val context: LucidBlockContext
 ) : LucidBaseListener(), SignalResolver {
     val dffs = mutableMapOf<String, Dff>()
     val sigs = mutableMapOf<String, Signal>()
@@ -193,7 +193,7 @@ data class TypesParser(
             ModuleInstance(
                 moduleInstanceName,
                 context.project,
-                context.instance,
+                context.instance as? ModuleInstance,
                 moduleType,
                 instParams,
                 instPorts
@@ -269,7 +269,7 @@ data class TypesParser(
             ModuleInstanceArray(
                 moduleInstanceName,
                 context.project,
-                context.instance,
+                context.instance as? ModuleInstance,
                 moduleType,
                 dimensions,
                 signalProvider = { idx ->

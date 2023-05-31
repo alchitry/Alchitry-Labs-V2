@@ -1,6 +1,6 @@
 package helpers
 
-import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidLexer
@@ -20,7 +20,7 @@ class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = nul
     ) {
 
     val project = ProjectContext()
-    val context = LucidModuleContext(
+    val context = LucidBlockContext(
         project,
         ModuleInstance(
             "top",

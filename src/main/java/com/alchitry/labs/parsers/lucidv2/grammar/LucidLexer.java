@@ -65,8 +65,10 @@ public class LucidLexer extends Lexer {
                 null, "';'", null, "'signed'"
         };
     }
-	private static final String[] _LITERAL_NAMES = makeLiteralNames();
-	private static String[] makeSymbolicNames() {
+
+    private static final String[] _LITERAL_NAMES = makeLiteralNames();
+
+    private static String[] makeSymbolicNames() {
         return new String[]{
                 null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null, null, null,
@@ -158,16 +160,17 @@ public class LucidLexer extends Lexer {
 	}
 	private boolean BIN_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 1:
-			return _input.LA(1) != '{';
-		}
-		return true;
-	}
-	private boolean TYPE_ID_sempred(RuleContext _localctx, int predIndex) {
-		switch (predIndex) {
-		case 2:
-			return _input.LA(1) != '{';
-		}
+            case 1:
+                return _input.LA(1) != '{';
+        }
+        return true;
+    }
+
+    private boolean TYPE_ID_sempred(RuleContext _localctx, int predIndex) {
+        switch (predIndex) {
+            case 2:
+                return _input.LA(1) != '{';
+        }
         return true;
     }
 

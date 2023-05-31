@@ -3,6 +3,7 @@ package com.alchitry.labs.parsers.lucidv2.context
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.types.GlobalNamespace
 import com.alchitry.labs.parsers.lucidv2.types.Module
+import com.alchitry.labs.parsers.lucidv2.types.TestBench
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -17,9 +18,14 @@ class ProjectContext {
 
     private val globals = mutableMapOf<String, GlobalNamespace>()
     private val modules = mutableMapOf<String, Module>()
+    private val testBenches = mutableMapOf<String, TestBench>()
 
     private val evaluationQueue = mutableSetOf<Evaluable>()
     private val queueLock = Mutex()
+
+    fun getTestBenches(): List<TestBench> {
+        return testBenches.values.toList()
+    }
 
     var initializing: Boolean = false
         private set
@@ -62,6 +68,9 @@ class ProjectContext {
 
     fun addModule(module: Module): Boolean =
         modules.putIfAbsent(module.name, module) == null
+
+    fun addTestBench(testBench: TestBench): Boolean =
+        testBenches.putIfAbsent(testBench.name, testBench) == null
 
     /**
      * Searches all GlobalNamespaces to resolve a signal name.

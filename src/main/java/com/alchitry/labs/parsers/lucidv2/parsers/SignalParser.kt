@@ -1,7 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
+import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidExprContext
-import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.*
@@ -29,12 +29,12 @@ data class SignalParser(
 
     override fun enterRepeatBlock(ctx: RepeatBlockContext) {
         val repCtx = ctx.getParent() as RepeatStatContext
-        if (context is LucidModuleContext) {
-            val alwaysParent = (ctx.firstParentOrNull { it is AlwaysBlockContext }
-                ?: error("Repeat statement without an AlwaysBlock parent?")) as AlwaysBlockContext
+        if (context is LucidBlockContext) {
+            val alwaysParent = ctx.firstParentOrNull { it is AlwaysBlockContext }
+                ?: return
 
             val repeatSignals =
-                context.alwaysParser.alwaysBlocks[alwaysParent]?.repeatSignals ?: context.alwaysParser.repeatSignals
+                context.blockParser.alwaysBlocks[alwaysParent]?.repeatSignals ?: context.blockParser.repeatSignals
             val newSig = repeatSignals[repCtx] ?: return//error("Missing repeat signal for repeat block!")
             localRepeatSignals[newSig.name] = newSig
         }

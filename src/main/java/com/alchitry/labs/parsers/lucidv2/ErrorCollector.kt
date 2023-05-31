@@ -84,15 +84,23 @@ class ErrorCollector : ErrorListener, ANTLRErrorListener {
         //syntaxIssues.add("Syntax context sensitivity at $startIndex to $stopIndex")
     }
 
-    val hasNoIssues: Boolean get() = hasNoSyntaxIssues && hasNoErrors && hasNoWarnings
-
-    val hasNoErrors: Boolean get() {
+    fun printErrors() {
         errors.forEach {
             println(it)
         }
-        return errors.isEmpty()
     }
-    val hasNoWarnings: Boolean get() {
+
+    val hasNoIssues: Boolean get() = hasNoSyntaxIssues && hasNoErrors && hasNoWarnings
+
+    val hasNoErrors: Boolean
+        get() {
+            errors.forEach {
+                println(it)
+            }
+            return errors.isEmpty()
+        }
+    val hasNoWarnings: Boolean
+        get() {
         warnings.forEach {
             println(it)
         }

@@ -1,7 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
-import com.alchitry.labs.parsers.lucidv2.context.LucidModuleContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.AlwaysBlockContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.RepeatStatContext
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
@@ -10,7 +10,7 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 
 class AlwaysBlock(
-    context: LucidModuleContext,
+    context: LucidBlockContext,
     dependencies: Set<Signal>,
     val drivenSignals: Set<Signal>,
     val repeatSignals: Map<RepeatStatContext, Signal>,
@@ -39,6 +39,6 @@ class AlwaysBlock(
             error("Failed to evaluate always block!")
         }
 
-        context.alwaysEvaluator.processWriteQueue()
+        context.blockEvaluator.processWriteQueue()
     }
 }
