@@ -16,7 +16,7 @@ enum class Function(val label: String, val argCount: Int, val constOnly: Boolean
     FFIXEDPOINT("fFixedPoint", 3, true),
     TICK("tick", 0, constOnly = false, testOnly = true),
     ASSERT("assert", 1, constOnly = false, testOnly = true),
-    CALL("call", -1, constOnly = false, testOnly = true)
+    PRINT("print", 1, constOnly = false, testOnly = true)
 }
 
 sealed class FunctionArg {

@@ -1473,7 +1473,13 @@ data class ExprParser(
                 }
             }
 
-            Function.CALL -> TODO()
+            Function.PRINT -> {
+                val value = when (val arg = args[0]) {
+                    is FunctionArg.RealArg -> arg.value.toString()
+                    is FunctionArg.ValueArg -> arg.value.toString()
+                }
+                context.print("${ctx.functionExpr(0).text} = $value")
+            }
         }
         debug(ctx)
     }

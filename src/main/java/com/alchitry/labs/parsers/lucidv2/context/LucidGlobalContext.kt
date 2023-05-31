@@ -14,8 +14,6 @@ class LucidGlobalContext(
     val errorCollector: ErrorCollector = ErrorCollector()
 ) : LucidExprContext, ErrorListener by errorCollector {
     override val evalContext: Evaluable? = null
-    override fun tick() = error("LucidGlobalContext doesn't support tick()")
-    override fun abortTest() = error("LucidGlobalContext doesn't support abortTest()")
 
     private val expr = ExprParser(this)
     private val bitSelection = BitSelectionParser(this)

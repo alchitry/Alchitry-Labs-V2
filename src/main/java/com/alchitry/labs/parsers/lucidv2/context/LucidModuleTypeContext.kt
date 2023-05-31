@@ -31,9 +31,6 @@ class LucidModuleTypeContext(
         this.module
     )
 
-    override fun tick() = error("LucidModuleTypeContext doesn't support tick()")
-    override fun abortTest() = error("LucidModuleTypeContext doesn't support abortTest()")
-
     fun extract(t: SourceContext): Module? {
         ParseTreeMultiWalker.walk(
             listeners,

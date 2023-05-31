@@ -193,6 +193,12 @@ sealed class SimpleValue(
             sb.append(bv.toString().substring(1))
         }
         sb.append('}')
+
+        if (isNumber()) {
+            sb.append(" : ")
+            sb.append(toBigInt().toString())
+        }
+
         return sb.toString()
     }
 

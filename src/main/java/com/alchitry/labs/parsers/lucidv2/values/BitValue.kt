@@ -49,15 +49,7 @@ data class BitValue(
     )
 
     override fun toString(): String {
-        val sb = StringBuilder()
-        if (constant)
-            sb.append("const ")
-        if (signed)
-            sb.append("signed ")
-        sb.append('{')
-        sb.append(bit.toString().substring(1))
-        sb.append('}')
-        return sb.toString()
+        return super.toString()
     }
 
     override fun write(selection: List<SignalSelector>, newValue: Value): BitValue {

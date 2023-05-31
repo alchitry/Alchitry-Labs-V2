@@ -56,6 +56,12 @@ class LucidBlockContext(
         throw TestAbortedException()
     }
 
+    override fun print(text: String) {
+        if (stage != ParseStage.Evaluation)
+            return
+        println(text)
+    }
+
     // These will be run multiple times during evaluation, so they need their context updated
     val expr = expr?.withContext(this) ?: ExprParser(this)
     val bitSelection = bitSelection?.withContext(this) ?: BitSelectionParser(this)

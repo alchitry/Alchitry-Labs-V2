@@ -67,18 +67,7 @@ data class BitListValue(
     }
 
     override fun toString(): String {
-        val sb = StringBuilder()
-        if (constant)
-            sb.append("const ")
-        if (signed)
-            sb.append("signed ")
-        sb.append('{')
-        for (i in bits.indices.reversed()) {
-            val bv = bits[i]
-            sb.append(bv.toString().substring(1))
-        }
-        sb.append('}')
-        return sb.toString()
+        return super.toString()
     }
 
     override fun write(selection: List<SignalSelector>, newValue: Value): BitListValue {

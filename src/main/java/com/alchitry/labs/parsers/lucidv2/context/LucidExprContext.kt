@@ -27,6 +27,7 @@ interface LucidExprContext : ErrorListener {
     val evalContext: Evaluable?
     val project: ProjectContext
 
-    fun tick()
-    fun abortTest()
+    fun tick(): Unit = error("tick() isn't supported!")
+    fun abortTest(): Unit = error("abortTest() isn't supported!")
+    fun print(text: String): Unit = error("print() isn't support!")
 }
