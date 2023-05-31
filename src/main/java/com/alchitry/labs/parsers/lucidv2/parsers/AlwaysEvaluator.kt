@@ -72,13 +72,13 @@ data class AlwaysEvaluator(
     }
 
     override fun exitRepeatStat(ctx: RepeatStatContext) {
-        val signal = context.alwaysParser.alwaysBlocks[alwaysBlock]?.repeatSignals?.get(ctx) ?: return
+        val signal = context.alwaysParser.alwaysBlocks[alwaysBlock]?.repeatSignals?.get(ctx)
         val countValue = context.expr.resolve(ctx.expr()) as? SimpleValue ?: return
 
         val count = countValue.toBigInt().toInt()
 
         repeat(count) {
-            signal.quietWrite(
+            signal?.quietWrite(
                 BitListValue(
                     value = it,
                     width = signal.width.getBitCount() ?: error("Repeat signal has an undefined width!"),

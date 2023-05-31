@@ -142,17 +142,7 @@ data class BlockParser(
 
     override fun enterRepeatBlock(ctx: RepeatBlockContext) {
         val repCtx = ctx.getParent() as RepeatStatContext
-        val sigName = repCtx.name().text
-
-        if (repCtx.name().TYPE_ID() == null) {
-            context.reportError(repCtx.name(), "Repeat variable name must start with a lowercase letter.")
-            return
-        }
-
-        if (context.resolveSignal(sigName) != null) {
-            context.reportError(repCtx.name(), "The name \"$sigName\" is already in use!")
-            return
-        }
+        val sigName = repCtx.name()?.text
 
         val countValue = context.resolve(repCtx.expr())
 
@@ -175,6 +165,19 @@ data class BlockParser(
 
         if (count < 1) {
             context.errorCollector.reportError(repCtx.expr(), "Repeat count must be greater than 0.")
+            return
+        }
+
+        if (sigName == null)
+            return
+
+        if (repCtx.name().TYPE_ID() == null) {
+            context.reportError(repCtx.name(), "Repeat variable name must start with a lowercase letter.")
+            return
+        }
+
+        if (context.resolveSignal(sigName) != null) {
+            context.reportError(repCtx.name(), "The name \"$sigName\" is already in use!")
             return
         }
 
