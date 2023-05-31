@@ -18,11 +18,12 @@ import com.alchitry.labs.parsers.lucidv2.values.minBits
 data class BlockParser(
     private val context: LucidBlockContext,
     val alwaysBlocks: MutableMap<AlwaysBlockContext, AlwaysBlock> = mutableMapOf(),
-    val testBlocks: MutableMap<TestBlockContext, TestBlock> = mutableMapOf()
+    val testBlocks: MutableMap<TestBlockContext, TestBlock> = mutableMapOf(),
+    val repeatSignals: MutableMap<RepeatStatContext, Signal> = mutableMapOf()
 ) : LucidBaseListener() {
     private val dependencies = mutableSetOf<Signal>()
     private val drivenSignals = mutableSetOf<Signal>()
-    val repeatSignals = mutableMapOf<RepeatStatContext, Signal>()
+    private val localRepeatSignals = mutableMapOf<RepeatStatContext, Signal>()
 
     private var inTestBlock = false
 
@@ -35,7 +36,7 @@ data class BlockParser(
     private fun enterBlock() {
         dependencies.clear()
         drivenSignals.clear()
-        repeatSignals.clear()
+        localRepeatSignals.clear()
     }
 
     override fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
@@ -48,7 +49,7 @@ data class BlockParser(
 
     override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
         alwaysBlocks[ctx] =
-            AlwaysBlock(context, dependencies.toSet(), drivenSignals.toSet(), repeatSignals.toMap(), ctx)
+            AlwaysBlock(context, dependencies.toSet(), drivenSignals.toSet(), localRepeatSignals.toMap(), ctx)
     }
 
     override fun enterTestBlock(ctx: TestBlockContext) {
@@ -211,6 +212,6 @@ data class BlockParser(
                 constant = false,
                 signed = false
             )
-        )
+        ).also { localRepeatSignals[repCtx] = it }
     }
 }

@@ -12,19 +12,14 @@ class TestBenchTests {
                     counter dut (.clk(clk))
                     
                     test simpleTest {
-                        clk = 0
-                        ${"$"}tick()
-                        ${"$"}assert(dut.count == 0)
-                        clk = 1
-                        ${"$"}tick()
-                        clk = 0
-                        ${"$"}tick()
-                        ${"$"}assert(dut.count == 1)
-                        clk = 1
-                        ${"$"}tick()
-                        clk = 0
-                        ${"$"}tick()
-                        ${"$"}assert(dut.count == 2)
+                        repeat(100, i) {
+                            clk = 0
+                            ${"$"}tick()
+                            ${"$"}assert(dut.count == i)
+                            clk = 1
+                            ${"$"}tick()
+                        }
+                        ${"$"}assert(dut.count == 100)
                     }
                 }
             """.trimIndent(),

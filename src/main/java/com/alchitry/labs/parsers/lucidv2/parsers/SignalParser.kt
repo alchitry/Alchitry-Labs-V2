@@ -31,12 +31,9 @@ data class SignalParser(
             return
 
         val repCtx = ctx.getParent() as RepeatStatContext
-        val alwaysParent = (ctx.firstParentOrNull { it is AlwaysBlockContext }
-            ?: error("Repeat statement without an AlwaysBlock parent outside of evaluation?")) as AlwaysBlockContext
 
-        val repeatSignals =
-            context.blockParser.alwaysBlocks[alwaysParent]?.repeatSignals ?: context.blockParser.repeatSignals
-        val newSig = repeatSignals[repCtx] ?: return//error("Missing repeat signal for repeat block!")
+        val repeatSignals = context.blockParser.repeatSignals
+        val newSig = repeatSignals[repCtx] ?: return
         context.localSignals[newSig.name] = newSig
     }
 
