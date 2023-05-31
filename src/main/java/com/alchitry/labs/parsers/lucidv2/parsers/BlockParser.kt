@@ -24,6 +24,8 @@ data class BlockParser(
     private val drivenSignals = mutableSetOf<Signal>()
     val repeatSignals = mutableMapOf<RepeatStatContext, Signal>()
 
+    private var inTestBlock = false
+
     suspend fun queueEval() {
         alwaysBlocks.values.forEach {
             context.project.queueEvaluation(it)
@@ -50,6 +52,7 @@ data class BlockParser(
     }
 
     override fun enterTestBlock(ctx: TestBlockContext) {
+        inTestBlock = true
         enterBlock()
 
         if (ctx.firstParentOrNull { it is TestBenchContext } == null) {
@@ -58,6 +61,7 @@ data class BlockParser(
     }
 
     override fun exitTestBlock(ctx: TestBlockContext) {
+        inTestBlock = false
         val name = ctx.name().text
 
         if (ctx.name().TYPE_ID() == null) {
@@ -66,7 +70,13 @@ data class BlockParser(
         }
 
         testBlocks[ctx] =
-            TestBlock(name, context, dependencies.toSet(), drivenSignals.toSet(), repeatSignals.toMap(), ctx)
+            TestBlock(name, context, dependencies.toSet(), drivenSignals.toSet(), ctx)
+    }
+
+    override fun exitAlwaysFunction(ctx: AlwaysFunctionContext) {
+        if (!inTestBlock) {
+            context.reportError(ctx, "Functions can only be called stand-alone in test blocks.")
+        }
     }
 
     override fun exitExprSignal(ctx: ExprSignalContext) {

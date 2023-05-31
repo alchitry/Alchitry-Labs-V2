@@ -19,8 +19,7 @@ fun ParserRuleContext.firstParentOrNull(condition: (ParserRuleContext) -> Boolea
 data class SignalParser(
     private val context: LucidExprContext,
     private val signals: MutableMap<SignalContext, SignalOrSubSignal> = mutableMapOf(),
-    private val signalWidths: MutableMap<SignalWidthContext, SignalWidth> = mutableMapOf(),
-    private val localRepeatSignals: MutableMap<String, Signal> = mutableMapOf()
+    private val signalWidths: MutableMap<SignalWidthContext, SignalWidth> = mutableMapOf()
 ) : LucidBaseListener() {
     fun withContext(context: LucidExprContext) = copy(context = context)
 
@@ -28,26 +27,30 @@ data class SignalParser(
     fun resolve(ctx: SignalWidthContext): SignalWidth? = signalWidths[ctx]
 
     override fun enterRepeatBlock(ctx: RepeatBlockContext) {
-        val repCtx = ctx.getParent() as RepeatStatContext
-        if (context is LucidBlockContext) {
-            val alwaysParent = ctx.firstParentOrNull { it is AlwaysBlockContext }
-                ?: return
+        if (context !is LucidBlockContext || context.stage == ParseStage.Evaluation)
+            return
 
-            val repeatSignals =
-                context.blockParser.alwaysBlocks[alwaysParent]?.repeatSignals ?: context.blockParser.repeatSignals
-            val newSig = repeatSignals[repCtx] ?: return//error("Missing repeat signal for repeat block!")
-            localRepeatSignals[newSig.name] = newSig
-        }
+        val repCtx = ctx.getParent() as RepeatStatContext
+        val alwaysParent = (ctx.firstParentOrNull { it is AlwaysBlockContext }
+            ?: error("Repeat statement without an AlwaysBlock parent outside of evaluation?")) as AlwaysBlockContext
+
+        val repeatSignals =
+            context.blockParser.alwaysBlocks[alwaysParent]?.repeatSignals ?: context.blockParser.repeatSignals
+        val newSig = repeatSignals[repCtx] ?: return//error("Missing repeat signal for repeat block!")
+        context.localSignals[newSig.name] = newSig
     }
 
     override fun exitRepeatBlock(ctx: RepeatBlockContext) {
+        if (context !is LucidBlockContext || context.stage == ParseStage.Evaluation)
+            return
+
         val repCtx = ctx.getParent() as RepeatStatContext
-        localRepeatSignals.remove(repCtx.name().text)
+        context.localSignals.remove(repCtx.name().text)
     }
 
     override fun exitSignal(ctx: SignalContext) {
         val firstName = ctx.name().firstOrNull() ?: return
-        val signalOrParent = localRepeatSignals[firstName.text] ?: context.resolveSignal(firstName.text)
+        val signalOrParent = context.resolveSignal(firstName.text)
 
         if (signalOrParent == null) {
             context.reportError(ctx.name(0), "Failed to resolve signal \"${firstName.text}\"")

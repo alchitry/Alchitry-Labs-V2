@@ -4,9 +4,11 @@ import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
+import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
+import com.alchitry.labs.parsers.lucidv2.values.minBits
 
 data class BlockEvaluator(
     private val context: LucidBlockContext
@@ -83,10 +85,23 @@ data class BlockEvaluator(
     }
 
     override fun exitRepeatStat(ctx: RepeatStatContext) {
-        val signal = context.blockParser.alwaysBlocks[alwaysBlock]?.repeatSignals?.get(ctx)
         val countValue = context.expr.resolve(ctx.expr()) as? SimpleValue ?: return
-
         val count = countValue.toBigInt().toInt()
+
+        val signalName = ctx.name()?.text
+        val width = (count - 1).toBigInteger().minBits()
+
+        val signal =
+            signalName?.let {
+                Signal(
+                    signalName,
+                    SignalDirection.Read,
+                    null,
+                    BitListValue(0, width, false, false)
+                )
+            }
+
+        signal?.let { context.localSignals[it.name] = it }
 
         repeat(count) {
             signal?.quietWrite(
@@ -100,5 +115,7 @@ data class BlockEvaluator(
             )
             context.walk(ctx.repeatBlock())
         }
+
+        signal?.let { context.localSignals.remove(it.name) }
     }
 }

@@ -4,6 +4,7 @@ import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.parsers.*
+import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
 import com.alchitry.labs.parsers.lucidv2.types.TestAbortedException
@@ -31,6 +32,14 @@ class LucidBlockContext(
     signalDriver: SignalDriverParser? = null,
     val localSignalResolver: SignalResolver? = null // Used in tests to simulate a full parse.
 ) : LucidExprContext, ErrorListener by errorCollector {
+
+    private val localSignalStack = mutableListOf<MutableMap<String, Signal>>(mutableMapOf())
+    val localSignals: MutableMap<String, Signal> get() = localSignalStack.last()
+
+    fun pushLocalStack(): MutableMap<String, Signal> =
+        mutableMapOf<String, Signal>().also { localSignalStack.add(it) }
+
+    fun popLocalStack() = localSignalStack.removeLast()
 
     override fun tick() {
         if (stage != ParseStage.Evaluation)
@@ -179,6 +188,7 @@ class LucidBlockContext(
      */
     override fun resolveSignal(name: String): SignalOrParent? {
         localSignalResolver?.resolve(name)?.let { return it }
+        localSignals[name]?.let { return it }
         types.resolve(name)?.let { return it }
         constant.resolve(name)?.let { return it }
         enum.resolve(name)?.let { return it }
