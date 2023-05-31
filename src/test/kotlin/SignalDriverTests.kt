@@ -14,12 +14,12 @@ class SignalDriverTests {
                 module myModule (
                     input a
                 ) {
-                    sig test[8]
+                    sig mySig[8]
                    
                     always {
-                        test = 8b0;
+                        mySig = 8b0;
                         
-                        if (test) {} // to remove unused signal warning
+                        if (mySig) {} // to remove unused signal warning
                         if (a) {}
                     }
                 }
@@ -35,16 +35,16 @@ class SignalDriverTests {
                 module myModule (
                     input a
                 ) {
-                    sig test[8]
+                    sig mySig[8]
                     
                     always {
-                        test = 8b1;
+                        mySig = 8b1;
                     }
                    
                     always {
-                        test = 8b0;
+                        mySig = 8b0;
                         
-                        if (test) {} // to remove unused signal warning
+                        if (mySig) {} // to remove unused signal warning
                         if (a) {}
                     }
                 }
@@ -63,12 +63,12 @@ class SignalDriverTests {
                 module myModule (
                     input a
                 ) {
-                    sig test[8]
+                    sig mySig[8]
                    
                     always {
-                        test[4:0] = 0;
+                        mySig[4:0] = 0;
                         
-                        if (test) { } // to remove unused signal warning
+                        if (mySig) { } // to remove unused signal warning
                         if (a) {}
                     }
                 }
@@ -87,13 +87,13 @@ class SignalDriverTests {
                 module myModule (
                     input a
                 ) {
-                    sig test[8]
+                    sig mySig[8]
                    
                     always {
-                        test[4:0] = 0;
-                        test[7:5] = 1;
+                        mySig[4:0] = 0;
+                        mySig[7:5] = 1;
                         
-                        if (test) { } // to remove unused signal warning
+                        if (mySig) { } // to remove unused signal warning
                         if (a) {}
                     }
                 }
@@ -109,11 +109,11 @@ class SignalDriverTests {
                 module myModule (
                     input a
                 ) {
-                    sig test[8]
+                    sig mySig[8]
                    
                     always {
                         if (1) {
-                            test = 0
+                            mySig = 0
                         }
                         if (a) {}
                     }
@@ -132,15 +132,15 @@ class SignalDriverTests {
                 module myModule (
                     input a
                 ) {
-                    sig test[8]
+                    sig mySig[8]
                    
                     always {
                         if (1) 
-                            test = a
+                            mySig = a
                         else
-                            test = 1
+                            mySig = 1
                             
-                        if (test) {} // used to remove unread warnings
+                        if (mySig) {} // used to remove unread warnings
                         if (a) {}
                     }
                 }
@@ -157,10 +157,10 @@ class SignalDriverTests {
                     input a,
                     output b[8]
                 ) {
-                    sig test[8] = 12
+                    sig mySig[8] = 12
                    
                     always {
-                        b = test
+                        b = mySig
                         if (a) {}
                     }
                 }
@@ -183,11 +183,11 @@ class SignalDriverTests {
                     input a,
                     output b[8]
                 ) {
-                    sig test[8] = 12
+                    sig mySig[8] = 12
                    
                     always {
-                        test = a
-                        b = test
+                        mySig = a
+                        b = mySig
                     }
                 }
             """.trimIndent()
@@ -206,11 +206,11 @@ class SignalDriverTests {
                     input a,
                     output b[8]
                 ) {
-                    sig test[8] = 9b0 // 9b0 is wider than 8 bits
+                    sig mySig[8] = 9b0 // 9b0 is wider than 8 bits
                    
                     always {
                         if (a) {}
-                        b = test
+                        b = mySig
                     }
                 }
             """.trimIndent()

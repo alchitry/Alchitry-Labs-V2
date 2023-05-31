@@ -17,11 +17,11 @@ class DynamicEvalTests {
     fun basicDynamicExpr() {
         repeat(30) { // repeat to attempt to check for race conditions
             val signal =
-                Signal("test", SignalDirection.Both, null, BitListValue("110", 2, constant = false, signed = false))
+                Signal("mySig", SignalDirection.Both, null, BitListValue("110", 2, constant = false, signed = false))
 
             val test =
                 SimpleLucidTester(
-                    "~test",
+                    "~mySig",
                     localSignalResolver = TestSignalResolver(signal)
                 )
 

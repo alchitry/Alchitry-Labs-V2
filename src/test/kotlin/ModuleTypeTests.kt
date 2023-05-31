@@ -24,7 +24,7 @@ class ModuleTypeTests {
                     input clk,
                     signed input rst,
                     output count[8],
-                    inout test
+                    inout a
                 ) {
                 }
             """.trimIndent()
@@ -58,7 +58,7 @@ class ModuleTypeTests {
                     "clk" to Port("clk", SignalDirection.Read, BitWidth, false),
                     "rst" to Port("rst", SignalDirection.Read, BitWidth, true),
                     "count" to Port("count", SignalDirection.Write, BitListWidth(8), false),
-                    "test" to Port("test", SignalDirection.Both, BitWidth, false)
+                    "a" to Port("a", SignalDirection.Both, BitWidth, false)
                 ),
                 tree.first().module(0)
             ),

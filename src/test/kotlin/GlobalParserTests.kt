@@ -118,7 +118,7 @@ class GlobalParserTests {
                         g[7],
                         b[6]
                     }
-                    struct test {
+                    struct myStruct {
                         color<rgb>,
                         type[8]
                     }
@@ -140,13 +140,13 @@ class GlobalParserTests {
 
         assertEquals(
             StructType(
-                "test",
+                "myStruct",
                 mapOf(
                     "color" to StructMember("color", StructWidth(rgbStruct), false),
                     "type" to StructMember("type", BitListWidth(8), false)
                 )
             ),
-            global.structs["test"]
+            global.structs["myStruct"]
         )
     }
 }

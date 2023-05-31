@@ -5,7 +5,7 @@ package com.alchitry.labs.parsers.lucidv2.grammar;
 }
 
 // starting rule
-source: (global | module | NL)* EOF;
+source: (global | module | testBench | NL)* EOF;
 
 global: 'global' NL* name NL* '{' NL* globalStat* NL* '}';
 
@@ -16,6 +16,7 @@ globalStat
   ;
 
 module: 'module' NL* name NL* paramList? NL* portList NL* moduleBody;
+testBench: 'testBench' NL* name NL* moduleBody;
 
 paramList: '#(' NL* paramDec (NL* ',' NL* paramDec)* NL* ')';
 portList: '(' NL* portDec (NL* ',' NL* portDec)* NL* ')';
@@ -45,6 +46,8 @@ stat
   | assignBlock    #StatAssign
   | alwaysBlock    #StatAlways
   | structDec      #StatStruct
+  | testBlock      #StatTest
+  | functionBlock  #StatFunction
   ;
 
 constDec: 'const' NL* name NL* '=' NL* expr semi;
@@ -65,6 +68,9 @@ connection: paramCon | sigCon;
 
 structMember: (SIGNED NL*)? name signalWidth;
 structDec: 'struct' NL* name NL* '{' NL* structMember (NL* ',' NL* structMember)* NL* '}' semi;
+
+functionBlock: 'fun' NL* name NL* block;
+testBlock: 'test' NL* name NL* block;
 
 alwaysBlock: 'always' NL* block;
 
@@ -98,7 +104,7 @@ caseBlock: (alwaysStat | NL)* alwaysStat;
 ifStat: 'if' NL* '(' NL* expr NL* ')' NL* block (NL* elseStat)?;
 elseStat: 'else' NL* block;
 
-repeatStat: 'repeat' NL* '(' NL* name NL* ',' NL* expr NL* ')' NL* repeatBlock;
+repeatStat: 'repeat' NL* '(' NL* expr NL* (',' NL* name NL*)? ')' NL* repeatBlock;
 repeatBlock: block;
 
 function: FUNCTION_ID NL* '(' NL* functionExpr (NL* ',' NL* functionExpr)* NL* ')';

@@ -23,11 +23,11 @@ class ModuleMultiPassTests {
                     input a
                 ) {
                 
-                    dff test(.clk(MyGlobal.ONE))
+                    dff myDff(.clk(MyGlobal.ONE))
                     
                     always {
-                        test.d = 0
-                        if (test.q) {}
+                        myDff.d = 0
+                        if (myDff.q) {}
                         if (a) {}
                     }
                 }
@@ -35,7 +35,7 @@ class ModuleMultiPassTests {
         )
         val context = tester.fullParse().context
 
-        val dff = context.resolveSignal("test") as Dff
+        val dff = context.resolveSignal("myDff") as Dff
 
         assertEquals(BitValue(Bit.B1, true, false), dff.clk.value)
     }
@@ -53,7 +53,7 @@ class ModuleMultiPassTests {
                     always {
                         if (a) {}
                         endValue = 0
-                        repeat(i, REP_CT) {
+                        repeat(REP_CT, i) {
                             endValue = endValue + i
                         }
                     }
@@ -149,7 +149,7 @@ class ModuleMultiPassTests {
             """
                 module myModule (
                     input a,
-                    output test[2]
+                    output b[2]
                 ) {
                     enum myFSM {
                         IDLE,
@@ -164,14 +164,14 @@ class ModuleMultiPassTests {
                     always {
                         if (a) {}
                         if (w == t) {}
-                        test = myFSM.RUN
+                        b = myFSM.RUN
                     }
                 }
             """.trimIndent()
         )
         val top = tester.fullParse()
         val context = top.context
-        val testSig = top.ports["test"]?.external
+        val testSig = top.ports["b"]?.external
 
         runBlocking {
             context.initialize()
@@ -198,10 +198,10 @@ class ModuleMultiPassTests {
         val tester = LucidTester(
             """
                 module myModule (
-                    output test[2]
+                    output a[2]
                 ) {
                     always {
-                        test = Enums.myFSM.RUN
+                        a = Enums.myFSM.RUN
                     }
                 }
             """.trimIndent(),
@@ -218,7 +218,7 @@ class ModuleMultiPassTests {
         )
         val top = tester.fullParse()
         val context = top.context
-        val testSig = top.ports["test"]?.external as Signal
+        val testSig = top.ports["a"]?.external as Signal
 
         runBlocking {
             context.initialize()

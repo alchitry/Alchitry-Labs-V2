@@ -14,7 +14,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
  */
 @SuppressWarnings("CheckReturnValue")
 public class LucidBaseListener implements LucidListener {
-	/**
+    /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
@@ -92,6 +92,24 @@ public class LucidBaseListener implements LucidListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override
+    public void enterTestBench(LucidParser.TestBenchContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitTestBench(LucidParser.TestBenchContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
     public void enterParamList(LucidParser.ParamListContext ctx) {
     }
 
@@ -114,16 +132,19 @@ public class LucidBaseListener implements LucidListener {
     }
 
     /**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitPortList(LucidParser.PortListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitPortList(LucidParser.PortListContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
 	@Override public void enterParamDec(LucidParser.ParamDecContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -331,26 +352,71 @@ public class LucidBaseListener implements LucidListener {
 	@Override public void enterStatAlways(LucidParser.StatAlwaysContext ctx) { }
 	/**
 	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStatAlways(LucidParser.StatAlwaysContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStatStruct(LucidParser.StatStructContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStatStruct(LucidParser.StatStructContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitStatAlways(LucidParser.StatAlwaysContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterStatStruct(LucidParser.StatStructContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitStatStruct(LucidParser.StatStructContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterStatTest(LucidParser.StatTestContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitStatTest(LucidParser.StatTestContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterStatFunction(LucidParser.StatFunctionContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitStatFunction(LucidParser.StatFunctionContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void enterConstDec(LucidParser.ConstDecContext ctx) { }
 	/**
@@ -489,54 +555,111 @@ public class LucidBaseListener implements LucidListener {
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStructMember(LucidParser.StructMemberContext ctx) { }
+     */
+    @Override
+    public void exitStructMember(LucidParser.StructMemberContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterStructDec(LucidParser.StructDecContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitStructDec(LucidParser.StructDecContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterFunctionBlock(LucidParser.FunctionBlockContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitFunctionBlock(LucidParser.FunctionBlockContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterTestBlock(LucidParser.TestBlockContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitTestBlock(LucidParser.TestBlockContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterAlwaysBlock(LucidParser.AlwaysBlockContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStructDec(LucidParser.StructDecContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStructDec(LucidParser.StructDecContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAlwaysBlock(LucidParser.AlwaysBlockContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAlwaysBlock(LucidParser.AlwaysBlockContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAlwaysAssign(LucidParser.AlwaysAssignContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAlwaysAssign(LucidParser.AlwaysAssignContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAlwaysCase(LucidParser.AlwaysCaseContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
+	@Override public void exitAlwaysBlock(LucidParser.AlwaysBlockContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterAlwaysAssign(LucidParser.AlwaysAssignContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitAlwaysAssign(LucidParser.AlwaysAssignContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterAlwaysCase(LucidParser.AlwaysCaseContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
      */
     @Override
     public void exitAlwaysCase(LucidParser.AlwaysCaseContext ctx) {
@@ -958,8 +1081,8 @@ public class LucidBaseListener implements LucidListener {
 
     /**
      * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
+	 *
+	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void enterExprInvert(LucidParser.ExprInvertContext ctx) { }
 	/**

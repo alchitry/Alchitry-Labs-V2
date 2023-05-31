@@ -1039,9 +1039,9 @@ internal class ExprParserTests {
     @Test
     fun simpleSignalTest() {
         val signal =
-            Signal("test", SignalDirection.Both, null, BitListValue("110", 2, constant = false, signed = false))
+            Signal("mySig", SignalDirection.Both, null, BitListValue("110", 2, constant = false, signed = false))
         val test =
-            SimpleLucidTester("test[2]", localSignalResolver = TestSignalResolver(signal))
+            SimpleLucidTester("mySig[2]", localSignalResolver = TestSignalResolver(signal))
         val exprCtx = test.expr().also { test.context.walk(it) }
 
         assert(test.hasNoIssues)
@@ -1052,9 +1052,9 @@ internal class ExprParserTests {
     @Test
     fun rangeSignalTest() {
         val signal =
-            Signal("test", SignalDirection.Both, null, BitListValue("1010", 2, constant = false, signed = false))
+            Signal("mySig", SignalDirection.Both, null, BitListValue("1010", 2, constant = false, signed = false))
         val test =
-            SimpleLucidTester("test[2:1]", localSignalResolver = TestSignalResolver(signal))
+            SimpleLucidTester("mySig[2:1]", localSignalResolver = TestSignalResolver(signal))
         val exprCtx = test.expr().also { test.context.walk(it) }
 
         assert(test.hasNoIssues)
@@ -1065,9 +1065,9 @@ internal class ExprParserTests {
     @Test
     fun rangeOutOfBoundsSignalTest() {
         val signal =
-            Signal("test", SignalDirection.Both, null, BitListValue("1010", 2, constant = false, signed = false))
+            Signal("mySig", SignalDirection.Both, null, BitListValue("1010", 2, constant = false, signed = false))
         val test =
-            SimpleLucidTester("test[9:1]", localSignalResolver = TestSignalResolver(signal))
+            SimpleLucidTester("mySig[9:1]", localSignalResolver = TestSignalResolver(signal))
         test.expr().also { test.context.walk(it) }
 
         assert(test.hasErrors)

@@ -23,7 +23,7 @@ class LucidModuleContext(
     enum: EnumParser? = null,
     struct: StructParser? = null,
     signal: SignalParser? = null,
-    alwaysParser: AlwaysParser? = null,
+    alwaysParser: BlockParser? = null,
     alwaysEvaluator: AlwaysEvaluator? = null,
     signalDriver: SignalDriverParser? = null,
     val localSignalResolver: SignalResolver? = null // Used in tests to simulate a full parse.
@@ -39,7 +39,7 @@ class LucidModuleContext(
     val struct = struct ?: StructParser(this)
     val enum = enum ?: EnumParser(this)
     val constant = constant ?: ConstantParser(this)
-    val alwaysParser = alwaysParser ?: AlwaysParser(this)
+    val alwaysParser = alwaysParser ?: BlockParser(this)
     val signalDriver = signalDriver ?: SignalDriverParser(this)
 
     private fun getListeners() = when (stage) {

@@ -196,11 +196,11 @@ internal class TypesParserTests {
 
     @Test
     fun testAssignBlockSimple() {
-        val tester = SimpleLucidTester(".clk(1), .rst(0) { dff test; }")
+        val tester = SimpleLucidTester(".clk(1), .rst(0) { dff myDff; }")
         tester.context.walk(tester.assignBlock())
         assert(tester.hasNoIssues)
 
-        val dff = tester.context.types.resolve("test")
+        val dff = tester.context.types.resolve("myDff")
 
         dff as Dff
 
@@ -210,7 +210,7 @@ internal class TypesParserTests {
 
     @Test
     fun testDoubleAssign() {
-        val tester = SimpleLucidTester(".clk(1), .rst(0) { dff test(.clk(0)); }")
+        val tester = SimpleLucidTester(".clk(1), .rst(0) { dff myDff(.clk(0)); }")
         tester.context.walk(tester.assignBlock())
         assert(tester.hasErrors)
         assert(tester.hasNoWarnings)
@@ -219,7 +219,7 @@ internal class TypesParserTests {
 
     @Test
     fun testDoubleAssignBlocks() {
-        val tester = SimpleLucidTester(".clk(1) { .clk(0) { dff test; } }")
+        val tester = SimpleLucidTester(".clk(1) { .clk(0) { dff myDff; } }")
         tester.context.walk(tester.assignBlock())
         assert(tester.hasErrors)
         assert(tester.hasNoWarnings)
@@ -233,8 +233,8 @@ internal class TypesParserTests {
             module myMod (
             input a
             ){
-            struct test { a, b[2][3], c[4] }
-            dff testing<test>(.clk(1))
+            struct myStruct { a, b[2][3], c[4] }
+            dff testing<myStruct>(.clk(1))
             }
             """.trimIndent()
         )
@@ -242,7 +242,7 @@ internal class TypesParserTests {
         assert(tester.hasNoIssues)
 
         val struct = StructType(
-            "test", mutableMapOf(
+            "myStruct", mutableMapOf(
                 "a" to StructMember("a", BitWidth, false),
                 "b" to StructMember("b", ArrayWidth(2, BitListWidth(3)), false),
                 "c" to StructMember("c", BitListWidth(4), false)
@@ -262,8 +262,8 @@ internal class TypesParserTests {
             module myMod (
             input a
             ){
-            struct test { a, b[2][3], c[4] };
-            dff testing[6]<test>(.clk(1));
+            struct myStruct { a, b[2][3], c[4] };
+            dff testing[6]<myStruct>(.clk(1));
             }
             """.trimIndent()
         )
@@ -271,7 +271,7 @@ internal class TypesParserTests {
         assert(tester.hasNoIssues)
 
         val struct = StructType(
-            "test", mutableMapOf(
+            "myStruct", mutableMapOf(
                 "a" to StructMember("a", BitWidth, false),
                 "b" to StructMember("b", ArrayWidth(2, BitListWidth(3)), false),
                 "c" to StructMember("c", BitListWidth(4), false)

@@ -6,21 +6,26 @@ import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.types.AlwaysBlock
+import com.alchitry.labs.parsers.lucidv2.types.TestBlock
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
 import com.alchitry.labs.parsers.lucidv2.values.minBits
 
 /**
- * The job of the AlwaysParser is to parse out always blocks and check them for errors. The AlwaysEvaluator is
+ * The job of the BlockParser is to parse out always blocks and check them for errors. The AlwaysEvaluator is
  * responsible for the actual evaluation after the AlwaysParser has done the first pass.
  */
-data class AlwaysParser(
+data class BlockParser(
     private val context: LucidModuleContext,
-    val alwaysBlocks: MutableMap<AlwaysBlockContext, AlwaysBlock> = mutableMapOf()
+    val alwaysBlocks: MutableMap<AlwaysBlockContext, AlwaysBlock> = mutableMapOf(),
+    val testBlocks: MutableMap<TestBlockContext, TestBlock> = mutableMapOf()
 ) : LucidBaseListener() {
     private val dependencies = mutableSetOf<Signal>()
     private val drivenSignals = mutableSetOf<Signal>()
     val repeatSignals = mutableMapOf<RepeatStatContext, Signal>()
+
+    var inTestBlock = false
+    var inAlwaysBlock = false
 
     suspend fun queueEval() {
         alwaysBlocks.values.forEach {
@@ -28,15 +33,31 @@ data class AlwaysParser(
         }
     }
 
-    override fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
+    private fun enterBlock() {
         dependencies.clear()
         drivenSignals.clear()
         repeatSignals.clear()
     }
 
+    override fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
+        enterBlock()
+        inAlwaysBlock = true
+    }
+
     override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
+        inAlwaysBlock = false
         alwaysBlocks[ctx] =
             AlwaysBlock(context, dependencies.toSet(), drivenSignals.toSet(), repeatSignals.toMap(), ctx)
+    }
+
+    override fun enterTestBlock(ctx: TestBlockContext) {
+        inTestBlock = true
+        enterBlock()
+    }
+
+    override fun exitTestBlock(ctx: TestBlockContext) {
+        inTestBlock = false
+        testBlocks[ctx] = TestBlock(context, dependencies.toSet(), drivenSignals.toSet(), repeatSignals.toMap(), ctx)
     }
 
     override fun exitExprSignal(ctx: ExprSignalContext) {
@@ -54,7 +75,7 @@ data class AlwaysParser(
         if (assignee.getSignal().hasDriver) {
             context.reportError(
                 ctx.signal(),
-                "The signal \"${ctx.signal().text}\" already has a driver so it can't be driven by this always block."
+                "The signal \"${ctx.signal().text}\" already has a driver so it can't be driven by this block."
             )
             return
         }
