@@ -42,7 +42,7 @@ data class SignalParser(
             return
 
         val repCtx = ctx.getParent() as RepeatStatContext
-        context.localSignals.remove(repCtx.name().text)
+        context.localSignals.remove(repCtx.name()?.text)
     }
 
     override fun exitSignal(ctx: SignalContext) {

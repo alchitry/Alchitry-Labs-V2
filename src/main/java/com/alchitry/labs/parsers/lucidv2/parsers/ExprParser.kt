@@ -4,13 +4,15 @@ import com.alchitry.labs.parsers.BigFunctions
 import com.alchitry.labs.parsers.Util.widthOfMult
 import com.alchitry.labs.parsers.errors.ErrorStrings
 import com.alchitry.labs.parsers.errors.WarningStrings
+import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidExprContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SubSignal
+import com.alchitry.labs.parsers.lucidv2.types.Function
+import com.alchitry.labs.parsers.lucidv2.types.FunctionArg
 import com.alchitry.labs.parsers.lucidv2.values.*
-import com.alchitry.labs.parsers.lucidv2.values.Function
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
 import org.apache.commons.text.StringEscapeUtils
@@ -1002,7 +1004,7 @@ data class ExprParser(
         val constant = ctx.functionExpr().all { c -> c.expr()?.let { values[it]?.constant == true } ?: true }
 
         val fid = ctx.FUNCTION_ID().text.substring(1) // remove $ from beginning
-        val function = Function.values().firstOrNull { it.label == fid }
+        val function = context.resolveFunction(fid)
 
         if (function == null) {
             context.reportError(ctx.FUNCTION_ID(), ErrorStrings.UNKNOWN_FUNCTION.format(fid))
@@ -1461,8 +1463,11 @@ data class ExprParser(
                 }
             }
 
-            Function.TICK -> context.tick()
+            Function.TICK -> if (context is LucidBlockContext) context.tick()
             Function.ASSERT -> {
+                if (context !is LucidBlockContext)
+                    return
+
                 val passed = when (val arg = args[0]) {
                     is FunctionArg.RealArg -> arg.value > 0.0
                     is FunctionArg.ValueArg -> arg.value.isTrue().bit == Bit.B1
@@ -1474,11 +1479,33 @@ data class ExprParser(
             }
 
             Function.PRINT -> {
+                if (context !is LucidBlockContext)
+                    return
+
                 val value = when (val arg = args[0]) {
                     is FunctionArg.RealArg -> arg.value.toString()
                     is FunctionArg.ValueArg -> arg.value.toString()
                 }
                 context.print("${ctx.functionExpr(0).text} = $value")
+            }
+
+            is Function.Custom -> {
+                if (context !is LucidBlockContext) return
+                val valArgs = checkNoReal() ?: return
+
+                function.args.forEachIndexed { index, customArg ->
+                    if (!customArg.width.canAssign(valArgs[index].width)) {
+                        context.reportError(
+                            ctx.functionExpr(index),
+                            "The function parameter \"${customArg.name}\" can't be assigned the value \"${
+                                ctx.functionExpr(index).text
+                            }\"!"
+                        )
+                        return
+                    }
+                }
+
+                context.runFunction(function, valArgs)
             }
         }
         debug(ctx)

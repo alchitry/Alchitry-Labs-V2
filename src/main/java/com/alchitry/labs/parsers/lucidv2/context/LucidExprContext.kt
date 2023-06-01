@@ -5,10 +5,8 @@ import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.parsers.BitSelection
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrSubSignal
-import com.alchitry.labs.parsers.lucidv2.types.Constant
-import com.alchitry.labs.parsers.lucidv2.types.EnumType
-import com.alchitry.labs.parsers.lucidv2.types.GlobalNamespace
-import com.alchitry.labs.parsers.lucidv2.types.StructType
+import com.alchitry.labs.parsers.lucidv2.types.*
+import com.alchitry.labs.parsers.lucidv2.types.Function
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs.parsers.lucidv2.values.Value
 
@@ -24,10 +22,7 @@ interface LucidExprContext : ErrorListener {
     fun resolveSignal(name: String): SignalOrParent?
     fun resolveStruct(name: String): StructType?
     fun resolveGlobal(name: String): GlobalNamespace?
+    fun resolveFunction(name: String): Function? = Function.builtIn().firstOrNull { it.label == name }
     val evalContext: Evaluable?
     val project: ProjectContext
-
-    fun tick(): Unit = error("tick() isn't supported!")
-    fun abortTest(): Unit = error("abortTest() isn't supported!")
-    fun print(text: String): Unit = error("print() isn't support!")
 }

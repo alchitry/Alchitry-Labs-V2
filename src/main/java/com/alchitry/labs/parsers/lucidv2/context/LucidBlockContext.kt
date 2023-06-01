@@ -6,10 +6,12 @@ import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.parsers.*
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
+import com.alchitry.labs.parsers.lucidv2.types.Function
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
 import com.alchitry.labs.parsers.lucidv2.types.TestAbortedException
 import com.alchitry.labs.parsers.lucidv2.types.TestOrModuleInstance
 import com.alchitry.labs.parsers.lucidv2.values.Bit
+import com.alchitry.labs.parsers.lucidv2.values.Value
 import kotlinx.coroutines.runBlocking
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.ParseTreeListener
@@ -36,12 +38,7 @@ class LucidBlockContext(
     private val localSignalStack = mutableListOf<MutableMap<String, Signal>>(mutableMapOf())
     val localSignals: MutableMap<String, Signal> get() = localSignalStack.last()
 
-    fun pushLocalStack(): MutableMap<String, Signal> =
-        mutableMapOf<String, Signal>().also { localSignalStack.add(it) }
-
-    fun popLocalStack() = localSignalStack.removeLast()
-
-    override fun tick() {
+    fun tick() {
         if (stage != ParseStage.Evaluation)
             return
         runBlocking {
@@ -50,13 +47,13 @@ class LucidBlockContext(
         }
     }
 
-    override fun abortTest() {
+    fun abortTest() {
         if (stage != ParseStage.Evaluation)
             return
         throw TestAbortedException()
     }
 
-    override fun print(text: String) {
+    fun print(text: String) {
         if (stage != ParseStage.Evaluation)
             return
         println(text)
@@ -207,4 +204,24 @@ class LucidBlockContext(
     override fun resolveStruct(name: String) = struct.resolveStruct(name)
 
     override fun resolveGlobal(name: String) = project.resolveGlobal(name)
+
+    override fun resolveFunction(name: String): Function? {
+        Function.builtIn().firstOrNull { it.label == name }?.let { return it }
+        return blockParser.resolveFunction(name)
+    }
+
+    fun runFunction(function: Function.Custom, args: List<Value>) {
+        if (stage != ParseStage.Evaluation)
+            return
+
+        localSignalStack.add(mutableMapOf())
+
+        function.args.forEachIndexed { idx, (name, width) ->
+            localSignals[name] = args[idx].resizeToMatch(width).asSignal(name, null)
+        }
+
+        walk(function.functionBlock.block())
+
+        localSignalStack.removeLast()
+    }
 }

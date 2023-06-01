@@ -6,6 +6,8 @@ import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.types.AlwaysBlock
+import com.alchitry.labs.parsers.lucidv2.types.CustomArg
+import com.alchitry.labs.parsers.lucidv2.types.Function
 import com.alchitry.labs.parsers.lucidv2.types.TestBlock
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
@@ -19,13 +21,17 @@ data class BlockParser(
     private val context: LucidBlockContext,
     val alwaysBlocks: MutableMap<AlwaysBlockContext, AlwaysBlock> = mutableMapOf(),
     val testBlocks: MutableMap<TestBlockContext, TestBlock> = mutableMapOf(),
-    val repeatSignals: MutableMap<RepeatStatContext, Signal> = mutableMapOf()
+    val repeatSignals: MutableMap<RepeatStatContext, Signal> = mutableMapOf(),
+    val functions: MutableMap<String, Function> = mutableMapOf()
 ) : LucidBaseListener() {
     private val dependencies = mutableSetOf<Signal>()
     private val drivenSignals = mutableSetOf<Signal>()
     private val localRepeatSignals = mutableMapOf<RepeatStatContext, Signal>()
 
     private var inTestBlock = false
+    private var inFunctionBlock = false
+
+    fun resolveFunction(name: String) = functions[name]
 
     suspend fun queueEval() {
         alwaysBlocks.values.forEach {
@@ -72,6 +78,45 @@ data class BlockParser(
 
         testBlocks[ctx] =
             TestBlock(name, context, dependencies.toSet(), drivenSignals.toSet(), ctx)
+    }
+
+    override fun enterFunctionBlock(ctx: FunctionBlockContext) {
+        inFunctionBlock = true
+        enterBlock()
+
+        if (ctx.firstParentOrNull { it is TestBenchContext } == null) {
+            context.reportError(ctx, "Test blocks can only be used in test benches!")
+        }
+    }
+
+    override fun exitFunctionBlock(ctx: FunctionBlockContext) {
+        inFunctionBlock = false
+
+        if (ctx.name().TYPE_ID() == null) {
+            context.reportError(ctx.name(), "Function names must start with a lowercase letter.")
+            return
+        }
+
+        val args = ctx.functionArg().map {
+            val name = it.name().TYPE_ID()?.text
+            if (name == null) {
+                context.reportError(it.name(), "Function argument names must start with a lowercase letter.")
+                return
+            }
+
+            val width = context.resolve(it.signalWidth()) ?: return
+            CustomArg(name, width)
+        }
+
+        val function = Function.Custom(ctx.name().text, args, ctx)
+
+        if (
+            Function.builtIn().any { it.label == function.label } ||
+            functions.putIfAbsent(function.label, function) != null
+        ) {
+            context.reportError(ctx.name(), "The function name \"${function.label}\" is already in use.")
+            return
+        }
     }
 
     override fun exitAlwaysFunction(ctx: AlwaysFunctionContext) {
