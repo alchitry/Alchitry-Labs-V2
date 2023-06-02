@@ -2,6 +2,8 @@ package com.alchitry.labs.parsers.lucidv2.signals
 
 import com.alchitry.labs.parsers.SynchronizedSharedFlow
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
+import com.alchitry.labs.parsers.lucidv2.signals.snapshot.Snapshot
+import com.alchitry.labs.parsers.lucidv2.signals.snapshot.Snapshotable
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
 import com.alchitry.labs.parsers.lucidv2.values.Value
@@ -14,7 +16,7 @@ open class Signal(
     override val parent: SignalParent?,
     initialValue: Value,
     val signed: Boolean = initialValue is SimpleValue && initialValue.signed
-) : SignalOrSubSignal, SignalOrParent {
+) : SignalOrSubSignal, SignalOrParent, Snapshotable {
     fun select(selection: SignalSelection) = SubSignal(this, selection)
 
     private val mutableValueFlow = SynchronizedSharedFlow<Value>()
@@ -28,6 +30,8 @@ open class Signal(
 
     var hasDriver: Boolean = false
     var isRead: Boolean = false
+
+    override fun takeSnapshot() = Snapshot(name, read())
 
     override fun read(evalContext: Evaluable?): Value {
         if (evalContext === setEvalContext)

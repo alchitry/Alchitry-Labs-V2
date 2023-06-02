@@ -38,13 +38,20 @@ class LucidBlockContext(
     private val localSignalStack = mutableListOf<MutableMap<String, Signal>>(mutableMapOf())
     val localSignals: MutableMap<String, Signal> get() = localSignalStack.last()
 
-    fun tick() {
+    private var takeSnapshot: () -> Unit = {}
+    fun setSnapshotCallback(onSnapshot: () -> Unit) {
+        takeSnapshot = onSnapshot
+    }
+
+    fun tick(shouldSnapshot: Boolean) {
         if (stage != ParseStage.Evaluation)
             return
         runBlocking {
             blockEvaluator.processWriteQueue()
             project.processQueue()
         }
+        if (shouldSnapshot)
+            takeSnapshot()
     }
 
     fun abortTest() {

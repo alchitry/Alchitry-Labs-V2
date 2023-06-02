@@ -1,5 +1,9 @@
+import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SimParent
+import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SimValue
+import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import helpers.LucidTester
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 
 class TestBenchTests {
     @Test
@@ -52,7 +56,7 @@ class TestBenchTests {
                     
                     fun tickClock() {
                         clk = 1
-                        ${"$"}tick()
+                        ${"$"}silentTick()
                         clk = 0
                         ${"$"}tick()
                     }
@@ -84,7 +88,11 @@ class TestBenchTests {
             """.trimIndent()
         )
 
-        tester.runTestBenches()
+        val result = tester.runFirstTestBench()
+
+        val countValues = ((result["dut"] as SimParent)["count"] as SimValue)
+        assertEquals(101, countValues.size)
+        assertEquals(BitListValue(67, 8, false, false), countValues[67])
     }
 
     @Test

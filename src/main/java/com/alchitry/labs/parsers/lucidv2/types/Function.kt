@@ -19,6 +19,7 @@ sealed class Function(val label: String, val argCount: Int, val constOnly: Boole
     object CFIXEDPOINT : Function("cFixedPoint", 3, true)
     object FFIXEDPOINT : Function("fFixedPoint", 3, true)
     object TICK : Function("tick", 0, constOnly = false, testOnly = true)
+    object SILENTTICK : Function("silentTick", 0, false, true)
     object ASSERT : Function("assert", 1, constOnly = false, testOnly = true)
     object PRINT : Function("print", 1, constOnly = false, testOnly = true)
 
@@ -42,6 +43,7 @@ sealed class Function(val label: String, val argCount: Int, val constOnly: Boole
                 CFIXEDPOINT,
                 FFIXEDPOINT,
                 TICK,
+                SILENTTICK,
                 ASSERT,
                 PRINT
             )

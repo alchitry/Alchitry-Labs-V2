@@ -1463,7 +1463,8 @@ data class ExprParser(
                 }
             }
 
-            Function.TICK -> if (context is LucidBlockContext) context.tick()
+            Function.TICK -> if (context is LucidBlockContext) context.tick(shouldSnapshot = true)
+            Function.SILENTTICK -> if (context is LucidBlockContext) context.tick(shouldSnapshot = false)
             Function.ASSERT -> {
                 if (context !is LucidBlockContext)
                     return

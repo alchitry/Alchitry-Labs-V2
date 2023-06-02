@@ -8,6 +8,7 @@ import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidLexer
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.SourceContext
+import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SimParent
 import com.alchitry.labs.parsers.lucidv2.types.Module
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
 import kotlinx.coroutines.runBlocking
@@ -97,6 +98,27 @@ class LucidTester(vararg val files: String) {
         }
 
         return moduleInstance
+    }
+
+    fun runFirstTestBench(errorCollector: ErrorCollector? = null): SimParent {
+        val errors = errorCollector ?: ErrorCollector()
+        val tree = parseText(errors)
+
+        globalParse(errors, tree)
+        moduleTypeParse(errors, tree)
+        testBenchParse(errors, tree)
+
+        val testBenches = project.getTestBenches()
+
+        val testBench = testBenches.first()
+        testBench.initialWalk()
+        val tests = testBench.getTestBlocks()
+        return runBlocking {
+            val test = tests.first()
+            testBench.runTest(test.name).also {
+                assert(test.context.errorCollector.hasNoIssues)
+            }
+        }
     }
 
     fun runTestBenches(errorCollector: ErrorCollector? = null) {

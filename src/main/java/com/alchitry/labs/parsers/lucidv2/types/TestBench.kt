@@ -4,6 +4,7 @@ import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.TestBenchContext
+import com.alchitry.labs.parsers.lucidv2.signals.snapshot.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -16,8 +17,16 @@ class TestBench(
     project: ProjectContext,
     private val testBenchContext: TestBenchContext,
     errorCollector: ErrorCollector = ErrorCollector()
-) : TestOrModuleInstance {
+) : TestOrModuleInstance, Snapshotable {
     val context = LucidBlockContext(project, this, errorCollector = errorCollector)
+
+    override fun takeSnapshot(): SnapshotParent {
+        val snapshots = mutableListOf<SnapshotOrParent>()
+        snapshots.addAll(context.types.dffs.values.map { it.takeSnapshot() })
+        snapshots.addAll(context.types.sigs.values.map { it.takeSnapshot() })
+        snapshots.addAll(context.types.moduleInstances.values.map { it.takeSnapshot() })
+        return SnapshotParent(name, snapshots)
+    }
 
     fun initialWalk(): String? {
         val walkErrors = context.initialWalk(testBenchContext) ?: return null
@@ -30,15 +39,21 @@ class TestBench(
         return context.blockParser.testBlocks.values.toList()
     }
 
-    suspend fun runTest(name: String): Boolean = withContext(Dispatchers.IO) {
-        val test = context.blockParser.testBlocks.values.firstOrNull { it.name == name } ?: return@withContext false
+    suspend fun runTest(name: String): SimParent = withContext(Dispatchers.IO) {
+        val test =
+            context.blockParser.testBlocks.values.first { it.name == name }
+
+        val snapshots = mutableListOf<SnapshotParent>()
+
+        test.context.setSnapshotCallback { snapshots.add(takeSnapshot()) }
+
         test.context.initialize()
         try {
             test.evaluate()
         } catch (e: TestAbortedException) {
-            return@withContext false
+            return@withContext snapshotsToSimResult(snapshots)
         }
-        return@withContext true
+        return@withContext snapshotsToSimResult(snapshots)
     }
 }
 

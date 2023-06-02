@@ -2,12 +2,15 @@ package com.alchitry.labs.parsers.lucidv2.types
 
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.*
+import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotOrParent
+import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotParent
+import com.alchitry.labs.parsers.lucidv2.signals.snapshot.Snapshotable
 import com.alchitry.labs.parsers.lucidv2.types.ports.Inout
 import com.alchitry.labs.parsers.lucidv2.types.ports.Input
 import com.alchitry.labs.parsers.lucidv2.types.ports.Output
 import com.alchitry.labs.parsers.lucidv2.values.*
 
-sealed interface ModuleInstanceOrArray : SignalParent {
+sealed interface ModuleInstanceOrArray : SignalParent, Snapshotable {
     val internal: Map<String, Signal>
     val external: Map<String, Signal>
 }
@@ -22,6 +25,15 @@ class ModuleInstanceArray(
     signalProvider: (List<Int>) -> Map<String, SignalOrSubSignal>
 ) : ModuleInstanceOrArray {
     private val modules: ModuleList
+
+    override fun takeSnapshot(): SnapshotParent {
+        val snapshots = mutableListOf<SnapshotOrParent>()
+        modules.forEachIndexed { index, moduleInstance ->
+            val indexedName = index.joinToString(prefix = "[", postfix = "]", separator = "][")
+            snapshots.add(moduleInstance.takeSnapshot().copy(name = indexedName))
+        }
+        return SnapshotParent(name, snapshots)
+    }
 
     fun getAllInstances(): List<ModuleInstance> {
         val instances = mutableListOf<ModuleInstance>()

@@ -6,6 +6,8 @@ import com.alchitry.labs.parsers.lucidv2.signals.DynamicExpr
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.signals.SignalParent
+import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotParent
+import com.alchitry.labs.parsers.lucidv2.signals.snapshot.Snapshotable
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
 import com.alchitry.labs.parsers.lucidv2.values.Value
@@ -19,7 +21,7 @@ class Dff(
     val clk: DynamicExpr,
     val rst: DynamicExpr?,
     val signed: Boolean
-) : SignalParent, Evaluable {
+) : SignalParent, Evaluable, Snapshotable {
     override val parent: SignalParent? = null
     val d = Signal("d", SignalDirection.Write, this, init.asMutable(), signed)
     val q = Signal("q", SignalDirection.Read, this, init.asMutable(), signed).also { it.hasDriver = true }
@@ -32,6 +34,10 @@ class Dff(
                     context.queueEvaluation(this@Dff)
             }
         }
+    }
+
+    override fun takeSnapshot(): SnapshotParent {
+        return SnapshotParent(name, listOf(d.takeSnapshot(), q.takeSnapshot()))
     }
 
     override fun getSignal(name: String): Signal? =

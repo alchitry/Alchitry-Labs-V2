@@ -6,6 +6,8 @@ import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrSubSignal
+import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotOrParent
+import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotParent
 import com.alchitry.labs.parsers.lucidv2.values.Value
 
 class ModuleInstance(
@@ -18,6 +20,15 @@ class ModuleInstance(
     errorCollector: ErrorCollector = ErrorCollector()
 ) : ModuleInstanceOrArray, ListOrModuleInstance, TestOrModuleInstance {
     val context = LucidBlockContext(project, this, errorCollector = errorCollector)
+
+    override fun takeSnapshot(): SnapshotParent {
+        val snapshots = mutableListOf<SnapshotOrParent>()
+        snapshots.addAll(context.types.dffs.values.map { it.takeSnapshot() })
+        snapshots.addAll(context.types.sigs.values.map { it.takeSnapshot() })
+        snapshots.addAll(context.types.moduleInstances.values.map { it.takeSnapshot() })
+        snapshots.addAll(internal.values.map { it.takeSnapshot() })
+        return SnapshotParent(name, snapshots)
+    }
 
     fun checkParameters(): String? {
         val paramErrors = context.checkParameters() ?: return null
