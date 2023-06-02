@@ -183,7 +183,7 @@ Next, all `global` declarations are parsed using the `LucidGlobalContext`.
 The next pass is to pull out module types. A module type is defined in the `Module` class and has the name of the
 module as well as its parameters and ports. This is done via the `LucidModuleTypeContext`.
 
-The next passes are all done using the same `LucidModuleContext` object. These are the `ModuleInternals` and `Drivers`
+The next passes are all done using the same `LucidBlockContext` object. These are the `ModuleInternals` and `Drivers`
 passes. The `ModuleInternals` pass looks at all the internals of a module for things like signal declarations, always
 blocks, module instances, etc. The `Drivers` pass looks at the output of the `ModuleInternals` pass and checks that all
 signals that are expected to be driven are. It also gives warnings for unused signals.
@@ -192,7 +192,7 @@ These two passes start at the top-level module in the design and propagate down 
 instantiated module. They are not run on a per-file basis like the first two.
 
 Finally, the last pass is the `Evaluation` pass. This is only run during simulation but each `AlwaysBlock` and
-`DynamicExpr` gets its own clone of the `LucidModuleContext` for its `Evaluation` pass.
+`DynamicExpr` gets its own clone of the `LucidBlockContext` for its `Evaluation` pass.
 
 ### LucidExprContext
 
@@ -228,15 +228,15 @@ respectively.
 
 These are both fed to the `ProjectContext` for later use.
 
-### LucidModuleContext
+### LucidBlockContext
 
-This context is really the most important one. It builds a model of the module instance and creates the necessary
-signals, always blocks, and dynamic expressions for it to be fully simulated.
+This context is really the most important one. It builds a model of the module instance or test bench and creates the
+necessary signals, always blocks, test blocks, functions, and dynamic expressions for it to be fully simulated.
 
-During the parse stages, it builds out all the internals using the `AlwaysParser` and `TypesParser`. It also checks that
-signal are properly driven with the `SignalDriverParser`.
+During the parse stages, it builds out all the internals using the `BlockParser` and `TypesParser`. It also checks that
+signals are properly driven with the `SignalDriverParser`.
 
-During the evaluation stage is uses the `AlwaysEvaluator` to evaluate always blocks as needed.
+During the evaluation stage is uses the `BlockEvalutator` to evaluate always blocks as needed.
 
 ## Evaluation
 
@@ -252,5 +252,5 @@ changes, it queues itself up to be evaluated in the next batch. Each batch is re
 
 A tick is started by calling the `processQueue()` function of `ProjectContext`.
 
-Before simulation begins, the `initialize()` function should be called on the top-level module's `LucidModuleContext`.
+Before simulation begins, the `initialize()` function should be called on the top-level module's `LucidBlockContext`.
 This will queue every `AlwaysBlock` for an initial evaluation.
