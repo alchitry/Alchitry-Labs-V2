@@ -31,8 +31,6 @@ import com.alchitry.labs.ui.main.MainMenuBar
 import com.alchitry.labs.ui.theme.AlchitryTheme
 import java.io.File
 
-const val IDE_VERSION = "2.0.0"
-
 val LocalScale = compositionLocalOf { 1.0f }
 
 @Composable
@@ -120,7 +118,7 @@ fun main() {
 
         Window(
             state = windowState,
-            title = "Alchitry Labs Version $IDE_VERSION",
+            title = "Alchitry Labs - ${Env.version}",
             onCloseRequest = { close(windowState) }
         ) {
             CompositionLocalProvider(LocalComposeWindow provides this.window) {

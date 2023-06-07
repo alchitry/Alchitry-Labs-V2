@@ -1,5 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.FileOutputStream
+import java.util.*
 
 plugins {
     kotlin("jvm") version "1.8.20"
@@ -8,7 +10,7 @@ plugins {
 }
 
 group = "com.alchitry"
-version = "2.0-SNAPSHOT"
+version = "2.0.0-SNAPSHOT"
 
 repositories {
     google()
@@ -54,4 +56,25 @@ compose.desktop {
             packageVersion = "2.0.0"
         }
     }
+}
+
+val generatedVersionDir = "$buildDir/resources/main"
+
+tasks.register("generateVersionProperties") {
+    doLast {
+        val propertiesFile = file("$generatedVersionDir/version.properties")
+        propertiesFile.parentFile.mkdirs()
+        val properties = Properties()
+        properties.setProperty("version", version.toString())
+        val out = FileOutputStream(propertiesFile)
+        properties.store(out, null)
+    }
+}
+
+tasks.named("compileKotlin") {
+    dependsOn("processResources")
+}
+
+tasks.named("processResources") {
+    dependsOn("generateVersionProperties")
 }
