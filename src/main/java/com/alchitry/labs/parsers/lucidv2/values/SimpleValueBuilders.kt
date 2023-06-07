@@ -1,6 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
-import com.alchitry.labs.parsers.Util
+import com.alchitry.labs.parsers.BitUtil
 import java.math.BigInteger
 import kotlin.experimental.and
 import kotlin.math.log2
@@ -134,12 +134,22 @@ fun BitListValue(
     return BitListValue(bits, constant, signed)
 }
 
-fun BitListValue(value: Long, width: Int = Util.minWidthNum(value), constant: Boolean, signed: Boolean): BitListValue =
+fun BitListValue(
+    value: Long,
+    width: Int = BitUtil.minWidthNum(value),
+    constant: Boolean,
+    signed: Boolean
+): BitListValue =
     BitListValue(width, constant, signed) {
         if ((value and (1L shl it)) != 0L) Bit.B1 else Bit.B0
     }
 
-fun BitListValue(value: Int, width: Int = Util.minWidthNum(value), constant: Boolean, signed: Boolean): BitListValue =
+fun BitListValue(
+    value: Int,
+    width: Int = BitUtil.minWidthNum(value),
+    constant: Boolean,
+    signed: Boolean
+): BitListValue =
     BitListValue(width, constant, signed) {
         if ((value and (1 shl it)) != 0) Bit.B1 else Bit.B0
     }

@@ -1,6 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
-import com.alchitry.labs.parsers.Util
+import com.alchitry.labs.parsers.BitUtil
 import com.alchitry.labs.parsers.lucidv2.signals.SignalParent
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.BitListWidth
@@ -15,7 +15,7 @@ data class EnumType(
         require(!members.contains("WIDTH")) { "EnumType can't have a member named WIDTH!" }
     }
 
-    override val width = BitListWidth(Util.minWidthNum(members.size - 1))
+    override val width = BitListWidth(BitUtil.minWidthNum(members.size - 1))
     private val widthSignal = BitListValue(width.size, constant = true, signed = false).asSignal("WIDTH", this)
     private val memberSignals = members.mapIndexed { idx, name ->
         BitListValue(idx, width.size, constant = true, signed = false).asSignal(

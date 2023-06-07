@@ -1,7 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
 import com.alchitry.labs.parsers.BigFunctions
-import com.alchitry.labs.parsers.Util.widthOfMult
+import com.alchitry.labs.parsers.BitUtil.widthOfMult
 import com.alchitry.labs.parsers.errors.ErrorStrings
 import com.alchitry.labs.parsers.errors.WarningStrings
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext

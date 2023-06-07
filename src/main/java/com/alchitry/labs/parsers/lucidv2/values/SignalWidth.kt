@@ -1,6 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
-import com.alchitry.labs.parsers.Util
+import com.alchitry.labs.parsers.BitUtil
 import com.alchitry.labs.parsers.lucidv2.types.StructType
 
 sealed class SignalWidth {
@@ -102,7 +102,7 @@ sealed class SignalWidth {
             return BitListValue(dims.first(), constant = true, signed = false)
         }
 
-        val width = Util.minWidthNum(dims.max())
+        val width = BitUtil.minWidthNum(dims.max())
 
         return ArrayValue(dims.map { BitListValue(it, width, constant = true, signed = false) })
     }

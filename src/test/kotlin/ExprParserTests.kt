@@ -1,4 +1,4 @@
-import com.alchitry.labs.parsers.Util
+import com.alchitry.labs.parsers.BitUtil
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.values.ArrayValue
@@ -224,7 +224,7 @@ internal class ExprParserTests {
             BitListValue(
                 "800",
                 10,
-                Util.widthOfMult(Util.minWidthNum(20), Util.minWidthNum(40)),
+                BitUtil.widthOfMult(BitUtil.minWidthNum(20), BitUtil.minWidthNum(40)),
                 constant = true,
                 signed = false
             ),
@@ -255,7 +255,7 @@ internal class ExprParserTests {
             BitListValue(
                 "800",
                 10,
-                Util.widthOfMult(Util.minWidthNum(20), Util.minWidthNum(40)),
+                BitUtil.widthOfMult(BitUtil.minWidthNum(20), BitUtil.minWidthNum(40)),
                 constant = true,
                 signed = false
             ),
@@ -273,7 +273,7 @@ internal class ExprParserTests {
             BitListValue(
                 "800",
                 10,
-                Util.widthOfMult(Util.minWidthNum(20) + 1, Util.minWidthNum(40) + 1),
+                BitUtil.widthOfMult(BitUtil.minWidthNum(20) + 1, BitUtil.minWidthNum(40) + 1),
                 constant = true,
                 signed = true
             ),
@@ -291,7 +291,7 @@ internal class ExprParserTests {
         var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
-            BitListValue("5", 10, Util.minWidthNum(40), constant = true, signed = false),
+            BitListValue("5", 10, BitUtil.minWidthNum(40), constant = true, signed = false),
             test.context.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -302,7 +302,7 @@ internal class ExprParserTests {
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
-            BitListValue("8", 10, Util.minWidthNum(40), constant = true, signed = false),
+            BitListValue("8", 10, BitUtil.minWidthNum(40), constant = true, signed = false),
             test.context.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -318,7 +318,7 @@ internal class ExprParserTests {
         var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
-            BitListValue("5", 10, Util.minWidthNum(40), constant = true, signed = false),
+            BitListValue("5", 10, BitUtil.minWidthNum(40), constant = true, signed = false),
             test.context.expr.resolve(tree)
         )
         assert(test.hasNoErrors)
@@ -757,7 +757,7 @@ internal class ExprParserTests {
         tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
-            BitListValue("20", 10, Util.minWidthNum(20) + 2, signed = true, constant = true),
+            BitListValue("20", 10, BitUtil.minWidthNum(20) + 2, signed = true, constant = true),
             test.context.expr.resolve(tree)
         )
 
@@ -772,7 +772,7 @@ internal class ExprParserTests {
         var tree = test.expr().also { test.context.walk(it) }
 
         assertEquals(
-            BitListValue("20", 10, width = Util.minWidthNum(20), signed = true, constant = true),
+            BitListValue("20", 10, width = BitUtil.minWidthNum(20), signed = true, constant = true),
             test.context.expr.resolve(tree)
         )
 

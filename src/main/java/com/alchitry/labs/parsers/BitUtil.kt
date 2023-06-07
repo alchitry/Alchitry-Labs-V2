@@ -7,7 +7,7 @@ import kotlin.math.floor
 import kotlin.math.ln
 import kotlin.math.pow
 
-object Util {
+object BitUtil {
     /**
      * Returns the minimum number of bits needed to represent the provided value.
      * @param i the value to calculate the minimum number of bits for

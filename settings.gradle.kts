@@ -1,3 +1,10 @@
+pluginManagement {
+    repositories {
+        google()
+        gradlePluginPortal()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    }
+}
 
-rootProject.name = "LucidParserV2"
+rootProject.name = "AlchitryLabs2"
 
