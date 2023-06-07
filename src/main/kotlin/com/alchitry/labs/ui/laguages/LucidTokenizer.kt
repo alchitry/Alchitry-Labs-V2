@@ -19,14 +19,15 @@ class LucidTokenizer : EditorTokenizer {
                 LucidLexer.SIGNED -> LucidStyle.signed
                 LucidLexer.COMMENT, LucidLexer.BLOCK_COMMENT -> LucidStyle.comment
                 LucidLexer.HEX, LucidLexer.BIN, LucidLexer.DEC, LucidLexer.INT -> LucidStyle.value
+                LucidLexer.REAL -> LucidStyle.realValue
                 LucidLexer.STRING -> LucidStyle.string
                 LucidLexer.CONST_ID -> LucidStyle.constant
                 LucidLexer.SPACE_ID -> LucidStyle.namespace
                 LucidLexer.FUNCTION_ID -> LucidStyle.function
                 else -> when (token.text) {
-                    "input", "output", "inout", "sig", "dff", "fsm", "const", "var", "struct" -> LucidStyle.variable
-                    "always", "if", "for", "else", "case" -> LucidStyle.keyword
-                    "module", "global" -> LucidStyle.module
+                    "input", "output", "inout", "dff", "sig", "const", "struct", "enum" -> LucidStyle.variable
+                    "always", "if", "else", "repeat", "case", "test", "fun" -> LucidStyle.keyword
+                    "module", "global", "testBench" -> LucidStyle.module
                     "default" -> LucidStyle.defaultKeyword
                     else ->
                         if (operatorRegex.matches(token.text)) LucidStyle.operator else null

@@ -29,7 +29,6 @@ import com.alchitry.labs.ui.laguages.LucidTokenizer
 import com.alchitry.labs.ui.main.Console
 import com.alchitry.labs.ui.main.MainMenuBar
 import com.alchitry.labs.ui.theme.AlchitryTheme
-import java.io.File
 
 val LocalScale = compositionLocalOf { 1.0f }
 
@@ -63,7 +62,24 @@ fun App() {
                                         LaunchedEffect(state) {
 
                                             val text =
-                                                File("/home/justin/alchitry/Au Main Test/source/au_top.luc").readText()
+                                                """
+                                                    testBench myTestBench {
+                                                        sig clk
+                                                        
+                                                        counter dut (.clk(clk))
+                                                        
+                                                        test simpleTest {
+                                                            repeat(100, i) {
+                                                                clk = 0
+                                                                ${"$"}tick()
+                                                                ${"$"}assert(dut.count == i)
+                                                                clk = 1
+                                                                ${"$"}tick()
+                                                            }
+                                                            ${"$"}assert(dut.count == 100)
+                                                        }
+                                                    }
+                                                """.trimIndent()
 
                                             state.setText(text)
                                         }

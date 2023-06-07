@@ -14,6 +14,7 @@ object LucidStyle {
     val comment = SpanStyle(Color(150, 150, 150))
     val string = SpanStyle(Color(191, 191, 10))
     val value = SpanStyle(Color(162, 105, 220))
+    val realValue = SpanStyle(Color(178, 98, 203))
     val constant = SpanStyle(Color(212, 90, 218))
     val namespace = SpanStyle(Color(218, 90, 140))
     val function = SpanStyle(Color(27, 221, 175))
