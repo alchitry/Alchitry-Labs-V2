@@ -1,9 +1,5 @@
 # Lucid Parser V2
 
-This code isn't intended to be used on its own and it will be incorporated into Alchitry Labs 2 in the future.
-
-## Background
-
 Lucid was first developed for the Mojo by Justin Rajewski when he was still in college. Its purpose was to provide an
 alternative to the heavy existing HDL languages to make simple things simple.
 
@@ -30,7 +26,7 @@ This was the motivation for doing a full rewrite with lots of new features in mi
 
 * Easier to understand and maintain
 * Provide a Lucid simulator
-* Simplify un-necessary aspects of Lucid V1
+* Simplify unnecessary aspects of Lucid V1
 * Stability
 * Robust error checking - no errors means exported Verilog should build
 
