@@ -6,5 +6,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = "AlchitryLabs2"
+rootProject.name = "AlchitryLabsV2"
 

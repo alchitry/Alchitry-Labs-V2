@@ -52,7 +52,7 @@ compose.desktop {
         mainClass = "MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "AlchitryLabs2"
+            packageName = "AlchitryLabsV2"
             packageVersion = "2.0.0"
         }
     }
