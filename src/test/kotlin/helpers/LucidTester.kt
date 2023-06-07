@@ -1,13 +1,13 @@
 package helpers
 
+import com.alchitry.labs.parsers.grammar.LucidLexer
+import com.alchitry.labs.parsers.grammar.LucidParser
+import com.alchitry.labs.parsers.grammar.LucidParser.SourceContext
 import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleTypeContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext
 import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
-import com.alchitry.labs.parsers.lucidv2.grammar.LucidLexer
-import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser
-import com.alchitry.labs.parsers.lucidv2.grammar.LucidParser.SourceContext
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SimParent
 import com.alchitry.labs.parsers.lucidv2.types.Module
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
