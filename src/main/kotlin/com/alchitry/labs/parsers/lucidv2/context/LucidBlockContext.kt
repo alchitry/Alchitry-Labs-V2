@@ -3,6 +3,7 @@ package com.alchitry.labs.parsers.lucidv2.context
 import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.ErrorCollector
+import com.alchitry.labs.parsers.lucidv2.Notation
 import com.alchitry.labs.parsers.lucidv2.parsers.*
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
@@ -153,7 +154,7 @@ class LucidBlockContext(
         project.initialize()
     }
 
-    fun initialWalk(t: ParseTree): List<String>? {
+    fun initialWalk(t: ParseTree): List<Notation>? {
         stage = ParseStage.ModuleInternals
         walk(t)
         if (errorCollector.errors.isNotEmpty())
@@ -167,7 +168,7 @@ class LucidBlockContext(
 
     fun walk(t: ParseTree) = ParseTreeMultiWalker.walk(getListeners(), t, getFilter())
 
-    fun checkParameters(): List<String>? {
+    fun checkParameters(): List<Notation>? {
         val instance = (instance as? ModuleInstance)
             ?: error("checkParameters() can only be called on contexts with a ModuleInstance!")
         stage = ParseStage.Evaluation

@@ -1,17 +1,27 @@
-package com.alchitry.labs.ui.code_editor
+package com.alchitry.labs.ui.code_editor.styles
 
 import androidx.compose.ui.text.AnnotatedString
+import com.alchitry.labs.ui.code_editor.CodeEditorState
+import com.alchitry.labs.ui.code_editor.LineStyle
+import com.alchitry.labs.ui.code_editor.StyleToken
+import com.alchitry.labs.ui.code_editor.toCharStream
 
 class CodeStyler(
     private val editor: CodeEditorState,
-    private val tokenizer: EditorTokenizer
+    private val tokenizer: EditorTokenizer,
+    private val codeParser: CodeErrorChecker
 ) {
 
     fun updateStyle() {
         val lines = editor.lines
         val styles = MutableList(lines.size) { mutableListOf<LineStyle>() }
 
-        tokenizer.getTokens(editor.lines.toCharStream()).forEach { token ->
+        val styleTokens = mutableListOf<StyleToken>().apply {
+            addAll(tokenizer.getTokens(editor.lines.toCharStream()))
+            addAll(codeParser.checkText(editor.getText()))
+        }
+
+        styleTokens.forEach { token ->
             if (token.style == null)
                 return@forEach
 
@@ -57,7 +67,7 @@ class CodeStyler(
                     lines[index] = newLineState(newLines[index])
                 }
             }
-            onChange()
+            invalidate()
         }
     }
 }

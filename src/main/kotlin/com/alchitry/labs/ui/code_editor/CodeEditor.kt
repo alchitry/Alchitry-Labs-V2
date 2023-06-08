@@ -24,7 +24,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import com.alchitry.labs.ui.laguages.LucidTokenizer
+import com.alchitry.labs.ui.code_editor.styles.lucid.LucidTokenizer
 import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTypography
 import java.awt.Cursor

@@ -1,7 +1,7 @@
 grammar Lucid;
 
 @header {
-package com.alchitry.labs.parsers.lucidv2.grammar;
+package com.alchitry.labs.parsers.grammar;
 }
 
 // starting rule
@@ -80,7 +80,7 @@ alwaysStat
   | caseStat       #AlwaysCase
   | ifStat         #AlwaysIf
   | repeatStat     #AlwaysRepeat
-  | function       #AlwaysFunction
+  | function semi  #AlwaysFunction
   ;
 
 block

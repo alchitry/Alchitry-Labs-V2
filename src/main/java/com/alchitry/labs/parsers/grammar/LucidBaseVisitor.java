@@ -1,4 +1,4 @@
-// Generated from /home/justin/IdeaProjects/LucidParserV2/src/main/java/com/alchitry/labs/parsers/lucidv2/grammar/Lucid.g4 by ANTLR 4.13.0
+// Generated from /home/justin/IdeaProjects/AlchitryLabsV2/src/main/java/com/alchitry/labs/parsers/grammar/Lucid.g4 by ANTLR 4.13.0
 
 package com.alchitry.labs.parsers.grammar;
 
@@ -152,16 +152,24 @@ public class LucidBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-	@Override public T visitSignalWidth(LucidParser.SignalWidthContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitArraySize(LucidParser.ArraySizeContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
+    @Override
+    public T visitSignalWidth(LucidParser.SignalWidthContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
+    public T visitArraySize(LucidParser.ArraySizeContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
@@ -214,17 +222,25 @@ public class LucidBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitStatDFF(LucidParser.StatDFFContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitStatModuleInst(LucidParser.StatModuleInstContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
+     */
+    @Override
+    public T visitStatDFF(LucidParser.StatDFFContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
+    public T visitStatModuleInst(LucidParser.StatModuleInstContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -308,19 +324,25 @@ public class LucidBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
      */
     @Override
     public T visitSigCon(LucidParser.SigConContext ctx) {
-        return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitParamCon(LucidParser.ParamConContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
+    public T visitParamCon(LucidParser.ParamConContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override
     public T visitSigDec(LucidParser.SigDecContext ctx) {
@@ -814,15 +836,19 @@ public class LucidBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
     /**
      * {@inheritDoc}
      *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitExprNegate(LucidParser.ExprNegateContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
+    public T visitExprNegate(LucidParser.ExprNegateContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitExprGroup(LucidParser.ExprGroupContext ctx) { return visitChildren(ctx); }
 	/**

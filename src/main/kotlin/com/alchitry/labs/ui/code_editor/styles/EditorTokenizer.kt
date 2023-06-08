@@ -1,6 +1,7 @@
-package com.alchitry.labs.ui.code_editor
+package com.alchitry.labs.ui.code_editor.styles
 
 import androidx.compose.ui.text.AnnotatedString
+import com.alchitry.labs.ui.code_editor.StyleToken
 import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CharStreams
 

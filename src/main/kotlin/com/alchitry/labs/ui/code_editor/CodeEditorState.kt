@@ -33,6 +33,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
+import com.alchitry.labs.ui.code_editor.styles.CodeStyler
+import com.alchitry.labs.ui.code_editor.styles.EditorTokenizer
+import com.alchitry.labs.ui.code_editor.styles.lucid.LucidErrorChecker
 import com.alchitry.labs.ui.gestures.detectEditorActions
 import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTypography
@@ -82,7 +85,7 @@ class CodeEditorState(
     val scrollState = ScrollState(0)
     var gutterWidth = 0
         private set
-    var softWrap by Delegates.observable(false) { _, _, _ -> onChange() }
+    var softWrap by Delegates.observable(false) { _, _, _ -> invalidate() }
     private var invalidator: (() -> Unit)? = null
     private var size: IntSize = IntSize.Zero
     private var scrollTarget: Int? = null
@@ -92,11 +95,11 @@ class CodeEditorState(
         cursorColor,
         selectionColor,
         scope,
-        ::onChange
+        ::invalidate
     )
     private val undoManager = UndoManager(this, selectionManager)
 
-    private val styler = CodeStyler(this, tokenizer)
+    private val styler = CodeStyler(this, tokenizer, LucidErrorChecker())
 
     var clipboardManager: ClipboardManager? = null
 
@@ -113,10 +116,15 @@ class CodeEditorState(
     }
 
     fun getText(): String {
-        return lines.joinToString("\n")
+        return lines.map { it.text.text }.joinToString("\n")
     }
 
-    internal fun onChange() {
+    fun onTextChange() {
+        styler.updateStyle()
+        invalidate()
+    }
+
+    internal fun invalidate() {
         invalidator?.invoke()
     }
 
@@ -167,9 +175,7 @@ class CodeEditorState(
         if (newLines.size > 1)
             lines.addAll(start.line + 1, newLines.subList(1, newLines.size))
 
-        styler.updateStyle()
-
-        onChange()
+        onTextChange()
 
         undoManager.queueSnapshot()
 
@@ -190,9 +196,8 @@ class CodeEditorState(
                 newLineState(AnnotatedString(line))
             )
         }
-        styler.updateStyle()
         undoManager.reset()
-        onChange()
+        onTextChange()
     }
 
     fun lineHeight(line: Int): Int {

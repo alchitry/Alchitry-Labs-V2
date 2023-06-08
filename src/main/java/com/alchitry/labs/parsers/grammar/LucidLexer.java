@@ -1,4 +1,4 @@
-// Generated from /home/justin/IdeaProjects/LucidParserV2/src/main/java/com/alchitry/labs/parsers/lucidv2/grammar/Lucid.g4 by ANTLR 4.13.0
+// Generated from /home/justin/IdeaProjects/AlchitryLabsV2/src/main/java/com/alchitry/labs/parsers/grammar/Lucid.g4 by ANTLR 4.13.0
 
 package com.alchitry.labs.parsers.grammar;
 
@@ -79,16 +79,18 @@ public class LucidLexer extends Lexer {
                 "SPACE_ID", "FUNCTION_ID", "BLOCK_COMMENT", "COMMENT", "WS"
         };
     }
-	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
-	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
-	/**
-	 * @deprecated Use {@link #VOCABULARY} instead.
-	 */
-	@Deprecated
-	public static final String[] tokenNames;
-	static {
-		tokenNames = new String[_SYMBOLIC_NAMES.length];
+    private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
+    public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
+
+    /**
+     * @deprecated Use {@link #VOCABULARY} instead.
+     */
+    @Deprecated
+    public static final String[] tokenNames;
+
+    static {
+        tokenNames = new String[_SYMBOLIC_NAMES.length];
 		for (int i = 0; i < tokenNames.length; i++) {
 			tokenNames[i] = VOCABULARY.getLiteralName(i);
 			if (tokenNames[i] == null) {
@@ -148,18 +150,20 @@ public class LucidLexer extends Lexer {
                 return TYPE_ID_sempred((RuleContext) _localctx, predIndex);
             case 66:
                 return SPACE_ID_sempred((RuleContext) _localctx, predIndex);
-        }
-		return true;
-	}
-	private boolean HEX_sempred(RuleContext _localctx, int predIndex) {
-		switch (predIndex) {
-		case 0:
-			return _input.LA(1) != '{';
 		}
 		return true;
-	}
-	private boolean BIN_sempred(RuleContext _localctx, int predIndex) {
-		switch (predIndex) {
+    }
+
+    private boolean HEX_sempred(RuleContext _localctx, int predIndex) {
+        switch (predIndex) {
+            case 0:
+                return _input.LA(1) != '{';
+        }
+        return true;
+    }
+
+    private boolean BIN_sempred(RuleContext _localctx, int predIndex) {
+        switch (predIndex) {
             case 1:
                 return _input.LA(1) != '{';
         }
@@ -518,5 +522,5 @@ public class LucidLexer extends Lexer {
         for (int i = 0; i < _ATN.getNumberOfDecisions(); i++) {
             _decisionToDFA[i] = new DFA(_ATN.getDecisionState(i), i);
         }
-    }
+	}
 }

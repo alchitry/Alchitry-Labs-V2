@@ -1,40 +1,80 @@
 package com.alchitry.labs.parsers.lucidv2
 
 import com.alchitry.labs.parsers.errors.ErrorListener
+import com.alchitry.labs.ui.code_editor.TextPosition
 import org.antlr.v4.runtime.*
 import org.antlr.v4.runtime.atn.ATNConfigSet
 import org.antlr.v4.runtime.dfa.DFA
 import org.antlr.v4.runtime.tree.TerminalNode
 import java.util.*
 
+data class Notation(
+    val message: String?,
+    val range: ClosedRange<TextPosition>,
+    val type: NotationType
+) {
+    override fun toString(): String {
+        return "${type.label} at line ${range.start.line} offset ${range.start.offset}${message?.let { ": $it" } ?: ""}"
+    }
+}
+
+enum class NotationType(val label: String) {
+    Error("Error"),
+    Warning("Warning"),
+    Info("Info"),
+    SyntaxError("Syntax error"),
+    SyntaxAmbiguity("Syntax ambiguity")
+}
+
 class ErrorCollector : ErrorListener, ANTLRErrorListener {
-    val errors = mutableListOf<String>()
-    val warnings = mutableListOf<String>()
-    val debugs = mutableListOf<String>()
-    val syntaxIssues = mutableListOf<String>()
+    val errors = mutableListOf<Notation>()
+    val warnings = mutableListOf<Notation>()
+    val infos = mutableListOf<Notation>()
+    val syntaxIssues = mutableListOf<Notation>()
+
+    fun getAllNotations(): List<Notation> = mutableListOf<Notation>().apply {
+        addAll(errors)
+        addAll(warnings)
+        addAll(infos)
+        addAll(syntaxIssues)
+    }
+
+    private fun getNotation(token: Token, message: String?, type: NotationType) = Notation(
+        message = message,
+        range = TextPosition(token.line - 1, token.charPositionInLine)..
+                TextPosition(token.line - 1, token.charPositionInLine + token.text.length),
+        type = type
+    )
+
+    private fun getNotation(ctx: ParserRuleContext, message: String?, type: NotationType) = Notation(
+        message = message,
+        range = TextPosition(ctx.start.line - 1, ctx.start.charPositionInLine)..
+                TextPosition(ctx.stop.line - 1, ctx.stop.charPositionInLine + ctx.stop.text.length),
+        type = type
+    )
 
     override fun reportError(node: TerminalNode, message: String) {
-        errors.add("Error at line ${node.symbol.line} offset ${node.symbol.charPositionInLine}: $message")
+        errors.add(getNotation(node.symbol, message, NotationType.Error))
     }
 
     override fun reportError(ctx: ParserRuleContext, message: String) {
-        errors.add("Error at line ${ctx.start.line} offset ${ctx.start.charPositionInLine}: $message")
+        errors.add(getNotation(ctx, message, NotationType.Error))
     }
 
     override fun reportWarning(node: TerminalNode, message: String) {
-        warnings.add("Warning at line ${node.symbol.line} offset ${node.symbol.charPositionInLine}: $message")
+        warnings.add(getNotation(node.symbol, message, NotationType.Warning))
     }
 
     override fun reportWarning(ctx: ParserRuleContext, message: String) {
-        warnings.add("Warning at line ${ctx.start.line} offset ${ctx.start.charPositionInLine}: $message")
+        warnings.add(getNotation(ctx, message, NotationType.Warning))
     }
 
-    override fun reportDebug(node: TerminalNode, message: String) {
-        debugs.add("Debug at line ${node.symbol.line} offset ${node.symbol.charPositionInLine}: $message")
+    override fun reportInfo(node: TerminalNode, message: String) {
+        infos.add(getNotation(node.symbol, message, NotationType.Info))
     }
 
-    override fun reportDebug(ctx: ParserRuleContext, message: String) {
-        debugs.add("Debug at line ${ctx.start.line} offset ${ctx.start.charPositionInLine}: $message")
+    override fun reportInfo(ctx: ParserRuleContext, message: String) {
+        infos.add(getNotation(ctx, message, NotationType.Info))
     }
 
     override fun syntaxError(
@@ -45,11 +85,12 @@ class ErrorCollector : ErrorListener, ANTLRErrorListener {
         msg: String?,
         e: RecognitionException?
     ) {
-        syntaxIssues.add("Syntax error at line: $line offset: $charPositionInLine - $msg")
+        val token = (offendingSymbol as? Token) ?: return
+        syntaxIssues.add(getNotation(token, msg, NotationType.SyntaxError))
     }
 
     override fun reportAmbiguity(
-        recognizer: Parser?,
+        recognizer: Parser,
         dfa: DFA?,
         startIndex: Int,
         stopIndex: Int,
@@ -57,8 +98,8 @@ class ErrorCollector : ErrorListener, ANTLRErrorListener {
         ambigAlts: BitSet?,
         configs: ATNConfigSet?
     ) {
-        val token = recognizer?.tokenStream?.get(startIndex)
-        syntaxIssues.add("Syntax ambiguity at line: ${token?.line} offset: ${token?.charPositionInLine}")
+        val token = recognizer.tokenStream.get(startIndex)
+        syntaxIssues.add(getNotation(token, null, NotationType.SyntaxAmbiguity))
     }
 
     override fun reportAttemptingFullContext(
@@ -101,17 +142,18 @@ class ErrorCollector : ErrorListener, ANTLRErrorListener {
         }
     val hasNoWarnings: Boolean
         get() {
-        warnings.forEach {
-            println(it)
+            warnings.forEach {
+                println(it)
+            }
+            return warnings.isEmpty()
         }
-        return warnings.isEmpty()
-    }
-    val hasNoSyntaxIssues: Boolean get() {
-        syntaxIssues.forEach {
-            println(it)
+    val hasNoSyntaxIssues: Boolean
+        get() {
+            syntaxIssues.forEach {
+                println(it)
+            }
+            return syntaxIssues.isEmpty()
         }
-        return syntaxIssues.isEmpty()
-    }
     val hasErrors: Boolean get() = errors.isNotEmpty()
     val hasWarnings: Boolean get() = warnings.isNotEmpty()
     val hasSyntaxIssues: Boolean get() = syntaxIssues.isNotEmpty()

@@ -1,8 +1,8 @@
-package com.alchitry.labs.ui.laguages
+package com.alchitry.labs.ui.code_editor.styles.lucid
 
 import com.alchitry.labs.parsers.grammar.LucidLexer
-import com.alchitry.labs.ui.code_editor.EditorTokenizer
 import com.alchitry.labs.ui.code_editor.StyleToken
+import com.alchitry.labs.ui.code_editor.styles.EditorTokenizer
 import com.alchitry.labs.ui.code_editor.toStyleToken
 import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CommonTokenStream

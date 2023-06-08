@@ -1,4 +1,4 @@
-package com.alchitry.labs.ui.laguages
+package com.alchitry.labs.ui.code_editor.styles.lucid
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle

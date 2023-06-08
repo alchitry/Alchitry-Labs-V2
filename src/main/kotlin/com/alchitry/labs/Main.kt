@@ -21,11 +21,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import com.alchitry.labs.ui.code_editor.CodeEditor
 import com.alchitry.labs.ui.code_editor.rememberCodeEditorState
+import com.alchitry.labs.ui.code_editor.styles.lucid.LucidTokenizer
 import com.alchitry.labs.ui.components.ResizePriority
 import com.alchitry.labs.ui.components.Sash
 import com.alchitry.labs.ui.components.Toolbar
 import com.alchitry.labs.ui.components.rememberSashData
-import com.alchitry.labs.ui.laguages.LucidTokenizer
 import com.alchitry.labs.ui.main.Console
 import com.alchitry.labs.ui.theme.AlchitryTheme
 

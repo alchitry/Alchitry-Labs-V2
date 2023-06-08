@@ -38,7 +38,7 @@ data class ExprParser(
     fun resolveDependencies(ctx: ExprContext): Set<Signal>? = dependencies[ctx]
 
     private fun debug(ctx: ParserRuleContext) {
-        context.reportDebug(ctx, values[ctx].toString())
+        //context.reportInfo(ctx, values[ctx].toString())
     }
 
     /**

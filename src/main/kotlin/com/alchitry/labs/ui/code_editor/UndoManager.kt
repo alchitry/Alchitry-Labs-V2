@@ -44,7 +44,7 @@ class UndoManager(private val editor: CodeEditorState, private val selectionMana
         selectionManager.caret = snapshot.caret
         selectionManager.start = snapshot.selectionStart
         selectionManager.end = snapshot.selectionEnd
-        editor.onChange()
+        editor.onTextChange()
         currentSnapshot = snapshot
     }
 

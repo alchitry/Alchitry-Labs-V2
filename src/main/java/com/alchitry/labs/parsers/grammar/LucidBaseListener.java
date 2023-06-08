@@ -1,4 +1,4 @@
-// Generated from /home/justin/IdeaProjects/LucidParserV2/src/main/java/com/alchitry/labs/parsers/lucidv2/grammar/Lucid.g4 by ANTLR 4.13.0
+// Generated from /home/justin/IdeaProjects/AlchitryLabsV2/src/main/java/com/alchitry/labs/parsers/grammar/Lucid.g4 by ANTLR 4.13.0
 
 package com.alchitry.labs.parsers.grammar;
 
@@ -161,16 +161,22 @@ public class LucidBaseListener implements LucidListener {
     /**
      * {@inheritDoc}
      *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterParamDefault(LucidParser.ParamDefaultContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitParamDefault(LucidParser.ParamDefaultContext ctx) { }
-	/**
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterParamDefault(LucidParser.ParamDefaultContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitParamDefault(LucidParser.ParamDefaultContext ctx) {
+    }
+
+    /**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
@@ -325,23 +331,31 @@ public class LucidBaseListener implements LucidListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStatDFF(LucidParser.StatDFFContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStatModuleInst(LucidParser.StatModuleInstContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStatModuleInst(LucidParser.StatModuleInstContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
+	@Override public void exitStatDFF(LucidParser.StatDFFContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterStatModuleInst(LucidParser.StatModuleInstContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitStatModuleInst(LucidParser.StatModuleInstContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
      */
     @Override
     public void enterStatAssign(LucidParser.StatAssignContext ctx) {
@@ -434,9 +448,11 @@ public class LucidBaseListener implements LucidListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override
-    public void enterConstDec(LucidParser.ConstDecContext ctx) { }
-	/**
-	 * {@inheritDoc}
+    public void enterConstDec(LucidParser.ConstDecContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
@@ -527,30 +543,42 @@ public class LucidBaseListener implements LucidListener {
 	@Override public void exitModuleInst(LucidParser.ModuleInstContext ctx) { }
 	/**
 	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterInstCons(LucidParser.InstConsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitInstCons(LucidParser.InstConsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterConList(LucidParser.ConListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitConList(LucidParser.ConListContext ctx) { }
-	/**
-	 * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterInstCons(LucidParser.InstConsContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitInstCons(LucidParser.InstConsContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void enterConList(LucidParser.ConListContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitConList(LucidParser.ConListContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
@@ -1140,11 +1168,9 @@ public class LucidBaseListener implements LucidListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override
-    public void exitExprReduction(LucidParser.ExprReductionContext ctx) {
-    }
-
-    /**
-     * {@inheritDoc}
+    public void exitExprReduction(LucidParser.ExprReductionContext ctx) { }
+	/**
+	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
