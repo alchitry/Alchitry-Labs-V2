@@ -27,7 +27,6 @@ import com.alchitry.labs.ui.components.Toolbar
 import com.alchitry.labs.ui.components.rememberSashData
 import com.alchitry.labs.ui.laguages.LucidTokenizer
 import com.alchitry.labs.ui.main.Console
-import com.alchitry.labs.ui.main.MainMenuBar
 import com.alchitry.labs.ui.theme.AlchitryTheme
 
 val LocalScale = compositionLocalOf { 1.0f }
@@ -45,7 +44,6 @@ fun App() {
                     .pointerInput(Unit) { detectTapGestures { focusManger.clearFocus() } }
             ) {
                 Column {
-                    MainMenuBar()
                     Toolbar()
                     LazyColumn { }
                     Sash(

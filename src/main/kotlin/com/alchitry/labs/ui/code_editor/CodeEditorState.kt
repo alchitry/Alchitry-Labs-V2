@@ -87,7 +87,7 @@ class CodeEditorState(
     private var size: IntSize = IntSize.Zero
     private var scrollTarget: Int? = null
 
-    private val selectionManager = SelectionManager(
+    val selectionManager = SelectionManager(
         this,
         cursorColor,
         selectionColor,
@@ -239,7 +239,7 @@ class CodeEditorState(
             canvas.translate(dx = 0f, dy = currentY.toFloat())
             lines.forEach { line ->
                 line.layoutResult?.let { layout ->
-                    val margin = (line.lineHeight - layout.size.height) / 2f
+                    val margin = line.topMargin
                     canvas.translate(dx = 0f, dy = margin)
                     val nextY = currentY + line.lineHeight
                     if (nextY > 0 || currentY < size.height) { // if visible

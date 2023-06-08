@@ -9,21 +9,12 @@ object AlchitryColors {
     val accent = Color(0xFFE6B800)
     val darkAccent = Color(0xFF333330)
 
-    val tooltipBackground = Color.White
-    val tooltipContent = Color.Black
-
-    val menuBarBackground = Color(0xFF424242)
-
-    val gutterBackground = Color(0xFF333333)
-
-    val selectionColor = Color(0xFF6C5600)
-
     val colors = Colors(
         primary = accent,
         primaryVariant = darkAccent,
         secondary = Color(0xFF4B4B41),
         secondaryVariant = Color(0xFF545449),
-        background = Color(0xFF505050),
+        background = Color(0xFF333333),
         surface = Color(0xFF282828),
         error = Color(0xFFFF1919),
         onPrimary = Color.White,
@@ -33,6 +24,17 @@ object AlchitryColors {
         onError = Color.Black,
         isLight = true
     )
+
+    val tooltipBackground = Color.White
+    val tooltipContent = Color.Black
+
+    val menuBarBackground = Color(0xFF424242)
+
+    val gutterForeground = Color(0xFFA1A1A1)
+    val lineHighlight = accent.copy(alpha = 0.05f)
+
+    val selectionColor = Color(0xFF6C5600)
+
 
     @Composable
     fun toolbarButtonColors(

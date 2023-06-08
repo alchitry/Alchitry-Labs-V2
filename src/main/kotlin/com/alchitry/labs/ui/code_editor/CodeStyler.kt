@@ -57,8 +57,7 @@ class CodeStyler(
                     lines[index] = newLineState(newLines[index])
                 }
             }
-            editor.onChange()
-
+            onChange()
         }
     }
 }

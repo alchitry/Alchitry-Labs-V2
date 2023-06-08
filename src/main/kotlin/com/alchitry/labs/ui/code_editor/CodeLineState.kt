@@ -13,13 +13,15 @@ import androidx.compose.ui.unit.LayoutDirection
 @OptIn(InternalFoundationTextApi::class)
 class CodeLineState(
     val text: AnnotatedString,
-    density: Density,
+    val density: Density,
     fontFamilyResolver: FontFamily.Resolver,
     style: TextStyle
 ) {
     var layoutResult: TextLayoutResult? = null
     private var lastConstraints: Constraints? = null
     var lineHeight = 0
+    val topMargin
+        get() = ((lineHeight - (layoutResult?.size?.height ?: 0) * 1.15f) / 2f)
 
     private val delegate by lazy {
         TextDelegate(
