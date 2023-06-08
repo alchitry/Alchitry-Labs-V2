@@ -22,7 +22,7 @@ interface LucidExprContext : ErrorListener {
     fun resolveSignal(name: String): SignalOrParent?
     fun resolveStruct(name: String): StructType?
     fun resolveGlobal(name: String): GlobalNamespace?
-    fun resolveFunction(name: String): Function? = Function.builtIn().firstOrNull { it.label == name }
+    fun resolveFunction(name: String): Function? = Function.builtIn.firstOrNull { it.label == name }
     val evalContext: Evaluable?
     val project: ProjectContext
 }

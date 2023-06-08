@@ -213,7 +213,7 @@ class LucidBlockContext(
     override fun resolveGlobal(name: String) = project.resolveGlobal(name)
 
     override fun resolveFunction(name: String): Function? {
-        Function.builtIn().firstOrNull { it.label == name }?.let { return it }
+        Function.builtIn.firstOrNull { it.label == name }?.let { return it }
         return blockParser.resolveFunction(name)
     }
 

@@ -1,5 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
+import com.alchitry.labs.allSealedObjects
 import com.alchitry.labs.parsers.grammar.LucidParser.FunctionBlockContext
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs.parsers.lucidv2.values.Value
@@ -27,27 +28,7 @@ sealed class Function(val label: String, val argCount: Int, val constOnly: Boole
         Function(label, args.size, false, true)
 
     companion object {
-        fun builtIn(): Array<Function> {
-            return arrayOf(
-                CLOG2,
-                POWER,
-                REVERSE,
-                FLATTEN,
-                BUILD,
-                SIGNED,
-                UNSIGNED,
-                CDIV,
-                RESIZE,
-                WIDTH,
-                FIXEDPOINT,
-                CFIXEDPOINT,
-                FFIXEDPOINT,
-                TICK,
-                SILENTTICK,
-                ASSERT,
-                PRINT
-            )
-        }
+        val builtIn = Function::class.allSealedObjects()
     }
 }
 

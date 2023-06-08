@@ -111,7 +111,7 @@ data class BlockParser(
         val function = Function.Custom(ctx.name().text, args, ctx)
 
         if (
-            Function.builtIn().any { it.label == function.label } ||
+            Function.builtIn.any { it.label == function.label } ||
             functions.putIfAbsent(function.label, function) != null
         ) {
             context.reportError(ctx.name(), "The function name \"${function.label}\" is already in use.")
