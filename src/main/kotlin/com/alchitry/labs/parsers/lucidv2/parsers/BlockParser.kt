@@ -163,7 +163,8 @@ data class BlockParser(
             ctx.expr() is ExprStructContext ||
             ctx.expr() is ExprConcatContext ||
             ctx.expr() is ExprDupContext ||
-            ctx.expr() is ExprArrayContext
+            ctx.expr() is ExprArrayContext ||
+            ctx.expr() is ExprNumContext
         ) {
             if (assignee.width.willTruncate(newValue.width)) {
                 context.reportWarning(

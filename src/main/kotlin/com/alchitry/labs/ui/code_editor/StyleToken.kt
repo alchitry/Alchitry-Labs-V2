@@ -36,13 +36,12 @@ fun Token.toStyleToken(style: SpanStyle?): StyleToken {
 }
 
 fun Notation.toStyleToken(): StyleToken {
-    val style = when (type) {
-        NotationType.Error -> SpanStyle(color = Color.Red, textDecoration = TextDecoration.Underline)
-        NotationType.Warning -> SpanStyle(color = Color.Yellow, textDecoration = TextDecoration.Underline)
-        NotationType.Info -> SpanStyle(color = Color.Blue, textDecoration = TextDecoration.Underline)
-        NotationType.SyntaxError -> SpanStyle(color = Color.Red, textDecoration = TextDecoration.Underline)
-        NotationType.SyntaxAmbiguity -> SpanStyle(color = Color.Yellow, textDecoration = TextDecoration.Underline)
+    val color = when (type) {
+        NotationType.Error, NotationType.SyntaxError -> Color.Red
+        NotationType.Warning, NotationType.SyntaxAmbiguity -> Color.Yellow
+        NotationType.Info -> Color.Blue
     }
+    val style = SpanStyle(color = color, textDecoration = TextDecoration.Underline)
     return StyleToken(
         start = range.start,
         end = range.endInclusive,
