@@ -7,10 +7,8 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
@@ -19,6 +17,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
+import com.alchitry.labs.project.Project
 import com.alchitry.labs.ui.code_editor.CodeEditor
 import com.alchitry.labs.ui.code_editor.rememberCodeEditorState
 import com.alchitry.labs.ui.code_editor.styles.lucid.LucidTokenizer
@@ -28,6 +27,8 @@ import com.alchitry.labs.ui.components.Toolbar
 import com.alchitry.labs.ui.components.rememberSashData
 import com.alchitry.labs.ui.main.Console
 import com.alchitry.labs.ui.theme.AlchitryTheme
+import com.alchitry.labs.ui.tree.ProjectTree
+import java.io.File
 
 val LocalScale = compositionLocalOf { 1.0f }
 
@@ -45,13 +46,12 @@ fun App() {
             ) {
                 Column {
                     Toolbar()
-                    LazyColumn { }
                     Sash(
                         first = {
                             Sash(
                                 first = {
                                     Surface(Modifier.matchParentSize()) {
-                                        Text("PLACEHOLDER FOR TREE")
+                                        ProjectTree()
                                     }
                                 },
                                 second = {
@@ -119,10 +119,13 @@ fun ApplicationScope.close(windowState: WindowState) {
 }
 
 val LocalComposeWindow = compositionLocalOf<ComposeWindow> { error("No ComposeWindow set!") }
+lateinit var mainWindow: ComposeWindow
 
 fun main() {
     Env.os = Env.OS.LINUX
     Env.isIDE = true
+
+    Project.openProject(File("src/main/resources/library/projects/base/base.alp"))
 
     application {
         val windowState = rememberWindowState(
@@ -135,6 +138,7 @@ fun main() {
             title = "Alchitry Labs - ${Env.version}",
             onCloseRequest = { close(windowState) }
         ) {
+            SideEffect { mainWindow = this.window }
             CompositionLocalProvider(LocalComposeWindow provides this.window) {
                 this.window
                 App()

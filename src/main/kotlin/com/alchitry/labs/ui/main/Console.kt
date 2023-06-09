@@ -100,9 +100,9 @@ fun LazyListMiniScrollBar(
     val last = visibleItems.last()
     val itemCount = layoutInfo.totalItemsCount
     val startPercent =
-        first.index / (itemCount.toFloat() - 1) - (first.offset.toFloat() - layoutInfo.viewportStartOffset) / first.size / itemCount
+        first.index / (itemCount.toFloat() - 1).coerceAtLeast(1f) - (first.offset.toFloat() - layoutInfo.viewportStartOffset) / first.size / itemCount
     val endPercent =
-        last.index / (itemCount.toFloat() - 1) - (last.size - (layoutInfo.viewportEndOffset.toFloat() - last.offset).coerceIn(
+        last.index / (itemCount.toFloat() - 1).coerceAtLeast(1f) - (last.size - (layoutInfo.viewportEndOffset.toFloat() - last.offset).coerceIn(
             0f,
             last.size.toFloat()
         )) / last.size / itemCount

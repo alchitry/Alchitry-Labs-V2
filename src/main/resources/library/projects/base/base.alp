@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Base" board="Alchitry Au" version="4">
+  <files>
+    <src top="true">alchitry_top.luc</src>
+  </files>
+</project>

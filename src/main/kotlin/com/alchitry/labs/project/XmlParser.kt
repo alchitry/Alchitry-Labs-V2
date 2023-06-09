@@ -15,7 +15,7 @@ import java.io.File
 import java.io.FileWriter
 import java.nio.file.Paths
 
-const val XML_VERSION = 3 // TODO change to 4
+const val XML_VERSION = 4
 
 fun Project.Companion.openXml(xmlFile: File): Project {
     val builder = SAXBuilder()

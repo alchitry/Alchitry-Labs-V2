@@ -11,35 +11,42 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.alchitry.labs.project.Project
 import com.alchitry.labs.ui.theme.AlchitryTheme
 
 @Composable
 fun Toolbar() {
     Row(modifier = Modifier.fillMaxWidth()) {
         ToolbarButton(
-            onClick = {},
-            painterResource("icons/open.svg"),
-            "New file"
+            onClick = { Project.openProject() },
+            icon = painterResource("icons/alchitry_icon.svg"),
+            description = "Project",
+            colorFilter = null
         )
         ToolbarButton(
             onClick = {},
-            painterResource("icons/save.svg"),
-            "Save"
+            icon = painterResource("icons/open.svg"),
+            description = "New file"
         )
         ToolbarButton(
             onClick = {},
-            painterResource("icons/save_all.svg"),
-            "Save all"
+            icon = painterResource("icons/save.svg"),
+            description = "Save"
         )
         ToolbarButton(
             onClick = {},
-            painterResource("icons/check.svg"),
-            "Check for errors"
+            icon = painterResource("icons/save_all.svg"),
+            description = "Save all"
         )
         ToolbarButton(
             onClick = {},
-            painterResource("icons/open.svg"),
-            "New File"
+            icon = painterResource("icons/check.svg"),
+            description = "Check for errors"
+        )
+        ToolbarButton(
+            onClick = {},
+            icon = painterResource("icons/open.svg"),
+            description = "New File"
         )
     }
 }

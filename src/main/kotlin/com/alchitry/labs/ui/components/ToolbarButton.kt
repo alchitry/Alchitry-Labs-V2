@@ -22,7 +22,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs.LocalScale
 import com.alchitry.labs.ui.theme.AlchitryTheme
@@ -45,12 +44,12 @@ fun ToolbarButton(
     onClick: () -> Unit,
     icon: Painter,
     description: String,
+    colorFilter: ColorFilter? = ColorFilter.tint(MaterialTheme.colors.onBackground),
     modifier: Modifier = Modifier
 ) {
     LocalDensity.current.run {
         val scale = LocalScale.current
-        val width = (icon.intrinsicSize.width.toDp() * scale).coerceAtLeast(24.dp)
-        val height = (icon.intrinsicSize.height.toDp() * scale).coerceAtLeast(24.dp)
+        val size = 40.dp * scale
         TextTooltipArea(
             text = description
         ) {
@@ -79,9 +78,9 @@ fun ToolbarButton(
                                 Image(
                                     painter = icon,
                                     contentDescription = description,
-                                    colorFilter = ColorFilter.tint(LocalContentColor.current),
+                                    colorFilter = colorFilter,
                                     contentScale = ContentScale.Fit,
-                                    modifier = Modifier.padding(6.dp).size(width, height)
+                                    modifier = Modifier.padding(6.dp).size(size)
                                 )
                             }
                         }

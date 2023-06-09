@@ -1,0 +1,6 @@
+module alchitry_top (
+    input clk,
+    input rst
+  ) {
+
+}
