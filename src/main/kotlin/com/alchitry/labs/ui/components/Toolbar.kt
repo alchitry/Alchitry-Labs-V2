@@ -14,8 +14,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.ui.theme.AlchitryTheme
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun Toolbar() {
@@ -23,12 +21,7 @@ fun Toolbar() {
     Row(modifier = Modifier.fillMaxWidth()) {
         ToolbarButton(
             onClick = {
-                scope.launch {
-                    // for whatever reason, the ripple animation causes the file dialog to show behind the main window
-                    // delaying until it is done ensures it grabs focus correctly
-                    delay(350)
-                    Project.openProject()
-                }
+                Project.openProject()
             },
             icon = painterResource("icons/alchitry_icon.svg"),
             description = "Project",

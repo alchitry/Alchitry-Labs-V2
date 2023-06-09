@@ -23,6 +23,7 @@ dependencies {
     implementation("org.apache.commons:commons-text:1.10.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.7.1")
     implementation(compose.desktop.currentOs)
     implementation(kotlin("reflect"))
     implementation("org.jdom:jdom:2.0.2")
