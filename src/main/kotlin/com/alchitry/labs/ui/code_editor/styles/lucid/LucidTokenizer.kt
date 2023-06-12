@@ -1,14 +1,14 @@
 package com.alchitry.labs.ui.code_editor.styles.lucid
 
 import com.alchitry.labs.parsers.grammar.LucidLexer
-import com.alchitry.labs.ui.code_editor.StyleToken
+import com.alchitry.labs.ui.code_editor.EditorToken
 import com.alchitry.labs.ui.code_editor.styles.EditorTokenizer
-import com.alchitry.labs.ui.code_editor.toStyleToken
+import com.alchitry.labs.ui.code_editor.toEditorToken
 import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CommonTokenStream
 
 class LucidTokenizer : EditorTokenizer {
-    override fun getTokens(stream: CharStream): List<StyleToken> {
+    override fun getTokens(stream: CharStream): List<EditorToken> {
         val lexer = LucidLexer(stream)
         lexer.removeErrorListeners()
         val tokenStream = CommonTokenStream(lexer)
@@ -33,7 +33,7 @@ class LucidTokenizer : EditorTokenizer {
                         if (operatorRegex.matches(token.text)) LucidStyle.operator else null
                 }
             }
-            token.toStyleToken(style)
+            token.toEditorToken(style)
         }
     }
 

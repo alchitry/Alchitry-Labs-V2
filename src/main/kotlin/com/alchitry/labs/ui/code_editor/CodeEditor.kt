@@ -130,7 +130,6 @@ fun CodeEditor(state: CodeEditorState = rememberCodeEditorState(remember { Lucid
                     with(state) {
                         draw()
                     }
-
                 }
             }
         }

@@ -4,11 +4,9 @@ import androidx.compose.ui.text.AnnotatedString
 import com.alchitry.labs.ui.code_editor.CodeEditorState
 import com.alchitry.labs.ui.code_editor.LineStyle
 import com.alchitry.labs.ui.code_editor.StyleToken
-import com.alchitry.labs.ui.code_editor.toCharStream
 
 class CodeStyler(
     private val editor: CodeEditorState,
-    private val tokenizer: EditorTokenizer,
     private val codeParser: CodeErrorChecker
 ) {
 
@@ -17,7 +15,7 @@ class CodeStyler(
         val styles = MutableList(lines.size) { mutableListOf<LineStyle>() }
 
         val styleTokens = mutableListOf<StyleToken>().apply {
-            addAll(tokenizer.getTokens(editor.lines.toCharStream()))
+            addAll(editor.tokens.map { it.styleToken })
             addAll(codeParser.checkText(editor.getText()))
         }
 
@@ -25,8 +23,8 @@ class CodeStyler(
             if (token.style == null)
                 return@forEach
 
-            val start = token.start.coerceInRange(lines)
-            val end = token.end.coerceInRange(lines)
+            val start = token.range.start.coerceInRange(lines)
+            val end = token.range.endInclusive.coerceInRange(lines)
 
             if (token.isSingleLine) {
                 styles[start.line].add(
@@ -55,7 +53,8 @@ class CodeStyler(
             AnnotatedString.Builder().apply {
                 append(line.text.text)
                 styles[lineNum].forEach {
-                    addStyle(it.style, it.start, it.end)
+                    if (it.start != it.end)
+                        addStyle(it.style, it.start, it.end)
                 }
             }.toAnnotatedString()
         }

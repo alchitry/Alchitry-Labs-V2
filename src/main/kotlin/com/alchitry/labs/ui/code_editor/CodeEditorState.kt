@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -90,6 +91,10 @@ class CodeEditorState(
     private var size: IntSize = IntSize.Zero
     private var scrollTarget: Int? = null
 
+    var tokens: List<EditorToken> = emptyList()
+        private set
+
+
     val selectionManager = SelectionManager(
         this,
         cursorColor,
@@ -99,9 +104,36 @@ class CodeEditorState(
     )
     private val undoManager = UndoManager(this, selectionManager)
 
-    private val styler = CodeStyler(this, tokenizer, LucidErrorChecker())
+    private val styler = CodeStyler(this, LucidErrorChecker())
 
     var clipboardManager: ClipboardManager? = null
+
+    private fun screenToTextOffset(offset: Offset) = Offset(offset.x, offset.y + scrollState.value)
+
+    private fun screenOffsetToTextPosition(offset: Offset): TextPosition {
+        val textOffset = screenToTextOffset(offset)
+        if (lines.isEmpty())
+            return TextPosition(0, 0)
+        var lineBottom = 0
+        val lineNumber = lines.indexOfFirst {
+            lineBottom += it.lineHeight
+            lineBottom > textOffset.y
+        }.let { if (it < 0) lines.size - 1 else it }
+
+        val line = lines[lineNumber]
+        val charNum =
+            line.layoutResult?.getOffsetForPosition(Offset(textOffset.x, textOffset.y - offsetAtLineTop(lineNumber)))
+                ?: return TextPosition(0, 0)
+        return TextPosition(lineNumber, charNum)
+    }
+
+    /**
+     * Converts a screen space offset to the nearest token.
+     */
+    private fun offsetToToken(offset: Offset): EditorToken? {
+        val position = screenOffsetToTextPosition(offset)
+        return tokens.firstOrNull { it.range.contains(position) }
+    }
 
     @Composable
     internal fun subscribe(scope: RecomposeScope) {
@@ -120,6 +152,7 @@ class CodeEditorState(
     }
 
     fun onTextChange() {
+        tokens = tokenizer.getTokens(lines.toCharStream())
         styler.updateStyle()
         invalidate()
     }
@@ -302,7 +335,14 @@ class CodeEditorState(
         .pointerInput(selectionManager) {
             detectEditorActions(
                 onClick = { offset -> selectionManager.onClick(offset) },
-                onDoubleClick = { offset -> println("Double click: $offset") },
+                onDoubleClick = { offset ->
+                    val token = offsetToToken(offset) ?: return@detectEditorActions
+                    selectionManager.selectRange(token.range)
+                },
+                onTripleClick = { offset ->
+                    val position = screenOffsetToTextPosition(offset)
+                    selectionManager.selectLine(position.line)
+                },
                 onDrag = { change ->
                     selectionManager.onDrag(change.position)
                 }

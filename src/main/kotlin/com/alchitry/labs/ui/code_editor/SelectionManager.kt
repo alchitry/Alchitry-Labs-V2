@@ -83,6 +83,12 @@ class SelectionManager(
         onChange()
     }
 
+    fun selectRange(range: ClosedRange<TextPosition>) {
+        start = range.start
+        end = range.endInclusive
+        onChange()
+    }
+
     fun getSelectedText(): AnnotatedString = AnnotatedString.Builder().apply {
         val first = firstPosition
         val last = secondPosition
@@ -108,15 +114,19 @@ class SelectionManager(
         append(editorState.lines[last.line].text.subSequence(0, last.offset))
     }.toAnnotatedString()
 
-    fun selectCurrentLine() {
-        val line = caret.line.coerceIn(0, editorState.lines.size)
-        val nextLine = (line + 1).coerceAtMost(editorState.lines.size)
-        start = TextPosition(line, 0)
-        end = if (nextLine == line)
-            TextPosition(line, editorState.lines[line].text.length)
+    fun selectLine(line: Int) {
+        val adjLine = line.coerceIn(0, editorState.lines.size)
+        val nextLine = (adjLine + 1).coerceAtMost(editorState.lines.size)
+        start = TextPosition(adjLine, 0)
+        end = if (nextLine == adjLine)
+            TextPosition(adjLine, editorState.lines[adjLine].text.length)
         else
             TextPosition(nextLine, 0)
         onChange()
+    }
+
+    fun selectCurrentLine() {
+        selectLine(caret.line)
     }
 
     fun clearSelection() {

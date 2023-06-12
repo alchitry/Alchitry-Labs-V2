@@ -7,12 +7,25 @@ import com.alchitry.labs.parsers.lucidv2.Notation
 import com.alchitry.labs.parsers.lucidv2.NotationType
 import org.antlr.v4.runtime.Token
 
+
+data class EditorToken(
+    val styleToken: StyleToken,
+    val token: Token
+) {
+    constructor(range: ClosedRange<TextPosition>, style: SpanStyle?, token: Token) : this(
+        StyleToken(range, style),
+        token
+    )
+
+    val range = styleToken.range
+    val style = styleToken.style
+}
+
 data class StyleToken(
-    val start: TextPosition,
-    val end: TextPosition,
+    val range: ClosedRange<TextPosition>,
     val style: SpanStyle?
 ) {
-    val isSingleLine: Boolean get() = start.line == end.line
+    val isSingleLine: Boolean get() = range.start.line == range.endInclusive.line
 }
 
 data class LineStyle(
@@ -21,17 +34,20 @@ data class LineStyle(
     val style: SpanStyle
 )
 
-fun Token.toStyleToken(style: SpanStyle?): StyleToken {
+fun Token.toEditorToken(style: SpanStyle?): EditorToken {
     // needed to avoid ambiguity see https://youtrack.jetbrains.com/issue/KT-46360
     val lineCounter = { c: Char -> if (c == '\n') 1 else 0 }
     val lineCount = text.sumOf(lineCounter)
 
     val lineOffset = text.lastIndexOf('\n') + 1
 
-    return StyleToken(
-        start = TextPosition(line - 1, charPositionInLine),
-        end = TextPosition(line + lineCount - 1, charPositionInLine + text.length - lineOffset),
-        style = style
+    val endOffset = if (lineCount == 0) charPositionInLine + text.length else text.length - lineOffset
+
+    return EditorToken(
+        range = TextPosition(line - 1, charPositionInLine)..
+                TextPosition(line + lineCount - 1, endOffset),
+        style = style,
+        token = this
     )
 }
 
@@ -43,8 +59,7 @@ fun Notation.toStyleToken(): StyleToken {
     }
     val style = SpanStyle(color = color, textDecoration = TextDecoration.Underline)
     return StyleToken(
-        start = range.start,
-        end = range.endInclusive,
+        range = range,
         style = style
     )
 }
