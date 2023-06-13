@@ -32,6 +32,7 @@ object AlchitryColors {
 
     val gutterForeground = Color(0xFFA1A1A1)
     val lineHighlight = accent.copy(alpha = 0.05f)
+    val tokenHighlight = accent.copy(alpha = 0.1f)
 
     val selectionColor = Color(0xFF6C5600)
 

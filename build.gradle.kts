@@ -40,6 +40,7 @@ tasks.withType<KotlinCompile> {
         jvmTarget = "11"
         freeCompilerArgs += "-opt-in=kotlin.ExperimentalStdlibApi"
         freeCompilerArgs += "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi"
+        freeCompilerArgs += "-Xcontext-receivers"
     }
 }
 

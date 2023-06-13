@@ -15,7 +15,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.round
 
 class SelectionManager(
     private val editorState: CodeEditorState,
@@ -38,6 +37,7 @@ class SelectionManager(
             active = true
             showCaret()
             launchBlinkCursor()
+            editorState.onCaretChanged()
         }
 
     val firstPosition: TextPosition get() = start.coerceAtMost(end)
@@ -245,83 +245,19 @@ class SelectionManager(
         }
     }
 
-    private fun TextPosition.getTopOffset(): Offset {
-        val lineState = editorState.lines.getOrNull(line)
-        val layout = lineState?.layoutResult
-        val xOffset = round(
-            layout?.getHorizontalPosition(
-                offset.coerceIn(0, lineState.text.length),
-                usePrimaryDirection = true
-            ) ?: 0f
-        )
-        val yOffset = editorState.offsetAtLineTop(line).toFloat()
-        return Offset(xOffset, yOffset)
-    }
-
-    private fun TextPosition.getBottomOffset(): Offset {
-        return getTopOffset().let {
-            it.copy(
-                y = it.y + (editorState.lineHeight(line)).toFloat()
-            )
-        }
-    }
-
-
     fun DrawScope.drawSelection() {
-        if (start == end) return
-
-        translate(top = -editorState.scrollState.value.toFloat()) {
-
-            val firstPos = firstPosition
-            val secondPos = secondPosition
-
-            // first line (might be partial)
-            val start = firstPos.getTopOffset()
-            val end = if (secondPos.line == firstPos.line) {
-                secondPos.getBottomOffset()
-            } else {
-                Offset(size.width, start.y + (editorState.lineHeight(firstPos.line)).toFloat())
-            }
-            val firstRect = Rect(topLeft = start, bottomRight = end)
-
-            drawRect(
-                selectionColor,
-                topLeft = firstRect.topLeft,
-                size = firstRect.size
-            )
-
-            // main bulk rect between partial selections
-            if (secondPos.line - firstPos.line > 1) {
-                val top = Offset(0f, editorState.offsetAtLineTop(firstPos.line + 1).toFloat())
-                val bottom = Offset(size.width, editorState.offsetAtLineBottom(secondPos.line - 1).toFloat())
-                val bulkRect = Rect(topLeft = top, bottomRight = bottom)
-                drawRect(
-                    selectionColor,
-                    topLeft = bulkRect.topLeft,
-                    size = bulkRect.size
-                )
-            }
-
-            // final partial selection line
-            if (secondPos.line != firstPos.line) {
-                val top = Offset(0f, editorState.offsetAtLineTop(secondPos.line).toFloat())
-                val bottom = secondPos.getBottomOffset()
-                val finalRect = Rect(topLeft = top, bottomRight = bottom)
-                drawRect(
-                    selectionColor,
-                    topLeft = finalRect.topLeft,
-                    size = finalRect.size
-                )
-            }
-        }
+        HighlightAnnotation(start.coerceAtMost(end)..end.coerceAtLeast(start), selectionColor).draw(editorState)
     }
 
     fun DrawScope.drawLineHighlight() {
         if (!active) return
 
+        val lineTop = editorState.offsetAtLineTop(caret.line).toFloat()
+        val lineBottom = lineTop + editorState.lines[caret.line].lineHeight
+
         val lineBounds = Rect(
-            topLeft = Offset(0f, editorState.offsetAtLineTop(caret.line).toFloat()),
-            bottomRight = Offset(size.width, editorState.offsetAtLineBottom(caret.line).toFloat())
+            topLeft = Offset(0f, lineTop),
+            bottomRight = Offset(size.width, lineBottom)
         )
 
         translate(top = -editorState.scrollState.value.toFloat()) {
@@ -337,7 +273,7 @@ class SelectionManager(
     fun DrawScope.drawCaret() {
         if (!active || !showCursor) return
 
-        val offset = caret.getTopOffset()
+        val offset = with(editorState) { caret.getTopOffset() }
         val line = editorState.lines.getOrNull(caret.line) ?: return
         val layout = line.layoutResult ?: return
         val caretOffset = caret.offset.coerceIn(0, line.text.length)

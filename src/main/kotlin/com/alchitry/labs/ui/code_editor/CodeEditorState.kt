@@ -18,6 +18,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
+import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.ui.code_editor.styles.CodeStyler
 import com.alchitry.labs.ui.code_editor.styles.EditorTokenizer
 import com.alchitry.labs.ui.code_editor.styles.lucid.LucidErrorChecker
@@ -88,7 +90,8 @@ class CodeEditorState(
         private set
     var softWrap by Delegates.observable(false) { _, _, _ -> invalidate() }
     private var invalidator: (() -> Unit)? = null
-    private var size: IntSize = IntSize.Zero
+    var size: IntSize = IntSize.Zero
+        private set
     private var scrollTarget: Int? = null
 
     var tokens: List<EditorToken> = emptyList()
@@ -107,6 +110,37 @@ class CodeEditorState(
     private val styler = CodeStyler(this, LucidErrorChecker())
 
     var clipboardManager: ClipboardManager? = null
+
+    var highlightAnnotations = emptyList<HighlightAnnotation>()
+
+    fun getWindow() = Rect(
+        0f,
+        scrollState.value.toFloat(),
+        size.width.toFloat(),
+        (scrollState.value + size.height).toFloat()
+    )
+
+    fun onCaretChanged() {
+        updateHighlightTokens()
+    }
+
+    fun updateHighlightTokens() {
+        val token = textPositionToToken(selectionManager.caret) ?: return
+
+        highlightAnnotations = when (token.token.type) {
+            LucidLexer.TYPE_ID, LucidLexer.CONST_ID, LucidLexer.SPACE_ID, LucidLexer.FUNCTION_ID -> {
+                tokens.mapNotNull { t ->
+                    if (t.token.type == token.token.type && t.token.text == token.token.text) {
+                        HighlightAnnotation(t.range, AlchitryColors.tokenHighlight)
+                    } else {
+                        null
+                    }
+                }
+            }
+
+            else -> emptyList()
+        }
+    }
 
     private fun screenToTextOffset(offset: Offset) = Offset(offset.x, offset.y + scrollState.value)
 
@@ -127,12 +161,15 @@ class CodeEditorState(
         return TextPosition(lineNumber, charNum)
     }
 
+    private fun textPositionToToken(textPosition: TextPosition): EditorToken? {
+        return tokens.firstOrNull { it.range.contains(textPosition) }
+    }
+
     /**
      * Converts a screen space offset to the nearest token.
      */
     private fun offsetToToken(offset: Offset): EditorToken? {
-        val position = screenOffsetToTextPosition(offset)
-        return tokens.firstOrNull { it.range.contains(position) }
+        return textPositionToToken(screenOffsetToTextPosition(offset))
     }
 
     @Composable
@@ -154,6 +191,7 @@ class CodeEditorState(
     fun onTextChange() {
         tokens = tokenizer.getTokens(lines.toCharStream())
         styler.updateStyle()
+        updateHighlightTokens()
         invalidate()
     }
 
@@ -265,8 +303,18 @@ class CodeEditorState(
         }
     }
 
+    fun isLineVisible(line: Int): Boolean {
+        if (!lines.indices.contains(line))
+            return false
+        val top = offsetAtLineTop(line)
+        val bottom = top + lines[line].lineHeight
+        return bottom > scrollState.value || top < scrollState.value + size.height
+    }
 
     fun DrawScope.draw() {
+        highlightAnnotations.forEach {
+            it.draw(this@CodeEditorState)
+        }
         with(selectionManager) {
             drawSelection()
         }
@@ -334,7 +382,9 @@ class CodeEditorState(
     fun tapModifier() = Modifier
         .pointerInput(selectionManager) {
             detectEditorActions(
-                onClick = { offset -> selectionManager.onClick(offset) },
+                onClick = { offset ->
+                    selectionManager.onClick(offset)
+                },
                 onDoubleClick = { offset ->
                     val token = offsetToToken(offset) ?: return@detectEditorActions
                     selectionManager.selectRange(token.range)
