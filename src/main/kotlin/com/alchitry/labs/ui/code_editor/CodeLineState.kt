@@ -2,6 +2,7 @@ package com.alchitry.labs.ui.code_editor
 
 import androidx.compose.foundation.text.InternalFoundationTextApi
 import androidx.compose.foundation.text.TextDelegate
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -14,6 +15,7 @@ import androidx.compose.ui.unit.LayoutDirection
 class CodeLineState(
     val text: AnnotatedString,
     val density: Density,
+    val highlights: MutableList<HighlightAnnotation>,
     fontFamilyResolver: FontFamily.Resolver,
     style: TextStyle
 ) {
@@ -38,5 +40,10 @@ class CodeLineState(
         lastConstraints = constraints
 
         return delegate.layout(constraints, LayoutDirection.Ltr, layoutResult).also { layoutResult = it }
+    }
+
+    context(DrawScope)
+    fun drawHighlights() {
+        highlights.forEach { it.draw(this) }
     }
 }

@@ -97,6 +97,7 @@ class CodeEditorState(
     var tokens: List<EditorToken> = emptyList()
         private set
 
+    var lineOffsetCache = mutableListOf<Int>()
 
     val selectionManager = SelectionManager(
         this,
@@ -110,8 +111,6 @@ class CodeEditorState(
     private val styler = CodeStyler(this, LucidErrorChecker())
 
     var clipboardManager: ClipboardManager? = null
-
-    var highlightAnnotations = emptyList<HighlightAnnotation>()
 
     fun getWindow() = Rect(
         0f,
@@ -127,7 +126,9 @@ class CodeEditorState(
     fun updateHighlightTokens() {
         val token = textPositionToToken(selectionManager.caret) ?: return
 
-        highlightAnnotations = when (token.token.type) {
+        lines.forEach { it.highlights.clear() }
+
+        val tokens = when (token.token.type) {
             LucidLexer.TYPE_ID, LucidLexer.CONST_ID, LucidLexer.SPACE_ID, LucidLexer.FUNCTION_ID -> {
                 tokens.mapNotNull { t ->
                     if (t.token.type == token.token.type && t.token.text == token.token.text) {
@@ -139,6 +140,13 @@ class CodeEditorState(
             }
 
             else -> emptyList()
+        }
+
+        tokens.forEach {
+            if (it.range.start.line != it.range.endInclusive.line) {
+                TODO("Multiline token highlighting not supported!")
+            }
+            lines[it.range.start.line].highlights.add(it)
         }
     }
 
@@ -189,6 +197,8 @@ class CodeEditorState(
     }
 
     fun onTextChange() {
+        lineOffsetCache.clear()
+        lineOffsetCache.add(0)
         tokens = tokenizer.getTokens(lines.toCharStream())
         styler.updateStyle()
         updateHighlightTokens()
@@ -202,7 +212,8 @@ class CodeEditorState(
     fun getSnapshot() =
         EditorSnapshot(lines.toImmutableList(), selectionManager.caret, selectionManager.start, selectionManager.end)
 
-    internal fun newLineState(text: AnnotatedString) = CodeLineState(text, density, fontFamilyResolver, style)
+    internal fun newLineState(text: AnnotatedString) =
+        CodeLineState(text, density, mutableListOf(), fontFamilyResolver, style)
 
     /**
      * Replaces the text covered by range with newText.
@@ -275,8 +286,14 @@ class CodeEditorState(
         return lines.getOrNull(line)?.lineHeight ?: 0
     }
 
-    fun offsetAtLineTop(line: Int): Int =
-        (0 until line).sumOf { lineHeight(it) }
+    fun offsetAtLineTop(line: Int): Int {
+        if (!lineOffsetCache.indices.contains(line)) {
+            for (i in lineOffsetCache.size..line) {
+                lineOffsetCache.add((lineOffsetCache.getOrNull(i - 1) ?: 0) + lineHeight(i))
+            }
+        }
+        return lineOffsetCache[line]
+    }
 
     fun offsetAtLineBottom(line: Int): Int =
         offsetAtLineTop(line + 1)
@@ -312,28 +329,31 @@ class CodeEditorState(
     }
 
     fun DrawScope.draw() {
-        highlightAnnotations.forEach {
-            it.draw(this@CodeEditorState)
-        }
         with(selectionManager) {
             drawSelection()
         }
-
         drawIntoCanvas { canvas ->
             canvas.save()
             var currentY = -scrollState.value
             canvas.translate(dx = 0f, dy = currentY.toFloat())
-            lines.forEach { line ->
-                line.layoutResult?.let { layout ->
-                    val margin = line.topMargin
+            var wasVisible = false
+            for (line in lines) {
+                val layout = line.layoutResult ?: continue
+                val margin = line.topMargin
+                val nextY = currentY + line.lineHeight
+                val visible = nextY > 0 && currentY < size.height
+                if (visible) {
+                    wasVisible = true
+                    line.drawHighlights()
                     canvas.translate(dx = 0f, dy = margin)
-                    val nextY = currentY + line.lineHeight
-                    if (nextY > 0 || currentY < size.height) { // if visible
-                        TextPainter.paint(canvas, layout)
-                    }
-                    currentY = nextY
+                    TextPainter.paint(canvas, layout)
                     canvas.translate(dx = 0f, dy = line.lineHeight.toFloat() - margin)
+                } else {
+                    canvas.translate(dx = 0f, dy = line.lineHeight.toFloat())
+                    if (wasVisible)
+                        break
                 }
+                currentY = nextY
             }
             canvas.restore()
         }

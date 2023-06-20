@@ -2,14 +2,43 @@ package com.alchitry.labs.ui.code_editor
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.translate
+import kotlin.math.round
 
 data class HighlightAnnotation(
     val range: ClosedRange<TextPosition>,
     val color: Color
 ) {
+    context(DrawScope)
+    fun draw(lineState: CodeLineState) {
+        require(range.start.line == range.endInclusive.line) {
+            "When drawing on a single line the range must be only a single line."
+        }
+        if (range.isEmpty())
+            return
+
+        val layout = lineState.layoutResult ?: return
+
+        val xStart = round(
+            layout.getHorizontalPosition(
+                range.start.offset.coerceIn(0, lineState.text.length),
+                usePrimaryDirection = true
+            )
+        )
+
+        val xEnd = round(
+            layout.getHorizontalPosition(
+                range.endInclusive.offset.coerceIn(0, lineState.text.length),
+                usePrimaryDirection = true
+            )
+        )
+
+        drawRect(color, Offset(xStart, 0f), Size(xEnd - xStart, lineState.lineHeight.toFloat()))
+    }
+
     context(DrawScope)
     fun draw(editorState: CodeEditorState) {
         if (range.isEmpty())
