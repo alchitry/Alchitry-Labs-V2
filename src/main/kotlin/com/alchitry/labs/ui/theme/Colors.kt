@@ -25,8 +25,8 @@ object AlchitryColors {
         isLight = true
     )
 
-    val tooltipBackground = Color.White
-    val tooltipContent = Color.Black
+    val tooltipBackground = Color(0xFF454545)
+    val tooltipContent = Color.White
 
     val menuBarBackground = Color(0xFF424242)
 

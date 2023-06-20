@@ -21,10 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs.ui.code_editor.styles.lucid.LucidTokenizer
+import com.alchitry.labs.ui.code_editor.tooltip.EditorTooltipArea
 import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTypography
 import java.awt.Cursor
@@ -60,9 +62,13 @@ fun CodeEditor(state: CodeEditorState = rememberCodeEditorState(remember { Lucid
                             LocalContentAlpha provides alpha,
                             LocalTextStyle provides AlchitryTypography.editor
                         ) {
-                            // if index is negative, this means it is being used to find the width the gutter should be
-                            // the value is the max number of digits so by using "8" we should be measuring the widest one
+                            // if the index is negative,
+                            // this means it is being used
+                            // to find the width the gutter should be
+                            // the value is the max number of digits,
+                            // so by using "8" we should be measuring the widest one
                             val lineNumber = if (index < 0) "8".repeat(-index) else (index + 1).toString()
+                            val density = LocalDensity.current
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     lineNumber,
@@ -70,6 +76,9 @@ fun CodeEditor(state: CodeEditorState = rememberCodeEditorState(remember { Lucid
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(horizontal = 10.dp)
+                                        .offset( // offset to make text centered
+                                            y = (state.lines.getOrNull(index)?.topMargin ?: 0f).dp * density.density
+                                        )
                                 )
                             }
                         }
@@ -118,19 +127,27 @@ fun CodeEditor(state: CodeEditorState = rememberCodeEditorState(remember { Lucid
                     .padding(start = 10.dp)
             ) {
                 state.subscribe(currentRecomposeScope)
-                Canvas(
-                    modifier = Modifier
-                        .scrollable(state.scrollState, Orientation.Vertical, reverseDirection = true)
-                        .fillMaxSize()
-                        .pointerHoverIcon(textCursor)
-                        .then(state.keyModifier())
-                        .then(state.tapModifier())
-
+                EditorTooltipArea(
+                    state = state.tooltipState,
+                    tooltip = {
+                        Text("Hovering: ${it.token.text}")
+                    }
                 ) {
-                    with(state) {
-                        draw()
+                    Canvas(
+                        modifier = Modifier
+                            .scrollable(state.scrollState, Orientation.Vertical, reverseDirection = true)
+                            .fillMaxSize()
+                            .pointerHoverIcon(textCursor)
+                            .then(state.keyModifier())
+                            .then(state.tapModifier())
+
+                    ) {
+                        with(state) {
+                            draw()
+                        }
                     }
                 }
+
             }
         }
     }

@@ -39,6 +39,7 @@ import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.ui.code_editor.styles.CodeStyler
 import com.alchitry.labs.ui.code_editor.styles.EditorTokenizer
 import com.alchitry.labs.ui.code_editor.styles.lucid.LucidErrorChecker
+import com.alchitry.labs.ui.code_editor.tooltip.EditorTooltipState
 import com.alchitry.labs.ui.gestures.detectEditorActions
 import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTypography
@@ -82,6 +83,7 @@ class CodeEditorState(
     cursorColor: Color,
     selectionColor: Color
 ) {
+    val tooltipState = EditorTooltipState(scope, this)
     val focusRequester = FocusRequester()
     val lines = ArrayList<CodeLineState>()
     private var gutterDigits = 0
@@ -97,7 +99,7 @@ class CodeEditorState(
     var tokens: List<EditorToken> = emptyList()
         private set
 
-    var lineOffsetCache = mutableListOf<Int>()
+    private var lineOffsetCache = mutableListOf<Int>()
 
     val selectionManager = SelectionManager(
         this,
@@ -176,8 +178,17 @@ class CodeEditorState(
     /**
      * Converts a screen space offset to the nearest token.
      */
-    private fun offsetToToken(offset: Offset): EditorToken? {
-        return textPositionToToken(screenOffsetToTextPosition(offset))
+    fun offsetToToken(offset: Offset, excludeRight: Boolean = false): EditorToken? {
+        val textPosition = screenOffsetToTextPosition(offset)
+        if (excludeRight) {
+            val line = lines[textPosition.line]
+            if (line.text.length == textPosition.offset) {
+                if ((line.layoutResult?.getBoundingBox(textPosition.offset - 1)?.right ?: 0f) < offset.x) {
+                    return null
+                }
+            }
+        }
+        return textPositionToToken(textPosition)
     }
 
     @Composable
