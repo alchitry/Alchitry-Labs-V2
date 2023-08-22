@@ -28,7 +28,9 @@ import com.alchitry.labs.ui.components.rememberSashData
 import com.alchitry.labs.ui.main.Console
 import com.alchitry.labs.ui.theme.AlchitryTheme
 import com.alchitry.labs.ui.tree.ProjectTree
+import kotlinx.cli.*
 import java.io.File
+import kotlin.reflect.full.declaredFunctions
 
 val LocalScale = compositionLocalOf { 1.0f }
 
@@ -121,28 +123,125 @@ fun ApplicationScope.close(windowState: WindowState) {
 val LocalComposeWindow = compositionLocalOf<ComposeWindow> { error("No ComposeWindow set!") }
 lateinit var mainWindow: ComposeWindow
 
-fun main() {
-    Env.os = Env.OS.LINUX
-    Env.isIDE = true
+fun ArgParser.showHelp(error: String? = null) {
+    error?.let { System.err.println("Error: $it") }
+    ArgParser::class.declaredFunctions.find { it.name == "makeUsage" }?.let {
+        System.err.println(it.call(this))
+    }
+}
 
-    Project.openProject(File("src/main/resources/library/projects/base/base.alp"))
+@OptIn(ExperimentalCli::class)
+fun main(args: Array<String>) {
+    if (Env.os == Env.OS.UNKNOWN) {
+        System.err.println("Warning: OS detection failed!")
+    }
 
-    application {
-        val windowState = rememberWindowState(
-            placement = if (Settings.maximized) WindowPlacement.Maximized else WindowPlacement.Floating,
-            size = DpSize(Settings.windowWidth.dp, Settings.windowHeight.dp)
-        )
+    val parser = ArgParser("Alchitry Labs", strictSubcommandOptionsOrder = true)
 
-        Window(
-            state = windowState,
-            title = "Alchitry Labs - ${Env.version}",
-            onCloseRequest = { close(windowState) }
-        ) {
-            SideEffect { mainWindow = this.window }
-            CompositionLocalProvider(LocalComposeWindow provides this.window) {
-                this.window
-                App()
+    val ide by parser.option(ArgType.Boolean, "ide", null, "Use development file paths").default(false)
+
+    class Cli : Subcommand("cli", "Command Line Interface") {
+        val project by option(ArgType.String, "project", "p", "Alchitry project file")
+        val check by option(ArgType.Boolean, "check", "c", "Check project for errors without building").default(false)
+        val build by option(ArgType.Boolean, "build", "b", "Build project").default(false)
+        val flash by option(ArgType.Boolean, "flash", "f", "Load project to FPGA's flash (persistent)").default(false)
+        val ram by option(ArgType.Boolean, "ram", "r", "Load project to FPGA's RAM (temporary)").default(false)
+        val bin by option(ArgType.String, "bin", null, "Bin file to load")
+        val list by option(ArgType.Boolean, "list", "l", "List all detected boards").default(false)
+        val board by option(ArgType.Int, "device", "d", "Index of device to load").default(0)
+
+        override fun execute() {
+            if (flash && ram) {
+                showHelp("Commands flash and ram can't both be specified!")
+                return
+            }
+
+            if (check && build) {
+                println("Warning: Command check is ignored when command build is specified.")
+            }
+
+            if (build || check && project == null) {
+                showHelp("A project file must be specified when commands check or build are specified.")
+                return
+            }
+
+            if (!check && !build && !flash && !ram && !list) {
+                showHelp("At least one command (check, build, flash, ram, list) must be specified!")
+                return
+            }
+
+            val project = project?.let {
+                Project.openProject(File(it))
+            }
+
+            if (check && !build) {
+                if (project == null) {
+                    showHelp("A project file must be specified when command check is specified.")
+                    return
+                }
+                showHelp("Not yet implemented!")
+            }
+
+            if (build) {
+                if (project == null) {
+                    showHelp("A project file must be specified when command build is specified.")
+                    return
+                }
+                showHelp("Not yet implemented!")
+            }
+
+            if (flash || ram) {
+                if (project == null && bin == null) {
+                    showHelp("A project or bin file must be specified when loading to the FPGA.")
+                    return
+                }
+
+                showHelp("Loading isn't implemented yet!")
             }
         }
+    }
+
+    class Labs : Subcommand("labs", "Launch Alchitry Labs GUI") {
+        val project by option(ArgType.String, "project", "p", "Alchitry project file")
+
+        override fun execute() {
+            Env.isIDE = ide
+
+            Project.openProject(File("src/main/resources/library/projects/base/base.alp"))
+
+            application {
+                val windowState = rememberWindowState(
+                    placement = if (Settings.maximized) WindowPlacement.Maximized else WindowPlacement.Floating,
+                    size = DpSize(Settings.windowWidth.dp, Settings.windowHeight.dp)
+                )
+
+                Window(
+                    state = windowState,
+                    title = "Alchitry Labs - ${Env.version}",
+                    onCloseRequest = { close(windowState) }
+                ) {
+                    SideEffect { mainWindow = this.window }
+                    CompositionLocalProvider(LocalComposeWindow provides this.window) {
+                        this.window
+                        App()
+                    }
+                }
+            }
+        }
+    }
+
+    class Loader : Subcommand("loader", "Launch Alchitry Loader GUI") {
+
+        override fun execute() {
+            showHelp("Not yet implemented!")
+        }
+    }
+
+    parser.subcommands(Cli(), Labs(), Loader())
+
+    parser.parse(args)
+
+    if (args.isEmpty()) {
+        parser.showHelp("A subcommand must be specified!")
     }
 }

@@ -5,12 +5,19 @@ import java.util.*
 object Env {
     enum class OS { UNKNOWN, WINDOWS, LINUX, MACOS }
 
-    var os = OS.UNKNOWN
+    val os = System.getProperty("os.name").lowercase(Locale.getDefault()).let {
+        when {
+            it.contains("win") -> OS.WINDOWS
+            it.contains("nix") || it.contains("nux") || it.contains("aix") -> OS.LINUX
+            it.contains("mac") -> OS.MACOS
+            else -> OS.UNKNOWN
+        }
+    }
     val isWindows: Boolean get() = os == OS.WINDOWS
     val isLinux: Boolean get() = os == OS.LINUX
     val isMac: Boolean get() = os == OS.MACOS
+
     var isIDE: Boolean = false
-    var isGUI: Boolean = true
 
     val version =
         Properties()

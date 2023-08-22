@@ -54,14 +54,17 @@ class Project(
                 mutableCurrentFlow.tryEmit(value)
             }
 
-        fun openProject(file: File? = null) {
+        fun openProject(file: File? = null): Project? {
             try {
-                val project =
+                val projectFile =
                     file ?: openFileDialog(mainWindow, "Open Project", listOf(".alp"), allowMultiSelection = false)
-                        .firstOrNull() ?: return
-                mutableCurrentFlow.tryEmit(openXml(project))
+                        .firstOrNull() ?: return null
+                val project = openXml(projectFile)
+                mutableCurrentFlow.tryEmit(project)
+                return project
             } catch (e: Exception) {
                 Log.showError("Failed to open project: ${e.message}")
+                return null
             }
         }
     }
