@@ -13,12 +13,13 @@ import com.alchitry.labs.parsers.lucidv2.types.TestAbortedException
 import com.alchitry.labs.parsers.lucidv2.types.TestOrModuleInstance
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.Value
+import com.alchitry.labs.project.Project
 import kotlinx.coroutines.runBlocking
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.ParseTreeListener
 
 class LucidBlockContext(
-    override val project: ProjectContext,
+    override val project: Project,
     val instance: TestOrModuleInstance,
     var stage: ParseStage = ParseStage.ModuleInternals,
     override val evalContext: Evaluable? = null,

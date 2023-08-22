@@ -77,7 +77,7 @@ fun CodeEditor(state: CodeEditorState = rememberCodeEditorState(remember { Lucid
                                         .fillMaxWidth()
                                         .padding(horizontal = 10.dp)
                                         .offset( // offset to make text centered
-                                            y = (state.lines.getOrNull(index)?.topMargin ?: 0f).dp * density.density
+                                            y = state.lineTopOffset.dp * density.density
                                         )
                                 )
                             }

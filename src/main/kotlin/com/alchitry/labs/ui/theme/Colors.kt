@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 
 object AlchitryColors {
-    val accent = Color(0xFFE6B800)
+    val accent = Color(0xFFfaac1f)
     val darkAccent = Color(0xFF333330)
 
     val colors = Colors(

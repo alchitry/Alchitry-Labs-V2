@@ -9,10 +9,11 @@ import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.types.Constant
 import com.alchitry.labs.parsers.lucidv2.types.EnumType
 import com.alchitry.labs.parsers.lucidv2.types.Module
+import com.alchitry.labs.project.Project
 import org.antlr.v4.runtime.tree.ParseTreeListener
 
 class LucidModuleTypeContext(
-    override val project: ProjectContext,
+    override val project: Project,
     val errorCollector: ErrorCollector = ErrorCollector()
 ) : LucidExprContext, ErrorListener by errorCollector {
     override val evalContext: Evaluable? = null

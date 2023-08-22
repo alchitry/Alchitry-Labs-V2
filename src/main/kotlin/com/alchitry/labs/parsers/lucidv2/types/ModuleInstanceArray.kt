@@ -1,6 +1,5 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
-import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.*
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotOrParent
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotParent
@@ -9,6 +8,7 @@ import com.alchitry.labs.parsers.lucidv2.types.ports.Inout
 import com.alchitry.labs.parsers.lucidv2.types.ports.Input
 import com.alchitry.labs.parsers.lucidv2.types.ports.Output
 import com.alchitry.labs.parsers.lucidv2.values.*
+import com.alchitry.labs.project.Project
 
 sealed interface ModuleInstanceOrArray : SignalParent, Snapshotable {
     val internal: Map<String, Signal>
@@ -17,7 +17,7 @@ sealed interface ModuleInstanceOrArray : SignalParent, Snapshotable {
 
 class ModuleInstanceArray(
     override val name: String,
-    projectContext: ProjectContext,
+    projectContext: Project,
     override val parent: ModuleInstance?,
     module: Module,
     dimensions: List<Int>,

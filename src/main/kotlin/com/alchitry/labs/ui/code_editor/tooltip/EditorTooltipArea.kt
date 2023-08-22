@@ -3,11 +3,11 @@ package com.alchitry.labs.ui.code_editor.tooltip
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.layout.boundsInWindow
@@ -46,7 +46,7 @@ fun EditorTooltipArea(
                     state.hide()
                     if (token != null)
                         state.startShowing(token)
-                } else if (state.isVisible) {
+                } else if (state.isVisible.value > 0f) {
                     state.hideIfNotHovered(state.parentBounds.topLeft + it.position)
                 }
             }
@@ -60,10 +60,10 @@ fun EditorTooltipArea(
             }
     ) {
         content()
-        if (state.isVisible) {
+        if (state.isVisible.value > 0f) {
             Popup(
                 popupPositionProvider = state.positionProvider(),
-                onDismissRequest = { state.isVisible = false }
+                onDismissRequest = { state.hide() }
             ) {
                 Surface(
                     Modifier
@@ -73,9 +73,9 @@ fun EditorTooltipArea(
                         }
                         .onPointerEvent(PointerEventType.Exit) {
                             state.hideIfNotHovered(state.popupPosition + it.position)
-                        },
+                        }
+                        .alpha(state.isVisible.value),
                     elevation = 10.dp,
-                    shape = RoundedCornerShape(5.dp),
                     color = AlchitryColors.tooltipBackground,
                     contentColor = AlchitryColors.tooltipContent
                 ) {

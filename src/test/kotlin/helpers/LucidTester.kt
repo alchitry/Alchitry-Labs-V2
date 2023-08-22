@@ -7,16 +7,18 @@ import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleTypeContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext
-import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SimParent
 import com.alchitry.labs.parsers.lucidv2.types.Module
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
+import com.alchitry.labs.project.Board
+import com.alchitry.labs.project.Project
 import kotlinx.coroutines.runBlocking
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
+import java.io.File
 
 class LucidTester(vararg val files: String) {
-    val project = ProjectContext()
+    val project = Project("Testing", File("."), Board.AlchitryAu, emptySet(), emptySet(), emptySet())
 
     fun parseText(errorCollector: ErrorCollector): List<SourceContext> {
         return files.map {

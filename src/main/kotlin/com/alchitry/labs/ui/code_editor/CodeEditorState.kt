@@ -6,9 +6,7 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.lazy.layout.LazyLayoutMeasureScope
-import androidx.compose.foundation.text.KeyCommand
-import androidx.compose.foundation.text.isTypedEvent
-import androidx.compose.foundation.text.platformDefaultKeyMapping
+import androidx.compose.foundation.text.*
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.LocalTextStyle
@@ -35,6 +33,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.ui.code_editor.styles.CodeStyler
 import com.alchitry.labs.ui.code_editor.styles.EditorTokenizer
@@ -83,6 +82,14 @@ class CodeEditorState(
     cursorColor: Color,
     selectionColor: Color
 ) {
+    @OptIn(InternalFoundationTextApi::class)
+    val lineTopOffset: Float = TextDelegate(
+        text = AnnotatedString("123"),
+        style = style,
+        density = density,
+        fontFamilyResolver = fontFamilyResolver
+    ).layout(Constraints(), LayoutDirection.Ltr, null).size.height * -0.07f
+
     val tooltipState = EditorTooltipState(scope, this)
     val focusRequester = FocusRequester()
     val lines = ArrayList<CodeLineState>()
@@ -125,7 +132,7 @@ class CodeEditorState(
         updateHighlightTokens()
     }
 
-    fun updateHighlightTokens() {
+    private fun updateHighlightTokens() {
         val token = textPositionToToken(selectionManager.caret) ?: return
 
         lines.forEach { it.highlights.clear() }
@@ -182,8 +189,12 @@ class CodeEditorState(
         val textPosition = screenOffsetToTextPosition(offset)
         if (excludeRight) {
             val line = lines[textPosition.line]
+            if (line.text.isEmpty())
+                return null
             if (line.text.length == textPosition.offset) {
-                if ((line.layoutResult?.getBoundingBox(textPosition.offset - 1)?.right ?: 0f) < offset.x) {
+                if ((line.layoutResult?.getBoundingBox((textPosition.offset - 1).coerceAtLeast(0))?.right
+                        ?: 0f) < offset.x
+                ) {
                     return null
                 }
             }
@@ -350,7 +361,7 @@ class CodeEditorState(
             var wasVisible = false
             for (line in lines) {
                 val layout = line.layoutResult ?: continue
-                val margin = line.topMargin
+                val margin = lineTopOffset
                 val nextY = currentY + line.lineHeight
                 val visible = nextY > 0 && currentY < size.height
                 if (visible) {
@@ -398,7 +409,6 @@ class CodeEditorState(
 
         lines.forEach {
             it.layout(lineConstraints)
-                .also { l -> it.lineHeight = l.size.height }
         }
 
         val totalHeight = lines.sumOf { it.lineHeight }

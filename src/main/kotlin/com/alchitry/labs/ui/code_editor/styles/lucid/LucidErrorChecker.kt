@@ -5,17 +5,19 @@ import com.alchitry.labs.parsers.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleTypeContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext
-import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
+import com.alchitry.labs.project.Board
+import com.alchitry.labs.project.Project
 import com.alchitry.labs.ui.code_editor.StyleToken
 import com.alchitry.labs.ui.code_editor.styles.CodeErrorChecker
 import com.alchitry.labs.ui.code_editor.toStyleToken
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
+import java.io.File
 
 class LucidErrorChecker : CodeErrorChecker {
     override fun checkText(text: String): List<StyleToken> {
-        val project = ProjectContext()
+        val project = Project("Testing", File("."), Board.AlchitryAu, emptySet(), emptySet(), emptySet())
         val errorCollector = ErrorCollector()
 
         val parser = LucidParser(

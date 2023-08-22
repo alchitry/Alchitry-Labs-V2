@@ -3,8 +3,8 @@ package com.alchitry.labs.parsers.lucidv2.types
 import com.alchitry.labs.parsers.grammar.LucidParser.TestBenchContext
 import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
-import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.*
+import com.alchitry.labs.project.Project
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -14,7 +14,7 @@ sealed interface TestOrModuleInstance {
 
 class TestBench(
     override val name: String,
-    project: ProjectContext,
+    project: Project,
     private val testBenchContext: TestBenchContext,
     errorCollector: ErrorCollector = ErrorCollector()
 ) : TestOrModuleInstance, Snapshotable {

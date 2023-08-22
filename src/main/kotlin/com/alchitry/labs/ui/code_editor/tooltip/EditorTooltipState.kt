@@ -1,5 +1,6 @@
 package com.alchitry.labs.ui.code_editor.tooltip
 
+import androidx.compose.animation.core.Animatable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,9 +23,9 @@ class EditorTooltipState(
     var parentBounds by mutableStateOf(Rect.Zero)
     var popupPosition by mutableStateOf(Offset.Zero)
     var cursorPosition by mutableStateOf(Offset.Zero)
-    var isVisible by mutableStateOf(false)
     var job: Job? by mutableStateOf(null)
     var activeToken by mutableStateOf<EditorToken?>(null)
+    val isVisible = Animatable(0f)
 
     fun tokenFromPosition(position: Offset): EditorToken? {
         return codeEditor.offsetToToken(position, true)
@@ -32,19 +33,21 @@ class EditorTooltipState(
 
     fun startShowing(token: EditorToken) {
         if (activeToken != token)
-            isVisible = false
-        activeToken = token
+            hide()
         job?.cancel()
         job = scope.launch {
             delay(750)
-            isVisible = true
+            activeToken = token
+            isVisible.animateTo(1f)
         }
     }
 
     fun hide() {
         job?.cancel()
-        isVisible = false
-        activeToken = null
+        scope.launch {
+            isVisible.animateTo(0f)
+            activeToken = null
+        }
     }
 
     fun hideIfNotHovered(globalPosition: Offset) {

@@ -6,9 +6,10 @@ import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs.parsers.lucidv2.parsers.TestBenchParser
 import com.alchitry.labs.parsers.lucidv2.parsers.WalkerFilter
+import com.alchitry.labs.project.Project
 
 class LucidTestBenchContext(
-    val project: ProjectContext,
+    val project: Project,
     val errorCollector: ErrorCollector = ErrorCollector()
 ) : ErrorListener by errorCollector {
 

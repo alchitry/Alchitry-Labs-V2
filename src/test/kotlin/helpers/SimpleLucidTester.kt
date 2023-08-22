@@ -3,13 +3,15 @@ package helpers
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.parsers.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
-import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs.parsers.lucidv2.parsers.ParseStage
 import com.alchitry.labs.parsers.lucidv2.types.Module
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
+import com.alchitry.labs.project.Board
+import com.alchitry.labs.project.Project
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
+import java.io.File
 
 class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = null) :
     LucidParser(
@@ -19,7 +21,7 @@ class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = nul
             ).also { it.removeErrorListeners() })
     ) {
 
-    val project = ProjectContext()
+    val project = Project("Testing", File("."), Board.AlchitryAu, emptySet(), emptySet(), emptySet())
     val context = LucidBlockContext(
         project,
         ModuleInstance(

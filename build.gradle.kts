@@ -4,8 +4,8 @@ import java.io.FileOutputStream
 import java.util.*
 
 plugins {
-    kotlin("jvm") version "1.8.20"
-    id("org.jetbrains.compose") version "1.4.0"
+    kotlin("jvm") version "1.9.0"
+    id("org.jetbrains.compose") version "1.4.3"
     antlr
 }
 
@@ -26,7 +26,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.7.1")
     implementation(compose.desktop.currentOs)
     implementation(kotlin("reflect"))
-    implementation("org.jdom:jdom:2.0.2")
+    implementation("org.jdom:jdom2:2.0.6.1")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
 
     testImplementation(kotlin("test"))
 }

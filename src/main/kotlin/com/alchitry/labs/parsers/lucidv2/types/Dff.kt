@@ -1,7 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
-import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.DynamicExpr
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
@@ -11,11 +10,12 @@ import com.alchitry.labs.parsers.lucidv2.signals.snapshot.Snapshotable
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
 import com.alchitry.labs.parsers.lucidv2.values.Value
+import com.alchitry.labs.project.Project
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 
 class Dff(
-    private val context: ProjectContext,
+    private val context: Project,
     override val name: String,
     val init: Value,
     val clk: DynamicExpr,

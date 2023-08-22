@@ -1,15 +1,15 @@
 package com.alchitry.labs.parsers.lucidv2.types.ports
 
-import com.alchitry.labs.parsers.lucidv2.context.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.signals.SignalParent
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
+import com.alchitry.labs.project.Project
 
 class Output(
     override val name: String,
-    project: ProjectContext,
+    project: Project,
     parent: SignalParent?,
     override val width: SignalWidth,
     override val signed: Boolean

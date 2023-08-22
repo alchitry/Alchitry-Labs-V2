@@ -279,7 +279,7 @@ class SelectionManager(
         val caretOffset = caret.offset.coerceIn(0, line.text.length)
         val cursorRect = layout.getCursorRect(caretOffset)
 
-        val margin = line.topMargin
+        val margin = editorState.lineTopOffset
 
         translate(top = -editorState.scrollState.value.toFloat()) {
             drawRect(

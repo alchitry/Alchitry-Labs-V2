@@ -7,10 +7,11 @@ import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.parsers.*
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.types.GlobalNamespace
+import com.alchitry.labs.project.Project
 import org.antlr.v4.runtime.tree.ParseTreeListener
 
 class LucidGlobalContext(
-    override val project: ProjectContext,
+    override val project: Project,
     val errorCollector: ErrorCollector = ErrorCollector()
 ) : LucidExprContext, ErrorListener by errorCollector {
     override val evalContext: Evaluable? = null
