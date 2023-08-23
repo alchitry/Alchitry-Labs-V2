@@ -1,4 +1,3 @@
-import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.types.Module
 import com.alchitry.labs.parsers.lucidv2.types.Parameter
@@ -7,6 +6,7 @@ import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.BitListWidth
 import com.alchitry.labs.parsers.lucidv2.values.BitWidth
 import helpers.LucidTester
+import helpers.testErrorCollector
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -30,7 +30,7 @@ class ModuleTypeTests {
             """.trimIndent()
         )
 
-        val errorCollector = ErrorCollector()
+        val errorCollector = testErrorCollector()
         val tree = test.parseText(errorCollector)
         val module = test.moduleTypeParse(errorCollector, tree)
 

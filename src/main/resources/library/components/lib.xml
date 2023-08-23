@@ -1,0 +1,15 @@
+<library>
+    <category name="Miscellaneous">
+        <module file="reset_conditioner.luc" name="Reset Conditioner">
+            <description>This will take an asynchronous reset input (such as a button) and synchronize the falling edge
+                to the clock. This is important to ensure that the entire FPGA comes out of reset at the same time.
+            </description>
+        </module>
+    </category>
+    <category name="Constraints">
+        <constraint file="alchitry.acf" name="Alchitry">
+            <description>This file contains the basic pin and clock constraints for the Alchitry Au, Au+, and Cu.
+            </description>
+        </constraint>
+    </category>
+</library>

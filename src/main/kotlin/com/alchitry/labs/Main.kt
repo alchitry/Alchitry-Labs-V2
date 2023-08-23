@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
+import com.alchitry.labs.parsers.lucidv2.ErrorManager
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.ui.code_editor.CodeEditor
 import com.alchitry.labs.ui.code_editor.rememberCodeEditorState
@@ -138,8 +139,6 @@ fun main(args: Array<String>) {
 
     val parser = ArgParser("Alchitry Labs", strictSubcommandOptionsOrder = true)
 
-    val ide by parser.option(ArgType.Boolean, "ide", null, "Use development file paths").default(false)
-
     class Cli : Subcommand("cli", "Command Line Interface") {
         val project by option(ArgType.String, "project", "p", "Alchitry project file")
         val check by option(ArgType.Boolean, "check", "c", "Check project for errors without building").default(false)
@@ -171,7 +170,12 @@ fun main(args: Array<String>) {
             }
 
             val project = project?.let {
-                Project.openProject(File(it))
+                try {
+                    Project.openProject(File(it))
+                } catch (e: Exception) {
+                    System.err.println("Failed to open project: ${e.message}")
+                    return
+                }
             }
 
             if (check && !build) {
@@ -179,7 +183,15 @@ fun main(args: Array<String>) {
                     showHelp("A project file must be specified when command check is specified.")
                     return
                 }
-                showHelp("Not yet implemented!")
+
+                val errorManager = ErrorManager()
+                val topModule = project.parse(errorManager)
+
+                if (topModule == null) {
+                    println("Failed to fully parse project!")
+                }
+
+                print(errorManager.getReport())
             }
 
             if (build) {
@@ -205,9 +217,7 @@ fun main(args: Array<String>) {
         val project by option(ArgType.String, "project", "p", "Alchitry project file")
 
         override fun execute() {
-            Env.isIDE = ide
-
-            Project.openProject(File("src/main/resources/library/projects/base/base.alp"))
+            project?.let { Project.openProject(File(it)) }
 
             application {
                 val windowState = rememberWindowState(

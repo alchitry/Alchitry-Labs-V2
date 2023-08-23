@@ -1,7 +1,7 @@
-import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import helpers.LucidTester
+import helpers.testErrorCollector
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -50,7 +50,7 @@ class SignalDriverTests {
                 }
             """.trimIndent()
         )
-        val errorCollector = ErrorCollector()
+        val errorCollector = testErrorCollector()
         tester.fullParse(errorCollector)
         assert(errorCollector.hasErrors)
         assert(errorCollector.hasNoWarnings)
@@ -74,7 +74,7 @@ class SignalDriverTests {
                 }
             """.trimIndent()
         )
-        val errorCollector = ErrorCollector()
+        val errorCollector = testErrorCollector()
         tester.fullParse(errorCollector)
         assert(errorCollector.hasErrors) // should complain about test being partially driven
         assert(errorCollector.hasNoWarnings)
@@ -120,7 +120,7 @@ class SignalDriverTests {
                 }
             """.trimIndent()
         )
-        val errorCollector = ErrorCollector()
+        val errorCollector = testErrorCollector()
         tester.fullParse(errorCollector)
         assert(errorCollector.hasErrors) // should complain about test being partially driven
     }
@@ -192,7 +192,7 @@ class SignalDriverTests {
                 }
             """.trimIndent()
         )
-        val errorCollector = ErrorCollector()
+        val errorCollector = testErrorCollector()
         tester.fullParse(errorCollector)
         assert(errorCollector.hasErrors)
         assert(errorCollector.hasNoWarnings)
@@ -215,7 +215,7 @@ class SignalDriverTests {
                 }
             """.trimIndent()
         )
-        val errorCollector = ErrorCollector()
+        val errorCollector = testErrorCollector()
         tester.fullParse(errorCollector)
         assert(errorCollector.hasNoErrors)
         assert(errorCollector.hasWarnings)

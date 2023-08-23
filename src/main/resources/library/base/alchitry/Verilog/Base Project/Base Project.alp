@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Base Project" board="Alchitry Au" language="Verilog" version="3">
+  <files>
+    <src top="true">au_top.v</src>
+    <constraint lib="true">au.xdc</constraint>
+    <constraint lib="true">alchitry.acf</constraint>
+    <component>reset_conditioner.luc</component>
+  </files>
+</project>

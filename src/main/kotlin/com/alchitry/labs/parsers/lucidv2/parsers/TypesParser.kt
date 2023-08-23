@@ -196,7 +196,8 @@ data class TypesParser(
                 context.instance as? ModuleInstance,
                 moduleType,
                 instParams,
-                instPorts
+                instPorts,
+                context.errorCollector.new()
             ).apply {
                 checkParameters()?.let {
                     this@TypesParser.context.reportError(ctx, it)
@@ -269,7 +270,7 @@ data class TypesParser(
             ModuleInstanceArray(
                 moduleInstanceName,
                 context.project,
-                context.instance as? ModuleInstance,
+                context.instance,
                 moduleType,
                 dimensions,
                 signalProvider = { idx ->

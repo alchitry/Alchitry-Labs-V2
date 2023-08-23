@@ -3,10 +3,16 @@ package com.alchitry.labs.project
 import com.alchitry.labs.Log
 import com.alchitry.labs.PathUtil
 import com.alchitry.labs.mainWindow
+import com.alchitry.labs.parsers.grammar.LucidLexer
+import com.alchitry.labs.parsers.grammar.LucidParser
+import com.alchitry.labs.parsers.lucidv2.ErrorManager
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
+import com.alchitry.labs.parsers.lucidv2.context.LucidGlobalContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidModuleTypeContext
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.types.GlobalNamespace
 import com.alchitry.labs.parsers.lucidv2.types.Module
+import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
 import com.alchitry.labs.parsers.lucidv2.types.TestBench
 import com.alchitry.labs.project.files.ConstraintFile
 import com.alchitry.labs.project.files.IPCore
@@ -20,6 +26,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.antlr.v4.runtime.CharStreams
+import org.antlr.v4.runtime.CommonTokenStream
 import java.io.File
 
 class QueueExhaustionException(message: String) : IllegalStateException(message)
@@ -67,6 +75,62 @@ class Project(
                 return null
             }
         }
+    }
+
+    fun parse(errorManger: ErrorManager): ModuleInstance? {
+        val trees = sourceFiles.map {
+            val parser = LucidParser(
+                CommonTokenStream(
+                    LucidLexer(
+                        CharStreams.fromPath(it.file.toPath())
+                    ).also { it.removeErrorListeners() })
+            ).apply {
+                (tokenStream.tokenSource as LucidLexer).addErrorListener(errorManger.getCollector(it))
+                removeErrorListeners()
+                addErrorListener(errorManger.getCollector(it))
+            }
+
+            it to parser.source()
+        }
+
+        if (!errorManger.hasNoIssues)
+            return null
+
+        trees.forEach {
+            val globalContext = LucidGlobalContext(this, errorManger.getCollector(it.first))
+            globalContext.walk(it.second)
+        }
+
+        if (errorManger.hasErrors)
+            return null
+
+        val modules = trees.mapNotNull {
+            val moduleTypeContext = LucidModuleTypeContext(this, errorManger.getCollector(it.first))
+            val module = moduleTypeContext.extract(it.second)
+
+            it.first to (module ?: return@mapNotNull null)
+        }
+
+        if (errorManger.hasErrors)
+            return null
+
+        val topModule = modules.firstOrNull { it.first == top }?.second
+
+        if (topModule == null) {
+            errorManger.getCollector(top)
+                .reportError(trees.first { it.first == top }.second, "Top file does not contain a module!")
+            return null
+        }
+
+        val moduleInstance =
+            ModuleInstance(top.name, this, null, topModule, mapOf(), mapOf(), errorManger.getCollector(top))
+
+        moduleInstance.initialWalk()
+
+        if (errorManger.hasErrors)
+            return null
+
+        return moduleInstance
     }
 
     fun getTestBenches(): List<TestBench> {

@@ -10,15 +10,16 @@ import kotlinx.coroutines.withContext
 
 sealed interface TestOrModuleInstance {
     val name: String
+    val context: LucidBlockContext
 }
 
 class TestBench(
     override val name: String,
     project: Project,
     private val testBenchContext: TestBenchContext,
-    errorCollector: ErrorCollector = ErrorCollector()
+    errorCollector: ErrorCollector
 ) : TestOrModuleInstance, Snapshotable {
-    val context = LucidBlockContext(project, this, errorCollector = errorCollector)
+    override val context = LucidBlockContext(project, this, errorCollector = errorCollector)
 
     override fun takeSnapshot(): SnapshotParent {
         val snapshots = mutableListOf<SnapshotOrParent>()

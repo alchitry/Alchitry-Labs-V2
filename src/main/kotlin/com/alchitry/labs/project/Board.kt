@@ -12,17 +12,17 @@ sealed class Board {
     abstract val fpgaName: String
 
     object AlchitryAu : Board() {
-        override val name = "Alchitry Au"
+        override val name = "Au"
         override val fpgaName = "xc7a35tftg256-1"
     }
 
     object AlchitryAuPlus : Board() {
-        override val name = "Alchitry Au+"
+        override val name = "Au+"
         override val fpgaName = "xc7a100tftg256-1"
     }
 
     object AlchitryCu : Board() {
-        override val name = "Alchitry Cu"
+        override val name = "Cu"
         override val fpgaName = "ICE40HX8K-CB132IC"
     }
 

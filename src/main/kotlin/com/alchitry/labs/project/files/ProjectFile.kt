@@ -26,4 +26,8 @@ interface ProjectFile {
             false
         }
     }
+
+    fun getContents(): String {
+        return String(Files.readAllBytes(file.toPath()))
+    }
 }

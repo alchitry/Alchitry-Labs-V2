@@ -152,7 +152,7 @@ data class BlockParser(
         if (!assignee.width.canAssign(newValue.width)) {
             context.reportError(
                 ctx.expr(),
-                "This expression doesn't match the dimensions of signal \"${ctx.signal().text}\"."
+                "The expression \"${ctx.expr().text}\" doesn't match the dimensions of signal \"${ctx.signal().text}\"."
             )
             return
         }
@@ -169,7 +169,7 @@ data class BlockParser(
             if (assignee.width.willTruncate(newValue.width)) {
                 context.reportWarning(
                     ctx.expr(),
-                    "This expression is wider than \"${ctx.signal().text}\" and will be truncated."
+                    "The expression \"${ctx.expr().text}\" is wider than \"${ctx.signal().text}\" and will be truncated."
                 )
             }
         }

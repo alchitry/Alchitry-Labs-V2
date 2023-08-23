@@ -17,8 +17,6 @@ object Env {
     val isLinux: Boolean get() = os == OS.LINUX
     val isMac: Boolean get() = os == OS.MACOS
 
-    var isIDE: Boolean = false
-
     val version =
         Properties()
             .apply {

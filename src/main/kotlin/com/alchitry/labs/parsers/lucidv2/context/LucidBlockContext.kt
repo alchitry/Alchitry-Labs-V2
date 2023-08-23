@@ -23,7 +23,7 @@ class LucidBlockContext(
     val instance: TestOrModuleInstance,
     var stage: ParseStage = ParseStage.ModuleInternals,
     override val evalContext: Evaluable? = null,
-    val errorCollector: ErrorCollector = ErrorCollector(),
+    val errorCollector: ErrorCollector,
     expr: ExprParser? = null,
     bitSelection: BitSelectionParser? = null,
     types: TypesParser? = null,
@@ -132,7 +132,7 @@ class LucidBlockContext(
         instance,
         ParseStage.Evaluation,
         evalContext,
-        ErrorCollector(), // give each context its own error collector
+        ErrorCollector(errorCollector.file), // give each context its own error collector
         expr,
         bitSelection,
         types,

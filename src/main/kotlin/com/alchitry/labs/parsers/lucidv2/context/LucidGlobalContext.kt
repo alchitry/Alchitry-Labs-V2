@@ -12,7 +12,7 @@ import org.antlr.v4.runtime.tree.ParseTreeListener
 
 class LucidGlobalContext(
     override val project: Project,
-    val errorCollector: ErrorCollector = ErrorCollector()
+    val errorCollector: ErrorCollector
 ) : LucidExprContext, ErrorListener by errorCollector {
     override val evalContext: Evaluable? = null
 

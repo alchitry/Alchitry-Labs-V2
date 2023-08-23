@@ -17,9 +17,9 @@ class ModuleInstance(
     val module: Module,
     parameters: Map<String, Value>,
     connections: Map<String, SignalOrSubSignal>,
-    errorCollector: ErrorCollector = ErrorCollector()
+    errorCollector: ErrorCollector
 ) : ModuleInstanceOrArray, ListOrModuleInstance, TestOrModuleInstance {
-    val context = LucidBlockContext(project, this, errorCollector = errorCollector)
+    override val context = LucidBlockContext(project, this, errorCollector = errorCollector)
 
     override fun takeSnapshot(): SnapshotParent {
         val snapshots = mutableListOf<SnapshotOrParent>()

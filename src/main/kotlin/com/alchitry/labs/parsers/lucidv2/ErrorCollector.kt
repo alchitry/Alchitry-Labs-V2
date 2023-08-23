@@ -1,6 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2
 
 import com.alchitry.labs.parsers.errors.ErrorListener
+import com.alchitry.labs.project.files.ProjectFile
 import com.alchitry.labs.ui.code_editor.TextPosition
 import org.antlr.v4.runtime.*
 import org.antlr.v4.runtime.atn.ATNConfigSet
@@ -26,11 +27,13 @@ enum class NotationType(val label: String) {
     SyntaxAmbiguity("Syntax ambiguity")
 }
 
-class ErrorCollector : ErrorListener, ANTLRErrorListener {
+class ErrorCollector(val file: ProjectFile) : ErrorListener, ANTLRErrorListener {
     val errors = mutableListOf<Notation>()
     val warnings = mutableListOf<Notation>()
     val infos = mutableListOf<Notation>()
     val syntaxIssues = mutableListOf<Notation>()
+
+    fun new(): ErrorCollector = ErrorCollector(file)
 
     fun getAllNotations(): List<Notation> = mutableListOf<Notation>().apply {
         addAll(errors)
@@ -125,6 +128,27 @@ class ErrorCollector : ErrorListener, ANTLRErrorListener {
         //syntaxIssues.add("Syntax context sensitivity at $startIndex to $stopIndex")
     }
 
+    fun sort() {
+        listOf(syntaxIssues, errors, warnings).forEach { list ->
+            list.sortBy { it.range.start }
+        }
+    }
+
+    fun getReport(): String? {
+        if (hasNoIssues)
+            return null
+
+        val stringBuilder = StringBuilder()
+
+        stringBuilder.append("Issues detected in ${file.name}:\n")
+
+        (syntaxIssues + errors + warnings).sortedBy { it.range.start }.forEach {
+            stringBuilder.append("    $it\n")
+        }
+
+        return stringBuilder.toString()
+    }
+
     fun printErrors() {
         errors.forEach {
             println(it)
@@ -133,27 +157,9 @@ class ErrorCollector : ErrorListener, ANTLRErrorListener {
 
     val hasNoIssues: Boolean get() = hasNoSyntaxIssues && hasNoErrors && hasNoWarnings
 
-    val hasNoErrors: Boolean
-        get() {
-            errors.forEach {
-                println(it)
-            }
-            return errors.isEmpty()
-        }
-    val hasNoWarnings: Boolean
-        get() {
-            warnings.forEach {
-                println(it)
-            }
-            return warnings.isEmpty()
-        }
-    val hasNoSyntaxIssues: Boolean
-        get() {
-            syntaxIssues.forEach {
-                println(it)
-            }
-            return syntaxIssues.isEmpty()
-        }
+    val hasNoErrors: Boolean get() = errors.isEmpty()
+    val hasNoWarnings: Boolean get() = warnings.isEmpty()
+    val hasNoSyntaxIssues: Boolean get() = syntaxIssues.isEmpty()
     val hasErrors: Boolean get() = errors.isNotEmpty()
     val hasWarnings: Boolean get() = warnings.isNotEmpty()
     val hasSyntaxIssues: Boolean get() = syntaxIssues.isNotEmpty()

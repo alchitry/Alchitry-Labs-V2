@@ -66,23 +66,35 @@ fun Project.Companion.openXml(xmlFile: File): Project {
                             val isTop = file.getAttribute(Tags.Attributes.top)?.value == "true"
                             val fullFile = PathUtil.assembleFile(sourceFolder, file.text)
 
+                            if (!fullFile.exists()) {
+                                throw Exception("Missing file: ${fullFile.path}")
+                            }
+
                             sourceFiles.add(SourceFile(fullFile, isTop))
                         }
 
                         Tags.constraint -> {
                             val isLib = file.getAttribute(Tags.Attributes.library)?.value == "true"
-                            val cstFile = PathUtil.assembleFile(
-                                if (isLib) Locations.components else constraintFolder,
-                                file.text
-                            )
+                            val cstFile = if (isLib)
+                                File(
+                                    this::class.java.getResource("${Locations.components}/${file.text}")?.toURI()
+                                        ?: throw Exception("Resource missing: ${Locations.components}/${file.text}")
+                                )
+                            else
+                                PathUtil.assembleFile(constraintFolder, file.text)
+
+                            if (!cstFile.exists()) {
+                                throw Exception("Missing file: ${cstFile.path}")
+                            }
+
                             constraintFiles.add(ConstraintFile(cstFile))
                         }
 
                         Tags.component -> sourceFiles.add(
                             SourceFile(
-                                PathUtil.assembleFile(
-                                    Locations.components,
-                                    file.text
+                                File(
+                                    this::class.java.getResource("${Locations.components}/${file.text}")?.toURI()
+                                        ?: throw Exception("Resource missing: ${Locations.components}/${file.text}")
                                 )
                             )
                         )

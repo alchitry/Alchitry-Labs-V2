@@ -30,10 +30,12 @@ class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = nul
             null,
             Module("testModule", mapOf(), mapOf(), ModuleContext(null, 0)),
             mapOf(),
-            mapOf()
+            mapOf(),
+            testErrorCollector()
         ),
         ParseStage.ErrorCheck,
-        localSignalResolver = localSignalResolver
+        localSignalResolver = localSignalResolver,
+        errorCollector = testErrorCollector()
     )
 
     init {

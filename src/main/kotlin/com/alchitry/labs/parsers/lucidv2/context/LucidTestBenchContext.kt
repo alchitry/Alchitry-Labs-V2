@@ -10,7 +10,7 @@ import com.alchitry.labs.project.Project
 
 class LucidTestBenchContext(
     val project: Project,
-    val errorCollector: ErrorCollector = ErrorCollector()
+    val errorCollector: ErrorCollector
 ) : ErrorListener by errorCollector {
 
     val testBench = TestBenchParser(this)

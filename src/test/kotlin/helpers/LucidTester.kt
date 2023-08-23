@@ -38,12 +38,12 @@ class LucidTester(vararg val files: String) {
     }
 
     fun globalParse(
-        errorCollector: ErrorCollector = ErrorCollector(),
-        tree: List<SourceContext> = parseText(errorCollector)
+        errorCollector: ErrorCollector = testErrorCollector(),
+        trees: List<SourceContext> = parseText(errorCollector)
     ) {
         assert(errorCollector.hasNoIssues)
 
-        tree.forEach {
+        trees.forEach {
             val globalContext = LucidGlobalContext(project, errorCollector)
             globalContext.walk(it)
 
@@ -52,12 +52,12 @@ class LucidTester(vararg val files: String) {
     }
 
     private fun testBenchParse(
-        errorCollector: ErrorCollector = ErrorCollector(),
-        tree: List<SourceContext> = parseText(errorCollector)
+        errorCollector: ErrorCollector = testErrorCollector(),
+        trees: List<SourceContext> = parseText(errorCollector)
     ) {
         assert(errorCollector.hasNoIssues)
 
-        tree.forEach {
+        trees.forEach {
             val testBenchContext = LucidTestBenchContext(project, errorCollector)
             testBenchContext.walk(it)
 
@@ -66,12 +66,12 @@ class LucidTester(vararg val files: String) {
     }
 
     fun moduleTypeParse(
-        errorCollector: ErrorCollector = ErrorCollector(),
-        tree: List<SourceContext> = parseText(errorCollector)
+        errorCollector: ErrorCollector = testErrorCollector(),
+        trees: List<SourceContext> = parseText(errorCollector)
     ): List<Module> {
         assert(errorCollector.hasNoIssues)
 
-        return tree.mapNotNull {
+        return trees.mapNotNull {
             val moduleTypeContext = LucidModuleTypeContext(project, errorCollector)
             val module = moduleTypeContext.extract(it)
 
@@ -86,11 +86,11 @@ class LucidTester(vararg val files: String) {
      * for errors after calling this function.
      */
     fun fullParse(errorCollector: ErrorCollector? = null): ModuleInstance {
-        val errors = errorCollector ?: ErrorCollector()
-        val tree = parseText(errors)
+        val errors = errorCollector ?: testErrorCollector()
+        val trees = parseText(errors)
 
-        globalParse(errors, tree)
-        val modules = moduleTypeParse(errors, tree)
+        globalParse(errors, trees)
+        val modules = moduleTypeParse(errors, trees)
 
         val moduleInstance = ModuleInstance("top", project, null, modules.first(), mapOf(), mapOf(), errors)
 
@@ -103,7 +103,7 @@ class LucidTester(vararg val files: String) {
     }
 
     fun runFirstTestBench(errorCollector: ErrorCollector? = null): SimParent {
-        val errors = errorCollector ?: ErrorCollector()
+        val errors = errorCollector ?: testErrorCollector()
         val tree = parseText(errors)
 
         globalParse(errors, tree)
@@ -124,7 +124,7 @@ class LucidTester(vararg val files: String) {
     }
 
     fun runTestBenches(errorCollector: ErrorCollector? = null) {
-        val errors = errorCollector ?: ErrorCollector()
+        val errors = errorCollector ?: testErrorCollector()
         val tree = parseText(errors)
 
         globalParse(errors, tree)

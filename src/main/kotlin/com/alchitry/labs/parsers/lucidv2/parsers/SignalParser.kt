@@ -77,7 +77,7 @@ data class SignalParser(
             if (sig == null) {
                 context.reportError(
                     children[usedChildren] as ParserRuleContext,
-                    "Failed to resolve signal $firstName.${children[usedChildren].text}"
+                    "Failed to resolve signal ${firstName.text}.${children[usedChildren].text}"
                 )
                 return
             }

@@ -18,12 +18,13 @@ sealed interface ModuleInstanceOrArray : SignalParent, Snapshotable {
 class ModuleInstanceArray(
     override val name: String,
     projectContext: Project,
-    override val parent: ModuleInstance?,
+    private val testOrModuleParent: TestOrModuleInstance,
     module: Module,
     dimensions: List<Int>,
     paramProvider: (List<Int>) -> Map<String, Value>,
     signalProvider: (List<Int>) -> Map<String, SignalOrSubSignal>
 ) : ModuleInstanceOrArray {
+    override val parent = testOrModuleParent as? ModuleInstance
     private val modules: ModuleList
 
     override fun takeSnapshot(): SnapshotParent {
@@ -88,7 +89,15 @@ class ModuleInstanceArray(
             val dim = dimensions.first()
             if (dimensions.size == 1) {
                 return ModuleList(List(dim) {
-                    ModuleInstance(name, projectContext, parent, module, paramProvider(index), signalProvider(index))
+                    ModuleInstance(
+                        name,
+                        projectContext,
+                        parent,
+                        module,
+                        paramProvider(index),
+                        signalProvider(index),
+                        testOrModuleParent.context.errorCollector.new()
+                    )
                 })
             }
             val subDim = dimensions.subList(1, dimensions.size)
