@@ -3,7 +3,10 @@ package com.alchitry.labs
 import com.alchitry.labs.project.Board
 import com.alchitry.labs.project.Locations
 import com.alchitry.labs.project.ProjectCreator
-import kotlinx.cli.*
+import kotlinx.cli.ArgType
+import kotlinx.cli.ExperimentalCli
+import kotlinx.cli.Subcommand
+import kotlinx.cli.default
 import java.io.File
 
 @OptIn(ExperimentalCli::class)
@@ -11,7 +14,7 @@ class CreateProject : Subcommand("proj", "Create Project") {
     private val listTemplates by option(ArgType.Boolean, "list", "l", "List project templates").default(false)
     private val create by option(ArgType.Boolean, "new", "n", "Create a new project").default(false)
     private val clone by option(ArgType.String, "clone", "c", "Clone an existing project")
-    private val projName by option(ArgType.String, "name", "p", "Project name").required()
+    private val projName by option(ArgType.String, "name", "p", "Project name")
     private val board by option(
         ArgType.String, "board", "b", "Board used in the project (${
             Board::class.allSealedObjects().joinToString(", ") { it.name }
@@ -40,6 +43,7 @@ class CreateProject : Subcommand("proj", "Create Project") {
 
         if (listTemplates) {
             printTemplates()
+            return
         }
 
         if (create && clone != null) {
@@ -47,8 +51,14 @@ class CreateProject : Subcommand("proj", "Create Project") {
             return
         }
 
-        if (!create && clone == null && !listTemplates) {
+        if (!create && clone == null) {
             showHelp("At least one command (create, clone, list) must be specified.")
+            return
+        }
+
+        val projName = projName
+        if (projName == null) {
+            showHelp("Project name must be provided when creating or cloning a project.")
             return
         }
 
@@ -83,6 +93,7 @@ class CreateProject : Subcommand("proj", "Create Project") {
             } catch (e: Exception) {
                 println("Failed to create project:")
                 println("    ${e.message}")
+                e.printStackTrace()
                 return
             }
 
@@ -102,8 +113,14 @@ class CreateProject : Subcommand("proj", "Create Project") {
                 return
             }
 
+            val parent = source.parentFile?.toURI()?.toURL()
+            if (parent == null) {
+                println("Failed to get parent folder for $source")
+                return
+            }
+
             try {
-                ProjectCreator.clone(source, projName, workspace)
+                ProjectCreator.clone(parent, source.name, projName, workspace)
             } catch (e: Exception) {
                 println("Failed to clone project:")
                 println("    ${e.message}")

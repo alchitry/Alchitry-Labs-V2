@@ -1,18 +1,19 @@
 package com.alchitry.labs.project
 
+import JarUtils
 import org.jdom2.Document
 import org.jdom2.JDOMException
 import org.jdom2.input.SAXBuilder
 import java.io.File
+import java.net.URL
 
 object ProjectCreator {
     fun getTemplates(): List<ProjectTemplate> {
-        val projectsResource = this::class.java.getResource("${Locations.lucidProjects}/projects.xml")?.toURI()
+        val projectsResource = this::class.java.getResourceAsStream("${Locations.lucidProjects}/projects.xml")
             ?: error("Failed to load projects.xml")
-        val projectsFile = File(projectsResource)
         val builder = SAXBuilder()
         val document: Document = try {
-            builder.build(projectsFile) as Document
+            builder.build(projectsResource) as Document
         } catch (e: JDOMException) {
             error(e.message ?: "Failed to parse projects.xml")
         }
@@ -32,8 +33,7 @@ object ProjectCreator {
         }
     }
 
-    fun clone(source: File, projName: String, workspace: File, board: Board? = null) {
-        val sourceFolder = source.parentFile ?: error("Failed to find parent folder for ${source.path}")
+    fun clone(sourceFolder: URL, sourceName: String, projName: String, workspace: File, board: Board? = null) {
         val destination = File(workspace, projName)
         if (destination.exists())
             error("The destination ${destination.path} already exists")
@@ -45,11 +45,11 @@ object ProjectCreator {
             error("Failed to make project directory ${destination.path}")
         }
 
-        if (!sourceFolder.copyRecursively(destination, false)) {
+        if (!JarUtils.copyResourcesRecursively(sourceFolder, destination)) {
             error("Failed to copy project")
         }
 
-        val projFile = File(destination, source.name)
+        val projFile = File(destination, sourceName)
         if (!projFile.exists()) {
             error("Failed to find copied project file ${projFile.path}")
         }
