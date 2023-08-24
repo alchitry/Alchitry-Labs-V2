@@ -8,6 +8,7 @@ object Tags {
     const val component = "component"
     const val core = "core"
     const val stub = "stub"
+    const val board = "board"
 
     object Attributes {
         const val top = "top"

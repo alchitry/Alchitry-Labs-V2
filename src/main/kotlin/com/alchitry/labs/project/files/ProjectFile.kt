@@ -1,7 +1,6 @@
 package com.alchitry.labs.project.files
 
 import com.alchitry.labs.Log
-import com.alchitry.labs.PathUtil
 import com.alchitry.labs.project.Locations
 import java.io.File
 import java.io.IOException
@@ -14,7 +13,9 @@ interface ProjectFile {
 
     fun isLibFile(skipExistCheck: Boolean = false): Boolean {
         return try {
-            val libVersion = PathUtil.assembleFile(Locations.components, name)
+            val libVersion =
+                this::class.java.getResource("${Locations.components}/${file.name}")?.toURI()?.let { File(it) }
+                    ?: return false
             if (!skipExistCheck && !libVersion.exists())
                 false
             else

@@ -32,7 +32,7 @@ import java.io.File
 
 class QueueExhaustionException(message: String) : IllegalStateException(message)
 
-class Project(
+data class Project(
     val projectName: String,
     val projectFolder: File,
     val board: Board,

@@ -4,10 +4,7 @@ import com.alchitry.labs.PathUtil
 import com.alchitry.labs.project.files.ConstraintFile
 import com.alchitry.labs.project.files.IPCore
 import com.alchitry.labs.project.files.SourceFile
-import org.jdom2.Attribute
-import org.jdom2.Document
-import org.jdom2.Element
-import org.jdom2.JDOMException
+import org.jdom2.*
 import org.jdom2.input.SAXBuilder
 import org.jdom2.output.Format
 import org.jdom2.output.XMLOutputter
@@ -27,14 +24,14 @@ fun Project.Companion.openXml(xmlFile: File): Project {
     }
     val projectXml = document.rootElement
     if (projectXml.name != Tags.project) {
-        throw Exception("Root element not project tag")
+        error("Root element not project tag")
     }
     val projName = projectXml.getAttribute(Tags.Attributes.name)
-        ?: throw Exception("Project name is missing")
+        ?: error("Project name is missing")
     val projectName = projName.value
     val brdType = projectXml.getAttribute(Tags.Attributes.board)
-        ?: throw Exception("Board type is missing")
-    val board = Board.fromName(brdType.value) ?: throw Exception("Unknown board type: " + brdType.value)
+        ?: error("Board type is missing")
+    val board = Board.fromName(brdType.value) ?: error("Unknown board type: " + brdType.value)
 
     val sourceFiles = HashSet<SourceFile>()
     val constraintFiles = HashSet<ConstraintFile>()
@@ -43,10 +40,10 @@ fun Project.Companion.openXml(xmlFile: File): Project {
     var version = 0
     val versionAttr = projectXml.getAttribute(Tags.Attributes.version)
     if (versionAttr != null) try {
-        version = versionAttr.value.toInt()
-        if (version > XML_VERSION) throw Exception("Project file is from a future version!")
-    } catch (e: NumberFormatException) {
-        throw Exception("Invalid version ID!")
+        version = versionAttr.intValue
+        if (version > XML_VERSION) error("Project file is from a future version!")
+    } catch (e: DataConversionException) {
+        error("Invalid version ID!")
     }
 
     val sourceFolder = PathUtil.assembleFile(folder, Locations.Project.sourceFolder)
@@ -67,7 +64,7 @@ fun Project.Companion.openXml(xmlFile: File): Project {
                             val fullFile = PathUtil.assembleFile(sourceFolder, file.text)
 
                             if (!fullFile.exists()) {
-                                throw Exception("Missing file: ${fullFile.path}")
+                                error("Missing file: ${fullFile.path}")
                             }
 
                             sourceFiles.add(SourceFile(fullFile, isTop))
@@ -78,13 +75,13 @@ fun Project.Companion.openXml(xmlFile: File): Project {
                             val cstFile = if (isLib)
                                 File(
                                     this::class.java.getResource("${Locations.components}/${file.text}")?.toURI()
-                                        ?: throw Exception("Resource missing: ${Locations.components}/${file.text}")
+                                        ?: error("Resource missing: ${Locations.components}/${file.text}")
                                 )
                             else
                                 PathUtil.assembleFile(constraintFolder, file.text)
 
                             if (!cstFile.exists()) {
-                                throw Exception("Missing file: ${cstFile.path}")
+                                error("Missing file: ${cstFile.path}")
                             }
 
                             constraintFiles.add(ConstraintFile(cstFile))
@@ -94,7 +91,7 @@ fun Project.Companion.openXml(xmlFile: File): Project {
                             SourceFile(
                                 File(
                                     this::class.java.getResource("${Locations.components}/${file.text}")?.toURI()
-                                        ?: throw Exception("Resource missing: ${Locations.components}/${file.text}")
+                                        ?: error("Resource missing: ${Locations.components}/${file.text}")
                                 )
                             )
                         )
@@ -102,7 +99,7 @@ fun Project.Companion.openXml(xmlFile: File): Project {
                         Tags.core -> {
                             val cFiles = file.children
                             val coreName = file.getAttributeValue(Tags.Attributes.name)
-                                ?: throw Exception("Missing core name")
+                                ?: error("Missing core name")
                             val coreDir = PathUtil.assemblePath(folder, Locations.Project.ipCoresFolder, coreName)
                             val sFiles = cFiles.mapNotNull { cFile ->
                                 if (cFile.name == Tags.source) {
@@ -117,25 +114,25 @@ fun Project.Companion.openXml(xmlFile: File): Project {
                             ipCores.add(IPCore(coreName, stub, sFiles))
                         }
 
-                        else -> throw Exception("Unknown tag " + file.name)
+                        else -> error("Unknown tag " + file.name)
                     }
                     j++
                 }
             }
 
-            else -> throw Exception("Unknown tag " + node.name)
+            else -> error("Unknown tag " + node.name)
         }
     }
     if (version != XML_VERSION) {
         // TODO: Upgrade old projects
-        throw Exception("Incompatible version ID!")
+        error("Incompatible version ID!")
     }
 
     val topCt = sourceFiles.count { it.top }
     if (topCt > 1)
-        throw Exception("Project contains more than one top file!")
+        error("Project contains more than one top file!")
     if (topCt < 1)
-        throw Exception("Project does not contain a top file!")
+        error("Project does not contain a top file!")
 
     return Project(projectName, folder, board, sourceFiles, constraintFiles, ipCores)
 }
@@ -175,7 +172,7 @@ fun Project.saveXML(file: File = projectFile) {
         for (coreFile in core.files) {
             println("Original file ${coreFile.absolutePath}")
             val p = corePath.relativize(Paths.get(coreFile.absolutePath)).toString()
-            println("Relative file ${p}")
+            println("Relative file $p")
             coreElement.addContent(Element(Tags.source).setText(p))
         }
         if (core.stub != null) {
