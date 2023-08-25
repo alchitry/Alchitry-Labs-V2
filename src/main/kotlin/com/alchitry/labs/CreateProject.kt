@@ -113,6 +113,11 @@ class CreateProject : Subcommand("proj", "Create Project") {
                 return
             }
 
+            if (!source.isFile || source.extension != "alp") {
+                showHelp("The source project file ${source.path} is not an Alchitry Labs project file (.alp)!")
+                return
+            }
+
             val parent = source.parentFile?.toURI()?.toURL()
             if (parent == null) {
                 println("Failed to get parent folder for $source")

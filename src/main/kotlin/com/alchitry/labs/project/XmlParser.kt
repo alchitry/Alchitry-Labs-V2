@@ -2,6 +2,7 @@ package com.alchitry.labs.project
 
 import com.alchitry.labs.PathUtil
 import com.alchitry.labs.project.files.ConstraintFile
+import com.alchitry.labs.project.files.FileProvider
 import com.alchitry.labs.project.files.IPCore
 import com.alchitry.labs.project.files.SourceFile
 import org.jdom2.*
@@ -15,6 +16,10 @@ import java.nio.file.Paths
 const val XML_VERSION = 4
 
 fun Project.Companion.openXml(xmlFile: File): Project {
+    if (!xmlFile.isFile || xmlFile.extension != "alp") {
+        error("The file ${xmlFile.path} is not an Alchitry Labs project file (.alp)!")
+    }
+
     val builder = SAXBuilder()
     val folder = xmlFile.parentFile
     val document: Document = try {
@@ -61,9 +66,9 @@ fun Project.Companion.openXml(xmlFile: File): Project {
                     when (file.name) {
                         Tags.source -> {
                             val isTop = file.getAttribute(Tags.Attributes.top)?.value == "true"
-                            val fullFile = PathUtil.assembleFile(sourceFolder, file.text)
+                            val fullFile = FileProvider.DiskFile(PathUtil.assembleFile(sourceFolder, file.text))
 
-                            if (!fullFile.exists()) {
+                            if (!fullFile.isValid()) {
                                 error("Missing file: ${fullFile.path}")
                             }
 
@@ -72,29 +77,26 @@ fun Project.Companion.openXml(xmlFile: File): Project {
 
                         Tags.constraint -> {
                             val isLib = file.getAttribute(Tags.Attributes.library)?.value == "true"
-                            val cstFile = if (isLib)
-                                File(
-                                    this::class.java.getResource("${Locations.components}/${file.text}")?.toURI()
-                                        ?: error("Resource missing: ${Locations.components}/${file.text}")
-                                )
-                            else
-                                PathUtil.assembleFile(constraintFolder, file.text)
+                            val cstFile = if (isLib) {
+                                FileProvider.ResourceFile(file.text, "${Locations.components}/${file.text}")
+                            } else {
+                                FileProvider.DiskFile(PathUtil.assembleFile(constraintFolder, file.text))
+                            }
 
-                            if (!cstFile.exists()) {
+                            if (!cstFile.isValid()) {
                                 error("Missing file: ${cstFile.path}")
                             }
 
                             constraintFiles.add(ConstraintFile(cstFile))
                         }
 
-                        Tags.component -> sourceFiles.add(
-                            SourceFile(
-                                File(
-                                    this::class.java.getResource("${Locations.components}/${file.text}")?.toURI()
-                                        ?: error("Resource missing: ${Locations.components}/${file.text}")
-                                )
-                            )
-                        )
+                        Tags.component -> {
+                            val resourceFile =
+                                FileProvider.ResourceFile(file.text, "${Locations.components}/${file.text}")
+                            if (!resourceFile.isValid())
+                                error("Resource invalid: ${resourceFile.resourcePath}")
+                            sourceFiles.add(SourceFile(resourceFile))
+                        }
 
                         Tags.core -> {
                             val cFiles = file.children
@@ -108,7 +110,7 @@ fun Project.Companion.openXml(xmlFile: File): Project {
                             }.toSet()
                             val stub = cFiles.firstNotNullOfOrNull { cFile ->
                                 if (cFile.name == Tags.stub) {
-                                    SourceFile(File(PathUtil.assemblePath(coreDir, cFile.text)))
+                                    SourceFile(FileProvider.DiskFile(PathUtil.assembleFile(coreDir, cFile.text)))
                                 } else null
                             }
                             ipCores.add(IPCore(coreName, stub, sFiles))
@@ -145,7 +147,7 @@ fun Project.saveXML(file: File = projectFile) {
     val doc = Document(project)
     val source = Element(Tags.files)
     for (sourceFile in sourceFiles) {
-        if (sourceFile.isLibFile()) {
+        if (sourceFile.isLibFile) {
             source.addContent(Element(Tags.component).setText(sourceFile.name))
         } else {
             val ele = Element(Tags.source).setText(sourceFile.name)
@@ -155,7 +157,7 @@ fun Project.saveXML(file: File = projectFile) {
     }
     for (ucfFile in constraintFiles) {
         val ele = Element(Tags.constraint).setText(ucfFile.name)
-        if (ucfFile.isLibFile()) ele.setAttribute(Attribute(Tags.Attributes.library, "true"))
+        if (ucfFile.isLibFile) ele.setAttribute(Attribute(Tags.Attributes.library, "true"))
         source.addContent(ele)
     }
     for (core in ipCores) {
@@ -175,8 +177,8 @@ fun Project.saveXML(file: File = projectFile) {
             println("Relative file $p")
             coreElement.addContent(Element(Tags.source).setText(p))
         }
-        if (core.stub != null) {
-            val p = corePath.relativize(Paths.get(core.stub.file.absolutePath)).toString()
+        if (core.stub != null && core.stub.file is FileProvider.DiskFile) {
+            val p = corePath.relativize(Paths.get(core.stub.file.file.absolutePath)).toString()
             coreElement.addContent(Element(Tags.stub).setText(p))
         }
         source.addContent(coreElement)

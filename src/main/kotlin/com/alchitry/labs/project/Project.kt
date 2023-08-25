@@ -82,7 +82,7 @@ data class Project(
             val parser = LucidParser(
                 CommonTokenStream(
                     LucidLexer(
-                        CharStreams.fromPath(it.file.toPath())
+                        CharStreams.fromStream(it.file.inputStream())
                     ).also { it.removeErrorListeners() })
             ).apply {
                 (tokenStream.tokenSource as LucidLexer).addErrorListener(errorManger.getCollector(it))

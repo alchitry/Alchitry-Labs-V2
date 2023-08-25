@@ -8,6 +8,7 @@ import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
 import com.alchitry.labs.project.Board
 import com.alchitry.labs.project.Project
+import com.alchitry.labs.project.files.FileProvider
 import com.alchitry.labs.project.files.SourceFile
 import com.alchitry.labs.ui.code_editor.StyleToken
 import com.alchitry.labs.ui.code_editor.styles.CodeErrorChecker
@@ -19,7 +20,7 @@ import java.io.File
 class LucidErrorChecker : CodeErrorChecker {
     override fun checkText(text: String): List<StyleToken> {
         val project = Project("Testing", File("."), Board.AlchitryAu, emptySet(), emptySet(), emptySet())
-        val errorCollector = ErrorCollector(SourceFile(File("alchitry_top.luc"), true))
+        val errorCollector = ErrorCollector(SourceFile(FileProvider.DiskFile("alchitry_top.luc"), true))
 
         val parser = LucidParser(
             CommonTokenStream(

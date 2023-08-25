@@ -18,7 +18,7 @@ object JarUtils {
                 urlConnection
             )
         } else {
-            File(originUrl.path).copyRecursively(destination)
+            File(originUrl.toURI()).copyRecursively(destination)
         }
     }
 

@@ -2,6 +2,7 @@ package com.alchitry.labs
 
 import com.alchitry.labs.parsers.lucidv2.ErrorManager
 import com.alchitry.labs.project.Project
+import com.alchitry.labs.project.openXml
 import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.Subcommand
@@ -45,10 +46,11 @@ class Cli : Subcommand("cli", "Command Line Interface") {
 
         val project = project?.let {
             try {
-                Project.openProject(File(it))
+                Project.openXml(File(it))
             } catch (e: Exception) {
-                System.err.println("Failed to open project: ${e.message}")
-                return
+                System.err.println("Failed to open project:")
+                System.err.println("     ${e.message}")
+                return@execute
             }
         }
 
