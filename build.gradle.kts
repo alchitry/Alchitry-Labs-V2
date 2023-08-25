@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.alchitry"
-version = "2.0.0-SNAPSHOT"
+version = "2.0.0-ALPHA-SNAPSHOT"
 
 repositories {
     google()

@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
@@ -30,6 +31,7 @@ import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.Subcommand
 import java.io.File
+import javax.swing.ImageIcon
 
 @OptIn(ExperimentalCli::class)
 class Labs : Subcommand("labs", "Launch Alchitry Labs GUI") {
@@ -44,11 +46,21 @@ class Labs : Subcommand("labs", "Launch Alchitry Labs GUI") {
                 size = DpSize(Settings.windowWidth.dp, Settings.windowHeight.dp)
             )
 
+            if (isTraySupported)
+                Tray(
+                    icon = painterResource("icons/alchitry_icon.svg"),
+                    tooltip = "Alchitry Labs"
+                )
+
             Window(
                 state = windowState,
                 title = "Alchitry Labs - ${Env.version}",
                 onCloseRequest = { close(windowState) }
             ) {
+                LaunchedEffect(Unit) {
+                    this@Window.window.iconImage =
+                        ImageIcon(this::class.java.getResource("/icons/icon.png")).image
+                }
                 SideEffect { mainWindow = this.window }
                 CompositionLocalProvider(LocalComposeWindow provides this.window) {
                     this.window
