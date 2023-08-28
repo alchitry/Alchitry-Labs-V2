@@ -2,6 +2,7 @@ package com.alchitry.labs
 
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.awt.ComposeWindow
+import com.alchitry.labs.subcommands.*
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ExperimentalCli
 import kotlin.reflect.full.declaredFunctions
@@ -28,7 +29,7 @@ fun main(args: Array<String>) {
 
     val parser = ArgParser("alchitry_labs", strictSubcommandOptionsOrder = true)
 
-    parser.subcommands(CreateProject(), Cli(), Labs(), Loader())
+    parser.subcommands(CreateProject(), CloneProject(), CheckProject(), BuildProject(), LoadProject(), Labs(), Loader())
 
     parser.parse(args)
 

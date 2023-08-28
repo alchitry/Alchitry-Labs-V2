@@ -1,5 +1,6 @@
-package com.alchitry.labs
+package com.alchitry.labs.subcommands
 
+import com.alchitry.labs.showHelp
 import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.Subcommand
 

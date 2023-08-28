@@ -1,4 +1,4 @@
-package com.alchitry.labs
+package com.alchitry.labs.subcommands
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
+import com.alchitry.labs.*
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.ui.code_editor.CodeEditor
 import com.alchitry.labs.ui.code_editor.rememberCodeEditorState
