@@ -7,10 +7,17 @@ import org.antlr.v4.runtime.dfa.DFA
 import org.antlr.v4.runtime.tree.TerminalNode
 import java.util.*
 
+// TODO: Fix concurrency issues during simulation
 class ErrorCollector(override val file: ProjectFile) : ErrorListener, ANTLRErrorListener {
     override val errors = mutableListOf<Notation>()
     override val warnings = mutableListOf<Notation>()
     override val infos = mutableListOf<Notation>()
+
+    fun clear() {
+        errors.clear()
+        warnings.clear()
+        infos.clear()
+    }
 
     override fun reportError(node: TerminalNode, message: String) {
         errors.add(ErrorListener.getNotation(node.symbol, message, NotationType.Error))

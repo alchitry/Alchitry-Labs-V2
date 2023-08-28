@@ -37,9 +37,14 @@ private fun buildEmptyTree(snap: SnapshotOrParent): SimValueOrParent {
 
 sealed interface SimValueOrParent {
     val name: String
+    fun valueString(): String
 }
 
-data class SimValue(override val name: String, val values: List<Value>) : SimValueOrParent, List<Value> by values
+data class SimValue(override val name: String, val values: List<Value>) : SimValueOrParent, List<Value> by values {
+    override fun valueString() = "$name: $values"
+}
 
 data class SimParent(override val name: String, val children: List<SimValueOrParent>) : SimValueOrParent,
-    Map<String, SimValueOrParent> by children.associateBy({ it.name })
+    Map<String, SimValueOrParent> by children.associateBy({ it.name }) {
+    override fun valueString() = children.joinToString("\n") { "$name.${it.valueString()}" }
+}

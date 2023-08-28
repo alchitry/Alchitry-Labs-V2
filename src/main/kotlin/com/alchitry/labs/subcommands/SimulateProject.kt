@@ -3,11 +3,11 @@ package com.alchitry.labs.subcommands
 import com.alchitry.labs.parsers.errors.ErrorManager
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.project.openXml
-import com.alchitry.labs.showHelp
 import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.Subcommand
 import kotlinx.cli.default
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 @OptIn(ExperimentalCli::class)
@@ -34,8 +34,9 @@ class SimulateProject : Subcommand("sim", "Simulate a project") {
             return
         }
 
+        val testBenches = project.getTestBenches()
+
         if (list) {
-            val testBenches = project.getTestBenches()
             if (testBenches.isEmpty()) {
                 println("No tests found!")
             } else {
@@ -46,9 +47,29 @@ class SimulateProject : Subcommand("sim", "Simulate a project") {
                     }
                 }
             }
-        } else {
-            showHelp()
+
+            return
         }
 
+        val tests = tests
+        if (tests == null) {
+            testBenches.forEach { testBench ->
+                testBench.getTestBlocks().forEach { test ->
+                    runBlocking {
+                        val ec = testBench.context.errorCollector
+                        val result = testBench.runTest(test.name)
+                        if (ec.hasErrors) {
+                            println("Test ${testBench.name}.${test.name} failed:")
+                            ec.getAllNotations().forEach {
+                                println("    $it")
+                            }
+                            ec.clear()
+                        } else {
+                            println("Test ${testBench.name}.${test.name} passed!")
+                        }
+                    }
+                }
+            }
+        }
     }
 }
