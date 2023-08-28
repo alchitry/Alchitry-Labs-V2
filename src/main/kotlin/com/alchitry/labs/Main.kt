@@ -10,7 +10,6 @@ import kotlin.reflect.full.declaredFunctions
 val LocalScale = compositionLocalOf { 1.0f }
 
 
-
 val LocalComposeWindow = compositionLocalOf<ComposeWindow> { error("No ComposeWindow set!") }
 lateinit var mainWindow: ComposeWindow
 
@@ -29,7 +28,16 @@ fun main(args: Array<String>) {
 
     val parser = ArgParser("alchitry_labs", strictSubcommandOptionsOrder = true)
 
-    parser.subcommands(CreateProject(), CloneProject(), CheckProject(), BuildProject(), LoadProject(), Labs(), Loader())
+    parser.subcommands(
+        CreateProject(),
+        CloneProject(),
+        CheckProject(),
+        BuildProject(),
+        LoadProject(),
+        SimulateProject(),
+        Labs(),
+        Loader()
+    )
 
     parser.parse(args)
 

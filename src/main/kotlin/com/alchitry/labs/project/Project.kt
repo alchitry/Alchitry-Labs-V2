@@ -9,6 +9,7 @@ import com.alchitry.labs.parsers.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
 import com.alchitry.labs.parsers.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleTypeContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.types.GlobalNamespace
 import com.alchitry.labs.parsers.lucidv2.types.Module
@@ -109,6 +110,19 @@ data class Project(
 
             it.first to (module ?: return@mapNotNull null)
         }
+
+        if (errorManger.hasErrors)
+            return null
+
+        trees.forEach {
+            val testBenchContext = LucidTestBenchContext(this, errorManger.getCollector(it.first))
+            testBenchContext.walk(it.second)
+        }
+
+        if (errorManger.hasErrors)
+            return null
+
+        testBenches.forEach { it.value.initialWalk() }
 
         if (errorManger.hasErrors)
             return null

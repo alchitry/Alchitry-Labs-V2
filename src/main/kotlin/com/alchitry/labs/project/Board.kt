@@ -7,6 +7,8 @@ sealed class Board {
     companion object {
         fun fromName(name: String): Board? =
             Board::class.allSealedObjects().firstOrNull { it.name.equals(name, ignoreCase = true) }
+
+        val All: List<Board> get() = Board::class.allSealedObjects()
     }
 
     abstract val name: String

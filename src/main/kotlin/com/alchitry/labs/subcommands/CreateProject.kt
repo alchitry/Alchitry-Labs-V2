@@ -13,9 +13,14 @@ class CreateProject : Subcommand("new", "Create a new project") {
     private val projName by argument(ArgType.String, "name", "New project's name").optional()
     private val listTemplates by option(ArgType.Boolean, "list", "l", "List project templates").default(false)
     private val board by option(
-        ArgType.String, "board", "b", "Board used in the project (${
-            Board::class.allSealedObjects().joinToString(", ") { it.name }
-        })"
+        ArgType.Choice(
+            Board.All,
+            toVariant = { Board.fromName(it) ?: error("Unknown board name $it!") },
+            variantToString = { it.name }
+        ),
+        "board",
+        "b",
+        "Board used in the project"
     )
     private val templateIndex by option(ArgType.Int, "template", "t", "Template to copy for a new project").default(0)
     private val workspace by option(
@@ -55,14 +60,9 @@ class CreateProject : Subcommand("new", "Create a new project") {
             return
         }
 
-        val boardName = board
-        if (boardName == null) {
-            showHelp("A board must be specified to create a new project!")
-            return
-        }
-        val board = Board.fromName(boardName)
+        val board = board
         if (board == null) {
-            showHelp("The board name \"$boardName\" was not recognized.")
+            showHelp("A board must be specified to create a new project!")
             return
         }
 
