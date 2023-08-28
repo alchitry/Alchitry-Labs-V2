@@ -23,7 +23,6 @@ class BoundsParserTests {
         assertEquals(emptyList<IntRange>(), test.context.bitSelection.resolve(tree).map { it.range })
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
-        assert(test.hasNoSyntaxIssues)
 
         test = SimpleLucidTester("[bx0:5]")
         tree = test.bitSelection()
@@ -31,13 +30,12 @@ class BoundsParserTests {
         assertEquals(emptyList<IntRange>(), test.context.bitSelection.resolve(tree).map { it.range })
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
-        assert(test.hasNoSyntaxIssues)
 
         test = SimpleLucidTester("[[0:5]")
         tree = test.bitSelection()
         test.context.walk(tree)
         assertEquals(emptyList<IntRange>(), test.context.bitSelection.resolve(tree).map { it.range })
-        assert(test.hasSyntaxIssues)
+        assert(test.hasErrors)
 
         test = SimpleLucidTester("[1321612161321613216354132465162316516546546516513246:0]")
         tree = test.bitSelection()
@@ -45,7 +43,6 @@ class BoundsParserTests {
         assertEquals(emptyList<IntRange>(), test.context.bitSelection.resolve(tree).map { it.range })
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
-        assert(test.hasNoSyntaxIssues)
     }
 
     @Test

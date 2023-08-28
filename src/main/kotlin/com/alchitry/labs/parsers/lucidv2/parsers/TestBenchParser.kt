@@ -16,6 +16,6 @@ class TestBenchParser(
             return
         }
 
-        context.project.addTestBench(TestBench(name, context.project, ctx, context.errorCollector.new()))
+        context.project.addTestBench(TestBench(name, context.project, ctx, context.errorCollector))
     }
 }

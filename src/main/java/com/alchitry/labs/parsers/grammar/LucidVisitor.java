@@ -90,16 +90,17 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
     T visitPortDec(LucidParser.PortDecContext ctx);
 
     /**
-	 * Visit a parse tree produced by {@link LucidParser#portDirection}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPortDirection(LucidParser.PortDirectionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#signalWidth}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
+     * Visit a parse tree produced by {@link LucidParser#portDirection}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitPortDirection(LucidParser.PortDirectionContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#signalWidth}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
 	T visitSignalWidth(LucidParser.SignalWidthContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LucidParser#arraySize}.
@@ -143,18 +144,22 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 	 * labeled alternative in {@link LucidParser#stat}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
-	 */
-	T visitStatSig(LucidParser.StatSigContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code StatEnum}
-	 * labeled alternative in {@link LucidParser#stat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStatEnum(LucidParser.StatEnumContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code StatDFF}
+     */
+    T visitStatSig(LucidParser.StatSigContext ctx);
+
+    /**
+     * Visit a parse tree produced by the {@code StatEnum}
      * labeled alternative in {@link LucidParser#stat}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitStatEnum(LucidParser.StatEnumContext ctx);
+
+    /**
+     * Visit a parse tree produced by the {@code StatDFF}
+     * labeled alternative in {@link LucidParser#stat}.
+     *
      * @param ctx the parse tree
      * @return the visitor result
      */
@@ -248,12 +253,15 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 
     /**
      * Visit a parse tree produced by {@link LucidParser#sigDec}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSigDec(LucidParser.SigDecContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#dffDec}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitSigDec(LucidParser.SigDecContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#dffDec}.
+     *
      * @param ctx the parse tree
      * @return the visitor result
      */
@@ -332,6 +340,14 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
     T visitFunctionBlock(LucidParser.FunctionBlockContext ctx);
 
     /**
+     * Visit a parse tree produced by {@link LucidParser#functionBody}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitFunctionBody(LucidParser.FunctionBodyContext ctx);
+
+    /**
      * Visit a parse tree produced by {@link LucidParser#testBlock}.
      *
      * @param ctx the parse tree
@@ -394,20 +410,25 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 
     /**
      * Visit a parse tree produced by {@link LucidParser#block}.
+     *
      * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBlock(LucidParser.BlockContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#assignStat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAssignStat(LucidParser.AssignStatContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LucidParser#arrayIndex}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
+     * @return the visitor result
+     */
+    T visitBlock(LucidParser.BlockContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#assignStat}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitAssignStat(LucidParser.AssignStatContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link LucidParser#arrayIndex}.
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
      */
     T visitArrayIndex(LucidParser.ArrayIndexContext ctx);
 
@@ -519,15 +540,17 @@ public interface LucidVisitor<T> extends ParseTreeVisitor<T> {
 
     /**
      * Visit a parse tree produced by {@link LucidParser#number}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNumber(LucidParser.NumberContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code ExprTernary}
-	 * labeled alternative in {@link LucidParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
+     *
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitNumber(LucidParser.NumberContext ctx);
+
+    /**
+     * Visit a parse tree produced by the {@code ExprTernary}
+     * labeled alternative in {@link LucidParser#expr}.
+     * @param ctx the parse tree
+     * @return the visitor result
 	 */
 	T visitExprTernary(LucidParser.ExprTernaryContext ctx);
 	/**

@@ -1,9 +1,9 @@
 package helpers
 
+import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.parsers.grammar.LucidParser
 import com.alchitry.labs.parsers.grammar.LucidParser.SourceContext
-import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleTypeContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext

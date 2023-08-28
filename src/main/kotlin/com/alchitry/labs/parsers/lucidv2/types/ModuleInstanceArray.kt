@@ -79,8 +79,8 @@ class ModuleInstanceArray(
         return null
     }
 
-    fun checkAllParameters(): String? = collectErrorsFor { it.checkParameters() }
-    fun initialWalkAll(): String? = collectErrorsFor { it.initialWalk() }
+    fun checkAllParameters(): Boolean = modules.map { it.checkParameters() }.all { it }
+    fun initialWalkAll(): Boolean = modules.map { it.initialWalk() }.all { it }
 
     init {
         require(dimensions.isNotEmpty()) { "Dimensions must not be empty!" }
@@ -96,7 +96,7 @@ class ModuleInstanceArray(
                         module,
                         paramProvider(index),
                         signalProvider(index),
-                        testOrModuleParent.context.errorCollector.new()
+                        testOrModuleParent.context.errorCollector
                     )
                 })
             }
@@ -128,6 +128,14 @@ class ModuleInstanceArray(
 
 sealed interface ListOrModuleInstance
 class ModuleList(private val modules: List<ListOrModuleInstance>) : ListOrModuleInstance {
+    fun <T> map(block: (ModuleInstance) -> T): List<T> {
+        val list = mutableListOf<T>()
+        forEach {
+            list.add(block(it))
+        }
+        return list
+    }
+
     fun forEach(block: (ModuleInstance) -> Unit) {
         modules.forEach {
             when (it) {

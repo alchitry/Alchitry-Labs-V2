@@ -69,8 +69,10 @@ connection: paramCon | sigCon;
 structMember: (SIGNED NL*)? name signalWidth;
 structDec: 'struct' NL* name NL* '{' NL* structMember (NL* ',' NL* structMember)* NL* '}' semi;
 
-functionArg: name signalWidth;
-functionBlock: 'fun' NL* name NL* '(' (NL* functionArg (NL* ',' NL* functionArg)*)? NL* ')' block;
+functionArg: SIGNED? name signalWidth;
+functionBlock: 'fun' NL* name NL* '(' (NL* functionArg (NL* ',' NL* functionArg)*)? NL* ')' functionBody;
+functionBody: block;
+
 testBlock: 'test' NL* name NL* block;
 
 alwaysBlock: 'always' NL* block;

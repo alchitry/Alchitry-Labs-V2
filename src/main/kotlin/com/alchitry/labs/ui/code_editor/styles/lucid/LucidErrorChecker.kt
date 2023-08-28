@@ -1,8 +1,8 @@
 package com.alchitry.labs.ui.code_editor.styles.lucid
 
+import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.parsers.grammar.LucidParser
-import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleTypeContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
@@ -35,7 +35,7 @@ class LucidErrorChecker : CodeErrorChecker {
 
         val tree = parser.source()
 
-        if (errorCollector.hasSyntaxIssues) {
+        if (errorCollector.hasErrors) {
             return errorCollector.getAllNotations().map { it.toStyleToken() }
         }
 

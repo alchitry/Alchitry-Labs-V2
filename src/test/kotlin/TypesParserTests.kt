@@ -25,9 +25,7 @@ internal class TypesParserTests {
         assertEquals(SignalDirection.Write, dSig.direction)
         assertEquals(SignalDirection.Read, qSig.direction)
 
-        assert(tester.hasNoErrors)
-        assert(tester.hasNoWarnings)
-        assert(tester.hasNoSyntaxIssues)
+        assert(tester.hasNoIssues)
     }
 
     @Test
@@ -37,7 +35,6 @@ internal class TypesParserTests {
         tester.context.types.resolve("testing")
 
         assert(tester.hasNoWarnings)
-        assert(tester.hasNoSyntaxIssues)
         assert(tester.hasErrors)
     }
 
@@ -48,7 +45,6 @@ internal class TypesParserTests {
         tester.context.types.resolve("testing")
 
         assert(tester.hasNoWarnings)
-        assert(tester.hasNoSyntaxIssues)
         assert(tester.hasErrors)
     }
 
@@ -59,7 +55,6 @@ internal class TypesParserTests {
         tester.context.types.resolve("testing")
 
         assert(tester.hasNoErrors)
-        assert(tester.hasNoSyntaxIssues)
         assert(tester.hasWarnings)
     }
 
@@ -70,7 +65,6 @@ internal class TypesParserTests {
         tester.context.types.resolve("testing")
 
         assert(tester.hasNoErrors)
-        assert(tester.hasNoSyntaxIssues)
         assert(tester.hasWarnings)
     }
 
@@ -89,9 +83,7 @@ internal class TypesParserTests {
         qSig as Signal
         assertEquals(BitValue(Bit.B1, constant = false, signed = false), qSig.read(tester.context.evalContext))
 
-        assert(tester.hasNoErrors)
-        assert(tester.hasNoWarnings)
-        assert(tester.hasNoSyntaxIssues)
+        assert(tester.hasNoIssues)
     }
 
     @Test
@@ -111,7 +103,6 @@ internal class TypesParserTests {
 
         assert(tester.hasNoErrors)
         assert(tester.hasWarnings)
-        assert(tester.hasNoSyntaxIssues)
     }
 
     @Test
@@ -131,7 +122,6 @@ internal class TypesParserTests {
 
         assert(tester.hasErrors)
         assert(tester.hasNoWarnings)
-        assert(tester.hasNoSyntaxIssues)
     }
 
     @Test
@@ -214,7 +204,6 @@ internal class TypesParserTests {
         tester.context.walk(tester.assignBlock())
         assert(tester.hasErrors)
         assert(tester.hasNoWarnings)
-        assert(tester.hasNoSyntaxIssues)
     }
 
     @Test
@@ -223,7 +212,6 @@ internal class TypesParserTests {
         tester.context.walk(tester.assignBlock())
         assert(tester.hasErrors)
         assert(tester.hasNoWarnings)
-        assert(tester.hasNoSyntaxIssues)
     }
 
     @Test
@@ -299,7 +287,6 @@ internal class TypesParserTests {
             """.trimIndent()
         )
         tester.context.walk(tester.source())
-        assert(tester.hasNoSyntaxIssues)
         assert(tester.hasNoWarnings)
         assert(tester.hasErrors)
     }
@@ -316,7 +303,6 @@ internal class TypesParserTests {
             """.trimIndent()
         )
         tester.context.walk(tester.source())
-        assert(tester.hasNoSyntaxIssues)
         assert(tester.hasNoErrors)
         // TODO: warn about unused signal
         val sig = tester.context.resolveSignal("testSig")
@@ -340,7 +326,6 @@ internal class TypesParserTests {
             """.trimIndent()
         )
         tester.context.walk(tester.source())
-        assert(tester.hasNoSyntaxIssues)
         assert(tester.hasNoErrors)
         // TODO: warn about unused signal
         val sig = tester.context.resolveSignal("testSig")

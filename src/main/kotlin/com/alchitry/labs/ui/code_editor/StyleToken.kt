@@ -3,8 +3,8 @@ package com.alchitry.labs.ui.code_editor
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.style.TextDecoration
-import com.alchitry.labs.parsers.lucidv2.Notation
-import com.alchitry.labs.parsers.lucidv2.NotationType
+import com.alchitry.labs.parsers.errors.Notation
+import com.alchitry.labs.parsers.errors.NotationType
 import org.antlr.v4.runtime.Token
 
 

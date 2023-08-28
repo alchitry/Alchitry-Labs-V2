@@ -197,16 +197,14 @@ data class TypesParser(
                 moduleType,
                 instParams,
                 instPorts,
-                context.errorCollector.new()
+                context.errorCollector
             ).apply {
-                checkParameters()?.let {
-                    this@TypesParser.context.reportError(ctx, it)
+                checkParameters()
+                if (context.hasErrors)
                     return
-                }
-                initialWalk()?.let {
-                    this@TypesParser.context.reportError(ctx, it)
+                initialWalk()
+                if (context.hasErrors)
                     return
-                }
             }
         } else {
             val dimensions = ctx.arraySize().map { arraySizes[it] ?: return }
@@ -291,14 +289,12 @@ data class TypesParser(
                 }
             )
                 .apply {
-                    checkAllParameters()?.let {
-                        this@TypesParser.context.reportError(ctx, it)
+                    checkAllParameters()
+                    if (context.hasErrors)
                         return
-                    }
-                    initialWalkAll()?.let {
-                        this@TypesParser.context.reportError(ctx, it)
+                    initialWalkAll()
+                    if (context.hasErrors)
                         return
-                    }
                 }
         }
 

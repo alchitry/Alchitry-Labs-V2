@@ -91,16 +91,16 @@ public class LucidLexer extends Lexer {
 
     static {
         tokenNames = new String[_SYMBOLIC_NAMES.length];
-		for (int i = 0; i < tokenNames.length; i++) {
-			tokenNames[i] = VOCABULARY.getLiteralName(i);
-			if (tokenNames[i] == null) {
-				tokenNames[i] = VOCABULARY.getSymbolicName(i);
-			}
+        for (int i = 0; i < tokenNames.length; i++) {
+            tokenNames[i] = VOCABULARY.getLiteralName(i);
+            if (tokenNames[i] == null) {
+                tokenNames[i] = VOCABULARY.getSymbolicName(i);
+            }
 
-			if (tokenNames[i] == null) {
-				tokenNames[i] = "<INVALID>";
-			}
-		}
+            if (tokenNames[i] == null) {
+                tokenNames[i] = "<INVALID>";
+            }
+        }
 	}
 
 	@Override
@@ -150,8 +150,8 @@ public class LucidLexer extends Lexer {
                 return TYPE_ID_sempred((RuleContext) _localctx, predIndex);
             case 66:
                 return SPACE_ID_sempred((RuleContext) _localctx, predIndex);
-		}
-		return true;
+        }
+        return true;
     }
 
     private boolean HEX_sempred(RuleContext _localctx, int predIndex) {

@@ -31,6 +31,7 @@ data class ExprParser(
     private val dependencies: MutableMap<ParseTree, Set<Signal>> = mutableMapOf()
 ) : LucidBaseListener() {
     private var inTestBlock = false
+    private var inFunctionBlock = false
 
     fun withContext(context: LucidExprContext) = copy(context = context)
 
@@ -55,6 +56,14 @@ data class ExprParser(
 
     override fun exitTestBlock(ctx: TestBlockContext) {
         inTestBlock = false
+    }
+
+    override fun enterFunctionBlock(ctx: FunctionBlockContext) {
+        inFunctionBlock = true
+    }
+
+    override fun exitFunctionBlock(ctx: FunctionBlockContext) {
+        inFunctionBlock = false
     }
 
     override fun exitBitSelectorFixWidth(ctx: BitSelectorFixWidthContext) {
@@ -1055,7 +1064,7 @@ data class ExprParser(
             return
         }
 
-        if (function.testOnly && !inTestBlock) {
+        if (function.testOnly && !(inTestBlock || inFunctionBlock)) {
             context.reportError(
                 ctx.FUNCTION_ID(),
                 "The function \"\$${function.label}\" can only be used in test or function blocks."
@@ -1466,7 +1475,7 @@ data class ExprParser(
             Function.TICK -> if (context is LucidBlockContext) context.tick(shouldSnapshot = true)
             Function.SILENTTICK -> if (context is LucidBlockContext) context.tick(shouldSnapshot = false)
             Function.ASSERT -> {
-                if (context !is LucidBlockContext)
+                if (context !is LucidBlockContext || context.stage != ParseStage.Evaluation)
                     return
 
                 val passed = when (val arg = args[0]) {

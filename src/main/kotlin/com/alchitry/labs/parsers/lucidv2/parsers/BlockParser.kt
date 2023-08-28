@@ -89,9 +89,8 @@ data class BlockParser(
         }
     }
 
-    override fun exitFunctionBlock(ctx: FunctionBlockContext) {
-        inFunctionBlock = false
-
+    override fun enterFunctionBody(ctxBody: FunctionBodyContext) {
+        val ctx = ctxBody.getParent() as FunctionBlockContext
         if (ctx.name().TYPE_ID() == null) {
             context.reportError(ctx.name(), "Function names must start with a lowercase letter.")
             return
@@ -105,7 +104,7 @@ data class BlockParser(
             }
 
             val width = context.resolve(it.signalWidth()) ?: return
-            CustomArg(name, width)
+            CustomArg(name, width, it.SIGNED() != null)
         }
 
         val function = Function.Custom(ctx.name().text, args, ctx)
@@ -119,9 +118,13 @@ data class BlockParser(
         }
     }
 
+    override fun exitFunctionBlock(ctx: FunctionBlockContext) {
+        inFunctionBlock = false
+    }
+
     override fun exitAlwaysFunction(ctx: AlwaysFunctionContext) {
-        if (!inTestBlock) {
-            context.reportError(ctx, "Functions can only be called stand-alone in test blocks.")
+        if (!inTestBlock && !inFunctionBlock) {
+            context.reportError(ctx, "Functions can only be called in test or function blocks.")
         }
     }
 
@@ -217,11 +220,6 @@ data class BlockParser(
             return
         }
 
-        if (!countValue.constant) {
-            context.errorCollector.reportError(repCtx.expr(), "Repeat count must be constant!")
-            return
-        }
-
         val count = try {
             countValue.toBigInt().intValueExact()
         } catch (e: ArithmeticException) {
@@ -229,9 +227,16 @@ data class BlockParser(
             return
         }
 
-        if (count < 1) {
-            context.errorCollector.reportError(repCtx.expr(), "Repeat count must be greater than 0.")
-            return
+        if (!inFunctionBlock && !inTestBlock) {
+            if (count < 1) {
+                context.errorCollector.reportError(repCtx.expr(), "Repeat count must be greater than 0.")
+                return
+            }
+
+            if (!countValue.constant) {
+                context.errorCollector.reportError(repCtx.expr(), "Repeat count must be constant!")
+                return
+            }
         }
 
         if (sigName == null)

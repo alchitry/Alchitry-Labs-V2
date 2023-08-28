@@ -47,8 +47,6 @@ class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = nul
     val hasNoIssues: Boolean get() = context.errorCollector.hasNoIssues
     val hasNoErrors: Boolean get() = context.errorCollector.hasNoErrors
     val hasNoWarnings: Boolean get() = context.errorCollector.hasNoWarnings
-    val hasNoSyntaxIssues: Boolean get() = context.errorCollector.hasNoSyntaxIssues
     val hasErrors: Boolean get() = context.errorCollector.hasErrors
     val hasWarnings: Boolean get() = context.errorCollector.hasWarnings
-    val hasSyntaxIssues: Boolean get() = context.errorCollector.hasSyntaxIssues
 }

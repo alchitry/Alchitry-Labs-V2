@@ -1,4 +1,4 @@
-package com.alchitry.labs.parsers.lucidv2
+package com.alchitry.labs.parsers.errors
 
 import com.alchitry.labs.project.files.ProjectFile
 
@@ -19,10 +19,13 @@ class ErrorManager {
             }
         }
 
+        if (stringBuilder.isEmpty())
+            return "No issues detected.\n"
+
         return stringBuilder.toString()
     }
 
-    val hasNoIssues: Boolean get() = errorCollectors.values.all { it.hasNoIssues }
+    val hasNoMessages: Boolean get() = errorCollectors.values.all { it.hasNoMessages }
     val hasNoErrors: Boolean get() = errorCollectors.values.all { it.hasNoErrors }
     val hasErrors: Boolean get() = !hasNoErrors
 }

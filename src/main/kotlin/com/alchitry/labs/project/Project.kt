@@ -3,9 +3,9 @@ package com.alchitry.labs.project
 import com.alchitry.labs.Log
 import com.alchitry.labs.PathUtil
 import com.alchitry.labs.mainWindow
+import com.alchitry.labs.parsers.errors.ErrorManager
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.parsers.grammar.LucidParser
-import com.alchitry.labs.parsers.lucidv2.ErrorManager
 import com.alchitry.labs.parsers.lucidv2.context.Evaluable
 import com.alchitry.labs.parsers.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleTypeContext
@@ -23,7 +23,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.antlr.v4.runtime.CharStreams
@@ -93,7 +92,7 @@ data class Project(
             it to parser.source()
         }
 
-        if (!errorManger.hasNoIssues)
+        if (!errorManger.hasNoMessages)
             return null
 
         trees.forEach {
@@ -164,9 +163,9 @@ data class Project(
             }
             coroutineScope {
                 items.forEach {
-                    launch(Dispatchers.Default) {
+                    //launch(Dispatchers.Default) {
                         it.evaluate()
-                    }
+                    //}
                 }
             }
         }

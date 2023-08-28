@@ -1,7 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
+import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.grammar.LucidParser.TestBenchContext
-import com.alchitry.labs.parsers.lucidv2.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.*
 import com.alchitry.labs.project.Project
@@ -29,12 +29,7 @@ class TestBench(
         return SnapshotParent(name, snapshots)
     }
 
-    fun initialWalk(): String? {
-        val walkErrors = context.initialWalk(testBenchContext) ?: return null
-        val sb = StringBuilder("Test instance $name contains errors:")
-        walkErrors.forEach { sb.append("\n    ").append(it) }
-        return sb.toString()
-    }
+    fun initialWalk(): Boolean = context.initialWalk(testBenchContext)
 
     fun getTestBlocks(): List<TestBlock> {
         return context.blockParser.testBlocks.values.toList()

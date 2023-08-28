@@ -1,9 +1,8 @@
 package com.alchitry.labs.parsers.lucidv2.context
 
+import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.grammar.LucidParser.*
-import com.alchitry.labs.parsers.lucidv2.ErrorCollector
-import com.alchitry.labs.parsers.lucidv2.Notation
 import com.alchitry.labs.parsers.lucidv2.parsers.*
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
@@ -132,7 +131,7 @@ class LucidBlockContext(
         instance,
         ParseStage.Evaluation,
         evalContext,
-        ErrorCollector(errorCollector.file), // give each context its own error collector
+        errorCollector,
         expr,
         bitSelection,
         types,
@@ -146,30 +145,32 @@ class LucidBlockContext(
         localSignalResolver
     )
 
+    private suspend fun queueEval() {
+        blockParser.queueEval()
+        types.getInstances().forEach { it.context.queueEval() }
+    }
+
     /**
      * Queues always blocks for an initial evaluation.
      */
     suspend fun initialize() {
-        blockParser.queueEval()
-        types.getInstances().forEach { it.context.initialize() }
+        queueEval()
         project.initialize()
     }
 
-    fun initialWalk(t: ParseTree): List<Notation>? {
+    fun initialWalk(t: ParseTree): Boolean {
         stage = ParseStage.ModuleInternals
         walk(t)
         if (errorCollector.errors.isNotEmpty())
-            return errorCollector.errors.toList()
+            return false
         stage = ParseStage.Drivers
         walk(t)
-        if (errorCollector.errors.isNotEmpty())
-            return errorCollector.errors.toList()
-        return null
+        return errorCollector.errors.isEmpty()
     }
 
     fun walk(t: ParseTree) = ParseTreeMultiWalker.walk(getListeners(), t, getFilter())
 
-    fun checkParameters(): List<Notation>? {
+    fun checkParameters(): Boolean {
         val instance = (instance as? ModuleInstance)
             ?: error("checkParameters() can only be called on contexts with a ModuleInstance!")
         stage = ParseStage.Evaluation
@@ -178,11 +179,11 @@ class LucidBlockContext(
                 walk(it)
                 if (resolve(it)?.isTrue()?.bit != Bit.B1) {
                     errorCollector.reportError(it, "Parameter constraint failed for ${param.name}.")
-                    return errorCollector.errors.toList()
+                    return false
                 }
             }
         }
-        return null
+        return true
     }
 
     override fun resolve(exprCtx: ExprContext) = expr.resolve(exprCtx)
@@ -225,11 +226,11 @@ class LucidBlockContext(
 
         localSignalStack.add(mutableMapOf())
 
-        function.args.forEachIndexed { idx, (name, width) ->
-            localSignals[name] = args[idx].resizeToMatch(width).asSignal(name, null)
+        function.args.forEachIndexed { idx, (name, width, signed) ->
+            localSignals[name] = args[idx].resizeToMatch(width).withSign(signed).asSignal(name, null)
         }
 
-        walk(function.functionBlock.block())
+        walk(function.functionBlock.functionBody().block())
 
         localSignalStack.removeLast()
     }

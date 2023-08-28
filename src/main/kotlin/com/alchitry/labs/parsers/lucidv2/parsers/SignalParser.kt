@@ -5,6 +5,7 @@ import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidExprContext
 import com.alchitry.labs.parsers.lucidv2.signals.*
+import com.alchitry.labs.parsers.lucidv2.types.Function
 import com.alchitry.labs.parsers.lucidv2.values.*
 import org.antlr.v4.runtime.ParserRuleContext
 
@@ -43,6 +44,31 @@ data class SignalParser(
 
         val repCtx = ctx.getParent() as RepeatStatContext
         context.localSignals.remove(repCtx.name()?.text)
+    }
+
+    override fun enterFunctionBody(ctx: FunctionBodyContext) {
+        if (context !is LucidBlockContext || context.stage == ParseStage.Evaluation)
+            return
+
+        val funcCtx = ctx.getParent() as FunctionBlockContext
+
+        val function = context.resolveFunction(funcCtx.name().text) as? Function.Custom ?: return
+        function.args.forEach {
+            context.localSignals[it.name] =
+                Signal(it.name, SignalDirection.Read, null, it.width.filledWith(Bit.B0, false, it.signed))
+        }
+    }
+
+    override fun exitFunctionBody(ctx: FunctionBodyContext) {
+        if (context !is LucidBlockContext || context.stage == ParseStage.Evaluation)
+            return
+
+        val funcCtx = ctx.getParent() as FunctionBlockContext
+
+        val function = context.resolveFunction(funcCtx.name().text) as? Function.Custom ?: return
+        function.args.forEach {
+            context.localSignals.remove(it.name)
+        }
     }
 
     override fun exitSignal(ctx: SignalContext) {

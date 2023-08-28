@@ -34,7 +34,8 @@ sealed class Function(val label: String, val argCount: Int, val constOnly: Boole
 
 data class CustomArg(
     val name: String,
-    val width: SignalWidth
+    val width: SignalWidth,
+    val signed: Boolean
 )
 
 sealed class FunctionArg {
