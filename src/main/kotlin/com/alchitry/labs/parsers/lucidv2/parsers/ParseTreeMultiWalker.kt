@@ -1,8 +1,8 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
-import org.antlr.v4.runtime.ParserRuleContext
-import org.antlr.v4.runtime.RuleContext
-import org.antlr.v4.runtime.tree.*
+import org.antlr.v4.kotlinruntime.ParserRuleContext
+import org.antlr.v4.kotlinruntime.RuleContext
+import org.antlr.v4.kotlinruntime.tree.*
 
 /**
  * Used to walk through a ParseTree with multiple listeners just like when doing the actual parse.
@@ -19,7 +19,7 @@ object ParseTreeMultiWalker {
         val r = t as RuleNode
         enterRule(listeners, r)
         for (i in 0 until r.childCount) {
-            val child = r.getChild(i)
+            val child = r.getChild(i) ?: continue
             if (!filter.shouldSkip(r, child))
                 walk(listeners, child, filter)
         }

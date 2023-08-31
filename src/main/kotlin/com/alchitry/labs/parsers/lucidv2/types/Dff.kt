@@ -36,6 +36,12 @@ class Dff(
         }
     }
 
+    suspend fun reset() {
+        d.write(init)
+        q.write(init)
+        lastClk = null
+    }
+
     override fun takeSnapshot(): SnapshotParent {
         return SnapshotParent(name, listOf(d.takeSnapshot(), q.takeSnapshot()))
     }

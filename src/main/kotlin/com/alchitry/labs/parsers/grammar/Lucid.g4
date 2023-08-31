@@ -1,9 +1,5 @@
 grammar Lucid;
 
-@header {
-package com.alchitry.labs.parsers.grammar;
-}
-
 // starting rule
 source: (global | module | testBench | NL)* EOF;
 
@@ -141,8 +137,8 @@ name: TYPE_ID | CONST_ID | SPACE_ID;
 
 semi: NL | (NL* SEMICOLON);
 
-HEX: ([1-9][0-9]*)? 'h' ([0-9a-fA-FzZX]|('x' {_input.LA(1) != '{'}?))+;
-BIN: ([1-9][0-9]*)? 'b' ([0-1zZX]|('x' {_input.LA(1) != '{'}?))+;
+HEX: ([1-9][0-9]*)? 'h' ([0-9a-fA-FzZX]|('x' {_input.LA(1) != '{'.code}?))+;
+BIN: ([1-9][0-9]*)? 'b' ([0-1zZX]|('x' {_input.LA(1) != '{'.code}?))+;
 DEC: ([1-9][0-9]*)? 'd' [0-9]+;
 REAL: '-'? [0-9]* '.' [0-9]+ | '-'? [0-9]+ '.' [0-9]*;
 INT: [0-9]+;
@@ -151,9 +147,9 @@ SEMICOLON : ';';
 NL : '\r' '\n' | '\n' | '\r';
 
 SIGNED: 'signed';
-TYPE_ID: [a-z]([a-wy-zA-Z0-9_]|('x' {_input.LA(1) != '{'}?))*;
+TYPE_ID: [a-z]([a-wy-zA-Z0-9_]|('x' {_input.LA(1) != '{'.code}?))*;
 CONST_ID: [A-Z][A-Z0-9_]*;
-SPACE_ID: [A-Z]([a-wy-zA-Z0-9_]|('x' {_input.LA(1) != '{'}?))*;
+SPACE_ID: [A-Z]([a-wy-zA-Z0-9_]|('x' {_input.LA(1) != '{'.code}?))*;
 FUNCTION_ID: '$'[a-z][a-zA-Z0-9_]*;
 
 BLOCK_COMMENT: ('/*' .*? '*/') -> channel(HIDDEN);

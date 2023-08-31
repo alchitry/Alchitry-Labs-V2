@@ -139,4 +139,57 @@ class TestBenchTests {
 
         tester.runTestBenches()
     }
+
+    @Test
+    fun doubleFunctionArgTests() {
+        val tester = LucidTester(
+            """
+                testBench myTestBench {
+                    sig clk
+                    
+                    counter dut (.clk(clk))
+                    
+                    fun tickClock(times[32]) {
+                        repeat(times) {
+                            clk = 1
+                            ${"$"}tick()
+                            clk = 0
+                            ${"$"}tick()
+                        }
+                    }
+                    
+                    test simpleTest {
+                        clk = 0
+                        ${"$"}tick()
+                        ${"$"}tickClock(100)
+                       
+                        ${"$"}assert(dut.count == 100)
+                    }
+                    
+                    test simpleTest2 {
+                        clk = 0
+                        ${"$"}tick()
+                        ${"$"}tickClock(200)
+                       
+                        ${"$"}assert(dut.count == 200)
+                    }
+                }
+            """.trimIndent(),
+            """
+                module counter (
+                    input clk,
+                    output count[8]
+                ) {
+                    dff counter[8] (.clk(clk))
+                    
+                    always {
+                        counter.d = counter.q + 1
+                        count = counter.q
+                    }
+                }
+            """.trimIndent()
+        )
+
+        tester.runTestBenches()
+    }
 }

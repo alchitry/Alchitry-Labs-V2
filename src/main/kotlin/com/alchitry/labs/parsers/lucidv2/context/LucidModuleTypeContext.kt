@@ -10,7 +10,7 @@ import com.alchitry.labs.parsers.lucidv2.types.Constant
 import com.alchitry.labs.parsers.lucidv2.types.EnumType
 import com.alchitry.labs.parsers.lucidv2.types.Module
 import com.alchitry.labs.project.Project
-import org.antlr.v4.runtime.tree.ParseTreeListener
+import org.antlr.v4.kotlinruntime.tree.ParseTreeListener
 
 class LucidModuleTypeContext(
     override val project: Project,

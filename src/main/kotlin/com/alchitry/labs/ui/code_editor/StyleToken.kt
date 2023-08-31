@@ -5,7 +5,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.style.TextDecoration
 import com.alchitry.labs.parsers.errors.Notation
 import com.alchitry.labs.parsers.errors.NotationType
-import org.antlr.v4.runtime.Token
+import org.antlr.v4.kotlinruntime.Token
 
 
 data class EditorToken(
@@ -37,11 +37,12 @@ data class LineStyle(
 fun Token.toEditorToken(style: SpanStyle?): EditorToken {
     // needed to avoid ambiguity see https://youtrack.jetbrains.com/issue/KT-46360
     val lineCounter = { c: Char -> if (c == '\n') 1 else 0 }
-    val lineCount = text.sumOf(lineCounter)
+    val lineCount = text?.sumOf(lineCounter) ?: 0
 
-    val lineOffset = text.lastIndexOf('\n') + 1
+    val lineOffset = (text?.lastIndexOf('\n') ?: -1) + 1
 
-    val endOffset = if (lineCount == 0) charPositionInLine + text.length else text.length - lineOffset
+    val textLength = text?.length ?: 0
+    val endOffset = if (lineCount == 0) charPositionInLine + textLength else textLength - lineOffset
 
     return EditorToken(
         range = TextPosition(line - 1, charPositionInLine)..

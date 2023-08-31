@@ -1,8 +1,8 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
 import com.alchitry.labs.parsers.grammar.LucidParser.*
-import org.antlr.v4.runtime.tree.ParseTree
-import org.antlr.v4.runtime.tree.RuleNode
+import org.antlr.v4.kotlinruntime.tree.ParseTree
+import org.antlr.v4.kotlinruntime.tree.RuleNode
 
 interface WalkerFilter {
     fun shouldSkip(parent: RuleNode, child: ParseTree): Boolean

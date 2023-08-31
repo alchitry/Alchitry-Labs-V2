@@ -26,14 +26,14 @@ data class ModuleParser(
     override fun enterParamConstraint(ctx: LucidParser.ParamConstraintContext) {
         val parent = ctx.parent
         if (parent is LucidParser.ParamDecContext) {
-            val name = parent.name().text
+            val name = parent.name()?.text ?: return
             val defaultValue = parent.paramDefault()?.expr()?.let { context.resolve(it) } ?: UndefinedValue(true)
             localParams[name] = Signal(name, SignalDirection.Read, null, defaultValue)
         }
     }
 
     override fun exitParamConstraint(ctx: LucidParser.ParamConstraintContext) {
-        val value = context.resolve(ctx.expr())
+        val value = context.resolve(ctx.expr() ?: return)
         if (value is UndefinedValue)
             return
         if (value?.isTrue()?.bit != Bit.B1) {
@@ -47,19 +47,21 @@ data class ModuleParser(
             return
         }
 
-        val name = ctx.name().text
+        val nameCtx = ctx.name() ?: return
+        val name = nameCtx.text
 
-        if (ctx.name().TYPE_ID() == null)
-            context.reportError(ctx.name(), "Module names must start with a lowercase letter!")
+        if (nameCtx.TYPE_ID() == null)
+            context.reportError(nameCtx, "Module names must start with a lowercase letter!")
 
         val params = mutableMapOf<String, Parameter>()
         val ports = mutableMapOf<String, Port>()
 
         ctx.paramList()?.paramDec()?.forEach { paramCtx ->
-            val paramName = paramCtx.name().text
-            if (paramCtx.name().CONST_ID() == null) {
+            val paramNameCtx = paramCtx.name() ?: return@forEach
+            val paramName = paramNameCtx.text
+            if (paramNameCtx.CONST_ID() == null) {
                 context.reportError(
-                    paramCtx.name(),
+                    paramNameCtx,
                     "Parameter names must start with an uppercase letter and can only contain uppercase letters, numbers, and underscores."
                 )
             }
@@ -69,36 +71,37 @@ data class ModuleParser(
 
             if (params.putIfAbsent(paramName, Parameter(paramName, defaultValue, constraintContext)) != null) {
                 context.reportError(
-                    paramCtx.name(),
+                    paramNameCtx,
                     "The parameter name $paramName has already been used."
                 )
             }
         }
 
-        ctx.portList().portDec().forEach { portCtx ->
+        ctx.portList()?.portDec()?.forEach { portCtx ->
             val signed = portCtx.SIGNED() != null
 
-            val portName = portCtx.name().text
-            if (portCtx.name().TYPE_ID() == null) {
-                context.reportError(portCtx.name(), "Port names must start with a lowercase letter!")
+            val portNameCtx = portCtx.name() ?: return@forEach
+            val portName = portNameCtx.text
+            if (portNameCtx.TYPE_ID() == null) {
+                context.reportError(portNameCtx, "Port names must start with a lowercase letter!")
             }
 
-            val direction = when (portCtx.portDirection().text) {
+            val direction = when (portCtx.portDirection()?.text) {
                 "input" -> SignalDirection.Read
                 "output" -> SignalDirection.Write
                 "inout" -> SignalDirection.Both
                 else -> {
                     context.reportError(
-                        portCtx.portDirection(),
-                        "Unknown signal type ${portCtx.portDirection().text}!"
+                        portCtx.portDirection() ?: portCtx,
+                        "Unknown signal type ${portCtx.portDirection()?.text}!"
                     )
                     return
                 }
             }
 
-            val width = context.resolve(portCtx.signalWidth())
+            val width = portCtx.signalWidth()?.let { context.resolve(it) }
             if (width == null) {
-                context.reportError(portCtx.signalWidth(), "Failed to resolve signal width!")
+                context.reportError(portCtx.signalWidth() ?: portCtx, "Failed to resolve signal width!")
                 return@forEach
             }
 
@@ -107,7 +110,7 @@ data class ModuleParser(
 
         module = Module(name, params, ports, ctx).also {
             if (!context.project.addModule(it)) {
-                context.reportError(ctx.name(), "A module with name $name already exists!")
+                context.reportError(ctx.name() ?: ctx, "A module with name $name already exists!")
             }
         }
 

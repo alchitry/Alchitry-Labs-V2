@@ -16,43 +16,48 @@ data class StructParser(
     fun resolve(structTypeContext: StructTypeContext) = resolvedStructTypes[structTypeContext]
     fun resolve(structDecContext: StructDecContext) = structTypes[structDecContext]
 
-    override fun enterModule(ctx: ModuleContext?) {
+    override fun enterModule(ctx: ModuleContext) {
         localStructType.clear()
     }
 
-    override fun enterGlobal(ctx: GlobalContext?) {
+    override fun enterGlobal(ctx: GlobalContext) {
         localStructType.clear()
     }
 
     override fun exitStructDec(ctx: StructDecContext) {
-        val name = ctx.name().text
+        val nameCtx = ctx.name() ?: return
+        val name = nameCtx.text
 
-        if (ctx.name().TYPE_ID() == null) {
-            context.reportError(ctx.name(), "The struct name \"$name\" must start with a lowercase letter.")
+        if (nameCtx.TYPE_ID() == null) {
+            context.reportError(nameCtx, "The struct name \"$name\" must start with a lowercase letter.")
             return
         }
 
         if (localStructType.containsKey(name)) {
-            context.reportError(ctx.name(), "The struct name \"${name}\" has already been used.")
+            context.reportError(nameCtx, "The struct name \"${name}\" has already been used.")
             return
         }
 
         val members = mutableMapOf<String, StructMember>()
 
         ctx.structMember().forEach { structMemberContext ->
-            val memberName = structMemberContext.name().text
+            val structNameCtx = structMemberContext.name() ?: return@forEach
+            val memberName = structNameCtx.text
             val signed = structMemberContext.SIGNED() != null
 
-            if (structMemberContext.name().TYPE_ID() == null)
+            if (structNameCtx.TYPE_ID() == null)
                 context.reportError(
-                    structMemberContext.name(),
+                    structNameCtx,
                     "The struct member name $memberName must start with a lowercase letter."
                 )
 
-            val width = context.resolve(structMemberContext.signalWidth())
+            val width = structMemberContext.signalWidth()?.let { context.resolve(it) }
 
             if (width == null) {
-                context.reportError(structMemberContext.signalWidth(), "Failed to resolve signal width!")
+                context.reportError(
+                    structMemberContext.signalWidth() ?: structMemberContext,
+                    "Failed to resolve signal width!"
+                )
                 return@forEach
             }
 
@@ -65,27 +70,28 @@ data class StructParser(
     }
 
     override fun exitStructType(ctx: StructTypeContext) {
-        val name = ctx.name().firstOrNull()?.text ?: return
+        val nameCtx = ctx.name()
+        val name = nameCtx.firstOrNull()?.text ?: return
 
-        val type = if (ctx.name().size > 1) { // includes a . aka GlobalSpace.structName
+        val type = if (nameCtx.size > 1) { // includes a . aka GlobalSpace.structName
             val global = context.resolveGlobal(name)
             if (global == null) {
-                context.reportError(ctx.name(0), "Couldn't find global namespace $name")
+                context.reportError(nameCtx[0], "Couldn't find global namespace $name")
                 return
             }
 
-            if (ctx.name().size > 2) {
-                context.reportError(ctx.name(2), "Unknown extension to struct name.")
+            if (nameCtx.size > 2) {
+                context.reportError(nameCtx[2], "Unknown extension to struct name.")
                 return
             }
 
-            global.structs[ctx.name(1).text]
+            global.structs[nameCtx[1].text]
         } else { // local struct
             context.resolveStruct(name)
         }
 
         if (type == null) {
-            context.reportError(ctx.name(0), "Failed to find struct with name $name.")
+            context.reportError(nameCtx[0], "Failed to find struct with name $name.")
             return
         }
 

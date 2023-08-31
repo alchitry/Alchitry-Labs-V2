@@ -24,10 +24,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import org.antlr.v4.runtime.CharStreams
-import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.kotlinruntime.CharStreams
+import org.antlr.v4.kotlinruntime.CommonTokenStream
 import java.io.File
 
 class QueueExhaustionException(message: String) : IllegalStateException(message)
@@ -85,7 +86,8 @@ data class Project(
                         CharStreams.fromStream(it.file.inputStream())
                     ).also { it.removeErrorListeners() })
             ).apply {
-                (tokenStream.tokenSource as LucidLexer).addErrorListener(errorManger.getCollector(it))
+                (tokenStream?.tokenSource as? LucidLexer)?.addErrorListener(errorManger.getCollector(it))
+                    ?: error("TokenSource was not a LucidLexer!")
                 removeErrorListeners()
                 addErrorListener(errorManger.getCollector(it))
             }
@@ -159,6 +161,12 @@ data class Project(
         initializing = false
     }
 
+    suspend fun clearQueue() {
+        queueLock.withLock {
+            evaluationQueue.clear()
+        }
+    }
+
     suspend fun queueEvaluation(evaluable: Evaluable) {
         queueLock.withLock {
             evaluationQueue.add(evaluable)
@@ -177,9 +185,9 @@ data class Project(
             }
             coroutineScope {
                 items.forEach {
-                    //launch(Dispatchers.Default) {
+                    launch(Dispatchers.Default) {
                         it.evaluate()
-                    //}
+                    }
                 }
             }
         }

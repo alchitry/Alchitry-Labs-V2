@@ -13,8 +13,8 @@ import com.alchitry.labs.project.files.SourceFile
 import com.alchitry.labs.ui.code_editor.StyleToken
 import com.alchitry.labs.ui.code_editor.styles.CodeErrorChecker
 import com.alchitry.labs.ui.code_editor.toStyleToken
-import org.antlr.v4.runtime.CharStreams
-import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.kotlinruntime.CharStreams
+import org.antlr.v4.kotlinruntime.CommonTokenStream
 import java.io.File
 
 class LucidErrorChecker : CodeErrorChecker {
@@ -28,7 +28,8 @@ class LucidErrorChecker : CodeErrorChecker {
                     CharStreams.fromString(text)
                 ).also { it.removeErrorListeners() })
         ).apply {
-            (tokenStream.tokenSource as LucidLexer).addErrorListener(errorCollector)
+            (tokenStream?.tokenSource as? LucidLexer)?.addErrorListener(errorCollector)
+                ?: error("TokenSource was not a LucidLexer!")
             removeErrorListeners()
             addErrorListener(errorCollector)
         }

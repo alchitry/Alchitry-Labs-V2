@@ -41,7 +41,7 @@ class ModuleTypeTests {
                     "CLK_FREQ" to Parameter(
                         "CLK_FREQ",
                         null,
-                        tree.first().module(0).paramList().paramDec(0).paramConstraint().expr()
+                        tree.first().module(0)?.paramList()?.paramDec(0)?.paramConstraint()?.expr()
                     ),
                     "MAX_CT" to Parameter(
                         "MAX_CT",
@@ -51,7 +51,7 @@ class ModuleTypeTests {
                     "NEG_TEST" to Parameter(
                         "NEG_TEST",
                         BitListValue((-100).toBigInteger(), true),
-                        tree.first().module(0).paramList().paramDec(2).paramConstraint().expr()
+                        tree.first().module(0)?.paramList()?.paramDec(2)?.paramConstraint()?.expr()
                     )
                 ),
                 mapOf(
@@ -60,7 +60,7 @@ class ModuleTypeTests {
                     "count" to Port("count", SignalDirection.Write, BitListWidth(8), false),
                     "a" to Port("a", SignalDirection.Both, BitWidth, false)
                 ),
-                tree.first().module(0)
+                tree.first().module(0)!!
             ),
             module.first()
         )

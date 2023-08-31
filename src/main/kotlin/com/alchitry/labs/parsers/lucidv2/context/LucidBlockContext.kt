@@ -14,8 +14,8 @@ import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.Value
 import com.alchitry.labs.project.Project
 import kotlinx.coroutines.runBlocking
-import org.antlr.v4.runtime.tree.ParseTree
-import org.antlr.v4.runtime.tree.ParseTreeListener
+import org.antlr.v4.kotlinruntime.tree.ParseTree
+import org.antlr.v4.kotlinruntime.tree.ParseTreeListener
 
 class LucidBlockContext(
     override val project: Project,
@@ -145,6 +145,11 @@ class LucidBlockContext(
         localSignalResolver
     )
 
+    private suspend fun reset() {
+        types.dffs.values.forEach { it.reset() }
+        types.getInstances().forEach { it.context.reset() }
+    }
+
     private suspend fun queueEval() {
         blockParser.queueEval()
         types.getInstances().forEach { it.context.queueEval() }
@@ -154,6 +159,7 @@ class LucidBlockContext(
      * Queues always blocks for an initial evaluation.
      */
     suspend fun initialize() {
+        reset()
         queueEval()
         project.initialize()
     }
@@ -230,7 +236,7 @@ class LucidBlockContext(
             localSignals[name] = args[idx].resizeToMatch(width).withSign(signed).asSignal(name, null)
         }
 
-        walk(function.functionBlock.functionBody().block())
+        walk(function.functionBlock.functionBody()?.block() ?: error("Missing function body block!"))
 
         localSignalStack.removeLast()
     }

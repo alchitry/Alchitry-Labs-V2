@@ -10,7 +10,7 @@ import com.alchitry.labs.parsers.lucidv2.types.Dff
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstanceOrArray
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.Value
-import org.antlr.v4.runtime.tree.ParseTree
+import org.antlr.v4.kotlinruntime.tree.ParseTree
 
 
 /**
@@ -26,52 +26,55 @@ data class SignalDriverParser(
     private var expectedDrivers: Set<Signal>? = null
 
     override fun exitPortDec(ctx: PortDecContext) {
+        val nameCtx = ctx.name() ?: error("Name missing from port dec!")
         val port =
-            context.resolveSignal(ctx.name().text) as? Signal ?: error("Unresolved port of name \"${ctx.name().text}\"")
+            context.resolveSignal(nameCtx.text) as? Signal ?: error("Unresolved port of name \"${nameCtx.text}\"")
         when (port.direction) {
             SignalDirection.Read ->
                 if (!port.isRead)
-                    context.reportWarning(ctx.name(), "The input \"${port.name}\" is never read.")
+                    context.reportWarning(nameCtx, "The input \"${port.name}\" is never read.")
 
             SignalDirection.Write ->
                 if (!port.hasDriver)
-                    context.reportError(ctx.name(), "The output \"${port.name}\" is never driven.")
+                    context.reportError(nameCtx, "The output \"${port.name}\" is never driven.")
 
             SignalDirection.Both ->
                 when {
                     !port.isRead && !port.hasDriver ->
-                        context.reportError(ctx.name(), "The inout \"${port.name}\" is not connected.")
+                        context.reportError(nameCtx, "The inout \"${port.name}\" is not connected.")
 
                     !port.isRead ->
-                        context.reportWarning(ctx.name(), "The inout \"${port.name}\" is never read.")
+                        context.reportWarning(nameCtx, "The inout \"${port.name}\" is never read.")
 
                     !port.hasDriver ->
-                        context.reportError(ctx.name(), "The inout \"${port.name}\" is never driven!")
+                        context.reportError(nameCtx, "The inout \"${port.name}\" is never driven!")
                 }
         }
     }
 
     override fun exitSigDec(ctx: SigDecContext) {
+        val nameCtx = ctx.name() ?: error("Name missing from sig dec!")
         val sig =
-            context.resolveSignal(ctx.name().text) as? Signal ?: error("Unresolved sig of name ${ctx.name().text}")
+            context.resolveSignal(nameCtx.text) as? Signal ?: error("Unresolved sig of name ${nameCtx.text}")
         if (!sig.hasDriver && sig.isRead) {
-            context.reportError(ctx.name(), "The signal \"${sig.name}\" is read but doesn't have a driver!")
+            context.reportError(nameCtx, "The signal \"${sig.name}\" is read but doesn't have a driver!")
             return
         }
         if (!sig.isRead) {
-            context.reportWarning(ctx.name(), "The signal \"${sig.name}\" is never read.")
+            context.reportWarning(nameCtx, "The signal \"${sig.name}\" is never read.")
             return
         }
     }
 
     override fun exitDffDec(ctx: DffDecContext) {
-        val dff = context.resolveSignal(ctx.name().text) as? Dff ?: error("Unresolved dff of name ${ctx.name().text}")
+        val nameCtx = ctx.name() ?: error("Name missing from dff dec!")
+        val dff = context.resolveSignal(nameCtx.text) as? Dff ?: error("Unresolved dff of name ${nameCtx.text}")
         if (!dff.d.hasDriver) {
-            context.reportError(ctx.name(), "The d input of dff \"${dff.name}\" is never driven!")
+            context.reportError(nameCtx, "The d input of dff \"${dff.name}\" is never driven!")
             return
         }
         if (!dff.q.isRead) {
-            context.reportWarning(ctx.name(), "The q output of the dff \"${dff.name}\" is never read.")
+            context.reportWarning(nameCtx, "The q output of the dff \"${dff.name}\" is never read.")
             return
         }
     }
@@ -133,7 +136,8 @@ data class SignalDriverParser(
     }
 
     override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
-        val drivenMap = drivenSignals[ctx.block()] ?: error("Missing always block signals!")
+        val drivenMap = drivenSignals[ctx.block() ?: error("Block missing from Always block!")]
+            ?: error("Missing always block signals!")
         expectedDrivers?.forEach { signal ->
             val driven = drivenMap[signal]
             if (driven == null) {
@@ -154,7 +158,7 @@ data class SignalDriverParser(
     }
 
     override fun exitExprSignal(ctx: ExprSignalContext) {
-        val sig = context.resolve(ctx.signal()) ?: return
+        val sig = context.resolve(ctx.signal() ?: return) ?: return
         val fullSig = sig.getSignal()
         val expected = expectedDrivers ?: return
         if (expected.contains(fullSig)) { // should be driving this signal
@@ -192,7 +196,7 @@ data class SignalDriverParser(
     override fun exitCaseBlock(ctx: CaseBlockContext) = stopBlock(ctx)
 
     override fun exitAssignStat(ctx: AssignStatContext) {
-        val assignee = context.resolve(ctx.signal()) ?: return
+        val assignee = context.resolve(ctx.signal() ?: return) ?: return
         val currentValue = signals[assignee.getSignal()]
             ?: assignee.getSignal().width.filledWith(Bit.B0, constant = false, signed = false)
 
@@ -206,13 +210,14 @@ data class SignalDriverParser(
     }
 
     override fun exitRepeatStat(ctx: RepeatStatContext) {
-        drivenSignals[ctx.repeatBlock().block()]?.let { signals.putAll(it) }
+        drivenSignals[ctx.repeatBlock()?.block() ?: return]?.let { signals.putAll(it) }
     }
 
     override fun exitIfStat(ctx: IfStatContext) {
         // if statements can't drive a signal if not complete
         val elseBlock = drivenSignals[ctx.elseStat()?.block() ?: return] ?: error("Missing else block signals!")
-        val ifBlock = drivenSignals[ctx.block()] ?: error("Missing if block signals!")
+        val ifBlock = drivenSignals[ctx.block() ?: error("Block missing from if statement!")]
+            ?: error("Missing if block signals!")
 
         ifBlock.keys.intersect(elseBlock.keys).forEach { signal ->
             val ifValue = ifBlock[signal]!!
@@ -228,7 +233,10 @@ data class SignalDriverParser(
             return
 
         val caseMaps =
-            ctx.caseElem().map { drivenSignals[it.caseBlock()] ?: error("Missing case block signals!") }
+            ctx.caseElem().map {
+                drivenSignals[it.caseBlock() ?: error("Block missing from case element!")]
+                    ?: error("Missing case block signals!")
+            }
 
         // for each signal appearing in all blocks
         caseMaps.flatMap { it.keys }.toSet().forEach { sig ->

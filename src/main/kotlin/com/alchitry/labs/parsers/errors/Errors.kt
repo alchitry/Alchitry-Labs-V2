@@ -1,6 +1,5 @@
-package com.alchitry.labs.parsers.lucidv2
+package com.alchitry.labs.parsers.errors
 
-import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.grammar.LucidParser.BitSelectorConstContext
 import com.alchitry.labs.parsers.grammar.LucidParser.ExprContext
 

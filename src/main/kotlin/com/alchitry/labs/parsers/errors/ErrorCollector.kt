@@ -1,11 +1,11 @@
 package com.alchitry.labs.parsers.errors
 
+import com.alchitry.kotlinmultiplatform.BitSet
 import com.alchitry.labs.project.files.ProjectFile
-import org.antlr.v4.runtime.*
-import org.antlr.v4.runtime.atn.ATNConfigSet
-import org.antlr.v4.runtime.dfa.DFA
-import org.antlr.v4.runtime.tree.TerminalNode
-import java.util.*
+import org.antlr.v4.kotlinruntime.*
+import org.antlr.v4.kotlinruntime.atn.ATNConfigSet
+import org.antlr.v4.kotlinruntime.dfa.DFA
+import org.antlr.v4.kotlinruntime.tree.TerminalNode
 
 // TODO: Fix concurrency issues during simulation
 class ErrorCollector(override val file: ProjectFile) : ErrorListener, ANTLRErrorListener {
@@ -20,35 +20,41 @@ class ErrorCollector(override val file: ProjectFile) : ErrorListener, ANTLRError
     }
 
     override fun reportError(node: TerminalNode, message: String) {
-        errors.add(ErrorListener.getNotation(node.symbol, message, NotationType.Error))
+        node.symbol?.let {
+            errors.add(ErrorListener.getNotation(it, message, NotationType.Error))
+        }
     }
 
     override fun reportError(ctx: ParserRuleContext, message: String) {
-        errors.add(ErrorListener.getNotation(ctx, message, NotationType.Error))
+        ErrorListener.getNotation(ctx, message, NotationType.Error)?.let { errors.add(it) }
     }
 
     override fun reportWarning(node: TerminalNode, message: String) {
-        warnings.add(ErrorListener.getNotation(node.symbol, message, NotationType.Warning))
+        node.symbol?.let {
+            warnings.add(ErrorListener.getNotation(it, message, NotationType.Warning))
+        }
     }
 
     override fun reportWarning(ctx: ParserRuleContext, message: String) {
-        warnings.add(ErrorListener.getNotation(ctx, message, NotationType.Warning))
+        ErrorListener.getNotation(ctx, message, NotationType.Warning)?.let { warnings.add(it) }
     }
 
     override fun reportInfo(node: TerminalNode, message: String) {
-        infos.add(ErrorListener.getNotation(node.symbol, message, NotationType.Info))
+        node.symbol?.let {
+            infos.add(ErrorListener.getNotation(it, message, NotationType.Info))
+        }
     }
 
     override fun reportInfo(ctx: ParserRuleContext, message: String) {
-        infos.add(ErrorListener.getNotation(ctx, message, NotationType.Info))
+        ErrorListener.getNotation(ctx, message, NotationType.Info)?.let { infos.add(it) }
     }
 
     override fun syntaxError(
-        recognizer: Recognizer<*, *>?,
+        recognizer: Recognizer<*, *>,
         offendingSymbol: Any?,
         line: Int,
         charPositionInLine: Int,
-        msg: String?,
+        msg: String,
         e: RecognitionException?
     ) {
         val token = (offendingSymbol as? Token) ?: return
@@ -57,36 +63,36 @@ class ErrorCollector(override val file: ProjectFile) : ErrorListener, ANTLRError
 
     override fun reportAmbiguity(
         recognizer: Parser,
-        dfa: DFA?,
+        dfa: DFA,
         startIndex: Int,
         stopIndex: Int,
         exact: Boolean,
-        ambigAlts: BitSet?,
-        configs: ATNConfigSet?
+        ambigAlts: BitSet,
+        configs: ATNConfigSet
     ) {
-        val token = recognizer.tokenStream.get(startIndex)
+        val token = recognizer.tokenStream?.get(startIndex) ?: return
         errors.add(ErrorListener.getNotation(token, null, NotationType.SyntaxAmbiguity))
     }
 
     override fun reportAttemptingFullContext(
-        recognizer: Parser?,
-        dfa: DFA?,
+        recognizer: Parser,
+        dfa: DFA,
         startIndex: Int,
         stopIndex: Int,
-        conflictingAlts: BitSet?,
-        configs: ATNConfigSet?
+        conflictingAlts: BitSet,
+        configs: ATNConfigSet
     ) {
         //val text = recognizer?.tokenStream?.getText(Interval(startIndex, stopIndex))
         //syntaxIssues.add("Syntax attempting full context at $startIndex to $stopIndex \"$text\"")
     }
 
     override fun reportContextSensitivity(
-        recognizer: Parser?,
-        dfa: DFA?,
+        recognizer: Parser,
+        dfa: DFA,
         startIndex: Int,
         stopIndex: Int,
         prediction: Int,
-        configs: ATNConfigSet?
+        configs: ATNConfigSet
     ) {
         //syntaxIssues.add("Syntax context sensitivity at $startIndex to $stopIndex")
     }

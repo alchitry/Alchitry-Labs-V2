@@ -69,10 +69,11 @@ data class BlockParser(
 
     override fun exitTestBlock(ctx: TestBlockContext) {
         inTestBlock = false
-        val name = ctx.name().text
+        val nameCtx = ctx.name() ?: return
+        val name = nameCtx.text
 
-        if (ctx.name().TYPE_ID() == null) {
-            context.reportError(ctx.name(), "Test names must start with a lowercase letter.")
+        if (nameCtx.TYPE_ID() == null) {
+            context.reportError(nameCtx, "Test names must start with a lowercase letter.")
             return
         }
 
@@ -90,30 +91,32 @@ data class BlockParser(
     }
 
     override fun enterFunctionBody(ctxBody: FunctionBodyContext) {
-        val ctx = ctxBody.getParent() as FunctionBlockContext
-        if (ctx.name().TYPE_ID() == null) {
-            context.reportError(ctx.name(), "Function names must start with a lowercase letter.")
+        val ctx = ctxBody.parent as FunctionBlockContext
+        val nameCtx = ctx.name() ?: return
+        if (nameCtx.TYPE_ID() == null) {
+            context.reportError(nameCtx, "Function names must start with a lowercase letter.")
             return
         }
 
         val args = ctx.functionArg().map {
-            val name = it.name().TYPE_ID()?.text
+            val itName = it.name() ?: return
+            val name = itName.TYPE_ID()?.text
             if (name == null) {
-                context.reportError(it.name(), "Function argument names must start with a lowercase letter.")
+                context.reportError(itName, "Function argument names must start with a lowercase letter.")
                 return
             }
 
-            val width = context.resolve(it.signalWidth()) ?: return
+            val width = it.signalWidth()?.let { it1 -> context.resolve(it1) } ?: return
             CustomArg(name, width, it.SIGNED() != null)
         }
 
-        val function = Function.Custom(ctx.name().text, args, ctx)
+        val function = Function.Custom(nameCtx.text, args, ctx)
 
         if (
             Function.builtIn.any { it.label == function.label } ||
             functions.putIfAbsent(function.label, function) != null
         ) {
-            context.reportError(ctx.name(), "The function name \"${function.label}\" is already in use.")
+            context.reportError(nameCtx, "The function name \"${function.label}\" is already in use.")
             return
         }
     }
@@ -133,56 +136,59 @@ data class BlockParser(
     }
 
     override fun exitAssignStat(ctx: AssignStatContext) {
-        val assignee = context.resolve(ctx.signal()) ?: return
+        val signalCtx = ctx.signal() ?: return
+        val assignee = context.resolve(signalCtx) ?: return
 
         if (!assignee.direction.canWrite) {
-            context.reportError(ctx.signal(), "The signal \"${ctx.signal().text}\" can't be written to.")
+            context.reportError(signalCtx, "The signal \"${signalCtx.text}\" can't be written to.")
             return
         }
 
         if (assignee.getSignal().hasDriver) {
             context.reportError(
-                ctx.signal(),
-                "The signal \"${ctx.signal().text}\" already has a driver so it can't be driven by this block."
+                signalCtx,
+                "The signal \"${signalCtx.text}\" already has a driver so it can't be driven by this block."
             )
             return
         }
 
         drivenSignals.add(assignee.getSignal())
 
-        val newValue = context.resolve(ctx.expr()) ?: return
+        val exprCtx = ctx.expr() ?: return
+        val newValue = context.resolve(exprCtx) ?: return
 
         if (!assignee.width.canAssign(newValue.width)) {
             context.reportError(
-                ctx.expr(),
-                "The expression \"${ctx.expr().text}\" doesn't match the dimensions of signal \"${ctx.signal().text}\"."
+                exprCtx,
+                "The expression \"${exprCtx.text}\" doesn't match the dimensions of signal \"${signalCtx.text}\"."
             )
             return
         }
 
         // only warn about truncation for certain types of expressions
         if (
-            ctx.expr() is ExprSignalContext ||
-            ctx.expr() is ExprStructContext ||
-            ctx.expr() is ExprConcatContext ||
-            ctx.expr() is ExprDupContext ||
-            ctx.expr() is ExprArrayContext ||
-            ctx.expr() is ExprNumContext
+            exprCtx is ExprSignalContext ||
+            exprCtx is ExprStructContext ||
+            exprCtx is ExprConcatContext ||
+            exprCtx is ExprDupContext ||
+            exprCtx is ExprArrayContext ||
+            exprCtx is ExprNumContext
         ) {
             if (assignee.width.willTruncate(newValue.width)) {
                 context.reportWarning(
-                    ctx.expr(),
-                    "The expression \"${ctx.expr().text}\" is wider than \"${ctx.signal().text}\" and will be truncated."
+                    exprCtx,
+                    "The expression \"${exprCtx.text}\" is wider than \"${signalCtx.text}\" and will be truncated."
                 )
             }
         }
     }
 
     override fun exitCaseStat(ctx: CaseStatContext) {
-        val value = context.expr.resolve(ctx.expr()) ?: return
+        val exprCtx = ctx.expr() ?: return
+        val value = context.expr.resolve(exprCtx) ?: return
 
         if (value !is SimpleValue) {
-            context.errorCollector.reportError(ctx.expr(), "Case statement's value must be a simple value.")
+            context.errorCollector.reportError(exprCtx, "Case statement's value must be a simple value.")
             return
         }
 
@@ -190,51 +196,53 @@ data class BlockParser(
             val exprCtx = caseElemContext.expr() ?: return@forEach
             val condition = context.expr.resolve(exprCtx)
             if (condition !is SimpleValue) {
-                context.errorCollector.reportError(ctx.expr(), "Case statement conditions must be simple values.")
+                context.errorCollector.reportError(exprCtx, "Case statement conditions must be simple values.")
                 return
             }
             if (!condition.constant) {
-                context.errorCollector.reportError(ctx.expr(), "Case statement conditions must be constant.")
+                context.errorCollector.reportError(exprCtx, "Case statement conditions must be constant.")
                 return
             }
         }
     }
 
     override fun exitIfStat(ctx: IfStatContext) {
-        val condition = context.expr.resolve(ctx.expr()) ?: return
+        val exprCtx = ctx.expr() ?: return
+        val condition = context.expr.resolve(exprCtx) ?: return
 
         if (condition !is SimpleValue) {
-            context.errorCollector.reportError(ctx.expr(), "If condition must be a simple value.")
+            context.errorCollector.reportError(exprCtx, "If condition must be a simple value.")
             return
         }
     }
 
     override fun enterRepeatBlock(ctx: RepeatBlockContext) {
-        val repCtx = ctx.getParent() as RepeatStatContext
+        val repCtx = ctx.parent as RepeatStatContext
         val sigName = repCtx.name()?.text
+        val exprCtx = repCtx.expr() ?: return
 
-        val countValue = context.resolve(repCtx.expr())
+        val countValue = context.resolve(exprCtx)
 
         if (countValue !is SimpleValue || !countValue.isNumber()) {
-            context.errorCollector.reportError(repCtx.expr(), "Repeat count must be a number!")
+            context.errorCollector.reportError(exprCtx, "Repeat count must be a number!")
             return
         }
 
         val count = try {
             countValue.toBigInt().intValueExact()
         } catch (e: ArithmeticException) {
-            context.errorCollector.reportError(repCtx.expr(), "Repeat count doesn't fit in an integer.")
+            context.errorCollector.reportError(exprCtx, "Repeat count doesn't fit in an integer.")
             return
         }
 
         if (!inFunctionBlock && !inTestBlock) {
             if (count < 1) {
-                context.errorCollector.reportError(repCtx.expr(), "Repeat count must be greater than 0.")
+                context.errorCollector.reportError(exprCtx, "Repeat count must be greater than 0.")
                 return
             }
 
             if (!countValue.constant) {
-                context.errorCollector.reportError(repCtx.expr(), "Repeat count must be constant!")
+                context.errorCollector.reportError(exprCtx, "Repeat count must be constant!")
                 return
             }
         }
@@ -242,13 +250,15 @@ data class BlockParser(
         if (sigName == null)
             return
 
-        if (repCtx.name().TYPE_ID() == null) {
-            context.reportError(repCtx.name(), "Repeat variable name must start with a lowercase letter.")
+        val nameCtx = repCtx.name() ?: return
+
+        if (nameCtx.TYPE_ID() == null) {
+            context.reportError(nameCtx, "Repeat variable name must start with a lowercase letter.")
             return
         }
 
         if (context.resolveSignal(sigName) != null) {
-            context.reportError(repCtx.name(), "The name \"$sigName\" is already in use!")
+            context.reportError(nameCtx, "The name \"$sigName\" is already in use!")
             return
         }
 

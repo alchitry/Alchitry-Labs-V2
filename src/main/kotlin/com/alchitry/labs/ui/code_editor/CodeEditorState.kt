@@ -138,7 +138,7 @@ class CodeEditorState(
         lines.forEach { it.highlights.clear() }
 
         val tokens = when (token.token.type) {
-            LucidLexer.TYPE_ID, LucidLexer.CONST_ID, LucidLexer.SPACE_ID, LucidLexer.FUNCTION_ID -> {
+            LucidLexer.Tokens.TYPE_ID.id, LucidLexer.Tokens.CONST_ID.id, LucidLexer.Tokens.SPACE_ID.id, LucidLexer.Tokens.FUNCTION_ID.id -> {
                 tokens.mapNotNull { t ->
                     if (t.token.type == token.token.type && t.token.text == token.token.text) {
                         HighlightAnnotation(t.range, AlchitryColors.tokenHighlight)

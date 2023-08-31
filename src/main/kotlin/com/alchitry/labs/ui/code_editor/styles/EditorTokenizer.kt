@@ -2,8 +2,8 @@ package com.alchitry.labs.ui.code_editor.styles
 
 import androidx.compose.ui.text.AnnotatedString
 import com.alchitry.labs.ui.code_editor.EditorToken
-import org.antlr.v4.runtime.CharStream
-import org.antlr.v4.runtime.CharStreams
+import org.antlr.v4.kotlinruntime.CharStream
+import org.antlr.v4.kotlinruntime.CharStreams
 
 interface EditorTokenizer {
     fun getTokens(stream: CharStream): List<EditorToken>

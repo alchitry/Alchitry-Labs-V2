@@ -4,8 +4,8 @@ import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.ui.code_editor.EditorToken
 import com.alchitry.labs.ui.code_editor.styles.EditorTokenizer
 import com.alchitry.labs.ui.code_editor.toEditorToken
-import org.antlr.v4.runtime.CharStream
-import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.kotlinruntime.CharStream
+import org.antlr.v4.kotlinruntime.CommonTokenStream
 
 class LucidTokenizer : EditorTokenizer {
     override fun getTokens(stream: CharStream): List<EditorToken> {
@@ -16,21 +16,21 @@ class LucidTokenizer : EditorTokenizer {
 
         return tokenStream.tokens.map { token ->
             val style = when (token.type) {
-                LucidLexer.SIGNED -> LucidStyle.signed
-                LucidLexer.COMMENT, LucidLexer.BLOCK_COMMENT -> LucidStyle.comment
-                LucidLexer.HEX, LucidLexer.BIN, LucidLexer.DEC, LucidLexer.INT -> LucidStyle.value
-                LucidLexer.REAL -> LucidStyle.realValue
-                LucidLexer.STRING -> LucidStyle.string
-                LucidLexer.CONST_ID -> LucidStyle.constant
-                LucidLexer.SPACE_ID -> LucidStyle.namespace
-                LucidLexer.FUNCTION_ID -> LucidStyle.function
+                LucidLexer.Tokens.SIGNED.id -> LucidStyle.signed
+                LucidLexer.Tokens.COMMENT.id, LucidLexer.Tokens.BLOCK_COMMENT.id -> LucidStyle.comment
+                LucidLexer.Tokens.HEX.id, LucidLexer.Tokens.BIN.id, LucidLexer.Tokens.DEC.id, LucidLexer.Tokens.INT.id -> LucidStyle.value
+                LucidLexer.Tokens.REAL.id -> LucidStyle.realValue
+                LucidLexer.Tokens.STRING.id -> LucidStyle.string
+                LucidLexer.Tokens.CONST_ID.id -> LucidStyle.constant
+                LucidLexer.Tokens.SPACE_ID.id -> LucidStyle.namespace
+                LucidLexer.Tokens.FUNCTION_ID.id -> LucidStyle.function
                 else -> when (token.text) {
                     "input", "output", "inout", "dff", "sig", "const", "struct", "enum" -> LucidStyle.variable
                     "always", "if", "else", "repeat", "case", "test", "fun" -> LucidStyle.keyword
                     "module", "global", "testBench" -> LucidStyle.module
                     "default" -> LucidStyle.defaultKeyword
                     else ->
-                        if (operatorRegex.matches(token.text)) LucidStyle.operator else null
+                        if (token.text?.let { operatorRegex.matches(it) } == true) LucidStyle.operator else null
                 }
             }
             token.toEditorToken(style)

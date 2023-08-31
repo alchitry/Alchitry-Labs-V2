@@ -9,17 +9,17 @@ import com.alchitry.labs.parsers.lucidv2.types.Module
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
 import com.alchitry.labs.project.Board
 import com.alchitry.labs.project.Project
-import org.antlr.v4.runtime.CharStreams
-import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.kotlinruntime.CharStreams
+import org.antlr.v4.kotlinruntime.CommonTokenStream
 import java.io.File
 
-class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = null) :
-    LucidParser(
+class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = null) {
+    val parser = LucidParser(
         CommonTokenStream(
             LucidLexer(
                 CharStreams.fromString(text)
             ).also { it.removeErrorListeners() })
-    ) {
+    )
 
     val project = Project("Testing", File("."), Board.AlchitryAu, emptySet(), emptySet(), emptySet())
     val context = LucidBlockContext(
@@ -28,7 +28,7 @@ class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = nul
             "top",
             project,
             null,
-            Module("testModule", mapOf(), mapOf(), ModuleContext(null, 0)),
+            Module("testModule", mapOf(), mapOf(), LucidParser.ModuleContext(null, 0)),
             mapOf(),
             mapOf(),
             testErrorCollector()
@@ -39,9 +39,9 @@ class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = nul
     )
 
     init {
-        (tokenStream.tokenSource as LucidLexer).addErrorListener(context.errorCollector)
-        removeErrorListeners()
-        addErrorListener(context.errorCollector)
+        (parser.tokenStream?.tokenSource as LucidLexer).addErrorListener(context.errorCollector)
+        parser.removeErrorListeners()
+        parser.addErrorListener(context.errorCollector)
     }
 
     val hasNoIssues: Boolean get() = context.errorCollector.hasNoIssues

@@ -25,7 +25,7 @@ class DynamicEvalTests {
                     localSignalResolver = TestSignalResolver(signal)
                 )
 
-            val exprCtx = test.expr()
+            val exprCtx = test.parser.expr()
             test.context.walk(exprCtx)
 
             val dynamicExpr = DynamicExpr(exprCtx, test.context)
@@ -61,7 +61,7 @@ class DynamicEvalTests {
                 localSignalResolver = TestSignalResolver(clk)
             )
 
-        val exprCtx = test.expr()
+        val exprCtx = test.parser.expr()
         test.context.walk(exprCtx)
         val clkExpr = DynamicExpr(exprCtx, test.context)
 
@@ -123,7 +123,7 @@ class DynamicEvalTests {
             TestSignalResolver(sig1, sig2)
         )
 
-        tester.context.walk(tester.module())
+        tester.context.walk(tester.parser.module())
         assert(tester.hasNoIssues)
 
         runBlocking {
@@ -167,7 +167,7 @@ class DynamicEvalTests {
             TestSignalResolver(sig1, sig2)
         )
 
-        tester.context.walk(tester.module())
+        tester.context.walk(tester.parser.module())
         assert(tester.hasNoIssues)
 
         runBlocking {

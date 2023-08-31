@@ -9,7 +9,7 @@ class WidthOfTests {
     @Test
     fun basicWidthTest() {
         val tester = SimpleLucidTester("\$widthOf(8b1);")
-        val ctx = tester.expr().also { tester.context.walk(it) }
+        val ctx = tester.parser.expr().also { tester.context.walk(it) }
 
         assert(tester.hasNoIssues)
 
@@ -22,7 +22,7 @@ class WidthOfTests {
     @Test
     fun multiDimWidthTest() {
         val tester = SimpleLucidTester("\$widthOf({8b1, 8b1});")
-        val ctx = tester.expr().also { tester.context.walk(it) }
+        val ctx = tester.parser.expr().also { tester.context.walk(it) }
 
         assert(tester.hasNoIssues)
 

@@ -3,10 +3,16 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.FileOutputStream
 import java.util.*
 
+buildscript {
+    dependencies {
+        classpath("com.alchitry.antlr-kotlin:antlr-kotlin-gradle-plugin:0.0.1")
+    }
+}
+
 plugins {
     kotlin("jvm") version "1.9.0"
     id("org.jetbrains.compose") version "1.4.3"
-    antlr
+    //antlr
 }
 
 group = "com.alchitry"
@@ -14,12 +20,13 @@ version = "2.0.0-ALPHA-SNAPSHOT"
 
 repositories {
     google()
+    mavenLocal()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
 dependencies {
-    antlr("org.antlr:antlr4:4.13.0")
+    implementation("com.alchitry.antlr-kotlin:antlr-kotlin-runtime:+")
     implementation("org.apache.commons:commons-text:1.10.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
@@ -103,4 +110,30 @@ tasks.register<Jar>("fatJar") {
         .map { if (it.isDirectory) it else zipTree(it) } +
             sourcesMain.output
     from(contents)
+}
+
+tasks.register<com.alchitry.antlrkotlin.gradleplugin.AntlrKotlinTask>("generateKotlinGrammarSource") {
+// the classpath used to run antlr code generation
+    antlrClasspath = configurations.detachedConfiguration(
+        // antlr itself
+        // antlr is transitive added by antlr-kotlin-target,
+        // add another dependency if you want to choose another antlr4 version (not recommended)
+        // project.dependencies.create("org.antlr:antlr4:$antlrVersion"),
+
+        // antlr target, required to create kotlin code
+        project.dependencies.create("com.alchitry.antlr-kotlin:antlr-kotlin-target:0.0.1")
+    )
+    maxHeapSize = "64m"
+    packageName = "com.alchitry.labs.parsers.grammar"
+    arguments = listOf("-no-visitor", "-listener")
+    source = project.objects
+        .sourceDirectorySet("antlr", "antlr")
+        .srcDir("src/main/kotlin/com/alchitry/labs/parsers/grammar").apply {
+            include("*.g4")
+        }
+    // outputDirectory is required, put it into the build directory
+    // if you do not want to add the generated sources to version control
+    //outputDirectory = File("build/generated-src/antlr/main")
+    // use this setting if you want to add the generated sources to version control
+    outputDirectory = File("src/main/kotlin")
 }

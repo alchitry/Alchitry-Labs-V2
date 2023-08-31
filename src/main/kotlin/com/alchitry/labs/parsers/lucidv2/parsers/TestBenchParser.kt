@@ -9,10 +9,11 @@ class TestBenchParser(
     private val context: LucidTestBenchContext
 ) : LucidBaseListener() {
     override fun exitTestBench(ctx: TestBenchContext) {
-        val name = ctx.name().text
+        val nameCtx = ctx.name() ?: return
+        val name = nameCtx.text
 
-        if (ctx.name().TYPE_ID() == null) {
-            context.reportError(ctx.name(), "Test bench names must start with a lowercase letter.")
+        if (nameCtx.TYPE_ID() == null) {
+            context.reportError(nameCtx, "Test bench names must start with a lowercase letter.")
             return
         }
 

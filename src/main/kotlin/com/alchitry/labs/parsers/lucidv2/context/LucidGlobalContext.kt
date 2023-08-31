@@ -8,7 +8,7 @@ import com.alchitry.labs.parsers.lucidv2.parsers.*
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.types.GlobalNamespace
 import com.alchitry.labs.project.Project
-import org.antlr.v4.runtime.tree.ParseTreeListener
+import org.antlr.v4.kotlinruntime.tree.ParseTreeListener
 
 class LucidGlobalContext(
     override val project: Project,

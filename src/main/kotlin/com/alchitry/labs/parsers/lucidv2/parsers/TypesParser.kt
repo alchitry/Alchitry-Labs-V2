@@ -39,23 +39,24 @@ data class TypesParser(
     }
 
     override fun exitModuleInst(ctx: ModuleInstContext) {
-        val moduleTypeName = ctx.name(0)?.text ?: return
-        val moduleInstanceName = ctx.name(1)?.text ?: return
+        val nameCtx = ctx.name()
+        val moduleTypeName = nameCtx.getOrNull(0)?.text ?: return
+        val moduleInstanceName = nameCtx.getOrNull(1)?.text ?: return
 
         val moduleType = context.project.resolveModuleType(moduleTypeName)
 
         if (moduleType == null) {
-            context.reportError(ctx.name(0), "Module with name $moduleTypeName could not be resolved.")
+            context.reportError(nameCtx[0], "Module with name $moduleTypeName could not be resolved.")
             return
         }
 
-        if (ctx.name(1).TYPE_ID() == null) {
-            context.reportError(ctx.name(1), "Module instance names must start with a lowercase letter.")
+        if (nameCtx[1].TYPE_ID() == null) {
+            context.reportError(nameCtx[1], "Module instance names must start with a lowercase letter.")
             return
         }
 
         if (context.resolveSignal(moduleInstanceName) != null) {
-            context.reportError(ctx.name(1), "The name $moduleInstanceName is already in use.")
+            context.reportError(nameCtx[1], "The name $moduleInstanceName is already in use.")
             return
         }
 
@@ -67,10 +68,20 @@ data class TypesParser(
 
         ctx.instCons()?.connection()?.forEach { connection ->
             connection.sigCon()?.let { sigCtx ->
-                localSignalConnections.add(Connection(sigCtx.name(), DynamicExpr(sigCtx.expr(), context)))
+                localSignalConnections.add(
+                    Connection(
+                        sigCtx.name() ?: return@let,
+                        DynamicExpr(sigCtx.expr() ?: return@let, context)
+                    )
+                )
             }
             connection.paramCon()?.let { paramCtx ->
-                localParamConnections.add(Connection(paramCtx.name(), DynamicExpr(paramCtx.expr(), context)))
+                localParamConnections.add(
+                    Connection(
+                        paramCtx.name() ?: return@let,
+                        DynamicExpr(paramCtx.expr() ?: return@let, context)
+                    )
+                )
             }
         }
 
@@ -151,7 +162,7 @@ data class TypesParser(
                         context.reportError(exprCtx, "Inout ports must be directly connected to another inout.")
                         return null
                     }
-                    val otherSig = context.resolve(exprCtx.signal())
+                    val otherSig = context.resolve(exprCtx.signal() ?: error("Signal missing expression!"))
                     if (otherSig !is Signal || otherSig.direction != SignalDirection.Both || otherSig.parent !is ModuleInstance) {
                         context.reportError(exprCtx, "Inout ports must be directly connected to another inout.")
                         return null
@@ -306,24 +317,26 @@ data class TypesParser(
         val params = mutableListOf<Connection>()
         ctx.connection().forEach { connectionContext ->
             connectionContext.sigCon()?.let { sigCtx ->
-                val name = sigCtx.name().text
+                val sigNameCtx = sigCtx.name() ?: return@let
+                val name = sigNameCtx.text
                 if (assignmentBlocks.any { block -> block.signals.any { it.port == name } })
                     context.reportError(
-                        sigCtx.name(),
+                        sigNameCtx,
                         "The port \"$name\" has already been assigned!"
                     )
                 else
-                    signals.add(Connection(sigCtx.name(), DynamicExpr(sigCtx.expr(), context)))
+                    signals.add(Connection(sigNameCtx, DynamicExpr(sigCtx.expr() ?: return@let, context)))
             }
             connectionContext.paramCon()?.let { paramCtx ->
-                val name = paramCtx.name().text
+                val paramNameCtx = paramCtx.name() ?: return@let
+                val name = paramNameCtx.text
                 if (assignmentBlocks.any { block -> block.params.any { it.port == name } })
                     context.reportError(
-                        paramCtx.name(),
+                        paramNameCtx,
                         "The parameter \"$name\" has already been assigned!"
                     )
                 else
-                    params.add(Connection(paramCtx.name(), DynamicExpr(paramCtx.expr(), context)))
+                    params.add(Connection(paramNameCtx, DynamicExpr(paramCtx.expr() ?: return@let, context)))
             }
         }
         assignmentBlocks.add(AssignmentBlock(signals, params))
@@ -334,7 +347,7 @@ data class TypesParser(
     }
 
     override fun exitArraySize(ctx: ArraySizeContext) {
-        val expr = context.expr.resolve(ctx.expr())
+        val expr = context.expr.resolve(ctx.expr() ?: return)
         if (expr == null) {
             context.reportError(ctx, "Array size expression couldn't be resolved.")
             return
@@ -361,15 +374,16 @@ data class TypesParser(
 
     override fun exitSigDec(ctx: SigDecContext) {
         val signed = ctx.SIGNED() != null
-        val name = ctx.name().text
+        val nameCtx = ctx.name() ?: return
+        val name = nameCtx.text
 
-        if (ctx.name().TYPE_ID() == null)
-            context.reportError(ctx.name(), "Sig names must start with a lowercase letter.")
+        if (nameCtx.TYPE_ID() == null)
+            context.reportError(nameCtx, "Sig names must start with a lowercase letter.")
 
-        val width = context.resolve(ctx.signalWidth())
+        val width = ctx.signalWidth()?.let { context.resolve(it) }
 
         if (width == null) {
-            context.reportError(ctx.signalWidth(), "Failed to resolve signal width!")
+            context.reportError(ctx.signalWidth() ?: ctx, "Failed to resolve signal width!")
             return
         }
 
@@ -378,7 +392,7 @@ data class TypesParser(
         ctx.expr()?.let { expr ->
             val value = context.resolve(expr)
             if (value == null) {
-                context.reportError(ctx.expr(), "Failed to resolve signal assignment!")
+                context.reportError(expr, "Failed to resolve signal assignment!")
                 return
             }
 
@@ -386,7 +400,7 @@ data class TypesParser(
 
             if (!signal.width.canAssign(dynamicExpr.width)) {
                 context.reportError(
-                    ctx.expr(),
+                    expr,
                     "Width of this expression isn't compatible with signal \"${signal.name}\"."
                 )
                 return
@@ -394,7 +408,7 @@ data class TypesParser(
 
             if (signal.width.willTruncate(dynamicExpr.width)) {
                 context.reportWarning(
-                    ctx.expr(),
+                    expr,
                     "The width of this expression is wider than the signal \"${signal.name}\" and will be truncated."
                 )
             }
@@ -408,17 +422,18 @@ data class TypesParser(
     override fun exitDffDec(ctx: DffDecContext) {
         val signed = ctx.SIGNED() != null
 
-        val name = ctx.name().text
+        val nameCtx = ctx.name() ?: return
+        val name = nameCtx.text
 
-        if (ctx.name().TYPE_ID() == null)
-            context.reportError(ctx.name(), "Dff names must start with a lowercase letter.")
+        if (nameCtx.TYPE_ID() == null)
+            context.reportError(nameCtx, "Dff names must start with a lowercase letter.")
 
         var clk: DynamicExpr? = null
         var rst: DynamicExpr? = null
-        val width = context.resolve(ctx.signalWidth())
+        val width = ctx.signalWidth()?.let { context.resolve(it) }
 
         if (width == null) {
-            context.reportError(ctx.signalWidth(), "Failed to resolve signal width!")
+            context.reportError(ctx.signalWidth() ?: ctx, "Failed to resolve signal width!")
             return
         }
 
@@ -432,10 +447,20 @@ data class TypesParser(
 
         ctx.instCons()?.connection()?.forEach { connection ->
             connection.sigCon()?.let { sigCtx ->
-                signalConnections.add(Connection(sigCtx.name(), DynamicExpr(sigCtx.expr(), context)))
+                signalConnections.add(
+                    Connection(
+                        sigCtx.name() ?: return@let,
+                        DynamicExpr(sigCtx.expr() ?: return@let, context)
+                    )
+                )
             }
             connection.paramCon()?.let { paramCtx ->
-                paramConnections.add(Connection(paramCtx.name(), DynamicExpr(paramCtx.expr(), context)))
+                paramConnections.add(
+                    Connection(
+                        paramCtx.name() ?: return@let,
+                        DynamicExpr(paramCtx.expr() ?: return@let, context)
+                    )
+                )
             }
         }
 

@@ -12,7 +12,7 @@ class StructTests {
     @Test
     fun basicStructDecTest() {
         val tester = SimpleLucidTester("struct myStruct { a, b[2][3], c[4] };")
-        val ctx = tester.structDec().also { tester.context.walk(it) }
+        val ctx = tester.parser.structDec().also { tester.context.walk(it) }
 
         assert(tester.hasNoIssues)
 

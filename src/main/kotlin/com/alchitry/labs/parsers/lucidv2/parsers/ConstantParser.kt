@@ -26,25 +26,27 @@ data class ConstantParser(
     }
 
     override fun exitConstDec(ctx: ConstDecContext) {
-        val constName = ctx.name().text
-        if (ctx.name().CONST_ID() == null)
-            context.reportError(ctx.name(), "Constant names must be all uppercase letters.")
+        val nameCtx = ctx.name() ?: return
+        val constName = nameCtx.text
+        if (nameCtx.CONST_ID() == null)
+            context.reportError(nameCtx, "Constant names must be all uppercase letters.")
 
-        val value = context.resolve(ctx.expr())
+        val exprCtx = ctx.expr() ?: return
+        val value = context.resolve(exprCtx)
         if (value == null) {
-            context.reportError(ctx.expr(), "Failed to resolve constant value!")
+            context.reportError(exprCtx, "Failed to resolve constant value!")
             return
         }
         if (!value.constant) {
             context.reportError(
-                ctx.expr(),
+                exprCtx,
                 "The value assigned to a constant must be constant!"
             )
             return
         }
         if (localConstants.putIfAbsent(constName, Signal(constName, SignalDirection.Read, null, value)) != null) {
             context.reportError(
-                ctx.name(),
+                nameCtx,
                 "The constant name \"$constName\" has already been used."
             )
             return

@@ -18,7 +18,7 @@ class GlobalParser(
 
     fun resolveGlobal(name: String) = globals[name]
 
-    override fun enterGlobal(ctx: GlobalContext?) {
+    override fun enterGlobal(ctx: GlobalContext) {
         constants.clear()
         structs.clear()
         enums.clear()
@@ -37,17 +37,18 @@ class GlobalParser(
     }
 
     override fun exitGlobal(ctx: GlobalContext) {
-        val name = ctx.name().text
-        if (ctx.name().SPACE_ID() == null)
+        val nameCtx = ctx.name() ?: return
+        val name = nameCtx.text
+        if (nameCtx.SPACE_ID() == null)
             context.reportError(
-                ctx.name(),
+                nameCtx,
                 "Global names must start with an uppercase letter and contain at least one lowercase letter."
             )
 
         val global =
             GlobalNamespace(name, constants.toMap(), structs.toMap(), enums.values.toList())
         if (!context.project.addGlobal(global)) {
-            context.reportError(ctx.name(), "The global name $name has already been used.")
+            context.reportError(nameCtx, "The global name $name has already been used.")
             return
         }
         globals[name] = global

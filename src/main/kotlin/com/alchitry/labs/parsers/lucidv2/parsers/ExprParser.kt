@@ -13,8 +13,8 @@ import com.alchitry.labs.parsers.lucidv2.signals.SubSignal
 import com.alchitry.labs.parsers.lucidv2.types.Function
 import com.alchitry.labs.parsers.lucidv2.types.FunctionArg
 import com.alchitry.labs.parsers.lucidv2.values.*
-import org.antlr.v4.runtime.ParserRuleContext
-import org.antlr.v4.runtime.tree.ParseTree
+import org.antlr.v4.kotlinruntime.ParserRuleContext
+import org.antlr.v4.kotlinruntime.tree.ParseTree
 import org.apache.commons.text.StringEscapeUtils
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -47,6 +47,7 @@ data class ExprParser(
      */
     private fun canSkip(ctx: ParseTree): Boolean {
         val value = values[ctx] ?: return false
+        kotlin.run { }
         return value.constant
     }
 
@@ -79,7 +80,7 @@ data class ExprParser(
     }
 
     override fun exitArrayIndex(ctx: ArrayIndexContext) {
-        dependencies[ctx.expr()]?.let { dependencies[ctx] = it }
+        dependencies[ctx.expr() ?: return]?.let { dependencies[ctx] = it }
     }
 
     override fun exitNumber(ctx: NumberContext) {
@@ -88,20 +89,23 @@ data class ExprParser(
 
         val radix: Int
         val split: List<String>?
+        val hex = ctx.HEX()
+        val bin = ctx.BIN()
+        val dec = ctx.DEC()
         when {
-            ctx.HEX() != null -> {
+            hex != null -> {
                 radix = 16
-                split = ctx.HEX().text.split("h")
+                split = hex.text.split("h")
             }
 
-            ctx.BIN() != null -> {
+            bin != null -> {
                 radix = 2
-                split = ctx.BIN().text.split("b")
+                split = bin.text.split("b")
             }
 
-            ctx.DEC() != null -> {
+            dec != null -> {
                 radix = 10
-                split = ctx.DEC().text.split("d")
+                split = dec.text.split("d")
             }
 
             else -> {
@@ -119,10 +123,12 @@ data class ExprParser(
         }
 
         if (split == null) {
-            if (ctx.INT() != null) {
-                valueString = ctx.INT().text
+            val intCtx = ctx.INT()
+            if (intCtx != null) {
+                valueString = intCtx.text
             } else { // String
-                val str = StringEscapeUtils.unescapeJava(ctx.STRING().text)
+                val stringCtx = ctx.STRING() ?: return
+                val str = StringEscapeUtils.unescapeJava(stringCtx.text)
                 valueString = str.substring(1, str.length - 1)
 
                 val value: Value
@@ -179,36 +185,38 @@ data class ExprParser(
 
     override fun exitParamConstraint(ctx: ParamConstraintContext) {
         if (canSkip(ctx)) return
+        val exprCtx = ctx.expr() ?: return
 
-        values[ctx.expr()]?.let { values[ctx] = it }
-        dependencies[ctx.expr()]?.let { dependencies[ctx] = it }
+        values[exprCtx]?.let { values[ctx] = it }
+        dependencies[exprCtx]?.let { dependencies[ctx] = it }
     }
 
     override fun exitStructConst(ctx: StructConstContext) {
         if (canSkip(ctx)) return
 
-        val type = context.resolve(ctx.structType()) ?: return
+        val type = ctx.structType()?.let { context.resolve(it) } ?: return
 
         val members = mutableMapOf<String, Value>()
 
         ctx.structMemberConst().forEach { memberCtx ->
-            val name = memberCtx.name().text
+            val nameCtx = memberCtx.name() ?: return
+            val name = nameCtx.text
             val member = type[name]
             if (member == null) {
-                context.reportError(memberCtx.name(), "The member $name doesn't belong to the struct ${type.name}.")
+                context.reportError(nameCtx, "The member $name doesn't belong to the struct ${type.name}.")
                 return
             }
 
-            val value = values[memberCtx.expr()] ?: return
+            val value = memberCtx.expr()?.let { values[it] } ?: return
 
             if (!member.width.canAssign(value.width)) {
-                context.reportError(memberCtx.expr(), "The member $name width does not match this expression.")
+                context.reportError(nameCtx, "The member $name width does not match this expression.")
                 return
             }
 
             if (member.width.willTruncate(value.width)) {
                 context.reportWarning(
-                    memberCtx.expr(),
+                    nameCtx,
                     "The member $name has fewer bits than this expression. It will be truncated."
                 )
             }
@@ -230,17 +238,18 @@ data class ExprParser(
 
     override fun exitBitSelection(ctx: BitSelectionContext) {
         dependencies[ctx] = mutableSetOf<Signal>().apply {
-            ctx.children.forEach { c -> dependencies[c]?.let { addAll(it) } }
+            ctx.children?.forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
     }
 
     override fun exitExprSignal(ctx: ExprSignalContext) {
         if (canSkip(ctx)) return
+        val signalCtx = ctx.signal() ?: return
 
-        val signal = context.resolve(ctx.signal()) ?: return
+        val signal = context.resolve(signalCtx) ?: return
 
         if (!signal.direction.canRead) {
-            context.reportError(ctx.signal(), "The signal ${ctx.signal().text} can't be read!")
+            context.reportError(signalCtx, "The signal ${signalCtx.text} can't be read!")
             return
         }
 
@@ -253,7 +262,7 @@ data class ExprParser(
 
         // add dependencies for all signals used in bit selection as well as this signal
         dependencies[ctx] = mutableSetOf(parentSig).apply {
-            ctx.signal().bitSelection().forEach { child ->
+            signalCtx.bitSelection().forEach { child ->
                 dependencies[child]?.let { addAll(it) }
             }
         }
@@ -261,44 +270,48 @@ data class ExprParser(
 
     override fun exitExprStruct(ctx: ExprStructContext) {
         if (canSkip(ctx)) return
-        values[ctx.structConst()]?.let { values[ctx] = it }
-        dependencies[ctx.structConst()]?.let { dependencies[ctx] = it }
+        val structCtx = ctx.structConst() ?: return
+        values[structCtx]?.let { values[ctx] = it }
+        dependencies[structCtx]?.let { dependencies[ctx] = it }
     }
 
     override fun exitExprFunction(ctx: ExprFunctionContext) {
         if (canSkip(ctx)) return
-        values[ctx.function()]?.let { values[ctx] = it }
-        dependencies[ctx.function()]?.let { dependencies[ctx] = it }
+        val functionCtx = ctx.function() ?: return
+        values[functionCtx]?.let { values[ctx] = it }
+        dependencies[functionCtx]?.let { dependencies[ctx] = it }
     }
 
     override fun exitExprNum(ctx: ExprNumContext) {
         if (canSkip(ctx)) return
-        values[ctx.number()]?.let { values[ctx] = it }
-        dependencies[ctx.number()]?.let { dependencies[ctx] = it }
+        val numCtx = ctx.number() ?: return
+        values[numCtx]?.let { values[ctx] = it }
+        dependencies[numCtx]?.let { dependencies[ctx] = it }
     }
 
     override fun exitExprGroup(ctx: ExprGroupContext) {
         if (canSkip(ctx)) return
-        if (ctx.expr() == null)
-            return
-        values[ctx.expr()]?.let { values[ctx] = it }
-        dependencies[ctx.expr()]?.let { dependencies[ctx] = it }
+        val exprCtx = ctx.expr() ?: return
+
+        values[exprCtx]?.let { values[ctx] = it }
+        dependencies[exprCtx]?.let { dependencies[ctx] = it }
     }
 
     // always returns an unsigned value
     override fun exitExprConcat(ctx: ExprConcatContext) {
         if (canSkip(ctx)) return
-        if (ctx.expr().isEmpty()) return
+        val exprCtx = ctx.expr()
+        if (exprCtx.isEmpty()) return
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
-            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+            exprCtx.forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
 
         // is constant if all operands are constant
-        val constant = ctx.expr().none { values[it]?.constant != true }
+        val constant = exprCtx.none { values[it]?.constant != true }
 
         val operands = mutableListOf<Pair<Value, ParserRuleContext>>()
-        ctx.expr().forEach {
+        exprCtx.forEach {
             val v = values[it] ?: return
             operands.add(Pair(v, it))
         }
@@ -382,32 +395,34 @@ data class ExprParser(
     override fun exitExprDup(ctx: ExprDupContext) {
         if (canSkip(ctx)) return
 
-        if (ctx.expr().size != 2)
+        val exprCtx = ctx.expr()
+
+        if (exprCtx.size != 2)
             return
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
-            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+            exprCtx.forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
 
-        val constant = values[ctx.expr(1)]?.constant == true
+        val constant = values[exprCtx[1]]?.constant == true
 
-        val dupCount = values[ctx.expr(0)] ?: return
-        val dupValue = values[ctx.expr(1)] ?: return
+        val dupCount = values[exprCtx[0]] ?: return
+        val dupValue = values[exprCtx[1]] ?: return
 
-        if (values[ctx.expr(0)]?.constant != true) {
-            context.reportError(ctx.expr(0), "The expression \"${ctx.expr(0).text}\" must be constant")
+        if (values[exprCtx[0]]?.constant != true) {
+            context.reportError(exprCtx[0], "The expression \"${exprCtx[0].text}\" must be constant")
             return
         }
 
         val valWidth = dupValue.width
 
         if (!valWidth.isArray()) {
-            context.reportError(ctx.expr(0), "Duplication can't be performed on structs")
+            context.reportError(exprCtx[0], "Duplication can't be performed on structs")
             return
         }
 
         if (!dupCount.width.isFlatArray()) {
-            context.reportError(ctx.expr(0), "The array duplication index must be one dimensional")
+            context.reportError(exprCtx[0], "The array duplication index must be one dimensional")
             return
         }
 
@@ -421,14 +436,14 @@ data class ExprParser(
         dupCount as SimpleValue
 
         if (!dupCount.isNumber()) {
-            context.reportError(ctx.expr(0), "The array duplication index must be a number (no x or z values)")
+            context.reportError(exprCtx[0], "The array duplication index must be a number (no x or z values)")
             return
         }
 
         val dupTimes = try {
             dupCount.toBigInt().intValueExact()
         } catch (e: java.lang.ArithmeticException) {
-            context.reportError(ctx.expr(0), "Duplication count is too big to fit into an integer!")
+            context.reportError(exprCtx[0], "Duplication count is too big to fit into an integer!")
             return
         }
 
@@ -462,16 +477,16 @@ data class ExprParser(
 
     override fun exitExprArray(ctx: ExprArrayContext) {
         if (canSkip(ctx)) return
-
-        if (ctx.expr().isEmpty())
+        val exprCtx = ctx.expr()
+        if (exprCtx.isEmpty())
             return
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
-            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+            exprCtx.forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
 
         val operands = mutableListOf<Pair<Value, ParserRuleContext>>()
-        ctx.expr().forEach {
+        exprCtx.forEach {
             val v = values[it] ?: return
             operands.add(Pair(v, it))
         }
@@ -503,10 +518,12 @@ data class ExprParser(
     override fun exitExprNegate(ctx: ExprNegateContext) {
         if (canSkip(ctx)) return
 
-        dependencies[ctx.expr()]?.let { dependencies[ctx] = it }
+        val exprCtx = ctx.expr() ?: return
 
-        val constant = values[ctx.expr()]?.constant == true
-        val expr = values[ctx.expr()] ?: return
+        dependencies[exprCtx]?.let { dependencies[ctx] = it }
+
+        val constant = values[exprCtx]?.constant == true
+        val expr = values[exprCtx] ?: return
 
         if (!expr.width.isFlatArray()) {
             context.reportError(ctx, ErrorStrings.NEG_MULTI_DIM)
@@ -533,11 +550,13 @@ data class ExprParser(
     override fun exitExprInvert(ctx: ExprInvertContext) {
         if (canSkip(ctx)) return
 
-        val expr = values[ctx.expr()] ?: return
+        val exprCtx = ctx.expr() ?: return
 
-        dependencies[ctx.expr()]?.let { dependencies[ctx] = it }
+        val expr = values[exprCtx] ?: return
 
-        values[ctx] = if (ctx.getChild(0).text == "!") {
+        dependencies[exprCtx]?.let { dependencies[ctx] = it }
+
+        values[ctx] = if (ctx.getChild(0)?.text == "!") {
             expr.isTrue().not()
         } else { // ~ operator
             expr.invert()
@@ -548,22 +567,24 @@ data class ExprParser(
     override fun exitExprAddSub(ctx: ExprAddSubContext) {
         if (canSkip(ctx)) return
 
-        if (ctx.childCount != 3 || ctx.expr().size != 2)
+        val exprCtx = ctx.expr()
+
+        if (ctx.childCount != 3 || exprCtx.size != 2)
             return
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
-            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+            exprCtx.forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
 
         // is constant if both operands are constant
-        val constant = ctx.expr().none { values[it]?.constant != true }
+        val constant = exprCtx.none { values[it]?.constant != true }
 
-        val op1 = values[ctx.expr(0)] ?: return
-        val op2 = values[ctx.expr(1)] ?: return
+        val op1 = values[exprCtx[0]] ?: return
+        val op2 = values[exprCtx[1]] ?: return
 
-        val operand = ctx.getChild(1).text
+        val operand = ctx.getChild(1)?.text ?: return
 
-        if (!context.checkFlat(*ctx.expr().toTypedArray()) {
+        if (!context.checkFlat(*exprCtx.toTypedArray()) {
                 context.reportError(
                     it,
                     if (operand == "+") ErrorStrings.ADD_MULTI_DIM else ErrorStrings.SUB_MULTI_DIM
@@ -613,21 +634,23 @@ data class ExprParser(
     override fun exitExprMultDiv(ctx: ExprMultDivContext) {
         if (canSkip(ctx)) return
 
-        if (ctx.childCount != 3 || ctx.expr().size != 2) return
+        val exprCtx = ctx.expr()
+
+        if (ctx.childCount != 3 || exprCtx.size != 2) return
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
-            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+            exprCtx.forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
 
         // is constant if both operands are constant
-        val constant = ctx.expr().none { values[it]?.constant != true }
+        val constant = exprCtx.none { values[it]?.constant != true }
 
-        val op1 = values[ctx.expr(0)] ?: return
-        val op2 = values[ctx.expr(1)] ?: return
+        val op1 = values[exprCtx[0]] ?: return
+        val op2 = values[exprCtx[1]] ?: return
 
-        val multOp = ctx.getChild(1).text == "*"
+        val multOp = ctx.getChild(1)?.text == "*"
 
-        if (!context.checkFlat(*ctx.expr().toTypedArray()) {
+        if (!context.checkFlat(*exprCtx.toTypedArray()) {
                 context.reportError(
                     it,
                     if (multOp) ErrorStrings.MUL_MULTI_DIM else ErrorStrings.DIV_MULTI_DIM
@@ -661,7 +684,7 @@ data class ExprParser(
             val op2BigInt = op2.toBigInt(signed)
 
             if (!constant && (!op2.constant || !op2.isPowerOf2())) {
-                context.reportWarning(ctx.expr(1), WarningStrings.DIVIDE_NOT_POW_2)
+                context.reportWarning(exprCtx[1], WarningStrings.DIVIDE_NOT_POW_2)
             }
 
             val width = op1.size
@@ -676,21 +699,23 @@ data class ExprParser(
     override fun exitExprShift(ctx: ExprShiftContext) {
         if (canSkip(ctx)) return
 
-        if (ctx.childCount != 3 || ctx.expr().size != 2) return
+        val exprCtx = ctx.expr()
+
+        if (ctx.childCount != 3 || exprCtx.size != 2) return
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
-            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+            exprCtx.forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
 
         // is constant if both operands are constant
-        val constant = ctx.expr().none { values[it]?.constant != true }
+        val constant = exprCtx.none { values[it]?.constant != true }
 
-        val value = values[ctx.expr(0)] ?: return
-        val shift = values[ctx.expr(1)] ?: return
+        val value = values[exprCtx[0]] ?: return
+        val shift = values[exprCtx[1]] ?: return
 
-        val operand = ctx.getChild(1).text
+        val operand = ctx.getChild(1)?.text ?: return
 
-        if (!context.checkFlat(*ctx.expr().toTypedArray()) {
+        if (!context.checkFlat(*exprCtx.toTypedArray()) {
                 context.reportError(it, ErrorStrings.SHIFT_MULTI_DIM)
             }) return
 
@@ -723,7 +748,7 @@ data class ExprParser(
         val shiftAmount = try {
             shift.toBigInt().intValueExact()
         } catch (e: java.lang.ArithmeticException) {
-            context.reportError(ctx.expr(1), "Shift amount didn't fit into an integer!")
+            context.reportError(exprCtx[1], "Shift amount didn't fit into an integer!")
             return
         }
 
@@ -733,7 +758,10 @@ data class ExprParser(
             "<<" -> value ushl shiftAmount
             "<<<" -> value shl shiftAmount
             else -> {
-                context.reportError(ctx.getChild(ParserRuleContext::class.java, 1), "Unknown operator $operand")
+                context.reportError(
+                    ctx.getChild(ParserRuleContext::class, 1) ?: return,
+                    "Unknown operator $operand"
+                )
                 return
             }
         }.let { if (!constant && it.constant) it.asMutable() else it }
@@ -743,26 +771,28 @@ data class ExprParser(
     override fun exitExprBitwise(ctx: ExprBitwiseContext) {
         if (canSkip(ctx)) return
 
-        if (ctx.childCount != 3 || ctx.expr().size != 2) return
+        val exprCtx = ctx.expr()
+
+        if (ctx.childCount != 3 || exprCtx.size != 2) return
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
-            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+            exprCtx.forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
 
         // is constant if all operands are constant
-        val constant = ctx.expr().none { values[it]?.constant != true }
+        val constant = exprCtx.none { values[it]?.constant != true }
 
-        val op1 = values[ctx.expr(0)] ?: return
-        val op2 = values[ctx.expr(1)] ?: return
+        val op1 = values[exprCtx[0]] ?: return
+        val op2 = values[exprCtx[1]] ?: return
 
-        val operand = ctx.getChild(1).text
+        val operand = ctx.getChild(1)?.text ?: return
 
-        if (!context.checkUndefinedMatchingDims(ctx.expr(0), ctx.expr(1)) {
+        if (!context.checkUndefinedMatchingDims(exprCtx[0], exprCtx[1]) {
                 context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
             }) return
 
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
-            if (!context.checkFlat(*ctx.expr().toTypedArray()) {
+            if (!context.checkFlat(*exprCtx.toTypedArray()) {
                     context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
                 }) return
 
@@ -771,7 +801,7 @@ data class ExprParser(
 
             if (op1Width.isDefinedArray() && op2Width.isDefinedArray()) {
                 if (op1Width != op2Width) {
-                    context.reportError(ctx.expr(1), ErrorStrings.OP_DIM_MISMATCH.format(operand))
+                    context.reportError(exprCtx[1], ErrorStrings.OP_DIM_MISMATCH.format(operand))
                     return
                 }
                 values[ctx] = UndefinedValue(constant, op1Width)
@@ -781,7 +811,7 @@ data class ExprParser(
             return
         }
 
-        if (!context.checkFlatOrMatchingDims(*ctx.expr().toTypedArray()) {
+        if (!context.checkFlatOrMatchingDims(*exprCtx.toTypedArray()) {
                 context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
             }) return
 
@@ -790,7 +820,10 @@ data class ExprParser(
             "|" -> op1 or op2
             "^" -> op1 xor op2
             else -> {
-                context.reportError(ctx.getChild(ParserRuleContext::class.java, 1), "Unknown operator $operand")
+                context.reportError(
+                    ctx.getChild(ParserRuleContext::class, 1) ?: return,
+                    "Unknown operator $operand"
+                )
                 return
             }
         }
@@ -800,27 +833,29 @@ data class ExprParser(
     override fun exitExprReduction(ctx: ExprReductionContext) {
         if (canSkip(ctx)) return
 
-        if (ctx.childCount != 2 || ctx.expr() == null) return
+        val exprCtx = ctx.expr()
 
-        dependencies[ctx.expr()]?.let { dependencies[ctx] = it }
+        if (ctx.childCount != 2 || exprCtx == null) return
 
-        val constant = values[ctx.expr()]?.constant == true
+        dependencies[exprCtx]?.let { dependencies[ctx] = it }
 
-        val value = values[ctx.expr()] ?: return
+        val constant = values[exprCtx]?.constant == true
+
+        val value = values[exprCtx] ?: return
 
         if (value is UndefinedValue) {
             values[ctx] = UndefinedValue(constant, BitWidth)
             return
         }
 
-        values[ctx] = when (ctx.getChild(0).text) {
+        values[ctx] = when (ctx.getChild(0)?.text) {
             "&" -> value.andReduce()
             "|" -> value.orReduce()
             "^" -> value.xorReduce()
             else -> {
                 context.reportError(
-                    ctx.getChild(ParserRuleContext::class.java, 0),
-                    "Unknown operator ${ctx.getChild(0).text}"
+                    ctx.getChild(ParserRuleContext::class, 0) ?: return,
+                    "Unknown operator ${ctx.getChild(0)?.text}"
                 )
                 return
             }
@@ -833,21 +868,23 @@ data class ExprParser(
     override fun exitExprCompare(ctx: ExprCompareContext) {
         if (canSkip(ctx)) return
 
-        if (ctx.childCount != 3 || ctx.expr().size != 2) return
+        val exprCtx = ctx.expr()
+
+        if (ctx.childCount != 3 || exprCtx.size != 2) return
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
-            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+            exprCtx.forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
 
         // is constant if all operands are constant
-        val constant = ctx.expr().none { values[it]?.constant != true }
+        val constant = exprCtx.none { values[it]?.constant != true }
 
-        val op1 = values[ctx.expr(0)] ?: return
-        val op2 = values[ctx.expr(1)] ?: return
+        val op1 = values[exprCtx[0]] ?: return
+        val op2 = values[exprCtx[1]] ?: return
 
-        when (val operand = ctx.getChild(1).text) {
+        when (val operand = ctx.getChild(1)?.text) {
             "<", ">", "<=", ">=" -> {
-                if (!context.checkFlat(*ctx.expr().toTypedArray()) {
+                if (!context.checkFlat(*exprCtx.toTypedArray()) {
                         context.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
                     }) return
 
@@ -857,7 +894,7 @@ data class ExprParser(
                     return
                 }
 
-                if (!context.checkSimpleValue(*ctx.expr().toTypedArray()) {
+                if (!context.checkSimpleValue(*exprCtx.toTypedArray()) {
                         context.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
                     }) return
 
@@ -874,7 +911,7 @@ data class ExprParser(
             }
 
             "==", "!=" -> {
-                if (!context.checkUndefinedMatchingDims(ctx.expr(0), ctx.expr(1)) {
+                if (!context.checkUndefinedMatchingDims(exprCtx[0], exprCtx[1]) {
                         context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
                     }) return
 
@@ -883,7 +920,7 @@ data class ExprParser(
                     return
                 }
 
-                if (!context.checkFlatOrMatchingDims(*ctx.expr().toTypedArray()) {
+                if (!context.checkFlatOrMatchingDims(*exprCtx.toTypedArray()) {
                         context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
                     }) return
 
@@ -901,21 +938,23 @@ data class ExprParser(
     override fun exitExprLogical(ctx: ExprLogicalContext) {
         if (canSkip(ctx)) return
 
-        if (ctx.childCount != 3 || ctx.expr().size != 2) return
+        val exprCtx = ctx.expr()
+
+        if (ctx.childCount != 3 || exprCtx.size != 2) return
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
-            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+            exprCtx.forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
 
         // is constant if all operands are constant
-        val constant = ctx.expr().none { values[it]?.constant != true }
+        val constant = exprCtx.none { values[it]?.constant != true }
 
-        val op1 = values[ctx.expr(0)] ?: return
-        val op2 = values[ctx.expr(1)] ?: return
+        val op1 = values[exprCtx[0]] ?: return
+        val op2 = values[exprCtx[1]] ?: return
 
-        val operand = ctx.getChild(1).text
+        val operand = ctx.getChild(1)?.text ?: return
 
-        if (!context.checkFlat(*ctx.expr().toTypedArray()) {
+        if (!context.checkFlat(*exprCtx.toTypedArray()) {
                 context.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
             }) return
 
@@ -925,7 +964,7 @@ data class ExprParser(
             return
         }
 
-        if (!context.checkSimpleValue(*ctx.expr().toTypedArray()) {
+        if (!context.checkSimpleValue(*exprCtx.toTypedArray()) {
                 context.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
             }) return
 
@@ -944,28 +983,30 @@ data class ExprParser(
     override fun exitExprTernary(ctx: ExprTernaryContext) {
         if (canSkip(ctx)) return
 
-        if (ctx.expr().size != 3) return
+        val exprCtx = ctx.expr()
+
+        if (exprCtx.size != 3) return
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
-            ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
+            exprCtx.forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
 
         // is constant if all operands are constant
-        val constant = ctx.expr().none { values[it]?.constant != true }
+        val constant = exprCtx.none { values[it]?.constant != true }
 
-        val cond = values[ctx.expr(0)] ?: return
-        val op1 = values[ctx.expr(1)] ?: return
-        val op2 = values[ctx.expr(2)] ?: return
+        val cond = values[exprCtx[0]] ?: return
+        val op1 = values[exprCtx[1]] ?: return
+        val op2 = values[exprCtx[2]] ?: return
 
         val op1Width = op1.width
         val op2Width = op2.width
 
         if (!cond.width.isFlatArray()) {
-            context.reportError(ctx.expr(0), ErrorStrings.TERN_SELECTOR_MULTI_DIM)
+            context.reportError(exprCtx[0], ErrorStrings.TERN_SELECTOR_MULTI_DIM)
             return
         }
 
-        if (!context.checkFlatOrMatchingDims(ctx.expr(1), ctx.expr(2)) {
+        if (!context.checkFlatOrMatchingDims(exprCtx[1], exprCtx[2]) {
                 context.reportError(it, ErrorStrings.OP_TERN_DIM_MISMATCH)
             }) return
 
@@ -1012,21 +1053,23 @@ data class ExprParser(
         // is constant if all operands are constant
         val constant = ctx.functionExpr().all { c -> c.expr()?.let { values[it]?.constant == true } ?: true }
 
-        val fid = ctx.FUNCTION_ID().text.substring(1) // remove $ from beginning
+        val functionIdCtx = ctx.FUNCTION_ID() ?: return
+        val fid = functionIdCtx.text.substring(1) // remove $ from beginning
         val function = context.resolveFunction(fid)
 
         if (function == null) {
-            context.reportError(ctx.FUNCTION_ID(), ErrorStrings.UNKNOWN_FUNCTION.format(fid))
+            context.reportError(functionIdCtx, ErrorStrings.UNKNOWN_FUNCTION.format(fid))
             return
         }
 
         val args = ctx.functionExpr().map { expr ->
-            if (expr.expr() != null) {
-                FunctionArg.ValueArg(values[expr.expr()] ?: return)
+            val exprExpr = expr.expr()
+            if (exprExpr != null) {
+                FunctionArg.ValueArg(values[exprExpr] ?: return)
             } else if (expr.REAL() != null) {
-                expr.REAL().text.toDoubleOrNull().let {
+                expr.REAL()?.text?.toDoubleOrNull().let {
                     if (it == null) {
-                        context.reportError(expr, "Failed to parse real number \"${expr.REAL().text}\"!")
+                        context.reportError(expr, "Failed to parse real number \"${expr.REAL()?.text}\"!")
                         return
                     }
                     FunctionArg.RealArg(it)
@@ -1040,7 +1083,7 @@ data class ExprParser(
         if (function.argCount >= 0) {
             if (args.size != function.argCount) {
                 context.reportError(
-                    ctx.FUNCTION_ID(),
+                    functionIdCtx,
                     ErrorStrings.FUNCTION_ARG_COUNT.format(ctx.FUNCTION_ID().toString(), function.argCount)
                 )
                 return
@@ -1048,7 +1091,7 @@ data class ExprParser(
         } else {
             if (args.size < function.argCount.absoluteValue) {
                 context.reportError(
-                    ctx.FUNCTION_ID(),
+                    functionIdCtx,
                     String.format(
                         ErrorStrings.FUNCTION_MIN_ARG_COUNT,
                         ctx.FUNCTION_ID(),
@@ -1060,13 +1103,13 @@ data class ExprParser(
         }
 
         if (function.constOnly && !constant) {
-            context.reportError(ctx.FUNCTION_ID(), ErrorStrings.CONST_FUNCTION.format(ctx.FUNCTION_ID().text))
+            context.reportError(functionIdCtx, ErrorStrings.CONST_FUNCTION.format(functionIdCtx.text))
             return
         }
 
         if (function.testOnly && !(inTestBlock || inFunctionBlock)) {
             context.reportError(
-                ctx.FUNCTION_ID(),
+                functionIdCtx,
                 "The function \"\$${function.label}\" can only be used in test or function blocks."
             )
             return
@@ -1076,7 +1119,7 @@ data class ExprParser(
             args.forEachIndexed { index, functionArg ->
                 if (functionArg is FunctionArg.RealArg) {
                     context.reportError(
-                        ctx.functionExpr(index),
+                        ctx.functionExpr(index) ?: ctx,
                         "Arguments for \"\$${function.label}()\" can't be real numbers."
                     )
                     return null
@@ -1091,7 +1134,7 @@ data class ExprParser(
                 val arg = valArgs[0]
                 val width = arg.width
                 if (!width.isSimpleArray()) {
-                    context.reportError(ctx.functionExpr(0), "The function widthOf() can't be used on structs.")
+                    context.reportError(ctx.functionExpr(0) ?: ctx, "The function widthOf() can't be used on structs.")
                     return
                 }
                 values[ctx] = width.toValue()
@@ -1100,7 +1143,7 @@ data class ExprParser(
             Function.FIXEDPOINT, Function.CFIXEDPOINT, Function.FFIXEDPOINT -> {
                 val width = when (val w = args[1]) {
                     is FunctionArg.RealArg -> {
-                        context.reportError(ctx.functionExpr(1), "The width value can't be real number.")
+                        context.reportError(ctx.functionExpr(1) ?: ctx, "The width value can't be real number.")
                         return
                     }
 
@@ -1110,13 +1153,16 @@ data class ExprParser(
                             return
                         }
                         if (w.value !is SimpleValue) {
-                            context.reportError(ctx.functionExpr(1), "The width value must be a simple value.")
+                            context.reportError(ctx.functionExpr(1) ?: ctx, "The width value must be a simple value.")
                             return
                         }
                         try {
                             w.value.toBigInt().intValueExact()
                         } catch (e: ArithmeticException) {
-                            context.reportError(ctx.functionExpr(1), "The width value doesn't fit into an integer!")
+                            context.reportError(
+                                ctx.functionExpr(1) ?: ctx,
+                                "The width value doesn't fit into an integer!"
+                            )
                             return
                         }
                     }
@@ -1124,7 +1170,7 @@ data class ExprParser(
 
                 val fractionalWidth = when (val w = args[2]) {
                     is FunctionArg.RealArg -> {
-                        context.reportError(ctx.functionExpr(2), "The width value can't be real number.")
+                        context.reportError(ctx.functionExpr(2) ?: ctx, "The width value can't be real number.")
                         return
                     }
 
@@ -1134,30 +1180,36 @@ data class ExprParser(
                             return
                         }
                         if (w.value !is SimpleValue) {
-                            context.reportError(ctx.functionExpr(2), "The width value must be a simple value.")
+                            context.reportError(ctx.functionExpr(2) ?: ctx, "The width value must be a simple value.")
                             return
                         }
                         try {
                             w.value.toBigInt().intValueExact()
                         } catch (e: ArithmeticException) {
-                            context.reportError(ctx.functionExpr(2), "The width value doesn't fit into an integer!")
+                            context.reportError(
+                                ctx.functionExpr(2) ?: ctx,
+                                "The width value doesn't fit into an integer!"
+                            )
                             return
                         }
                     }
                 }
 
                 if (width <= 0) {
-                    context.reportError(ctx.functionExpr(1), "The width value must be greater than 0.")
+                    context.reportError(ctx.functionExpr(1) ?: ctx, "The width value must be greater than 0.")
                     return
                 }
 
                 if (fractionalWidth < 0) {
-                    context.reportError(ctx.functionExpr(2), "The fractional width must be greater or equal to 0.")
+                    context.reportError(
+                        ctx.functionExpr(2) ?: ctx,
+                        "The fractional width must be greater or equal to 0."
+                    )
                 }
 
                 if (fractionalWidth > width) {
                     context.reportError(
-                        ctx.functionExpr(2),
+                        ctx.functionExpr(2) ?: ctx,
                         "The partial width must be less than or equal to the total width."
                     )
                     return
@@ -1171,12 +1223,12 @@ data class ExprParser(
                             return
                         }
                         if (a.value !is SimpleValue) {
-                            context.reportError(ctx.functionExpr(0), "The value must be a simple value.")
+                            context.reportError(ctx.functionExpr(0) ?: ctx, "The value must be a simple value.")
                             return
                         }
                         a.value.toBigInt().toDouble().also {
                             if (!it.isFinite()) {
-                                context.reportError(ctx.functionExpr(0), "The value doesn't fit into a double!")
+                                context.reportError(ctx.functionExpr(0) ?: ctx, "The value doesn't fit into a double!")
                                 return
                             }
                         }
@@ -1200,7 +1252,7 @@ data class ExprParser(
 
                 if (bigInt.minBits() > width) {
                     context.reportWarning(
-                        ctx.functionExpr(0),
+                        ctx.functionExpr(0) ?: ctx,
                         "This value is bigger than can fit in the specified width. It will be truncated!"
                     )
                 }
@@ -1213,8 +1265,8 @@ data class ExprParser(
                 val arg = valArgs[0]
                 if (arg !is SimpleValue) {
                     context.reportError(
-                        ctx.functionExpr(0),
-                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(0).text, arg.toString())
+                        ctx.functionExpr(0) ?: ctx,
+                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(0)?.text, arg.toString())
                     )
                     return
                 }
@@ -1236,15 +1288,15 @@ data class ExprParser(
                 val arg2 = valArgs[1]
                 if (arg1 !is SimpleValue) {
                     context.reportError(
-                        ctx.functionExpr(0),
-                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(0).text, arg1.toString())
+                        ctx.functionExpr(0) ?: ctx,
+                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(0)?.text, arg1.toString())
                     )
                     return
                 }
                 if (arg2 !is SimpleValue) {
                     context.reportError(
-                        ctx.functionExpr(1),
-                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(1).text, arg2.toString())
+                        ctx.functionExpr(1) ?: ctx,
+                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(1)?.text, arg2.toString())
                     )
                     return
                 }
@@ -1254,8 +1306,8 @@ data class ExprParser(
                     values[ctx] = b1.pow(b2.intValueExact()).toBitListValue(constant)
                 } catch (e: ArithmeticException) {
                     context.reportError(
-                        ctx.functionExpr(1),
-                        ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.functionExpr(1).text)
+                        ctx.functionExpr(1) ?: ctx,
+                        ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.functionExpr(1)?.text)
                     )
                 }
             }
@@ -1265,8 +1317,8 @@ data class ExprParser(
                 val arg = valArgs[0]
                 if (!arg.width.isArray()) {
                     context.reportError(
-                        ctx.functionExpr(0),
-                        ErrorStrings.FUNCTION_ARG_NOT_ARRAY.format(ctx.functionExpr(0).text)
+                        ctx.functionExpr(0) ?: ctx,
+                        ErrorStrings.FUNCTION_ARG_NOT_ARRAY.format(ctx.functionExpr(0)?.text)
                     )
                     return
                 }
@@ -1277,8 +1329,8 @@ data class ExprParser(
                 val valArgs = checkNoReal() ?: return
                 if (!valArgs[0].width.isDefined()) {
                     context.reportError(
-                        ctx.functionExpr(0),
-                        ErrorStrings.UNKNOWN_WIDTH.format(ctx.functionExpr(0).text)
+                        ctx.functionExpr(0) ?: ctx,
+                        ErrorStrings.UNKNOWN_WIDTH.format(ctx.functionExpr(0)?.text)
                     )
                     return
                 }
@@ -1289,14 +1341,14 @@ data class ExprParser(
                 val valArgs = checkNoReal() ?: return
                 val value = valArgs[0]
                 if (value !is BitListValue) {
-                    context.reportError(ctx.functionExpr(0), ErrorStrings.BUILD_MULTI_DIM)
+                    context.reportError(ctx.functionExpr(0) ?: ctx, ErrorStrings.BUILD_MULTI_DIM)
                     return
                 }
                 for (i in 1 until valArgs.size) {
                     if (!valArgs[i].isNumber() || valArgs[i] !is BitListValue) {
                         context.reportError(
-                            ctx.functionExpr(i),
-                            ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(i).text, valArgs[i].toString())
+                            ctx.functionExpr(i) ?: ctx,
+                            ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(i)?.text, valArgs[i].toString())
                         )
                         return
                     }
@@ -1306,8 +1358,8 @@ data class ExprParser(
                         (it as BitListValue).toBigInt().intValueExact()
                     } catch (e: ArithmeticException) {
                         context.reportError(
-                            ctx.functionExpr(i + 1),
-                            ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.functionExpr(i + 1).text)
+                            ctx.functionExpr(i + 1) ?: ctx,
+                            ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.functionExpr(i + 1)?.text)
                         )
                         return
                     }
@@ -1316,15 +1368,15 @@ data class ExprParser(
                 dims.forEachIndexed { i, dim ->
                     if (dim < 0) {
                         context.reportError(
-                            ctx.functionExpr(i + 1),
-                            ErrorStrings.FUNCTION_ARG_NEG.format(ctx.functionExpr(i + 1).text)
+                            ctx.functionExpr(i + 1) ?: ctx,
+                            ErrorStrings.FUNCTION_ARG_NEG.format(ctx.functionExpr(i + 1)?.text)
                         )
                         return
                     }
                     if (dim == 0) {
                         context.reportError(
-                            ctx.functionExpr(i + 1),
-                            ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.functionExpr(i + 1).text)
+                            ctx.functionExpr(i + 1) ?: ctx,
+                            ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.functionExpr(i + 1)?.text)
                         )
                         return
                     }
@@ -1333,8 +1385,8 @@ data class ExprParser(
 
                 if (value.size % factor != 0L) {
                     context.reportError(
-                        ctx.functionExpr(0),
-                        ErrorStrings.ARRAY_NOT_DIVISIBLE.format(ctx.functionExpr(0).text)
+                        ctx.functionExpr(0) ?: ctx,
+                        ErrorStrings.ARRAY_NOT_DIVISIBLE.format(ctx.functionExpr(0)?.text)
                     )
                     return
                 }
@@ -1371,7 +1423,7 @@ data class ExprParser(
                     is BitValue -> values[ctx] = arg.copy(signed = true)
                     is BitListValue -> values[ctx] = arg.copy(signed = true)
                     is UndefinedValue -> values[ctx] = arg.copy()
-                    else -> context.reportError(ctx.functionExpr(0), ErrorStrings.SIGNED_MULTI_DIM)
+                    else -> context.reportError(ctx.functionExpr(0) ?: ctx, ErrorStrings.SIGNED_MULTI_DIM)
                 }
             }
 
@@ -1381,7 +1433,7 @@ data class ExprParser(
                     is BitValue -> values[ctx] = arg.copy(signed = false)
                     is BitListValue -> values[ctx] = arg.copy(signed = false)
                     is UndefinedValue -> values[ctx] = arg.copy()
-                    else -> context.reportError(ctx.functionExpr(0), ErrorStrings.UNSIGNED_MULTI_DIM)
+                    else -> context.reportError(ctx.functionExpr(0) ?: ctx, ErrorStrings.UNSIGNED_MULTI_DIM)
                 }
             }
 
@@ -1391,15 +1443,15 @@ data class ExprParser(
                 val arg2 = valArgs[1]
                 if (arg1 !is SimpleValue) {
                     context.reportError(
-                        ctx.functionExpr(0),
-                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(0).text, arg1.toString())
+                        ctx.functionExpr(0) ?: ctx,
+                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(0)?.text, arg1.toString())
                     )
                     return
                 }
                 if (arg2 !is SimpleValue) {
                     context.reportError(
-                        ctx.functionExpr(1),
-                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(1).text, arg2.toString())
+                        ctx.functionExpr(1) ?: ctx,
+                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(1)?.text, arg2.toString())
                     )
                     return
                 }
@@ -1408,8 +1460,8 @@ data class ExprParser(
 
                 if (b2 == BigInteger.ZERO) {
                     context.reportError(
-                        ctx.functionExpr(1),
-                        ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.functionExpr(1).text)
+                        ctx.functionExpr(1) ?: ctx,
+                        ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.functionExpr(1)?.text)
                     )
                     return
                 }
@@ -1432,36 +1484,36 @@ data class ExprParser(
                         size.toBigInt().intValueExact()
                     } catch (e: ArithmeticException) {
                         context.reportError(
-                            ctx.functionExpr(1),
-                            ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.functionExpr(1).text)
+                            ctx.functionExpr(1) ?: ctx,
+                            ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.functionExpr(1)?.text)
                         )
                         return
                     }
                     if (numBits < 0) {
                         context.reportError(
-                            ctx.functionExpr(1),
-                            ErrorStrings.FUNCTION_ARG_NEG.format(ctx.functionExpr(1).text)
+                            ctx.functionExpr(1) ?: ctx,
+                            ErrorStrings.FUNCTION_ARG_NEG.format(ctx.functionExpr(1)?.text)
                         )
                         return
                     }
                     if (numBits == 0) {
                         context.reportError(
-                            ctx.functionExpr(1),
-                            ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.functionExpr(1).text)
+                            ctx.functionExpr(1) ?: ctx,
+                            ErrorStrings.FUNCTION_ARG_ZERO.format(ctx.functionExpr(1)?.text)
                         )
                         return
                     }
                     if (!value.width.isFlatArray()) {
                         context.reportError(
-                            ctx.functionExpr(0),
-                            ErrorStrings.FUNCTION_NOT_FLAT.format(ctx.FUNCTION_ID().text)
+                            ctx.functionExpr(0) ?: ctx,
+                            ErrorStrings.FUNCTION_NOT_FLAT.format(functionIdCtx.text)
                         )
                         return
                     }
                     if (value is SimpleValue && value.minBits() > numBits) {
                         context.reportWarning(
-                            ctx.functionExpr(0),
-                            ErrorStrings.TRUNC_WARN.format(ctx.functionExpr(1).text, size.toString())
+                            ctx.functionExpr(0) ?: ctx,
+                            ErrorStrings.TRUNC_WARN.format(ctx.functionExpr(1)?.text, size.toString())
                         )
                     }
                     values[ctx] = when (value) {
@@ -1483,7 +1535,7 @@ data class ExprParser(
                     is FunctionArg.ValueArg -> arg.value.isTrue().bit == Bit.B1
                 }
                 if (!passed) {
-                    context.reportError(ctx, "Assert failed: \"${ctx.functionExpr(0).text}\"")
+                    context.reportError(ctx, "Assert failed: \"${ctx.functionExpr(0)?.text}\"")
                     context.abortTest()
                 }
             }
@@ -1496,7 +1548,7 @@ data class ExprParser(
                     is FunctionArg.RealArg -> arg.value.toString()
                     is FunctionArg.ValueArg -> arg.value.toString()
                 }
-                context.print("${ctx.functionExpr(0).text} = $value")
+                context.print("${ctx.functionExpr(0)?.text} = $value")
             }
 
             is Function.Custom -> {
@@ -1506,9 +1558,9 @@ data class ExprParser(
                 function.args.forEachIndexed { index, customArg ->
                     if (!customArg.width.canAssign(valArgs[index].width)) {
                         context.reportError(
-                            ctx.functionExpr(index),
+                            ctx.functionExpr(index) ?: ctx,
                             "The function parameter \"${customArg.name}\" can't be assigned the value \"${
-                                ctx.functionExpr(index).text
+                                ctx.functionExpr(index)?.text
                             }\"!"
                         )
                         return

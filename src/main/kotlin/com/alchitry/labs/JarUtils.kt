@@ -1,3 +1,5 @@
+package com.alchitry.labs
+
 import org.apache.commons.lang3.StringUtils
 import java.io.*
 import java.net.JarURLConnection

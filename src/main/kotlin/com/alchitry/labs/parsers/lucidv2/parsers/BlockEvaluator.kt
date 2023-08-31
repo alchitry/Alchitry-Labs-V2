@@ -45,8 +45,8 @@ data class BlockEvaluator(
     }
 
     override fun exitAssignStat(ctx: AssignStatContext) {
-        val assignee = context.resolve(ctx.signal()) ?: return
-        val newValue = context.resolve(ctx.expr()) ?: return
+        val assignee = ctx.signal()?.let { context.resolve(it) } ?: return
+        val newValue = ctx.expr()?.let { context.resolve(it) } ?: return
 
         assignee.quietWrite(newValue, context.evalContext)
 
@@ -54,38 +54,39 @@ data class BlockEvaluator(
     }
 
     override fun exitCaseStat(ctx: CaseStatContext) {
-        val value = context.expr.resolve(ctx.expr()) as? SimpleValue ?: return
+        val value = ctx.expr()?.let { context.expr.resolve(it) } as? SimpleValue ?: return
         ctx.caseElem().forEach { elemCtx ->
             val exprCtx: ExprContext? = elemCtx.expr()
             if (exprCtx == null) { // default case
-                context.walk(elemCtx.caseBlock())
+                context.walk(elemCtx.caseBlock() ?: error("Missing case block!"))
                 return
             }
             val condition = context.expr.resolve(exprCtx) as? SimpleValue ?: return
             if ((condition isEqualTo value).bit == Bit.B1) {
-                context.walk(elemCtx.caseBlock())
+                context.walk(elemCtx.caseBlock() ?: error("Missing case block!"))
                 return
             }
         }
     }
 
     override fun exitIfStat(ctx: IfStatContext) {
-        val condition = context.expr.resolve(ctx.expr()) as? SimpleValue ?: return
+        val expr = ctx.expr() ?: return
+        val condition = context.expr.resolve(expr) as? SimpleValue ?: return
         val truthBit = condition.isTrue().bit
 
         if (!truthBit.isNumber()) {
-            context.errorCollector.reportWarning(ctx.expr(), "If condition evaluated to $truthBit!")
+            context.errorCollector.reportWarning(expr, "If condition evaluated to $truthBit!")
         }
 
         if (truthBit == Bit.B1) {
-            context.walk(ctx.block())
+            context.walk(ctx.block() ?: error("Missing if statement block!"))
         } else {
             ctx.elseStat()?.block()?.let { context.walk(it) }
         }
     }
 
     override fun exitRepeatStat(ctx: RepeatStatContext) {
-        val countValue = context.expr.resolve(ctx.expr()) as? SimpleValue ?: return
+        val countValue = ctx.expr()?.let { context.expr.resolve(it) } as? SimpleValue ?: return
         val count = countValue.toBigInt().toInt()
 
         val signalName = ctx.name()?.text
@@ -113,7 +114,7 @@ data class BlockEvaluator(
                 ),
                 context.evalContext
             )
-            context.walk(ctx.repeatBlock())
+            context.walk(ctx.repeatBlock() ?: error("Missing repeat block!"))
         }
 
         signal?.let { context.localSignals.remove(it.name) }

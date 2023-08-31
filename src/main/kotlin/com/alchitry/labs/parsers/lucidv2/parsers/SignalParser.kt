@@ -7,12 +7,12 @@ import com.alchitry.labs.parsers.lucidv2.context.LucidExprContext
 import com.alchitry.labs.parsers.lucidv2.signals.*
 import com.alchitry.labs.parsers.lucidv2.types.Function
 import com.alchitry.labs.parsers.lucidv2.values.*
-import org.antlr.v4.runtime.ParserRuleContext
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 fun ParserRuleContext.firstParentOrNull(condition: (ParserRuleContext) -> Boolean): ParserRuleContext? {
-    var context = this.getParent() ?: return null
+    var context = this.parent as? ParserRuleContext ?: return null
     while (!condition(context)) {
-        context = context.getParent() ?: return null
+        context = context.parent as? ParserRuleContext ?: return null
     }
     return context
 }
@@ -31,7 +31,7 @@ data class SignalParser(
         if (context !is LucidBlockContext || context.stage == ParseStage.Evaluation)
             return
 
-        val repCtx = ctx.getParent() as RepeatStatContext
+        val repCtx = ctx.parent as? RepeatStatContext ?: error("RepeatBlockContext parent wasn't a RepeatStatContext!")
 
         val repeatSignals = context.blockParser.repeatSignals
         val newSig = repeatSignals[repCtx] ?: return
@@ -42,7 +42,7 @@ data class SignalParser(
         if (context !is LucidBlockContext || context.stage == ParseStage.Evaluation)
             return
 
-        val repCtx = ctx.getParent() as RepeatStatContext
+        val repCtx = ctx.parent as? RepeatStatContext ?: error("RepeatBlockContext parent wasn't a RepeatStatContext!")
         context.localSignals.remove(repCtx.name()?.text)
     }
 
@@ -50,9 +50,10 @@ data class SignalParser(
         if (context !is LucidBlockContext || context.stage == ParseStage.Evaluation)
             return
 
-        val funcCtx = ctx.getParent() as FunctionBlockContext
+        val funcCtx =
+            ctx.parent as? FunctionBlockContext ?: error("FunctionBodyContext parent wasn't a FunctionBlockContext!")
 
-        val function = context.resolveFunction(funcCtx.name().text) as? Function.Custom ?: return
+        val function = context.resolveFunction(funcCtx.name()?.text ?: return) as? Function.Custom ?: return
         function.args.forEach {
             context.localSignals[it.name] =
                 Signal(it.name, SignalDirection.Read, null, it.width.filledWith(Bit.B0, false, it.signed))
@@ -63,39 +64,41 @@ data class SignalParser(
         if (context !is LucidBlockContext || context.stage == ParseStage.Evaluation)
             return
 
-        val funcCtx = ctx.getParent() as FunctionBlockContext
+        val funcCtx =
+            ctx.parent as? FunctionBlockContext ?: error("FunctionBodyContext parent wasn't a FunctionBlockContext!")
 
-        val function = context.resolveFunction(funcCtx.name().text) as? Function.Custom ?: return
+        val function = context.resolveFunction(funcCtx.name()?.text ?: return) as? Function.Custom ?: return
         function.args.forEach {
             context.localSignals.remove(it.name)
         }
     }
 
     override fun exitSignal(ctx: SignalContext) {
-        val firstName = ctx.name().firstOrNull() ?: return
+        val nameCtx = ctx.name()
+        val firstName = nameCtx.firstOrNull() ?: return
         val signalOrParent = context.resolveSignal(firstName.text)
 
         if (signalOrParent == null) {
-            context.reportError(ctx.name(0), "Failed to resolve signal \"${firstName.text}\"")
+            context.reportError(nameCtx.first(), "Failed to resolve signal \"${firstName.text}\"")
             return
         }
 
-        val children = ctx.children.filter { it is NameContext || it is BitSelectionContext }
+        val children = ctx.children?.filter { it is NameContext || it is BitSelectionContext } ?: emptyList()
         var usedChildren = 1
         var currentSignalOrParent: SignalOrParent = signalOrParent
 
         while (currentSignalOrParent is SignalParent) {
             if (children.size < usedChildren + 1) {
                 context.reportError(
-                    ctx.name(usedChildren - 1),
-                    "${ctx.name(usedChildren - 1).text} is not a signal and can't be accessed directly."
+                    nameCtx[usedChildren - 1],
+                    "${nameCtx[usedChildren - 1].text} is not a signal and can't be accessed directly."
                 )
                 return
             }
             if (children[usedChildren] is BitSelectionContext) {
                 context.reportError(
                     children[usedChildren] as ParserRuleContext,
-                    "${ctx.name(usedChildren).text} is not an array."
+                    "${nameCtx[usedChildren].text} is not an array."
                 )
                 return
             }
@@ -142,13 +145,15 @@ data class SignalParser(
     override fun exitSignalWidth(ctx: SignalWidthContext) {
         val dims = ctx.arraySize()
             .asReversed()
-            .mapNotNull { (context.resolve(it.expr()) as? BitListValue)?.toBigInt()?.intValueExact() }
+            .mapNotNull {
+                (it.expr()?.let { it1 -> context.resolve(it1) } as? BitListValue)?.toBigInt()?.intValueExact()
+            }
 
         val structType = ctx.structType()?.let {
             context.resolve(it).also { v ->
                 if (v == null)
                     context.reportError(
-                        ctx.structType(),
+                        ctx.structType() ?: ctx,
                         "Failed to resolve struct type ${it.text}!"
                     )
             }
