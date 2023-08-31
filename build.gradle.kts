@@ -4,10 +4,14 @@ import java.io.FileOutputStream
 import java.util.*
 
 buildscript {
+    val antlrKotlinVersion = "12145087f8"
+    extra.set("antlrKotlinVersion", antlrKotlinVersion)
     dependencies {
-        classpath("com.alchitry.antlr-kotlin:antlr-kotlin-gradle-plugin:0.0.1")
+        classpath("com.github.alchitry.antlr-kotlin:antlr-kotlin-gradle-plugin:$antlrKotlinVersion")
     }
 }
+
+val antlrKotlinVersion = ext.get("antlrKotlinVersion") as String
 
 plugins {
     kotlin("jvm") version "1.9.0"
@@ -23,10 +27,11 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven("https://jitpack.io")
 }
 
 dependencies {
-    implementation("com.alchitry.antlr-kotlin:antlr-kotlin-runtime:+")
+    implementation("com.github.alchitry.antlr-kotlin:antlr-kotlin-runtime:$antlrKotlinVersion")
     implementation("org.apache.commons:commons-text:1.10.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
@@ -121,7 +126,7 @@ tasks.register<com.alchitry.antlrkotlin.gradleplugin.AntlrKotlinTask>("generateK
         // project.dependencies.create("org.antlr:antlr4:$antlrVersion"),
 
         // antlr target, required to create kotlin code
-        project.dependencies.create("com.alchitry.antlr-kotlin:antlr-kotlin-target:0.0.1")
+        project.dependencies.create("com.github.alchitry.antlr-kotlin:antlr-kotlin-target:$antlrKotlinVersion")
     )
     maxHeapSize = "64m"
     packageName = "com.alchitry.labs.parsers.grammar"
