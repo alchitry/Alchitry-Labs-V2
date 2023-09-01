@@ -5,13 +5,12 @@ import com.alchitry.labs.parsers.lucidv2.types.StructMember
 import com.alchitry.labs.parsers.lucidv2.types.StructType
 import com.alchitry.labs.parsers.lucidv2.values.*
 import helpers.SimpleLucidTester
-import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class TypesParserTests {
     @Test
-    fun testDffSimpleDeclaration() = runBlocking {
+    fun testDffSimpleDeclaration() {
         val tester = SimpleLucidTester("dff testing(.clk(1));")
         tester.context.walk(tester.parser.dffDec()) // parse
         val dff = tester.context.types.resolve("testing")
@@ -30,7 +29,7 @@ internal class TypesParserTests {
     }
 
     @Test
-    fun testDffArrayClk() = runBlocking {
+    fun testDffArrayClk() {
         val tester = SimpleLucidTester("dff testing(.clk({1}));")
         tester.context.walk(tester.parser.dffDec()) // parse
         tester.context.types.resolve("testing")
@@ -40,7 +39,7 @@ internal class TypesParserTests {
     }
 
     @Test
-    fun testDffArrayRst() = runBlocking {
+    fun testDffArrayRst() {
         val tester = SimpleLucidTester("dff testing(.clk(1), .rst({1}));")
         tester.context.walk(tester.parser.dffDec()) // parse
         tester.context.types.resolve("testing")
@@ -50,7 +49,7 @@ internal class TypesParserTests {
     }
 
     @Test
-    fun testDffWideClk() = runBlocking {
+    fun testDffWideClk() {
         val tester = SimpleLucidTester("dff testing(.clk(2b11));")
         tester.context.walk(tester.parser.dffDec()) // parse
         tester.context.types.resolve("testing")
@@ -60,7 +59,7 @@ internal class TypesParserTests {
     }
 
     @Test
-    fun testDffWideRst() = runBlocking {
+    fun testDffWideRst() {
         val tester = SimpleLucidTester("dff testing(.clk(1), .rst(2b11));")
         tester.context.walk(tester.parser.dffDec()) // parse
         tester.context.types.resolve("testing")
@@ -70,7 +69,7 @@ internal class TypesParserTests {
     }
 
     @Test
-    fun testDffInit() = runBlocking {
+    fun testDffInit() {
         val tester = SimpleLucidTester("dff testing(.clk(1), #INIT(1));")
         tester.context.walk(tester.parser.dffDec()) // parse
         val dff = tester.context.types.resolve("testing")
@@ -88,7 +87,7 @@ internal class TypesParserTests {
     }
 
     @Test
-    fun testDffInitTruncate() = runBlocking {
+    fun testDffInitTruncate() {
         val tester = SimpleLucidTester("dff testing[3](.clk(1), #INIT(15));")
         tester.context.walk(tester.parser.dffDec()) // parse
         val dff = tester.context.types.resolve("testing")
@@ -107,7 +106,7 @@ internal class TypesParserTests {
     }
 
     @Test
-    fun testDffInitDimMismatch() = runBlocking {
+    fun testDffInitDimMismatch() {
         val tester = SimpleLucidTester("dff testing[3](.clk(1), #INIT({15}));")
         tester.context.walk(tester.parser.dffDec()) // parse
         val dff = tester.context.types.resolve("testing")
@@ -126,7 +125,7 @@ internal class TypesParserTests {
     }
 
     @Test
-    fun testDffArray() = runBlocking {
+    fun testDffArray() {
         val tester = SimpleLucidTester("dff testing[8][4][2](.clk(1));")
         tester.context.walk(tester.parser.dffDec()) // parse
         assert(tester.hasNoIssues)
@@ -154,7 +153,7 @@ internal class TypesParserTests {
     }
 
     @Test
-    fun testSignedDffArray() = runBlocking {
+    fun testSignedDffArray() {
         val tester = SimpleLucidTester("signed dff testing[8][4][2](.clk(1));")
         tester.context.walk(tester.parser.dffDec()) // parse
 
@@ -186,7 +185,7 @@ internal class TypesParserTests {
     }
 
     @Test
-    fun testAssignBlockSimple() = runBlocking {
+    fun testAssignBlockSimple() {
         val tester = SimpleLucidTester(".clk(1), .rst(0) { dff myDff; }")
         tester.context.walk(tester.parser.assignBlock())
         assert(tester.hasNoIssues)
@@ -200,7 +199,7 @@ internal class TypesParserTests {
     }
 
     @Test
-    fun testDoubleAssign() = runBlocking {
+    fun testDoubleAssign() {
         val tester = SimpleLucidTester(".clk(1), .rst(0) { dff myDff(.clk(0)); }")
         tester.context.walk(tester.parser.assignBlock())
         assert(tester.hasErrors)
@@ -208,7 +207,7 @@ internal class TypesParserTests {
     }
 
     @Test
-    fun testDoubleAssignBlocks() = runBlocking {
+    fun testDoubleAssignBlocks() {
         val tester = SimpleLucidTester(".clk(1) { .clk(0) { dff myDff; } }")
         tester.context.walk(tester.parser.assignBlock())
         assert(tester.hasErrors)
@@ -216,7 +215,7 @@ internal class TypesParserTests {
     }
 
     @Test
-    fun testDffSimpleStruct() = runBlocking {
+    fun testDffSimpleStruct() {
         val tester = SimpleLucidTester(
             """
             module myMod (
@@ -245,7 +244,7 @@ internal class TypesParserTests {
     }
 
     @Test
-    fun testDffStructArray() = runBlocking {
+    fun testDffStructArray() {
         val tester = SimpleLucidTester(
             """
             module myMod (
@@ -275,7 +274,7 @@ internal class TypesParserTests {
     }
 
     @Test
-    fun testBadParam() = runBlocking {
+    fun testBadParam() {
         val tester = SimpleLucidTester(
             """
             module myMod #(
@@ -293,7 +292,7 @@ internal class TypesParserTests {
     }
 
     @Test
-    fun testSimpleSig() = runBlocking {
+    fun testSimpleSig() {
         val tester = SimpleLucidTester(
             """
             module myMod (
@@ -316,7 +315,7 @@ internal class TypesParserTests {
     }
 
     @Test
-    fun testArraySig() = runBlocking {
+    fun testArraySig() {
         val tester = SimpleLucidTester(
             """
             module myMod (

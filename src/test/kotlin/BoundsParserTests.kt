@@ -1,11 +1,10 @@
 import helpers.SimpleLucidTester
-import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class BoundsParserTests {
     @Test
-    fun testBitSelectorConst() = runBlocking {
+    fun testBitSelectorConst() {
         var test = SimpleLucidTester("[0:0]")
         var tree = test.parser.bitSelection()
         test.context.walk(tree)
@@ -47,7 +46,7 @@ class BoundsParserTests {
     }
 
     @Test
-    fun testBitSelectorFixedWidth() = runBlocking {
+    fun testBitSelectorFixedWidth() {
         var test = SimpleLucidTester("[0+:5]")
         var tree = test.parser.bitSelection()
         test.context.walk(tree)
@@ -80,7 +79,7 @@ class BoundsParserTests {
     }
 
     @Test
-    fun testArrayIndex() = runBlocking {
+    fun testArrayIndex() {
         var test = SimpleLucidTester("[5]")
         var tree = test.parser.bitSelection()
         test.context.walk(tree)

@@ -29,7 +29,7 @@ class TestBench(
         return SnapshotParent(name, snapshots)
     }
 
-    suspend fun initialWalk(): Boolean = context.initialWalk(testBenchContext)
+    fun initialWalk(): Boolean = context.initialWalk(testBenchContext)
 
     fun getTestBlocks(): List<TestBlock> {
         return context.blockParser.testBlocks.values.toList()

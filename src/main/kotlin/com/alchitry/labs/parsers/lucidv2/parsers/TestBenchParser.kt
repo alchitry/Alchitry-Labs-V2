@@ -8,7 +8,7 @@ import com.alchitry.labs.parsers.lucidv2.types.TestBench
 class TestBenchParser(
     private val context: LucidTestBenchContext
 ) : LucidBaseListener() {
-    override suspend fun exitTestBench(ctx: TestBenchContext) {
+    override fun exitTestBench(ctx: TestBenchContext) {
         val nameCtx = ctx.name() ?: return
         val name = nameCtx.text
 

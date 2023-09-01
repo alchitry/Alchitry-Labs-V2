@@ -17,15 +17,15 @@ data class EnumParser(
 
     fun getLocalEnums(): List<EnumType> = localEnumType.values.toList()
 
-    override suspend fun enterGlobal(ctx: LucidParser.GlobalContext) {
+    override fun enterGlobal(ctx: LucidParser.GlobalContext) {
         localEnumType.clear()
     }
 
-    override suspend fun enterModule(ctx: LucidParser.ModuleContext) {
+    override fun enterModule(ctx: LucidParser.ModuleContext) {
         localEnumType.clear()
     }
 
-    override suspend fun exitEnumDec(ctx: EnumDecContext) {
+    override fun exitEnumDec(ctx: EnumDecContext) {
         val names = ctx.name()
         val nameCtx = names.firstOrNull() ?: return
 

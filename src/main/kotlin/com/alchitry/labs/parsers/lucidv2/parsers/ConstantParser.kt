@@ -17,15 +17,15 @@ data class ConstantParser(
     override fun resolve(name: String) = localConstants[name]
     fun resolve(constDecContext: ConstDecContext) = constants[constDecContext]
 
-    override suspend fun enterGlobal(ctx: LucidParser.GlobalContext) {
+    override fun enterGlobal(ctx: LucidParser.GlobalContext) {
         localConstants.clear()
     }
 
-    override suspend fun enterModule(ctx: LucidParser.ModuleContext) {
+    override fun enterModule(ctx: LucidParser.ModuleContext) {
         localConstants.clear()
     }
 
-    override suspend fun exitConstDec(ctx: ConstDecContext) {
+    override fun exitConstDec(ctx: ConstDecContext) {
         val nameCtx = ctx.name() ?: return
         val constName = nameCtx.text
         if (nameCtx.CONST_ID() == null)

@@ -36,7 +36,7 @@ data class BitSelectionParser(
     }
 
     /* Bounds Section */
-    override suspend fun exitBitSelectorConst(ctx: BitSelectorConstContext) {
+    override fun exitBitSelectorConst(ctx: BitSelectorConstContext) {
         if (canSkip(ctx)) return
 
         val expr = ctx.expr()
@@ -79,7 +79,7 @@ data class BitSelectionParser(
         bounds[ctx] = BitSelection(minInt..maxInt, ctx)
     }
 
-    override suspend fun exitBitSelectorFixWidth(ctx: BitSelectorFixWidthContext) {
+    override fun exitBitSelectorFixWidth(ctx: BitSelectorFixWidthContext) {
         if (canSkip(ctx)) return
 
         val expr = ctx.expr()
@@ -139,7 +139,7 @@ data class BitSelectionParser(
         bounds[ctx] = BitSelection(selection, ctx)
     }
 
-    override suspend fun exitArrayIndex(ctx: ArrayIndexContext) {
+    override fun exitArrayIndex(ctx: ArrayIndexContext) {
         if (canSkip(ctx)) return
 
         val expr = ctx.expr() ?: return

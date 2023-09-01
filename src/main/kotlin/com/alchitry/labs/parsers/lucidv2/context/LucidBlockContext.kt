@@ -164,7 +164,7 @@ class LucidBlockContext(
         project.initialize()
     }
 
-    suspend fun initialWalk(t: ParseTree): Boolean {
+    fun initialWalk(t: ParseTree): Boolean {
         stage = ParseStage.ModuleInternals
         walk(t)
         if (errorCollector.errors.isNotEmpty())
@@ -174,9 +174,9 @@ class LucidBlockContext(
         return errorCollector.errors.isEmpty()
     }
 
-    suspend fun walk(t: ParseTree) = ParseTreeMultiWalker.walk(getListeners(), t, getFilter())
+    fun walk(t: ParseTree) = ParseTreeMultiWalker.walk(getListeners(), t, getFilter())
 
-    suspend fun checkParameters(): Boolean {
+    fun checkParameters(): Boolean {
         val instance = (instance as? ModuleInstance)
             ?: error("checkParameters() can only be called on contexts with a ModuleInstance!")
         stage = ParseStage.Evaluation
@@ -226,7 +226,7 @@ class LucidBlockContext(
         return blockParser.resolveFunction(name)
     }
 
-    suspend fun runFunction(function: Function.Custom, args: List<Value>) {
+    fun runFunction(function: Function.Custom, args: List<Value>) {
         if (stage != ParseStage.Evaluation)
             return
 

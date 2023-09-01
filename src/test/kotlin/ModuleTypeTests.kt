@@ -7,14 +7,13 @@ import com.alchitry.labs.parsers.lucidv2.values.BitListWidth
 import com.alchitry.labs.parsers.lucidv2.values.BitWidth
 import helpers.LucidTester
 import helpers.testErrorCollector
-import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class ModuleTypeTests {
 
     @Test
-    fun basicModuleTest() = runBlocking {
+    fun basicModuleTest() {
         val test = LucidTester(
             """
                 module myModule #(

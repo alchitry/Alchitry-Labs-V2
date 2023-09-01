@@ -6,7 +6,6 @@ import com.alchitry.labs.project.openXml
 import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.Subcommand
-import kotlinx.coroutines.runBlocking
 import java.io.File
 
 @OptIn(ExperimentalCli::class)
@@ -23,7 +22,7 @@ class CheckProject : Subcommand("check", "Check a project for errors") {
         }
 
         val errorManager = ErrorManager()
-        val topModule = runBlocking { project.parse(errorManager) }
+        val topModule = project.parse(errorManager)
 
         if (topModule == null) {
             println("Failed to fully parse project!")

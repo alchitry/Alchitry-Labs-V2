@@ -4,14 +4,13 @@ import com.alchitry.labs.parsers.lucidv2.values.ArrayWidth
 import com.alchitry.labs.parsers.lucidv2.values.BitListWidth
 import com.alchitry.labs.parsers.lucidv2.values.BitWidth
 import helpers.SimpleLucidTester
-import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class StructTests {
 
     @Test
-    fun basicStructDecTest() = runBlocking {
+    fun basicStructDecTest() {
         val tester = SimpleLucidTester("struct myStruct { a, b[2][3], c[4] };")
         val ctx = tester.parser.structDec().also { tester.context.walk(it) }
 

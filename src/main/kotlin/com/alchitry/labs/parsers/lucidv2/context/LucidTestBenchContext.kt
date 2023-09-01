@@ -15,7 +15,7 @@ class LucidTestBenchContext(
 
     val testBench = TestBenchParser(this)
 
-    suspend fun walk(t: SourceContext) = ParseTreeMultiWalker.walk(
+    fun walk(t: SourceContext) = ParseTreeMultiWalker.walk(
         listOf(testBench),
         t,
         WalkerFilter.join(WalkerFilter.TestBenchesOnly, WalkerFilter.SkipModuleBodies)

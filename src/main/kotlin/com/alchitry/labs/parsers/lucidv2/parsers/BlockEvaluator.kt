@@ -19,23 +19,23 @@ data class BlockEvaluator(
     private var alwaysBlock: AlwaysBlockContext? = null
     private var testBlock: TestBlockContext? = null
 
-    override suspend fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
+    override fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
         check(context.stage == ParseStage.Evaluation) { "The BlockEvaluator should only be used in evaluations!" }
         writtenSignals.clear()
         alwaysBlock = ctx
     }
 
-    override suspend fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
+    override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
         alwaysBlock = null
     }
 
-    override suspend fun enterTestBlock(ctx: TestBlockContext) {
+    override fun enterTestBlock(ctx: TestBlockContext) {
         check(context.stage == ParseStage.Evaluation) { "The BlockEvaluator should only be used in evaluations!" }
         writtenSignals.clear()
         testBlock = ctx
     }
 
-    override suspend fun exitTestBlock(ctx: TestBlockContext) {
+    override fun exitTestBlock(ctx: TestBlockContext) {
         testBlock = null
     }
 
@@ -44,7 +44,7 @@ data class BlockEvaluator(
         writtenSignals.clear()
     }
 
-    override suspend fun exitAssignStat(ctx: AssignStatContext) {
+    override fun exitAssignStat(ctx: AssignStatContext) {
         val assignee = ctx.signal()?.let { context.resolve(it) } ?: return
         val newValue = ctx.expr()?.let { context.resolve(it) } ?: return
 
@@ -53,7 +53,7 @@ data class BlockEvaluator(
         writtenSignals.add(assignee.getSignal())
     }
 
-    override suspend fun exitCaseStat(ctx: CaseStatContext) {
+    override fun exitCaseStat(ctx: CaseStatContext) {
         val value = ctx.expr()?.let { context.expr.resolve(it) } as? SimpleValue ?: return
         ctx.caseElem().forEach { elemCtx ->
             val exprCtx: ExprContext? = elemCtx.expr()
@@ -69,7 +69,7 @@ data class BlockEvaluator(
         }
     }
 
-    override suspend fun exitIfStat(ctx: IfStatContext) {
+    override fun exitIfStat(ctx: IfStatContext) {
         val expr = ctx.expr() ?: return
         val condition = context.expr.resolve(expr) as? SimpleValue ?: return
         val truthBit = condition.isTrue().bit
@@ -85,7 +85,7 @@ data class BlockEvaluator(
         }
     }
 
-    override suspend fun exitRepeatStat(ctx: RepeatStatContext) {
+    override fun exitRepeatStat(ctx: RepeatStatContext) {
         val countValue = ctx.expr()?.let { context.expr.resolve(it) } as? SimpleValue ?: return
         val count = countValue.toBigInt().toInt()
 

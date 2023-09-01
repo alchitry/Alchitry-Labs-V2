@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 
 class DynamicEvalTests {
     @Test
-    fun basicDynamicExpr() = runBlocking {
+    fun basicDynamicExpr() {
         repeat(30) { // repeat to attempt to check for race conditions
             val signal =
                 Signal("mySig", SignalDirection.Both, null, BitListValue("110", 2, constant = false, signed = false))
@@ -49,7 +49,7 @@ class DynamicEvalTests {
     }
 
     @Test
-    fun dffTest() = runBlocking {
+    fun dffTest() {
         val b0 = BitValue(Bit.B0, false, false)
         val b1 = BitValue(Bit.B1, false, false)
 
@@ -87,7 +87,7 @@ class DynamicEvalTests {
     }
 
     @Test
-    fun signalContextTest() = runBlocking {
+    fun signalContextTest() {
         val evaluable = Evaluable { }
         val evaluable2 = Evaluable { }
         val sig = Signal("test", SignalDirection.Both, null, BitValue(Bit.B1, false, false), false)
@@ -107,7 +107,7 @@ class DynamicEvalTests {
     }
 
     @Test
-    fun basicAlwaysEvalTest() = runBlocking {
+    fun basicAlwaysEvalTest() {
         val sig1 =
             Signal("sig1", SignalDirection.Write, null, BitValue(Bit.B0, constant = false, signed = false), false)
         val sig2 = Signal("sig2", SignalDirection.Read, null, BitValue(Bit.B1, constant = false, signed = false), false)
@@ -149,7 +149,7 @@ class DynamicEvalTests {
     }
 
     @Test
-    fun testIfStatement() = runBlocking {
+    fun testIfStatement() {
         val sig1 =
             Signal("sig1", SignalDirection.Write, null, BitValue(Bit.B0, constant = false, signed = false), false)
         val sig2 = Signal("sig2", SignalDirection.Read, null, BitValue(Bit.B1, constant = false, signed = false), false)

@@ -2,13 +2,12 @@ import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SimParent
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SimValue
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import helpers.LucidTester
-import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class TestBenchTests {
     @Test
-    fun basicTestBenchTest() = runBlocking {
+    fun basicTestBenchTest() {
         val tester = LucidTester(
             """
                 testBench myTestBench {
@@ -47,7 +46,7 @@ class TestBenchTests {
     }
 
     @Test
-    fun basicFunctionTest() = runBlocking {
+    fun basicFunctionTest() {
         val tester = LucidTester(
             """
                 testBench myTestBench {
@@ -97,7 +96,7 @@ class TestBenchTests {
     }
 
     @Test
-    fun basicFunctionArgTest() = runBlocking {
+    fun basicFunctionArgTest() {
         val tester = LucidTester(
             """
                 testBench myTestBench {
@@ -142,7 +141,7 @@ class TestBenchTests {
     }
 
     @Test
-    fun doubleFunctionArgTests() = runBlocking {
+    fun doubleFunctionArgTests() {
         val tester = LucidTester(
             """
                 testBench myTestBench {

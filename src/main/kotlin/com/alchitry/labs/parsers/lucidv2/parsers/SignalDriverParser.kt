@@ -25,7 +25,7 @@ data class SignalDriverParser(
 
     private var expectedDrivers: Set<Signal>? = null
 
-    override suspend fun exitPortDec(ctx: PortDecContext) {
+    override fun exitPortDec(ctx: PortDecContext) {
         val nameCtx = ctx.name() ?: error("Name missing from port dec!")
         val port =
             context.resolveSignal(nameCtx.text) as? Signal ?: error("Unresolved port of name \"${nameCtx.text}\"")
@@ -52,7 +52,7 @@ data class SignalDriverParser(
         }
     }
 
-    override suspend fun exitSigDec(ctx: SigDecContext) {
+    override fun exitSigDec(ctx: SigDecContext) {
         val nameCtx = ctx.name() ?: error("Name missing from sig dec!")
         val sig =
             context.resolveSignal(nameCtx.text) as? Signal ?: error("Unresolved sig of name ${nameCtx.text}")
@@ -66,7 +66,7 @@ data class SignalDriverParser(
         }
     }
 
-    override suspend fun exitDffDec(ctx: DffDecContext) {
+    override fun exitDffDec(ctx: DffDecContext) {
         val nameCtx = ctx.name() ?: error("Name missing from dff dec!")
         val dff = context.resolveSignal(nameCtx.text) as? Dff ?: error("Unresolved dff of name ${nameCtx.text}")
         if (!dff.d.hasDriver) {
@@ -79,7 +79,7 @@ data class SignalDriverParser(
         }
     }
 
-    override suspend fun exitModuleInst(ctx: ModuleInstContext) {
+    override fun exitModuleInst(ctx: ModuleInstContext) {
         val nameNode = ctx.name(1) ?: return
         val inst = context.resolveSignal(nameNode.text) as? ModuleInstanceOrArray
             ?: error("Unresolved instance of name ${nameNode.text}")
@@ -130,12 +130,12 @@ data class SignalDriverParser(
         }
     }
 
-    override suspend fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
+    override fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
         expectedDrivers = (context.blockParser.alwaysBlocks[ctx]?.drivenSignals
             ?: error("Failed to resolve always block!"))
     }
 
-    override suspend fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
+    override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
         val drivenMap = drivenSignals[ctx.block() ?: error("Block missing from Always block!")]
             ?: error("Missing always block signals!")
         expectedDrivers?.forEach { signal ->
@@ -157,7 +157,7 @@ data class SignalDriverParser(
         expectedDrivers = null
     }
 
-    override suspend fun exitExprSignal(ctx: ExprSignalContext) {
+    override fun exitExprSignal(ctx: ExprSignalContext) {
         val sig = context.resolve(ctx.signal() ?: return) ?: return
         val fullSig = sig.getSignal()
         val expected = expectedDrivers ?: return
@@ -190,12 +190,12 @@ data class SignalDriverParser(
         drivenSignals[ctx] = signals
     }
 
-    override suspend fun enterBlock(ctx: BlockContext) = startBlock()
-    override suspend fun exitBlock(ctx: BlockContext) = stopBlock(ctx)
-    override suspend fun enterCaseBlock(ctx: CaseBlockContext) = startBlock()
-    override suspend fun exitCaseBlock(ctx: CaseBlockContext) = stopBlock(ctx)
+    override fun enterBlock(ctx: BlockContext) = startBlock()
+    override fun exitBlock(ctx: BlockContext) = stopBlock(ctx)
+    override fun enterCaseBlock(ctx: CaseBlockContext) = startBlock()
+    override fun exitCaseBlock(ctx: CaseBlockContext) = stopBlock(ctx)
 
-    override suspend fun exitAssignStat(ctx: AssignStatContext) {
+    override fun exitAssignStat(ctx: AssignStatContext) {
         val assignee = context.resolve(ctx.signal() ?: return) ?: return
         val currentValue = signals[assignee.getSignal()]
             ?: assignee.getSignal().width.filledWith(Bit.B0, constant = false, signed = false)
@@ -209,11 +209,11 @@ data class SignalDriverParser(
         }
     }
 
-    override suspend fun exitRepeatStat(ctx: RepeatStatContext) {
+    override fun exitRepeatStat(ctx: RepeatStatContext) {
         drivenSignals[ctx.repeatBlock()?.block() ?: return]?.let { signals.putAll(it) }
     }
 
-    override suspend fun exitIfStat(ctx: IfStatContext) {
+    override fun exitIfStat(ctx: IfStatContext) {
         // if statements can't drive a signal if not complete
         val elseBlock = drivenSignals[ctx.elseStat()?.block() ?: return] ?: error("Missing else block signals!")
         val ifBlock = drivenSignals[ctx.block() ?: error("Block missing from if statement!")]
@@ -227,7 +227,7 @@ data class SignalDriverParser(
         }
     }
 
-    override suspend fun exitCaseStat(ctx: CaseStatContext) {
+    override fun exitCaseStat(ctx: CaseStatContext) {
         // case statements can't drive a signal without a default case
         if (ctx.caseElem().none { it.expr() == null })
             return

@@ -4,7 +4,7 @@ import java.io.FileOutputStream
 import java.util.*
 
 buildscript {
-    val antlrKotlinVersion = "6afd6996da"
+    val antlrKotlinVersion = "12145087f8"
     extra.set("antlrKotlinVersion", antlrKotlinVersion)
     dependencies {
         classpath("com.github.alchitry.antlr-kotlin:antlr-kotlin-gradle-plugin:$antlrKotlinVersion")

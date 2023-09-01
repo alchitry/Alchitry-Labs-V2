@@ -34,7 +34,7 @@ class LucidGlobalContext(
         this.global
     )
 
-    suspend fun walk(t: SourceContext) = ParseTreeMultiWalker.walk(listeners, t, WalkerFilter.GlobalsOnly)
+    fun walk(t: SourceContext) = ParseTreeMultiWalker.walk(listeners, t, WalkerFilter.GlobalsOnly)
 
     override fun resolve(exprCtx: LucidParser.ExprContext) = expr.resolve(exprCtx)
 
