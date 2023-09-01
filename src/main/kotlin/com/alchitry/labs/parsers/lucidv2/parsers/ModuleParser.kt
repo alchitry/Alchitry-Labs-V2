@@ -23,7 +23,7 @@ data class ModuleParser(
     /**
      * Build a local reference to the default value
      */
-    override fun enterParamConstraint(ctx: LucidParser.ParamConstraintContext) {
+    override suspend fun enterParamConstraint(ctx: LucidParser.ParamConstraintContext) {
         val parent = ctx.parent
         if (parent is LucidParser.ParamDecContext) {
             val name = parent.name()?.text ?: return
@@ -32,7 +32,7 @@ data class ModuleParser(
         }
     }
 
-    override fun exitParamConstraint(ctx: LucidParser.ParamConstraintContext) {
+    override suspend fun exitParamConstraint(ctx: LucidParser.ParamConstraintContext) {
         val value = context.resolve(ctx.expr() ?: return)
         if (value is UndefinedValue)
             return
@@ -41,7 +41,7 @@ data class ModuleParser(
         }
     }
 
-    override fun exitModule(ctx: LucidParser.ModuleContext) {
+    override suspend fun exitModule(ctx: LucidParser.ModuleContext) {
         if (module != null) {
             context.reportError(ctx, "Only one module per file is allowed.")
             return

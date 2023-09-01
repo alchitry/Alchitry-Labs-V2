@@ -18,25 +18,25 @@ class GlobalParser(
 
     fun resolveGlobal(name: String) = globals[name]
 
-    override fun enterGlobal(ctx: GlobalContext) {
+    override suspend fun enterGlobal(ctx: GlobalContext) {
         constants.clear()
         structs.clear()
         enums.clear()
     }
 
-    override fun exitConstDec(ctx: ConstDecContext) {
+    override suspend fun exitConstDec(ctx: ConstDecContext) {
         context.resolve(ctx)?.let { constants[it.name] = it }
     }
 
-    override fun exitStructDec(ctx: StructDecContext) {
+    override suspend fun exitStructDec(ctx: StructDecContext) {
         context.resolve(ctx)?.let { structs[it.name] = it }
     }
 
-    override fun exitEnumDec(ctx: EnumDecContext) {
+    override suspend fun exitEnumDec(ctx: EnumDecContext) {
         context.resolve(ctx)?.let { enums[it.name] = it }
     }
 
-    override fun exitGlobal(ctx: GlobalContext) {
+    override suspend fun exitGlobal(ctx: GlobalContext) {
         val nameCtx = ctx.name() ?: return
         val name = nameCtx.text
         if (nameCtx.SPACE_ID() == null)

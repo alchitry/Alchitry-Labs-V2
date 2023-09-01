@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
 
 class ModuleInstanceTests {
     @Test
-    fun basicTwoModules() {
+    fun basicTwoModules() = runBlocking {
         val tester = LucidTester(
             """
                 module alchitryTop (
@@ -42,7 +42,7 @@ class ModuleInstanceTests {
     }
 
     @Test
-    fun basicModuleArray() {
+    fun basicModuleArray() = runBlocking {
         val tester = LucidTester(
             """
                 module alchitryTop (
@@ -76,7 +76,7 @@ class ModuleInstanceTests {
     }
 
     @Test
-    fun counterTest() {
+    fun counterTest() = runBlocking {
         val tester = LucidTester(
             """
                 module alchitryTop (
@@ -118,7 +118,7 @@ class ModuleInstanceTests {
     }
 
     @Test
-    fun counterParamTest() {
+    fun counterParamTest() = runBlocking {
         val tester = LucidTester(
             """
                 module alchitryTop (

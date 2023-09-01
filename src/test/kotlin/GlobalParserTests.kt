@@ -2,13 +2,14 @@ import com.alchitry.labs.parsers.lucidv2.types.StructMember
 import com.alchitry.labs.parsers.lucidv2.types.StructType
 import com.alchitry.labs.parsers.lucidv2.values.*
 import helpers.LucidTester
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class GlobalParserTests {
     @Test
-    fun simpleGlobalTest() {
+    fun simpleGlobalTest() = runBlocking {
         val tester = LucidTester(
             """
                 global MyGlobal {
@@ -24,7 +25,7 @@ class GlobalParserTests {
     }
 
     @Test
-    fun selfRefGlobalTest() {
+    fun selfRefGlobalTest() = runBlocking {
         val tester = LucidTester(
             """
                 global MyGlobal {
@@ -41,7 +42,7 @@ class GlobalParserTests {
     }
 
     @Test
-    fun structGlobalTest() {
+    fun structGlobalTest() = runBlocking {
         val tester = LucidTester(
             """
                 global MyGlobal {
@@ -70,7 +71,7 @@ class GlobalParserTests {
     }
 
     @Test
-    fun structRefGlobalTest() {
+    fun structRefGlobalTest() = runBlocking {
         val tester = LucidTester(
             """
                 global MyGlobal {
@@ -109,7 +110,7 @@ class GlobalParserTests {
     }
 
     @Test
-    fun nestedStructGlobalTest() {
+    fun nestedStructGlobalTest() = runBlocking {
         val tester = LucidTester(
             """
                 global MyGlobal {

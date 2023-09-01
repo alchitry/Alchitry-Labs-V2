@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 
 class SignalDriverTests {
     @Test
-    fun basicDriverTest() {
+    fun basicDriverTest() = runBlocking {
         val tester = LucidTester(
             """
                 module myModule (
@@ -29,7 +29,7 @@ class SignalDriverTests {
     }
 
     @Test
-    fun doubleDriverTest() {
+    fun doubleDriverTest() = runBlocking {
         val tester = LucidTester(
             """
                 module myModule (
@@ -57,7 +57,7 @@ class SignalDriverTests {
     }
 
     @Test
-    fun basicPartialDrivenTest() {
+    fun basicPartialDrivenTest() = runBlocking {
         val tester = LucidTester(
             """
                 module myModule (
@@ -81,7 +81,7 @@ class SignalDriverTests {
     }
 
     @Test
-    fun multiPartialDrivenTest() {
+    fun multiPartialDrivenTest() = runBlocking {
         val tester = LucidTester(
             """
                 module myModule (
@@ -103,7 +103,7 @@ class SignalDriverTests {
     }
 
     @Test
-    fun basicIfPartialDrivenTest() {
+    fun basicIfPartialDrivenTest() = runBlocking {
         val tester = LucidTester(
             """
                 module myModule (
@@ -126,7 +126,7 @@ class SignalDriverTests {
     }
 
     @Test
-    fun basicIfCompleteDrivenTest() {
+    fun basicIfCompleteDrivenTest() = runBlocking {
         val tester = LucidTester(
             """
                 module myModule (
@@ -150,7 +150,7 @@ class SignalDriverTests {
     }
 
     @Test
-    fun sigDirectAssignTest() {
+    fun sigDirectAssignTest() = runBlocking {
         val tester = LucidTester(
             """
                 module myModule (
@@ -176,7 +176,7 @@ class SignalDriverTests {
     }
 
     @Test
-    fun sigDirectAssignOverdriveTest() {
+    fun sigDirectAssignOverdriveTest() = runBlocking {
         val tester = LucidTester(
             """
                 module myModule (
@@ -199,7 +199,7 @@ class SignalDriverTests {
     }
 
     @Test
-    fun sigDirectAssignTruncationTest() {
+    fun sigDirectAssignTruncationTest() = runBlocking {
         val tester = LucidTester(
             """
                 module myModule (

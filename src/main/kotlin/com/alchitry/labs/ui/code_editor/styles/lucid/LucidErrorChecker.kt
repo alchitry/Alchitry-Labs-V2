@@ -18,7 +18,7 @@ import org.antlr.v4.kotlinruntime.CommonTokenStream
 import java.io.File
 
 class LucidErrorChecker : CodeErrorChecker {
-    override fun checkText(text: String): List<StyleToken> {
+    override suspend fun checkText(text: String): List<StyleToken> {
         val project = Project("Testing", File("."), Board.AlchitryAu, emptySet(), emptySet(), emptySet())
         val errorCollector = ErrorCollector(SourceFile(FileProvider.DiskFile("alchitry_top.luc"), true))
 

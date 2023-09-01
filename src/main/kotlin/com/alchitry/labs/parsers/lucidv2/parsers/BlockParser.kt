@@ -45,7 +45,7 @@ data class BlockParser(
         localRepeatSignals.clear()
     }
 
-    override fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
+    override suspend fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
         enterBlock()
 
         if (ctx.firstParentOrNull { it is ModuleContext } == null) {
@@ -53,12 +53,12 @@ data class BlockParser(
         }
     }
 
-    override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
+    override suspend fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
         alwaysBlocks[ctx] =
             AlwaysBlock(context, dependencies.toSet(), drivenSignals.toSet(), localRepeatSignals.toMap(), ctx)
     }
 
-    override fun enterTestBlock(ctx: TestBlockContext) {
+    override suspend fun enterTestBlock(ctx: TestBlockContext) {
         inTestBlock = true
         enterBlock()
 
@@ -67,7 +67,7 @@ data class BlockParser(
         }
     }
 
-    override fun exitTestBlock(ctx: TestBlockContext) {
+    override suspend fun exitTestBlock(ctx: TestBlockContext) {
         inTestBlock = false
         val nameCtx = ctx.name() ?: return
         val name = nameCtx.text
@@ -81,7 +81,7 @@ data class BlockParser(
             TestBlock(name, context, dependencies.toSet(), drivenSignals.toSet(), ctx)
     }
 
-    override fun enterFunctionBlock(ctx: FunctionBlockContext) {
+    override suspend fun enterFunctionBlock(ctx: FunctionBlockContext) {
         inFunctionBlock = true
         enterBlock()
 
@@ -90,7 +90,7 @@ data class BlockParser(
         }
     }
 
-    override fun enterFunctionBody(ctxBody: FunctionBodyContext) {
+    override suspend fun enterFunctionBody(ctxBody: FunctionBodyContext) {
         val ctx = ctxBody.parent as FunctionBlockContext
         val nameCtx = ctx.name() ?: return
         if (nameCtx.TYPE_ID() == null) {
@@ -121,21 +121,21 @@ data class BlockParser(
         }
     }
 
-    override fun exitFunctionBlock(ctx: FunctionBlockContext) {
+    override suspend fun exitFunctionBlock(ctx: FunctionBlockContext) {
         inFunctionBlock = false
     }
 
-    override fun exitAlwaysFunction(ctx: AlwaysFunctionContext) {
+    override suspend fun exitAlwaysFunction(ctx: AlwaysFunctionContext) {
         if (!inTestBlock && !inFunctionBlock) {
             context.reportError(ctx, "Functions can only be called in test or function blocks.")
         }
     }
 
-    override fun exitExprSignal(ctx: ExprSignalContext) {
+    override suspend fun exitExprSignal(ctx: ExprSignalContext) {
         context.expr.resolveDependencies(ctx)?.let { dependencies.addAll(it) }
     }
 
-    override fun exitAssignStat(ctx: AssignStatContext) {
+    override suspend fun exitAssignStat(ctx: AssignStatContext) {
         val signalCtx = ctx.signal() ?: return
         val assignee = context.resolve(signalCtx) ?: return
 
@@ -183,7 +183,7 @@ data class BlockParser(
         }
     }
 
-    override fun exitCaseStat(ctx: CaseStatContext) {
+    override suspend fun exitCaseStat(ctx: CaseStatContext) {
         val exprCtx = ctx.expr() ?: return
         val value = context.expr.resolve(exprCtx) ?: return
 
@@ -206,7 +206,7 @@ data class BlockParser(
         }
     }
 
-    override fun exitIfStat(ctx: IfStatContext) {
+    override suspend fun exitIfStat(ctx: IfStatContext) {
         val exprCtx = ctx.expr() ?: return
         val condition = context.expr.resolve(exprCtx) ?: return
 
@@ -216,7 +216,7 @@ data class BlockParser(
         }
     }
 
-    override fun enterRepeatBlock(ctx: RepeatBlockContext) {
+    override suspend fun enterRepeatBlock(ctx: RepeatBlockContext) {
         val repCtx = ctx.parent as RepeatStatContext
         val sigName = repCtx.name()?.text
         val exprCtx = repCtx.expr() ?: return

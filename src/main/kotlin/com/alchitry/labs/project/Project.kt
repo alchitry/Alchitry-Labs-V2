@@ -78,7 +78,7 @@ data class Project(
         }
     }
 
-    fun parse(errorManger: ErrorManager): ModuleInstance? {
+    suspend fun parse(errorManger: ErrorManager): ModuleInstance? {
         val trees = sourceFiles.map {
             val parser = LucidParser(
                 CommonTokenStream(

@@ -37,7 +37,7 @@ class LucidTester(vararg val files: String) {
         }
     }
 
-    fun globalParse(
+    suspend fun globalParse(
         errorCollector: ErrorCollector = testErrorCollector(),
         trees: List<SourceContext> = parseText(errorCollector)
     ) {
@@ -51,7 +51,7 @@ class LucidTester(vararg val files: String) {
         }
     }
 
-    private fun testBenchParse(
+    private suspend fun testBenchParse(
         errorCollector: ErrorCollector = testErrorCollector(),
         trees: List<SourceContext> = parseText(errorCollector)
     ) {
@@ -65,7 +65,7 @@ class LucidTester(vararg val files: String) {
         }
     }
 
-    fun moduleTypeParse(
+    suspend fun moduleTypeParse(
         errorCollector: ErrorCollector = testErrorCollector(),
         trees: List<SourceContext> = parseText(errorCollector)
     ): List<Module> {
@@ -85,7 +85,7 @@ class LucidTester(vararg val files: String) {
      * @param errorCollector if null, the function will automatically check for errors. If provided, you should check
      * for errors after calling this function.
      */
-    fun fullParse(errorCollector: ErrorCollector? = null): ModuleInstance {
+    suspend fun fullParse(errorCollector: ErrorCollector? = null): ModuleInstance {
         val errors = errorCollector ?: testErrorCollector()
         val trees = parseText(errors)
 
@@ -102,7 +102,7 @@ class LucidTester(vararg val files: String) {
         return moduleInstance
     }
 
-    fun runFirstTestBench(errorCollector: ErrorCollector? = null): SimParent {
+    suspend fun runFirstTestBench(errorCollector: ErrorCollector? = null): SimParent {
         val errors = errorCollector ?: testErrorCollector()
         val tree = parseText(errors)
 
@@ -123,7 +123,7 @@ class LucidTester(vararg val files: String) {
         }
     }
 
-    fun runTestBenches(errorCollector: ErrorCollector? = null) {
+    suspend fun runTestBenches(errorCollector: ErrorCollector? = null) {
         val errors = errorCollector ?: testErrorCollector()
         val tree = parseText(errors)
 

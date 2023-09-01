@@ -4,6 +4,7 @@ import androidx.compose.ui.text.AnnotatedString
 import com.alchitry.labs.ui.code_editor.CodeEditorState
 import com.alchitry.labs.ui.code_editor.LineStyle
 import com.alchitry.labs.ui.code_editor.StyleToken
+import kotlinx.coroutines.runBlocking
 
 class CodeStyler(
     private val editor: CodeEditorState,
@@ -16,7 +17,7 @@ class CodeStyler(
 
         val styleTokens = mutableListOf<StyleToken>().apply {
             addAll(editor.tokens.map { it.styleToken })
-            addAll(codeParser.checkText(editor.getText()))
+            runBlocking { addAll(codeParser.checkText(editor.getText())) } // TODO: do this async?
         }
 
         styleTokens.forEach { token ->

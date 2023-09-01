@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
 
 class ModuleMultiPassTests {
     @Test
-    fun testGlobalUse() {
+    fun testGlobalUse() = runBlocking {
         val tester = LucidTester(
             """
                 global MyGlobal {
@@ -41,7 +41,7 @@ class ModuleMultiPassTests {
     }
 
     @Test
-    fun basicRepeatTest() {
+    fun basicRepeatTest() = runBlocking {
         val tester = LucidTester(
             """
                 module myModule (
@@ -71,7 +71,7 @@ class ModuleMultiPassTests {
     }
 
     @Test
-    fun doubleDriverTest() {
+    fun doubleDriverTest() = runBlocking {
         val tester = LucidTester(
             """
                 module myModule (
@@ -104,7 +104,7 @@ class ModuleMultiPassTests {
     }
 
     @Test
-    fun endlessLoopTest() {
+    fun endlessLoopTest() = runBlocking {
         val tester = LucidTester(
             """
                 module myModule (
@@ -144,7 +144,7 @@ class ModuleMultiPassTests {
     }
 
     @Test
-    fun enumTest() {
+    fun enumTest() = runBlocking {
         val tester = LucidTester(
             """
                 module myModule (
@@ -194,7 +194,7 @@ class ModuleMultiPassTests {
     }
 
     @Test
-    fun globalEnumTest() {
+    fun globalEnumTest() = runBlocking {
         val tester = LucidTester(
             """
                 module myModule (
