@@ -1,7 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
-import com.alchitry.labs.parsers.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.grammar.LucidParser.*
+import com.alchitry.labs.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
@@ -23,7 +23,7 @@ data class BlockParser(
     val testBlocks: MutableMap<TestBlockContext, TestBlock> = mutableMapOf(),
     val repeatSignals: MutableMap<RepeatStatContext, Signal> = mutableMapOf(),
     val functions: MutableMap<String, Function> = mutableMapOf()
-) : LucidBaseListener() {
+) : SuspendLucidBaseListener() {
     private val dependencies = mutableSetOf<Signal>()
     private val drivenSignals = mutableSetOf<Signal>()
     private val localRepeatSignals = mutableMapOf<RepeatStatContext, Signal>()

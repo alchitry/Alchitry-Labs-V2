@@ -13,9 +13,7 @@ import com.alchitry.labs.parsers.lucidv2.types.TestOrModuleInstance
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.Value
 import com.alchitry.labs.project.Project
-import kotlinx.coroutines.runBlocking
 import org.antlr.v4.kotlinruntime.tree.ParseTree
-import org.antlr.v4.kotlinruntime.tree.ParseTreeListener
 
 class LucidBlockContext(
     override val project: Project,
@@ -46,13 +44,11 @@ class LucidBlockContext(
         takeSnapshot = onSnapshot
     }
 
-    fun tick(shouldSnapshot: Boolean) {
+    suspend fun tick(shouldSnapshot: Boolean) {
         if (stage != ParseStage.Evaluation)
             return
-        runBlocking {
-            blockEvaluator.processWriteQueue()
-            project.processQueue()
-        }
+        blockEvaluator.processWriteQueue()
+        project.processQueue()
         if (shouldSnapshot)
             takeSnapshot()
     }
@@ -84,7 +80,7 @@ class LucidBlockContext(
     val signalDriver = signalDriver ?: SignalDriverParser(this)
 
     private fun getListeners() = when (stage) {
-        ParseStage.ModuleInternals -> listOf<ParseTreeListener>(
+        ParseStage.ModuleInternals -> listOf(
             this.expr,
             this.bitSelection,
             this.struct,
@@ -95,21 +91,21 @@ class LucidBlockContext(
             this.signal
         )
 
-        ParseStage.Drivers -> listOf<ParseTreeListener>(
+        ParseStage.Drivers -> listOf(
             this.expr,
             this.bitSelection,
             this.signal,
             this.signalDriver
         )
 
-        ParseStage.Evaluation -> listOf<ParseTreeListener>(
+        ParseStage.Evaluation -> listOf(
             this.expr,
             this.bitSelection,
             this.signal,
             this.blockEvaluator
         )
 
-        ParseStage.ErrorCheck -> listOf<ParseTreeListener>(
+        ParseStage.ErrorCheck -> listOf(
             this.expr,
             this.bitSelection,
             this.struct,

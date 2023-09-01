@@ -4,8 +4,8 @@ import com.alchitry.labs.parsers.BigFunctions
 import com.alchitry.labs.parsers.BitUtil.widthOfMult
 import com.alchitry.labs.parsers.errors.ErrorStrings
 import com.alchitry.labs.parsers.errors.WarningStrings
-import com.alchitry.labs.parsers.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.grammar.LucidParser.*
+import com.alchitry.labs.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidExprContext
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
@@ -29,7 +29,7 @@ data class ExprParser(
     private val context: LucidExprContext,
     private val values: MutableMap<ParseTree, Value> = mutableMapOf(),
     private val dependencies: MutableMap<ParseTree, Set<Signal>> = mutableMapOf()
-) : LucidBaseListener() {
+) : SuspendLucidBaseListener() {
     private var inTestBlock = false
     private var inFunctionBlock = false
 

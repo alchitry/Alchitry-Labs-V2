@@ -10,6 +10,7 @@ import org.antlr.v4.kotlinruntime.atn.ParserATNSimulator
 import org.antlr.v4.kotlinruntime.atn.PredictionContextCache
 import org.antlr.v4.kotlinruntime.dfa.DFA
 import org.antlr.v4.kotlinruntime.tree.ParseTreeListener
+import org.antlr.v4.kotlinruntime.tree.SuspendParseTreeListener
 import org.antlr.v4.kotlinruntime.tree.TerminalNode
 
 class LucidParser(input: TokenStream) : Parser(input) {
@@ -369,12 +370,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterSource(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterSource(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitSource(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitSource(this)
         }
     }
 
@@ -457,12 +466,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterGlobal(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterGlobal(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitGlobal(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitGlobal(this)
         }
     }
 
@@ -579,12 +596,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterGlobalStat(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterGlobalStat(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitGlobalStat(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitGlobalStat(this)
         }
     }
 
@@ -648,12 +673,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterModule(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterModule(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitModule(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitModule(this)
         }
     }
 
@@ -767,12 +800,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterTestBench(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterTestBench(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitTestBench(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitTestBench(this)
         }
     }
 
@@ -843,12 +884,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterParamList(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterParamList(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitParamList(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitParamList(this)
         }
     }
 
@@ -966,12 +1015,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterPortList(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterPortList(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitPortList(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitPortList(this)
         }
     }
 
@@ -1096,12 +1153,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterParamDec(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterParamDec(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitParamDec(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitParamDec(this)
         }
     }
 
@@ -1213,12 +1278,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterParamDefault(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterParamDefault(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitParamDefault(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitParamDefault(this)
         }
     }
 
@@ -1253,12 +1326,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterParamConstraint(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterParamConstraint(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitParamConstraint(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitParamConstraint(this)
         }
     }
 
@@ -1298,12 +1379,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterPortDec(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterPortDec(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitPortDec(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitPortDec(this)
         }
     }
 
@@ -1379,12 +1468,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterPortDirection(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterPortDirection(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitPortDirection(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitPortDirection(this)
         }
     }
 
@@ -1429,12 +1526,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterSignalWidth(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterSignalWidth(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitSignalWidth(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitSignalWidth(this)
         }
     }
 
@@ -1494,12 +1599,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterArraySize(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterArraySize(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitArraySize(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitArraySize(this)
         }
     }
 
@@ -1570,12 +1683,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterStructType(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterStructType(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitStructType(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitStructType(this)
         }
     }
 
@@ -1686,12 +1807,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterStructMemberConst(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterStructMemberConst(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitStructMemberConst(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitStructMemberConst(this)
         }
     }
 
@@ -1781,12 +1910,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterStructConst(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterStructConst(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitStructConst(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitStructConst(this)
         }
     }
 
@@ -1917,12 +2054,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterModuleBody(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterModuleBody(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitModuleBody(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitModuleBody(this)
         }
     }
 
@@ -2001,12 +2146,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterStatModuleInst(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterStatModuleInst(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitStatModuleInst(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitStatModuleInst(this)
         }
     }
 
@@ -2017,12 +2170,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterStatTest(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterStatTest(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitStatTest(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitStatTest(this)
         }
     }
 
@@ -2033,12 +2194,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterStatConst(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterStatConst(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitStatConst(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitStatConst(this)
         }
     }
 
@@ -2049,12 +2218,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterStatDFF(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterStatDFF(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitStatDFF(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitStatDFF(this)
         }
     }
 
@@ -2065,12 +2242,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterStatFunction(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterStatFunction(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitStatFunction(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitStatFunction(this)
         }
     }
 
@@ -2081,12 +2266,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterStatAlways(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterStatAlways(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitStatAlways(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitStatAlways(this)
         }
     }
 
@@ -2097,12 +2290,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterStatStruct(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterStatStruct(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitStatStruct(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitStatStruct(this)
         }
     }
 
@@ -2113,12 +2314,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterStatSig(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterStatSig(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitStatSig(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitStatSig(this)
         }
     }
 
@@ -2129,12 +2338,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterStatEnum(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterStatEnum(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitStatEnum(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitStatEnum(this)
         }
     }
 
@@ -2145,12 +2362,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterStatAssign(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterStatAssign(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitStatAssign(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitStatAssign(this)
         }
     }
 
@@ -2277,12 +2502,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterConstDec(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterConstDec(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitConstDec(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitConstDec(this)
         }
     }
 
@@ -2376,12 +2609,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterAssignBlock(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterAssignBlock(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitAssignBlock(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitAssignBlock(this)
         }
     }
 
@@ -2481,12 +2722,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterSigCon(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterSigCon(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitSigCon(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitSigCon(this)
         }
     }
 
@@ -2575,12 +2824,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterParamCon(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterParamCon(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitParamCon(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitParamCon(this)
         }
     }
 
@@ -2672,12 +2929,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterSigDec(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterSigDec(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitSigDec(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitSigDec(this)
         }
     }
 
@@ -2801,12 +3066,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterDffDec(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterDffDec(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitDffDec(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitDffDec(this)
         }
     }
 
@@ -2912,12 +3185,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterEnumDec(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterEnumDec(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitEnumDec(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitEnumDec(this)
         }
     }
 
@@ -3073,12 +3354,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterModuleInst(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterModuleInst(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitModuleInst(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitModuleInst(this)
         }
     }
 
@@ -3188,12 +3477,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterInstCons(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterInstCons(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitInstCons(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitInstCons(this)
         }
     }
 
@@ -3311,12 +3608,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterConList(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterConList(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitConList(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitConList(this)
         }
     }
 
@@ -3400,12 +3705,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterConnection(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterConnection(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitConnection(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitConnection(this)
         }
     }
 
@@ -3460,12 +3773,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterStructMember(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterStructMember(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitStructMember(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitStructMember(this)
         }
     }
 
@@ -3532,12 +3853,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterStructDec(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterStructDec(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitStructDec(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitStructDec(this)
         }
     }
 
@@ -3688,12 +4017,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterFunctionArg(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterFunctionArg(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitFunctionArg(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitFunctionArg(this)
         }
     }
 
@@ -3746,12 +4083,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterFunctionBlock(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterFunctionBlock(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitFunctionBlock(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitFunctionBlock(this)
         }
     }
 
@@ -3906,12 +4251,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterFunctionBody(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterFunctionBody(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitFunctionBody(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitFunctionBody(this)
         }
     }
 
@@ -3949,12 +4302,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterTestBlock(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterTestBlock(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitTestBlock(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitTestBlock(this)
         }
     }
 
@@ -4024,12 +4385,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterAlwaysBlock(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterAlwaysBlock(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitAlwaysBlock(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitAlwaysBlock(this)
         }
     }
 
@@ -4093,12 +4462,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterAlwaysIf(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterAlwaysIf(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitAlwaysIf(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitAlwaysIf(this)
         }
     }
 
@@ -4109,12 +4486,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterAlwaysCase(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterAlwaysCase(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitAlwaysCase(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitAlwaysCase(this)
         }
     }
 
@@ -4125,12 +4510,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterAlwaysAssign(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterAlwaysAssign(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitAlwaysAssign(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitAlwaysAssign(this)
         }
     }
 
@@ -4142,12 +4535,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterAlwaysFunction(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterAlwaysFunction(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitAlwaysFunction(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitAlwaysFunction(this)
         }
     }
 
@@ -4158,12 +4559,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterAlwaysRepeat(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterAlwaysRepeat(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitAlwaysRepeat(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitAlwaysRepeat(this)
         }
     }
 
@@ -4248,12 +4657,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterBlock(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterBlock(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitBlock(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitBlock(this)
         }
     }
 
@@ -4340,12 +4757,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterAssignStat(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterAssignStat(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitAssignStat(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitAssignStat(this)
         }
     }
 
@@ -4417,12 +4842,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterArrayIndex(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterArrayIndex(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitArrayIndex(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitArrayIndex(this)
         }
     }
 
@@ -4505,12 +4938,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterBitSelectorConst(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterBitSelectorConst(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitBitSelectorConst(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitBitSelectorConst(this)
         }
     }
 
@@ -4524,12 +4965,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterBitSelectorFixWidth(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterBitSelectorFixWidth(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitBitSelectorFixWidth(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitBitSelectorFixWidth(this)
         }
     }
 
@@ -4736,12 +5185,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterBitSelection(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterBitSelection(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitBitSelection(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitBitSelection(this)
         }
     }
 
@@ -4828,12 +5285,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterSignal(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterSignal(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitSignal(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitSignal(this)
         }
     }
 
@@ -4968,12 +5433,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterCaseStat(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterCaseStat(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitCaseStat(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitCaseStat(this)
         }
     }
 
@@ -5107,12 +5580,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterCaseElem(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterCaseElem(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitCaseElem(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitCaseElem(this)
         }
     }
 
@@ -5186,12 +5667,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterCaseBlock(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterCaseBlock(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitCaseBlock(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitCaseBlock(this)
         }
     }
 
@@ -5262,12 +5751,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterIfStat(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterIfStat(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitIfStat(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitIfStat(this)
         }
     }
 
@@ -5391,12 +5888,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterElseStat(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterElseStat(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitElseStat(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitElseStat(this)
         }
     }
 
@@ -5452,12 +5957,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterRepeatStat(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterRepeatStat(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitRepeatStat(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitRepeatStat(this)
         }
     }
 
@@ -5597,12 +6110,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterRepeatBlock(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterRepeatBlock(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitRepeatBlock(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitRepeatBlock(this)
         }
     }
 
@@ -5641,12 +6162,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterFunction(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterFunction(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitFunction(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitFunction(this)
         }
     }
 
@@ -5784,12 +6313,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterFunctionExpr(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterFunctionExpr(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitFunctionExpr(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitFunctionExpr(this)
         }
     }
 
@@ -5844,12 +6381,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterNumber(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterNumber(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitNumber(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitNumber(this)
         }
     }
 
@@ -5907,12 +6452,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprTernary(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprTernary(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprTernary(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprTernary(this)
         }
     }
 
@@ -5923,12 +6476,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprNum(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprNum(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprNum(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprNum(this)
         }
     }
 
@@ -5942,12 +6503,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprConcat(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprConcat(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprConcat(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprConcat(this)
         }
     }
 
@@ -5960,12 +6529,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprReduction(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprReduction(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprReduction(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprReduction(this)
         }
     }
 
@@ -5978,12 +6555,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprInvert(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprInvert(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprInvert(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprInvert(this)
         }
     }
 
@@ -5994,12 +6579,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprStruct(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprStruct(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprStruct(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprStruct(this)
         }
     }
 
@@ -6013,12 +6606,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprArray(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprArray(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprArray(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprArray(this)
         }
     }
 
@@ -6032,12 +6633,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprShift(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprShift(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprShift(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprShift(this)
         }
     }
 
@@ -6051,12 +6660,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprAddSub(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprAddSub(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprAddSub(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprAddSub(this)
         }
     }
 
@@ -6070,12 +6687,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprLogical(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprLogical(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprLogical(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprLogical(this)
         }
     }
 
@@ -6088,12 +6713,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprNegate(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprNegate(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprNegate(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprNegate(this)
         }
     }
 
@@ -6106,12 +6739,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprGroup(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprGroup(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprGroup(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprGroup(this)
         }
     }
 
@@ -6125,12 +6766,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprBitwise(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprBitwise(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprBitwise(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprBitwise(this)
         }
     }
 
@@ -6141,12 +6790,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprFunction(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprFunction(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprFunction(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprFunction(this)
         }
     }
 
@@ -6160,12 +6817,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprCompare(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprCompare(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprCompare(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprCompare(this)
         }
     }
 
@@ -6179,12 +6844,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprDup(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprDup(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprDup(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprDup(this)
         }
     }
 
@@ -6198,12 +6871,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprMultDiv(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprMultDiv(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprMultDiv(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprMultDiv(this)
         }
     }
 
@@ -6214,12 +6895,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
             copyFrom(ctx)
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterExprSignal(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterExprSignal(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitExprSignal(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitExprSignal(this)
         }
     }
 
@@ -7080,12 +7769,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterName(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterName(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitName(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitName(this)
         }
     }
 
@@ -7130,12 +7827,20 @@ class LucidParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
-        override suspend fun enterRule(listener: ParseTreeListener) {
+        override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.enterSemi(this)
         }
 
-        override suspend fun exitRule(listener: ParseTreeListener) {
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.enterSemi(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
             if (listener is LucidListener) listener.exitSemi(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendLucidListener) listener.exitSemi(this)
         }
     }
 

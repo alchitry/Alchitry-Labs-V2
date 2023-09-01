@@ -8,7 +8,6 @@ import com.alchitry.labs.parsers.lucidv2.parsers.*
 import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
 import com.alchitry.labs.parsers.lucidv2.types.GlobalNamespace
 import com.alchitry.labs.project.Project
-import org.antlr.v4.kotlinruntime.tree.ParseTreeListener
 
 class LucidGlobalContext(
     override val project: Project,
@@ -24,7 +23,7 @@ class LucidGlobalContext(
     private val enum = EnumParser(this)
     private val constant = ConstantParser(this)
 
-    private val listeners = listOf<ParseTreeListener>(
+    private val listeners = listOf(
         this.expr,
         this.bitSelection,
         this.struct,

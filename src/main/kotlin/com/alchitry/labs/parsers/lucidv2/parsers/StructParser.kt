@@ -16,15 +16,15 @@ data class StructParser(
     fun resolve(structTypeContext: StructTypeContext) = resolvedStructTypes[structTypeContext]
     fun resolve(structDecContext: StructDecContext) = structTypes[structDecContext]
 
-    override suspend fun enterModule(ctx: ModuleContext) {
+    override fun enterModule(ctx: ModuleContext) {
         localStructType.clear()
     }
 
-    override suspend fun enterGlobal(ctx: GlobalContext) {
+    override fun enterGlobal(ctx: GlobalContext) {
         localStructType.clear()
     }
 
-    override suspend fun exitStructDec(ctx: StructDecContext) {
+    override fun exitStructDec(ctx: StructDecContext) {
         val nameCtx = ctx.name() ?: return
         val name = nameCtx.text
 
@@ -69,7 +69,7 @@ data class StructParser(
         }
     }
 
-    override suspend fun exitStructType(ctx: StructTypeContext) {
+    override fun exitStructType(ctx: StructTypeContext) {
         val nameCtx = ctx.name()
         val name = nameCtx.firstOrNull()?.text ?: return
 

@@ -1,7 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
-import com.alchitry.labs.parsers.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.grammar.LucidParser.*
+import com.alchitry.labs.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
@@ -12,7 +12,7 @@ import com.alchitry.labs.parsers.lucidv2.values.minBits
 
 data class BlockEvaluator(
     private val context: LucidBlockContext
-) : LucidBaseListener() {
+) : SuspendLucidBaseListener() {
     fun withContext(context: LucidBlockContext) = copy(context = context)
 
     private val writtenSignals = mutableSetOf<Signal>()

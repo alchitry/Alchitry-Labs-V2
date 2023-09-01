@@ -1,7 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
-import com.alchitry.labs.parsers.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.grammar.LucidParser.*
+import com.alchitry.labs.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs.parsers.lucidv2.signals.*
@@ -13,7 +13,7 @@ import com.alchitry.labs.parsers.lucidv2.values.*
 
 data class TypesParser(
     private val context: LucidBlockContext
-) : LucidBaseListener(), SignalResolver {
+) : SuspendLucidBaseListener(), SignalResolver {
     val dffs = mutableMapOf<String, Dff>()
     val sigs = mutableMapOf<String, Signal>()
     val moduleInstances = mutableMapOf<String, ModuleInstanceOrArray>()

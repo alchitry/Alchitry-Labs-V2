@@ -10,7 +10,6 @@ import com.alchitry.labs.parsers.lucidv2.types.Constant
 import com.alchitry.labs.parsers.lucidv2.types.EnumType
 import com.alchitry.labs.parsers.lucidv2.types.Module
 import com.alchitry.labs.project.Project
-import org.antlr.v4.kotlinruntime.tree.ParseTreeListener
 
 class LucidModuleTypeContext(
     override val project: Project,
@@ -24,7 +23,7 @@ class LucidModuleTypeContext(
     private val signal = SignalParser(this)
     private val module = ModuleParser(this)
 
-    private val listeners = listOf<ParseTreeListener>(
+    private val listeners = listOf(
         this.expr,
         this.bitSelection,
         this.struct,
