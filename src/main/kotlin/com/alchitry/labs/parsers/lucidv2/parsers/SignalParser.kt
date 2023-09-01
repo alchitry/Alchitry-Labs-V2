@@ -27,7 +27,7 @@ data class SignalParser(
     fun resolve(sigCtx: SignalContext): SignalOrSubSignal? = signals[sigCtx]
     fun resolve(ctx: SignalWidthContext): SignalWidth? = signalWidths[ctx]
 
-    override fun enterRepeatBlock(ctx: RepeatBlockContext) {
+    override suspend fun enterRepeatBlock(ctx: RepeatBlockContext) {
         if (context !is LucidBlockContext || context.stage == ParseStage.Evaluation)
             return
 
@@ -38,7 +38,7 @@ data class SignalParser(
         context.localSignals[newSig.name] = newSig
     }
 
-    override fun exitRepeatBlock(ctx: RepeatBlockContext) {
+    override suspend fun exitRepeatBlock(ctx: RepeatBlockContext) {
         if (context !is LucidBlockContext || context.stage == ParseStage.Evaluation)
             return
 
@@ -46,7 +46,7 @@ data class SignalParser(
         context.localSignals.remove(repCtx.name()?.text)
     }
 
-    override fun enterFunctionBody(ctx: FunctionBodyContext) {
+    override suspend fun enterFunctionBody(ctx: FunctionBodyContext) {
         if (context !is LucidBlockContext || context.stage == ParseStage.Evaluation)
             return
 
@@ -60,7 +60,7 @@ data class SignalParser(
         }
     }
 
-    override fun exitFunctionBody(ctx: FunctionBodyContext) {
+    override suspend fun exitFunctionBody(ctx: FunctionBodyContext) {
         if (context !is LucidBlockContext || context.stage == ParseStage.Evaluation)
             return
 
@@ -73,7 +73,7 @@ data class SignalParser(
         }
     }
 
-    override fun exitSignal(ctx: SignalContext) {
+    override suspend fun exitSignal(ctx: SignalContext) {
         val nameCtx = ctx.name()
         val firstName = nameCtx.firstOrNull() ?: return
         val signalOrParent = context.resolveSignal(firstName.text)
@@ -142,7 +142,7 @@ data class SignalParser(
         signals[ctx] = selectedSignal
     }
 
-    override fun exitSignalWidth(ctx: SignalWidthContext) {
+    override suspend fun exitSignalWidth(ctx: SignalWidthContext) {
         val dims = ctx.arraySize()
             .asReversed()
             .mapNotNull {

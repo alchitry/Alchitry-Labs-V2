@@ -30,8 +30,8 @@ class ModuleInstance(
         return SnapshotParent(name, snapshots)
     }
 
-    fun checkParameters(): Boolean = context.checkParameters()
-    fun initialWalk() = context.initialWalk(module.context)
+    suspend fun checkParameters(): Boolean = context.checkParameters()
+    suspend fun initialWalk() = context.initialWalk(module.context)
 
     val ports = module.ports.mapValues { (_, port) ->
         port.instantiate(this, project)

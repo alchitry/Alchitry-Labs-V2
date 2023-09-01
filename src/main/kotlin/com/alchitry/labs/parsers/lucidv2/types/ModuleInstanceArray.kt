@@ -81,8 +81,8 @@ class ModuleInstanceArray(
         return null
     }
 
-    fun checkAllParameters(): Boolean = modules.map { it.checkParameters() }.all { it }
-    fun initialWalkAll(): Boolean = modules.map { it.initialWalk() }.all { it }
+    suspend fun checkAllParameters(): Boolean = modules.suspendMap { it.checkParameters() }.all { it }
+    suspend fun initialWalkAll(): Boolean = modules.suspendMap { it.initialWalk() }.all { it }
 
     init {
         require(dimensions.isNotEmpty()) { "Dimensions must not be empty!" }
@@ -138,11 +138,28 @@ class ModuleList(private val modules: List<ListOrModuleInstance>) : ListOrModule
         return list
     }
 
+    suspend fun <T> suspendMap(block: suspend (ModuleInstance) -> T): List<T> {
+        val list = mutableListOf<T>()
+        suspendForEach {
+            list.add(block(it))
+        }
+        return list
+    }
+
     fun forEach(block: (ModuleInstance) -> Unit) {
         modules.forEach {
             when (it) {
                 is ModuleInstance -> block(it)
                 is ModuleList -> forEach(block)
+            }
+        }
+    }
+
+    suspend fun suspendForEach(block: suspend (ModuleInstance) -> Unit) {
+        modules.forEach {
+            when (it) {
+                is ModuleInstance -> block(it)
+                is ModuleList -> suspendForEach(block)
             }
         }
     }

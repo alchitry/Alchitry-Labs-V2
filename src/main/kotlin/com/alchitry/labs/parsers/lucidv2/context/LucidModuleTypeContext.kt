@@ -32,7 +32,7 @@ class LucidModuleTypeContext(
         this.module
     )
 
-    fun extract(t: SourceContext): Module? {
+    suspend fun extract(t: SourceContext): Module? {
         ParseTreeMultiWalker.walk(
             listeners,
             t,

@@ -7,12 +7,13 @@ import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.BitValue
 import helpers.SimpleLucidTester
 import helpers.TestSignalResolver
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.Test
 
 internal class ExprParserTests {
     @Test
-    fun testNumbers() {
+    fun testNumbers() = runBlocking {
         var test = SimpleLucidTester("5b11011")
         var tree = test.parser.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("11011", 2, 5, constant = true, signed = false), test.context.expr.resolve(tree))
@@ -54,7 +55,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun testAddition() {
+    fun testAddition() = runBlocking {
         val test = SimpleLucidTester("5b1101 + 4b0010")
         val tree = test.parser.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("1111", 2, 6, constant = true, signed = false), test.context.expr.resolve(tree))
@@ -62,7 +63,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun testSubtraction() {
+    fun testSubtraction() = runBlocking {
         val test = SimpleLucidTester("5b1101 - 4b0010")
         val tree = test.parser.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("1011", 2, 6, constant = true, signed = false), test.context.expr.resolve(tree))
@@ -70,7 +71,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun testConcat() {
+    fun testConcat() = runBlocking {
         var test = SimpleLucidTester("c{b1101, b0010, 0}")
         var tree = test.parser.expr().also { test.context.walk(it) }
         assertEquals(
@@ -107,7 +108,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun testDup() {
+    fun testDup() = runBlocking {
         var test = SimpleLucidTester("2x{0}")
         var tree = test.parser.expr().also { test.context.walk(it) }
         assertEquals(BitListValue("00", 2, 2, constant = true, signed = false), test.context.expr.resolve(tree))
@@ -129,7 +130,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun testArray() {
+    fun testArray() = runBlocking {
         var test = SimpleLucidTester("{0}")
         var tree = test.parser.expr().also { test.context.walk(it) }
         assertEquals(
@@ -181,7 +182,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun testMultiply() {
+    fun testMultiply() = runBlocking {
         var test = SimpleLucidTester("20 * 40")
         var tree = test.parser.expr().also { test.context.walk(it) }
 
@@ -243,7 +244,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun testDivide() {
+    fun testDivide() = runBlocking {
         var test = SimpleLucidTester("40 / 8")
         var tree = test.parser.expr().also { test.context.walk(it) }
 
@@ -266,7 +267,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun testNegativeShift() {
+    fun testNegativeShift() = runBlocking {
         val test = SimpleLucidTester("-8 >> 2")
         val tree = test.parser.expr().also { test.context.walk(it) }
 
@@ -278,7 +279,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun testShift() {
+    fun testShift() = runBlocking {
         var test = SimpleLucidTester("40 >> 3")
         var tree = test.parser.expr().also { test.context.walk(it) }
 
@@ -344,7 +345,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun testBitwise() {
+    fun testBitwise() = runBlocking {
         var test = SimpleLucidTester("b1101 & b1001")
         var tree = test.parser.expr().also { test.context.walk(it) }
 
@@ -428,7 +429,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun testReduction() {
+    fun testReduction() = runBlocking {
         var test = SimpleLucidTester("|b1001")
         var tree = test.parser.expr().also { test.context.walk(it) }
 
@@ -494,7 +495,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun testCompare() {
+    fun testCompare() = runBlocking {
         var test = SimpleLucidTester("10 < 4")
         var tree = test.parser.expr().also { test.context.walk(it) }
 
@@ -551,7 +552,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun testLogical() {
+    fun testLogical() = runBlocking {
         var test = SimpleLucidTester("10 || 0")
         var tree = test.parser.expr().also { test.context.walk(it) }
         assert(test.hasNoIssues)
@@ -590,7 +591,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun testTernary() {
+    fun testTernary() = runBlocking {
         var test = SimpleLucidTester("10 ? 1 : 2")
         var tree = test.parser.expr().also { test.context.walk(it) }
         assert(test.hasNoIssues)
@@ -611,7 +612,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun testInvert() {
+    fun testInvert() = runBlocking {
         var test = SimpleLucidTester("!10")
         var tree = test.parser.expr().also { test.context.walk(it) }
 
@@ -641,7 +642,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun testNegate() {
+    fun testNegate() = runBlocking {
         var test = SimpleLucidTester("-20")
         var tree = test.parser.expr().also { test.context.walk(it) }
 
@@ -664,7 +665,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun testFunctions() {
+    fun testFunctions() = runBlocking {
         var test = SimpleLucidTester("\$signed(20)")
         var tree = test.parser.expr().also { test.context.walk(it) }
 
@@ -893,7 +894,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun simpleSignalTest() {
+    fun simpleSignalTest() = runBlocking {
         val signal =
             Signal("mySig", SignalDirection.Both, null, BitListValue("110", 2, constant = false, signed = false))
         val test =
@@ -906,7 +907,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun rangeSignalTest() {
+    fun rangeSignalTest() = runBlocking {
         val signal =
             Signal("mySig", SignalDirection.Both, null, BitListValue("1010", 2, constant = false, signed = false))
         val test =
@@ -919,7 +920,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun rangeOutOfBoundsSignalTest() {
+    fun rangeOutOfBoundsSignalTest() = runBlocking {
         val signal =
             Signal("mySig", SignalDirection.Both, null, BitListValue("1010", 2, constant = false, signed = false))
         val test =
@@ -931,7 +932,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun fixedPointTest() {
+    fun fixedPointTest() = runBlocking {
         val test =
             SimpleLucidTester("\$fixedPoint(3.14, 8, 4)")
         val expr = test.parser.expr().also { test.context.walk(it) }
@@ -947,7 +948,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun fixedPointIntTest() {
+    fun fixedPointIntTest() = runBlocking {
         val test =
             SimpleLucidTester("\$fixedPoint(10, 8, 4)")
         val expr = test.parser.expr().also { test.context.walk(it) }
@@ -963,7 +964,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun fixedPointOverflowTest() {
+    fun fixedPointOverflowTest() = runBlocking {
         val test =
             SimpleLucidTester("\$fixedPoint(300.14, 8, 4)")
         val expr = test.parser.expr().also { test.context.walk(it) }
@@ -980,7 +981,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun cFixedPointTest() {
+    fun cFixedPointTest() = runBlocking {
         val test =
             SimpleLucidTester("\$cFixedPoint(3.14, 8, 4)")
         val expr = test.parser.expr().also { test.context.walk(it) }
@@ -996,7 +997,7 @@ internal class ExprParserTests {
     }
 
     @Test
-    fun fFixedPointTest() {
+    fun fFixedPointTest() = runBlocking {
         val test =
             SimpleLucidTester("\$fFixedPoint(3.16, 8, 4)")
         val expr = test.parser.expr().also { test.context.walk(it) }

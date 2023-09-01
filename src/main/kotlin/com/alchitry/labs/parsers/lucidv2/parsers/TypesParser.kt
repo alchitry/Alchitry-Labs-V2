@@ -38,7 +38,7 @@ data class TypesParser(
         }
     }
 
-    override fun exitModuleInst(ctx: ModuleInstContext) {
+    override suspend fun exitModuleInst(ctx: ModuleInstContext) {
         val nameCtx = ctx.name()
         val moduleTypeName = nameCtx.getOrNull(0)?.text ?: return
         val moduleInstanceName = nameCtx.getOrNull(1)?.text ?: return
@@ -313,7 +313,7 @@ data class TypesParser(
         moduleInstances[instance.name] = instance
     }
 
-    override fun exitConList(ctx: ConListContext) {
+    override suspend fun exitConList(ctx: ConListContext) {
         val signals = mutableListOf<Connection>()
         val params = mutableListOf<Connection>()
         ctx.connection().forEach { connectionContext ->
@@ -343,11 +343,11 @@ data class TypesParser(
         assignmentBlocks.add(AssignmentBlock(signals, params))
     }
 
-    override fun exitAssignBlock(ctx: AssignBlockContext) {
+    override suspend fun exitAssignBlock(ctx: AssignBlockContext) {
         assignmentBlocks.removeLast()
     }
 
-    override fun exitArraySize(ctx: ArraySizeContext) {
+    override suspend fun exitArraySize(ctx: ArraySizeContext) {
         val expr = context.expr.resolve(ctx.expr() ?: return)
         if (expr == null) {
             context.reportError(ctx, "Array size expression couldn't be resolved.")
@@ -373,7 +373,7 @@ data class TypesParser(
     }
 
 
-    override fun exitSigDec(ctx: SigDecContext) {
+    override suspend fun exitSigDec(ctx: SigDecContext) {
         val signed = ctx.SIGNED() != null
         val nameCtx = ctx.name() ?: return
         val name = nameCtx.text
@@ -420,7 +420,7 @@ data class TypesParser(
         sigs[name] = signal
     }
 
-    override fun exitDffDec(ctx: DffDecContext) {
+    override suspend fun exitDffDec(ctx: DffDecContext) {
         val signed = ctx.SIGNED() != null
 
         val nameCtx = ctx.name() ?: return

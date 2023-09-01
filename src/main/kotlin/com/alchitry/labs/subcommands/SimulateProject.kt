@@ -26,7 +26,7 @@ class SimulateProject : Subcommand("sim", "Simulate a project") {
         }
 
         val errorManager = ErrorManager()
-        val topModule = project.parse(errorManager)
+        val topModule = runBlocking { project.parse(errorManager) }
 
         if (topModule == null) {
             println("Failed to fully parse project!")

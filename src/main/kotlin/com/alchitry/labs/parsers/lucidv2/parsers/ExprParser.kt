@@ -51,39 +51,39 @@ data class ExprParser(
         return value.constant
     }
 
-    override fun enterTestBlock(ctx: TestBlockContext) {
+    override suspend fun enterTestBlock(ctx: TestBlockContext) {
         inTestBlock = true
     }
 
-    override fun exitTestBlock(ctx: TestBlockContext) {
+    override suspend fun exitTestBlock(ctx: TestBlockContext) {
         inTestBlock = false
     }
 
-    override fun enterFunctionBlock(ctx: FunctionBlockContext) {
+    override suspend fun enterFunctionBlock(ctx: FunctionBlockContext) {
         inFunctionBlock = true
     }
 
-    override fun exitFunctionBlock(ctx: FunctionBlockContext) {
+    override suspend fun exitFunctionBlock(ctx: FunctionBlockContext) {
         inFunctionBlock = false
     }
 
-    override fun exitBitSelectorFixWidth(ctx: BitSelectorFixWidthContext) {
+    override suspend fun exitBitSelectorFixWidth(ctx: BitSelectorFixWidthContext) {
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
     }
 
-    override fun exitBitSelectorConst(ctx: BitSelectorConstContext) {
+    override suspend fun exitBitSelectorConst(ctx: BitSelectorConstContext) {
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
     }
 
-    override fun exitArrayIndex(ctx: ArrayIndexContext) {
+    override suspend fun exitArrayIndex(ctx: ArrayIndexContext) {
         dependencies[ctx.expr() ?: return]?.let { dependencies[ctx] = it }
     }
 
-    override fun exitNumber(ctx: NumberContext) {
+    override suspend fun exitNumber(ctx: NumberContext) {
         if (canSkip(ctx)) return
         dependencies[ctx] = emptySet()
 
@@ -183,7 +183,7 @@ data class ExprParser(
             values[ctx] = value
     }
 
-    override fun exitParamConstraint(ctx: ParamConstraintContext) {
+    override suspend fun exitParamConstraint(ctx: ParamConstraintContext) {
         if (canSkip(ctx)) return
         val exprCtx = ctx.expr() ?: return
 
@@ -191,7 +191,7 @@ data class ExprParser(
         dependencies[exprCtx]?.let { dependencies[ctx] = it }
     }
 
-    override fun exitStructConst(ctx: StructConstContext) {
+    override suspend fun exitStructConst(ctx: StructConstContext) {
         if (canSkip(ctx)) return
 
         val type = ctx.structType()?.let { context.resolve(it) } ?: return
@@ -236,13 +236,13 @@ data class ExprParser(
         values[ctx] = StructValue(type, members)
     }
 
-    override fun exitBitSelection(ctx: BitSelectionContext) {
+    override suspend fun exitBitSelection(ctx: BitSelectionContext) {
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             ctx.children?.forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
     }
 
-    override fun exitExprSignal(ctx: ExprSignalContext) {
+    override suspend fun exitExprSignal(ctx: ExprSignalContext) {
         if (canSkip(ctx)) return
         val signalCtx = ctx.signal() ?: return
 
@@ -268,28 +268,28 @@ data class ExprParser(
         }
     }
 
-    override fun exitExprStruct(ctx: ExprStructContext) {
+    override suspend fun exitExprStruct(ctx: ExprStructContext) {
         if (canSkip(ctx)) return
         val structCtx = ctx.structConst() ?: return
         values[structCtx]?.let { values[ctx] = it }
         dependencies[structCtx]?.let { dependencies[ctx] = it }
     }
 
-    override fun exitExprFunction(ctx: ExprFunctionContext) {
+    override suspend fun exitExprFunction(ctx: ExprFunctionContext) {
         if (canSkip(ctx)) return
         val functionCtx = ctx.function() ?: return
         values[functionCtx]?.let { values[ctx] = it }
         dependencies[functionCtx]?.let { dependencies[ctx] = it }
     }
 
-    override fun exitExprNum(ctx: ExprNumContext) {
+    override suspend fun exitExprNum(ctx: ExprNumContext) {
         if (canSkip(ctx)) return
         val numCtx = ctx.number() ?: return
         values[numCtx]?.let { values[ctx] = it }
         dependencies[numCtx]?.let { dependencies[ctx] = it }
     }
 
-    override fun exitExprGroup(ctx: ExprGroupContext) {
+    override suspend fun exitExprGroup(ctx: ExprGroupContext) {
         if (canSkip(ctx)) return
         val exprCtx = ctx.expr() ?: return
 
@@ -298,7 +298,7 @@ data class ExprParser(
     }
 
     // always returns an unsigned value
-    override fun exitExprConcat(ctx: ExprConcatContext) {
+    override suspend fun exitExprConcat(ctx: ExprConcatContext) {
         if (canSkip(ctx)) return
         val exprCtx = ctx.expr()
         if (exprCtx.isEmpty()) return
@@ -392,7 +392,7 @@ data class ExprParser(
     }
 
     // always returns an unsigned value
-    override fun exitExprDup(ctx: ExprDupContext) {
+    override suspend fun exitExprDup(ctx: ExprDupContext) {
         if (canSkip(ctx)) return
 
         val exprCtx = ctx.expr()
@@ -475,7 +475,7 @@ data class ExprParser(
         debug(ctx)
     }
 
-    override fun exitExprArray(ctx: ExprArrayContext) {
+    override suspend fun exitExprArray(ctx: ExprArrayContext) {
         if (canSkip(ctx)) return
         val exprCtx = ctx.expr()
         if (exprCtx.isEmpty())
@@ -515,7 +515,7 @@ data class ExprParser(
         values[ctx] = ArrayValue(elements)
     }
 
-    override fun exitExprNegate(ctx: ExprNegateContext) {
+    override suspend fun exitExprNegate(ctx: ExprNegateContext) {
         if (canSkip(ctx)) return
 
         val exprCtx = ctx.expr() ?: return
@@ -547,7 +547,7 @@ data class ExprParser(
         debug(ctx)
     }
 
-    override fun exitExprInvert(ctx: ExprInvertContext) {
+    override suspend fun exitExprInvert(ctx: ExprInvertContext) {
         if (canSkip(ctx)) return
 
         val exprCtx = ctx.expr() ?: return
@@ -564,7 +564,7 @@ data class ExprParser(
         debug(ctx)
     }
 
-    override fun exitExprAddSub(ctx: ExprAddSubContext) {
+    override suspend fun exitExprAddSub(ctx: ExprAddSubContext) {
         if (canSkip(ctx)) return
 
         val exprCtx = ctx.expr()
@@ -631,7 +631,7 @@ data class ExprParser(
         }
     }
 
-    override fun exitExprMultDiv(ctx: ExprMultDivContext) {
+    override suspend fun exitExprMultDiv(ctx: ExprMultDivContext) {
         if (canSkip(ctx)) return
 
         val exprCtx = ctx.expr()
@@ -696,7 +696,7 @@ data class ExprParser(
         debug(ctx)
     }
 
-    override fun exitExprShift(ctx: ExprShiftContext) {
+    override suspend fun exitExprShift(ctx: ExprShiftContext) {
         if (canSkip(ctx)) return
 
         val exprCtx = ctx.expr()
@@ -768,7 +768,7 @@ data class ExprParser(
         debug(ctx)
     }
 
-    override fun exitExprBitwise(ctx: ExprBitwiseContext) {
+    override suspend fun exitExprBitwise(ctx: ExprBitwiseContext) {
         if (canSkip(ctx)) return
 
         val exprCtx = ctx.expr()
@@ -830,7 +830,7 @@ data class ExprParser(
         debug(ctx)
     }
 
-    override fun exitExprReduction(ctx: ExprReductionContext) {
+    override suspend fun exitExprReduction(ctx: ExprReductionContext) {
         if (canSkip(ctx)) return
 
         val exprCtx = ctx.expr()
@@ -865,7 +865,7 @@ data class ExprParser(
 
     }
 
-    override fun exitExprCompare(ctx: ExprCompareContext) {
+    override suspend fun exitExprCompare(ctx: ExprCompareContext) {
         if (canSkip(ctx)) return
 
         val exprCtx = ctx.expr()
@@ -935,7 +935,7 @@ data class ExprParser(
         debug(ctx)
     }
 
-    override fun exitExprLogical(ctx: ExprLogicalContext) {
+    override suspend fun exitExprLogical(ctx: ExprLogicalContext) {
         if (canSkip(ctx)) return
 
         val exprCtx = ctx.expr()
@@ -980,7 +980,7 @@ data class ExprParser(
         debug(ctx)
     }
 
-    override fun exitExprTernary(ctx: ExprTernaryContext) {
+    override suspend fun exitExprTernary(ctx: ExprTernaryContext) {
         if (canSkip(ctx)) return
 
         val exprCtx = ctx.expr()
@@ -1043,7 +1043,7 @@ data class ExprParser(
         debug(ctx)
     }
 
-    override fun exitFunction(ctx: FunctionContext) {
+    override suspend fun exitFunction(ctx: FunctionContext) {
         if (canSkip(ctx)) return
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
