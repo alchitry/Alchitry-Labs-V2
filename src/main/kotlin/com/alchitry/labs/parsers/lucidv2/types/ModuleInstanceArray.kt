@@ -1,5 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
+import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.signals.*
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotOrParent
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotParent
@@ -19,6 +20,7 @@ class ModuleInstanceArray(
     override val name: String,
     projectContext: Project,
     private val testOrModuleParent: TestOrModuleInstance,
+    val errorCollector: ErrorCollector,
     module: Module,
     dimensions: List<Int>,
     paramProvider: (List<Int>) -> Map<String, Value>,
@@ -96,7 +98,7 @@ class ModuleInstanceArray(
                         module,
                         paramProvider(index),
                         signalProvider(index),
-                        testOrModuleParent.context.errorCollector
+                        testOrModuleParent.context.errorCollector.createChild("[${index.joinToString("][")}]")
                     )
                 })
             }

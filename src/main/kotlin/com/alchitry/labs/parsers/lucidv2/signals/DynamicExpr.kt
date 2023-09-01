@@ -23,7 +23,7 @@ class DynamicExpr(
     context: LucidBlockContext,
     widthConstraint: SignalWidth? = null
 ) : Evaluable {
-    private val context = context.withEvalContext(this)
+    private val context = context.withEvalContext(this, "DynamicExpr(${expr.text})")
     private val mutableValueFlow = SynchronizedSharedFlow<Value>()
     val valueFlow: Flow<Value> get() = mutableValueFlow.asFlow()
 
@@ -96,8 +96,8 @@ class DynamicExpr(
 
         val newValue = context.expr.resolve(expr)
 
-        if (context.errorCollector.errors.isNotEmpty()) {
-            context.errorCollector.errors.forEach { println(it) }
+        if (context.errorCollector.hasErrors) {
+            context.errorCollector.printErrors()
             error("Failed to parse DynamicValue $expr")
         }
 

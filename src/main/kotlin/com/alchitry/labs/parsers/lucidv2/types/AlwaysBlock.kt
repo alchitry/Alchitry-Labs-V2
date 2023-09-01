@@ -16,7 +16,7 @@ class AlwaysBlock(
     val repeatSignals: Map<RepeatStatContext, Signal>,
     private val alwaysBlockContext: AlwaysBlockContext
 ): Evaluable {
-    val context = context.withEvalContext(this)
+    val context = context.withEvalContext(this, "AlwaysBlock")
 
     init {
         dependencies.forEach { it.isRead = true }
@@ -34,8 +34,8 @@ class AlwaysBlock(
     override suspend fun evaluate() {
         context.walk(alwaysBlockContext)
 
-        if (context.errorCollector.errors.isNotEmpty()) {
-            context.errorCollector.errors.forEach { println(it) }
+        if (context.errorCollector.hasErrors) {
+            context.errorCollector.printErrors()
             error("Failed to evaluate always block!")
         }
 

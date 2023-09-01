@@ -20,7 +20,7 @@ import org.antlr.v4.kotlinruntime.tree.ParseTreeListener
 class LucidBlockContext(
     override val project: Project,
     val instance: TestOrModuleInstance,
-    var stage: ParseStage = ParseStage.ModuleInternals,
+    stage: ParseStage = ParseStage.ModuleInternals,
     override val evalContext: Evaluable? = null,
     val errorCollector: ErrorCollector,
     expr: ExprParser? = null,
@@ -35,6 +35,8 @@ class LucidBlockContext(
     signalDriver: SignalDriverParser? = null,
     val localSignalResolver: SignalResolver? = null // Used in tests to simulate a full parse.
 ) : LucidExprContext, ErrorListener by errorCollector {
+    var stage: ParseStage = stage
+        private set
 
     private val localSignalStack = mutableListOf<MutableMap<String, Signal>>(mutableMapOf())
     val localSignals: MutableMap<String, Signal> get() = localSignalStack.last()
@@ -126,12 +128,12 @@ class LucidBlockContext(
         ParseStage.ErrorCheck -> WalkerFilter.SkipGlobals
     }
 
-    fun withEvalContext(evalContext: Evaluable) = LucidBlockContext(
+    fun withEvalContext(evalContext: Evaluable, name: String) = LucidBlockContext(
         project,
         instance,
         ParseStage.Evaluation,
         evalContext,
-        errorCollector,
+        errorCollector.createChild(name),
         expr,
         bitSelection,
         types,
@@ -167,11 +169,11 @@ class LucidBlockContext(
     fun initialWalk(t: ParseTree): Boolean {
         stage = ParseStage.ModuleInternals
         walk(t)
-        if (errorCollector.errors.isNotEmpty())
+        if (errorCollector.hasErrors)
             return false
         stage = ParseStage.Drivers
         walk(t)
-        return errorCollector.errors.isEmpty()
+        return errorCollector.hasNoErrors
     }
 
     fun walk(t: ParseTree) = ParseTreeMultiWalker.walk(getListeners(), t, getFilter())

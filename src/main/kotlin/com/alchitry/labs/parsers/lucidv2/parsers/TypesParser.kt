@@ -208,13 +208,13 @@ data class TypesParser(
                 moduleType,
                 instParams,
                 instPorts,
-                context.errorCollector
+                context.errorCollector.createChild("ModuleInstance($moduleInstanceName)")
             ).apply {
                 checkParameters()
-                if (context.hasErrors)
+                if (context.errorCollector.hasErrors)
                     return
                 initialWalk()
-                if (context.hasErrors)
+                if (context.errorCollector.hasErrors)
                     return
             }
         } else {
@@ -280,6 +280,7 @@ data class TypesParser(
                 moduleInstanceName,
                 context.project,
                 context.instance,
+                context.errorCollector.createChild("ModuleInstanceArray($moduleInstanceName)"),
                 moduleType,
                 dimensions,
                 signalProvider = { idx ->
@@ -301,10 +302,10 @@ data class TypesParser(
             )
                 .apply {
                     checkAllParameters()
-                    if (context.hasErrors)
+                    if (errorCollector.hasErrors)
                         return
                     initialWalkAll()
-                    if (context.hasErrors)
+                    if (errorCollector.hasErrors)
                         return
                 }
         }
