@@ -14,7 +14,7 @@ open class Signal(
     override val name: String, // includes namespace or module name
     override val direction: SignalDirection,
     override val parent: SignalParent?,
-    initialValue: Value,
+    val initialValue: Value,
     val signed: Boolean = initialValue is SimpleValue && initialValue.signed
 ) : SignalOrSubSignal, SignalOrParent, Snapshotable {
     fun select(selection: SignalSelection) = SubSignal(this, selection)

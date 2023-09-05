@@ -97,7 +97,7 @@ class DynamicExpr(
         val newValue = context.expr.resolve(expr)
 
         if (context.errorCollector.hasErrors) {
-            context.errorCollector.printErrors()
+            context.errorCollector.printReport()
             error("Failed to parse DynamicValue $expr")
         }
 

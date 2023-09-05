@@ -162,6 +162,7 @@ class TestBenchTests {
                     test simpleTest {
                         clk = 0
                         ${"$"}tick()
+                        ${"$"}assert(dut.count == 0)
                         ${"$"}tickClock(100)
                        
                         ${"$"}assert(dut.count == 100)
@@ -170,6 +171,89 @@ class TestBenchTests {
                     test simpleTest2 {
                         clk = 0
                         ${"$"}tick()
+                        ${"$"}assert(dut.count == 0)
+                        ${"$"}tickClock(200)
+                       
+                        ${"$"}assert(dut.count == 200)
+                    }
+                }
+            """.trimIndent(),
+            """
+                module counter (
+                    input clk,
+                    output count[8]
+                ) {
+                    dff counter[8] (.clk(clk))
+                    
+                    always {
+                        counter.d = counter.q + 1
+                        count = counter.q
+                    }
+                }
+            """.trimIndent()
+        )
+
+        tester.runTestBenches()
+    }
+
+    @Test
+    fun manyFunctionArgTests() = runBlocking {
+        val tester = LucidTester(
+            """
+                testBench myTestBench {
+                    sig clk
+                    
+                    counter dut (.clk(clk))
+                    
+                    fun tickClock(times[32]) {
+                        repeat(times) {
+                            clk = 1
+                            ${"$"}tick()
+                            clk = 0
+                            ${"$"}tick()
+                        }
+                    }
+                    
+                    test simpleTest {
+                        clk = 0
+                        ${"$"}tick()
+                        ${"$"}assert(dut.count == 0)
+                        ${"$"}tickClock(100)
+                       
+                        ${"$"}assert(dut.count == 100)
+                    }
+                    
+                    test simpleTest2 {
+                        clk = 0
+                        ${"$"}tick()
+                        ${"$"}assert(dut.count == 0)
+                        ${"$"}tickClock(150)
+                       
+                        ${"$"}assert(dut.count == 150)
+                    }
+                    
+                    test simpleTest3 {
+                        clk = 0
+                        ${"$"}tick()
+                        ${"$"}assert(dut.count == 0)
+                        ${"$"}tickClock(50)
+                       
+                        ${"$"}assert(dut.count == 50)
+                    }
+                    
+                    test simpleTest4 {
+                        clk = 0
+                        ${"$"}tick()
+                        ${"$"}assert(dut.count == 0)
+                        ${"$"}tickClock(120)
+                       
+                        ${"$"}assert(dut.count == 120)
+                    }
+                    
+                    test simpleTest5 {
+                        clk = 0
+                        ${"$"}tick()
+                        ${"$"}assert(dut.count == 0)
                         ${"$"}tickClock(200)
                        
                         ${"$"}assert(dut.count == 200)

@@ -144,7 +144,7 @@ data class BlockParser(
             return
         }
 
-        if (assignee.getSignal().hasDriver) {
+        if (!inFunctionBlock && !inTestBlock && assignee.getSignal().hasDriver) {
             context.reportError(
                 signalCtx,
                 "The signal \"${signalCtx.text}\" already has a driver so it can't be driven by this block."

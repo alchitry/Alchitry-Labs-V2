@@ -144,6 +144,7 @@ class LucidBlockContext(
     )
 
     private suspend fun reset() {
+        types.sigs.values.forEach { it.write(it.initialValue) } // reset sigs to 'x'
         types.dffs.values.forEach { it.reset() }
         types.getInstances().forEach { it.context.reset() }
     }
@@ -158,6 +159,7 @@ class LucidBlockContext(
      */
     suspend fun initialize() {
         reset()
+        project.initialize() // propagate initial signal values
         queueEval()
         project.initialize()
     }
@@ -231,7 +233,7 @@ class LucidBlockContext(
         localSignalStack.add(mutableMapOf())
 
         function.args.forEachIndexed { idx, (name, width, signed) ->
-            localSignals[name] = args[idx].resizeToMatch(width).withSign(signed).asSignal(name, null)
+            localSignals[name] = args[idx].resizeToMatch(width).withSign(signed).asMutable().asSignal(name, null)
         }
 
         walk(function.functionBlock.functionBody()?.block() ?: error("Missing function body block!"))

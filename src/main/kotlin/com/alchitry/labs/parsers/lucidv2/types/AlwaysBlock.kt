@@ -35,7 +35,7 @@ class AlwaysBlock(
         context.walk(alwaysBlockContext)
 
         if (context.errorCollector.hasErrors) {
-            context.errorCollector.printErrors()
+            context.errorCollector.printReport()
             error("Failed to evaluate always block!")
         }
 

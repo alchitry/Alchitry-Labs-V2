@@ -94,10 +94,32 @@ class ErrorCollector private constructor(
     val hasWarnings: Boolean get() = !hasNoWarnings
     val hasInfos: Boolean get() = !hasNoInfos
 
-    fun printErrors() {
-        val errorReport = getReport(includeErrors = true, includeWarnings = false, includeInfos = false)
+    /**
+     * Checks that this [ErrorCollector] has no errors or warnings.
+     * If it has errors, it throws an [AssertionError] with a report as the reason.
+     */
+    fun assertNoIssues() {
+        assert(hasNoIssues) { "\n" + (getReport(includeInfos = false) ?: "No issues in $name") }
+    }
+
+    /**
+     * Checks that this [ErrorCollector] has no errors or warnings.
+     * If it has errors, it throws an [AssertionError] with errors listed as the reason.
+     */
+    fun assertNoErrors() {
+        assert(hasNoIssues) {
+            "\n" + (getReport(includeWarnings = false, includeInfos = false) ?: "No errors in $name")
+        }
+    }
+
+    fun printReport(
+        includeErrors: Boolean = true,
+        includeWarnings: Boolean = true,
+        includeInfos: Boolean = true
+    ) {
+        val errorReport = getReport(includeErrors, includeWarnings, includeInfos)
         if (errorReport == null)
-            println("No errors")
+            println("Nothing to print for: $name")
         else
             println(errorReport)
     }

@@ -23,7 +23,7 @@ class TestBlock(
         context.walk(testBlockContext)
 
         if (context.errorCollector.hasErrors) {
-            context.errorCollector.printErrors()
+            context.errorCollector.printReport()
             error("Failed to evaluate test block!")
         }
 

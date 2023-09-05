@@ -46,9 +46,7 @@ data class ExprParser(
      * Returns true if the value at this node doesn't need to be recalculated
      */
     private fun canSkip(ctx: ParseTree): Boolean {
-        val value = values[ctx] ?: return false
-        kotlin.run { }
-        return value.constant
+        return values[ctx]?.constant == true
     }
 
     override suspend fun enterTestBlock(ctx: TestBlockContext) {
