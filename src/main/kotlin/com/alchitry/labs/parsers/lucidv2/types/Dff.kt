@@ -1,7 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
-import com.alchitry.labs.parsers.EvalQueue
 import com.alchitry.labs.parsers.Evaluable
+import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.DynamicExpr
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
@@ -15,7 +15,7 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 
 data class Dff(
-    private val context: EvalQueue,
+    private val context: ProjectContext,
     override val name: String,
     val init: Value,
     val clk: DynamicExpr,

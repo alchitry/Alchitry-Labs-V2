@@ -26,15 +26,15 @@ class SimulateProject : Subcommand("sim", "Simulate a project") {
         }
 
         val errorManager = ErrorManager()
-        val topModule = runBlocking { project.parse(errorManager) }
+        val projectContext = runBlocking { project.parse(errorManager) }
 
-        if (topModule == null) {
+        if (projectContext == null) {
             println("Failed to fully parse project!")
             print(errorManager.getReport())
             return
         }
 
-        val testBenches = project.getTestBenches()
+        val testBenches = projectContext.getTestBenches()
 
         if (list) {
             if (testBenches.isEmpty()) {
@@ -57,7 +57,7 @@ class SimulateProject : Subcommand("sim", "Simulate a project") {
                 testBench.getTestBlocks().forEach { test ->
                     runBlocking {
                         val ec = testBench.context.errorCollector
-                        val result = testBench.runTest(test.name)
+                        testBench.runTest(test.name)
                         if (ec.hasErrors) {
                             println("Test ${testBench.name}.${test.name} failed:")
                             ec.getAllNotations().forEach {

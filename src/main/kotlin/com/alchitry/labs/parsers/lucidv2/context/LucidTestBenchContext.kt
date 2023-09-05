@@ -1,17 +1,15 @@
 package com.alchitry.labs.parsers.lucidv2.context
 
-import com.alchitry.labs.parsers.EvalQueue
+import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.grammar.LucidParser.SourceContext
 import com.alchitry.labs.parsers.lucidv2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs.parsers.lucidv2.parsers.TestBenchParser
 import com.alchitry.labs.parsers.lucidv2.parsers.WalkerFilter
-import com.alchitry.labs.project.Project
 
 class LucidTestBenchContext(
-    val project: Project,
-    val evalQueue: EvalQueue,
+    val project: ProjectContext,
     val errorCollector: ErrorCollector
 ) : ErrorListener by errorCollector {
 

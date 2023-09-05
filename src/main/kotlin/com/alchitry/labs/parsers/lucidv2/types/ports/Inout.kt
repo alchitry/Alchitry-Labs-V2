@@ -1,7 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.types.ports
 
-import com.alchitry.labs.parsers.EvalQueue
 import com.alchitry.labs.parsers.Evaluable
+import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.signals.ProxySignal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.signals.SignalParent
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class Inout(
     override val name: String,
-    context: EvalQueue,
+    context: ProjectContext,
     parent: SignalParent?,
     override val width: SignalWidth,
     override val signed: Boolean

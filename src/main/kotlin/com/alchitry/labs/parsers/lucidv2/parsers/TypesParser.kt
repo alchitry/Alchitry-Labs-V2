@@ -11,12 +11,13 @@ import com.alchitry.labs.parsers.lucidv2.types.ModuleInstanceArray
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstanceOrArray
 import com.alchitry.labs.parsers.lucidv2.values.*
 
-data class TypesParser(
+class TypesParser(
     private val context: LucidBlockContext
 ) : SuspendLucidBaseListener(), SignalResolver {
     val dffs = mutableMapOf<String, Dff>()
     val sigs = mutableMapOf<String, Signal>()
     val moduleInstances = mutableMapOf<String, ModuleInstanceOrArray>()
+    val dynamicExprs = mutableMapOf<ExprContext, DynamicExpr>()
     private val arraySizes = mutableMapOf<ArraySizeContext, Int>()
     private val assignmentBlocks = mutableListOf<AssignmentBlock>()
 
@@ -204,7 +205,6 @@ data class TypesParser(
             ModuleInstance(
                 moduleInstanceName,
                 context.project,
-                context.evalQueue,
                 context.instance as? ModuleInstance,
                 moduleType,
                 instParams,
@@ -280,7 +280,6 @@ data class TypesParser(
             ModuleInstanceArray(
                 moduleInstanceName,
                 context.project,
-                context.evalQueue,
                 context.instance,
                 context.errorCollector.createChild("ModuleInstanceArray($moduleInstanceName)"),
                 moduleType,
@@ -413,6 +412,8 @@ data class TypesParser(
                     "The width of this expression is wider than the signal \"$name\" and will be truncated."
                 )
             }
+
+            dynamicExprs[expr] = dynamicExpr
 
             dynamicExpr
         }
@@ -562,7 +563,7 @@ data class TypesParser(
             }
         }
 
-        val dff = Dff(context.evalQueue, name, init, resolvedClk.constrain(BitWidth), rst?.constrain(BitWidth), signed)
+        val dff = Dff(context.project, name, init, resolvedClk.constrain(BitWidth), rst?.constrain(BitWidth), signed)
         dffs[name] = dff
     }
 }

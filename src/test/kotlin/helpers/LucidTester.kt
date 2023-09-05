@@ -1,6 +1,6 @@
 package helpers
 
-import com.alchitry.labs.parsers.EvalQueue
+import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.parsers.grammar.LucidParser
@@ -11,15 +11,11 @@ import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SimParent
 import com.alchitry.labs.parsers.lucidv2.types.Module
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
-import com.alchitry.labs.project.Board
-import com.alchitry.labs.project.Project
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
-import java.io.File
 
 class LucidTester(vararg val files: String) {
-    val project = Project("Testing", File("."), Board.AlchitryAu, emptySet(), emptySet(), emptySet())
-    val evalQueue = EvalQueue()
+    val project = ProjectContext()
 
     fun parseText(errorCollector: ErrorCollector): List<SourceContext> {
         return files.map {
@@ -45,7 +41,7 @@ class LucidTester(vararg val files: String) {
         assert(errorCollector.hasNoIssues) { errorCollector.printReport() }
 
         trees.forEach {
-            val globalContext = LucidGlobalContext(project, evalQueue, errorCollector)
+            val globalContext = LucidGlobalContext(project, errorCollector)
             globalContext.walk(it)
 
             errorCollector.assertNoIssues()
@@ -59,7 +55,7 @@ class LucidTester(vararg val files: String) {
         assert(errorCollector.hasNoIssues) { errorCollector.printReport() }
 
         trees.forEach {
-            val testBenchContext = LucidTestBenchContext(project, evalQueue, errorCollector)
+            val testBenchContext = LucidTestBenchContext(project, errorCollector)
             testBenchContext.walk(it)
 
             errorCollector.assertNoIssues()
@@ -73,7 +69,7 @@ class LucidTester(vararg val files: String) {
         assert(errorCollector.hasNoIssues) { errorCollector.printReport() }
 
         return trees.mapNotNull {
-            val moduleTypeContext = LucidModuleTypeContext(project, evalQueue, errorCollector)
+            val moduleTypeContext = LucidModuleTypeContext(project, errorCollector)
             val module = moduleTypeContext.extract(it)
 
             errorCollector.assertNoIssues()
@@ -93,7 +89,7 @@ class LucidTester(vararg val files: String) {
         globalParse(errors, trees)
         val modules = moduleTypeParse(errors, trees)
 
-        val moduleInstance = ModuleInstance("top", project, evalQueue, null, modules.first(), mapOf(), mapOf(), errors)
+        val moduleInstance = ModuleInstance("top", project, null, modules.first(), mapOf(), mapOf(), errors)
 
         moduleInstance.initialWalk()
         if (errorCollector == null)

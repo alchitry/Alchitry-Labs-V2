@@ -33,12 +33,12 @@ class DynamicEvalTests {
             assertEquals(BitListValue("001", 2, constant = false, signed = false), dynamicExpr.value)
 
             signal.write(BitListValue("011", 2, constant = false, signed = false))
-            test.context.evalQueue.processQueue()
+            test.context.project.processQueue()
 
             assertEquals(BitListValue("100", 2, constant = false, signed = false), dynamicExpr.value)
 
             signal.write(BitListValue("111", 2, constant = false, signed = false))
-            test.context.evalQueue.processQueue()
+            test.context.project.processQueue()
 
             assertEquals(BitListValue("000", 2, constant = false, signed = false), dynamicExpr.value)
         }
@@ -61,23 +61,23 @@ class DynamicEvalTests {
         test.context.walk(exprCtx)
         val clkExpr = DynamicExpr(exprCtx, test.context)
 
-        val dff = Dff(test.evalQueue, "myDff", b0, clkExpr, null, false)
+        val dff = Dff(test.project, "myDff", b0, clkExpr, null, false)
 
 
             clk.write(b0)
-        test.evalQueue.processQueue()
+        test.project.processQueue()
             dff.d.write(b1)
             clk.write(b1)
-        test.evalQueue.processQueue()
+        test.project.processQueue()
             assertEquals(b1, dff.q.read())
 
             clk.write(b0)
             dff.d.write(b0)
-        test.evalQueue.processQueue()
+        test.project.processQueue()
             assertEquals(b1, dff.q.read())
 
             clk.write(b1)
-        test.evalQueue.processQueue()
+        test.project.processQueue()
             assertEquals(b0, dff.q.read())
 
     }
@@ -133,13 +133,13 @@ class DynamicEvalTests {
             sig2.write(BitValue(Bit.B0, constant = false, signed = false))
             assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.read(null))
 
-            tester.evalQueue.processQueue()
+            tester.project.processQueue()
             assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
 
             sig2.write(BitValue(Bit.Bx, constant = false, signed = false))
             assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
 
-            tester.evalQueue.processQueue()
+            tester.project.processQueue()
             assertEquals(BitValue(Bit.Bx, constant = false, signed = false), sig1.read(null))
         }
     }
@@ -179,7 +179,7 @@ class DynamicEvalTests {
             sig2.write(BitValue(Bit.B0, constant = false, signed = false))
             assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.read(null))
 
-            tester.evalQueue.processQueue()
+            tester.project.processQueue()
             assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
 
             assert(alwaysBlock.context.errorCollector.hasNoMessages)
@@ -187,7 +187,7 @@ class DynamicEvalTests {
             sig2.write(BitValue(Bit.Bx, constant = false, signed = false))
             assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
 
-            tester.evalQueue.processQueue()
+            tester.project.processQueue()
             assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
 
             assert(alwaysBlock.context.errorCollector.hasWarnings) // warn about Bx value in if statement

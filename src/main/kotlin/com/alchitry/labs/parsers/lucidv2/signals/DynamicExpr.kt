@@ -21,11 +21,13 @@ import kotlinx.coroutines.launch
 class DynamicExpr(
     val expr: ExprContext,
     context: LucidBlockContext,
-    widthConstraint: SignalWidth? = null
+    private val widthConstraint: SignalWidth? = null
 ) : Evaluable {
     private val context = context.withEvalContext(this, "DynamicExpr(${expr.text})")
     private val mutableValueFlow = SynchronizedSharedFlow<Value>()
     val valueFlow: Flow<Value> get() = mutableValueFlow.asFlow()
+
+    fun withContext(context: LucidBlockContext) = DynamicExpr(expr, context, widthConstraint)
 
     var value: Value = context.expr.resolve(expr)?.let {
         if (widthConstraint != null) {
@@ -44,9 +46,9 @@ class DynamicExpr(
         val dependencies =
             context.expr.resolveDependencies(expr) ?: error("Failed to resolve dependencies for ${expr.text}")
         dependencies.forEach { it.isRead = true }
-        context.evalQueue.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+        context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             onAnyChange(dependencies.map { it.valueFlow }) {
-                context.evalQueue.queueEvaluation(this@DynamicExpr)
+                context.project.queueEvaluation(this@DynamicExpr)
             }
         }
     }
@@ -55,9 +57,9 @@ class DynamicExpr(
         return Signal(name, SignalDirection.Read, null, value).also { signal ->
             signal.hasDriver = true
             val evaluable = Evaluable { signal.write(value) }
-            context.evalQueue.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+            context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
                 valueFlow.collect {
-                    context.evalQueue.queueEvaluation(evaluable)
+                    context.project.queueEvaluation(evaluable)
                 }
             }
         }
@@ -70,14 +72,14 @@ class DynamicExpr(
             signal.hasDriver = true
         }
 
-        context.evalQueue.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+        context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             signal.write(value)
         }
 
         val evaluable = Evaluable { signal.write(value) }
-        context.evalQueue.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+        context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             valueFlow.collect {
-                context.evalQueue.queueEvaluation(evaluable)
+                context.project.queueEvaluation(evaluable)
             }
         }
     }

@@ -24,9 +24,9 @@ class AlwaysBlock(
             require(!it.hasDriver) { "Signal \"${it.name}\" is already driven!" }
             it.hasDriver = true
         }
-        this.context.evalQueue.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+        this.context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             onAnyChange(dependencies.map { it.valueFlow }) {
-                this@AlwaysBlock.context.evalQueue.queueEvaluation(this@AlwaysBlock)
+                this@AlwaysBlock.context.project.queueEvaluation(this@AlwaysBlock)
             }
         }
     }

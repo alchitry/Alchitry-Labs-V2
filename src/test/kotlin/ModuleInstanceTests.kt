@@ -107,9 +107,9 @@ class ModuleInstanceTests {
                 assertEquals(BitListValue(it, 8, false, false), count.read())
 
                 clk.write(b0)
-                tester.evalQueue.processQueue()
+                tester.project.processQueue()
                 clk.write(b1)
-                tester.evalQueue.processQueue()
+                tester.project.processQueue()
             }
             assertEquals(BitListValue(0, 8, false, false), count.read())
         }
@@ -164,9 +164,9 @@ class ModuleInstanceTests {
                 assertEquals(BitListValue(it * 2, 8, false, false), count.read())
 
                 clk.write(b0)
-                tester.evalQueue.processQueue()
+                tester.project.processQueue()
                 clk.write(b1)
-                tester.evalQueue.processQueue()
+                tester.project.processQueue()
             }
             assertEquals(BitListValue(0, 8, false, false), count.read())
         }

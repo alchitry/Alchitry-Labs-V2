@@ -1,6 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
-import com.alchitry.labs.parsers.EvalQueue
+import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.signals.*
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotOrParent
@@ -10,7 +10,6 @@ import com.alchitry.labs.parsers.lucidv2.types.ports.Inout
 import com.alchitry.labs.parsers.lucidv2.types.ports.Input
 import com.alchitry.labs.parsers.lucidv2.types.ports.Output
 import com.alchitry.labs.parsers.lucidv2.values.*
-import com.alchitry.labs.project.Project
 
 sealed interface ModuleInstanceOrArray : SignalParent, Snapshotable {
     val internal: Map<String, Signal>
@@ -19,8 +18,7 @@ sealed interface ModuleInstanceOrArray : SignalParent, Snapshotable {
 
 class ModuleInstanceArray(
     override val name: String,
-    project: Project,
-    evalQueue: EvalQueue,
+    project: ProjectContext,
     private val testOrModuleParent: TestOrModuleInstance,
     val errorCollector: ErrorCollector,
     module: Module,
@@ -57,9 +55,9 @@ class ModuleInstanceArray(
                 ArrayWidth(it, width)
         }
         when (port.direction) {
-            SignalDirection.Read -> Input(port.name, evalQueue, this, width, port.signed)
-            SignalDirection.Write -> Output(port.name, evalQueue, this, width, port.signed)
-            SignalDirection.Both -> Inout(port.name, evalQueue, this, width, port.signed)
+            SignalDirection.Read -> Input(port.name, project, this, width, port.signed)
+            SignalDirection.Write -> Output(port.name, project, this, width, port.signed)
+            SignalDirection.Both -> Inout(port.name, project, this, width, port.signed)
         }
     }
 
@@ -96,7 +94,6 @@ class ModuleInstanceArray(
                     ModuleInstance(
                         name,
                         project,
-                        evalQueue,
                         parent,
                         module,
                         paramProvider(index),
@@ -120,9 +117,9 @@ class ModuleInstanceArray(
             moduleInstance.external.forEach { (name, port) ->
                 val subSig = internal[name]?.select(selection) ?: error("Missing port \"$name\"!")
                 if (port.direction.canWrite)
-                    subSig.connectTo(port, evalQueue)
+                    subSig.connectTo(port, project)
                 if (port.direction.canRead)
-                    port.connectTo(subSig, evalQueue)
+                    port.connectTo(subSig, project)
             }
         }
 

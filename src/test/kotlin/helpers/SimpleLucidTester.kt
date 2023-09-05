@@ -1,6 +1,6 @@
 package helpers
 
-import com.alchitry.labs.parsers.EvalQueue
+import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.parsers.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
@@ -8,11 +8,8 @@ import com.alchitry.labs.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs.parsers.lucidv2.parsers.ParseStage
 import com.alchitry.labs.parsers.lucidv2.types.Module
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
-import com.alchitry.labs.project.Board
-import com.alchitry.labs.project.Project
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
-import java.io.File
 
 class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = null) {
     val parser = LucidParser(
@@ -22,15 +19,12 @@ class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = nul
             ).also { it.removeErrorListeners() })
     )
 
-    val project = Project("Testing", File("."), Board.AlchitryAu, emptySet(), emptySet(), emptySet())
-    val evalQueue = EvalQueue()
+    val project = ProjectContext()
     val context = LucidBlockContext(
         project,
-        evalQueue,
         ModuleInstance(
             "top",
             project,
-            evalQueue,
             null,
             Module("testModule", mapOf(), mapOf(), LucidParser.ModuleContext(null, 0)),
             mapOf(),

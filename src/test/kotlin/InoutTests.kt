@@ -1,4 +1,4 @@
-import com.alchitry.labs.parsers.EvalQueue
+import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.lucidv2.types.ports.Inout
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.BitListWidth
@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 class InoutTests {
     @Test
     fun basicInoutTest() {
-        val inout = Inout("test", EvalQueue(), null, BitListWidth(8), false)
+        val inout = Inout("test", ProjectContext(), null, BitListWidth(8), false)
         runBlocking {
             var ct = 0
             val readJob = launch(start = CoroutineStart.UNDISPATCHED) {

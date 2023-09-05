@@ -130,7 +130,7 @@ class ModuleMultiPassTests {
         context.initialize()
         (top.getSignal("a") as Signal).write(BitValue(Bit.B1, false, false))
         try {
-            tester.evalQueue.processQueue()
+            tester.project.processQueue()
             error("ProcessQueue should've thrown an error!")
         } catch (_: QueueExhaustionException) {
 
