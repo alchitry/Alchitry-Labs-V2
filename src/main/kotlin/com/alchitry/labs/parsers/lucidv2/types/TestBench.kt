@@ -5,8 +5,6 @@ import com.alchitry.labs.parsers.grammar.LucidParser.TestBenchContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.*
 import com.alchitry.labs.project.Project
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 sealed interface TestOrModuleInstance {
     val name: String
@@ -35,7 +33,7 @@ class TestBench(
         return context.blockParser.testBlocks.values.toList()
     }
 
-    suspend fun runTest(name: String): SimParent = withContext(Dispatchers.IO) {
+    suspend fun runTest(name: String): SimParent {
         val test =
             context.blockParser.testBlocks.values.first { it.name == name }
 
@@ -46,10 +44,9 @@ class TestBench(
         test.context.initialize()
         try {
             test.evaluate()
-        } catch (e: TestAbortedException) {
-            return@withContext snapshotsToSimResult(snapshots)
+        } catch (_: TestAbortedException) {
         }
-        return@withContext snapshotsToSimResult(snapshots)
+        return snapshotsToSimResult(snapshots)
     }
 }
 

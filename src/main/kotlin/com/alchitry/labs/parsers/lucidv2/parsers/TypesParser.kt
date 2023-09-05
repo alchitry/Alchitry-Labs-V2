@@ -388,9 +388,7 @@ data class TypesParser(
             return
         }
 
-        val signal = Signal(name, SignalDirection.Both, null, width.filledWith(Bit.Bx, false, signed), signed)
-
-        ctx.expr()?.let { expr ->
+        val dynamicExpr = ctx.expr()?.let { expr ->
             val value = context.resolve(expr)
             if (value == null) {
                 context.reportError(expr, "Failed to resolve signal assignment!")
@@ -399,23 +397,27 @@ data class TypesParser(
 
             val dynamicExpr = DynamicExpr(expr, context)
 
-            if (!signal.width.canAssign(dynamicExpr.width)) {
+            if (!width.canAssign(dynamicExpr.width)) {
                 context.reportError(
                     expr,
-                    "Width of this expression isn't compatible with signal \"${signal.name}\"."
+                    "Width of this expression isn't compatible with signal \"$name\"."
                 )
                 return
             }
 
-            if (signal.width.willTruncate(dynamicExpr.width)) {
+            if (width.willTruncate(dynamicExpr.width)) {
                 context.reportWarning(
                     expr,
-                    "The width of this expression is wider than the signal \"${signal.name}\" and will be truncated."
+                    "The width of this expression is wider than the signal \"$name\" and will be truncated."
                 )
             }
 
-            dynamicExpr.connectTo(signal)
+            dynamicExpr
         }
+
+        val init = dynamicExpr?.value?.resizeToMatch(width) ?: width.filledWith(Bit.Bx, false, signed)
+        val signal = Signal(name, SignalDirection.Both, null, init, signed)
+        dynamicExpr?.connectTo(signal)
 
         sigs[name] = signal
     }

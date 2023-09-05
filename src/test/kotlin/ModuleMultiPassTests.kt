@@ -63,9 +63,7 @@ class ModuleMultiPassTests {
         val context = tester.fullParse().context
         val testSig = context.resolveSignal("endValue") as Signal
 
-        runBlocking {
-            context.initialize()
-        }
+        context.initialize()
 
         assertEquals(BitListValue(1 + 2 + 3 + 4, 16, signed = false, constant = false), testSig.read(null))
     }
@@ -96,9 +94,7 @@ class ModuleMultiPassTests {
         val context = tester.fullParse().context
         val testSig = context.resolveSignal("testB") as Signal
 
-        runBlocking {
-            context.initialize()
-        }
+        context.initialize()
 
         assertEquals(BitValue(Bit.B1, signed = false, constant = false), testSig.read(null))
     }
@@ -130,16 +126,14 @@ class ModuleMultiPassTests {
 
         val context = top.context
 
-        runBlocking {
-            (top.getSignal("a") as Signal).write(BitValue(Bit.B0, false, false))
-            context.initialize()
-            (top.getSignal("a") as Signal).write(BitValue(Bit.B1, false, false))
-            try {
-                tester.project.processQueue()
-                error("ProcessQueue should've thrown an error!")
-            } catch (_: QueueExhaustionException) {
+        (top.getSignal("a") as Signal).write(BitValue(Bit.B0, false, false))
+        context.initialize()
+        (top.getSignal("a") as Signal).write(BitValue(Bit.B1, false, false))
+        try {
+            tester.project.processQueue()
+            error("ProcessQueue should've thrown an error!")
+        } catch (_: QueueExhaustionException) {
 
-            }
         }
     }
 
@@ -173,9 +167,7 @@ class ModuleMultiPassTests {
         val context = top.context
         val testSig = top.ports["b"]?.external
 
-        runBlocking {
-            context.initialize()
-        }
+        context.initialize()
 
         val enum = EnumType("myFSM", setOf("IDLE", "INIT", "RUN", "STOP"), null)
 
@@ -220,9 +212,7 @@ class ModuleMultiPassTests {
         val context = top.context
         val testSig = top.ports["a"]?.external as Signal
 
-        runBlocking {
-            context.initialize()
-        }
+        context.initialize()
 
         val enum = EnumType("myFSM", setOf("IDLE", "INIT", "RUN", "STOP"), tester.project.resolveGlobal("Enums"))
 
