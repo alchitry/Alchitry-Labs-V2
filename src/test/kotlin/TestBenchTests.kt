@@ -258,6 +258,51 @@ class TestBenchTests {
                        
                         ${"$"}assert(dut.count == 200)
                     }
+                    
+                    test simpleTest6 {
+                        clk = 0
+                        ${"$"}tick()
+                        ${"$"}assert(dut.count == 0)
+                        ${"$"}tickClock(100)
+                       
+                        ${"$"}assert(dut.count == 100)
+                    }
+                    
+                    test simpleTest7 {
+                        clk = 0
+                        ${"$"}tick()
+                        ${"$"}assert(dut.count == 0)
+                        ${"$"}tickClock(150)
+                       
+                        ${"$"}assert(dut.count == 150)
+                    }
+                    
+                    test simpleTest8 {
+                        clk = 0
+                        ${"$"}tick()
+                        ${"$"}assert(dut.count == 0)
+                        ${"$"}tickClock(50)
+                       
+                        ${"$"}assert(dut.count == 50)
+                    }
+                    
+                    test simpleTest9 {
+                        clk = 0
+                        ${"$"}tick()
+                        ${"$"}assert(dut.count == 0)
+                        ${"$"}tickClock(120)
+                       
+                        ${"$"}assert(dut.count == 120)
+                    }
+                    
+                    test simpleTest10 {
+                        clk = 0
+                        ${"$"}tick()
+                        ${"$"}assert(dut.count == 0)
+                        ${"$"}tickClock(200)
+                       
+                        ${"$"}assert(dut.count == 200)
+                    }
                 }
             """.trimIndent(),
             """
@@ -275,6 +320,6 @@ class TestBenchTests {
             """.trimIndent()
         )
 
-        tester.runTestBenches()
+        tester.parallelRunTestBenches()
     }
 }

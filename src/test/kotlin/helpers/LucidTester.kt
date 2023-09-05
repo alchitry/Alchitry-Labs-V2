@@ -11,6 +11,9 @@ import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SimParent
 import com.alchitry.labs.parsers.lucidv2.types.Module
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 
@@ -139,6 +142,53 @@ class LucidTester(vararg val files: String) {
             tests.forEach {
                 testBench.runTest(it.name)
                 it.context.errorCollector.assertNoIssues()
+            }
+        }
+    }
+
+    private suspend fun runTest(testBench: String, test: String) {
+        val errors = testErrorCollector()
+        val tree = parseText(errors)
+
+        globalParse(errors, tree)
+        moduleTypeParse(errors, tree)
+        testBenchParse(errors, tree)
+
+        val bench = project.getTestBenches().first { it.name == testBench }
+
+        bench.initialWalk()
+
+        errors.assertNoErrors()
+
+        bench.runTest(test)
+        bench.context.errorCollector.assertNoIssues()
+    }
+
+    suspend fun parallelRunTestBenches(errorCollector: ErrorCollector? = null) {
+        val errors = errorCollector ?: testErrorCollector()
+        val tree = parseText(errors)
+
+        globalParse(errors, tree)
+        moduleTypeParse(errors, tree)
+        testBenchParse(errors, tree)
+
+        val testBenches = project.getTestBenches()
+
+        testBenches.forEach { testBench ->
+            testBench.initialWalk()
+        }
+
+        errors.assertNoErrors()
+
+        coroutineScope {
+            testBenches.forEach { testBench ->
+                val tests = testBench.getTestBlocks()
+                tests.forEach {
+                    val tester = LucidTester(*files)
+                    launch(Dispatchers.Default) {
+                        tester.runTest(testBench.name, it.name)
+                    }
+                }
             }
         }
     }
