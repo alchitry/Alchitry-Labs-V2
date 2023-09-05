@@ -3,10 +3,10 @@ package com.alchitry.labs.project
 import com.alchitry.labs.Log
 import com.alchitry.labs.PathUtil
 import com.alchitry.labs.mainWindow
+import com.alchitry.labs.parsers.EvalQueue
 import com.alchitry.labs.parsers.errors.ErrorManager
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.parsers.grammar.LucidParser
-import com.alchitry.labs.parsers.lucidv2.context.Evaluable
 import com.alchitry.labs.parsers.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleTypeContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext
@@ -19,14 +19,8 @@ import com.alchitry.labs.project.files.ConstraintFile
 import com.alchitry.labs.project.files.IPCore
 import com.alchitry.labs.project.files.SourceFile
 import com.alchitry.labs.ui.misc.openFileDialog
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 import java.io.File
@@ -44,14 +38,9 @@ data class Project(
     val top: SourceFile get() = sourceFiles.firstOrNull { it.top } ?: throw Exception("Missing top module!")
     val projectFile = File(PathUtil.assemblePath(projectFolder, "$projectName.alp"))
 
-    val scope = CoroutineScope(Dispatchers.Default)
-
     private val globals = mutableMapOf<String, GlobalNamespace>()
     private val modules = mutableMapOf<String, Module>()
     private val testBenches = mutableMapOf<String, TestBench>()
-
-    private val evaluationQueue = mutableSetOf<Evaluable>()
-    private val queueLock = Mutex()
 
     companion object {
         private val mutableCurrentFlow = MutableStateFlow<Project?>(null)
@@ -79,6 +68,8 @@ data class Project(
     }
 
     suspend fun parse(errorManger: ErrorManager): ModuleInstance? {
+        val evalQueue = EvalQueue()
+
         val trees = sourceFiles.map {
             val parser = LucidParser(
                 CommonTokenStream(
@@ -99,7 +90,7 @@ data class Project(
             return null
 
         trees.forEach {
-            val globalContext = LucidGlobalContext(this, errorManger.getCollector(it.first))
+            val globalContext = LucidGlobalContext(this, evalQueue, errorManger.getCollector(it.first))
             globalContext.walk(it.second)
         }
 
@@ -107,7 +98,7 @@ data class Project(
             return null
 
         val modules = trees.mapNotNull {
-            val moduleTypeContext = LucidModuleTypeContext(this, errorManger.getCollector(it.first))
+            val moduleTypeContext = LucidModuleTypeContext(this, evalQueue, errorManger.getCollector(it.first))
             val module = moduleTypeContext.extract(it.second)
 
             it.first to (module ?: return@mapNotNull null)
@@ -117,7 +108,7 @@ data class Project(
             return null
 
         trees.forEach {
-            val testBenchContext = LucidTestBenchContext(this, errorManger.getCollector(it.first))
+            val testBenchContext = LucidTestBenchContext(this, evalQueue, errorManger.getCollector(it.first))
             testBenchContext.walk(it.second)
         }
 
@@ -138,7 +129,7 @@ data class Project(
         }
 
         val moduleInstance =
-            ModuleInstance(top.name, this, null, topModule, mapOf(), mapOf(), errorManger.getCollector(top))
+            ModuleInstance(top.name, this, evalQueue, null, topModule, mapOf(), mapOf(), errorManger.getCollector(top))
 
         moduleInstance.initialWalk()
 
@@ -150,48 +141,6 @@ data class Project(
 
     fun getTestBenches(): List<TestBench> {
         return testBenches.values.toList()
-    }
-
-    var initializing: Boolean = false
-        private set
-
-    suspend fun initialize() {
-        initializing = true
-        processQueue()
-        initializing = false
-    }
-
-    suspend fun clearQueue() {
-        queueLock.withLock {
-            evaluationQueue.clear()
-        }
-    }
-
-    suspend fun queueEvaluation(evaluable: Evaluable) {
-        queueLock.withLock {
-            evaluationQueue.add(evaluable)
-        }
-    }
-
-    suspend fun processQueue() {
-        repeat(1000) {
-            val items = queueLock.withLock {
-                if (evaluationQueue.isEmpty())
-                    return
-
-                evaluationQueue.toList().also {
-                    evaluationQueue.clear()
-                }
-            }
-            coroutineScope {
-                items.forEach {
-                    launch(Dispatchers.Default) {
-                        it.evaluate()
-                    }
-                }
-            }
-        }
-        throw QueueExhaustionException("Failed to resolve a stable state after 1000 iterations. There is likely a dependency loop.")
     }
 
     fun addGlobal(globalNamespace: GlobalNamespace): Boolean =

@@ -1,20 +1,17 @@
+import com.alchitry.labs.parsers.EvalQueue
 import com.alchitry.labs.parsers.lucidv2.types.ports.Inout
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.BitListWidth
-import com.alchitry.labs.project.Board
-import com.alchitry.labs.project.Project
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
-import java.io.File
 import kotlin.test.assertEquals
 
 class InoutTests {
     @Test
     fun basicInoutTest() {
-        val project = Project("Testing", File("."), Board.AlchitryAu, emptySet(), emptySet(), emptySet())
-        val inout = Inout("test", project, null, BitListWidth(8), false)
+        val inout = Inout("test", EvalQueue(), null, BitListWidth(8), false)
         runBlocking {
             var ct = 0
             val readJob = launch(start = CoroutineStart.UNDISPATCHED) {

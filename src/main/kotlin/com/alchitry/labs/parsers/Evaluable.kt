@@ -1,4 +1,4 @@
-package com.alchitry.labs.parsers.lucidv2.context
+package com.alchitry.labs.parsers
 
 import kotlinx.coroutines.sync.Mutex
 

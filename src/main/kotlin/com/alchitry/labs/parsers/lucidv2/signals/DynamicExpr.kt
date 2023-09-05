@@ -1,8 +1,8 @@
 package com.alchitry.labs.parsers.lucidv2.signals
 
+import com.alchitry.labs.parsers.Evaluable
 import com.alchitry.labs.parsers.SynchronizedSharedFlow
 import com.alchitry.labs.parsers.grammar.LucidParser.ExprContext
-import com.alchitry.labs.parsers.lucidv2.context.Evaluable
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs.parsers.lucidv2.values.Value
@@ -44,9 +44,9 @@ class DynamicExpr(
         val dependencies =
             context.expr.resolveDependencies(expr) ?: error("Failed to resolve dependencies for ${expr.text}")
         dependencies.forEach { it.isRead = true }
-        context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+        context.evalQueue.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             onAnyChange(dependencies.map { it.valueFlow }) {
-                context.project.queueEvaluation(this@DynamicExpr)
+                context.evalQueue.queueEvaluation(this@DynamicExpr)
             }
         }
     }
@@ -55,9 +55,9 @@ class DynamicExpr(
         return Signal(name, SignalDirection.Read, null, value).also { signal ->
             signal.hasDriver = true
             val evaluable = Evaluable { signal.write(value) }
-            context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+            context.evalQueue.scope.launch(start = CoroutineStart.UNDISPATCHED) {
                 valueFlow.collect {
-                    context.project.queueEvaluation(evaluable)
+                    context.evalQueue.queueEvaluation(evaluable)
                 }
             }
         }
@@ -70,14 +70,14 @@ class DynamicExpr(
             signal.hasDriver = true
         }
 
-        context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+        context.evalQueue.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             signal.write(value)
         }
 
         val evaluable = Evaluable { signal.write(value) }
-        context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+        context.evalQueue.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             valueFlow.collect {
-                context.project.queueEvaluation(evaluable)
+                context.evalQueue.queueEvaluation(evaluable)
             }
         }
     }

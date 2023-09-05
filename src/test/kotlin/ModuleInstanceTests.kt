@@ -92,8 +92,6 @@ class ModuleInstanceTests {
             """.trimIndent()
         )
 
-        val project = tester.project
-
         val top = tester.fullParse()
 
         val clk = top.getSignal("clk") as Signal
@@ -109,9 +107,9 @@ class ModuleInstanceTests {
                 assertEquals(BitListValue(it, 8, false, false), count.read())
 
                 clk.write(b0)
-                project.processQueue()
+                tester.evalQueue.processQueue()
                 clk.write(b1)
-                project.processQueue()
+                tester.evalQueue.processQueue()
             }
             assertEquals(BitListValue(0, 8, false, false), count.read())
         }
@@ -151,8 +149,6 @@ class ModuleInstanceTests {
             """.trimIndent()
         )
 
-        val project = tester.project
-
         val top = tester.fullParse()
 
         val clk = top.getSignal("clk") as Signal
@@ -168,9 +164,9 @@ class ModuleInstanceTests {
                 assertEquals(BitListValue(it * 2, 8, false, false), count.read())
 
                 clk.write(b0)
-                project.processQueue()
+                tester.evalQueue.processQueue()
                 clk.write(b1)
-                project.processQueue()
+                tester.evalQueue.processQueue()
             }
             assertEquals(BitListValue(0, 8, false, false), count.read())
         }

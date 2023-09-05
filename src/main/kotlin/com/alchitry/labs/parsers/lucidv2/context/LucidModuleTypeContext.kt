@@ -1,5 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.context
 
+import com.alchitry.labs.parsers.EvalQueue
+import com.alchitry.labs.parsers.Evaluable
 import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.grammar.LucidParser
@@ -13,6 +15,7 @@ import com.alchitry.labs.project.Project
 
 class LucidModuleTypeContext(
     override val project: Project,
+    override val evalQueue: EvalQueue,
     val errorCollector: ErrorCollector
 ) : LucidExprContext, ErrorListener by errorCollector {
     override val evalContext: Evaluable? = null

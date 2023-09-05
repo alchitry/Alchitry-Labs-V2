@@ -1,5 +1,6 @@
 package com.alchitry.labs.ui.code_editor.styles.lucid
 
+import com.alchitry.labs.parsers.EvalQueue
 import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.parsers.grammar.LucidParser
@@ -40,33 +41,36 @@ class LucidErrorChecker : CodeErrorChecker {
             return errorCollector.getAllNotations().map { it.toStyleToken() }
         }
 
-        val moduleTypeContext = LucidModuleTypeContext(project, errorCollector)
-        val module = moduleTypeContext.extract(tree)
-
-        if (errorCollector.hasErrors) {
-            return errorCollector.getAllNotations().map { it.toStyleToken() }
-        }
-
-        if (module != null) {
-            val moduleInstance = ModuleInstance("top", project, null, module, mapOf(), mapOf(), errorCollector)
-
-            moduleInstance.initialWalk()
+        EvalQueue().use { evalQueue ->
+            val moduleTypeContext = LucidModuleTypeContext(project, evalQueue, errorCollector)
+            val module = moduleTypeContext.extract(tree)
 
             if (errorCollector.hasErrors) {
                 return errorCollector.getAllNotations().map { it.toStyleToken() }
             }
-        }
 
-        val testBenchContext = LucidTestBenchContext(project, errorCollector)
-        testBenchContext.walk(tree)
+            if (module != null) {
+                val moduleInstance =
+                    ModuleInstance("top", project, evalQueue, null, module, mapOf(), mapOf(), errorCollector)
 
-        if (errorCollector.hasErrors) {
-            return errorCollector.getAllNotations().map { it.toStyleToken() }
-        }
+                moduleInstance.initialWalk()
 
-        return project.getTestBenches().flatMap { testBench ->
-            testBench.initialWalk()
-            testBench.context.errorCollector.getAllNotations().map { it.toStyleToken() }
+                if (errorCollector.hasErrors) {
+                    return errorCollector.getAllNotations().map { it.toStyleToken() }
+                }
+            }
+
+            val testBenchContext = LucidTestBenchContext(project, evalQueue, errorCollector)
+            testBenchContext.walk(tree)
+
+            if (errorCollector.hasErrors) {
+                return errorCollector.getAllNotations().map { it.toStyleToken() }
+            }
+
+            return project.getTestBenches().flatMap { testBench ->
+                testBench.initialWalk()
+                testBench.context.errorCollector.getAllNotations().map { it.toStyleToken() }
+            }
         }
     }
 }

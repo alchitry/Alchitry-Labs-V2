@@ -1,9 +1,9 @@
 package com.alchitry.labs.parsers.lucidv2.signals
 
-import com.alchitry.labs.parsers.lucidv2.context.Evaluable
+import com.alchitry.labs.parsers.EvalQueue
+import com.alchitry.labs.parsers.Evaluable
 import com.alchitry.labs.parsers.lucidv2.types.Measurable
 import com.alchitry.labs.parsers.lucidv2.values.Value
-import com.alchitry.labs.project.Project
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -41,7 +41,7 @@ sealed interface SignalOrSubSignal : Measurable {
     /**
      * Connects this signal's value to the provided signal.
      */
-    fun connectTo(sig: SignalOrSubSignal, context: Project) {
+    fun connectTo(sig: SignalOrSubSignal, context: EvalQueue) {
         require(sig.width.canAssign(width)) {
             "Cannot assign this signal's value to the provided signal!"
         }

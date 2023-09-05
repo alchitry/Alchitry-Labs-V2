@@ -1,5 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
+import com.alchitry.labs.parsers.EvalQueue
 import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.signals.*
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotOrParent
@@ -18,7 +19,8 @@ sealed interface ModuleInstanceOrArray : SignalParent, Snapshotable {
 
 class ModuleInstanceArray(
     override val name: String,
-    projectContext: Project,
+    project: Project,
+    evalQueue: EvalQueue,
     private val testOrModuleParent: TestOrModuleInstance,
     val errorCollector: ErrorCollector,
     module: Module,
@@ -55,9 +57,9 @@ class ModuleInstanceArray(
                 ArrayWidth(it, width)
         }
         when (port.direction) {
-            SignalDirection.Read -> Input(port.name, projectContext, this, width, port.signed)
-            SignalDirection.Write -> Output(port.name, projectContext, this, width, port.signed)
-            SignalDirection.Both -> Inout(port.name, projectContext, this, width, port.signed)
+            SignalDirection.Read -> Input(port.name, evalQueue, this, width, port.signed)
+            SignalDirection.Write -> Output(port.name, evalQueue, this, width, port.signed)
+            SignalDirection.Both -> Inout(port.name, evalQueue, this, width, port.signed)
         }
     }
 
@@ -93,7 +95,8 @@ class ModuleInstanceArray(
                 return ModuleList(List(dim) {
                     ModuleInstance(
                         name,
-                        projectContext,
+                        project,
+                        evalQueue,
                         parent,
                         module,
                         paramProvider(index),
@@ -117,9 +120,9 @@ class ModuleInstanceArray(
             moduleInstance.external.forEach { (name, port) ->
                 val subSig = internal[name]?.select(selection) ?: error("Missing port \"$name\"!")
                 if (port.direction.canWrite)
-                    subSig.connectTo(port, projectContext)
+                    subSig.connectTo(port, evalQueue)
                 if (port.direction.canRead)
-                    port.connectTo(subSig, projectContext)
+                    port.connectTo(subSig, evalQueue)
             }
         }
 

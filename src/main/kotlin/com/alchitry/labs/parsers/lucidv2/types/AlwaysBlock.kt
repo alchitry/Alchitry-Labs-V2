@@ -1,8 +1,8 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
+import com.alchitry.labs.parsers.Evaluable
 import com.alchitry.labs.parsers.grammar.LucidParser.AlwaysBlockContext
 import com.alchitry.labs.parsers.grammar.LucidParser.RepeatStatContext
-import com.alchitry.labs.parsers.lucidv2.context.Evaluable
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.onAnyChange
@@ -24,9 +24,9 @@ class AlwaysBlock(
             require(!it.hasDriver) { "Signal \"${it.name}\" is already driven!" }
             it.hasDriver = true
         }
-        this.context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+        this.context.evalQueue.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             onAnyChange(dependencies.map { it.valueFlow }) {
-                this@AlwaysBlock.context.project.queueEvaluation(this@AlwaysBlock)
+                this@AlwaysBlock.context.evalQueue.queueEvaluation(this@AlwaysBlock)
             }
         }
     }

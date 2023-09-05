@@ -1,5 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
+import com.alchitry.labs.parsers.EvalQueue
 import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.grammar.LucidParser.TestBenchContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
@@ -14,10 +15,11 @@ sealed interface TestOrModuleInstance {
 class TestBench(
     override val name: String,
     project: Project,
+    evalQueue: EvalQueue,
     private val testBenchContext: TestBenchContext,
     errorCollector: ErrorCollector
 ) : TestOrModuleInstance, Snapshotable {
-    override val context = LucidBlockContext(project, this, errorCollector = errorCollector)
+    override val context = LucidBlockContext(project, evalQueue, this, errorCollector = errorCollector)
 
     override fun takeSnapshot(): SnapshotParent {
         val snapshots = mutableListOf<SnapshotOrParent>()

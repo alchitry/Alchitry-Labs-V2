@@ -1,5 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.context
 
+import com.alchitry.labs.parsers.EvalQueue
+import com.alchitry.labs.parsers.Evaluable
 import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.parsers.BitSelection
@@ -26,4 +28,5 @@ interface LucidExprContext : ErrorListener {
     fun resolveFunction(name: String): Function? = Function.builtIn.firstOrNull { it.label == name }
     val evalContext: Evaluable?
     val project: Project
+    val evalQueue: EvalQueue
 }

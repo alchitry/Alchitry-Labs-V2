@@ -204,6 +204,7 @@ data class TypesParser(
             ModuleInstance(
                 moduleInstanceName,
                 context.project,
+                context.evalQueue,
                 context.instance as? ModuleInstance,
                 moduleType,
                 instParams,
@@ -279,6 +280,7 @@ data class TypesParser(
             ModuleInstanceArray(
                 moduleInstanceName,
                 context.project,
+                context.evalQueue,
                 context.instance,
                 context.errorCollector.createChild("ModuleInstanceArray($moduleInstanceName)"),
                 moduleType,
@@ -560,7 +562,7 @@ data class TypesParser(
             }
         }
 
-        val dff = Dff(context.project, name, init, resolvedClk.constrain(BitWidth), rst?.constrain(BitWidth), signed)
+        val dff = Dff(context.evalQueue, name, init, resolvedClk.constrain(BitWidth), rst?.constrain(BitWidth), signed)
         dffs[name] = dff
     }
 }

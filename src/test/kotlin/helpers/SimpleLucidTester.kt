@@ -1,5 +1,6 @@
 package helpers
 
+import com.alchitry.labs.parsers.EvalQueue
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.parsers.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
@@ -22,11 +23,14 @@ class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = nul
     )
 
     val project = Project("Testing", File("."), Board.AlchitryAu, emptySet(), emptySet(), emptySet())
+    val evalQueue = EvalQueue()
     val context = LucidBlockContext(
         project,
+        evalQueue,
         ModuleInstance(
             "top",
             project,
+            evalQueue,
             null,
             Module("testModule", mapOf(), mapOf(), LucidParser.ModuleContext(null, 0)),
             mapOf(),

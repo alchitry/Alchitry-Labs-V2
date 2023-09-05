@@ -1,4 +1,4 @@
-import com.alchitry.labs.parsers.lucidv2.context.Evaluable
+import com.alchitry.labs.parsers.Evaluable
 import com.alchitry.labs.parsers.lucidv2.signals.DynamicExpr
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
@@ -32,17 +32,13 @@ class DynamicEvalTests {
 
             assertEquals(BitListValue("001", 2, constant = false, signed = false), dynamicExpr.value)
 
-            runBlocking {
-                signal.write(BitListValue("011", 2, constant = false, signed = false))
-                test.context.project.processQueue()
-            }
+            signal.write(BitListValue("011", 2, constant = false, signed = false))
+            test.context.evalQueue.processQueue()
 
             assertEquals(BitListValue("100", 2, constant = false, signed = false), dynamicExpr.value)
 
-            runBlocking {
-                signal.write(BitListValue("111", 2, constant = false, signed = false))
-                test.context.project.processQueue()
-            }
+            signal.write(BitListValue("111", 2, constant = false, signed = false))
+            test.context.evalQueue.processQueue()
 
             assertEquals(BitListValue("000", 2, constant = false, signed = false), dynamicExpr.value)
         }
@@ -65,25 +61,25 @@ class DynamicEvalTests {
         test.context.walk(exprCtx)
         val clkExpr = DynamicExpr(exprCtx, test.context)
 
-        val dff = Dff(test.project, "myDff", b0, clkExpr, null, false)
+        val dff = Dff(test.evalQueue, "myDff", b0, clkExpr, null, false)
 
-        runBlocking {
+
             clk.write(b0)
-            test.project.processQueue()
+        test.evalQueue.processQueue()
             dff.d.write(b1)
             clk.write(b1)
-            test.project.processQueue()
+        test.evalQueue.processQueue()
             assertEquals(b1, dff.q.read())
 
             clk.write(b0)
             dff.d.write(b0)
-            test.project.processQueue()
+        test.evalQueue.processQueue()
             assertEquals(b1, dff.q.read())
 
             clk.write(b1)
-            test.project.processQueue()
+        test.evalQueue.processQueue()
             assertEquals(b0, dff.q.read())
-        }
+
     }
 
     @Test
@@ -137,13 +133,13 @@ class DynamicEvalTests {
             sig2.write(BitValue(Bit.B0, constant = false, signed = false))
             assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.read(null))
 
-            tester.project.processQueue()
+            tester.evalQueue.processQueue()
             assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
 
             sig2.write(BitValue(Bit.Bx, constant = false, signed = false))
             assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
 
-            tester.project.processQueue()
+            tester.evalQueue.processQueue()
             assertEquals(BitValue(Bit.Bx, constant = false, signed = false), sig1.read(null))
         }
     }
@@ -183,7 +179,7 @@ class DynamicEvalTests {
             sig2.write(BitValue(Bit.B0, constant = false, signed = false))
             assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.read(null))
 
-            tester.project.processQueue()
+            tester.evalQueue.processQueue()
             assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
 
             assert(alwaysBlock.context.errorCollector.hasNoMessages)
@@ -191,7 +187,7 @@ class DynamicEvalTests {
             sig2.write(BitValue(Bit.Bx, constant = false, signed = false))
             assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
 
-            tester.project.processQueue()
+            tester.evalQueue.processQueue()
             assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
 
             assert(alwaysBlock.context.errorCollector.hasWarnings) // warn about Bx value in if statement

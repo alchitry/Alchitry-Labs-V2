@@ -1,5 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
+import com.alchitry.labs.parsers.EvalQueue
 import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.signals.Signal
@@ -12,14 +13,15 @@ import com.alchitry.labs.project.Project
 
 class ModuleInstance(
     override val name: String,
-    private val project: Project,
+    project: Project,
+    private val evalQueue: EvalQueue,
     override val parent: ModuleInstance?,
     val module: Module,
     parameters: Map<String, Value>,
     connections: Map<String, SignalOrSubSignal>,
     errorCollector: ErrorCollector
 ) : ModuleInstanceOrArray, ListOrModuleInstance, TestOrModuleInstance {
-    override val context = LucidBlockContext(project, this, errorCollector = errorCollector)
+    override val context = LucidBlockContext(project, evalQueue, this, errorCollector = errorCollector)
 
     override fun takeSnapshot(): SnapshotParent {
         val snapshots = mutableListOf<SnapshotOrParent>()
@@ -34,7 +36,7 @@ class ModuleInstance(
     suspend fun initialWalk() = context.initialWalk(module.context)
 
     val ports = module.ports.mapValues { (_, port) ->
-        port.instantiate(this, project)
+        port.instantiate(this, evalQueue)
     }
 
     override val internal: Map<String, Signal> = ports.mapValues { it.value.internal }
@@ -46,9 +48,9 @@ class ModuleInstance(
         connections.forEach { (name, sig) ->
             val port = ports[name]?.external ?: error("No matching port for given connection \"$name\"!")
             if (port.direction.canWrite)
-                sig.connectTo(port, project)
+                sig.connectTo(port, evalQueue)
             if (port.direction.canRead)
-                port.connectTo(sig, project)
+                port.connectTo(sig, evalQueue)
         }
     }
 

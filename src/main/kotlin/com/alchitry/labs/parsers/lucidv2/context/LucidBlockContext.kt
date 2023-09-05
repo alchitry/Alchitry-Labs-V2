@@ -1,5 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.context
 
+import com.alchitry.labs.parsers.EvalQueue
+import com.alchitry.labs.parsers.Evaluable
 import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.grammar.LucidParser.*
@@ -17,6 +19,7 @@ import org.antlr.v4.kotlinruntime.tree.ParseTree
 
 class LucidBlockContext(
     override val project: Project,
+    override val evalQueue: EvalQueue,
     val instance: TestOrModuleInstance,
     stage: ParseStage = ParseStage.ModuleInternals,
     override val evalContext: Evaluable? = null,
@@ -48,7 +51,7 @@ class LucidBlockContext(
         if (stage != ParseStage.Evaluation)
             return
         blockEvaluator.processWriteQueue()
-        project.processQueue()
+        evalQueue.processQueue()
         if (shouldSnapshot)
             takeSnapshot()
     }
@@ -126,6 +129,7 @@ class LucidBlockContext(
 
     fun withEvalContext(evalContext: Evaluable, name: String) = LucidBlockContext(
         project,
+        evalQueue,
         instance,
         ParseStage.Evaluation,
         evalContext,
@@ -159,9 +163,9 @@ class LucidBlockContext(
      */
     suspend fun initialize() {
         reset()
-        project.initialize() // propagate initial signal values
+        evalQueue.initialize() // propagate initial signal values
         queueEval()
-        project.initialize()
+        evalQueue.initialize()
     }
 
     suspend fun initialWalk(t: ParseTree): Boolean {

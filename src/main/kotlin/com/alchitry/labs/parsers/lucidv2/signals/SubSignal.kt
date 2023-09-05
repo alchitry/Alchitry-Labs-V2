@@ -1,6 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.signals
 
-import com.alchitry.labs.parsers.lucidv2.context.Evaluable
+import com.alchitry.labs.parsers.Evaluable
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs.parsers.lucidv2.values.Value
 import kotlinx.coroutines.flow.Flow
