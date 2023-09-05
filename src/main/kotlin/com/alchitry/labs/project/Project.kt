@@ -59,28 +59,36 @@ data class Project(
         }
     }
 
-    suspend fun parse(errorManger: ErrorManager): ProjectContext? {
+    fun parse(errorManger: ErrorManager): List<Pair<SourceFile, LucidParser.SourceContext>>? {
+        val trees = sourceFiles.map { file ->
+            val parser = LucidParser(
+                CommonTokenStream(
+                    LucidLexer(
+                        CharStreams.fromStream(file.file.inputStream())
+                    ).also { it.removeErrorListeners() })
+            ).apply {
+                (tokenStream?.tokenSource as? LucidLexer)?.addErrorListener(errorManger.getCollector(file))
+                    ?: error("TokenSource was not a LucidLexer!")
+                removeErrorListeners()
+                addErrorListener(errorManger.getCollector(file))
+            }
+
+            file to parser.source()
+        }
+        if (!errorManger.hasNoMessages)
+            return null
+        return trees
+    }
+
+    suspend fun buildContext(
+        errorManger: ErrorManager,
+        trees: List<Pair<SourceFile, LucidParser.SourceContext>>? = parse(errorManger)
+    ): ProjectContext? {
         val projectContext = ProjectContext()
         var success = false
 
         try {
-            val trees = sourceFiles.map {
-                val parser = LucidParser(
-                    CommonTokenStream(
-                        LucidLexer(
-                            CharStreams.fromStream(it.file.inputStream())
-                        ).also { it.removeErrorListeners() })
-                ).apply {
-                    (tokenStream?.tokenSource as? LucidLexer)?.addErrorListener(errorManger.getCollector(it))
-                        ?: error("TokenSource was not a LucidLexer!")
-                    removeErrorListeners()
-                    addErrorListener(errorManger.getCollector(it))
-                }
-
-                it to parser.source()
-            }
-
-            if (!errorManger.hasNoMessages)
+            if (trees == null)
                 return null
 
             trees.forEach {

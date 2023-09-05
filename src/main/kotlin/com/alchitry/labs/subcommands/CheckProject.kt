@@ -23,7 +23,7 @@ class CheckProject : Subcommand("check", "Check a project for errors") {
         }
 
         val errorManager = ErrorManager()
-        val topModule = runBlocking { project.parse(errorManager) }
+        val topModule = runBlocking { project.buildContext(errorManager) }
 
         if (topModule == null) {
             println("Failed to fully parse project!")

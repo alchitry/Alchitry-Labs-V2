@@ -26,7 +26,7 @@ class SimulateProject : Subcommand("sim", "Simulate a project") {
         }
 
         val errorManager = ErrorManager()
-        val projectContext = runBlocking { project.parse(errorManager) }
+        val projectContext = runBlocking { project.buildContext(errorManager) }
 
         if (projectContext == null) {
             println("Failed to fully parse project!")
@@ -63,10 +63,10 @@ class SimulateProject : Subcommand("sim", "Simulate a project") {
                             ec.getAllNotations().forEach {
                                 println("    $it")
                             }
-                            ec.clear()
                         } else {
                             println("Test ${testBench.name}.${test.name} passed!")
                         }
+                        ec.clear()
                     }
                 }
             }

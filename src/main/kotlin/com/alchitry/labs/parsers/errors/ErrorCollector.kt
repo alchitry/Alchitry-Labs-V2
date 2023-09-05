@@ -126,9 +126,7 @@ class ErrorCollector private constructor(
 
     fun clear() {
         children.forEach {
-            it.errors.clear()
-            it.warnings.clear()
-            it.infos.clear()
+            it.clear()
         }
         errors.clear()
         warnings.clear()
