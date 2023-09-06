@@ -54,7 +54,7 @@ fun CodeEditor(state: CodeEditorState = rememberCodeEditorState(remember { Lucid
                         get() = state.lines.size
 
                     @Composable
-                    override fun Item(index: Int) {
+                    override fun Item(index: Int, key: Any) {
                         val alpha =
                             if (state.selectionManager.active && state.selectionManager.caret.line == index) 1f else 0.3f
                         CompositionLocalProvider(
@@ -67,7 +67,8 @@ fun CodeEditor(state: CodeEditorState = rememberCodeEditorState(remember { Lucid
                             // to find the width the gutter should be
                             // the value is the max number of digits,
                             // so by using "8" we should be measuring the widest one
-                            val lineNumber = if (index < 0) "8".repeat(-index) else (index + 1).toString()
+                            // it is offset by -1 so that it will never be -1 as it is used as a flag by Compose
+                            val lineNumber = if (index < 0) "8".repeat(-(index + 1)) else (index + 1).toString()
                             val density = LocalDensity.current
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(

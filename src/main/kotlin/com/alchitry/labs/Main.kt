@@ -42,6 +42,6 @@ fun main(args: Array<String>) {
     parser.parse(args)
 
     if (args.isEmpty()) {
-        parser.showHelp("A subcommand must be specified!")
+        Labs().execute() // default to full GUI
     }
 }

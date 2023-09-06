@@ -396,7 +396,7 @@ class CodeEditorState(
 
         val maxDigits = lines.size.length()
         if (gutterDigits != maxDigits) {
-            val placeables = measure(-maxDigits, Constraints())
+            val placeables = measure(-maxDigits - 1, Constraints())
             gutterWidth = placeables.maxOf { it.width }
             gutterDigits = maxDigits
         }

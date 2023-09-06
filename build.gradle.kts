@@ -15,7 +15,7 @@ val antlrKotlinVersion = ext.get("antlrKotlinVersion") as String
 
 plugins {
     kotlin("jvm") version "1.9.0"
-    id("org.jetbrains.compose") version "1.4.3"
+    id("org.jetbrains.compose") version "1.5.1"
     //antlr
 }
 
@@ -36,15 +36,13 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.7.1")
-    implementation(compose.desktop.linux_x64)
-    implementation(compose.desktop.linux_arm64)
-    implementation(compose.desktop.windows_x64)
-    implementation(compose.desktop.macos_x64)
-    implementation(compose.desktop.macos_arm64)
+    implementation(compose.desktop.currentOs)
     implementation(kotlin("reflect"))
     implementation("org.jdom:jdom2:2.0.6.1")
-
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
+    implementation("org.usb4java:usb4java:1.3.0")
+    implementation("com.fazecast:jSerialComm:2.10.3")
+    implementation("com.github.aushacker.yad2xx:yad2xxJava:db60b85c1") // requires native binaries to work
 
     testImplementation(kotlin("test"))
 }
@@ -69,11 +67,22 @@ java {
 
 compose.desktop {
     application {
-        mainClass = "MainKt"
+        mainClass = "com.alchitry.labs.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "AlchitryLabsV2"
-            packageVersion = "2.0.0"
+            packageName = "Alchitry Labs"
+            packageVersion = (version as String).split("-").first()
+            vendor = "Alchitry"
+
+            linux {
+                iconFile.set(File("icon.png"))
+
+            }
+
+            windows {
+                console = true // print output when running .exe from cmd line
+                upgradeUuid = "3e4e3be7-b77e-437e-9ffe-5607b15a6710"
+            }
         }
     }
 }
