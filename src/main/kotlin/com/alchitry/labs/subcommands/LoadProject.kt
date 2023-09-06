@@ -1,5 +1,7 @@
 package com.alchitry.labs.subcommands
 
+import com.alchitry.labs.hardware.usb.UsbDevice
+import com.alchitry.labs.project.Board
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.project.openXml
 import com.alchitry.labs.showHelp
@@ -16,13 +18,30 @@ class LoadProject : Subcommand("load", "Load a project or .bin file") {
         false
     )
     private val ram by option(ArgType.Boolean, "ram", "r", "Load project to FPGA's RAM (temporary)").default(false)
-    private val bin by option(ArgType.String, "bin", null, "Bin file to load")
+    private val bin by option(ArgType.String, "bin", "b", "Bin file to load")
     private val list by option(ArgType.Boolean, "list", "l", "List all detected boards").default(false)
     private val board by option(ArgType.Int, "device", "d", "Index of device to load").default(0)
 
     override fun execute() {
         if (flash && ram) {
             showHelp("Commands flash and ram can't both be specified!")
+            return
+        }
+
+        if (list) {
+            val devices = UsbDevice.usbFindAll(Board.All)
+            if (devices.isEmpty()) {
+                println("No devices detected.")
+                return
+            }
+            Board.All.forEach { b ->
+                val boards = devices.filter { it.board == b }
+                if (boards.isEmpty())
+                    return@forEach
+                println("Detected ${boards.size} ${b.name}")
+            }
+
+            UsbDevice.entryListFree(devices)
             return
         }
 

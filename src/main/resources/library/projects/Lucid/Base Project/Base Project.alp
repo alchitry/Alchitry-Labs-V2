@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Base Project" board="Au" language="Lucid" version="4">
+<project name="Base Project" board="Alchitry Au" language="Lucid" version="4">
   <files>
     <src top="true">alchitry_top.luc</src>
     <constraint lib="true">alchitry.acf</constraint>

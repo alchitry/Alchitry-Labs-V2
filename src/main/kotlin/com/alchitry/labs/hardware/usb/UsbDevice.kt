@@ -1,6 +1,7 @@
 package com.alchitry.labs.hardware.usb
 
 import com.alchitry.labs.hardware.usb.ftdi.enums.DetachMode
+import com.alchitry.labs.project.Board
 import org.usb4java.*
 import java.io.Closeable
 import java.nio.ByteBuffer
@@ -287,28 +288,22 @@ open class UsbDevice(
             return devices
         }
 
-        fun usbFindAll(descriptions: List<UsbUtil.UsbDescriptor>): List<UsbUtil.DeviceEntry> {
+        fun usbFindAll(boards: List<Board>): List<UsbUtil.DeviceEntry> {
             if (LibUsb.init(null) != 0) throw LibUsbException("LibUsb.init() failed", -3)
 
             // Read the USB device list
             val list = DeviceList()
             var result: Int = LibUsb.getDeviceList(null, list)
             if (result < 0) throw LibUsbException("Unable to get device list", result)
-            val devices: ArrayList<UsbUtil.DeviceEntry> = ArrayList()
+            val devices = mutableListOf<UsbUtil.DeviceEntry>()
             try {
                 // Iterate over all devices and scan for the right one
                 for (dev in list) {
                     val desc = DeviceDescriptor()
                     result = LibUsb.getDeviceDescriptor(dev, desc)
                     if (result != LibUsb.SUCCESS) throw LibUsbException("Unable to read device descriptor", result)
-                    var vidPidMatch = false
-                    for (udes in descriptions) {
-                        if (udes.vid == desc.idVendor() && udes.pid == desc.idProduct()) {
-                            vidPidMatch = true
-                            break
-                        }
-                    }
-                    if (vidPidMatch) {
+
+                    if (boards.any { it.usbDescriptor.vid == desc.idVendor() && it.usbDescriptor.pid == desc.idProduct() }) {
                         val device = DeviceHandle()
                         val code: Int = LibUsb.open(dev, device)
                         if (code < 0) {
@@ -319,13 +314,10 @@ open class UsbDevice(
                             LibUsb.close(device)
                             throw LibUsbException("unable to fetch product description", -8)
                         }
-                        var match: UsbUtil.UsbDescriptor? = null
-                        for (udes in descriptions) {
-                            if (udes.vid == desc.idVendor() && udes.pid == desc.idProduct() && (udes.product == null || udes.product == sDesc)) {
-                                match = udes
-                                break
-                            }
+                        val match = boards.firstOrNull {
+                            it.usbDescriptor.vid == desc.idVendor() && it.usbDescriptor.pid == desc.idProduct() && (it.usbDescriptor.product == null || it.usbDescriptor.product == sDesc)
                         }
+
                         LibUsb.close(device)
                         if (match == null) continue
                         devices.add(UsbUtil.DeviceEntry(match, dev))

@@ -11,29 +11,19 @@ import com.fazecast.jSerialComm.SerialPort
 import net.sf.yad2xx.Device
 import net.sf.yad2xx.FTDIException
 import net.sf.yad2xx.FTDIInterface
-import org.usb4java.DeviceDescriptor
-import org.usb4java.DeviceHandle
 import org.usb4java.LibUsb
 import org.usb4java.LibUsbException
 
 object UsbUtil {
-    private val AU_DESC = Board.AlchitryAu.usbDescriptor
-    private val AU_PLUS_DESC = Board.AlchitryAuPlus.usbDescriptor
-    private val CU_DESC = Board.AlchitryCu.usbDescriptor
-
-    val ALL_DEVICES = listOf(AU_DESC, AU_PLUS_DESC, CU_DESC)
-    val AU_DEVICES = listOf(AU_DESC, AU_PLUS_DESC)
-    val CU_DEVICES = listOf(CU_DESC)
-
-    fun getDevice(boards: List<UsbDescriptor>): DeviceEntry? {
+    fun getDevice(boards: List<Board>): DeviceEntry? {
         var dev: DeviceEntry? = null
         var result: DeviceEntry? = null
-        val devs = UsbDevice.usbFindAll(boards)
+        val devs = UsbDevice.usbFindAll(Board.All)
         if (devs.size == 1) {
-            dev = devs[0]
+            dev = devs.first()
         } else if (devs.size > 1) {
             val devList: MutableList<String> = ArrayList()
-            devs.forEachIndexed { i, it -> devList.add("${i + 1}: ${it.description.name}") }
+            devs.forEachIndexed { i, it -> devList.add("${i + 1}: ${it.board.usbDescriptor.name}") }
             TODO("Select device when more than one present")
 //            val dsr = DeviceSelectorRunnable(devList)
 //            runBlocking(Dispatchers.SWT) { dsr.run() }
@@ -43,20 +33,20 @@ object UsbUtil {
 //            }
         }
         if (dev != null) {
-            result = DeviceEntry(dev.description, LibUsb.refDevice(dev.device))
+            result = DeviceEntry(dev.board, LibUsb.refDevice(dev.device))
         }
         UsbDevice.entryListFree(devs)
         return result
     }
 
     @Throws(FTDIException::class)
-    private fun findD2xxDevice(iface: PortInterfaceType, board: List<UsbDescriptor>): Device? {
+    private fun findD2xxDevice(iface: PortInterfaceType, board: List<Board>): Device? {
         val devices = FTDIInterface.getDevices()
         for (d in devices) {
             val desc = d.description
             if (desc.isNotEmpty() && iface.letterMatches(desc[(desc.length - 1).coerceAtLeast(0)])) {
                 val product = desc.substring(0, desc.length - 2)
-                for (b in board) if (product == b.product) {
+                for (b in board) if (product == b.usbDescriptor.product) {
                     return d
                 }
             }
@@ -64,7 +54,7 @@ object UsbUtil {
         return null
     }
 
-    fun openFtdiDevice(iface: PortInterfaceType, board: List<UsbDescriptor>): Ftdi? {
+    fun openFtdiDevice(iface: PortInterfaceType, board: List<Board>): Ftdi? {
         if (Env.isWindows) {
             try {
                 val dev = findD2xxDevice(iface, board)
@@ -89,7 +79,7 @@ object UsbUtil {
 
     @JvmStatic
     @JvmOverloads
-    fun openSerial(devices: List<UsbDescriptor> = ALL_DEVICES): SerialDevice? {
+    fun openSerial(devices: List<Board> = Board.All): SerialDevice? {
         try {
             if (Env.isWindows) {
                 try {
@@ -132,19 +122,5 @@ object UsbUtil {
     }
 
     data class UsbDescriptor(val name: String, val vid: Short, val pid: Short, val product: String?)
-    data class DeviceEntry(val description: UsbDescriptor, val device: org.usb4java.Device)
-}
-
-fun org.usb4java.Device.usbGetStrings(dev: org.usb4java.Device): UsbDevice.DeviceStrings {
-    val device = DeviceHandle()
-    if (LibUsb.open(dev, device) < 0) throw LibUsbException("LibUsb.open() failed", -4)
-    val desc = DeviceDescriptor()
-    if (LibUsb.getDeviceDescriptor(dev, desc) < 0) throw LibUsbException("LibUsb.getDeviceDescriptor() failed", -11)
-    val strings = UsbDevice.DeviceStrings(
-        manufacture = LibUsb.getStringDescriptor(device, desc.iManufacturer()),
-        product = LibUsb.getStringDescriptor(device, desc.iProduct()),
-        serial = LibUsb.getStringDescriptor(device, desc.iSerialNumber())
-    )
-    LibUsb.close(device)
-    return strings
+    data class DeviceEntry(val board: Board, val device: org.usb4java.Device)
 }
