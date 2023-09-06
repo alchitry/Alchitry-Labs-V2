@@ -41,6 +41,27 @@ enum class PortInterfaceType(index: Int) {
             INTERFACE_C -> letter == 'C'
             INTERFACE_D -> letter == 'D'
         }
-        return false
     }
+
+    fun interfaceNumber() = when (this) {
+        INTERFACE_ANY, INTERFACE_A -> 0
+        INTERFACE_B -> 1
+        INTERFACE_C -> 2
+        INTERFACE_D -> 3
+    }
+
+    fun inEndPoint(): Byte = when (this) {
+        INTERFACE_ANY, INTERFACE_A -> 0x02
+        INTERFACE_B -> 0x04
+        INTERFACE_C -> 0x06
+        INTERFACE_D -> 0x08
+    }
+
+    fun outEndPoint(): Byte = when (this) {
+        INTERFACE_ANY, INTERFACE_A -> 0x81.toByte()
+        INTERFACE_B -> 0x83.toByte()
+        INTERFACE_C -> 0x84.toByte()
+        INTERFACE_D -> 0x87.toByte()
+    }
+
 }

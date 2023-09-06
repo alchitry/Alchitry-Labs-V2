@@ -2,6 +2,9 @@ package com.alchitry.labs.hardware.usb.ftdi
 
 import com.alchitry.labs.hardware.usb.ftdi.enums.FlashCommand
 import com.alchitry.labs.hardware.usb.ftdi.enums.MpsseCommand
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -9,15 +12,6 @@ import kotlin.math.min
 
 class LatticeSpi(ftdi: Ftdi) : Mpsse(ftdi) {
     init {
-        init()
-    }
-
-    override fun init() {
-        super.init()
-        configSpi()
-    }
-
-    private fun configSpi() {
         // Set up the Hi-Speed specific commands for the FTx232H
         ftdi.writeData(
             byteArrayOf(
@@ -114,11 +108,7 @@ class LatticeSpi(ftdi: Ftdi) : Mpsse(ftdi) {
         flashChipSelect()
         xferSpi(buf)
         if (buf[4] == 0xFF.toByte()) {
-            TODO("Print stuff")
-//            Util.println(
-//                "Extended device string length is 0xff. This is likely an error. Ignoring...",
-//                Theme.infoTextColor
-//            )
+            println("Extended device string length is 0xff. This is likely an error. Ignoring...")
         } else if (buf[4].toInt() != 0) {
             ext = ByteArray(buf[4].toInt())
             xferSpi(ext)
@@ -206,7 +196,7 @@ class LatticeSpi(ftdi: Ftdi) : Mpsse(ftdi) {
         flashChipDeselect()
     }
 
-    private fun flashWait() {
+    private suspend fun flashWait() {
         var count = 0
         val data = ByteArray(2)
         while (true) {
@@ -223,13 +213,12 @@ class LatticeSpi(ftdi: Ftdi) : Mpsse(ftdi) {
             } else {
                 count = 0
             }
-            //Util.sleep(1)
-            TODO("Delay")
+            delay(1000)
         }
     }
 
     @Suppress("unused")
-    private fun flashDisableProtection() {
+    private suspend fun flashDisableProtection() {
         val data = byteArrayOf(FlashCommand.WSR1.command, 0x00)
         flashChipSelect()
         xferSpi(data)
@@ -244,12 +233,11 @@ class LatticeSpi(ftdi: Ftdi) : Mpsse(ftdi) {
     }
 
 
-    fun eraseFlash() {
-        TODO("Add util methods")
-        //Util.println("Resetting...")
+    suspend fun eraseFlash() {
+        println("Resetting...")
         flashChipDeselect()
-        //Util.sleep(250)
-        // Util.println("Erasing...")
+        delay(250)
+        println("Erasing...")
         flashReset()
         flashPowerUp()
         flashReadId()
@@ -258,23 +246,24 @@ class LatticeSpi(ftdi: Ftdi) : Mpsse(ftdi) {
         flashWait()
         flashPowerDown()
         flashReleaseReset()
-        //Util.sleep(250)
-        //Util.println("Done.", Theme.successTextColor)
+        delay(250)
+        println("Done.")
     }
 
     @Throws(IOException::class)
-    fun writeBin(binFile: String?) {
-        TODO("Add util methods")
-        val binData = Files.readAllBytes(Paths.get(binFile))
-        //Util.println("Resetting...")
+    suspend fun writeBin(binFile: String) {
+        val binData = withContext(Dispatchers.IO) {
+            Files.readAllBytes(Paths.get(binFile))
+        }
+        println("Resetting...")
         flashChipDeselect()
-        //Util.sleep(250)
+        delay(250)
         flashReset()
         flashPowerUp()
         flashReadId()
         val begin_addr = 0
         val end_addr = binData.size + 0xffff and 0xffff.inv()
-        //Util.println("Erasing...")
+        println("Erasing...")
         var addr = begin_addr
         while (addr < end_addr) {
             flashWriteEnable()
@@ -282,7 +271,7 @@ class LatticeSpi(ftdi: Ftdi) : Mpsse(ftdi) {
             flashWait()
             addr += 0x10000
         }
-        //Util.println("Programming...")
+        println("Programming...")
         var pageBuf = ByteArray(256)
         var offset = 0
         while (offset < binData.size) {
@@ -294,11 +283,11 @@ class LatticeSpi(ftdi: Ftdi) : Mpsse(ftdi) {
             flashWait()
             offset += pageBuf.size
         }
-        //Util.println("Resetting...")
+        println("Resetting...")
         flashPowerDown()
         flashReleaseReset()
-        //Util.sleep(250)
-        //Util.println("Done.", Theme.successTextColor)
+        delay(250)
+        println("Done.")
     }
 
     companion object {

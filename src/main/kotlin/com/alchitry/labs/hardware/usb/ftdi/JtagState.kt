@@ -62,7 +62,6 @@ enum class JtagState {
             EXIT2_IR -> if (tms) UPDATE_IR else SHIFT_IR
             UPDATE_IR -> if (tms) SELECT_DR_SCAN else RUN_TEST_IDLE
         }
-        return TEST_LOGIC_RESET
     }
 
     fun getTransitions(end: JtagState): Transistions {

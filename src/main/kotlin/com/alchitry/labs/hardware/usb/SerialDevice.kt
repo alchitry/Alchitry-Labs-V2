@@ -1,7 +1,8 @@
 package com.alchitry.labs.hardware.usb
 
-interface SerialDevice {
-    fun close(): Boolean
+import java.io.Closeable
+
+interface SerialDevice : Closeable {
     fun setBaudrate(baud: Int): Int
     fun setDtrRts(dtr: Boolean, rts: Boolean)
     fun setTimeouts(read: Int, write: Int)

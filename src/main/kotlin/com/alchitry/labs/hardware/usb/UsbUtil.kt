@@ -11,6 +11,8 @@ import com.fazecast.jSerialComm.SerialPort
 import net.sf.yad2xx.Device
 import net.sf.yad2xx.FTDIException
 import net.sf.yad2xx.FTDIInterface
+import org.usb4java.DeviceDescriptor
+import org.usb4java.DeviceHandle
 import org.usb4java.LibUsb
 import org.usb4java.LibUsbException
 
@@ -75,10 +77,8 @@ object UsbUtil {
             }
         }
         try {
-            val ftdi = FtdiLibUSB()
-            ftdi.setInterface(iface)
             val dev = getDevice(board) ?: return null
-            ftdi.usbOpenDev(dev.device)
+            val ftdi = FtdiLibUSB(dev.device, iface)
             LibUsb.unrefDevice(dev.device)
             return ftdi
         } catch (e: LibUsbException) {
@@ -122,10 +122,7 @@ object UsbUtil {
 
             val device: SerialDevice
 
-            device = FtdiLibUSB()
-            device.setInterface(PortInterfaceType.INTERFACE_B)
-            device.usbOpenDev(dev.device)
-
+            device = FtdiLibUSB(dev.device, PortInterfaceType.INTERFACE_B)
             LibUsb.unrefDevice(dev.device)
             return device
         } catch (e: LibUsbException) {
@@ -136,4 +133,18 @@ object UsbUtil {
 
     data class UsbDescriptor(val name: String, val vid: Short, val pid: Short, val product: String?)
     data class DeviceEntry(val description: UsbDescriptor, val device: org.usb4java.Device)
+}
+
+fun org.usb4java.Device.usbGetStrings(dev: org.usb4java.Device): UsbDevice.DeviceStrings {
+    val device = DeviceHandle()
+    if (LibUsb.open(dev, device) < 0) throw LibUsbException("LibUsb.open() failed", -4)
+    val desc = DeviceDescriptor()
+    if (LibUsb.getDeviceDescriptor(dev, desc) < 0) throw LibUsbException("LibUsb.getDeviceDescriptor() failed", -11)
+    val strings = UsbDevice.DeviceStrings(
+        manufacture = LibUsb.getStringDescriptor(device, desc.iManufacturer()),
+        product = LibUsb.getStringDescriptor(device, desc.iProduct()),
+        serial = LibUsb.getStringDescriptor(device, desc.iSerialNumber())
+    )
+    LibUsb.close(device)
+    return strings
 }

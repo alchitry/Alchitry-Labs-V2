@@ -2,14 +2,9 @@ package com.alchitry.labs.hardware.usb
 
 import com.fazecast.jSerialComm.SerialPort
 
-class GenericSerial(dev: SerialPort) : SerialDevice {
-    private val device: SerialPort
+class GenericSerial(private val device: SerialPort) : SerialDevice {
     private var readTimeout = 2000
     private var writeTimeout = 2000
-
-    init {
-        device = dev
-    }
 
     fun open(): Boolean {
         if (!device.openPort()) return false
@@ -17,8 +12,8 @@ class GenericSerial(dev: SerialPort) : SerialDevice {
         return true
     }
 
-    override fun close(): Boolean {
-        return device.closePort()
+    override fun close() {
+        device.closePort()
     }
 
     override fun setBaudrate(baud: Int): Int {
@@ -45,9 +40,9 @@ class GenericSerial(dev: SerialPort) : SerialDevice {
         return device.readBytes(data, data.size)
     }
 
-    override fun readData(buf: ByteArray): Int {
+    override fun readData(data: ByteArray): Int {
         device.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING, readTimeout, writeTimeout)
-        val count: Int = device.readBytes(buf, buf.size)
+        val count: Int = device.readBytes(data, data.size)
         device.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, readTimeout, writeTimeout)
         return count
     }
@@ -55,6 +50,7 @@ class GenericSerial(dev: SerialPort) : SerialDevice {
     override fun flushReadBuffer() {
         device.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING, readTimeout, writeTimeout)
         val buff = ByteArray(100)
+        @Suppress("ControlFlowWithEmptyBody")
         while (device.readBytes(buff, 100) > 0) {
         }
         device.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, readTimeout, writeTimeout)

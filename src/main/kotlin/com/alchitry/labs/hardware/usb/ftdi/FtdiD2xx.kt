@@ -49,7 +49,7 @@ class FtdiD2xx(device: Device) : Ftdi, SerialDevice {
         }
     }
 
-    override fun setBitmode(pinDirection: Byte, bitMode: BitMode) {
+    override fun setBitMode(pinDirection: Byte, bitMode: BitMode) {
         try {
             device.setBitMode(pinDirection, bitMode.fTDIMode)
         } catch (e: FTDIException) {
@@ -86,13 +86,12 @@ class FtdiD2xx(device: Device) : Ftdi, SerialDevice {
         }
     }
 
-    override fun usbClose(): Boolean {
+    override fun close() {
         try {
             device.close()
         } catch (e: FTDIException) {
-            return false
+            e.printStackTrace()
         }
-        return true
     }
 
     override fun usbPurgeBuffers() {
@@ -101,10 +100,6 @@ class FtdiD2xx(device: Device) : Ftdi, SerialDevice {
         } catch (e: FTDIException) {
             throw RuntimeException(e)
         }
-    }
-
-    override fun close(): Boolean {
-        return usbClose()
     }
 
     override fun setBaudrate(baud: Int): Int {

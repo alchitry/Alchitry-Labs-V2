@@ -11,107 +11,57 @@ import java.nio.ByteBuffer
 import java.nio.IntBuffer
 import kotlin.experimental.or
 
-class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
-    private var type: ChipType? = null
+class FtdiLibUSB(dev: Device, val interfaceType: PortInterfaceType) : UsbDevice(
+    dev,
+    interfaceType.interfaceNumber(),
+    interfaceType.inEndPoint(),
+    interfaceType.outEndPoint()
+), Ftdi, SerialDevice {
+    private val type: ChipType
     private var bitbangEnabled = false
-    private var interfaceType: PortInterfaceType? = null
-    protected override fun UsbCloseInternal() {
-        super.UsbCloseInternal()
-        // if (eeprom != null)
-        // eeprom.initialized_for_connected_device = 0;
-    }
 
     init {
-        type = ChipType.TYPE_BM
-        bitbangEnabled = false
-        setInterface(PortInterfaceType.INTERFACE_ANY)
-        // eeprom = new FtdiEeprom();
-    }
-
-    fun setInterface(newInterface: PortInterfaceType) {
-        if (device != null) {
-            var checkInterface: PortInterfaceType = newInterface
-            if (checkInterface == PortInterfaceType.INTERFACE_ANY) checkInterface = PortInterfaceType.INTERFACE_A
-            if (interfaceType != checkInterface) throw LibUsbException(
-                "Interface can not be changed on an already open device",
-                -3
-            )
-        }
-        when (newInterface) {
-            PortInterfaceType.INTERFACE_ANY, PortInterfaceType.INTERFACE_A -> {
-                interfaceType = PortInterfaceType.INTERFACE_A
-                iface = 0
-                inEndPoint = 0x02
-                outEndPoint = 0x81.toByte()
-            }
-
-            PortInterfaceType.INTERFACE_B -> {
-                interfaceType = PortInterfaceType.INTERFACE_B
-                iface = 1
-                inEndPoint = 0x04
-                outEndPoint = 0x83.toByte()
-            }
-
-            PortInterfaceType.INTERFACE_C -> {
-                interfaceType = PortInterfaceType.INTERFACE_C
-                iface = 2
-                inEndPoint = 0x06
-                outEndPoint = 0x85.toByte()
-            }
-
-            PortInterfaceType.INTERFACE_D -> {
-                interfaceType = PortInterfaceType.INTERFACE_D
-                iface = 3
-                inEndPoint = 0x08
-                outEndPoint = 0x87.toByte()
-            }
-
-            else -> throw LibUsbException("Unknown interface", -1)
-        }
-    }
-
-    protected override fun determinMaxPacketSize(dev: Device?, defSize: Int): Int {
-        var defSize = defSize
-        defSize =
-            if (ChipType.TYPE_2232H == type || ChipType.TYPE_4232H == type || ChipType.TYPE_232H == type) 512 else 64
-        return super.determinMaxPacketSize(dev, defSize)
-    }
-
-    override fun usbOpenDev(dev: Device?) {
-        super.usbOpenDev(dev)
         val desc = DeviceDescriptor()
         if (LibUsb.getDeviceDescriptor(dev, desc) < 0) throw LibUsbException("LibUsb.getDeviceDescriptior() failed", -9)
-        if (desc.bcdDevice() == 0x400.toShort() || desc.bcdDevice() == 0x200.toShort() && desc.iSerialNumber() == 0.toByte()) type =
-            ChipType.TYPE_BM else if (desc.bcdDevice() == 0x200.toShort()) type =
-            ChipType.TYPE_AM else if (desc.bcdDevice() == 0x500.toShort()) type =
-            ChipType.TYPE_2232C else if (desc.bcdDevice() == 0x600.toShort()) type =
-            ChipType.TYPE_R else if (desc.bcdDevice() == 0x700.toShort()) type =
-            ChipType.TYPE_2232H else if (desc.bcdDevice() == 0x800.toShort()) type =
-            ChipType.TYPE_4232H else if (desc.bcdDevice() == 0x900.toShort()) type =
-            ChipType.TYPE_232H else if (desc.bcdDevice() == 0x1000.toShort()) type = ChipType.TYPE_230X
+        val bcdDevice = desc.bcdDevice()
+        type = when {
+            bcdDevice == 0x400.toShort() || bcdDevice == 0x200.toShort() && desc.iSerialNumber() == 0.toByte() -> ChipType.TYPE_BM
+            bcdDevice == 0x200.toShort() -> ChipType.TYPE_AM
+            bcdDevice == 0x500.toShort() -> ChipType.TYPE_2232C
+            bcdDevice == 0x600.toShort() -> ChipType.TYPE_R
+            bcdDevice == 0x700.toShort() -> ChipType.TYPE_2232H
+            bcdDevice == 0x800.toShort() -> ChipType.TYPE_4232H
+            bcdDevice == 0x900.toShort() -> ChipType.TYPE_232H
+            bcdDevice == 0x1000.toShort() -> ChipType.TYPE_230X
+            else -> throw LibUsbException("Unknown bcdDevice(): $bcdDevice", -8)
+        }
         try {
             usbReset()
         } catch (e: LibUsbException) {
-            UsbCloseInternal()
+            close()
             throw e
         }
         try {
             setBaudrate(1000000)
         } catch (e: LibUsbException) {
-            UsbCloseInternal()
+            close()
             throw LibUsbException("set baudrate failed", -7)
         }
+        val maxPacket = when (type) {
+            ChipType.TYPE_2232H, ChipType.TYPE_4232H, ChipType.TYPE_232H -> 512
+            else -> 64
+        }
+        maxPacketSize = maxPacketSize.coerceAtMost(maxPacket)
     }
 
     override fun usbReset() {
-        if (device == null) throw LibUsbException("USB device unavailable", -2)
         var code: Int
         if (LibUsb.controlTransfer(
                 device,
                 FTDI_DEVICE_OUT_REQTYPE,
                 SIO_RESET_REQUEST,
                 SIO_RESET_SIO,
-                interfaceType?.index as Short,
+                interfaceType.index,
                 EMPTY_BUF,
                 writeTimeout.toLong()
             ).also { code = it } < 0
@@ -119,14 +69,13 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
         resetReadBuffer()
     }
 
-    fun usbPurgeRxBuffer() {
-        if (device == null) throw LibUsbException("USB device unavailable", -2)
+    private fun usbPurgeRxBuffer() {
         if (LibUsb.controlTransfer(
                 device,
                 FTDI_DEVICE_OUT_REQTYPE,
                 SIO_RESET_REQUEST,
                 SIO_RESET_PURGE_RX,
-                interfaceType?.index as Short,
+                interfaceType.index,
                 EMPTY_BUF,
                 writeTimeout.toLong()
             ) < 0
@@ -134,18 +83,22 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
         resetReadBuffer()
     }
 
-    fun usbPurgeTxBuffer() {
-        if (device == null) throw LibUsbException("USB device unavailable", -2)
+    private fun usbPurgeTxBuffer() {
         if (LibUsb.controlTransfer(
                 device,
                 FTDI_DEVICE_OUT_REQTYPE,
                 SIO_RESET_REQUEST,
                 SIO_RESET_PURGE_TX,
-                interfaceType?.index as Short,
+                interfaceType.index,
                 EMPTY_BUF,
                 writeTimeout.toLong()
             ) < 0
         ) throw LibUsbException("Ftdi purge of TX buffer failed", -1)
+    }
+
+    override fun setTimeouts(read: Int, write: Int) {
+        readTimeout = read
+        writeTimeout = write
     }
 
     override fun usbPurgeBuffers() {
@@ -153,83 +106,79 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
         usbPurgeTxBuffer()
     }
 
-    override fun readData(buf: ByteArray): Int {
+    override fun readData(data: ByteArray): Int {
         var offset = 0
         var ret: Int
         var i: Int
-        var num_of_chunks: Int
-        var chunk_remains: Int
-        val packet_size: Int
-        val actual_length_buf = IntBuffer.allocate(1)
-        var actual_length = 1
-        if (device == null) throw LibUsbException("USB device unavailable", -666)
-
-        val readBuffer = readBuffer ?: error("readBuffer must be set before reading data!")
+        var numOfChunks: Int
+        var chunkRemains: Int
+        val actualLengthBuf = IntBuffer.allocate(1)
+        var actualLength = 1
 
         // Packet size sanity check (avoid division by zero)
-        packet_size = maxPacketSize
+        val packet_size = maxPacketSize
         if (packet_size == 0) throw LibUsbException("max_packet_size is bogus (zero)", -1)
 
         // everything we want is still in the readbuffer?
-        if (buf!!.size <= readBuffer.remaining()) {
-            readBuffer.get(buf)
-            return buf.size
+        if (data.size <= readBuffer.remaining()) {
+            readBuffer.get(data)
+            return data.size
         }
         // something still in the readbuffer, but not enough to satisfy 'size'?
         if (readBuffer.remaining() != 0) {
             offset += readBuffer.remaining()
-            readBuffer.get(buf, 0, readBuffer.remaining())
+            readBuffer.get(data, 0, readBuffer.remaining())
         }
         // do the actual USB read
-        while (offset < buf.size && actual_length > 0) {
+        while (offset < data.size && actualLength > 0) {
             readBuffer.clear()
-            /* returns how much received */actual_length_buf.clear()
-            ret = LibUsb.bulkTransfer(device, outEndPoint, readBuffer, actual_length_buf, readTimeout.toLong())
-            actual_length = actual_length_buf.get()
-            readBuffer.limit(actual_length)
+            /* returns how much received */actualLengthBuf.clear()
+            ret = LibUsb.bulkTransfer(device, outEndPoint, readBuffer, actualLengthBuf, readTimeout.toLong())
+            actualLength = actualLengthBuf.get()
+            readBuffer.limit(actualLength)
             if (ret < 0) throw LibUsbException("usb bulk read failed", ret)
-            if (actual_length > 2) {
+            if (actualLength > 2) {
                 // skip Ftdi status bytes.
                 // Maybe stored in the future to enable modem use
-                num_of_chunks = actual_length / packet_size
-                chunk_remains = actual_length % packet_size
+                numOfChunks = actualLength / packet_size
+                chunkRemains = actualLength % packet_size
                 readBuffer.position(readBuffer.position() + 2)
-                actual_length -= 2
-                if (actual_length > packet_size - 2) {
+                actualLength -= 2
+                if (actualLength > packet_size - 2) {
                     val buffer = ByteArray(readBuffer.remaining())
                     readBuffer.get(buffer)
                     i = 1
-                    while (i < num_of_chunks) {
+                    while (i < numOfChunks) {
                         System.arraycopy(buffer, packet_size * i, buffer, (packet_size - 2) * i, packet_size - 2)
                         i++
                     }
-                    actual_length -= if (chunk_remains > 2) {
-                        System.arraycopy(buffer, packet_size * i, buffer, (packet_size - 2) * i, chunk_remains - 2)
-                        2 * num_of_chunks
+                    actualLength -= if (chunkRemains > 2) {
+                        System.arraycopy(buffer, packet_size * i, buffer, (packet_size - 2) * i, chunkRemains - 2)
+                        2 * numOfChunks
                     } else {
-                        2 * (num_of_chunks - 1) + chunk_remains
+                        2 * (numOfChunks - 1) + chunkRemains
                     }
                     readBuffer.clear()
-                    readBuffer.put(buffer, 0, actual_length)
-                    readBuffer.limit(actual_length)
+                    readBuffer.put(buffer, 0, actualLength)
+                    readBuffer.limit(actualLength)
                     readBuffer.rewind()
                 }
-            } else if (actual_length <= 2) {
+            } else {
                 // no more data to read?
                 resetReadBuffer()
                 return offset
             }
             if (readBuffer.remaining() > 0) {
                 // data still fits in buf?
-                if (offset + actual_length <= buf.size) {
-                    readBuffer.get(buf, offset, actual_length)
-                    offset += actual_length
+                if (offset + actualLength <= data.size) {
+                    readBuffer.get(data, offset, actualLength)
+                    offset += actualLength
 
-                    /* Did we read exactly the right amount of bytes? */if (offset == buf.size) return offset
+                    /* Did we read exactly the right amount of bytes? */if (offset == data.size) return offset
                 } else {
                     // only copy part of the data or size <= readbuffer_chunksize
-                    val part_size = buf.size - offset
-                    readBuffer.get(buf, offset, part_size)
+                    val part_size = data.size - offset
+                    readBuffer.get(data, offset, part_size)
                     offset += part_size
                     return offset
                 }
@@ -315,9 +264,9 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
         return res
     }
 
-    private fun toClkbits(baudrate: Int, clk: Int, clkDiv: Int): BaudCalcResults {
+    private fun toClkBits(baudrate: Int, clk: Int, clkDiv: Int): BaudCalcResults {
         val fracCode = intArrayOf(0, 3, 2, 4, 1, 5, 6, 7)
-        var bestBaud = 0
+        var bestBaud: Int
         val divisor: Int
         var bestDivisor: Int
         val res = BaudCalcResults()
@@ -357,11 +306,11 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
 				 * On H Devices, use 12 000 000 Baudrate when possible We have a 14 bit divisor, a 1 bit divisor switch (10 or 16) three fractional bits and a 120 MHz clock
 				 * Assume AN_120 "Sub-integer divisors between 0 and 2 are not allowed" holds for DIV/10 CLK too, so /1, /1.5 and /2 can be handled the same
 				 */
-                res = toClkbits(baudrate, H_CLK, 10)
+                res = toClkBits(baudrate, H_CLK, 10)
                 res.encodedDivisor = res.encodedDivisor or 0x20000L /* switch on CLK/10 */
-            } else res = toClkbits(baudrate, C_CLK, 16)
+            } else res = toClkBits(baudrate, C_CLK, 16)
         } else if (ChipType.TYPE_BM == type || ChipType.TYPE_2232C == type || ChipType.TYPE_R == type || ChipType.TYPE_230X == type) {
-            res = toClkbits(baudrate, C_CLK, 16)
+            res = toClkBits(baudrate, C_CLK, 16)
         } else {
             res = toClkbitsAm(baudrate)
         }
@@ -370,21 +319,20 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
         if (ChipType.TYPE_2232H == type || ChipType.TYPE_4232H == type || ChipType.TYPE_232H == type) {
             res.index = (res.encodedDivisor shr 8).toShort()
             res.index = (res.index.toInt() and 0xFF00).toShort()
-            res.index = (res.index.toInt() or interfaceType!!.index.toInt()).toShort()
+            res.index = (res.index.toInt() or interfaceType.index.toInt()).toShort()
         } else res.index = (res.encodedDivisor shr 16).toShort()
 
         // Return the nearest baud rate
         return res
     }
 
-    override fun setBaudrate(baudrate: Int): Int {
-        var baudrate = baudrate
-        val res: BaudCalcResults?
-        if (device == null) throw LibUsbException("USB device unavailable", -2)
+    override fun setBaudrate(baud: Int): Int {
+        var baudrate = baud
+
         if (bitbangEnabled) {
-            baudrate = baudrate * 4
+            baudrate *= 4
         }
-        res = convertBaudrate(baudrate)
+        val res: BaudCalcResults? = convertBaudrate(baudrate)
         if (res!!.bestBaud <= 0) throw LibUsbException("Silly baudrate <= 0.", -1)
 
         // Check within tolerance (about 5%)
@@ -408,59 +356,57 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
 
     fun setLineProperty(bits: LineDatabit, sbit: LineStopbit, parity: LineParity, breakType: LineBreak) {
         var value: Short = bits.bits.toShort()
-        if (device == null) throw LibUsbException("USB device unavailable", -2)
-        when (parity) {
-            LineParity.NONE -> value = (value.toInt() or (0x00 shl 8)).toShort()
-            LineParity.ODD -> value = (value.toInt() or (0x01 shl 8)).toShort()
-            LineParity.EVEN -> value = (value.toInt() or (0x02 shl 8)).toShort()
-            LineParity.MARK -> value = (value.toInt() or (0x03 shl 8)).toShort()
-            LineParity.SPACE -> value = (value.toInt() or (0x04 shl 8)).toShort()
+
+        value = when (parity) {
+            LineParity.NONE -> (value.toInt() or (0x00 shl 8)).toShort()
+            LineParity.ODD -> (value.toInt() or (0x01 shl 8)).toShort()
+            LineParity.EVEN -> (value.toInt() or (0x02 shl 8)).toShort()
+            LineParity.MARK -> (value.toInt() or (0x03 shl 8)).toShort()
+            LineParity.SPACE -> (value.toInt() or (0x04 shl 8)).toShort()
         }
-        when (sbit) {
-            LineStopbit.STOP_BIT_1 -> value = (value.toInt() or (0x00 shl 11)).toShort()
-            LineStopbit.STOP_BIT_15 -> value = (value.toInt() or (0x01 shl 11)).toShort()
-            LineStopbit.STOP_BIT_2 -> value = (value.toInt() or (0x02 shl 11)).toShort()
+        value = when (sbit) {
+            LineStopbit.STOP_BIT_1 -> (value.toInt() or (0x00 shl 11)).toShort()
+            LineStopbit.STOP_BIT_15 -> (value.toInt() or (0x01 shl 11)).toShort()
+            LineStopbit.STOP_BIT_2 -> (value.toInt() or (0x02 shl 11)).toShort()
         }
-        when (breakType) {
-            LineBreak.BREAK_OFF -> value = (value.toInt() or (0x00 shl 14)).toShort()
-            LineBreak.BREAK_ON -> value = (value.toInt() or (0x01 shl 14)).toShort()
+        value = when (breakType) {
+            LineBreak.BREAK_OFF -> (value.toInt() or (0x00 shl 14)).toShort()
+            LineBreak.BREAK_ON -> (value.toInt() or (0x01 shl 14)).toShort()
         }
         if (LibUsb.controlTransfer(
                 device,
                 FTDI_DEVICE_OUT_REQTYPE,
                 SIO_SET_DATA_REQUEST,
                 value,
-                interfaceType!!.index,
+                interfaceType.index,
                 EMPTY_BUF,
                 writeTimeout.toLong()
             ) < 0
         ) throw LibUsbException("Setting new line property failed", -1)
     }
 
-    override fun setBitmode(mask: Byte, mode: BitMode) {
-        if (device == null) throw LibUsbException("USB device unavailable", -2)
-        val usbVal = (mask.toInt() or (mode.mask.toShort().toInt() shl 8)).toShort()
+    override fun setBitMode(pinDirection: Byte, bitMode: BitMode) {
+        val usbVal = (pinDirection.toInt() or (bitMode.mask.toShort().toInt() shl 8)).toShort()
         if (LibUsb.controlTransfer(
                 device,
                 FTDI_DEVICE_OUT_REQTYPE,
                 SIO_SET_BITMODE_REQUEST,
                 usbVal,
-                interfaceType!!.index,
+                interfaceType.index,
                 EMPTY_BUF,
                 writeTimeout.toLong()
             ) < 0
         ) throw LibUsbException("unable to configure bitbang mode. Perhaps not a BM type chip?", -1)
-        bitbangEnabled = BitMode.RESET != mode
+        bitbangEnabled = BitMode.RESET != bitMode
     }
 
-    fun disableBitmode() {
-        if (device == null) throw LibUsbException("USB device unavailable", -2)
+    fun disableBitMode() {
         if (LibUsb.controlTransfer(
                 device,
                 FTDI_DEVICE_OUT_REQTYPE,
                 SIO_SET_BITMODE_REQUEST,
                 0.toShort(),
-                interfaceType!!.index,
+                interfaceType.index,
                 EMPTY_BUF,
                 writeTimeout.toLong()
             ) < 0
@@ -469,14 +415,13 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
     }
 
     fun readPins(): Byte {
-        if (device == null) throw LibUsbException("USB device unavailable", -2)
         val pins = ByteBuffer.allocateDirect(1)
         if (LibUsb.controlTransfer(
                 device,
                 FTDI_DEVICE_IN_REQTYPE,
                 SIO_READ_PINS_REQUEST,
                 0.toShort(),
-                interfaceType!!.index,
+                interfaceType.index,
                 pins,
                 readTimeout.toLong()
             ) != 1
@@ -484,16 +429,15 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
         return pins.get()
     }
 
-    override fun setLatencyTimer(latency: Byte) {
-        if (latency.toInt() == 0) throw LibUsbException("latency out of range. Only valid for 1-255", -1)
-        if (device == null) throw LibUsbException("USB device unavailable", -3)
-        val usbVal = (0x00FF and latency.toInt()).toShort()
+    override fun setLatencyTimer(time: Byte) {
+        if (time.toInt() == 0) throw LibUsbException("latency out of range. Only valid for 1-255", -1)
+        val usbVal = (0x00FF and time.toInt()).toShort()
         if (LibUsb.controlTransfer(
                 device,
                 FTDI_DEVICE_OUT_REQTYPE,
                 SIO_SET_LATENCY_TIMER_REQUEST,
                 usbVal,
-                interfaceType!!.index,
+                interfaceType.index,
                 EMPTY_BUF,
                 writeTimeout.toLong()
             ) < 0
@@ -501,14 +445,13 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
     }
 
     fun getLatencyTimer(): Byte {
-        if (device == null) throw LibUsbException("USB device unavailable", -2)
         val latency = ByteBuffer.allocateDirect(1)
         if (LibUsb.controlTransfer(
                 device,
                 FTDI_DEVICE_IN_REQTYPE,
                 SIO_GET_LATENCY_TIMER_REQUEST,
                 0.toShort(),
-                interfaceType!!.index,
+                interfaceType.index,
                 latency,
                 readTimeout.toLong()
             ) != 1
@@ -517,14 +460,13 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
     }
 
     fun pullModemStatus(): Short {
-        if (device == null) throw LibUsbException("USB device unavailable", -2)
         val status = ByteBuffer.allocateDirect(2)
         if (LibUsb.controlTransfer(
                 device,
                 FTDI_DEVICE_IN_REQTYPE,
                 SIO_POLL_MODEM_STATUS_REQUEST,
                 0.toShort(),
-                interfaceType!!.index,
+                interfaceType.index,
                 status,
                 readTimeout.toLong()
             ) != 2
@@ -533,13 +475,12 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
     }
 
     fun setFlowCtrl(flowctrl: FlowControl) {
-        if (device == null) throw LibUsbException("USB device unavailable", -2)
         if (LibUsb.controlTransfer(
                 device,
                 FTDI_DEVICE_OUT_REQTYPE,
                 SIO_SET_FLOW_CTRL_REQUEST,
                 0.toShort(),
-                (flowctrl.bytecode.toInt() or interfaceType!!.index.toInt()).toShort(),
+                (flowctrl.bytecode.toInt() or interfaceType.index.toInt()).toShort(),
                 EMPTY_BUF,
                 writeTimeout.toLong()
             ) < 0
@@ -547,14 +488,13 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
     }
 
     fun setFlowCtrlXonXoff(xon: Byte, xoff: Byte) {
-        if (device == null) throw LibUsbException("USB device unavailable", -2)
         val xonxoff = (xon.toShort().toInt() and 0x00ff or (xoff.toShort().toInt() shl 8)).toShort()
         if (LibUsb.controlTransfer(
                 device,
                 FTDI_DEVICE_OUT_REQTYPE,
                 SIO_SET_FLOW_CTRL_REQUEST,
                 xonxoff,
-                (SIO_XON_XOFF_HS.toInt() or interfaceType!!.index.toInt()).toShort(),
+                (SIO_XON_XOFF_HS.toInt() or interfaceType.index.toInt()).toShort(),
                 EMPTY_BUF,
                 writeTimeout.toLong()
             ) < 0
@@ -562,14 +502,14 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
     }
 
     fun setDtr(state: Boolean) {
-        if (device == null) throw LibUsbException("USB device unavailable", -2)
+
         val usbVal = if (state) SIO_SET_DTR_HIGH else SIO_SET_DTR_LOW
         if (LibUsb.controlTransfer(
                 device,
                 FTDI_DEVICE_OUT_REQTYPE,
                 SIO_SET_MODEM_CTRL_REQUEST,
                 usbVal,
-                interfaceType!!.index,
+                interfaceType.index,
                 EMPTY_BUF,
                 writeTimeout.toLong()
             ) < 0
@@ -577,14 +517,13 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
     }
 
     fun setRts(state: Boolean) {
-        if (device == null) throw LibUsbException("USB device unavailable", -2)
         val usbVal = if (state) SIO_SET_RTS_HIGH else SIO_SET_RTS_LOW
         if (LibUsb.controlTransfer(
                 device,
                 FTDI_DEVICE_OUT_REQTYPE,
                 SIO_SET_MODEM_CTRL_REQUEST,
                 usbVal,
-                interfaceType!!.index,
+                interfaceType.index,
                 EMPTY_BUF,
                 writeTimeout.toLong()
             ) < 0
@@ -592,7 +531,6 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
     }
 
     override fun setDtrRts(dtr: Boolean, rts: Boolean) {
-        if (device == null) throw LibUsbException("USB device unavailable", -2)
         var usbVal = if (dtr) SIO_SET_DTR_HIGH else SIO_SET_DTR_LOW
         usbVal = (usbVal.toInt() or (if (rts) SIO_SET_RTS_HIGH else SIO_SET_RTS_LOW).toInt()).toShort()
         if (LibUsb.controlTransfer(
@@ -600,7 +538,7 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
                 FTDI_DEVICE_OUT_REQTYPE,
                 SIO_SET_MODEM_CTRL_REQUEST,
                 usbVal,
-                interfaceType!!.index,
+                interfaceType.index,
                 EMPTY_BUF,
                 writeTimeout.toLong()
             ) < 0
@@ -608,7 +546,6 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
     }
 
     override fun setChars(eventChar: Byte, eventEnable: Boolean, errorChar: Byte, errorEnable: Boolean) {
-        if (device == null) throw LibUsbException("USB device unavailable", -2)
         var usbVal = (eventChar.toInt() and 0x00ff).toShort()
         if (eventEnable) usbVal = (usbVal.toInt() or (1 shl 8)).toShort()
         if (LibUsb.controlTransfer(
@@ -616,7 +553,7 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
                 FTDI_DEVICE_OUT_REQTYPE,
                 SIO_SET_EVENT_CHAR_REQUEST,
                 usbVal,
-                interfaceType!!.index,
+                interfaceType.index,
                 EMPTY_BUF,
                 writeTimeout.toLong()
             ) < 0
@@ -628,15 +565,11 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
                 FTDI_DEVICE_OUT_REQTYPE,
                 SIO_SET_ERROR_CHAR_REQUEST,
                 usbVal,
-                interfaceType!!.index,
+                interfaceType.index,
                 EMPTY_BUF,
                 writeTimeout.toLong()
             ) < 0
         ) throw LibUsbException("setting error character failed", -1)
-    }
-
-    override fun close(): Boolean {
-        return usbClose()
     }
 
     companion object {
@@ -708,9 +641,9 @@ class FtdiLibUSB : UsbDevice(), Ftdi, SerialDevice {
         const val SIO_SET_BAUD_RATE = 3.toByte() /* Set baud rate */
         const val SIO_SET_DATA = 4.toByte() /* Set the data characteristics of the port */
         val FTDI_DEVICE_OUT_REQTYPE =
-            (LibUsb.REQUEST_TYPE_VENDOR or LibUsb.RECIPIENT_DEVICE or LibUsb.ENDPOINT_OUT) as Byte
+            (LibUsb.REQUEST_TYPE_VENDOR or LibUsb.RECIPIENT_DEVICE or LibUsb.ENDPOINT_OUT)
         val FTDI_DEVICE_IN_REQTYPE =
-            (LibUsb.REQUEST_TYPE_VENDOR or LibUsb.RECIPIENT_DEVICE or LibUsb.ENDPOINT_IN) as Byte
+            (LibUsb.REQUEST_TYPE_VENDOR or LibUsb.RECIPIENT_DEVICE or LibUsb.ENDPOINT_IN)
 
         /* Requests */
         const val SIO_RESET_REQUEST = SIO_RESET

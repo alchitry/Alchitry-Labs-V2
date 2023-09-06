@@ -4,7 +4,7 @@ import com.alchitry.labs.hardware.usb.ftdi.enums.MpsseCommand
 
 class Jtag(ftdi: Ftdi) : Mpsse(ftdi) {
     private var currentState = JtagState.RUN_TEST_IDLE
-    override fun init() {
+    override suspend fun init() {
         super.init()
         configJtag()
     }
@@ -30,27 +30,27 @@ class Jtag(ftdi: Ftdi) : Mpsse(ftdi) {
 
     fun resetState() {
         currentState = JtagState.CAPTURE_DR
-        navitageToState(JtagState.TEST_LOGIC_RESET)
+        navigateToState(JtagState.TEST_LOGIC_RESET)
     }
 
-    fun navitageToState(state: JtagState) {
-        val transistions: JtagState.Transistions = currentState.getTransitions(state)
-        if (transistions.moves > 0) {
-            if (transistions.moves < 8) {
+    fun navigateToState(state: JtagState) {
+        val transitions: JtagState.Transistions = currentState.getTransitions(state)
+        if (transitions.moves > 0) {
+            if (transitions.moves < 8) {
                 ftdi.writeData(
                     byteArrayOf(
                         0x4B.toByte(),
-                        (transistions.moves - 1).toByte(),
-                        (0x7F and transistions.tms).toByte()
+                        (transitions.moves - 1).toByte(),
+                        (0x7F and transitions.tms).toByte()
                     )
                 )
             } else {
-                ftdi.writeData(byteArrayOf(0x4B.toByte(), 6.toByte(), (0x7F and transistions.tms).toByte()))
+                ftdi.writeData(byteArrayOf(0x4B.toByte(), 6.toByte(), (0x7F and transitions.tms).toByte()))
                 ftdi.writeData(
                     byteArrayOf(
                         0x4B.toByte(),
-                        (transistions.moves - 8).toByte(),
-                        (0x7F and (transistions.tms shr 7)).toByte()
+                        (transitions.moves - 8).toByte(),
+                        (0x7F and (transitions.tms shr 7)).toByte()
                     )
                 )
             }
@@ -65,15 +65,15 @@ class Jtag(ftdi: Ftdi) : Mpsse(ftdi) {
             else -> throw MpsseException("jtag fsm is in state " + currentState.name + " which is not a shift state")
         }
         val reqBytes = bitCount / 8 + if (bitCount % 8 > 0) 1 else 0
-        val read = tdo != null
+
         tdo?.let { ftdi.readData(it) }
 
         var tdoBytes = 0
-        if (read && tdo!!.size != tdi.size) throw MpsseException("tdo length do not match tdi length")
+        if (tdo != null && tdo.size != tdi.size) throw MpsseException("tdo length do not match tdi length")
         if (bitCount < 9) {
             if (bitCount > 1) ftdi.writeData(
                 byteArrayOf(
-                    (if (read) 0x3B else 0x1B).toByte(),
+                    (if (tdo != null) 0x3B else 0x1B).toByte(),
                     (bitCount - 2).toByte(),
                     tdi[0]
                 )
@@ -81,16 +81,15 @@ class Jtag(ftdi: Ftdi) : Mpsse(ftdi) {
             val lastBit = (tdi[0].toInt() ushr (bitCount - 1) % 8 and 0x01).toByte()
             ftdi.writeData(
                 byteArrayOf(
-                    (if (read) 0x6E else 0x4B).toByte(),
+                    (if (tdo != null) 0x6E else 0x4B).toByte(),
                     0x00,
                     (0x03 or (lastBit.toInt() shl 7)).toByte()
                 )
             )
-            if (read) {
+            if (tdo != null) {
                 val inputBuffer = ByteArray(if (bitCount > 1) 2 else 1)
                 if (ftdi.readDataWithTimeout(inputBuffer) != inputBuffer.size) throw RuntimeException("Read of " + inputBuffer.size + " bytes timed out!")
-                tdo!![0] = (inputBuffer[inputBuffer.size - 1].toInt() ushr 8 - bitCount).toByte()
-                tdoBytes = 1
+                tdo[0] = (inputBuffer[inputBuffer.size - 1].toInt() ushr 8 - bitCount).toByte()
             }
         } else {
             val fullBytes = (bitCount - 1) / 8
@@ -100,14 +99,14 @@ class Jtag(ftdi: Ftdi) : Mpsse(ftdi) {
             while (remBytes > 0) {
                 val bct = if (remBytes > 4096) 4096 else remBytes
                 if (writeBuffer == null || writeBuffer.size != bct + 3) writeBuffer = ByteArray(bct + 3)
-                writeBuffer[0] = (if (read) 0x39 else 0x19).toByte()
+                writeBuffer[0] = (if (tdo != null) 0x39 else 0x19).toByte()
                 writeBuffer[1] = (bct - 1 and 0xff).toByte()
                 writeBuffer[2] = (bct - 1 shr 8 and 0xff).toByte()
                 System.arraycopy(tdi, offset, writeBuffer, 3, bct)
                 if (ftdi.writeData(writeBuffer) != writeBuffer.size) throw MpsseException("failed to write entire buffer")
                 remBytes -= bct
                 offset += bct
-                if (read) {
+                if (tdo != null) {
                     val readBuffer = ByteArray(bct)
                     ftdi.readDataWithTimeout(readBuffer)
                     System.arraycopy(readBuffer, 0, tdo, tdoBytes, bct)
@@ -118,7 +117,7 @@ class Jtag(ftdi: Ftdi) : Mpsse(ftdi) {
             if (fullBytes * 8 + 1 != bitCount) {
                 ftdi.writeData(
                     byteArrayOf(
-                        (if (read) 0x3B else 0x1B).toByte(),
+                        (if (tdo != null) 0x3B else 0x1B).toByte(),
                         (partialBits - 1).toByte(),
                         tdi[reqBytes - 1]
                     )
@@ -127,17 +126,17 @@ class Jtag(ftdi: Ftdi) : Mpsse(ftdi) {
             val lastBit = (tdi[reqBytes - 1].toInt() shr (bitCount - 1) % 8 and 0x01).toByte()
             ftdi.writeData(
                 byteArrayOf(
-                    (if (read) 0x6E else 0x4B).toByte(),
+                    (if (tdo != null) 0x6E else 0x4B).toByte(),
                     0.toByte(),
                     (0x03 or (lastBit.toInt() shl 7)).toByte()
                 )
             )
-            if (read) {
+            if (tdo != null) {
                 val bytesToRead = if (fullBytes * 8 + 1 != bitCount) 2 else 1
                 val readBuffer = ByteArray(bytesToRead)
                 ftdi.readDataWithTimeout(readBuffer)
-                if (bytesToRead == 2) tdo!![tdoBytes] =
-                    (readBuffer[1].toInt() ushr 8 - (partialBits + 1)).toByte() else tdo!![tdoBytes] =
+                if (bytesToRead == 2) tdo[tdoBytes] =
+                    (readBuffer[1].toInt() ushr 8 - (partialBits + 1)).toByte() else tdo[tdoBytes] =
                     (readBuffer[0].toInt() ushr 8 - partialBits).toByte()
             }
         }
@@ -170,17 +169,18 @@ class Jtag(ftdi: Ftdi) : Mpsse(ftdi) {
     }
 
     fun sendClocks(cycles: Long) {
-        var cycles = cycles
-        if (cycles / 8 > 65536) {
-            sendClocks(cycles - 65536 * 8)
-            cycles = (65536 * 8).toLong()
+        val actualCycles = if (cycles / 8 > 65536) {
+            sendClocks(cycles - 65536L * 8L)
+            65536L
+        } else {
+            cycles / 8
         }
-        cycles /= 8
+
         ftdi.writeData(
             byteArrayOf(
                 MpsseCommand.CLK_N8.command,
-                (cycles - 1 and 0xffL).toByte(),
-                (cycles - 1 shr 8 and 0xffL).toByte()
+                (actualCycles - 1 and 0xffL).toByte(),
+                (actualCycles - 1 shr 8 and 0xffL).toByte()
             )
         )
     }
@@ -206,9 +206,9 @@ class Jtag(ftdi: Ftdi) : Mpsse(ftdi) {
     }
 
     fun shiftDRWithCheck(bits: Int, write: ByteArray, read: ByteArray?, mask: ByteArray?) {
-        navitageToState(JtagState.SHIFT_DR)
+        navigateToState(JtagState.SHIFT_DR)
         shiftDataWithCheck(bits, write, read, mask)
-        navitageToState(JtagState.RUN_TEST_IDLE)
+        navigateToState(JtagState.RUN_TEST_IDLE)
     }
 
     fun shiftIRWithCheck(bits: Int, write: String, read: String?, mask: String?) {
@@ -221,22 +221,22 @@ class Jtag(ftdi: Ftdi) : Mpsse(ftdi) {
     }
 
     fun shiftIRWithCheck(bits: Int, write: ByteArray, read: ByteArray?, mask: ByteArray?) {
-        navitageToState(JtagState.SHIFT_IR)
+        navigateToState(JtagState.SHIFT_IR)
         shiftDataWithCheck(bits, write, read, mask)
-        navitageToState(JtagState.RUN_TEST_IDLE)
+        navigateToState(JtagState.RUN_TEST_IDLE)
     }
 
     @JvmOverloads
     fun shiftIR(bits: Int, write: ByteArray, read: ByteArray? = null) {
-        navitageToState(JtagState.SHIFT_IR)
+        navigateToState(JtagState.SHIFT_IR)
         shiftData(bits, write, read)
-        navitageToState(JtagState.RUN_TEST_IDLE)
+        navigateToState(JtagState.RUN_TEST_IDLE)
     }
 
     @JvmOverloads
     fun shiftDR(bits: Int, write: ByteArray, read: ByteArray? = null) {
-        navitageToState(JtagState.SHIFT_DR)
+        navigateToState(JtagState.SHIFT_DR)
         shiftData(bits, write, read)
-        navitageToState(JtagState.RUN_TEST_IDLE)
+        navigateToState(JtagState.RUN_TEST_IDLE)
     }
 }

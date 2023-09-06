@@ -1,11 +1,22 @@
 package com.alchitry.labs.hardware.usb.ftdi
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
 
+
 class XilinxJtag(private val ftdi: Ftdi) {
+    private val jtag: Jtag = Jtag(ftdi)
+
+    suspend fun init() {
+        jtag.init()
+        jtag.resetState()
+    }
+
     enum class Instruction(val code: Byte) {
         EXTEST(0x26.toByte()), EXTEST_PULSE(0x3C.toByte()), EXTEST_TRAIN(0x3D.toByte()), SAMPLE(0x01.toByte()), USER1(
             0x02.toByte()
@@ -28,7 +39,6 @@ class XilinxJtag(private val ftdi: Ftdi) {
 
     }
 
-    private val jtag: Jtag = Jtag(ftdi)
     fun setIR(inst: Instruction) {
         jtag.shiftIR(6, byteArrayOf(inst.code))
     }
@@ -48,14 +58,16 @@ class XilinxJtag(private val ftdi: Ftdi) {
     }
 
     @Throws(IOException::class)
-    private fun loadBridge(loaderFile: String) {
-        val inStream = javaClass.getResourceAsStream(loaderFile)
+    private suspend fun loadBridge(loaderFile: String) {
+        val inStream = javaClass.getResourceAsStream(loaderFile) ?: error("Failed to get loader file!")
         val os = ByteArrayOutputStream()
         val buffer = ByteArray(1024)
         var len: Int
 
         // read bytes from the input stream and store them in buffer
-        while (inStream.read(buffer).also { len = it } != -1) {
+        while (withContext(Dispatchers.IO) {
+                inStream.read(buffer)
+            }.also { len = it } != -1) {
             // write bytes from the buffer into output stream
             os.write(buffer, 0, len)
         }
@@ -63,24 +75,23 @@ class XilinxJtag(private val ftdi: Ftdi) {
     }
 
     @Throws(IOException::class)
-    private fun loadBin(binPath: String) {
-        val binData = Files.readAllBytes(Paths.get(binPath))
+    private suspend fun loadBin(binPath: String) {
+        val binData = withContext(Dispatchers.IO) {
+            Files.readAllBytes(Paths.get(binPath))
+        }
         loadBin(binData)
     }
 
     @Throws(IOException::class)
-    private fun loadBin(binData: ByteArray) {
+    private suspend fun loadBin(binData: ByteArray) {
         for (i in binData.indices) binData[i] = reverse(binData[i])
         ftdi.usbPurgeBuffers()
         jtag.setFreq(30000000.0)
         jtag.resetState()
-        jtag.navitageToState(JtagState.RUN_TEST_IDLE)
+        jtag.navigateToState(JtagState.RUN_TEST_IDLE)
         setIR(Instruction.JPROGRAM)
         setIR(Instruction.ISC_NOOP)
-        try {
-            Thread.sleep(100)
-        } catch (e: InterruptedException) {
-        }
+        delay(100)
 
         // config/jprog/poll
         jtag.sendClocks(10000)
@@ -91,32 +102,28 @@ class XilinxJtag(private val ftdi: Ftdi) {
         jtag.shiftDR(binData.size * 8, binData)
 
         // config/start
-        jtag.navitageToState(JtagState.RUN_TEST_IDLE)
+        jtag.navigateToState(JtagState.RUN_TEST_IDLE)
         jtag.sendClocks(10000)
         setIR(Instruction.JSTART)
-        jtag.navitageToState(JtagState.RUN_TEST_IDLE)
+        jtag.navigateToState(JtagState.RUN_TEST_IDLE)
         jtag.sendClocks(100)
         jtag.shiftIRWithCheck(6, "09", "31", "11")
-        jtag.navitageToState(JtagState.TEST_LOGIC_RESET)
+        jtag.navigateToState(JtagState.TEST_LOGIC_RESET)
     }
 
     @Throws(IOException::class)
-    private fun erase(loaderFile: String) {
+    private suspend fun erase(loaderFile: String) {
         println("Loading bridge configuration...")
         loadBridge(loaderFile)
         println("Erasing...")
         jtag.setFreq(1500000.0)
         setIR(Instruction.USER1)
         jtag.shiftDR(1, byteArrayOf(0))
-        try {
-            Thread.sleep(100)
-        } catch (e: InterruptedException) {
-            TODO("Report exception $e")
-        }
+        delay(100)
     }
 
     @Throws(IOException::class)
-    fun eraseFlash(loaderFile: String) {
+    suspend fun eraseFlash(loaderFile: String) {
         erase(loaderFile)
         setIR(Instruction.JPROGRAM) // reset the FPGA
         jtag.resetState()
@@ -124,20 +131,18 @@ class XilinxJtag(private val ftdi: Ftdi) {
     }
 
     @Throws(IOException::class)
-    fun writeBin(binFile: String, flash: Boolean, loaderFile: String) {
+    suspend fun writeBin(binFile: String, flash: Boolean, loaderFile: String) {
         if (flash) {
             erase(loaderFile) // configure the FPGA with the bridge and erase the flash
             println("Writing flash...")
             setIR(Instruction.USER2)
-            val binData = Files.readAllBytes(Paths.get(binFile))
+            val binData = withContext(Dispatchers.IO) {
+                Files.readAllBytes(Paths.get(binFile))
+            }
             jtag.shiftDR(binData.size * 8, binData)
             println("Resetting FPGA...")
             jtag.resetState()
-            try {
-                Thread.sleep(100)
-            } catch (e: InterruptedException) {
-                TODO("Report exception $e")
-            }
+            delay(100)
             setIR(Instruction.JPROGRAM)
         } else {
             println("Loading bin...")
@@ -150,10 +155,5 @@ class XilinxJtag(private val ftdi: Ftdi) {
     companion object {
         const val AU_LOADER_FILE = "/fpga/au_loader.bin"
         const val AU_PLUS_LOADER_FILE = "/fpga/au_plus_loader.bin"
-    }
-
-    init {
-        jtag.init()
-        jtag.resetState()
     }
 }
