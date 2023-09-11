@@ -27,7 +27,7 @@ fun main(args: Array<String>) {
         System.err.println("Warning: OS detection failed!")
     }
 
-    val parser = ArgParser("alchitry_labs", strictSubcommandOptionsOrder = true)
+    val parser = ArgParser("alchitry", strictSubcommandOptionsOrder = true)
 
     parser.subcommands(
         CreateProject(),
