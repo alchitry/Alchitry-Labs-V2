@@ -1,3 +1,4 @@
+import org.apache.tools.ant.taskdefs.condition.Os
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.incremental.createDirectory
@@ -96,12 +97,11 @@ compose.desktop {
             packageVersion = (version as String).split("-").first()
             vendor = "Alchitry"
             args.add("labs")
-            // needed for jline3 (used by progress bar lib)
-            jvmArgs.add("--add-opens java.base/java.lang=ALL-UNNAMED")
 
             linux {
                 iconFile.set(File("icon.png"))
                 shortcut = true
+                debMaintainer = "Alchitry"
             }
 
             windows {
@@ -109,6 +109,7 @@ compose.desktop {
                 upgradeUuid = "3e4e3be7-b77e-437e-9ffe-5607b15a6710"
                 shortcut = true
                 iconFile.set(File("icon.ico"))
+                menuGroup = "Alchitry"
             }
 
             macOS {
@@ -119,6 +120,14 @@ compose.desktop {
             // PR: https://github.com/JetBrains/compose-multiplatform/pull/3640
             additionalLauncher("Alchitry Loader") {
                 add("arguments", "loader")
+            }
+
+            if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                additionalLauncher("alchitry") {
+                    add("arguments", "")
+                    add("win-console", "true")
+                    add("win-shortcut", "false")
+                }
             }
         }
     }
