@@ -18,6 +18,7 @@ class BoundsParserTests {
         assertEquals(listOf(0..5), test.context.bitSelection.resolve(tree).map { it.range })
         assert(test.hasNoIssues)
 
+        // flipped indices
         test = SimpleLucidTester("[0:5]")
         tree = test.parser.bitSelection()
         test.context.walk(tree)
@@ -25,6 +26,7 @@ class BoundsParserTests {
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
 
+        // NaN
         test = SimpleLucidTester("[bx0:5]")
         tree = test.parser.bitSelection()
         test.context.walk(tree)
@@ -32,12 +34,14 @@ class BoundsParserTests {
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
 
+        // syntax error
         test = SimpleLucidTester("[[0:5]")
         tree = test.parser.bitSelection()
         test.context.walk(tree)
         assertEquals(emptyList<IntRange>(), test.context.bitSelection.resolve(tree).map { it.range })
         assert(test.hasErrors)
 
+        // too big
         test = SimpleLucidTester("[1321612161321613216354132465162316516546546516513246:0]")
         tree = test.parser.bitSelection()
         test.context.walk(tree)
