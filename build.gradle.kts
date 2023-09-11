@@ -115,7 +115,7 @@ afterEvaluate {
     }
 }
 
-// used to remove all the debs before building so that there will only be one for debDriverTask to find
+// used to remove all the debs before building so that there will only be one for modifyDebTask to find
 val cleanDebsTask = tasks.register("cleanDebs") {
     doLast {
         project.buildDir.resolve("compose/binaries/main/deb").apply {
