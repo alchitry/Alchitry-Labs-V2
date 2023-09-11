@@ -105,7 +105,7 @@ compose.desktop {
             }
 
             windows {
-                console = true // print output when running .exe from cmd line
+                console = false // print output when running .exe from cmd line
                 upgradeUuid = "3e4e3be7-b77e-437e-9ffe-5607b15a6710"
                 shortcut = true
                 iconFile.set(File("icon.ico"))
