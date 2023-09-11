@@ -58,7 +58,7 @@ class Jtag(ftdi: Ftdi) : Mpsse(ftdi) {
         currentState = state
     }
 
-    fun shiftData(bitCount: Int, tdi: ByteArray, tdo: ByteArray?) {
+    fun shiftData(bitCount: Int, tdi: ByteArray, tdo: ByteArray?, progressCallback: (byteIdx: Int) -> Unit = {}) {
         if (bitCount == 0) return
         when (currentState) {
             JtagState.SHIFT_DR, JtagState.SHIFT_IR -> {}
@@ -112,6 +112,7 @@ class Jtag(ftdi: Ftdi) : Mpsse(ftdi) {
                     System.arraycopy(readBuffer, 0, tdo, tdoBytes, bct)
                     tdoBytes += bct
                 }
+                progressCallback(offset)
             }
             val partialBits = bitCount - 1 - fullBytes * 8
             if (fullBytes * 8 + 1 != bitCount) {
@@ -226,17 +227,15 @@ class Jtag(ftdi: Ftdi) : Mpsse(ftdi) {
         navigateToState(JtagState.RUN_TEST_IDLE)
     }
 
-    @JvmOverloads
     fun shiftIR(bits: Int, write: ByteArray, read: ByteArray? = null) {
         navigateToState(JtagState.SHIFT_IR)
         shiftData(bits, write, read)
         navigateToState(JtagState.RUN_TEST_IDLE)
     }
 
-    @JvmOverloads
-    fun shiftDR(bits: Int, write: ByteArray, read: ByteArray? = null) {
+    fun shiftDR(bits: Int, write: ByteArray, read: ByteArray? = null, progressCallback: (byteIdx: Int) -> Unit = {}) {
         navigateToState(JtagState.SHIFT_DR)
-        shiftData(bits, write, read)
+        shiftData(bits, write, read, progressCallback)
         navigateToState(JtagState.RUN_TEST_IDLE)
     }
 }

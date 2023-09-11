@@ -1,17 +1,19 @@
 package com.alchitry.labs.hardware.usb.ftdi
 
+import com.alchitry.labs.Log
 import com.alchitry.labs.hardware.usb.ftdi.enums.FlashCommand
 import com.alchitry.labs.hardware.usb.ftdi.enums.MpsseCommand
+import com.alchitry.labs.ui.theme.AlchitryColors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Paths
 import kotlin.math.min
 
 class LatticeSpi(ftdi: Ftdi) : Mpsse(ftdi) {
-    init {
+    override suspend fun init() {
+        super.init()
         // Set up the Hi-Speed specific commands for the FTx232H
         ftdi.writeData(
             byteArrayOf(
@@ -108,7 +110,10 @@ class LatticeSpi(ftdi: Ftdi) : Mpsse(ftdi) {
         flashChipSelect()
         xferSpi(buf)
         if (buf[4] == 0xFF.toByte()) {
-            println("Extended device string length is 0xff. This is likely an error. Ignoring...")
+            Log.println(
+                "Extended device string length is 0xff. This is likely an error. Ignoring...",
+                AlchitryColors.Warning
+            )
         } else if (buf[4].toInt() != 0) {
             ext = ByteArray(buf[4].toInt())
             xferSpi(ext)
@@ -213,7 +218,7 @@ class LatticeSpi(ftdi: Ftdi) : Mpsse(ftdi) {
             } else {
                 count = 0
             }
-            delay(1000)
+            delay(1)
         }
     }
 
@@ -234,10 +239,10 @@ class LatticeSpi(ftdi: Ftdi) : Mpsse(ftdi) {
 
 
     suspend fun eraseFlash() {
-        println("Resetting...")
+        Log.println("Resetting...")
         flashChipDeselect()
         delay(250)
-        println("Erasing...")
+        Log.println("Erasing...")
         flashReset()
         flashPowerUp()
         flashReadId()
@@ -247,47 +252,50 @@ class LatticeSpi(ftdi: Ftdi) : Mpsse(ftdi) {
         flashPowerDown()
         flashReleaseReset()
         delay(250)
-        println("Done.")
+        Log.println("Done.", AlchitryColors.Success)
     }
 
     @Throws(IOException::class)
-    suspend fun writeBin(binFile: String) {
+    suspend fun writeBin(binFile: File) {
         val binData = withContext(Dispatchers.IO) {
-            Files.readAllBytes(Paths.get(binFile))
+            binFile.readBytes()
         }
-        println("Resetting...")
+        Log.println("Resetting...")
         flashChipDeselect()
         delay(250)
         flashReset()
         flashPowerUp()
         flashReadId()
-        val begin_addr = 0
-        val end_addr = binData.size + 0xffff and 0xffff.inv()
-        println("Erasing...")
-        var addr = begin_addr
-        while (addr < end_addr) {
-            flashWriteEnable()
-            flash64KbSectorErase(addr)
-            flashWait()
-            addr += 0x10000
+        val endAddr = binData.size + 0xffff and 0xffff.inv()
+        Log.progressBar("Erase  ", endAddr.toLong()) {
+            for (addr in 0..<endAddr step 0x10000) {
+                flashWriteEnable()
+                flash64KbSectorErase(addr)
+                flashWait()
+                it.stepBy(0x10000)
+            }
         }
-        println("Programming...")
+
         var pageBuf = ByteArray(256)
-        var offset = 0
-        while (offset < binData.size) {
-            val ct = min(256, binData.size - offset)
-            if (pageBuf.size != ct) pageBuf = ByteArray(ct)
-            System.arraycopy(binData, offset, pageBuf, 0, pageBuf.size)
-            flashWriteEnable()
-            flashProg(offset, pageBuf)
-            flashWait()
-            offset += pageBuf.size
+        Log.progressBar("Program", binData.size.toLong()) {
+            for (offset in binData.indices step pageBuf.size) {
+                val ct = min(256, binData.size - offset)
+                if (pageBuf.size != ct) pageBuf = ByteArray(ct)
+                System.arraycopy(binData, offset, pageBuf, 0, pageBuf.size)
+                flashWriteEnable()
+                flashProg(offset, pageBuf)
+                // datasheet for W25Q64FV specifies 3ms as max page program time
+                // simply delaying 3ms is MUCH faster than querying the chip's status register
+                delay(3)
+                // flashWait()
+                it.stepBy(ct.toLong())
+            }
         }
-        println("Resetting...")
+        Log.println("Resetting...")
         flashPowerDown()
         flashReleaseReset()
         delay(250)
-        println("Done.")
+        Log.println("Done.", AlchitryColors.Success)
     }
 
     companion object {

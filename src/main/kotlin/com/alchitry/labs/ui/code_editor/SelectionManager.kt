@@ -262,7 +262,7 @@ class SelectionManager(
 
         translate(top = -editorState.scrollState.value.toFloat()) {
             drawRect(
-                AlchitryColors.lineHighlight,
+                AlchitryColors.LineHighlight,
                 lineBounds.topLeft,
                 lineBounds.size,
                 style = Fill

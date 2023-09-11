@@ -1,11 +1,14 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.incremental.createDirectory
+import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 import java.io.FileOutputStream
 import java.util.*
 
 buildscript {
-    val antlrKotlinVersion = "f845b6f724"
+    val antlrKotlinVersion = "f845b6f724" // commit hash for custom antlr runtime
     extra.set("antlrKotlinVersion", antlrKotlinVersion)
+
     dependencies {
         classpath("com.github.alchitry.antlr-kotlin:antlr-kotlin-gradle-plugin:$antlrKotlinVersion")
     }
@@ -15,12 +18,15 @@ val antlrKotlinVersion = ext.get("antlrKotlinVersion") as String
 
 plugins {
     kotlin("jvm") version "1.9.0"
-    id("org.jetbrains.compose") version "1.5.1"
-    //antlr
+    id("org.jetbrains.compose") version "0.1.0-SNAPSHOT" // TODO: replace with publicly available version when possible
 }
 
+
+val fullVersion = "2.0.0-ALPHA-SNAPSHOT"
+val numOnlyVersion = fullVersion.split('-').first()
+
 group = "com.alchitry"
-version = "2.0.0-ALPHA-SNAPSHOT"
+version = fullVersion
 
 repositories {
     google()
@@ -42,7 +48,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
     implementation("org.usb4java:usb4java:1.3.0")
     implementation("com.fazecast:jSerialComm:2.10.3")
-    implementation("com.github.aushacker.yad2xx:yad2xxJava:db60b85c1") // requires native binaries to work
+    implementation("com.github.alchitry.yad2xx:yad2xxJava:d2xx_only_with_lib-SNAPSHOT")
+    implementation("me.tongfei:progressbar:0.10.0")
 
     testImplementation(kotlin("test"))
 }
@@ -69,21 +76,101 @@ compose.desktop {
     application {
         mainClass = "com.alchitry.labs.MainKt"
         nativeDistributions {
+            // Docs: https://github.com/JetBrains/compose-multiplatform/blob/master/tutorials/Native_distributions_and_local_execution/README.md
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Alchitry Labs"
             packageVersion = (version as String).split("-").first()
             vendor = "Alchitry"
+            args.add("labs")
 
             linux {
                 iconFile.set(File("icon.png"))
-
+                shortcut = true
             }
 
             windows {
                 console = true // print output when running .exe from cmd line
                 upgradeUuid = "3e4e3be7-b77e-437e-9ffe-5607b15a6710"
+                shortcut = true
+                // TODO: Add icon file
+            }
+
+            macOS {
+                // TODO: Add mac support
+            }
+
+            // This currently relies upon our custom compose fork
+            // PR: https://github.com/JetBrains/compose-multiplatform/pull/3640
+            additionalLauncher("Alchitry Loader") {
+                add("arguments", "loader")
             }
         }
+    }
+}
+
+afterEvaluate {
+    tasks.named("packageDeb") {
+        dependsOn(cleanDebsTask)
+        finalizedBy(modifyDebTask)
+    }
+}
+
+// used to remove all the debs before building so that there will only be one for debDriverTask to find
+val cleanDebsTask = tasks.register("cleanDebs") {
+    doLast {
+        project.buildDir.resolve("compose/binaries/main/deb").apply {
+            if (exists())
+                deleteDirectoryContents()
+        }
+    }
+}
+
+fun modifyFile(file: File, modifier: StringBuilder.() -> Unit) {
+    val fileText = file.readText()
+    val newPostInst = StringBuilder(fileText).run {
+        modifier()
+        toString()
+    }
+    file.writeText(newPostInst)
+}
+
+fun StringBuilder.indexAtEndOf(str: String) = indexOf(str) + str.length
+
+val modifyDebTask = tasks.register("modifyDeb") {
+    dependsOn("packageDeb")
+    doLast {
+        val debDir = project.buildDir.resolve("compose/binaries/main/deb")
+        val deb = debDir.listFiles().firstOrNull { it.extension == "deb" } ?: error("Failed to find deb file!")
+        val tmpDir = debDir.resolve("tmp")
+        tmpDir.createDirectory()
+
+        exec {
+            workingDir = debDir
+            executable = "dpkg-deb"
+            args = listOf("-R", deb.name, "tmp")
+        }
+
+        val sourceDirectory = File("install/linux")
+        sourceDirectory.copyRecursively(tmpDir, overwrite = true)
+
+        modifyFile(tmpDir.resolve("DEBIAN/postinst")) {
+            insert(
+                indexAtEndOf("configure)"),
+                "\nln -s /opt/alchitry-labs/bin/Alchitry\\ Labs /usr/bin/alchitry"
+            )
+        }
+
+        modifyFile(tmpDir.resolve("DEBIAN/prerm")) {
+            insert(indexAtEndOf("deconfigure)"), "\nrm /usr/bin/alchitry")
+        }
+
+        exec {
+            workingDir = debDir
+            executable = "dpkg-deb"
+            args = listOf("--root-owner-group", "-b", "tmp", deb.name)
+        }
+
+        tmpDir.deleteRecursively()
     }
 }
 

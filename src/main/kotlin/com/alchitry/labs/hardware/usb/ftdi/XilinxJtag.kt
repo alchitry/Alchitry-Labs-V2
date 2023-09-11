@@ -1,12 +1,14 @@
 package com.alchitry.labs.hardware.usb.ftdi
 
+import com.alchitry.labs.Log
+import com.alchitry.labs.project.Board
+import com.alchitry.labs.ui.theme.AlchitryColors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Paths
+import java.io.InputStream
 
 
 class XilinxJtag(private val ftdi: Ftdi) {
@@ -58,28 +60,15 @@ class XilinxJtag(private val ftdi: Ftdi) {
     }
 
     @Throws(IOException::class)
-    private suspend fun loadBridge(loaderFile: String) {
-        val inStream = javaClass.getResourceAsStream(loaderFile) ?: error("Failed to get loader file!")
-        val os = ByteArrayOutputStream()
-        val buffer = ByteArray(1024)
-        var len: Int
-
-        // read bytes from the input stream and store them in buffer
-        while (withContext(Dispatchers.IO) {
-                inStream.read(buffer)
-            }.also { len = it } != -1) {
-            // write bytes from the buffer into output stream
-            os.write(buffer, 0, len)
+    private suspend fun loadBin(stream: InputStream) {
+        withContext(Dispatchers.IO) {
+            loadBin(stream.readAllBytes())
         }
-        loadBin(os.toByteArray())
     }
 
     @Throws(IOException::class)
-    private suspend fun loadBin(binPath: String) {
-        val binData = withContext(Dispatchers.IO) {
-            Files.readAllBytes(Paths.get(binPath))
-        }
-        loadBin(binData)
+    private suspend fun loadBin(binFile: File) {
+        loadBin(binFile.inputStream())
     }
 
     @Throws(IOException::class)
@@ -112,10 +101,12 @@ class XilinxJtag(private val ftdi: Ftdi) {
     }
 
     @Throws(IOException::class)
-    private suspend fun erase(loaderFile: String) {
-        println("Loading bridge configuration...")
-        loadBridge(loaderFile)
-        println("Erasing...")
+    private suspend fun erase(bridgeResource: String) {
+        Log.println("Loading bridge configuration...")
+        val stream = this::class.java.getResourceAsStream(bridgeResource)
+            ?: error("Failed to load bridge resource: $bridgeResource")
+        loadBin(stream)
+        Log.println("Erasing...")
         jtag.setFreq(1500000.0)
         setIR(Instruction.USER1)
         jtag.shiftDR(1, byteArrayOf(0))
@@ -123,37 +114,37 @@ class XilinxJtag(private val ftdi: Ftdi) {
     }
 
     @Throws(IOException::class)
-    suspend fun eraseFlash(loaderFile: String) {
-        erase(loaderFile)
+    suspend fun eraseFlash(bridgeResource: String) {
+        erase(bridgeResource)
         setIR(Instruction.JPROGRAM) // reset the FPGA
         jtag.resetState()
-        //println("Done.", Theme.successTextColor)
+        Log.println("Done.", AlchitryColors.Success)
     }
 
     @Throws(IOException::class)
-    suspend fun writeBin(binFile: String, flash: Boolean, loaderFile: String) {
+    suspend fun writeBin(binFile: File, flash: Boolean, board: Board.XilinxBoard) {
+        Log.println("Checking IDCODE...")
+        checkIDCODE(board.idCode)
         if (flash) {
-            erase(loaderFile) // configure the FPGA with the bridge and erase the flash
-            println("Writing flash...")
+            erase(board.bridgeFile) // configure the FPGA with the bridge and erase the flash
             setIR(Instruction.USER2)
             val binData = withContext(Dispatchers.IO) {
-                Files.readAllBytes(Paths.get(binFile))
+                binFile.readBytes()
             }
-            jtag.shiftDR(binData.size * 8, binData)
-            println("Resetting FPGA...")
+            Log.progressBar("Flashing", binData.size.toLong() - 1) { progressBar ->
+                jtag.shiftDR(binData.size * 8, binData) {
+                    progressBar.stepTo(it.toLong())
+                }
+            }
+            Log.println("Resetting FPGA...")
             jtag.resetState()
             delay(100)
             setIR(Instruction.JPROGRAM)
         } else {
-            println("Loading bin...")
+            Log.println("Loading bin...")
             loadBin(binFile)
         }
         jtag.resetState()
-        //println("Done.", Theme.successTextColor)
-    }
-
-    companion object {
-        const val AU_LOADER_FILE = "/fpga/au_loader.bin"
-        const val AU_PLUS_LOADER_FILE = "/fpga/au_plus_loader.bin"
+        Log.println("Done.", AlchitryColors.Success)
     }
 }

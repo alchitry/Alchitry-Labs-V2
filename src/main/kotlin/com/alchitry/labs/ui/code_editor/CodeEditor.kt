@@ -58,7 +58,7 @@ fun CodeEditor(state: CodeEditorState = rememberCodeEditorState(remember { Lucid
                         val alpha =
                             if (state.selectionManager.active && state.selectionManager.caret.line == index) 1f else 0.3f
                         CompositionLocalProvider(
-                            LocalContentColor provides AlchitryColors.gutterForeground,
+                            LocalContentColor provides AlchitryColors.GutterForeground,
                             LocalContentAlpha provides alpha,
                             LocalTextStyle provides AlchitryTypography.editor
                         ) {

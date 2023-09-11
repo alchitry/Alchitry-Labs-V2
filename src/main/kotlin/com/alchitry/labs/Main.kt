@@ -14,15 +14,16 @@ val LocalComposeWindow = compositionLocalOf<ComposeWindow> { error("No ComposeWi
 lateinit var mainWindow: ComposeWindow
 
 fun ArgParser.showHelp(error: String? = null) {
-    error?.let { System.err.println("Error: $it") }
+    error?.let { Log.printlnError("Error: $it") }
     ArgParser::class.declaredFunctions.find { it.name == "makeUsage" }?.let {
-        System.err.println(it.call(this))
+        Log.println(it.call(this))
     }
 }
 
 @OptIn(ExperimentalCli::class)
 fun main(args: Array<String>) {
-    if (Env.os == Env.OS.UNKNOWN) {
+
+    if (Env.os == Env.OS.Unknown) {
         System.err.println("Warning: OS detection failed!")
     }
 
@@ -42,6 +43,6 @@ fun main(args: Array<String>) {
     parser.parse(args)
 
     if (args.isEmpty()) {
-        Labs().execute() // default to full GUI
+        parser.showHelp("A subcommand must be specified!")
     }
 }

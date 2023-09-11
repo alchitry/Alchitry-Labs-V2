@@ -3,19 +3,19 @@ package com.alchitry.labs
 import java.util.*
 
 object Env {
-    enum class OS { UNKNOWN, WINDOWS, LINUX, MACOS }
+    enum class OS { Unknown, Windows, Linux, MacOS }
 
     val os = System.getProperty("os.name").lowercase(Locale.getDefault()).let {
         when {
-            it.contains("win") -> OS.WINDOWS
-            it.contains("nix") || it.contains("nux") || it.contains("aix") -> OS.LINUX
-            it.contains("mac") -> OS.MACOS
-            else -> OS.UNKNOWN
+            it.startsWith("Win", ignoreCase = true) -> OS.Windows
+            it.startsWith("Linux", ignoreCase = true) -> OS.Linux
+            it.equals("Mac OS X", ignoreCase = true) -> OS.MacOS
+            else -> OS.Unknown
         }
     }
-    val isWindows: Boolean get() = os == OS.WINDOWS
-    val isLinux: Boolean get() = os == OS.LINUX
-    val isMac: Boolean get() = os == OS.MACOS
+    val isWindows: Boolean get() = os == OS.Windows
+    val isLinux: Boolean get() = os == OS.Linux
+    val isMac: Boolean get() = os == OS.MacOS
 
     val version =
         Properties()

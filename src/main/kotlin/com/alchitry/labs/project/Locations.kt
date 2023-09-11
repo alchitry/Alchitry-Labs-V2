@@ -20,9 +20,9 @@ object Locations {
     val osDir: String
         get() =
             when (Env.os) {
-                Env.OS.WINDOWS -> "windows"
-                Env.OS.LINUX -> "linux"
-                Env.OS.MACOS -> "macos"
+                Env.OS.Windows -> "windows"
+                Env.OS.Linux -> "linux"
+                Env.OS.MacOS -> "macos"
                 else -> throw IllegalStateException("OS type is unknown!")
             }
 

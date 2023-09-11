@@ -1,7 +1,6 @@
 package com.alchitry.labs.project
 
 import com.alchitry.labs.Log
-import com.alchitry.labs.PathUtil
 import com.alchitry.labs.mainWindow
 import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.errors.ErrorManager
@@ -32,7 +31,9 @@ data class Project(
     val ipCores: Set<IPCore>
 ) {
     val top: SourceFile get() = sourceFiles.firstOrNull { it.top } ?: throw Exception("Missing top module!")
-    val projectFile = File(PathUtil.assemblePath(projectFolder, "$projectName.alp"))
+    val projectFile = projectFolder.resolve("$projectName.alp")
+    val buildDirectory = projectFolder.resolve("build")
+    val binFile = buildDirectory.resolve("alchitry.bin")
 
     companion object {
         private val mutableCurrentFlow = MutableStateFlow<Project?>(null)

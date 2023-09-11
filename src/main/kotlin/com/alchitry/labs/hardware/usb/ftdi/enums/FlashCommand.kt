@@ -1,113 +1,111 @@
 package com.alchitry.labs.hardware.usb.ftdi.enums
 
-enum class FlashCommand(/* Reset Device */
-                        val command: Byte
-) {
+enum class FlashCommand(val command: Byte) {
+    /** Write Enable */
     WE(0x06.toByte()),
 
-    /* Write Enable */
+    /** Volatile SR Write Enable */
     SRWE(0x50.toByte()),
 
-    /* Volatile SR Write Enable */
+    /** Write Disable */
     WD(0x04.toByte()),
 
-    /* Write Disable */
+    /** Release Power-Down, returns Device ID */
     RPD(0xAB.toByte()),
 
-    /* Release Power-Down, returns Device ID */
+    /** Read Manufacturer/Device ID */
     MFGID(0x90.toByte()),
 
-    /* Read Manufacturer/Device ID */
+    /** Read JEDEC ID */
     JEDECID(0x9F.toByte()),
 
-    /* Read JEDEC ID */
+    /** Read Unique ID */
     UID(0x4B.toByte()),
 
-    /* Read Unique ID */
+    /** Read Data */
     RD(0x03.toByte()),
 
-    /* Read Data */
+    /** Fast Read */
     FR(0x0B.toByte()),
 
-    /* Fast Read */
+    /** Page Program */
     PP(0x02.toByte()),
 
-    /* Page Program */
+    /** Sector Erase 4kb */
     SE(0x20.toByte()),
 
-    /* Sector Erase 4kb */
+    /** Block Erase 32kb */
     BE32(0x52.toByte()),
 
-    /* Block Erase 32kb */
+    /** Block Erase 64kb */
     BE64(0xD8.toByte()),
 
-    /* Block Erase 64kb */
+    /** Chip Erase */
     CE(0xC7.toByte()),
 
-    /* Chip Erase */
+    /** Read Status Register 1 */
     RSR1(0x05.toByte()),
 
-    /* Read Status Register 1 */
+    /** Write Status Register 1 */
     WSR1(0x01.toByte()),
 
-    /* Write Status Register 1 */
+    /** Read Status Register 2 */
     RSR2(0x35.toByte()),
 
-    /* Read Status Register 2 */
+    /** Write Status Register 2 */
     WSR2(0x31.toByte()),
 
-    /* Write Status Register 2 */
+    /** Read Status Register 3 */
     RSR3(0x15.toByte()),
 
-    /* Read Status Register 3 */
+    /** Write Status Register 3 */
     WSR3(0x11.toByte()),
 
-    /* Write Status Register 3 */
+    /** Read SFDP Register */
     RSFDP(0x5A.toByte()),
 
-    /* Read SFDP Register */
+    /** Erase Security Register */
     ESR(0x44.toByte()),
 
-    /* Erase Security Register */
+    /** Program Security Register */
     PSR(0x42.toByte()),
 
-    /* Program Security Register */
+    /** Read Security Register */
     RSR(0x48.toByte()),
 
-    /* Read Security Register */
+    /** Global Block Lock */
     GBL(0x7E.toByte()),
 
-    /* Global Block Lock */
+    /** Global Block Unlock */
     GBU(0x98.toByte()),
 
-    /* Global Block Unlock */
+    /** Read Block Lock */
     RBL(0x3D.toByte()),
 
-    /* Read Block Lock */
+    /** Read Sector Protection Registers (adesto) */
     RPR(0x3C.toByte()),
 
-    /* Read Sector Protection Registers (adesto) */
+    /** Individual Block Lock */
     IBL(0x36.toByte()),
 
-    /* Individual Block Lock */
+    /** Individual Block Unlock */
     IBU(0x39.toByte()),
 
-    /* Individual Block Unlock */
+    /** Erase / Program Suspend */
     EPS(0x75.toByte()),
 
-    /* Erase / Program Suspend */
+    /** Erase / Program Resume */
     EPR(0x7A.toByte()),
 
-    /* Erase / Program Resume */
+    /** Power-down */
     PD(0xB9.toByte()),
 
-    /* Power-down */
+    /** Enter QPI mode */
     QPI(0x38.toByte()),
 
-    /* Enter QPI mode */
+    /** Enable Reset */
     ERESET(0x66.toByte()),
 
-    /* Enable Reset */
+    /** Reset Device */
     RESET(0x99.toByte())
-
 }

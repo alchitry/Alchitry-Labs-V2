@@ -60,7 +60,7 @@ fun SelectionContext.TreeSection(
                     focusRequester.requestFocus()
                 }
                 .background(
-                    if (isSelected) (if (focused) AlchitryColors.accent else LocalContentColor.current).copy(
+                    if (isSelected) (if (focused) AlchitryColors.Accent else LocalContentColor.current).copy(
                         0.15f
                     ) else Color.Transparent
                 )

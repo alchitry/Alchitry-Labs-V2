@@ -33,7 +33,7 @@ private fun openProject(window: ComposeWindow) {
         try {
             Project.openXml(it)
         } catch (e: Throwable) {
-            Log.printError("Failed to open project file!", e)
+            Log.printlnError("Failed to open project file!", e)
             null
         }
     } ?: return

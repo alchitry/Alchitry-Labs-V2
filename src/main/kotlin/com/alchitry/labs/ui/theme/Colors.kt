@@ -6,17 +6,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 
 object AlchitryColors {
-    val accent = Color(0xFFfaac1f)
-    val darkAccent = Color(0xFF333330)
+    val Accent = Color(0xFFfaac1f)
+    val DarkAccent = Color(0xFF333330)
 
     val colors = Colors(
-        primary = accent,
-        primaryVariant = darkAccent,
+        primary = Accent,
+        primaryVariant = DarkAccent,
         secondary = Color(0xFF4B4B41),
         secondaryVariant = Color(0xFF545449),
         background = Color(0xFF333333),
         surface = Color(0xFF282828),
-        error = Color(0xFFFF1919),
+        error = Color(0xFFCC1414),
         onPrimary = Color.White,
         onSecondary = Color.White,
         onBackground = Color.White,
@@ -25,16 +25,23 @@ object AlchitryColors {
         isLight = true
     )
 
-    val tooltipBackground = Color(0xFF454545)
-    val tooltipContent = Color.White
+    val ProgressBar = Color(0xFFE19A1A)
 
-    val menuBarBackground = Color(0xFF424242)
+    val TooltipBackground = Color(0xFF454545)
+    val TooltipContent = Color.White
 
-    val gutterForeground = Color(0xFFA1A1A1)
-    val lineHighlight = accent.copy(alpha = 0.05f)
-    val tokenHighlight = accent.copy(alpha = 0.1f)
+    val MenuBarBackground = Color(0xFF424242)
 
-    val selectionColor = Color(0xFF6C5600)
+    val GutterForeground = Color(0xFFA1A1A1)
+    val LineHighlight = Accent.copy(alpha = 0.05f)
+    val TokenHighlight = Accent.copy(alpha = 0.1f)
+
+    val SelectionColor = Color(0xFF6C5600)
+
+    val Success = Color(25, 200, 25)
+    val Warning = Color(200, 200, 25)
+    val Error = colors.error
+    val Info = Color(41, 162, 204)
 
 
     @Composable

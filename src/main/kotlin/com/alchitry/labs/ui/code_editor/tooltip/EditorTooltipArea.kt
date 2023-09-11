@@ -76,8 +76,8 @@ fun EditorTooltipArea(
                         }
                         .alpha(state.isVisible.value),
                     elevation = 10.dp,
-                    color = AlchitryColors.tooltipBackground,
-                    contentColor = AlchitryColors.tooltipContent
+                    color = AlchitryColors.TooltipBackground,
+                    contentColor = AlchitryColors.TooltipContent
                 ) {
                     Box(
                         Modifier.padding(10.dp)

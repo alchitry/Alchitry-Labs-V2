@@ -132,7 +132,7 @@ fun MenuBar(
 
     Surface(
         Modifier.fillMaxWidth(),
-        color = AlchitryColors.menuBarBackground,
+        color = AlchitryColors.MenuBarBackground,
         contentColor = AlchitryColors.colors.onSurface,
         elevation = 8.dp
     ) {

@@ -31,6 +31,8 @@ open class UsbDevice(
     )
 
     init {
+        if (LibUsb.init(context) != 0) throw LibUsbException("LibUsb.init() failed", -3)
+
         readTimeout = 5000
         writeTimeout = 5000
         writeBufferChunksize = 16384

@@ -37,7 +37,7 @@ fun SelectionContext.TreeItem(
             requestSelection(selectable)
             focusRequester.requestFocus()
         }
-        .background(if (isSelected) (if (focused) AlchitryColors.accent else LocalContentColor.current).copy(0.15f) else Color.Transparent)
+        .background(if (isSelected) (if (focused) AlchitryColors.Accent else LocalContentColor.current).copy(0.15f) else Color.Transparent)
 
         .padding(vertical = 5.dp)
         .padding(start = 25.dp * LocalScale.current * indentLevel)
