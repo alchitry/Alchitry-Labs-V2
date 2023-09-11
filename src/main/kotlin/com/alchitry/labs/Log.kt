@@ -72,13 +72,17 @@ object Log {
         }
     }
 
-    val barStyle: ProgressBarStyle = ProgressBarStyleBuilder().apply {
-        leftBracket("\u001b[${AlchitryColors.ProgressBar.ansiCode()}m│")
-        rightBracket("│\u001b[0m")
-        block('█')
-        fractionSymbols(" ▏▎▍▌▋▊▉")
-        rightSideFractionSymbol(' ')
-    }.build()
+    val barStyle: ProgressBarStyle = if (Env.isWindows) {
+        ProgressBarStyle.ASCII
+    } else {
+        ProgressBarStyleBuilder().apply {
+            leftBracket("\u001b[${AlchitryColors.ProgressBar.ansiCode()}m│")
+            rightBracket("│\u001b[0m")
+            block('█')
+            fractionSymbols(" ▏▎▍▌▋▊▉")
+            rightSideFractionSymbol(' ')
+        }.build()
+    }
 
     inline fun progressBar(name: String, max: Long, block: (ProgressBar) -> Unit) {
         val progressBar = ProgressBarBuilder().apply {

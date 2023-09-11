@@ -14,11 +14,13 @@ buildscript {
     }
 }
 
-val antlrKotlinVersion = ext.get("antlrKotlinVersion") as String
+val antlrKotlinVersion = extra.get("antlrKotlinVersion") as String
+
 
 plugins {
     kotlin("jvm") version "1.9.0"
-    id("org.jetbrains.compose") version "0.1.0-SNAPSHOT" // TODO: replace with publicly available version when possible
+    // TODO: replace with main branch when PR accepted: https://github.com/JetBrains/compose-multiplatform/pull/3640
+    id("org.jetbrains.compose") version "0.1.0-SNAPSHOT"
 }
 
 
@@ -36,13 +38,15 @@ repositories {
     maven("https://jitpack.io")
 }
 
+val crossPlatform = true
+
 dependencies {
     implementation("com.github.alchitry.antlr-kotlin:antlr-kotlin-runtime:$antlrKotlinVersion")
     implementation("org.apache.commons:commons-text:1.10.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.7.1")
-    implementation(compose.desktop.currentOs)
+
     implementation(kotlin("reflect"))
     implementation("org.jdom:jdom2:2.0.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
@@ -50,6 +54,16 @@ dependencies {
     implementation("com.fazecast:jSerialComm:2.10.3")
     implementation("com.github.alchitry.yad2xx:yad2xxJava:d2xx_only_with_lib-SNAPSHOT")
     implementation("me.tongfei:progressbar:0.10.0")
+
+    if (crossPlatform) {
+        implementation(compose.desktop.linux_x64)
+        implementation(compose.desktop.linux_arm64)
+        implementation(compose.desktop.windows_x64)
+        implementation(compose.desktop.macos_x64)
+        implementation(compose.desktop.macos_arm64)
+    } else {
+        implementation(compose.desktop.currentOs)
+    }
 
     testImplementation(kotlin("test"))
 }
@@ -82,6 +96,8 @@ compose.desktop {
             packageVersion = (version as String).split("-").first()
             vendor = "Alchitry"
             args.add("labs")
+            // needed for jline3 (used by progress bar lib)
+            jvmArgs.add("--add-opens java.base/java.lang=ALL-UNNAMED")
 
             linux {
                 iconFile.set(File("icon.png"))
@@ -92,7 +108,7 @@ compose.desktop {
                 console = true // print output when running .exe from cmd line
                 upgradeUuid = "3e4e3be7-b77e-437e-9ffe-5607b15a6710"
                 shortcut = true
-                // TODO: Add icon file
+                iconFile.set(File("icon.ico"))
             }
 
             macOS {
