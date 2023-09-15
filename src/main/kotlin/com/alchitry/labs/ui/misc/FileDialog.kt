@@ -11,11 +11,18 @@ fun openFileDialog(
     window: ComposeWindow,
     title: String,
     allowedExtensions: List<String>,
-    allowMultiSelection: Boolean = true
+    allowMultiSelection: Boolean = true,
+    startingDirectory: File? = null
 ): Set<File> {
     val scope = CoroutineScope(Dispatchers.Swing)
     return FileDialog(window, title, FileDialog.LOAD).apply {
         isMultipleMode = allowMultiSelection
+
+
+        println("Starting Dir: $startingDirectory")
+        startingDirectory?.let {
+            directory = it.path
+        }
 
         // windows
         file = allowedExtensions.joinToString(";") { "*$it" } // e.g. '*.jpg'

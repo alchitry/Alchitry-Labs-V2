@@ -7,9 +7,8 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.lazy.layout.LazyLayoutMeasureScope
 import androidx.compose.foundation.text.*
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.LocalTextStyle
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -55,7 +54,7 @@ fun rememberCodeEditorState(tokenizer: EditorTokenizer): CodeEditorState {
     val fontFamilyResolver = LocalFontFamilyResolver.current
     val scope = rememberCoroutineScope()
     val textColor = LocalTextStyle.current.color.takeOrElse {
-        LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
+        LocalContentColor.current
     }
     val style = AlchitryTypography.editor.copy(color = textColor)
     return remember(tokenizer) {
@@ -66,7 +65,7 @@ fun rememberCodeEditorState(tokenizer: EditorTokenizer): CodeEditorState {
             fontFamilyResolver,
             scope,
             textColor.copy(alpha = 0.7f),
-            AlchitryColors.SelectionColor
+            AlchitryColors.current.SelectionColor
         )
     }
 }
@@ -141,7 +140,7 @@ class CodeEditorState(
             LucidLexer.Tokens.TYPE_ID.id, LucidLexer.Tokens.CONST_ID.id, LucidLexer.Tokens.SPACE_ID.id, LucidLexer.Tokens.FUNCTION_ID.id -> {
                 tokens.mapNotNull { t ->
                     if (t.token.type == token.token.type && t.token.text == token.token.text) {
-                        HighlightAnnotation(t.range, AlchitryColors.TokenHighlight)
+                        HighlightAnnotation(t.range, AlchitryColors.current.TokenHighlight)
                     } else {
                         null
                     }

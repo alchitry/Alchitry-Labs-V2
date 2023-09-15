@@ -11,7 +11,22 @@ import java.io.File
 import java.io.IOException
 import kotlin.math.min
 
-class LatticeSpi(ftdi: Ftdi) : Mpsse(ftdi) {
+class LatticeSpi private constructor(ftdi: Ftdi) : Mpsse(ftdi) {
+    companion object {
+        // private static final byte DATA_TMS = (byte) 0x40; /* When set use TMS mode */
+        private const val DATA_IN = 0x20.toByte() /* When set read data (Data IN) */
+        private const val DATA_OUT = 0x10.toByte() /* When set write data (Data OUT) */
+
+        // private static final byte DATA_LSB = (byte) 0x08; /* When set input/output data LSB first. */
+        // private static final byte DATA_ICN = (byte) 0x04; /* When set receive data on negative clock edge */
+        private const val DATA_BITS = 0x02.toByte() /* When set count bits not bytes */
+        private const val DATA_OCN = 0x01.toByte() /* When set update data on negative clock edge */
+
+        suspend fun init(ftdi: Ftdi): LatticeSpi {
+            return LatticeSpi(ftdi).apply { init() }
+        }
+    }
+
     override suspend fun init() {
         super.init()
         // Set up the Hi-Speed specific commands for the FTx232H
@@ -112,7 +127,7 @@ class LatticeSpi(ftdi: Ftdi) : Mpsse(ftdi) {
         if (buf[4] == 0xFF.toByte()) {
             Log.println(
                 "Extended device string length is 0xff. This is likely an error. Ignoring...",
-                AlchitryColors.Warning
+                AlchitryColors.current.Warning
             )
         } else if (buf[4].toInt() != 0) {
             ext = ByteArray(buf[4].toInt())
@@ -252,7 +267,7 @@ class LatticeSpi(ftdi: Ftdi) : Mpsse(ftdi) {
         flashPowerDown()
         flashReleaseReset()
         delay(250)
-        Log.println("Done.", AlchitryColors.Success)
+        Log.println("Done.", AlchitryColors.current.Success)
     }
 
     @Throws(IOException::class)
@@ -295,17 +310,6 @@ class LatticeSpi(ftdi: Ftdi) : Mpsse(ftdi) {
         flashPowerDown()
         flashReleaseReset()
         delay(250)
-        Log.println("Done.", AlchitryColors.Success)
-    }
-
-    companion object {
-        // private static final byte DATA_TMS = (byte) 0x40; /* When set use TMS mode */
-        private const val DATA_IN = 0x20.toByte() /* When set read data (Data IN) */
-        private const val DATA_OUT = 0x10.toByte() /* When set write data (Data OUT) */
-
-        // private static final byte DATA_LSB = (byte) 0x08; /* When set input/output data LSB first. */
-        // private static final byte DATA_ICN = (byte) 0x04; /* When set receive data on negative clock edge */
-        private const val DATA_BITS = 0x02.toByte() /* When set count bits not bytes */
-        private const val DATA_OCN = 0x01.toByte() /* When set update data on negative clock edge */
+        Log.println("Done.", AlchitryColors.current.Success)
     }
 }

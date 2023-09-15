@@ -6,9 +6,9 @@ import androidx.compose.foundation.interaction.HoverInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -132,9 +132,10 @@ fun MenuBar(
 
     Surface(
         Modifier.fillMaxWidth(),
-        color = AlchitryColors.MenuBarBackground,
-        contentColor = AlchitryColors.colors.onSurface,
-        elevation = 8.dp
+        color = AlchitryColors.current.MenuBarBackground,
+        contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
+        tonalElevation = 8.dp,
+        shadowElevation = 8.dp
     ) {
         Row(
             Modifier
@@ -277,7 +278,7 @@ fun <T> MenuBarContext.RadioMenuItem(
                                 .size(8.dp)
                                 .clip(CircleShape)
                                 .alpha(if (selected == it) 1f else 0.1f)
-                                .background(if (selected == it) MaterialTheme.colors.primary else LocalContentColor.current)
+                                .background(if (selected == it) MaterialTheme.colorScheme.primary else LocalContentColor.current)
                         )
                         labeler(it)
                     }

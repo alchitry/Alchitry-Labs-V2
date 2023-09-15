@@ -4,7 +4,7 @@ import com.alchitry.labs.hardware.usb.ftdi.enums.MpsseCommand
 
 class Jtag(ftdi: Ftdi) : Mpsse(ftdi) {
     private var currentState = JtagState.RUN_TEST_IDLE
-    override suspend fun init() {
+    public override suspend fun init() {
         super.init()
         configJtag()
     }

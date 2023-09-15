@@ -5,10 +5,9 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ProvideTextStyle
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -40,7 +39,7 @@ fun ToolbarButton(
     onClick: () -> Unit,
     icon: Painter,
     description: String,
-    colorFilter: ColorFilter? = ColorFilter.tint(MaterialTheme.colors.onBackground),
+    colorFilter: ColorFilter? = ColorFilter.tint(MaterialTheme.colorScheme.onBackground),
     modifier: Modifier = Modifier
 ) {
     LocalDensity.current.run {
@@ -50,16 +49,15 @@ fun ToolbarButton(
             text = description
         ) {
             CompositionLocalProvider(
-                LocalContentColor provides MaterialTheme.colors.onBackground
+                LocalContentColor provides MaterialTheme.colorScheme.onBackground
             ) {
                 Box(
                     modifier
                         //.background(color = backgroundColor)
                         .clickable(onClick = onClick)
                 ) {
-                    CompositionLocalProvider(LocalContentAlpha provides LocalContentColor.current.alpha) {
                         ProvideTextStyle(
-                            value = MaterialTheme.typography.button
+                            value = MaterialTheme.typography.labelLarge
                         ) {
                             Row(
                                 horizontalArrangement = Arrangement.Center,
@@ -73,8 +71,8 @@ fun ToolbarButton(
                                     modifier = Modifier.padding(6.dp).size(size)
                                 )
                             }
+
                         }
-                    }
                 }
             }
         }

@@ -6,9 +6,9 @@ import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.LocalTextStyle
-import androidx.compose.material.Text
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,7 +60,7 @@ fun SelectionContext.TreeSection(
                     focusRequester.requestFocus()
                 }
                 .background(
-                    if (isSelected) (if (focused) AlchitryColors.Accent else LocalContentColor.current).copy(
+                    if (isSelected) (if (focused) AlchitryColors.current.Accent else LocalContentColor.current).copy(
                         0.15f
                     ) else Color.Transparent
                 )

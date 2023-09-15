@@ -1,6 +1,6 @@
 package com.alchitry.labs.ui.main
 
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.awt.ComposeWindow
 import com.alchitry.labs.LocalComposeWindow

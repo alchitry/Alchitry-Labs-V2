@@ -7,7 +7,7 @@ import kotlinx.coroutines.delay
 abstract class Mpsse(protected var ftdi: Ftdi) {
     inner class MpsseException(string: String?) : RuntimeException(string)
 
-    open suspend fun init() {
+    protected open suspend fun init() {
         ftdi.usbReset()
         ftdi.setChars(0.toByte(), false, 0.toByte(), false)
         ftdi.setLatencyTimer(16.toByte())

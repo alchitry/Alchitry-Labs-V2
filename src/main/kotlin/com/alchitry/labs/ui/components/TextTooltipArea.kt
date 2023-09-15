@@ -5,8 +5,8 @@ import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.TooltipPlacement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
@@ -24,7 +24,7 @@ fun TextTooltipArea(
 ) {
     TooltipArea(
         tooltip = {
-            Surface(elevation = 4.dp, shape = RoundedCornerShape(5.dp)) {
+            Surface(tonalElevation = 4.dp, shadowElevation = 4.dp, shape = RoundedCornerShape(5.dp)) {
                 Text(text, Modifier.padding(8.dp))
             }
         },

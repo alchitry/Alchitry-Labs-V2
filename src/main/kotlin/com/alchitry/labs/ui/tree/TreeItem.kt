@@ -4,8 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.Text
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -37,7 +37,11 @@ fun SelectionContext.TreeItem(
             requestSelection(selectable)
             focusRequester.requestFocus()
         }
-        .background(if (isSelected) (if (focused) AlchitryColors.Accent else LocalContentColor.current).copy(0.15f) else Color.Transparent)
+        .background(
+            if (isSelected) (if (focused) AlchitryColors.current.Accent else LocalContentColor.current).copy(
+                0.15f
+            ) else Color.Transparent
+        )
 
         .padding(vertical = 5.dp)
         .padding(start = 25.dp * LocalScale.current * indentLevel)

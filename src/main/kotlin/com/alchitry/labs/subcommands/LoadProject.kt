@@ -94,9 +94,8 @@ class LoadProject : Subcommand("load", "Load a project or .bin file") {
                 try {
                     when (boardType) {
                         is Board.XilinxBoard -> {
-                            val jtag = XilinxJtag(ftdi)
                             runBlocking {
-                                jtag.init()
+                                val jtag = XilinxJtag.init(ftdi)
                                 jtag.writeBin(binFile, flash, boardType)
                             }
                         }
@@ -106,9 +105,8 @@ class LoadProject : Subcommand("load", "Load a project or .bin file") {
                                 showHelp("The Alchitry Cu doesn't support RAM loading.")
                                 return
                             }
-                            val spi = LatticeSpi(ftdi)
                             runBlocking {
-                                spi.init()
+                                val spi = LatticeSpi.init(ftdi)
                                 spi.writeBin(binFile)
                             }
                         }

@@ -11,10 +11,16 @@ import java.io.IOException
 import java.io.InputStream
 
 
-class XilinxJtag(private val ftdi: Ftdi) {
+class XilinxJtag private constructor(private val ftdi: Ftdi) {
     private val jtag: Jtag = Jtag(ftdi)
 
-    suspend fun init() {
+    companion object {
+        suspend fun init(ftdi: Ftdi): XilinxJtag {
+            return XilinxJtag(ftdi).also { it.init() }
+        }
+    }
+
+    private suspend fun init() {
         jtag.init()
         jtag.resetState()
     }
@@ -114,11 +120,11 @@ class XilinxJtag(private val ftdi: Ftdi) {
     }
 
     @Throws(IOException::class)
-    suspend fun eraseFlash(bridgeResource: String) {
-        erase(bridgeResource)
+    suspend fun eraseFlash(board: Board.XilinxBoard) {
+        erase(board.bridgeFile)
         setIR(Instruction.JPROGRAM) // reset the FPGA
         jtag.resetState()
-        Log.println("Done.", AlchitryColors.Success)
+        Log.println("Done.", AlchitryColors.current.Success)
     }
 
     @Throws(IOException::class)
@@ -145,6 +151,6 @@ class XilinxJtag(private val ftdi: Ftdi) {
             loadBin(binFile)
         }
         jtag.resetState()
-        Log.println("Done.", AlchitryColors.Success)
+        Log.println("Done.", AlchitryColors.current.Success)
     }
 }

@@ -1,10 +1,7 @@
 package com.alchitry.labs.ui.code_editor.tooltip
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -67,6 +64,6 @@ class EditorTooltipState(
     @Composable
     fun positionProvider() =
         rememberPopupPositionProviderAtPosition(
-            positionPx = getPopupAnchor()
+            positionPx = remember { getPopupAnchor() }
         )
 }

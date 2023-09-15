@@ -66,6 +66,9 @@ dependencies {
         implementation(compose.desktop.currentOs)
     }
 
+    // TODO: Replace with next full release
+    implementation("org.jetbrains.compose.material3:material3-desktop:1.5.10-beta01")
+
     testImplementation(kotlin("test"))
 }
 
@@ -78,6 +81,7 @@ tasks.withType<KotlinCompile> {
         jvmTarget = "11"
         freeCompilerArgs += "-opt-in=kotlin.ExperimentalStdlibApi"
         freeCompilerArgs += "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi"
+        freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
         freeCompilerArgs += "-Xcontext-receivers"
     }
 }

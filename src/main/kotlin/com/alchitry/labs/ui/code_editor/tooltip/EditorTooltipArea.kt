@@ -2,9 +2,7 @@ package com.alchitry.labs.ui.code_editor.tooltip
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -13,10 +11,9 @@ import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.alchitry.labs.ui.code_editor.EditorToken
-import com.alchitry.labs.ui.theme.AlchitryColors
+import com.alchitry.labs.ui.components.AlchitryToolTipContent
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -65,7 +62,7 @@ fun EditorTooltipArea(
                 popupPositionProvider = state.positionProvider(),
                 onDismissRequest = { state.hide() }
             ) {
-                Surface(
+                AlchitryToolTipContent(
                     Modifier
                         .onGloballyPositioned { state.popupPosition = it.positionInWindow() }
                         .onPointerEvent(PointerEventType.Move) {
@@ -74,17 +71,10 @@ fun EditorTooltipArea(
                         .onPointerEvent(PointerEventType.Exit) {
                             state.hideIfNotHovered(state.popupPosition + it.position)
                         }
-                        .alpha(state.isVisible.value),
-                    elevation = 10.dp,
-                    color = AlchitryColors.TooltipBackground,
-                    contentColor = AlchitryColors.TooltipContent
+                        .alpha(state.isVisible.value)
                 ) {
-                    Box(
-                        Modifier.padding(10.dp)
-                    ) {
-                        SelectionContainer {
-                            state.activeToken?.let { tooltip(it) }
-                        }
+                    SelectionContainer {
+                        state.activeToken?.let { tooltip(it) }
                     }
                 }
             }

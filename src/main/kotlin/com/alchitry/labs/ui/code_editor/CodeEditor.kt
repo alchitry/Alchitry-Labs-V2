@@ -8,16 +8,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.layout.LazyLayout
 import androidx.compose.foundation.lazy.layout.LazyLayoutItemProvider
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.LocalTextStyle
-import androidx.compose.material.Text
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -58,8 +58,7 @@ fun CodeEditor(state: CodeEditorState = rememberCodeEditorState(remember { Lucid
                         val alpha =
                             if (state.selectionManager.active && state.selectionManager.caret.line == index) 1f else 0.3f
                         CompositionLocalProvider(
-                            LocalContentColor provides AlchitryColors.GutterForeground,
-                            LocalContentAlpha provides alpha,
+                            LocalContentColor provides AlchitryColors.current.GutterForeground,
                             LocalTextStyle provides AlchitryTypography.editor
                         ) {
                             // if the index is negative,
@@ -80,6 +79,7 @@ fun CodeEditor(state: CodeEditorState = rememberCodeEditorState(remember { Lucid
                                         .offset( // offset to make text centered
                                             y = state.lineTopOffset.dp * density.density
                                         )
+                                        .alpha(alpha)
                                 )
                             }
                         }
