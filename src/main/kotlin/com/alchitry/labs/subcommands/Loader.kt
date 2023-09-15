@@ -1,7 +1,9 @@
 package com.alchitry.labs.subcommands
 
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -10,16 +12,14 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import com.alchitry.labs.Env
-import com.alchitry.labs.LocalComposeWindow
-import com.alchitry.labs.LocalScale
-import com.alchitry.labs.Settings
+import com.alchitry.labs.*
 import com.alchitry.labs.hardware.usb.UsbUtil
 import com.alchitry.labs.hardware.usb.ftdi.LatticeSpi
 import com.alchitry.labs.hardware.usb.ftdi.XilinxJtag
 import com.alchitry.labs.project.Board
 import com.alchitry.labs.ui.components.AlchitryToolTip
 import com.alchitry.labs.ui.misc.openFileDialog
+import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTheme
 import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.Subcommand
@@ -115,9 +115,14 @@ fun LoaderWindow() {
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        loaderStatus?.let { Text(it, maxLines = 1) }
-                        loaderProgress?.let { CircularProgressIndicator(it) }
-                        Box(Modifier.weight(1f))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            modifier = Modifier.weight(1f).horizontalScroll(rememberScrollState())
+                        ) {
+                            loaderStatus?.let { Text(it) }
+                            loaderProgress?.let { CircularProgressIndicator(it) }
+                        }
                         Button(
                             onClick = {
                                 busy = true
@@ -136,6 +141,8 @@ fun LoaderWindow() {
                                                 }
                                             }
                                         }
+                                    } catch (e: Exception) {
+                                        Log.println(e.message, AlchitryColors.current.Error)
                                     } finally {
                                         busy = false
                                     }
@@ -169,6 +176,8 @@ fun LoaderWindow() {
                                                     }
                                                 }
                                             }
+                                        } catch (e: Exception) {
+                                            Log.println(e.message, AlchitryColors.current.Error)
                                         } finally {
                                             busy = false
                                         }
@@ -199,6 +208,8 @@ fun LoaderWindow() {
                                                 }
                                             }
                                         }
+                                    } catch (e: Exception) {
+                                        Log.println(e.message, AlchitryColors.current.Error)
                                     } finally {
                                         busy = false
                                     }
