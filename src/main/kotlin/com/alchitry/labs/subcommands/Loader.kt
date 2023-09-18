@@ -106,7 +106,7 @@ fun LoaderWindow() {
                     Modifier.padding(10.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    BoardSelector { board = it }
+                    BoardSelector(busy) { board = it }
                     BinSelector(binFilePath) { binFilePath = it }
 
                     Row(
@@ -218,6 +218,7 @@ private data class IndexedBoard(val board: Board, val index: Int) {
 
 @Composable
 private fun BoardSelector(
+    busy: Boolean,
     onBoardChanged: (IndexedBoard?) -> Unit
 ) {
     Row(
@@ -226,13 +227,14 @@ private fun BoardSelector(
     ) {
         var boards by remember { mutableStateOf(mapOf<Board, Int>()) }
 
-        LaunchedEffect(Unit) {
+        LaunchedEffect(busy) {
             while (true) {
-                try {
-                    boards = UsbUtil.detectAttachedBoards()
-                } catch (_: Exception) {
+                if (!busy)
+                    try {
+                        boards = UsbUtil.detectAttachedBoards()
+                    } catch (_: Exception) {
 
-                }
+                    }
                 delay(1000)
             }
         }
