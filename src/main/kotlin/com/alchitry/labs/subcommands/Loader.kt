@@ -13,9 +13,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs.*
+import com.alchitry.labs.hardware.usb.BoardLoader
 import com.alchitry.labs.hardware.usb.UsbUtil
-import com.alchitry.labs.hardware.usb.ftdi.LatticeSpi
-import com.alchitry.labs.hardware.usb.ftdi.XilinxJtag
 import com.alchitry.labs.project.Board
 import com.alchitry.labs.ui.components.AlchitryToolTip
 import com.alchitry.labs.ui.misc.openFileDialog
@@ -129,16 +128,8 @@ fun LoaderWindow() {
                                 scope.launch {
                                     try {
                                         board?.let { board ->
-                                            UsbUtil.openFtdiDevice(board.board, board.index)?.use { ftdi ->
-                                                when (board.board) {
-                                                    is Board.XilinxBoard -> {
-                                                        XilinxJtag.init(ftdi).eraseFlash(board.board)
-                                                    }
-
-                                                    Board.AlchitryCu -> {
-                                                        LatticeSpi.init(ftdi).eraseFlash()
-                                                    }
-                                                }
+                                            if (!BoardLoader.erase(board.board, board.index)) {
+                                                Log.println("Failed to open board!", AlchitryColors.current.Error)
                                             }
                                         }
                                     } catch (e: Exception) {
@@ -153,36 +144,36 @@ fun LoaderWindow() {
                         ) {
                             Text("Erase")
                         }
+
+                        fun load(flash: Boolean) {
+                            busy = true
+                            scope.launch {
+                                try {
+                                    board?.let { board ->
+                                        if (!BoardLoader.load(
+                                                board.board,
+                                                board.index,
+                                                File(binFilePath),
+                                                flash
+                                            )
+                                        ) {
+                                            Log.println("Failed to open board!", AlchitryColors.current.Error)
+                                        }
+                                    }
+                                } catch (e: Exception) {
+                                    Log.println(e.message, AlchitryColors.current.Error)
+                                } finally {
+                                    busy = false
+                                }
+                            }
+                        }
+
                         AlchitryToolTip(
                             { Text("Not supported on Cu") },
                             enabled = board?.board is Board.AlchitryCu
                         ) {
                             Button(
-                                onClick = {
-                                    busy = true
-                                    scope.launch {
-                                        try {
-                                            board?.let { board ->
-                                                UsbUtil.openFtdiDevice(board.board, board.index)?.use { ftdi ->
-                                                    when (board.board) {
-                                                        is Board.XilinxBoard -> {
-                                                            XilinxJtag.init(ftdi)
-                                                                .writeBin(File(binFilePath), false, board.board)
-                                                        }
-
-                                                        Board.AlchitryCu -> {
-                                                            LatticeSpi.init(ftdi).writeBin(File(binFilePath))
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        } catch (e: Exception) {
-                                            Log.println(e.message, AlchitryColors.current.Error)
-                                        } finally {
-                                            busy = false
-                                        }
-                                    }
-                                },
+                                onClick = { load(false) },
                                 modifier = Modifier.requiredWidth(IntrinsicSize.Max),
                                 enabled = canLoadBin && board?.board is Board.XilinxBoard && !busy
                             ) {
@@ -190,31 +181,7 @@ fun LoaderWindow() {
                             }
                         }
                         Button(
-                            onClick = {
-                                busy = true
-                                scope.launch {
-                                    try {
-                                        board?.let { board ->
-                                            UsbUtil.openFtdiDevice(board.board, board.index)?.use { ftdi ->
-                                                when (board.board) {
-                                                    is Board.XilinxBoard -> {
-                                                        XilinxJtag.init(ftdi)
-                                                            .writeBin(File(binFilePath), true, board.board)
-                                                    }
-
-                                                    Board.AlchitryCu -> {
-                                                        LatticeSpi.init(ftdi).writeBin(File(binFilePath))
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    } catch (e: Exception) {
-                                        Log.println(e.message, AlchitryColors.current.Error)
-                                    } finally {
-                                        busy = false
-                                    }
-                                }
-                            },
+                            onClick = { load(true) },
                             modifier = Modifier.requiredWidth(IntrinsicSize.Max),
                             enabled = canLoadBin && !busy
                         ) {

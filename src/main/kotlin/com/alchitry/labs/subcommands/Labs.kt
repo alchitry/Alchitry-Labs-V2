@@ -76,27 +76,31 @@ fun openWindow(
 
         if (isTraySupported)
             Tray(
-                icon = painterResource("icons/alchitry_icon.svg"),
+                icon = painterResource("/icons/alchitry_icon.svg"),
                 tooltip = title
             )
 
         Window(
             state = windowState,
             title = "$title - ${Env.version}",
+            icon = painterResource("/icons/icon.png"),
             onCloseRequest = {
                 onClose(windowState)
                 exitApplication()
             }
         ) {
-            var lastMinDimension by remember { mutableStateOf<Dimension?>(null) }
+            var updateMinSize by remember { mutableStateOf(false) }
 
-            LaunchedEffect(Unit) {
-                window.minimumSize = Dimension(minWidth, minHeight)
-                lastMinDimension = null
-                delay(10) // need to wait for the window to open then resize it to the size we want
+            LaunchedEffect(packContent) {
+                if (!packContent) {
+                    window.minimumSize = Dimension(minWidth, minHeight)
+                }
+                delay(50) // need to wait for the window to open then resize it to the size we want
+                updateMinSize = true
+
                 window.size =
                     Dimension(initialWindowState.size.width.value.toInt(), initialWindowState.size.height.value.toInt())
-                this@Window.window.iconImage =
+                window.iconImage =
                     ImageIcon(this::class.java.getResource("/icons/icon.png")).image
             }
             SideEffect { mainWindow = this.window }
@@ -108,9 +112,13 @@ fun openWindow(
                         val minY = measurables.maxOf { it.minIntrinsicHeight(minX) }
 
                         val minDim = Dimension(minX.coerceAtLeast(minWidth), minY.coerceAtLeast(minHeight))
-                        if (lastMinDimension == null) {
-                            lastMinDimension = minDim
-                            window.minimumSize = minDim
+                        if (updateMinSize) {
+                            updateMinSize = false
+                            // some window manages seem to include the window decorations while others done
+                            // the offsets adjust for window decorations
+                            val offsetX = window.size.width - window.rootPane.size.width
+                            val offsetY = window.size.height - window.rootPane.size.height
+                            window.minimumSize = Dimension(minDim.width + offsetX, minDim.height + offsetY)
                         }
                     }
 

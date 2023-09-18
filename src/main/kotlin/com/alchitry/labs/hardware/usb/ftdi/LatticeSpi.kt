@@ -1,6 +1,7 @@
 package com.alchitry.labs.hardware.usb.ftdi
 
 import com.alchitry.labs.Log
+import com.alchitry.labs.hardware.usb.BoardLoader
 import com.alchitry.labs.hardware.usb.ftdi.enums.FlashCommand
 import com.alchitry.labs.hardware.usb.ftdi.enums.MpsseCommand
 import com.alchitry.labs.ui.theme.AlchitryColors
@@ -11,7 +12,7 @@ import java.io.File
 import java.io.IOException
 import kotlin.math.min
 
-class LatticeSpi private constructor(ftdi: Ftdi) : Mpsse(ftdi) {
+class LatticeSpi private constructor(ftdi: Ftdi) : Mpsse(ftdi), BoardLoader {
     companion object {
         // private static final byte DATA_TMS = (byte) 0x40; /* When set use TMS mode */
         private const val DATA_IN = 0x20.toByte() /* When set read data (Data IN) */
@@ -253,7 +254,7 @@ class LatticeSpi private constructor(ftdi: Ftdi) : Mpsse(ftdi) {
     }
 
 
-    suspend fun eraseFlash() {
+    override suspend fun eraseFlash() {
         Log.println("Resetting...")
         flashChipDeselect()
         delay(250)
@@ -271,7 +272,8 @@ class LatticeSpi private constructor(ftdi: Ftdi) : Mpsse(ftdi) {
     }
 
     @Throws(IOException::class)
-    suspend fun writeBin(binFile: File) {
+    override suspend fun writeBin(binFile: File, flash: Boolean) {
+        check(flash) { "Lattice chips only support programming the Flash" }
         val binData = withContext(Dispatchers.IO) {
             binFile.readBytes()
         }

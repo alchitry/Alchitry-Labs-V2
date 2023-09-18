@@ -1,6 +1,7 @@
 package com.alchitry.labs.hardware.usb.ftdi
 
 import com.alchitry.labs.Log
+import com.alchitry.labs.hardware.usb.BoardLoader
 import com.alchitry.labs.project.Board
 import com.alchitry.labs.ui.theme.AlchitryColors
 import kotlinx.coroutines.Dispatchers
@@ -11,12 +12,12 @@ import java.io.IOException
 import java.io.InputStream
 
 
-class XilinxJtag private constructor(private val ftdi: Ftdi) {
+class XilinxJtag private constructor(private val ftdi: Ftdi, private val board: Board.XilinxBoard) : BoardLoader {
     private val jtag: Jtag = Jtag(ftdi)
 
     companion object {
-        suspend fun init(ftdi: Ftdi): XilinxJtag {
-            return XilinxJtag(ftdi).also { it.init() }
+        suspend fun init(ftdi: Ftdi, board: Board.XilinxBoard): XilinxJtag {
+            return XilinxJtag(ftdi, board).also { it.init() }
         }
     }
 
@@ -120,7 +121,7 @@ class XilinxJtag private constructor(private val ftdi: Ftdi) {
     }
 
     @Throws(IOException::class)
-    suspend fun eraseFlash(board: Board.XilinxBoard) {
+    override suspend fun eraseFlash() {
         erase(board.bridgeFile)
         setIR(Instruction.JPROGRAM) // reset the FPGA
         jtag.resetState()
@@ -128,7 +129,7 @@ class XilinxJtag private constructor(private val ftdi: Ftdi) {
     }
 
     @Throws(IOException::class)
-    suspend fun writeBin(binFile: File, flash: Boolean, board: Board.XilinxBoard) {
+    override suspend fun writeBin(binFile: File, flash: Boolean) {
         Log.println("Checking IDCODE...")
         checkIDCODE(board.idCode)
         if (flash) {

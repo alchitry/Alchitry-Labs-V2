@@ -1,9 +1,8 @@
 package com.alchitry.labs.subcommands
 
 import com.alchitry.labs.Log
+import com.alchitry.labs.hardware.usb.BoardLoader
 import com.alchitry.labs.hardware.usb.UsbUtil
-import com.alchitry.labs.hardware.usb.ftdi.LatticeSpi
-import com.alchitry.labs.hardware.usb.ftdi.XilinxJtag
 import com.alchitry.labs.project.Board
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.project.openXml
@@ -22,6 +21,7 @@ class LoadProject : Subcommand("load", "Load a project or .bin file") {
         false
     )
     private val ram by option(ArgType.Boolean, "ram", "r", "Load project to FPGA's RAM (temporary)").default(false)
+    private val erase by option(ArgType.Boolean, "erase", "e", "Erase the FPGA's flash").default(false)
 
     private val list by option(ArgType.Boolean, "list", "l", "List all detected boards").default(false)
     private val device by option(ArgType.Int, "device", "d", "Index of device to load").default(0)
@@ -39,8 +39,8 @@ class LoadProject : Subcommand("load", "Load a project or .bin file") {
     )
 
     override fun execute() {
-        if (flash && ram) {
-            showHelp("Commands flash and ram can't both be specified!")
+        if (listOf(flash, ram, erase).count { it } > 1) {
+            showHelp("Only one of flash, ram, and erase commands can be specified!")
             return
         }
 
@@ -74,6 +74,23 @@ class LoadProject : Subcommand("load", "Load a project or .bin file") {
             }
         }
 
+        if (erase) {
+            val boardType = project?.board ?: board ?: run {
+                showHelp("A board must be specified when erasing.")
+                return
+            }
+
+            runBlocking {
+                try {
+                    if (!BoardLoader.erase(boardType, device)) {
+                        Log.printlnError("No board of type ${boardType.name} found!")
+                    }
+                } catch (e: Exception) {
+                    Log.printlnError("Error: ${e.message}")
+                }
+            }
+        }
+
         if (flash || ram) {
             val binFile = project?.binFile ?: bin?.let { File(it) }
             ?: run {
@@ -86,37 +103,15 @@ class LoadProject : Subcommand("load", "Load a project or .bin file") {
                 return
             }
 
-            UsbUtil.openFtdiDevice(boardType, device).use { ftdi ->
-                if (ftdi == null) {
-                    Log.printlnError("No board of type ${boardType.name} found!")
-                    return
-                }
+            runBlocking {
                 try {
-                    when (boardType) {
-                        is Board.XilinxBoard -> {
-                            runBlocking {
-                                val jtag = XilinxJtag.init(ftdi)
-                                jtag.writeBin(binFile, flash, boardType)
-                            }
-                        }
-
-                        Board.AlchitryCu -> {
-                            if (!flash) {
-                                showHelp("The Alchitry Cu doesn't support RAM loading.")
-                                return
-                            }
-                            runBlocking {
-                                val spi = LatticeSpi.init(ftdi)
-                                spi.writeBin(binFile)
-                            }
-                        }
+                    if (!BoardLoader.load(boardType, device, binFile, flash)) {
+                        Log.printlnError("No board of type ${boardType.name} found!")
                     }
                 } catch (e: Exception) {
                     Log.printlnError("Error: ${e.message}")
                 }
             }
-
-
         }
     }
 }
