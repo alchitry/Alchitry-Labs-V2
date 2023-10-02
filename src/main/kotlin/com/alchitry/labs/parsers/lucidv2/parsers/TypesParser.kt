@@ -281,7 +281,7 @@ class TypesParser(
                 moduleType,
                 dimensions,
                 signalProvider = { idx ->
-                    val selection = idx.map { SignalSelector.Bits(it, SelectionContext.Constant(it)) }
+                    val selection = idx.map { SignalSelector.Bits(it, SelectionContext.Constant) }
                     val localMap = localSignals.map { (connection, signal) ->
                         connection.port to signal.select(selection)
                     }.toMap()
@@ -289,7 +289,7 @@ class TypesParser(
                     localMap + extMap
                 },
                 paramProvider = { idx ->
-                    val selection = idx.map { SignalSelector.Bits(it, SelectionContext.Constant(it)) }
+                    val selection = idx.map { SignalSelector.Bits(it, SelectionContext.Constant) }
                     val localMap = localParamConnections.associate {
                         it.port to it.value.value.select(selection)
                     }

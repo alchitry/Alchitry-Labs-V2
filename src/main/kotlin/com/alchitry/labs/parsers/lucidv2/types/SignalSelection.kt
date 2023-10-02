@@ -10,6 +10,11 @@ sealed class SignalSelector {
     data class Bits(val range: IntRange, val context: SelectionContext) : SignalSelector() {
         constructor(bit: Int, context: SelectionContext) : this(bit..bit, context)
 
+        /**
+         * The number of elements selected
+         */
+        val count: Int get() = range.last - range.first + 1
+
         override fun toString(): String {
             return if (range.first == range.last) {
                 "[${range.first}]"
@@ -27,12 +32,7 @@ sealed class SignalSelector {
 }
 
 sealed class SelectionContext {
-    data class Constant(
-        val start: Int,
-        val stop: Int
-    ) : SelectionContext() {
-        constructor(bit: Int) : this(bit, bit)
-    }
+    data object Constant : SelectionContext()
 
     data class Single(
         val bit: LucidParser.ExprContext
@@ -44,7 +44,7 @@ sealed class SelectionContext {
     ) : SelectionContext()
 
     data class DownTo(
-        val start: LucidParser.ExprContext,
+        val stop: LucidParser.ExprContext,
         val width: Int
     ) : SelectionContext()
 

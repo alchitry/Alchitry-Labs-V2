@@ -18,7 +18,7 @@ class StructTests {
         assert(tester.hasNoIssues)
 
         val expected = StructType(
-            "myStruct", mutableMapOf(
+            "myStruct", linkedMapOf(
                 "a" to StructMember("a", BitWidth, false),
                 "b" to StructMember("b", ArrayWidth(2, BitListWidth(3)), false),
                 "c" to StructMember("c", BitListWidth(4), false)
@@ -26,5 +26,20 @@ class StructTests {
         )
 
         assertEquals(expected, tester.context.resolve(ctx))
+    }
+
+    @Test
+    fun structOffsetTest() {
+        val struct = StructType(
+            "myStruct", linkedMapOf(
+                "a" to StructMember("a", BitWidth, false),
+                "b" to StructMember("b", ArrayWidth(2, BitListWidth(3)), false),
+                "c" to StructMember("c", BitListWidth(4), false)
+            )
+        )
+
+        assertEquals(0, struct.offsetOf("a"))
+        assertEquals(1, struct.offsetOf("b"))
+        assertEquals(1 + 6, struct.offsetOf("c"))
     }
 }

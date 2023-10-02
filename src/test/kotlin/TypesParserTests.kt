@@ -1,8 +1,4 @@
-import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
-import com.alchitry.labs.parsers.lucidv2.types.Dff
-import com.alchitry.labs.parsers.lucidv2.types.Signal
-import com.alchitry.labs.parsers.lucidv2.types.StructMember
-import com.alchitry.labs.parsers.lucidv2.types.StructType
+import com.alchitry.labs.parsers.lucidv2.types.*
 import com.alchitry.labs.parsers.lucidv2.values.*
 import helpers.SimpleLucidTester
 import kotlinx.coroutines.runBlocking
@@ -231,7 +227,7 @@ internal class TypesParserTests {
         assert(tester.hasNoIssues)
 
         val struct = StructType(
-            "myStruct", mutableMapOf(
+            "myStruct", linkedMapOf(
                 "a" to StructMember("a", BitWidth, false),
                 "b" to StructMember("b", ArrayWidth(2, BitListWidth(3)), false),
                 "c" to StructMember("c", BitListWidth(4), false)
@@ -260,7 +256,7 @@ internal class TypesParserTests {
         assert(tester.hasNoIssues)
 
         val struct = StructType(
-            "myStruct", mutableMapOf(
+            "myStruct", linkedMapOf(
                 "a" to StructMember("a", BitWidth, false),
                 "b" to StructMember("b", ArrayWidth(2, BitListWidth(3)), false),
                 "c" to StructMember("c", BitListWidth(4), false)

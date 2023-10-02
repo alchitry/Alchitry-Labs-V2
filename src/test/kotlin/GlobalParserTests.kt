@@ -60,7 +60,7 @@ class GlobalParserTests {
         assertEquals(
             StructType(
                 "rgb",
-                mapOf(
+                linkedMapOf(
                     "r" to StructMember("r", BitListWidth(8), false),
                     "g" to StructMember("g", BitListWidth(7), false),
                     "b" to StructMember("b", BitListWidth(6), false),
@@ -90,7 +90,7 @@ class GlobalParserTests {
 
         val type = StructType(
             "rgb",
-            mapOf(
+            linkedMapOf(
                 "r" to StructMember("r", BitListWidth(8), false),
                 "g" to StructMember("g", BitListWidth(8), false),
                 "b" to StructMember("b", BitListWidth(8), false),
@@ -99,7 +99,7 @@ class GlobalParserTests {
 
         val value = StructValue(
             type,
-            mapOf(
+            linkedMapOf(
                 "r" to BitListValue(0, width = 8, constant = true, signed = false),
                 "g" to BitListValue(0, width = 8, constant = true, signed = false),
                 "b" to BitListValue(255, width = 8, constant = true, signed = false),
@@ -131,7 +131,7 @@ class GlobalParserTests {
         assertNotNull(global)
         val rgbStruct = StructType(
             "rgb",
-            mapOf(
+            linkedMapOf(
                 "r" to StructMember("r", BitListWidth(8), false),
                 "g" to StructMember("g", BitListWidth(7), false),
                 "b" to StructMember("b", BitListWidth(6), false),
@@ -142,7 +142,7 @@ class GlobalParserTests {
         assertEquals(
             StructType(
                 "myStruct",
-                mapOf(
+                linkedMapOf(
                     "color" to StructMember("color", StructWidth(rgbStruct), false),
                     "type" to StructMember("type", BitListWidth(8), false)
                 )

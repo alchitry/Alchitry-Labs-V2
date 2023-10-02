@@ -38,7 +38,7 @@ data class StructParser(
             return
         }
 
-        val members = mutableMapOf<String, StructMember>()
+        val members = linkedMapOf<String, StructMember>()
 
         ctx.structMember().forEach { structMemberContext ->
             val structNameCtx = structMemberContext.name() ?: return@forEach

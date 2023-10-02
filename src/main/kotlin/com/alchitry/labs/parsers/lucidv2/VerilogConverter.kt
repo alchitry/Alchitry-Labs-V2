@@ -102,6 +102,7 @@ class VerilogConverter(
             is Signal -> signal
             is SubSignal -> signal.parent
         }
+
         val baseName = when (val parent = baseSignal.parent) {
             null -> baseSignal.name.sanitize()
             is Dff -> "D_${parent.name}_${baseSignal.name}"
@@ -110,22 +111,97 @@ class VerilogConverter(
             is ModuleInstanceOrArray -> "M_${parent.name}_${baseSignal.name}"
         }
 
+        // signedness is lost when bits are selected and overwritten by structs
+        var signed = baseSignal.signed
+
+        // build the bit selection string (if sub-signal)
         val selection = (signal as? SubSignal)?.selection?.let { selection ->
-            val sb = StringBuilder()
-            var width = baseSignal.width
+            val bitSelection = StringBuilder()
+            var currentWidth: SignalWidth? = baseSignal.width
+            check(currentWidth?.isDefined() == true) { "Signal width was not defined!" }
 
-            while (true) {
-                when (width) {
-                    is ArrayWidth -> TODO()
-                    is BitListWidth -> TODO()
-                    BitWidth -> break
-                    is StructWidth -> TODO()
-                    UndefinedSimpleWidth -> break
+            var selectedBitCount = currentWidth!!.bitCount!! // the defined check above makes this safe
+
+            var first = true
+
+            if (selection.isNotEmpty())
+                bitSelection.append("[")
+
+            for (selector in selection) {
+                if (!first)
+                    bitSelection.append("+")
+                else
+                    first = false
+
+                when (currentWidth) {
+                    is ArrayWidth, is SimpleWidth -> {
+                        val s = selector as? SignalSelector.Bits ?: error("Struct selector used on an array!")
+
+                        bitSelection.append("(")
+                        when (s.context) {
+                            is SelectionContext.Constant -> bitSelection.append(s.range.first)
+                            is SelectionContext.Single -> bitSelection.append(s.context.bit.verilog)
+                            is SelectionContext.Fixed -> bitSelection.append(s.context.start.verilog)
+                            is SelectionContext.DownTo -> bitSelection.append("(${s.context.stop.verilog})-${s.context.width - 1}")
+                            is SelectionContext.UpTo -> bitSelection.append(s.context.start)
+                        }
+                        bitSelection.append(")")
+
+                        val elementSize = if (currentWidth is ArrayWidth) currentWidth.next.bitCount!! else 1
+
+                        // scale the offset by the size of each element
+                        if (elementSize > 1)
+                            bitSelection
+                                .append("*")
+                                .append(elementSize)
+
+                        signed = false
+                        selectedBitCount = s.count * elementSize
+                        currentWidth = if (currentWidth is ArrayWidth)
+                            when (s.context) {
+                                is SelectionContext.Constant,
+                                is SelectionContext.Single ->
+                                    currentWidth.next
+
+                                is SelectionContext.Fixed,
+                                is SelectionContext.DownTo,
+                                is SelectionContext.UpTo ->
+                                    null // these select a range of bits and can't be selected further
+                            } else null
+                    }
+
+                    is StructWidth -> {
+                        val s = selector as? SignalSelector.Struct ?: error("Bit selector used on a struct!")
+                        val type = currentWidth.type
+                        val member = type[s.member] ?: error("Struct member could not be found!")
+
+                        bitSelection.append(type.offsetOf(s.member))
+
+                        signed = member.signed
+                        currentWidth = member.width
+                        selectedBitCount = currentWidth.bitCount!!
+                    }
+
+                    UndefinedSimpleWidth -> error(ctx, "Undefined width during verilog conversion!")
+                    null -> error(ctx, "Too many selectors for the signal width!")
                 }
-
             }
 
+            if (selection.isNotEmpty() && selectedBitCount > 1) {
+                bitSelection
+                    .append("+")
+                    .append(selectedBitCount - 1)
+                    .append("-:")
+                    .append(selectedBitCount)
+                    .append("]")
+            }
+
+            bitSelection.toString()
         }
+
+        val sigVerilog = "$baseName$selection"
+        val write = ctx.parent is LucidParser.AssignStatContext
+        ctx.verilog = if (signed && !write) "\$signed($sigVerilog)" else sigVerilog
     }
 
     override fun exitCaseStat(ctx: LucidParser.CaseStatContext) {

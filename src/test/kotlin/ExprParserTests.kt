@@ -1,6 +1,6 @@
 import com.alchitry.labs.parsers.BitUtil
-import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.types.Signal
+import com.alchitry.labs.parsers.lucidv2.types.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.values.ArrayValue
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
