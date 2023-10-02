@@ -1,7 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
 import com.alchitry.labs.parsers.BitUtil
-import com.alchitry.labs.parsers.lucidv2.signals.SignalParent
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.BitListWidth
 

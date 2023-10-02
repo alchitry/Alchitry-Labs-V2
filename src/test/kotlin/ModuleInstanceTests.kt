@@ -1,7 +1,7 @@
-import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstanceArray
+import com.alchitry.labs.parsers.lucidv2.types.Signal
 import com.alchitry.labs.parsers.lucidv2.values.*
 import helpers.LucidTester
 import kotlinx.coroutines.runBlocking

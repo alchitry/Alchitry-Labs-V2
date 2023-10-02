@@ -1,9 +1,5 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
-import com.alchitry.labs.parsers.lucidv2.signals.Signal
-import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
-import com.alchitry.labs.parsers.lucidv2.signals.SignalParent
-
 class GlobalNamespace(
     override val name: String,
     val constants: Map<String, Constant>,

@@ -4,7 +4,7 @@ import com.alchitry.labs.parsers.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidExprContext
-import com.alchitry.labs.parsers.lucidv2.signals.*
+import com.alchitry.labs.parsers.lucidv2.types.*
 import com.alchitry.labs.parsers.lucidv2.types.Function
 import com.alchitry.labs.parsers.lucidv2.values.*
 import org.antlr.v4.kotlinruntime.ParserRuleContext
@@ -120,7 +120,7 @@ data class SignalParser(
             when (child) {
                 is NameContext -> listOf(SignalSelector.Struct(child.text) to child)
                 is BitSelectionContext -> context.resolve(child)
-                    .map { SignalSelector.Bits(it.range) to it.ctx }
+                    .map { SignalSelector.Bits(it.range, it.selectionCtx) to it.ctx }
 
                 else -> error("Signal child was not a NameContext or BitSelectionContext")
             }

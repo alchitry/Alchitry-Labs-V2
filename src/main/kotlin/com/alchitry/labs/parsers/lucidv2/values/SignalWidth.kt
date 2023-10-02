@@ -107,15 +107,17 @@ sealed class SignalWidth {
         return ArrayValue(dims.map { BitListValue(it, width, constant = true, signed = false) })
     }
 
-    fun getBitCount(): Int? {
-        return when (this) {
-            is BitWidth -> 1
-            is ArrayWidth -> size * (next.getBitCount() ?: return null)
-            is StructWidth -> type.values.sumOf { it.width.getBitCount() ?: return null }
-            UndefinedSimpleWidth -> null
-            is SimpleWidth -> size
+
+    val bitCount: Int?
+        get() {
+            return when (this) {
+                is BitWidth -> 1
+                is ArrayWidth -> size * (next.bitCount ?: return null)
+                is StructWidth -> type.values.sumOf { it.width.bitCount ?: return null }
+                UndefinedSimpleWidth -> null
+                is SimpleWidth -> size
+            }
         }
-    }
 
     /** Returns true if the other width can be scaled to match this width. */
     fun canAssign(other: SignalWidth): Boolean =
@@ -129,7 +131,7 @@ sealed class SignalWidth {
         return when (this) {
             is ArrayWidth, is StructWidth -> false
             BitWidth, is SimpleWidth, UndefinedSimpleWidth ->
-                (getBitCount() ?: return false) < (other.getBitCount() ?: return false)
+                (bitCount ?: return false) < (other.bitCount ?: return false)
         }
     }
 

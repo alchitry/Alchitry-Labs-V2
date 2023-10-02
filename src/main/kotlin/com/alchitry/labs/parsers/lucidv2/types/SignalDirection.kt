@@ -1,4 +1,4 @@
-package com.alchitry.labs.parsers.lucidv2.signals
+package com.alchitry.labs.parsers.lucidv2.types
 
 enum class SignalDirection {
     Read,

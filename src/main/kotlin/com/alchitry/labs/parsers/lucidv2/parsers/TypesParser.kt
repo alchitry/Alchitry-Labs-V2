@@ -4,11 +4,7 @@ import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.context.SignalResolver
-import com.alchitry.labs.parsers.lucidv2.signals.*
-import com.alchitry.labs.parsers.lucidv2.types.Dff
-import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
-import com.alchitry.labs.parsers.lucidv2.types.ModuleInstanceArray
-import com.alchitry.labs.parsers.lucidv2.types.ModuleInstanceOrArray
+import com.alchitry.labs.parsers.lucidv2.types.*
 import com.alchitry.labs.parsers.lucidv2.values.*
 
 class TypesParser(
@@ -285,7 +281,7 @@ class TypesParser(
                 moduleType,
                 dimensions,
                 signalProvider = { idx ->
-                    val selection = idx.map { SignalSelector.Bits(it) }
+                    val selection = idx.map { SignalSelector.Bits(it, SelectionContext.Constant(it)) }
                     val localMap = localSignals.map { (connection, signal) ->
                         connection.port to signal.select(selection)
                     }.toMap()
@@ -293,7 +289,7 @@ class TypesParser(
                     localMap + extMap
                 },
                 paramProvider = { idx ->
-                    val selection = idx.map { SignalSelector.Bits(it) }
+                    val selection = idx.map { SignalSelector.Bits(it, SelectionContext.Constant(it)) }
                     val localMap = localParamConnections.associate {
                         it.port to it.value.value.select(selection)
                     }

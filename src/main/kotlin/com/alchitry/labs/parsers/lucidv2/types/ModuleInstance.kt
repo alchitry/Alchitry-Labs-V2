@@ -3,9 +3,6 @@ package com.alchitry.labs.parsers.lucidv2.types
 import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
-import com.alchitry.labs.parsers.lucidv2.signals.Signal
-import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
-import com.alchitry.labs.parsers.lucidv2.signals.SignalOrSubSignal
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotOrParent
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotParent
 import com.alchitry.labs.parsers.lucidv2.values.Value

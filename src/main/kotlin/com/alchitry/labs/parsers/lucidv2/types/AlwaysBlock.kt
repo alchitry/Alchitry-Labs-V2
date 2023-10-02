@@ -4,7 +4,6 @@ import com.alchitry.labs.parsers.Evaluable
 import com.alchitry.labs.parsers.grammar.LucidParser.AlwaysBlockContext
 import com.alchitry.labs.parsers.grammar.LucidParser.RepeatStatContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
-import com.alchitry.labs.parsers.lucidv2.signals.Signal
 import com.alchitry.labs.parsers.onAnyChange
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch

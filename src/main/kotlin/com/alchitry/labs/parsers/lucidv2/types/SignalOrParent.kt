@@ -1,4 +1,4 @@
-package com.alchitry.labs.parsers.lucidv2.signals
+package com.alchitry.labs.parsers.lucidv2.types
 
 /**
  * A union of the interface SignalParent and Signal class

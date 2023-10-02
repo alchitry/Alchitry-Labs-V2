@@ -3,7 +3,6 @@ package com.alchitry.labs.parsers.lucidv2.types
 import com.alchitry.labs.parsers.Evaluable
 import com.alchitry.labs.parsers.grammar.LucidParser.TestBlockContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
-import com.alchitry.labs.parsers.lucidv2.signals.Signal
 
 class TestBlock(
     val name: String,

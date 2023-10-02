@@ -1,4 +1,4 @@
-import com.alchitry.labs.parsers.lucidv2.signals.Signal
+import com.alchitry.labs.parsers.lucidv2.types.Signal
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import helpers.LucidTester
 import helpers.testErrorCollector

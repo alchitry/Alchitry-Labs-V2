@@ -1,8 +1,8 @@
 package com.alchitry.labs.parsers.lucidv2.types.ports
 
 import com.alchitry.labs.parsers.ProjectContext
-import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
-import com.alchitry.labs.parsers.lucidv2.signals.SignalParent
+import com.alchitry.labs.parsers.lucidv2.types.SignalDirection
+import com.alchitry.labs.parsers.lucidv2.types.SignalParent
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
 
 data class Port(

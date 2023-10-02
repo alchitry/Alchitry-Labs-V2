@@ -3,8 +3,8 @@ package com.alchitry.labs.parsers.lucidv2.parsers
 import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
-import com.alchitry.labs.parsers.lucidv2.signals.Signal
-import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
+import com.alchitry.labs.parsers.lucidv2.types.Signal
+import com.alchitry.labs.parsers.lucidv2.types.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
@@ -108,7 +108,7 @@ data class BlockEvaluator(
             signal?.quietWrite(
                 BitListValue(
                     value = it,
-                    width = signal.width.getBitCount() ?: error("Repeat signal has an undefined width!"),
+                    width = signal.width.bitCount ?: error("Repeat signal has an undefined width!"),
                     constant = false,
                     signed = false
                 ),

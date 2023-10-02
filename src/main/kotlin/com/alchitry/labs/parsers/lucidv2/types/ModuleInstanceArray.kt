@@ -2,7 +2,6 @@ package com.alchitry.labs.parsers.lucidv2.types
 
 import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.errors.ErrorCollector
-import com.alchitry.labs.parsers.lucidv2.signals.*
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotOrParent
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotParent
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.Snapshotable
@@ -113,7 +112,7 @@ class ModuleInstanceArray(
         modules = generateModules(dimensions, emptyList()) as ModuleList
 
         modules.forEachIndexed { index: List<Int>, moduleInstance: ModuleInstance ->
-            val selection = index.map { SignalSelector.Bits(it) }
+            val selection = index.map { SignalSelector.Bits(it, SelectionContext.Constant(it)) }
             moduleInstance.external.forEach { (name, port) ->
                 val subSig = internal[name]?.select(selection) ?: error("Missing port \"$name\"!")
                 if (port.direction.canWrite)

@@ -1,6 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
-import com.alchitry.labs.parsers.lucidv2.signals.SignalSelector
+import com.alchitry.labs.parsers.lucidv2.types.SignalSelector
+
 
 data class BitValue(
     val bit: Bit,

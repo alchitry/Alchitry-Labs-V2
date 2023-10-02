@@ -5,8 +5,6 @@ import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.parsers.BitSelection
-import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
-import com.alchitry.labs.parsers.lucidv2.signals.SignalOrSubSignal
 import com.alchitry.labs.parsers.lucidv2.types.*
 import com.alchitry.labs.parsers.lucidv2.types.Function
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth

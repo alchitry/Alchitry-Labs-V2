@@ -6,12 +6,8 @@ import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.parsers.*
-import com.alchitry.labs.parsers.lucidv2.signals.Signal
-import com.alchitry.labs.parsers.lucidv2.signals.SignalOrParent
+import com.alchitry.labs.parsers.lucidv2.types.*
 import com.alchitry.labs.parsers.lucidv2.types.Function
-import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
-import com.alchitry.labs.parsers.lucidv2.types.TestAbortedException
-import com.alchitry.labs.parsers.lucidv2.types.TestOrModuleInstance
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.Value
 import org.antlr.v4.kotlinruntime.tree.ParseTree

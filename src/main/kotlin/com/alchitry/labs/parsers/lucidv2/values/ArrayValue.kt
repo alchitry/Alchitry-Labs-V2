@@ -1,7 +1,8 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
-import com.alchitry.labs.parsers.lucidv2.signals.SignalSelectionException
-import com.alchitry.labs.parsers.lucidv2.signals.SignalSelector
+import com.alchitry.labs.parsers.lucidv2.types.SignalSelectionException
+import com.alchitry.labs.parsers.lucidv2.types.SignalSelector
+
 
 data class ArrayValue(
     val elements: List<Value>

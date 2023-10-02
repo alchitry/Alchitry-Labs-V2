@@ -4,6 +4,7 @@ import com.alchitry.labs.parsers.errors.*
 import com.alchitry.labs.parsers.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.context.LucidExprContext
+import com.alchitry.labs.parsers.lucidv2.types.SelectionContext
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
 import org.antlr.v4.kotlinruntime.ParserRuleContext
@@ -11,7 +12,8 @@ import org.antlr.v4.kotlinruntime.tree.ParseTree
 
 data class BitSelection(
     val range: IntRange,
-    val ctx: ParserRuleContext
+    val ctx: ParserRuleContext,
+    val selectionCtx: SelectionContext
 )
 
 /**
@@ -42,8 +44,12 @@ data class BitSelectionParser(
         val expr = ctx.expr()
         if (expr.size != 2) return
 
-        val max = ctx.expr(0)?.let { context.resolve(it) } ?: return
-        val min = ctx.expr(1)?.let { context.resolve(it) } ?: return
+
+        val maxCtx = ctx.expr(0) ?: return
+        val minCtx = ctx.expr(1) ?: return
+
+        val max = context.resolve(maxCtx) ?: return
+        val min = context.resolve(minCtx) ?: return
 
         if (!max.constant) context.reportExprNotConstant(expr[0])
         if (!min.constant) context.reportExprNotConstant(expr[1])
@@ -76,7 +82,7 @@ data class BitSelectionParser(
             context.reportArraySizeTooBig(expr[1])
             return
         }
-        bounds[ctx] = BitSelection(minInt..maxInt, ctx)
+        bounds[ctx] = BitSelection(minInt..maxInt, ctx, SelectionContext.Fixed(minCtx, maxCtx))
     }
 
     override fun exitBitSelectorFixWidth(ctx: BitSelectorFixWidthContext) {
@@ -136,7 +142,12 @@ data class BitSelectionParser(
         else
             (startInt - widthInt + 1)..startInt
 
-        bounds[ctx] = BitSelection(selection, ctx)
+        val selectionContext = when (isUpTo) {
+            true -> SelectionContext.UpTo(expr[0], widthInt)
+            false -> SelectionContext.DownTo(expr[0], widthInt)
+        }
+
+        bounds[ctx] = BitSelection(selection, ctx, selectionContext)
     }
 
     override fun exitArrayIndex(ctx: ArrayIndexContext) {
@@ -163,6 +174,6 @@ data class BitSelectionParser(
             return
         }
 
-        bounds[ctx] = BitSelection(value..value, ctx)
+        bounds[ctx] = BitSelection(value..value, ctx, SelectionContext.Single(expr))
     }
 }

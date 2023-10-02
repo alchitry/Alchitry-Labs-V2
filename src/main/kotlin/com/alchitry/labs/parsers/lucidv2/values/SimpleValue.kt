@@ -181,6 +181,25 @@ sealed class SimpleValue(
         return BitListValue(newBits, constant, false)
     }
 
+    fun asVerilog(): String {
+        check(width.isDefined()) { "Can't turn an undefined width value to Verilog" }
+        val sb = StringBuilder()
+        sb.append(width.bitCount)
+        sb.append("'")
+        if (signed)
+            sb.append("s")
+        if (isNumber()) {
+            sb.append("h")
+            sb.append(toBigInt().toString(16))
+        } else {
+            sb.append("b")
+            bits.reversed().forEach {
+                sb.append(it.char)
+            }
+        }
+        return sb.toString()
+    }
+
     override fun toString(): String {
         val sb = StringBuilder()
         if (constant)
@@ -190,7 +209,7 @@ sealed class SimpleValue(
         sb.append('{')
         for (i in bits.indices.reversed()) {
             val bv = bits[i]
-            sb.append(bv.toString().substring(1))
+            sb.append(bv.char)
         }
         sb.append('}')
 

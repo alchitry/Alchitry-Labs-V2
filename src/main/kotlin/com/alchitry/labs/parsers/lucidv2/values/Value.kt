@@ -1,7 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
-import com.alchitry.labs.parsers.lucidv2.signals.*
-import com.alchitry.labs.parsers.lucidv2.types.Measurable
+import com.alchitry.labs.parsers.lucidv2.types.*
 
 sealed class Value : Measurable {
     abstract val constant: Boolean
@@ -46,11 +45,11 @@ sealed class Value : Measurable {
             is SimpleValue -> bits
             is StructValue -> type.flatMap { (key, value) ->
                 this[key]?.getBits() ?: List(
-                    value.width.getBitCount() ?: error("Member of a struct has an undefined width!")
+                    value.width.bitCount ?: error("Member of a struct has an undefined width!")
                 ) { Bit.Bx }
             }
 
-            is UndefinedValue -> List(width.getBitCount() ?: 1) { Bit.Bx }
+            is UndefinedValue -> List(width.bitCount ?: 1) { Bit.Bx }
         }
     }
 

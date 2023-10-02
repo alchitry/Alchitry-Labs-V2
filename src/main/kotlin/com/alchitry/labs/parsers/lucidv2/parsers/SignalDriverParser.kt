@@ -3,11 +3,7 @@ package com.alchitry.labs.parsers.lucidv2.parsers
 import com.alchitry.labs.parsers.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
-import com.alchitry.labs.parsers.lucidv2.signals.Signal
-import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
-import com.alchitry.labs.parsers.lucidv2.signals.SubSignal
-import com.alchitry.labs.parsers.lucidv2.types.Dff
-import com.alchitry.labs.parsers.lucidv2.types.ModuleInstanceOrArray
+import com.alchitry.labs.parsers.lucidv2.types.*
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.Value
 import org.antlr.v4.kotlinruntime.tree.ParseTree

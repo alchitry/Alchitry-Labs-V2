@@ -1,9 +1,9 @@
-package com.alchitry.labs.parsers.lucidv2.signals
+package com.alchitry.labs.parsers.lucidv2.types
 
 /**
  * A SignalParent is something that holds signals. For example a Dff has signals "d" and "q".
  */
-interface SignalParent : SignalOrParent {
+sealed interface SignalParent : SignalOrParent {
     /**
      * Retrieves the child signal from this parent.
      * @param name the name of the signal to retrieve

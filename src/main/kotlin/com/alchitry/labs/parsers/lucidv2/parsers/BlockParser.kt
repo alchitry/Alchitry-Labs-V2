@@ -3,12 +3,8 @@ package com.alchitry.labs.parsers.lucidv2.parsers
 import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
-import com.alchitry.labs.parsers.lucidv2.signals.Signal
-import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
-import com.alchitry.labs.parsers.lucidv2.types.AlwaysBlock
-import com.alchitry.labs.parsers.lucidv2.types.CustomArg
+import com.alchitry.labs.parsers.lucidv2.types.*
 import com.alchitry.labs.parsers.lucidv2.types.Function
-import com.alchitry.labs.parsers.lucidv2.types.TestBlock
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
 import com.alchitry.labs.parsers.lucidv2.values.minBits

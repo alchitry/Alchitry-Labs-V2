@@ -8,10 +8,10 @@ import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidExprContext
-import com.alchitry.labs.parsers.lucidv2.signals.Signal
-import com.alchitry.labs.parsers.lucidv2.signals.SubSignal
 import com.alchitry.labs.parsers.lucidv2.types.Function
 import com.alchitry.labs.parsers.lucidv2.types.FunctionArg
+import com.alchitry.labs.parsers.lucidv2.types.Signal
+import com.alchitry.labs.parsers.lucidv2.types.SubSignal
 import com.alchitry.labs.parsers.lucidv2.values.*
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree

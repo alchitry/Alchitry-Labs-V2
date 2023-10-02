@@ -2,10 +2,6 @@ package com.alchitry.labs.parsers.lucidv2.types
 
 import com.alchitry.labs.parsers.Evaluable
 import com.alchitry.labs.parsers.ProjectContext
-import com.alchitry.labs.parsers.lucidv2.signals.DynamicExpr
-import com.alchitry.labs.parsers.lucidv2.signals.Signal
-import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
-import com.alchitry.labs.parsers.lucidv2.signals.SignalParent
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotParent
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.Snapshotable
 import com.alchitry.labs.parsers.lucidv2.values.Bit

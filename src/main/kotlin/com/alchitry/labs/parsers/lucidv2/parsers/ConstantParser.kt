@@ -5,9 +5,9 @@ import com.alchitry.labs.parsers.grammar.LucidParser
 import com.alchitry.labs.parsers.grammar.LucidParser.ConstDecContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidExprContext
 import com.alchitry.labs.parsers.lucidv2.context.SignalResolver
-import com.alchitry.labs.parsers.lucidv2.signals.Signal
-import com.alchitry.labs.parsers.lucidv2.signals.SignalDirection
 import com.alchitry.labs.parsers.lucidv2.types.Constant
+import com.alchitry.labs.parsers.lucidv2.types.Signal
+import com.alchitry.labs.parsers.lucidv2.types.SignalDirection
 
 data class ConstantParser(
     private val context: LucidExprContext,
