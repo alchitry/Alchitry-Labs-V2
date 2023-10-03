@@ -21,6 +21,8 @@ data class SignalDriverParser(
 
     private var expectedDrivers: Set<Signal>? = null
 
+    fun getDrivenSignals(context: BlockContext): Set<Signal>? = drivenSignals[context]?.keys
+
     override fun exitPortDec(ctx: PortDecContext) {
         val nameCtx = ctx.name() ?: error("Name missing from port dec!")
         val port =

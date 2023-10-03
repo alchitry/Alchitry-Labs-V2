@@ -5,7 +5,6 @@ import com.alchitry.labs.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.types.*
 import com.alchitry.labs.parsers.lucidv2.types.Function
-import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
 import com.alchitry.labs.parsers.lucidv2.values.minBits
 
@@ -86,15 +85,15 @@ data class BlockParser(
         }
     }
 
-    override suspend fun enterFunctionBody(ctxBody: FunctionBodyContext) {
-        val ctx = ctxBody.parent as FunctionBlockContext
-        val nameCtx = ctx.name() ?: return
+    override suspend fun enterFunctionBody(ctx: FunctionBodyContext) {
+        val functionCtx = ctx.parent as FunctionBlockContext
+        val nameCtx = functionCtx.name() ?: return
         if (nameCtx.TYPE_ID() == null) {
             context.reportError(nameCtx, "Function names must start with a lowercase letter.")
             return
         }
 
-        val args = ctx.functionArg().map {
+        val args = functionCtx.functionArg().map {
             val itName = it.name() ?: return
             val name = itName.TYPE_ID()?.text
             if (name == null) {
@@ -106,7 +105,7 @@ data class BlockParser(
             CustomArg(name, width, it.SIGNED() != null)
         }
 
-        val function = Function.Custom(nameCtx.text, args, ctx)
+        val function = Function.Custom(nameCtx.text, args, functionCtx)
 
         if (
             Function.builtIn.any { it.label == function.label } ||
@@ -189,14 +188,14 @@ data class BlockParser(
         }
 
         ctx.caseElem().forEach { caseElemContext ->
-            val exprCtx = caseElemContext.expr() ?: return@forEach
-            val condition = context.expr.resolve(exprCtx)
+            val caseExprCtx = caseElemContext.expr() ?: return@forEach
+            val condition = context.expr.resolve(caseExprCtx)
             if (condition !is SimpleValue) {
-                context.errorCollector.reportError(exprCtx, "Case statement conditions must be simple values.")
+                context.errorCollector.reportError(caseExprCtx, "Case statement conditions must be simple values.")
                 return
             }
             if (!condition.constant) {
-                context.errorCollector.reportError(exprCtx, "Case statement conditions must be constant.")
+                context.errorCollector.reportError(caseExprCtx, "Case statement conditions must be constant.")
                 return
             }
         }
@@ -225,7 +224,7 @@ data class BlockParser(
         }
 
         val count = try {
-            countValue.toBigInt().intValueExact()
+            countValue.toBigInt()!!.intValueExact() // isNumber() check above makes !! safe
         } catch (e: ArithmeticException) {
             context.errorCollector.reportError(exprCtx, "Repeat count doesn't fit in an integer.")
             return
@@ -260,15 +259,9 @@ data class BlockParser(
 
         val sigWidth = (count - 1).toBigInteger().minBits()
 
-        repeatSignals[repCtx] = Signal(
-            sigName,
-            SignalDirection.Read,
-            null,
-            BitListValue(
-                0, sigWidth,
-                constant = false,
-                signed = false
-            )
-        ).also { localRepeatSignals[repCtx] = it }
+        val repSignal = RepeatSignal(sigName, sigWidth, repCtx)
+
+        repeatSignals[repCtx] = repSignal.signal
+        localRepeatSignals[repCtx] = repSignal.signal
     }
 }

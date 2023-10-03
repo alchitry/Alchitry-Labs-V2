@@ -87,7 +87,7 @@ data class BlockEvaluator(
 
     override suspend fun exitRepeatStat(ctx: RepeatStatContext) {
         val countValue = ctx.expr()?.let { context.expr.resolve(it) } as? SimpleValue ?: return
-        val count = countValue.toBigInt().toInt()
+        val count = countValue.toBigInt()?.toInt() ?: return
 
         val signalName = ctx.name()?.text
         val width = (count - 1).toBigInteger().minBits()

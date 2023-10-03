@@ -16,8 +16,13 @@ sealed class SimpleValue(
     abstract val bits: List<Bit>
     fun asBitListValue() = if (this is BitListValue) this else BitListValue(bits, constant, signed)
 
-    fun toBigInt(signed: Boolean = this.signed): BigInteger {
-        check(isNumber()) { "The value is not a number (it contains x, z, or u values)" }
+    /**
+     * Converts this value into a [BigInteger] or returns null if this isn't possible.
+     * @param signed sets the signedness of the resulting [BigInteger]
+     */
+    fun toBigInt(signed: Boolean = this.signed): BigInteger? {
+        if (!isNumber())
+            return null
         val bytes =
             ByteArray(ceil((size + if (signed) 0 else 1).toDouble() / 8.0).toInt()) // if not signed need extra 0 sign bit
         if (signed && msb == Bit.B1) // sign extension
@@ -181,8 +186,9 @@ sealed class SimpleValue(
         return BitListValue(newBits, constant, false)
     }
 
-    fun asVerilog(): String {
-        check(width.isDefined()) { "Can't turn an undefined width value to Verilog" }
+    fun asVerilog(): String? {
+        if (!width.isDefined())
+            return null
         val sb = StringBuilder()
         sb.append(width.bitCount)
         sb.append("'")
@@ -190,7 +196,7 @@ sealed class SimpleValue(
             sb.append("s")
         if (isNumber()) {
             sb.append("h")
-            sb.append(toBigInt().toString(16))
+            sb.append(toBigInt()!!.toString(16))
         } else {
             sb.append("b")
             bits.reversed().forEach {

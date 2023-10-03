@@ -360,7 +360,7 @@ class TypesParser(
         }
 
         val size = try {
-            expr.toBigInt().intValueExact()
+            expr.toBigInt()!!.intValueExact() // isNumber() check above make !! safe
         } catch (e: ArithmeticException) {
             context.reportError(ctx, "Array size must fit into an integer.")
             return

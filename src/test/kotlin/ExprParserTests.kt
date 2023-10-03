@@ -289,7 +289,7 @@ internal class ExprParserTests {
         )
         assert(test.hasNoIssues)
 
-        test = SimpleLucidTester("-8 >> 2")
+        test = SimpleLucidTester("-8\n >> 2")
         tree = test.parser.expr().also { test.context.walk(it) }
 
         assertEquals(

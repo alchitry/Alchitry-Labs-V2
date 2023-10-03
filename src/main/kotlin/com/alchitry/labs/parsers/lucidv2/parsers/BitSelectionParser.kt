@@ -71,13 +71,13 @@ data class BitSelectionParser(
             return
         }
         val maxInt: Int = try {
-            max.toBigInt().intValueExact()
+            max.toBigInt()!!.intValueExact()
         } catch (e: ArithmeticException) {
             context.reportArraySizeTooBig(expr[0])
             return
         }
         val minInt: Int = try {
-            min.toBigInt().intValueExact()
+            min.toBigInt()!!.intValueExact()
         } catch (e: ArithmeticException) {
             context.reportArraySizeTooBig(expr[1])
             return
@@ -117,14 +117,14 @@ data class BitSelectionParser(
         }
 
         val widthInt = try {
-            width.toBigInt().intValueExact()
+            width.toBigInt()!!.intValueExact()
         } catch (e: ArithmeticException) {
             context.reportArraySizeTooBig(expr[1])
             return
         }
 
         val startInt = try {
-            start.toBigInt().intValueExact()
+            start.toBigInt()!!.intValueExact()
         } catch (e: ArithmeticException) {
             context.reportArraySizeTooBig(expr[0])
             return
@@ -168,7 +168,7 @@ data class BitSelectionParser(
         }
 
         val value = try {
-            index.toBigInt().intValueExact()
+            index.toBigInt()!!.intValueExact()
         } catch (e: ArithmeticException) {
             context.reportArraySizeTooBig(expr)
             return
