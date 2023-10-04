@@ -50,6 +50,12 @@ interface WalkerFilter {
             }
         }
 
+        val ModulesOnly = object : WalkerFilter {
+            override fun shouldSkip(parent: RuleNode, child: ParseTree): Boolean {
+                return child is GlobalContext || child is TestBenchContext
+            }
+        }
+
         val TestBenchesOnly = object : WalkerFilter {
             override fun shouldSkip(parent: RuleNode, child: ParseTree): Boolean {
                 return child is ModuleContext || child is GlobalContext

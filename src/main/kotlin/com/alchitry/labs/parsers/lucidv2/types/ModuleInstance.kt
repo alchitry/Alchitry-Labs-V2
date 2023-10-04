@@ -18,6 +18,7 @@ class ModuleInstance(
 ) : ModuleInstanceOrArray, ListOrModuleInstance, TestOrModuleInstance {
     override val context = LucidBlockContext(project, this, errorCollector = errorCollector)
 
+
     override fun takeSnapshot(): SnapshotParent {
         val snapshots = mutableListOf<SnapshotOrParent>()
         snapshots.addAll(context.types.dffs.values.map { it.takeSnapshot() })
@@ -58,6 +59,8 @@ class ModuleInstance(
             parameters[name] ?: param.default ?: error("Missing module parameter!")
         )
     }
+
+    val parameterizedModuleName: String = "M_${module.name}_${this.parameters.hashCode()}"
 
     fun getInternalSignal(name: String) = internal[name] ?: parameters[name]
     override fun getSignal(name: String) = external[name]

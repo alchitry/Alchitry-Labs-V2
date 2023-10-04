@@ -10,12 +10,10 @@ import com.alchitry.labs.parsers.lucidv2.types.EnumType
 data class EnumParser(
     private val context: LucidExprContext,
     private val enumTypes: MutableMap<EnumDecContext, EnumType> = mutableMapOf(),
-    private val localEnumType: MutableMap<String, EnumType> = mutableMapOf()
+    val localEnumType: MutableMap<String, EnumType> = mutableMapOf()
 ) : LucidBaseListener(), SignalResolver {
     override fun resolve(name: String) = localEnumType[name]
     fun resolve(enumDecContext: EnumDecContext) = enumTypes[enumDecContext]
-
-    fun getLocalEnums(): List<EnumType> = localEnumType.values.toList()
 
     override fun enterGlobal(ctx: LucidParser.GlobalContext) {
         localEnumType.clear()

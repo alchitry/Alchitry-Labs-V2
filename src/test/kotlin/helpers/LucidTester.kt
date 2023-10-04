@@ -192,4 +192,8 @@ class LucidTester(vararg val files: String) {
             }
         }
     }
+
+    suspend fun getVerilog(errorCollector: ErrorCollector? = null): String? {
+        return fullParse(errorCollector).context.convertToVerilog()
+    }
 }

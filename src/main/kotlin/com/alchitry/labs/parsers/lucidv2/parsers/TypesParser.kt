@@ -12,6 +12,7 @@ class TypesParser(
 ) : SuspendLucidBaseListener(), SignalResolver {
     val dffs = mutableMapOf<String, Dff>()
     val sigs = mutableMapOf<String, Signal>()
+    val signalDynamicExprs = mutableMapOf<Signal, DynamicExpr>()
     val moduleInstances = mutableMapOf<String, ModuleInstanceOrArray>()
     val dynamicExprs = mutableMapOf<ExprContext, DynamicExpr>()
     private val arraySizes = mutableMapOf<ArraySizeContext, Int>()
@@ -416,7 +417,10 @@ class TypesParser(
 
         val init = dynamicExpr?.value?.resizeToMatch(width) ?: width.filledWith(Bit.Bx, false, signed)
         val signal = Signal(name, SignalDirection.Both, null, init, signed)
-        dynamicExpr?.connectTo(signal)
+        dynamicExpr?.let {
+            it.connectTo(signal)
+            signalDynamicExprs[signal] = it
+        }
 
         sigs[name] = signal
     }

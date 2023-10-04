@@ -15,7 +15,7 @@ import org.antlr.v4.kotlinruntime.tree.ParseTree
 class VerilogConverter(
     private val context: LucidBlockContext
 ) : LucidBaseListener() {
-    private val verilog = mutableMapOf<ParseTree, String>()
+    val verilog = mutableMapOf<ParseTree, String>()
     private var tabCount: Int = 0
 
     /**
@@ -68,14 +68,174 @@ class VerilogConverter(
         return this ?: error(context, "Context \"${T::class.simpleName}\" was null!")
     }
 
-    override fun exitSource(ctx: LucidParser.SourceContext) {
-        ctx.verilog = buildString {
-            append(HEADER)
-            ctx.module().forEach { moduleContext ->
-                newLine()
-                newLine()
-                append(moduleContext.verilog)
+    private fun StringBuilder.addParamHeader() {
+        val parameters = (context.instance as ModuleInstance).parameters
+        if (parameters.isEmpty())
+            return
+        append("/*\n  Parameters:\n")
+        parameters.values.forEach { param ->
+            append("      ")
+            append(param.name)
+            append(" = ")
+            append(param.initialValue)
+            append("\n")
+        }
+        append("*/\n")
+    }
+
+    private fun StringBuilder.addPorts(ports: Collection<Signal>) {
+        append(" (")
+        tabCount++
+        ports.forEachIndexed { index, port ->
+            newLine()
+            when (port.direction) {
+                SignalDirection.Read -> append("input ")
+                SignalDirection.Write -> append("output reg ")
+                SignalDirection.Both -> append("inout ")
             }
+            if (port.signed)
+                append("signed ")
+            val bitCount = port.width.bitCount ?: error("Module port \"${port.name}\" has undefined width!")
+            if (bitCount > 1) {
+                append("[")
+                append(bitCount - 1)
+                append(":0] ")
+            }
+            append(port.verilogName)
+            if (index != ports.size - 1)
+                append(",")
+        }
+        tabCount--
+        newLine()
+        append(");")
+    }
+
+    private fun StringBuilder.addConstants() {
+        val instance = context.instance as ModuleInstance
+        val constants = mutableListOf<Signal>().apply {
+            addAll(instance.parameters.values)
+            addAll(context.constant.localConstants.values)
+            context.enum.localEnumType.values.forEach {
+                add(it.widthSignal)
+                addAll(it.memberSignals.values)
+            }
+        }
+
+        constants.forEach {
+            append("localparam ")
+            append(it.verilogName)
+            append(" = ")
+            append(it.initialValue.flatten().asVerilog())
+            append(";")
+            newLine()
+        }
+    }
+
+    private fun StringBuilder.addDffs() {
+        context.types.dffs.values.forEach { dff ->
+            append("reg ")
+            if (dff.signed)
+                append("signed ")
+            val bitCount = dff.d.width.bitCount ?: error("Dff \"${dff.name}\" has an undefined width!")
+            if (bitCount > 1) {
+                append("[")
+                append(bitCount - 1)
+                append(":0] ")
+            }
+            append(dff.d.verilogName)
+            append(", ")
+            append(dff.q.verilogName)
+            append(" = ")
+            append(dff.init.flatten().asVerilog())
+            append(";")
+            newLine()
+        }
+    }
+
+    private fun StringBuilder.addSigs() {
+        context.types.sigs.values.forEach { sig ->
+            val dynamicExpr = context.types.signalDynamicExprs[sig]
+            if (dynamicExpr != null) {
+                append("wire ")
+            } else {
+                append("reg ")
+            }
+            if (sig.signed)
+                append("signed ")
+            val bitCount = sig.width.bitCount ?: error("Sig \"${sig.name}\" has an undefined width!")
+            if (bitCount > 1) {
+                append("[")
+                append(bitCount - 1)
+                append(":0] ")
+            }
+            append(sig.verilogName)
+
+            if (dynamicExpr != null) {
+                append(" = ")
+                append(dynamicExpr.expr.verilog)
+            }
+
+            append(";")
+            newLine()
+        }
+    }
+
+    private fun StringBuilder.addSequentialBlocks() {
+        val clkGroupedDffs = mutableMapOf<String, MutableSet<Dff>>()
+        context.types.dffs.values.forEach { dff ->
+            clkGroupedDffs.getOrPut(dff.clk.expr.text) { mutableSetOf() }.add(dff)
+        }
+        clkGroupedDffs.forEach { (_, clkDffs) ->
+            newLine()
+            append("always @(posedge (")
+            append(clkDffs.first().clk.expr.verilog)
+            append(")) begin")
+            tabCount++
+            newLine()
+
+            val rstGroupedDffs = mutableMapOf<String, MutableSet<Dff>>()
+            clkDffs.forEach { dff ->
+                if (dff.rst == null) {
+                    append(dff.q.verilogName)
+                    append(" <= ")
+                    append(dff.d.verilogName)
+                    append(";")
+                    newLine()
+                } else {
+                    rstGroupedDffs.getOrPut(dff.rst.expr.text) { mutableSetOf() }.add(dff)
+                }
+            }
+
+            rstGroupedDffs.forEach { (_, dffs) ->
+                append("if ((")
+                append(dffs.first().rst!!.expr.verilog)
+                append(") == 1b'1) begin")
+                tabCount++
+                dffs.forEach {
+                    newLine()
+                    append(it.q.verilogName)
+                    append(" <= ")
+                    append(it.init.flatten().asVerilog() ?: error("Failed to get verilog for dff init value!"))
+                    append(";")
+                }
+                tabCount--
+                newLine()
+                append("end else begin")
+                tabCount++
+                dffs.forEach {
+                    newLine()
+                    append(it.q.verilogName)
+                    append(" <= ")
+                    append(it.d.verilogName)
+                    append(";")
+                }
+                tabCount--
+                newLine()
+                append("end")
+            }
+            tabCount--
+            newLine()
+            append("end")
         }
     }
 
@@ -84,7 +244,40 @@ class VerilogConverter(
     }
 
     override fun exitModule(ctx: LucidParser.ModuleContext) {
-        // TODO("Not yet implemented")
+        val instance = (context.instance as? ModuleInstance) ?: error(
+            ctx,
+            "Verilog converter can only be used with ModuleInstances!"
+        )
+        ctx.verilog = buildString {
+            tabCount--
+            append(HEADER)
+            newLine()
+            addParamHeader()
+            tabCount++
+            append("module ")
+            append(instance.parameterizedModuleName)
+            addPorts(instance.internal.values)
+            newLine()
+            addConstants()
+            newLine()
+            addDffs()
+            newLine()
+            addSigs()
+            newLine()
+
+            // TODO: Module instantiation
+
+            context.blockParser.alwaysBlocks.keys.forEach { context ->
+                append(context.verilog)
+                newLine()
+            }
+
+            addSequentialBlocks()
+
+            tabCount--
+            newLine()
+            append("endmodule")
+        }
     }
 
     override fun exitAlwaysBlock(ctx: LucidParser.AlwaysBlockContext) {
@@ -136,7 +329,14 @@ class VerilogConverter(
                 is Dff -> "D_${parent.name}_${baseSignal.name}"
                 is EnumType -> "E_${parent.name}_${baseSignal.name}"
                 is GlobalNamespace -> "G_${parent.name}_${baseSignal.name}"
-                is ModuleInstanceOrArray -> "M_${parent.name}_${baseSignal.name}"
+                is ModuleInstanceOrArray -> {
+                    val instance = context.instance as? ModuleInstance
+                    if (instance == parent)
+                        "P_${baseSignal.name}"
+                    else
+                        "M_${parent.name}_${baseSignal.name}"
+                }
+
                 is RepeatSignal -> "R_${parent.name}_${baseSignal.name}\""
             }
         }
@@ -235,7 +435,7 @@ class VerilogConverter(
                     append("]")
                 }
             }
-        }
+        } ?: ""
 
         val sigVerilog = "$verilogName$selection"
         val write = ctx.parent is LucidParser.AssignStatContext

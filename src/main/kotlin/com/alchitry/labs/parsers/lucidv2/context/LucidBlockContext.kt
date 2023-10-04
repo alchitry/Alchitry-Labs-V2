@@ -5,6 +5,7 @@ import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.grammar.LucidParser.*
+import com.alchitry.labs.parsers.lucidv2.VerilogConverter
 import com.alchitry.labs.parsers.lucidv2.parsers.*
 import com.alchitry.labs.parsers.lucidv2.types.*
 import com.alchitry.labs.parsers.lucidv2.types.Function
@@ -75,42 +76,47 @@ class LucidBlockContext(
     val constant = constant ?: ConstantParser(this)
     val blockParser = blockParser ?: BlockParser(this)
     val signalDriver = signalDriver ?: SignalDriverParser(this)
+    val verilogConverter = VerilogConverter(this)
 
     private fun getListeners() = when (stage) {
         ParseStage.ModuleInternals -> listOf(
-            this.expr,
-            this.bitSelection,
-            this.struct,
-            this.enum,
-            this.constant,
-            this.types,
-            this.blockParser,
-            this.signal
+            expr,
+            bitSelection,
+            struct,
+            enum,
+            constant,
+            types,
+            blockParser,
+            signal
         )
 
         ParseStage.Drivers -> listOf(
-            this.expr,
-            this.bitSelection,
-            this.signal,
-            this.signalDriver
+            expr,
+            bitSelection,
+            signal,
+            signalDriver
         )
 
         ParseStage.Evaluation -> listOf(
-            this.expr,
-            this.bitSelection,
-            this.signal,
-            this.blockEvaluator
+            expr,
+            bitSelection,
+            signal,
+            blockEvaluator
         )
 
         ParseStage.ErrorCheck -> listOf(
-            this.expr,
-            this.bitSelection,
-            this.struct,
-            this.enum,
-            this.constant,
-            this.signal,
-            this.types,
-            this.blockParser
+            expr,
+            bitSelection,
+            struct,
+            enum,
+            constant,
+            signal,
+            types,
+            blockParser
+        )
+
+        ParseStage.Convert -> listOf(
+            verilogConverter
         )
     }
 
@@ -119,6 +125,7 @@ class LucidBlockContext(
         ParseStage.Drivers -> WalkerFilter.SkipGlobals
         ParseStage.Evaluation -> WalkerFilter.join(WalkerFilter.SkipControlBlocks, WalkerFilter.SkipGlobals)
         ParseStage.ErrorCheck -> WalkerFilter.SkipGlobals
+        ParseStage.Convert -> WalkerFilter.ModulesOnly
     }
 
     fun withEvalContext(evalContext: Evaluable, name: String) = LucidBlockContext(
@@ -187,6 +194,14 @@ class LucidBlockContext(
             }
         }
         return true
+    }
+
+    suspend fun convertToVerilog(): String? {
+        val instance = (instance as? ModuleInstance)
+            ?: error("convertToVerilog() can only be called on contexts with a ModuleInstance!")
+        stage = ParseStage.Convert
+        walk(instance.module.context)
+        return verilogConverter.verilog[instance.module.context]
     }
 
     override fun resolve(exprCtx: ExprContext) = expr.resolve(exprCtx)

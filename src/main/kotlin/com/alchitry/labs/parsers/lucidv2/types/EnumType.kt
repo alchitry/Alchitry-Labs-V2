@@ -15,8 +15,8 @@ data class EnumType(
     }
 
     override val width = BitListWidth(BitUtil.minWidthNum(members.size - 1))
-    private val widthSignal = BitListValue(width.size, constant = true, signed = false).asSignal("WIDTH", this)
-    private val memberSignals = members.mapIndexed { idx, name ->
+    val widthSignal = BitListValue(width.size, constant = true, signed = false).asSignal("WIDTH", this)
+    val memberSignals = members.mapIndexed { idx, name ->
         BitListValue(idx, width.size, constant = true, signed = false).asSignal(
             name,
             this

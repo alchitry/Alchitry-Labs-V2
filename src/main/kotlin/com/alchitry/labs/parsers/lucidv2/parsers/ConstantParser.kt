@@ -12,7 +12,7 @@ import com.alchitry.labs.parsers.lucidv2.types.SignalDirection
 data class ConstantParser(
     private val context: LucidExprContext,
     private val constants: MutableMap<ConstDecContext, Constant> = mutableMapOf(),
-    private val localConstants: MutableMap<String, Signal> = mutableMapOf()
+    val localConstants: MutableMap<String, Signal> = mutableMapOf()
 ) : LucidBaseListener(), SignalResolver {
     override fun resolve(name: String) = localConstants[name]
     fun resolve(constDecContext: ConstDecContext) = constants[constDecContext]
