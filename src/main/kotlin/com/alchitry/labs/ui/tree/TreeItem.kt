@@ -13,11 +13,11 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.alchitry.labs.LocalScale
 import com.alchitry.labs.ui.hiddenClickable
 import com.alchitry.labs.ui.selection.Selectable
 import com.alchitry.labs.ui.selection.SelectionContext
 import com.alchitry.labs.ui.theme.AlchitryColors
+import com.alchitry.labs.windows.LocalScale
 
 @Composable
 fun SelectionContext.TreeItem(

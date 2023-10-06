@@ -1,8 +1,4 @@
-import org.apache.tools.ant.taskdefs.condition.Os
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.incremental.createDirectory
-import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 import java.io.FileOutputStream
 import java.util.*
 
@@ -20,16 +16,16 @@ val antlrKotlinVersion = extra.get("antlrKotlinVersion") as String
 
 plugins {
     kotlin("jvm") version "1.9.0"
-    // TODO: replace with main branch when PR accepted: https://github.com/JetBrains/compose-multiplatform/pull/3640
-    id("org.jetbrains.compose") version "0.1.0-SNAPSHOT"
+    id("org.jetbrains.compose") version "1.5.2"
+    id("dev.hydraulic.conveyor") version "1.5"
+    id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
 }
 
-
-val fullVersion = "2.0.0-ALPHA-SNAPSHOT"
+val fullVersion = "2.0.0-ALPHA"
 val numOnlyVersion = fullVersion.split('-').first()
 
 group = "com.alchitry"
-version = fullVersion
+version = numOnlyVersion
 
 repositories {
     google()
@@ -38,8 +34,6 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     maven("https://jitpack.io")
 }
-
-val crossPlatform = true
 
 dependencies {
     implementation("com.github.alchitry.antlr-kotlin:antlr-kotlin-runtime:$antlrKotlinVersion")
@@ -56,20 +50,22 @@ dependencies {
     implementation("com.github.alchitry.yad2xx:yad2xxJava:d2xx_only_with_lib-SNAPSHOT")
     implementation("me.tongfei:progressbar:0.10.0")
 
-    if (crossPlatform) {
-        implementation(compose.desktop.linux_x64)
-        implementation(compose.desktop.linux_arm64)
-        implementation(compose.desktop.windows_x64)
-        implementation(compose.desktop.macos_x64)
-        implementation(compose.desktop.macos_arm64)
-    } else {
-        implementation(compose.desktop.currentOs)
-    }
+    linuxAmd64(compose.desktop.linux_x64)
+    linuxAarch64(compose.desktop.linux_arm64)
+    macAmd64(compose.desktop.macos_x64)
+    macAarch64(compose.desktop.macos_arm64)
+    windowsAmd64(compose.desktop.windows_x64)
 
     // TODO: Replace with next full release
-    implementation("org.jetbrains.compose.material3:material3-desktop:1.5.10-beta01")
+    implementation("org.jetbrains.compose.material3:material3-desktop:1.5.10-beta02")
 
     testImplementation(kotlin("test"))
+}
+
+configurations.all {
+    attributes {
+        attribute(Attribute.of("ui", String::class.java), "awt")
+    }
 }
 
 tasks.test {
@@ -78,7 +74,7 @@ tasks.test {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
         freeCompilerArgs += "-opt-in=kotlin.ExperimentalStdlibApi"
         freeCompilerArgs += "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi"
         freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
@@ -86,122 +82,32 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+kotlin {
+    jvmToolchain(17)
 }
 
 compose.desktop {
     application {
-        mainClass = "com.alchitry.labs.MainKt"
-        nativeDistributions {
-            // Docs: https://github.com/JetBrains/compose-multiplatform/blob/master/tutorials/Native_distributions_and_local_execution/README.md
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "Alchitry Labs"
-            packageVersion = (version as String).split("-").first()
-            vendor = "Alchitry"
-            args.add("labs")
+        mainClass = "com.alchitry.labs.GUIKt"
+    }
+}
 
-            linux {
-                iconFile.set(File("icon.png"))
-                shortcut = true
-                debMaintainer = "Alchitry"
-            }
-
-            windows {
-                console = false // print output when running .exe from cmd line
-                upgradeUuid = "3e4e3be7-b77e-437e-9ffe-5607b15a6710"
-                shortcut = true
-                iconFile.set(File("icon.ico"))
-                menuGroup = "Alchitry"
-            }
-
-            macOS {
-                // TODO: Add mac support
-            }
-
-            // This currently relies upon our custom compose fork
-            // PR: https://github.com/JetBrains/compose-multiplatform/pull/3640
-            additionalLauncher("Alchitry Loader") {
-                add("arguments", "loader")
-            }
-
-            if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                additionalLauncher("alchitry") {
-                    add("arguments", "")
-                    add("win-console", "true")
-                    add("win-shortcut", "false")
-                }
+fun TaskContainer.registerConveyorTask(name: String) {
+    register(name) {
+        group = "conveyor"
+        dependsOn.add("jar")
+        doLast {
+            exec {
+                commandLine("conveyor", "--passphrase=${secrets.get("conveyorRootKey")}", "make", name)
             }
         }
     }
 }
 
-afterEvaluate {
-    tasks.named("packageDeb") {
-        dependsOn(cleanDebsTask)
-        finalizedBy(modifyDebTask)
-    }
-}
+tasks.registerConveyorTask("app")
+tasks.registerConveyorTask("site") // makes the site files locally
+tasks.registerConveyorTask("copied-site") // pushes the site files to GitHub
 
-// used to remove all the debs before building so that there will only be one for modifyDebTask to find
-val cleanDebsTask = tasks.register("cleanDebs") {
-    doLast {
-        project.buildDir.resolve("compose/binaries/main/deb").apply {
-            if (exists())
-                deleteDirectoryContents()
-        }
-    }
-}
-
-fun modifyFile(file: File, modifier: StringBuilder.() -> Unit) {
-    val fileText = file.readText()
-    val newPostInst = StringBuilder(fileText).run {
-        modifier()
-        toString()
-    }
-    file.writeText(newPostInst)
-}
-
-fun StringBuilder.indexAtEndOf(str: String) = indexOf(str) + str.length
-
-val modifyDebTask = tasks.register("modifyDeb") {
-    dependsOn("packageDeb")
-    doLast {
-        val debDir = project.buildDir.resolve("compose/binaries/main/deb")
-        val deb = debDir.listFiles().firstOrNull { it.extension == "deb" } ?: error("Failed to find deb file!")
-        val tmpDir = debDir.resolve("tmp")
-        tmpDir.createDirectory()
-
-        exec {
-            workingDir = debDir
-            executable = "dpkg-deb"
-            args = listOf("-R", deb.name, "tmp")
-        }
-
-        val sourceDirectory = File("install/linux")
-        sourceDirectory.copyRecursively(tmpDir, overwrite = true)
-
-        modifyFile(tmpDir.resolve("DEBIAN/postinst")) {
-            insert(
-                indexAtEndOf("configure)"),
-                "\nln -s /opt/alchitry-labs/bin/Alchitry\\ Labs /usr/bin/alchitry"
-            )
-        }
-
-        modifyFile(tmpDir.resolve("DEBIAN/prerm")) {
-            insert(indexAtEndOf("deconfigure)"), "\nrm /usr/bin/alchitry")
-        }
-
-        exec {
-            workingDir = debDir
-            executable = "dpkg-deb"
-            args = listOf("--root-owner-group", "-b", "tmp", deb.name)
-        }
-
-        tmpDir.deleteRecursively()
-    }
-}
 
 val generatedVersionDir = "$buildDir/resources/main"
 
@@ -210,7 +116,7 @@ tasks.register("generateVersionProperties") {
         val propertiesFile = file("$generatedVersionDir/version.properties")
         propertiesFile.parentFile.mkdirs()
         val properties = Properties()
-        properties.setProperty("version", version.toString())
+        properties.setProperty("version", fullVersion)
         val out = FileOutputStream(propertiesFile)
         properties.store(out, null)
     }
@@ -222,24 +128,6 @@ tasks.named("compileKotlin") {
 
 tasks.named("processResources") {
     dependsOn("generateVersionProperties")
-}
-
-tasks.register<Jar>("fatJar") {
-    dependsOn.addAll(
-        listOf(
-            "compileJava",
-            "compileKotlin",
-            "processResources"
-        )
-    ) // We need this for Gradle optimization to work
-    archiveClassifier.set("standalone") // Naming the jar
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    manifest { attributes(mapOf("Main-Class" to "com.alchitry.labs.MainKt")) }
-    val sourcesMain = sourceSets.main.get()
-    val contents = configurations.runtimeClasspath.get()
-        .map { if (it.isDirectory) it else zipTree(it) } +
-            sourcesMain.output
-    from(contents)
 }
 
 tasks.register<com.alchitry.antlrkotlin.gradleplugin.AntlrKotlinTask>("generateKotlinGrammarSource") {

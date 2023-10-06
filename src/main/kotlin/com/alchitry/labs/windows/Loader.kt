@@ -1,4 +1,4 @@
-package com.alchitry.labs.subcommands
+package com.alchitry.labs.windows
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
@@ -12,7 +12,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import com.alchitry.labs.*
+import androidx.compose.ui.window.ApplicationScope
+import com.alchitry.labs.Log
+import com.alchitry.labs.Settings
 import com.alchitry.labs.hardware.usb.BoardLoader
 import com.alchitry.labs.hardware.usb.UsbUtil
 import com.alchitry.labs.project.Board
@@ -20,32 +22,12 @@ import com.alchitry.labs.ui.components.AlchitryToolTip
 import com.alchitry.labs.ui.misc.openFileDialog
 import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTheme
-import kotlinx.cli.ExperimentalCli
-import kotlinx.cli.Subcommand
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.tongfei.progressbar.ProgressBarConsumer
 import me.tongfei.progressbar.ProgressBarRenderer
 import me.tongfei.progressbar.ProgressState
 import java.io.File
-
-@OptIn(ExperimentalCli::class)
-class Loader : Subcommand("loader", "Launch Alchitry Loader GUI") {
-    override fun execute() {
-        Env.mode = Env.Mode.Loader
-        openWindow(
-            "Alchitry Loader",
-            Settings.loaderWindowState,
-            packContent = true,
-            minWidth = 700,
-            onClose = {
-                println("Saving: ${it.size}")
-                Settings.loaderWindowState = it
-                Settings.commit()
-            }
-        ) { LoaderWindow() }
-    }
-}
 
 private val File.isValidBinFile: Boolean get() = exists() && isFile && canRead() && extension == "bin"
 
@@ -72,63 +54,100 @@ object LoaderProgressBarRender : ProgressBarRenderer {
 }
 
 @Composable
-fun LoaderWindow() {
-    val window = LocalComposeWindow.current
-    CompositionLocalProvider(LocalScale provides 1.0f) {
-        AlchitryTheme {
-            val focusManger = LocalFocusManager.current
-            Surface(
-                Modifier
-                    .fillMaxSize()
-                    .pointerInput(Unit) { detectTapGestures { focusManger.clearFocus() } }
-            ) {
-
-                var binFilePath by remember { mutableStateOf(Settings.loaderBinFile ?: "") }
-                var board by remember { mutableStateOf<IndexedBoard?>(null) }
-                val canLoadBin by remember { derivedStateOf { File(binFilePath).isValidBinFile && board != null } }
-                var busy by remember { mutableStateOf(false) }
-                val scope = rememberCoroutineScope()
-
-                DisposableEffect(Unit) {
-                    onDispose {
-                        Settings.loaderBinFile = binFilePath
-                        Settings.commit()
-                    }
-                }
-
-                LaunchedEffect(busy, loaderStatus) {
-                    if (busy) return@LaunchedEffect
-                    delay(3000)
-                    loaderStatus = null
-                }
-
-                Column(
-                    Modifier.padding(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+fun ApplicationScope.loaderWindow() {
+    openWindow(
+        "Alchitry Loader",
+        Settings.loaderWindowState,
+        packContent = true,
+        minWidth = 700,
+        onClose = {
+            Settings.loaderWindowState = it
+            Settings.commit()
+        }
+    ) {
+        CompositionLocalProvider(LocalScale provides 1.0f) {
+            AlchitryTheme {
+                val focusManger = LocalFocusManager.current
+                Surface(
+                    Modifier
+                        .fillMaxSize()
+                        .pointerInput(Unit) { detectTapGestures { focusManger.clearFocus() } }
                 ) {
-                    BoardSelector(busy) { board = it }
-                    BinSelector(binFilePath) { binFilePath = it }
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        modifier = Modifier.fillMaxWidth()
+                    var binFilePath by remember { mutableStateOf(Settings.loaderBinFile ?: "") }
+                    var board by remember { mutableStateOf<IndexedBoard?>(null) }
+                    val canLoadBin by remember { derivedStateOf { File(binFilePath).isValidBinFile && board != null } }
+                    var busy by remember { mutableStateOf(false) }
+                    val scope = rememberCoroutineScope()
+
+                    DisposableEffect(Unit) {
+                        onDispose {
+                            Settings.loaderBinFile = binFilePath
+                            Settings.commit()
+                        }
+                    }
+
+                    LaunchedEffect(busy, loaderStatus) {
+                        if (busy) return@LaunchedEffect
+                        delay(3000)
+                        loaderStatus = null
+                    }
+
+                    Column(
+                        Modifier.padding(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
+                        BoardSelector(busy) { board = it }
+                        BinSelector(binFilePath) { binFilePath = it }
+
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
-                            modifier = Modifier.weight(1f).horizontalScroll(rememberScrollState())
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            loaderStatus?.let { Text(it) }
-                            loaderProgress?.let { CircularProgressIndicator(it) }
-                        }
-                        Button(
-                            onClick = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                modifier = Modifier.weight(1f).horizontalScroll(rememberScrollState())
+                            ) {
+                                loaderStatus?.let { Text(it) }
+                                loaderProgress?.let { CircularProgressIndicator(it) }
+                            }
+                            Button(
+                                onClick = {
+                                    busy = true
+                                    scope.launch {
+                                        try {
+                                            board?.let { board ->
+                                                if (!BoardLoader.erase(board.board, board.index)) {
+                                                    Log.println("Failed to open board!", AlchitryColors.current.Error)
+                                                }
+                                            }
+                                        } catch (e: Exception) {
+                                            Log.println(e.message, AlchitryColors.current.Error)
+                                        } finally {
+                                            busy = false
+                                        }
+                                    }
+                                },
+                                modifier = Modifier.requiredWidth(IntrinsicSize.Max),
+                                enabled = board != null && !busy
+                            ) {
+                                Text("Erase")
+                            }
+
+                            fun load(flash: Boolean) {
                                 busy = true
                                 scope.launch {
                                     try {
                                         board?.let { board ->
-                                            if (!BoardLoader.erase(board.board, board.index)) {
+                                            if (!BoardLoader.load(
+                                                    board.board,
+                                                    board.index,
+                                                    File(binFilePath),
+                                                    flash
+                                                )
+                                            ) {
                                                 Log.println("Failed to open board!", AlchitryColors.current.Error)
                                             }
                                         }
@@ -138,54 +157,27 @@ fun LoaderWindow() {
                                         busy = false
                                     }
                                 }
-                            },
-                            modifier = Modifier.requiredWidth(IntrinsicSize.Max),
-                            enabled = board != null && !busy
-                        ) {
-                            Text("Erase")
-                        }
+                            }
 
-                        fun load(flash: Boolean) {
-                            busy = true
-                            scope.launch {
-                                try {
-                                    board?.let { board ->
-                                        if (!BoardLoader.load(
-                                                board.board,
-                                                board.index,
-                                                File(binFilePath),
-                                                flash
-                                            )
-                                        ) {
-                                            Log.println("Failed to open board!", AlchitryColors.current.Error)
-                                        }
-                                    }
-                                } catch (e: Exception) {
-                                    Log.println(e.message, AlchitryColors.current.Error)
-                                } finally {
-                                    busy = false
+                            AlchitryToolTip(
+                                { Text("Not supported on Cu") },
+                                enabled = board?.board is Board.AlchitryCu
+                            ) {
+                                Button(
+                                    onClick = { load(false) },
+                                    modifier = Modifier.requiredWidth(IntrinsicSize.Max),
+                                    enabled = canLoadBin && board?.board is Board.XilinxBoard && !busy
+                                ) {
+                                    Text("Program RAM")
                                 }
                             }
-                        }
-
-                        AlchitryToolTip(
-                            { Text("Not supported on Cu") },
-                            enabled = board?.board is Board.AlchitryCu
-                        ) {
                             Button(
-                                onClick = { load(false) },
+                                onClick = { load(true) },
                                 modifier = Modifier.requiredWidth(IntrinsicSize.Max),
-                                enabled = canLoadBin && board?.board is Board.XilinxBoard && !busy
+                                enabled = canLoadBin && !busy
                             ) {
-                                Text("Program RAM")
+                                Text("Program Flash")
                             }
-                        }
-                        Button(
-                            onClick = { load(true) },
-                            modifier = Modifier.requiredWidth(IntrinsicSize.Max),
-                            enabled = canLoadBin && !busy
-                        ) {
-                            Text("Program Flash")
                         }
                     }
                 }

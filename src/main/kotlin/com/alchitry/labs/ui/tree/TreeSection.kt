@@ -22,11 +22,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.alchitry.labs.LocalScale
 import com.alchitry.labs.ui.hiddenClickable
 import com.alchitry.labs.ui.selection.Selectable
 import com.alchitry.labs.ui.selection.SelectionContext
 import com.alchitry.labs.ui.theme.AlchitryColors
+import com.alchitry.labs.windows.LocalScale
 
 @Composable
 fun SelectionContext.TreeSection(

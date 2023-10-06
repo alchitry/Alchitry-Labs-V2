@@ -3,7 +3,6 @@ package com.alchitry.labs.ui.main
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.awt.ComposeWindow
-import com.alchitry.labs.LocalComposeWindow
 import com.alchitry.labs.Log
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.project.openXml
@@ -11,6 +10,7 @@ import com.alchitry.labs.ui.menu.MenuBar
 import com.alchitry.labs.ui.menu.MenuItem
 import com.alchitry.labs.ui.menu.TopMenuItem
 import com.alchitry.labs.ui.misc.openFileDialog
+import com.alchitry.labs.windows.LocalComposeWindow
 
 @Composable
 fun MainMenuBar() {

@@ -1,7 +1,6 @@
 package com.alchitry.labs.project
 
 import com.alchitry.labs.Log
-import com.alchitry.labs.mainWindow
 import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.errors.ErrorManager
 import com.alchitry.labs.parsers.grammar.LucidLexer
@@ -14,6 +13,7 @@ import com.alchitry.labs.project.files.ConstraintFile
 import com.alchitry.labs.project.files.IPCore
 import com.alchitry.labs.project.files.SourceFile
 import com.alchitry.labs.ui.misc.openFileDialog
+import com.alchitry.labs.windows.mainWindow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.antlr.v4.kotlinruntime.CharStreams

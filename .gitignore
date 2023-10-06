@@ -4,3 +4,6 @@
 /build/classes/kotlin/main/
 /build/classes/kotlin/test/
 /.idea/
+/output/
+/secrets.properties
+/conveyor-local.conf

@@ -7,11 +7,11 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import com.alchitry.labs.subcommands.LoaderProgressBarConsumer
-import com.alchitry.labs.subcommands.LoaderProgressBarRender
-import com.alchitry.labs.subcommands.loaderStatus
 import com.alchitry.labs.ui.main.Console
 import com.alchitry.labs.ui.theme.AlchitryColors
+import com.alchitry.labs.windows.LoaderProgressBarConsumer
+import com.alchitry.labs.windows.LoaderProgressBarRender
+import com.alchitry.labs.windows.loaderStatus
 import me.tongfei.progressbar.*
 import java.io.FileDescriptor
 import java.io.FileOutputStream

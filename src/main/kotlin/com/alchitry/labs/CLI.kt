@@ -1,17 +1,9 @@
 package com.alchitry.labs
 
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.ui.awt.ComposeWindow
 import com.alchitry.labs.subcommands.*
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ExperimentalCli
 import kotlin.reflect.full.declaredFunctions
-
-val LocalScale = compositionLocalOf { 1.0f }
-
-
-val LocalComposeWindow = compositionLocalOf<ComposeWindow> { error("No ComposeWindow set!") }
-lateinit var mainWindow: ComposeWindow
 
 fun ArgParser.showHelp(error: String? = null) {
     error?.let { Log.printlnError("Error: $it") }
@@ -35,9 +27,7 @@ fun main(args: Array<String>) {
         CheckProject(),
         BuildProject(),
         LoadProject(),
-        SimulateProject(),
-        Labs(),
-        Loader()
+        SimulateProject()
     )
 
     parser.parse(args)
