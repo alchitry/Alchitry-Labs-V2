@@ -21,7 +21,7 @@ plugins {
     id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
 }
 
-val fullVersion = "2.0.0-ALPHA"
+val fullVersion = "2.0.0-PREVIEW"
 val numOnlyVersion = fullVersion.split('-').first()
 
 group = "com.alchitry"
@@ -46,6 +46,7 @@ dependencies {
     implementation("org.jdom:jdom2:2.0.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
     implementation("org.usb4java:usb4java:1.3.0")
+    macAarch64("io.github.dsheirer:libusb4java-darwin-aarch64:1.3.1") // ARM Mac binary
     implementation("com.fazecast:jSerialComm:2.10.3")
     implementation("com.github.alchitry.yad2xx:yad2xxJava:d2xx_only_with_lib-SNAPSHOT")
     implementation("me.tongfei:progressbar:0.10.0")
