@@ -22,8 +22,10 @@ class DynamicExpr(
     val expr: ExprContext,
     context: LucidBlockContext,
     private val widthConstraint: SignalWidth? = null
-) : Evaluable {
-    private val context = context.withEvalContext(this, "DynamicExpr(${expr.text})")
+) : Evaluable, SignalParent {
+    override val name = "DynamicExpr(${expr.text})"
+    override val parent: SignalParent? = null
+    private val context = context.withEvalContext(this, name)
     private val mutableValueFlow = SynchronizedSharedFlow<Value>()
     val valueFlow: Flow<Value> get() = mutableValueFlow.asFlow()
 
@@ -53,8 +55,10 @@ class DynamicExpr(
         }
     }
 
+    override fun getSignal(name: String): Signal = asSignal(name)
+
     fun asSignal(name: String): Signal {
-        return Signal(name, SignalDirection.Read, null, value).also { signal ->
+        return Signal(name, SignalDirection.Read, this, value).also { signal ->
             signal.hasDriver = true
             val evaluable = Evaluable { signal.write(value) }
             context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {

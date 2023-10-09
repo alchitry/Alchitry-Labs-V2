@@ -21,12 +21,12 @@ class ModuleInstanceArray(
     private val testOrModuleParent: TestOrModuleInstance,
     val errorCollector: ErrorCollector,
     module: Module,
-    dimensions: List<Int>,
+    val dimensions: List<Int>,
     paramProvider: (List<Int>) -> Map<String, Value>,
     signalProvider: (List<Int>) -> Map<String, SignalOrSubSignal>
 ) : ModuleInstanceOrArray {
     override val parent = testOrModuleParent as? ModuleInstance
-    private val modules: ModuleList
+    val modules: ModuleList
 
     override fun takeSnapshot(): SnapshotParent {
         val snapshots = mutableListOf<SnapshotOrParent>()
@@ -45,7 +45,7 @@ class ModuleInstanceArray(
         return instances
     }
 
-    private val ports = module.ports.mapValues { (_, port) ->
+    val ports = module.ports.mapValues { (_, port) ->
         var width: SignalWidth = port.width
         dimensions.asReversed().forEach {
             width = if (width is BitWidth)
@@ -90,14 +90,15 @@ class ModuleInstanceArray(
             val dim = dimensions.first()
             if (dimensions.size == 1) {
                 return ModuleList(List(dim) {
+                    val curIdx = index.toMutableList().apply { add(it) }
                     ModuleInstance(
-                        name,
-                        project,
-                        parent,
-                        module,
-                        paramProvider(index),
-                        signalProvider(index),
-                        testOrModuleParent.context.errorCollector.createChild("[${index.joinToString("][")}]")
+                        name = name,
+                        project = project,
+                        parent = parent,
+                        module = module,
+                        parameters = paramProvider(curIdx),
+                        connections = signalProvider(curIdx),
+                        errorCollector = testOrModuleParent.context.errorCollector.createChild("[${curIdx.joinToString("][")}]")
                     )
                 })
             }
@@ -149,7 +150,7 @@ class ModuleList(private val modules: List<ListOrModuleInstance>) : ListOrModule
         modules.forEach {
             when (it) {
                 is ModuleInstance -> block(it)
-                is ModuleList -> forEach(block)
+                is ModuleList -> it.forEach(block)
             }
         }
     }
@@ -158,7 +159,7 @@ class ModuleList(private val modules: List<ListOrModuleInstance>) : ListOrModule
         modules.forEach {
             when (it) {
                 is ModuleInstance -> block(it)
-                is ModuleList -> suspendForEach(block)
+                is ModuleList -> it.suspendForEach(block)
             }
         }
     }

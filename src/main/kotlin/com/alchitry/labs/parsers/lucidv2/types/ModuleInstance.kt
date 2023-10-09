@@ -13,7 +13,7 @@ class ModuleInstance(
     override val parent: ModuleInstance?,
     val module: Module,
     parameters: Map<String, Value>,
-    connections: Map<String, SignalOrSubSignal>,
+    val connections: Map<String, SignalOrSubSignal>,
     errorCollector: ErrorCollector
 ) : ModuleInstanceOrArray, ListOrModuleInstance, TestOrModuleInstance {
     override val context = LucidBlockContext(project, this, errorCollector = errorCollector)
@@ -60,7 +60,27 @@ class ModuleInstance(
         )
     }
 
-    val parameterizedModuleName: String = "M_${module.name}_${this.parameters.hashCode()}"
+    /**
+     * Generates a unique suffix to attach to this instance corresponding to the parameter set.
+     */
+    private fun generateSuffix(): String {
+        if (parameters.isEmpty())
+            return ""
+        var hash = 0
+        // sort the list to make it order independent
+        parameters.asIterable().sortedBy { it.key }.forEach { (name, signal) ->
+            hash += name.hashCode()
+            hash *= 31
+            hash += signal.initialValue.hashCode()
+            hash *= 31
+        }
+        return "_${hash.toUInt().toString(16)}"
+    }
+
+    /**
+     * A name for this instance that is unique for this set of parameters.
+     */
+    val parameterizedModuleName: String = "MI_${module.name}${generateSuffix()}"
 
     fun getInternalSignal(name: String) = internal[name] ?: parameters[name]
     override fun getSignal(name: String) = external[name]

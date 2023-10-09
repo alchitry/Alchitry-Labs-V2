@@ -146,7 +146,7 @@ data class SignalParser(
         val dims = ctx.arraySize()
             .asReversed()
             .mapNotNull {
-                (it.expr()?.let { it1 -> context.resolve(it1) } as? BitListValue)?.toBigInt()?.intValueExact()
+                (it.expr()?.let { it1 -> context.resolve(it1) } as? SimpleValue)?.toBigInt()?.intValueExact()
             }
 
         val structType = ctx.structType()?.let {

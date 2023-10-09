@@ -17,6 +17,7 @@ class VerilogConverter(
 ) : LucidBaseListener() {
     val verilog = mutableMapOf<ParseTree, String>()
     private var tabCount: Int = 0
+    private val globals = mutableSetOf<Signal>()
 
     /**
      * Throws an [IllegalStateException] with the provided message and line/offset of the provided context.
@@ -113,6 +114,7 @@ class VerilogConverter(
     private fun StringBuilder.addConstants() {
         val instance = context.instance as ModuleInstance
         val constants = mutableListOf<Signal>().apply {
+            addAll(globals)
             addAll(instance.parameters.values)
             addAll(context.constant.localConstants.values)
             context.enum.localEnumType.values.forEach {
@@ -239,7 +241,141 @@ class VerilogConverter(
         }
     }
 
+    private fun StringBuilder.addModuleInstances() {
+        context.types.moduleInstances.values.forEach { instance ->
+            instance.external.values.forEach { port ->
+                when (port.direction) {
+                    SignalDirection.Read -> append("wire ") // output
+                    SignalDirection.Write -> append("reg ") // input
+                    SignalDirection.Both -> error("Direct use of inout is not allowed!")
+                }
+                if (port.signed)
+                    append("signed ")
+
+                val bitCount = port.width.bitCount ?: 1
+                if (port.width is ArrayWidth || bitCount > 1) {
+                    append("[")
+                    append(bitCount - 1)
+                    append(":0] ")
+                }
+
+                append(port.verilogName)
+
+                append(";")
+                newLine()
+            }
+
+            // The inputs of an array can be an expression, but we need to index
+            // the individual bits for each module. We first must assign the
+            // expression to a wire then use this later to get the sub-signal
+            if (instance is ModuleInstanceArray) {
+                // we can look at any of the instances, so just look at the first
+                instance.getAllInstances().first().connections.forEach { (port, connection) ->
+                    if (connection is SubSignal) { // only happens when this is selected per instance
+                        val sig = connection.getSignal()
+                        append("wire ")
+                        if (sig.signed)
+                            append("signed ")
+                        append("[")
+                        append((sig.width.bitCount ?: 1) - 1)
+                        append(":0] M_")
+                        append(instance.name)
+                        append("_")
+                        append(port)
+                        append(" = ")
+                        append(sig.verilogName)
+                        append(";")
+                        newLine()
+                    }
+                }
+            }
+
+            val dimensions = (instance as? ModuleInstanceArray)?.dimensions
+
+            fun addInstModule(module: ModuleInstance, dim: List<Int>?) {
+                append(module.parameterizedModuleName)
+                append(" ")
+                append(module.name.sanitize())
+                dim?.forEach {
+                    append("_")
+                    append(it)
+                }
+                // TODO: Add parameters for Verilog modules
+                append(" (")
+                tabCount++
+                (module.connections + module.external).asIterable()
+                    .forEachIndexed { index, (portName, signalOrSubSignal) ->
+                        val port = module.ports[portName] ?: error("Missing port for module instance!")
+                        if (index != 0)
+                            append(",")
+                        newLine()
+                        append(".P_")
+                        append(port.name)
+                        append("(")
+                        when (signalOrSubSignal) {
+                            is Signal -> append(signalOrSubSignal.verilogName)
+                            is SubSignal -> {
+                                when (signalOrSubSignal.parent.parent) {
+                                    is DynamicExpr -> {
+                                        append("M_")
+                                        append(instance.name)
+                                        append("_")
+                                        append(portName)
+                                    }
+
+                                    else -> {
+                                        append(signalOrSubSignal.verilogName)
+                                    }
+                                }
+
+                            }
+                        }
+                        //append(signalOrSubSignal.verilogName)
+                        if (module.external.contains(portName) && dim != null && dimensions != null) {
+                            var offset = 0
+                            val bitCount = signalOrSubSignal.width.bitCount ?: 1
+                            dim.indices.forEach { idx ->
+                                val d = dim[idx]
+                                val w = dimensions.subList(idx + 1, dimensions.size).fold(1) { r, dim ->
+                                    r * dim
+                                }
+                                offset += d * w * bitCount
+                            }
+                            offset += bitCount - 1
+                            append("[")
+                            append(offset)
+                            if (bitCount > 1) {
+                                append("-:")
+                                append(bitCount)
+                            }
+                            append("]")
+                        }
+                        if (signalOrSubSignal is SubSignal) {
+                            append(signalOrSubSignal.toVerilog().selection)
+                        }
+                        append(")")
+                    }
+
+                tabCount--
+                newLine()
+                append(");")
+                newLine()
+            }
+
+            when (instance) {
+                is ModuleInstance -> addInstModule(instance, null)
+                is ModuleInstanceArray -> instance.modules.forEachIndexed { ints, moduleInstance ->
+                    addInstModule(
+                        moduleInstance,
+                        ints
+                    )
+                }
+            }
+        }
+    }
+
     override fun enterModule(ctx: LucidParser.ModuleContext) {
+        globals.clear()
         tabCount++
     }
 
@@ -264,8 +400,8 @@ class VerilogConverter(
             newLine()
             addSigs()
             newLine()
-
-            // TODO: Module instantiation
+            addModuleInstances()
+            newLine()
 
             context.blockParser.alwaysBlocks.keys.forEach { context ->
                 append(context.verilog)
@@ -319,10 +455,7 @@ class VerilogConverter(
      */
     private val SignalOrSubSignal.verilogName: String
         get() {
-            val baseSignal = when (this) {
-                is Signal -> this
-                is SubSignal -> parent
-            }
+            val baseSignal = getSignal()
 
             return when (val parent = baseSignal.parent) {
                 null -> baseSignal.name.sanitize()
@@ -338,106 +471,120 @@ class VerilogConverter(
                 }
 
                 is RepeatSignal -> "R_${parent.name}_${baseSignal.name}\""
+                is DynamicExpr -> parent.expr.verilog
             }
         }
 
-    override fun exitSignal(ctx: LucidParser.SignalContext) {
-        val signal = context.resolve(ctx) ?: error(ctx, "Failed to resolve signal for \"${ctx.text}\"")
+    private data class SubSignalData(
+        val signed: Boolean,
+        val name: String,
+        val selection: String
+    )
 
-        val baseSignal = when (signal) {
-            is Signal -> signal
-            is SubSignal -> signal.parent
-        }
+    private fun SubSignal.toVerilog(): SubSignalData {
+        var signed = getSignal().signed
+        val selection = buildString {
+            var currentWidth: SignalWidth? = parent.width
+            check(currentWidth?.isDefined() == true) { "Signal width was not defined!" }
 
-        val verilogName = signal.verilogName
+            var selectedBitCount = currentWidth!!.bitCount!! // the defined check above makes this safe
 
-        // signedness is lost when bits are selected and overwritten by structs
-        var signed = baseSignal.signed
+            var first = true
 
-        // build the bit selection string (if sub-signal)
-        val selection = (signal as? SubSignal)?.selection?.let { selection ->
-            buildString {
-                var currentWidth: SignalWidth? = baseSignal.width
-                check(currentWidth?.isDefined() == true) { "Signal width was not defined!" }
+            if (selection.isNotEmpty())
+                append("[")
 
-                var selectedBitCount = currentWidth!!.bitCount!! // the defined check above makes this safe
+            for (selector in selection) {
+                if (!first)
+                    append("+")
+                else
+                    first = false
 
-                var first = true
+                when (currentWidth) {
+                    is ArrayWidth, is SimpleWidth -> {
+                        val s = selector as? SignalSelector.Bits ?: error("Struct selector used on an array!")
 
-                if (selection.isNotEmpty())
-                    append("[")
+                        append("(")
+                        when (s.context) {
+                            is SelectionContext.Constant -> append(s.range.first)
+                            is SelectionContext.Single -> append(s.context.bit.verilog)
+                            is SelectionContext.Fixed -> append(s.context.start.verilog)
+                            is SelectionContext.DownTo -> append("(${s.context.stop.verilog})-${s.context.width - 1}")
+                            is SelectionContext.UpTo -> append(s.context.start)
+                        }
+                        append(")")
 
-                for (selector in selection) {
-                    if (!first)
-                        append("+")
-                    else
-                        first = false
+                        val elementSize = if (currentWidth is ArrayWidth) currentWidth.next.bitCount!! else 1
 
-                    when (currentWidth) {
-                        is ArrayWidth, is SimpleWidth -> {
-                            val s = selector as? SignalSelector.Bits ?: error("Struct selector used on an array!")
+                        // scale the offset by the size of each element
+                        if (elementSize > 1) {
+                            append("*")
+                            append(elementSize)
+                        }
 
-                            append("(")
+                        signed = false
+                        selectedBitCount = s.count * elementSize
+                        currentWidth = if (currentWidth is ArrayWidth)
                             when (s.context) {
-                                is SelectionContext.Constant -> append(s.range.first)
-                                is SelectionContext.Single -> append(s.context.bit.verilog)
-                                is SelectionContext.Fixed -> append(s.context.start.verilog)
-                                is SelectionContext.DownTo -> append("(${s.context.stop.verilog})-${s.context.width - 1}")
-                                is SelectionContext.UpTo -> append(s.context.start)
-                            }
-                            append(")")
+                                is SelectionContext.Constant,
+                                is SelectionContext.Single ->
+                                    currentWidth.next
 
-                            val elementSize = if (currentWidth is ArrayWidth) currentWidth.next.bitCount!! else 1
-
-                            // scale the offset by the size of each element
-                            if (elementSize > 1) {
-                                append("*")
-                                append(elementSize)
-                            }
-
-                            signed = false
-                            selectedBitCount = s.count * elementSize
-                            currentWidth = if (currentWidth is ArrayWidth)
-                                when (s.context) {
-                                    is SelectionContext.Constant,
-                                    is SelectionContext.Single ->
-                                        currentWidth.next
-
-                                    is SelectionContext.Fixed,
-                                    is SelectionContext.DownTo,
-                                    is SelectionContext.UpTo ->
-                                        null // these select a range of bits and can't be selected further
-                                } else null
-                        }
-
-                        is StructWidth -> {
-                            val s = selector as? SignalSelector.Struct ?: error("Bit selector used on a struct!")
-                            val type = currentWidth.type
-                            val member = type[s.member] ?: error("Struct member could not be found!")
-
-                            append(type.offsetOf(s.member))
-
-                            signed = member.signed
-                            currentWidth = member.width
-                            selectedBitCount = currentWidth.bitCount!!
-                        }
-
-                        UndefinedSimpleWidth -> error(ctx, "Undefined width during verilog conversion!")
-                        null -> error(ctx, "Too many selectors for the signal width!")
+                                is SelectionContext.Fixed,
+                                is SelectionContext.DownTo,
+                                is SelectionContext.UpTo ->
+                                    null // these select a range of bits and can't be selected further
+                            } else null
                     }
-                }
 
-                if (selection.isNotEmpty() && selectedBitCount > 1) {
+                    is StructWidth -> {
+                        val s = selector as? SignalSelector.Struct ?: error("Bit selector used on a struct!")
+                        val type = currentWidth.type
+                        val member = type[s.member] ?: error("Struct member could not be found!")
+
+                        append(type.offsetOf(s.member))
+
+                        signed = member.signed
+                        currentWidth = member.width
+                        selectedBitCount = currentWidth.bitCount!!
+                    }
+
+                    UndefinedSimpleWidth -> error("Undefined width during verilog conversion!")
+                    null -> error("Too many selectors for the signal width!")
+                }
+            }
+
+            if (selection.isNotEmpty()) {
+                if (selectedBitCount > 1) {
                     append("+")
                     append(selectedBitCount - 1)
                     append("-:")
                     append(selectedBitCount)
                     append("]")
+                } else {
+                    append("]")
                 }
             }
-        } ?: ""
+        }
+        return SubSignalData(signed, parent.verilogName, selection)
+    }
 
-        val sigVerilog = "$verilogName$selection"
+    override fun exitSignal(ctx: LucidParser.SignalContext) {
+        val signal = context.resolve(ctx) ?: error(ctx, "Failed to resolve signal for \"${ctx.text}\"")
+
+        val baseSignal = signal.getSignal()
+
+        if (baseSignal.parent is GlobalNamespace)
+            globals.add(baseSignal)
+
+        val verilogName = signal.verilogName
+
+
+        // build the bit selection string (if sub-signal)
+        val selection = (signal as? SubSignal)?.toVerilog()
+        val signed = selection?.signed ?: baseSignal.signed
+
+        val sigVerilog = "$verilogName${selection?.selection ?: ""}"
         val write = ctx.parent is LucidParser.AssignStatContext
         ctx.verilog = if (signed && !write) "\$signed($sigVerilog)" else sigVerilog
     }

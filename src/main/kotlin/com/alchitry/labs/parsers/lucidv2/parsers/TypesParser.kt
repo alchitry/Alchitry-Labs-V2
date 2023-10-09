@@ -69,7 +69,11 @@ class TypesParser(
                 localSignalConnections.add(
                     Connection(
                         sigCtx.name() ?: return@let,
-                        DynamicExpr(sigCtx.expr() ?: return@let, context)
+                        try {
+                            DynamicExpr(sigCtx.expr() ?: return@let, context)
+                        } catch (e: IllegalStateException) {
+                            return@let
+                        }
                     )
                 )
             }
@@ -77,7 +81,11 @@ class TypesParser(
                 localParamConnections.add(
                     Connection(
                         paramCtx.name() ?: return@let,
+                        try {
                         DynamicExpr(paramCtx.expr() ?: return@let, context)
+                        } catch (e: IllegalStateException) {
+                            return@let
+                        }
                     )
                 )
             }
@@ -198,7 +206,7 @@ class TypesParser(
             }
 
             val instParams = localParamConnections.union(extParamConnections).associate { it.port to it.value.value }
-            val instPorts = localSignals.values.union(extSignals.values).associateBy { it.name }
+            val instPorts = (localSignals + extSignals).mapKeys { it.key.port }
             ModuleInstance(
                 moduleInstanceName,
                 context.project,
@@ -355,7 +363,7 @@ class TypesParser(
         if (!expr.constant)
             context.reportError(ctx, "Array sizes must be a constant value.")
 
-        if (expr !is BitListValue || !expr.isNumber()) {
+        if (expr !is SimpleValue || !expr.isNumber()) {
             context.reportError(ctx, "Array sizes must be a number.")
             return
         }
