@@ -8,6 +8,7 @@ import com.alchitry.labs.parsers.lucidv2.signals.snapshot.Snapshotable
 import com.alchitry.labs.parsers.lucidv2.types.ports.Inout
 import com.alchitry.labs.parsers.lucidv2.types.ports.Input
 import com.alchitry.labs.parsers.lucidv2.types.ports.Output
+import com.alchitry.labs.parsers.lucidv2.types.ports.PortInstance
 import com.alchitry.labs.parsers.lucidv2.values.*
 
 sealed interface ModuleInstanceOrArray : SignalParent, Snapshotable {
@@ -45,25 +46,9 @@ class ModuleInstanceArray(
         return instances
     }
 
-    val ports = module.ports.mapValues { (_, port) ->
-        var width: SignalWidth = port.width
-        dimensions.asReversed().forEach {
-            width = if (width is BitWidth)
-                BitListWidth(it)
-            else
-                ArrayWidth(it, width)
-        }
-        when (port.direction) {
-            SignalDirection.Read -> Input(port.name, project, this, width, port.signed)
-            SignalDirection.Write -> Output(port.name, project, this, width, port.signed)
-            SignalDirection.Both -> Inout(port.name, project, this, width, port.signed)
-        }
-    }
-
-    override val internal: Map<String, Signal> = ports.mapValues { it.value.internal }
-    override val external = ports
-        .filter { !signalProvider(dimensions.map { 0 }).containsKey(it.key) }
-        .mapValues { it.value.external }
+    val ports: Map<String, PortInstance>
+    override val internal: Map<String, Signal>
+    override val external: Map<String, Signal>
 
     private fun collectErrorsFor(block: (ModuleInstance) -> String?): String? {
         val sb = StringBuilder()
@@ -82,6 +67,18 @@ class ModuleInstanceArray(
 
     suspend fun checkAllParameters(): Boolean = modules.suspendMap { it.checkParameters() }.all { it }
     suspend fun initialWalkAll(): Boolean = modules.suspendMap { it.initialWalk() }.all { it }
+    fun checkPortDimensions(): Boolean {
+        val template = modules.first()
+        var match = true
+        modules.forEach {
+            template.ports.forEach { (name, port) ->
+                if (it.ports[name]?.width != port.width) {
+                    match = false
+                }
+            }
+        }
+        return match
+    }
 
     init {
         require(dimensions.isNotEmpty()) { "Dimensions must not be empty!" }
@@ -112,6 +109,28 @@ class ModuleInstanceArray(
 
         modules = generateModules(dimensions, emptyList()) as ModuleList
 
+        val exampleModule = modules.first()
+
+        ports = exampleModule.ports.mapValues { (_, port) ->
+            var width: SignalWidth = port.width
+            dimensions.asReversed().forEach {
+                width = if (width is BitWidth)
+                    BitListWidth(it)
+                else
+                    ArrayWidth(it, width)
+            }
+            when (port) {
+                is Input -> Input(port.name, project, this, width, port.signed)
+                is Output -> Output(port.name, project, this, width, port.signed)
+                is Inout -> Inout(port.name, project, this, width, port.signed)
+            }
+        }
+
+        internal = ports.mapValues { it.value.internal }
+        external = ports
+            .filter { !signalProvider(dimensions.map { 0 }).containsKey(it.key) }
+            .mapValues { it.value.external }
+
         modules.forEachIndexed { index: List<Int>, moduleInstance: ModuleInstance ->
             val selection = index.map { SignalSelector.Bits(it, SelectionContext.Constant) }
             moduleInstance.external.forEach { (name, port) ->
@@ -122,7 +141,6 @@ class ModuleInstanceArray(
                     port.connectTo(subSig, project)
             }
         }
-
     }
 
     override fun getSignal(name: String) = external[name]
@@ -130,6 +148,16 @@ class ModuleInstanceArray(
 
 sealed interface ListOrModuleInstance
 class ModuleList(private val modules: List<ListOrModuleInstance>) : ListOrModuleInstance {
+    fun first(): ModuleInstance {
+        var current: ListOrModuleInstance = this
+        while (true) {
+            when (current) {
+                is ModuleInstance -> return current
+                is ModuleList -> current = current.modules.first()
+            }
+        }
+    }
+
     fun <T> map(block: (ModuleInstance) -> T): List<T> {
         val list = mutableListOf<T>()
         forEach {

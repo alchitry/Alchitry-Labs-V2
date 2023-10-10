@@ -18,7 +18,6 @@ class ModuleInstance(
 ) : ModuleInstanceOrArray, ListOrModuleInstance, TestOrModuleInstance {
     override val context = LucidBlockContext(project, this, errorCollector = errorCollector)
 
-
     override fun takeSnapshot(): SnapshotParent {
         val snapshots = mutableListOf<SnapshotOrParent>()
         snapshots.addAll(context.types.dffs.values.map { it.takeSnapshot() })
@@ -30,6 +29,16 @@ class ModuleInstance(
 
     suspend fun checkParameters(): Boolean = context.checkParameters()
     suspend fun initialWalk() = context.initialWalk(module.context)
+
+    // Use the provided parameters or the default value from the module is it is missing
+    val parameters = module.parameters.mapValues { (name, param) ->
+        Signal(
+            name,
+            SignalDirection.Read,
+            this,
+            parameters[name] ?: param.default ?: error("Missing module parameter!")
+        )
+    }
 
     val ports = module.ports.mapValues { (_, port) ->
         port.instantiate(this, project)
@@ -50,15 +59,6 @@ class ModuleInstance(
         }
     }
 
-    // Use the provided parameters or the default value from the module is it is missing
-    val parameters = module.parameters.mapValues { (name, param) ->
-        Signal(
-            name,
-            SignalDirection.Read,
-            this,
-            parameters[name] ?: param.default ?: error("Missing module parameter!")
-        )
-    }
 
     /**
      * Generates a unique suffix to attach to this instance corresponding to the parameter set.

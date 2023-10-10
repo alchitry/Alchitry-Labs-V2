@@ -1,9 +1,12 @@
 package com.alchitry.labs.parsers.lucidv2.types.ports
 
 import com.alchitry.labs.parsers.ProjectContext
+import com.alchitry.labs.parsers.lucidv2.context.LucidExprEval
+import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
 import com.alchitry.labs.parsers.lucidv2.types.SignalDirection
-import com.alchitry.labs.parsers.lucidv2.types.SignalParent
+import com.alchitry.labs.parsers.lucidv2.values.ResolvableWidth
 import com.alchitry.labs.parsers.lucidv2.values.SignalWidth
+import kotlinx.coroutines.runBlocking
 
 data class Port(
     val name: String,
@@ -13,9 +16,19 @@ data class Port(
 ) {
     val isInout: Boolean = direction == SignalDirection.Both
 
-    fun instantiate(parent: SignalParent?, context: ProjectContext) = when (direction) {
-        SignalDirection.Read -> Input(name, context, parent, width, signed)
-        SignalDirection.Write -> Output(name, context, parent, width, signed)
-        SignalDirection.Both -> Inout(name, context, parent, width, signed)
+    fun instantiate(parent: ModuleInstance, context: ProjectContext): PortInstance {
+        val instWidth = if (width is ResolvableWidth) {
+            val eval = LucidExprEval(context, parent.context.errorCollector.createChild("PortEval")) {
+                return@LucidExprEval parent.parameters[it]
+            }
+            // this is OK as the eval will never suspend (no calls to $TICK and such)
+            runBlocking { eval.walk(width.context) }
+            eval.resolve(width.context) ?: error("Failed to resolve port width: $width")
+        } else width
+        return when (direction) {
+            SignalDirection.Read -> Input(name, context, parent, instWidth, signed)
+            SignalDirection.Write -> Output(name, context, parent, instWidth, signed)
+            SignalDirection.Both -> Inout(name, context, parent, instWidth, signed)
+        }
     }
 }

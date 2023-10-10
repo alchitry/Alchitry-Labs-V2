@@ -4,7 +4,7 @@ import com.alchitry.labs.parsers.lucidv2.types.SignalSelector
 
 data class UndefinedValue(
     override val constant: Boolean,
-    override val width: SignalWidth = UndefinedSimpleWidth
+    override val width: SignalWidth = UndefinedWidth()
 ) : Value() {
     override fun isNumber() = false
 

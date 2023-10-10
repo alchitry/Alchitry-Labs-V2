@@ -8,6 +8,7 @@ import com.alchitry.labs.parsers.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.parsers.ExprParser
 import com.alchitry.labs.parsers.lucidv2.types.*
+import com.alchitry.labs.parsers.lucidv2.types.Function
 import com.alchitry.labs.parsers.lucidv2.values.*
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree
@@ -549,7 +550,7 @@ class VerilogConverter(
                         selectedBitCount = currentWidth.bitCount!!
                     }
 
-                    UndefinedSimpleWidth -> error("Undefined width during verilog conversion!")
+                    is UndefinedWidth -> error("Undefined width during verilog conversion!")
                     null -> error("Too many selectors for the signal width!")
                 }
             }
@@ -823,7 +824,41 @@ class VerilogConverter(
     override fun exitExprFunction(ctx: LucidParser.ExprFunctionContext) {
         if (handleConstant(ctx))
             return
-        error(ctx, "Not yet implemented") // TODO
+        val functionCtx = ctx.function() ?: error(ctx, "Function context missing!")
+        val function = context.expr.functions[functionCtx] ?: error(ctx, "Failed to resolve function!")
+        ctx.verilog = when (function) {
+            Function.FLATTEN,
+            Function.BUILD ->
+                functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
+
+            Function.SIGNED ->
+                "${"$"}signed(${
+                    functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
+                })"
+
+            Function.UNSIGNED ->
+                "${"$"}unsigned(${
+                    functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
+                })"
+
+            Function.ASSERT,
+            Function.PRINT,
+            Function.TICK,
+            Function.SILENTTICK,
+            is Function.Custom ->
+                error(ctx, "Test only function \"${function.label}\" can't be converted to Verilog!")
+
+            Function.CDIV,
+            Function.RESIZE,
+            Function.POWER,
+            Function.REVERSE,
+            Function.CLOG2,
+            Function.CFIXEDPOINT,
+            Function.FFIXEDPOINT,
+            Function.FIXEDPOINT,
+            Function.WIDTH ->
+                error(ctx, "Function \"${function.label}\" should always be constant but didn't have a value!")
+        }
     }
 
     override fun exitExprCompare(ctx: LucidParser.ExprCompareContext) {

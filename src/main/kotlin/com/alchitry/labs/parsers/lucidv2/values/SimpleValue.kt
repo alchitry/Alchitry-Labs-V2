@@ -119,7 +119,7 @@ sealed class SimpleValue(
         is BitListWidth -> asBitListValue().resize(newWidth.size)
         BitWidth -> BitValue(lsb, constant, signed)
         is StructWidth -> error("Cannot resize SimpleValue to fit a StructValue!")
-        is UndefinedSimpleWidth -> UndefinedValue(constant, UndefinedSimpleWidth)
+        is UndefinedWidth -> UndefinedValue(constant)
     }
 
     private inline fun doOp(b: SimpleValue, crossinline op: (Bit, Bit) -> Bit): SimpleValue {

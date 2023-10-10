@@ -11,6 +11,7 @@ import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SimParent
 import com.alchitry.labs.parsers.lucidv2.types.Module
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
+import com.alchitry.labs.parsers.lucidv2.types.ModuleInstanceArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -193,7 +194,19 @@ class LucidTester(vararg val files: String) {
         }
     }
 
-    suspend fun getVerilog(errorCollector: ErrorCollector? = null): String? {
-        return fullParse(errorCollector).context.convertToVerilog()
+    suspend fun getVerilog(errorCollector: ErrorCollector? = null): Map<String, String> {
+        val topInstance = fullParse(errorCollector)
+        val instances = mutableMapOf<String, ModuleInstance>()
+        fun add(instance: ModuleInstance) {
+            instances[instance.parameterizedModuleName] = instance
+            instance.context.types.moduleInstances.values.forEach { moduleInstanceOrArray ->
+                when (moduleInstanceOrArray) {
+                    is ModuleInstance -> add(moduleInstanceOrArray)
+                    is ModuleInstanceArray -> moduleInstanceOrArray.modules.forEach { add(it) }
+                }
+            }
+        }
+        add(topInstance)
+        return instances.mapValues { it.value.context.convertToVerilog() ?: error("Missing verilog for ${it.key}") }
     }
 }

@@ -145,7 +145,7 @@ data class SignalParser(
     override fun exitSignalWidth(ctx: SignalWidthContext) {
         val dims = ctx.arraySize()
             .asReversed()
-            .mapNotNull {
+            .map {
                 (it.expr()?.let { it1 -> context.resolve(it1) } as? SimpleValue)?.toBigInt()?.intValueExact()
             }
 
@@ -158,6 +158,13 @@ data class SignalParser(
                     )
             }
         }
+
+        if (dims.contains(null)) {
+            signalWidths[ctx] = ResolvableWidth(ctx)
+            return
+        }
+        @Suppress("UNCHECKED_CAST")
+        dims as List<Int>
 
         if (dims.isEmpty()) {
             signalWidths[ctx] = structType?.let { StructWidth(it) } ?: BitWidth

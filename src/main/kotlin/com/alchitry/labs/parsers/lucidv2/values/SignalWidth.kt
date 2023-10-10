@@ -1,23 +1,10 @@
 package com.alchitry.labs.parsers.lucidv2.values
 
 import com.alchitry.labs.parsers.BitUtil
+import com.alchitry.labs.parsers.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.types.StructType
 
 sealed class SignalWidth {
-    /**
-     * Returns true if this is a 1D array
-     */
-    fun isFlatArray(): Boolean {
-        return this is SimpleWidth || this is UndefinedSimpleWidth
-    }
-
-    /**
-     * Returns true if this is a 1D array or a single bit
-     */
-    fun isFlat(): Boolean {
-        return this is SimpleWidth || this is BitWidth || this is UndefinedSimpleWidth
-    }
-
     /**
      *  Returns true if this is JUST an array (no structs)
      */
@@ -25,7 +12,7 @@ sealed class SignalWidth {
         return when (this) {
             is ArrayWidth -> next.isSimpleArray()
             is SimpleWidth, BitWidth -> true
-            is UndefinedSimpleWidth -> true
+            is UndefinedWidth -> false
             is StructWidth -> false
         }
     }
@@ -41,7 +28,7 @@ sealed class SignalWidth {
      * Returns true if this is an array. It may be an array of anything, including structs.
      */
     fun isArray(): Boolean {
-        return this is ArrayWidth || this is UndefinedSimpleWidth || this is SimpleWidth
+        return this is ArrayWidth || this is SimpleWidth
     }
 
     /**
@@ -59,7 +46,7 @@ sealed class SignalWidth {
             is SimpleWidth, BitWidth -> true
             is ArrayWidth -> next.isDefined()
             is StructWidth -> type.values.all { it.width.isDefined() }
-            is UndefinedSimpleWidth -> false
+            is UndefinedWidth -> false
         }
     }
 
@@ -89,7 +76,7 @@ sealed class SignalWidth {
                 }
 
                 is StructWidth -> error("toValue() doesn't work on structs!")
-                UndefinedSimpleWidth -> {
+                is UndefinedWidth -> {
                     dims.add(-1)
                     break
                 }
@@ -114,7 +101,7 @@ sealed class SignalWidth {
                 is BitWidth -> 1
                 is ArrayWidth -> size * (next.bitCount ?: return null)
                 is StructWidth -> type.values.sumOf { it.width.bitCount ?: return null }
-                UndefinedSimpleWidth -> null
+                is UndefinedWidth -> null
                 is SimpleWidth -> size
             }
         }
@@ -123,14 +110,15 @@ sealed class SignalWidth {
     fun canAssign(other: SignalWidth): Boolean =
         when (this) {
             is ArrayWidth, is StructWidth -> this == other
-            BitWidth, is SimpleWidth, UndefinedSimpleWidth -> other is BitWidth || other is SimpleWidth || other is UndefinedSimpleWidth
+            BitWidth, is SimpleWidth -> other is BitWidth || other is SimpleWidth
+            is UndefinedWidth -> false
         }
 
     /** Returns true if bits of other will be dropped during an assignment. */
     fun willTruncate(other: SignalWidth): Boolean {
         return when (this) {
             is ArrayWidth, is StructWidth -> false
-            BitWidth, is SimpleWidth, UndefinedSimpleWidth ->
+            BitWidth, is SimpleWidth, is UndefinedWidth ->
                 (bitCount ?: return false) < (other.bitCount ?: return false)
         }
     }
@@ -159,7 +147,7 @@ sealed class SimpleWidth : SignalWidth() {
     }
 }
 
-object BitWidth : SimpleWidth() {
+data object BitWidth : SimpleWidth() {
     override val size = 1
     override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): BitValue =
         BitValue(bit, constant, signed)
@@ -187,9 +175,26 @@ data class StructWidth(
         StructValue(type, type.mapValues { it.value.width.filledWith(bit, constant, it.value.signed) })
 }
 
-object UndefinedSimpleWidth : SignalWidth() {
+open class UndefinedWidth : SignalWidth() {
     override fun equals(other: Any?): Boolean {
         return false
+    }
+
+    override fun toString(): String {
+        return "UndefinedWidth"
+    }
+
+    override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): UndefinedValue =
+        UndefinedValue(constant, this)
+
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
+}
+
+class ResolvableWidth(val context: LucidParser.SignalWidthContext) : UndefinedWidth() {
+    override fun toString(): String {
+        return "ResolvableWidth(${context.text})"
     }
 
     override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): UndefinedValue =

@@ -55,6 +55,19 @@ internal class ExprParserTests {
     }
 
     @Test
+    fun testMinBits() {
+        assertEquals(1, BitListValue("1", 16, constant = true, signed = false).minimumBits())
+        assertEquals(1, BitListValue("0", 16, constant = true, signed = false).minimumBits())
+        assertEquals(4, BitListValue("F", 16, constant = true, signed = false).minimumBits())
+        assertEquals(1, BitListValue("11", 2, constant = true, signed = true).minimumBits())
+        assertEquals(3, BitListValue("101", 2, constant = true, signed = true).minimumBits())
+        assertEquals(3, BitListValue("011", 2, constant = true, signed = true).minimumBits())
+        assertEquals(4, BitListValue("0101", 2, constant = true, signed = true).minimumBits())
+        assertEquals(3, BitListValue("0011", 2, constant = true, signed = true).minimumBits())
+        assertEquals(4, BitListValue("00101", 2, constant = true, signed = true).minimumBits())
+    }
+
+    @Test
     fun testAddition() = runBlocking {
         val test = SimpleLucidTester("5b1101 + 4b0010")
         val tree = test.parser.expr().also { test.context.walk(it) }

@@ -17,13 +17,15 @@ data class ModuleParser(
 ) : LucidBaseListener(), SignalResolver {
     var module: Module? = null
     private val localParams: MutableMap<String, Signal> = mutableMapOf()
+    private val publicParams: MutableMap<String, Signal> = mutableMapOf()
+    private var inConstraint: Boolean = false
 
-    override fun resolve(name: String) = localParams[name]
+    override fun resolve(name: String) = if (inConstraint) localParams[name] else publicParams[name]
 
     /**
      * Build a local reference to the default value
      */
-    override fun enterParamConstraint(ctx: LucidParser.ParamConstraintContext) {
+    override fun exitParamDefault(ctx: LucidParser.ParamDefaultContext) {
         val parent = ctx.parent
         if (parent is LucidParser.ParamDecContext) {
             val name = parent.name()?.text ?: return
@@ -32,14 +34,32 @@ data class ModuleParser(
         }
     }
 
+    override fun enterParamDec(ctx: LucidParser.ParamDecContext) {
+        val name = ctx.name()?.text ?: return
+        if (localParams.contains(name))
+            return
+        Signal(name, SignalDirection.Read, null, UndefinedValue(true)).also {
+            localParams[name] = it
+            publicParams[name] = it
+        }
+    }
+
+    override fun enterParamConstraint(ctx: LucidParser.ParamConstraintContext) {
+        inConstraint = true
+    }
+
     override fun exitParamConstraint(ctx: LucidParser.ParamConstraintContext) {
+        inConstraint = false
         val value = context.resolve(ctx.expr() ?: return)
         if (value is UndefinedValue)
             return
         if (value?.isTrue()?.bit != Bit.B1) {
-            context.reportError(ctx, "Parameter constraint \"${ctx.text}\" failed!")
+            val defaultValue = (ctx.parent as? LucidParser.ParamDecContext)?.paramDefault()?.expr()
+                ?.let { context.resolve(it) }
+            context.reportError(ctx, "Parameter constraint \"${ctx.text}\" failed for default value: $defaultValue")
         }
     }
+
 
     override fun exitModule(ctx: LucidParser.ModuleContext) {
         if (module != null) {

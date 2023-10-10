@@ -151,7 +151,7 @@ class TypesParser(
         }
 
         extParamConnections.forEach { param ->
-            if (!param.value.width.isFlat()) {
+            if (param.value.width !is SimpleWidth) {
                 context.reportError(param.portCtx, "Parameter \"${param.port}\" is not a simple value.")
                 return
             }
@@ -199,7 +199,7 @@ class TypesParser(
 
         val instance = if (ctx.arraySize().isEmpty()) {
             localParamConnections.forEach { param ->
-                if (!param.value.width.isFlat()) {
+                if (param.value.width !is SimpleWidth) {
                     context.reportError(param.portCtx, "Parameter \"${param.port}\" is not a simple value.")
                     return
                 }
@@ -229,16 +229,28 @@ class TypesParser(
             localSignals.forEach { (connection, signal) ->
                 val port = moduleType.ports[connection.port] ?: error("Missing expected port!")
                 var width = signal.width
-                dimensions.forEach {
+                dimensions.forEachIndexed { index, dim ->
                     val curWidth = width
-                    if (curWidth !is ArrayWidth || curWidth.size != it) {
-                        context.reportError(
-                            connection.portCtx,
-                            "The signal \"${signal.name}\" does not match the dimensions of this module instance."
-                        )
-                        return
+                    // special case for single bit wide ports
+                    // this allows them to be assigned a value instead of an array aka sig[8] instead of sig[8][1]
+                    if (curWidth is SimpleWidth && port.width is BitWidth && curWidth.size == dim) {
+                        if (index != dimensions.size - 1) {
+                            context.reportError(
+                                connection.portCtx,
+                                "The signal \"${signal.name}\" does not match the dimensions of this module instance."
+                            )
+                        }
+                        width = BitWidth
+                    } else {
+                        if (curWidth !is ArrayWidth || curWidth.size != dim) {
+                            context.reportError(
+                                connection.portCtx,
+                                "The signal \"${signal.name}\" does not match the dimensions of this module instance."
+                            )
+                            return
+                        }
+                        width = curWidth.next
                     }
-                    width = curWidth.next
                 }
 
                 if (!port.width.canAssign(width)) {
@@ -263,7 +275,7 @@ class TypesParser(
                     }
                     width = curWidth.next
                 }
-                if (!width.isFlat()) {
+                if (width !is SimpleWidth) {
                     context.reportError(param.portCtx, "Parameter ${param.port} does not index to a simple value.")
                     return
                 }
@@ -313,6 +325,10 @@ class TypesParser(
                     initialWalkAll()
                     if (errorCollector.hasErrors)
                         return
+                    if (!checkPortDimensions()) {
+                        context.reportError(ctx, "All module instances in an array must have identical port widths!")
+                        return
+                    }
                 }
         }
 

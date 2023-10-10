@@ -63,6 +63,17 @@ data class BitListValue(
         }
     }
 
+    /**
+     * Returns the minimum number of bits that can represent this value.
+     */
+    fun minimumBits(): Int {
+        val searchBit = if (signed && msb == Bit.B1) Bit.B0 else Bit.B1
+        val offset = bits.reversed().indexOfFirst { it == searchBit || it == Bit.Bx }
+        if (offset < 0)
+            return 1
+        return size - offset + if (signed) 1 else 0
+    }
+
     override fun subList(fromIndex: Int, toIndex: Int): BitListValue {
         return BitListValue(bits.subList(fromIndex, toIndex), constant, false)
     }
