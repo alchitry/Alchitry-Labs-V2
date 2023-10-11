@@ -253,7 +253,14 @@ data class ExprParser(
             return
         }
 
-        values[ctx] = signal.read(context.evalContext)
+        // mark this signal as not constant if any of the bit selections aren't constant
+        val variable = (signal is SubSignal) && signalCtx.bitSelection().any {
+            it.arrayIndex().any {
+                it.expr()?.let { values[it] }?.constant == false
+            } || it.bitSelector()?.children?.any { it is ExprContext && values[it]?.constant == false } == true
+        }
+
+        values[ctx] = signal.read(context.evalContext).let { if (variable) it.asMutable() else it }
 
         val parentSig = when (signal) {
             is Signal -> signal

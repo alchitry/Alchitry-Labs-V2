@@ -1,5 +1,6 @@
 package com.alchitry.labs.parsers
 
+import com.alchitry.labs.Log
 import com.alchitry.labs.parsers.lucidv2.types.*
 import com.alchitry.labs.project.QueueExhaustionException
 import kotlinx.coroutines.*
@@ -57,6 +58,29 @@ class ProjectContext : Closeable {
             }
         }
         throw QueueExhaustionException("Failed to resolve a stable state after 1000 iterations. There is likely a dependency loop.")
+    }
+
+    suspend fun convertToVerilog(): Map<String, String> {
+        val topInstance = top ?: error("Top level module instance missing!")
+        val instances = mutableMapOf<String, ModuleInstance>()
+        fun add(instance: ModuleInstance) {
+            instances[instance.parameterizedModuleName] = instance
+            instance.context.types.moduleInstances.values.forEach { moduleInstanceOrArray ->
+                when (moduleInstanceOrArray) {
+                    is ModuleInstance -> add(moduleInstanceOrArray)
+                    is ModuleInstanceArray -> moduleInstanceOrArray.modules.forEach { add(it) }
+                }
+            }
+        }
+        add(topInstance)
+        return instances.mapNotNull {
+            try {
+                it.key to (it.value.context.convertToVerilog() ?: error("Missing verilog for ${it.key}"))
+            } catch (e: Exception) {
+                Log.showError("Error while converting to Verilog! This is a bug!", e)
+                null
+            }
+        }.toMap()
     }
 
     override fun close() {

@@ -132,7 +132,8 @@ class TypesParser(
 
         val providedParams = localParamConnections.union(extParamConnections).map { it.port }
         val moduleParams = moduleType.parameters.values.map { it.name }
-        val requiredParams = moduleType.parameters.values.mapNotNull { v -> if (v.default == null) v.name else null }
+        val requiredParams =
+            moduleType.parameters.values.mapNotNull { v -> if (v.default == null || v.defaultTestOnly) v.name else null }
 
         val extraParams = providedParams.filter { !moduleParams.contains(it) }
         val missingParams = requiredParams.filter { !providedParams.contains(it) }

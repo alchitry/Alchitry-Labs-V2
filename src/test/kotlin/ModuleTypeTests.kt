@@ -18,7 +18,7 @@ class ModuleTypeTests {
         val test = LucidTester(
             """
                 module myModule #(
-                    CLK_FREQ : CLK_FREQ > 0,
+                    CLK_FREQ ~ 100000000 : CLK_FREQ > 0,
                     MAX_CT = 100,
                     NEG_TEST = -100 : NEG_TEST < ${"\$"}signed(0)
                 )(
@@ -41,17 +41,20 @@ class ModuleTypeTests {
                 mapOf(
                     "CLK_FREQ" to Parameter(
                         "CLK_FREQ",
-                        null,
+                        BitListValue(100000000.toBigInteger(), true),
+                        true,
                         tree.first().module(0)?.paramList()?.paramDec(0)?.paramConstraint()?.expr()
                     ),
                     "MAX_CT" to Parameter(
                         "MAX_CT",
                         BitListValue(100.toBigInteger(), true),
+                        false,
                         null
                     ),
                     "NEG_TEST" to Parameter(
                         "NEG_TEST",
                         BitListValue((-100).toBigInteger(), true),
+                        false,
                         tree.first().module(0)?.paramList()?.paramDec(2)?.paramConstraint()?.expr()
                     )
                 ),

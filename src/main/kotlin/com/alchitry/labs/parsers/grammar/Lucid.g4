@@ -17,8 +17,8 @@ testBench: 'testBench' NL* name NL* moduleBody;
 paramList: '#(' NL* paramDec (NL* ',' NL* paramDec)* NL* ')';
 portList: '(' (NL* portDec (NL* ',' NL* portDec)*)? NL* ')';
 
-paramDec: name (NL* '=' NL* paramDefault)? (NL* ':' NL* paramConstraint)?;
-paramDefault: expr;
+paramDec: name (NL* paramDefault)? (NL* ':' NL* paramConstraint)?;
+paramDefault: ('='|'~') NL* expr;
 paramConstraint: expr;
 
 portDec: (SIGNED NL*)? portDirection NL* name signalWidth;

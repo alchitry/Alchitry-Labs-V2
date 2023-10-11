@@ -575,11 +575,12 @@ class VerilogConverter(
 
         val baseSignal = signal.getSignal()
 
-        if (baseSignal.parent is GlobalNamespace)
-            globals.add(baseSignal)
+        // Keep track of globals that are read and indexed as we may need the full value for dynamic indexing
+        if (signal is SubSignal && signal.parent.parent is GlobalNamespace) {
+            globals.add(signal.parent)
+        }
 
         val verilogName = signal.verilogName
-
 
         // build the bit selection string (if sub-signal)
         val selection = (signal as? SubSignal)?.toVerilog()

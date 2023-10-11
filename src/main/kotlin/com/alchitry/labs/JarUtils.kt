@@ -8,6 +8,7 @@ import java.net.URLConnection
 import java.util.*
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
+import kotlin.io.path.createParentDirectories
 
 object JarUtils {
     fun copyResourcesRecursively(
@@ -40,6 +41,8 @@ object JarUtils {
                 )
                 val f = File(destDir, filename)
                 if (!entry.isDirectory) {
+                    // required as the directory entry doesn't always come before a file inside it
+                    f.toPath().createParentDirectories()
                     val entryInputStream = jarFile.getInputStream(entry)
                     copyStream(entryInputStream, FileOutputStream(f))
                     entryInputStream.close()

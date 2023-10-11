@@ -21,13 +21,15 @@ internal class LucidToVerilogTests {
             "4'b1x01",
             BitListValue(listOf(Bit.B1, Bit.B0, Bit.Bx, Bit.B1), constant = true, signed = false).asVerilog()
         )
-
     }
 
     @Test
     fun simpleConversion() {
         val tester = LucidTester(
             """
+                global Globals {
+                    const SIZE = 4
+                }
                 module alchitry_top (
                     input clk,              // 100MHz clock
                     input rst_n,            // reset button (active low)
@@ -40,12 +42,14 @@ internal class LucidToVerilogTests {
                   signed sig clk_n = ~clk
                   
                   sig mySig[2] = 2h1;
+                  //const TEST_CONST = 1
                   
                   .clk(clk) {
                     dff ct[8](#INIT(25), .rst(rst))
                     dff ct2[8]
-                      
-                    reset_conditioner cond[2](.in(mySig),#OUT_SIZE({2,2}))
+                      #OUT_SIZE(Globals.SIZE[1]) {
+                    reset_conditioner cond[2](.in(mySig))
+                    }
                     
                   }
                   
@@ -56,7 +60,7 @@ internal class LucidToVerilogTests {
                     }
                   
                   always {
-                    ct2.d = ct2.q + 2
+                    ct2.d = ct2.q + 2 + Globals.SIZE[ct2.q]
                     ct3.d = ct3.q + 3 + cond.out[1];
                     
                     led = 8h00             // turn LEDs off
@@ -68,18 +72,18 @@ internal class LucidToVerilogTests {
             """
                 module reset_conditioner #(
                     STAGES = 4 : STAGES > 1, // number of stages
-                    OUT_SIZE = 2 : OUT_SIZE > 1
+                    OUT_SIZE ~ 2 : OUT_SIZE >= 0
                   )(
                     input clk,  // clock
                     input in,   // async reset
-                    output out[OUT_SIZE]  // snyc reset
+                    output out[2]  // sync reset
                   ) {
                   
                   dff stage[STAGES] (.clk(clk), .rst(in), #INIT(STAGESx{1}));
 
                   always {
                     stage.d = c{stage.q[STAGES-2:0],0};
-                    out = stage.q[STAGES-1];
+                    out = stage.q[STAGES-1] + OUT_SIZE;
                   }
                 }
 

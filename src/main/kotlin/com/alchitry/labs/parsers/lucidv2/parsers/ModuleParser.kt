@@ -26,12 +26,10 @@ data class ModuleParser(
      * Build a local reference to the default value
      */
     override fun exitParamDefault(ctx: LucidParser.ParamDefaultContext) {
-        val parent = ctx.parent
-        if (parent is LucidParser.ParamDecContext) {
-            val name = parent.name()?.text ?: return
-            val defaultValue = parent.paramDefault()?.expr()?.let { context.resolve(it) } ?: UndefinedValue(true)
-            localParams[name] = Signal(name, SignalDirection.Read, null, defaultValue)
-        }
+        val parent = ctx.parent as? LucidParser.ParamDecContext ?: return
+        val name = parent.name()?.text ?: return
+        val defaultValue = ctx.expr()?.let { context.resolve(it) } ?: UndefinedValue(true)
+        localParams[name] = Signal(name, SignalDirection.Read, null, defaultValue)
     }
 
     override fun enterParamDec(ctx: LucidParser.ParamDecContext) {
@@ -41,6 +39,18 @@ data class ModuleParser(
         Signal(name, SignalDirection.Read, null, UndefinedValue(true)).also {
             localParams[name] = it
             publicParams[name] = it
+        }
+    }
+
+    override fun exitParamDec(ctx: LucidParser.ParamDecContext) {
+        if (ctx.paramDefault() == null) {
+            val name = ctx.name() ?: return
+            context.reportWarning(
+                name,
+                "No default value provided for parameter \"${name.text}\"." +
+                        " Consider providing a default value using \"${name.text} = VALUE\"" +
+                        " or a value to use only while error checking this file with \"${name.text} ~ VALUE\"."
+            )
         }
     }
 
@@ -86,10 +96,15 @@ data class ModuleParser(
                 )
             }
 
+            val defaultTestOnly = paramCtx.paramDefault()?.getChild(0)?.text == "~"
             val defaultValue = paramCtx.paramDefault()?.expr()?.let { context.resolve(it) }
             val constraintContext = paramCtx.paramConstraint()?.expr()
 
-            if (params.putIfAbsent(paramName, Parameter(paramName, defaultValue, constraintContext)) != null) {
+            if (params.putIfAbsent(
+                    paramName,
+                    Parameter(paramName, defaultValue, defaultTestOnly, constraintContext)
+                ) != null
+            ) {
                 context.reportError(
                     paramNameCtx,
                     "The parameter name $paramName has already been used."

@@ -134,7 +134,7 @@ class ModuleInstanceTests {
             """.trimIndent(),
             """
                 module testModule #(
-                    INC
+                    INC ~ 1
                 )(
                     input clk,
                     output count[8]

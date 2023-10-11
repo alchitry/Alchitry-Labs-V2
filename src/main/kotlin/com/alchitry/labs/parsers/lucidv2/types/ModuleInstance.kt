@@ -36,7 +36,9 @@ class ModuleInstance(
             name,
             SignalDirection.Read,
             this,
-            parameters[name] ?: param.default ?: error("Missing module parameter!")
+            parameters[name]
+                ?: (if (param.defaultTestOnly) null else param.default)
+                ?: error("Missing module parameter!")
         )
     }
 

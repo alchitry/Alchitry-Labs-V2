@@ -1,5 +1,6 @@
 package com.alchitry.labs.subcommands
 
+import com.alchitry.labs.parsers.errors.ErrorManager
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.project.openXml
 import com.alchitry.labs.showHelp
@@ -7,6 +8,7 @@ import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.Subcommand
 import kotlinx.cli.default
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 @OptIn(ExperimentalCli::class)
@@ -33,7 +35,22 @@ class BuildProject : Subcommand("build", "Build an Alchitry Project") {
             return
         }
 
-        showHelp("Not yet implemented!")
+        if (!runBlocking {
+                val errorManager = ErrorManager()
+                val topModule = project.buildContext(errorManager)
+                if (topModule == null) {
+                    println("Failed to fully parse project!")
+                }
+                print(errorManager.getReport())
+                topModule ?: return@runBlocking false
+                val verilog = topModule.convertToVerilog()
+                verilog.forEach { (name, file) ->
+                    println("$name.v:")
+                    println(file)
+                    println()
+                }
+                true
+            }) return
 
         if (flash || ram) {
             showHelp("Loading isn't implemented yet!")

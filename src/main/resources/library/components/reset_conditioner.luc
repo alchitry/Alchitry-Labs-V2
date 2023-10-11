@@ -42,7 +42,7 @@ module reset_conditioner #(
   )(
     input clk,  // clock
     input in,   // async reset
-    output out  // snyc reset
+    output out  // sync reset
   ) {
   
   dff stage[STAGES] (.clk(clk), .rst(in), #INIT(STAGESx{1}));

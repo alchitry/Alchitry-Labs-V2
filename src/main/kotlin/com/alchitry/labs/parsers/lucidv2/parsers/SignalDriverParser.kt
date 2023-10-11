@@ -50,6 +50,16 @@ data class SignalDriverParser(
         }
     }
 
+    override fun exitConstDec(ctx: ConstDecContext) {
+        val nameCtx = ctx.name() ?: error("Name missing from const dec!")
+        val sig =
+            context.resolveSignal(nameCtx.text) as? Signal ?: error("Unresolved sig of name ${nameCtx.text}")
+        if (!sig.isRead) {
+            context.reportWarning(nameCtx, "The constant \"${sig.name}\" is never used.")
+            return
+        }
+    }
+
     override fun exitSigDec(ctx: SigDecContext) {
         val nameCtx = ctx.name() ?: error("Name missing from sig dec!")
         val sig =
