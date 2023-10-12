@@ -1,6 +1,9 @@
 package com.alchitry.labs.project
 
 import com.alchitry.labs.allSealedObjects
+import com.alchitry.labs.hardware.pinout.AuPinConverter
+import com.alchitry.labs.hardware.pinout.CuPinConverter
+import com.alchitry.labs.hardware.pinout.PinConverter
 import com.alchitry.labs.hardware.usb.UsbUtil
 import com.alchitry.labs.hardware.usb.ftdi.enums.PortInterfaceType
 
@@ -18,6 +21,7 @@ sealed class Board {
     abstract val alias: String
     abstract val fpgaName: String
     abstract val usbDescriptor: UsbUtil.UsbDescriptor
+    abstract val pinConverter: PinConverter
 
     sealed interface XilinxBoard {
         val bridgeFile: String
@@ -38,6 +42,7 @@ sealed class Board {
             )
         override val bridgeFile = "/bridges/au.bin"
         override val idCode = "0362D093"
+        override val pinConverter = AuPinConverter
     }
 
     data object AlchitryAuPlus : Board(), XilinxBoard {
@@ -54,6 +59,7 @@ sealed class Board {
             )
         override val bridgeFile = "/bridges/au_plus.bin"
         override val idCode = "13631093"
+        override val pinConverter = AuPinConverter
     }
 
     data object AlchitryCu : Board() {
@@ -68,6 +74,7 @@ sealed class Board {
                 "Alchitry Cu",
                 PortInterfaceType.INTERFACE_A
             )
+        override val pinConverter = CuPinConverter
     }
 }
 

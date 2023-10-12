@@ -60,7 +60,7 @@ class ProjectContext : Closeable {
         throw QueueExhaustionException("Failed to resolve a stable state after 1000 iterations. There is likely a dependency loop.")
     }
 
-    suspend fun convertToVerilog(): Map<String, String> {
+    suspend fun convertToVerilog(): Map<String, String?> {
         val topInstance = top ?: error("Top level module instance missing!")
         val instances = mutableMapOf<String, ModuleInstance>()
         fun add(instance: ModuleInstance) {
@@ -73,14 +73,14 @@ class ProjectContext : Closeable {
             }
         }
         add(topInstance)
-        return instances.mapNotNull {
+        return instances.mapValues {
             try {
-                it.key to (it.value.context.convertToVerilog() ?: error("Missing verilog for ${it.key}"))
+                it.value.context.convertToVerilog() ?: error("Missing verilog for ${it.key}")
             } catch (e: Exception) {
-                Log.showError("Error while converting to Verilog! This is a bug!", e)
+                Log.printlnError("Error while converting to Verilog! This is a bug!", e)
                 null
             }
-        }.toMap()
+        }
     }
 
     override fun close() {

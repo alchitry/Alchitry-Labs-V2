@@ -543,7 +543,7 @@ class VerilogConverter(
                         val type = currentWidth.type
                         val member = type[s.member] ?: error("Struct member could not be found!")
 
-                        append(type.offsetOf(s.member))
+                        append(type.offsetOf(s.member) ?: error("Struct member offset not well defined!"))
 
                         signed = member.signed
                         currentWidth = member.width

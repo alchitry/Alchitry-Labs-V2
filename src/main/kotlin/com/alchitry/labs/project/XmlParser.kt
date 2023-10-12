@@ -13,7 +13,8 @@ import java.io.File
 import java.io.FileWriter
 import java.nio.file.Paths
 
-const val XML_VERSION = 4
+const val PROJECT_VERSION = 4
+const val MIN_PROJECT_VERSION = 4
 
 fun Project.Companion.openXml(xmlFile: File): Project {
     if (!xmlFile.isFile || xmlFile.extension != "alp") {
@@ -46,7 +47,8 @@ fun Project.Companion.openXml(xmlFile: File): Project {
     val versionAttr = projectXml.getAttribute(Tags.Attributes.version)
     if (versionAttr != null) try {
         version = versionAttr.intValue
-        if (version > XML_VERSION) error("Project file is from a future version!")
+        if (version > PROJECT_VERSION) error("Project file is from a future version!")
+        if (version < MIN_PROJECT_VERSION) error("Project file is from an unsupported past version!")
     } catch (e: DataConversionException) {
         error("Invalid version ID!")
     }
@@ -125,7 +127,7 @@ fun Project.Companion.openXml(xmlFile: File): Project {
             else -> error("Unknown tag " + node.name)
         }
     }
-    if (version != XML_VERSION) {
+    if (version != PROJECT_VERSION) {
         // TODO: Upgrade old projects
         error("Incompatible version ID!")
     }
@@ -143,7 +145,7 @@ fun Project.saveXML(file: File = projectFile) {
     val project = Element(Tags.project)
     project.setAttribute(Attribute(Tags.Attributes.name, projectName))
     project.setAttribute(Attribute(Tags.Attributes.board, board.name))
-    project.setAttribute(Attribute(Tags.Attributes.version, XML_VERSION.toString()))
+    project.setAttribute(Attribute(Tags.Attributes.version, PROJECT_VERSION.toString()))
     val doc = Document(project)
     val source = Element(Tags.files)
     for (sourceFile in sourceFiles) {

@@ -37,13 +37,13 @@ class BuildProject : Subcommand("build", "Build an Alchitry Project") {
 
         if (!runBlocking {
                 val errorManager = ErrorManager()
-                val topModule = project.buildContext(errorManager)
-                if (topModule == null) {
+                val projectContext = project.buildContext(errorManager)
+                if (projectContext == null) {
                     println("Failed to fully parse project!")
                 }
                 print(errorManager.getReport())
-                topModule ?: return@runBlocking false
-                val verilog = topModule.convertToVerilog()
+                projectContext ?: return@runBlocking false
+                val verilog = projectContext.convertToVerilog()
                 verilog.forEach { (name, file) ->
                     println("$name.v:")
                     println(file)
