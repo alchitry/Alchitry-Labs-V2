@@ -2,6 +2,7 @@ package com.alchitry.labs.project
 
 import com.alchitry.labs.Log
 import com.alchitry.labs.parsers.ProjectContext
+import com.alchitry.labs.parsers.acf.XdcConverter
 import com.alchitry.labs.parsers.errors.ErrorManager
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.parsers.grammar.LucidParser
@@ -9,6 +10,7 @@ import com.alchitry.labs.parsers.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleTypeContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
+import com.alchitry.labs.project.builders.VivadoBuilder
 import com.alchitry.labs.project.files.ConstraintFile
 import com.alchitry.labs.project.files.IPCore
 import com.alchitry.labs.project.files.SourceFile
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 import java.io.File
+import kotlin.io.path.createDirectories
 
 class QueueExhaustionException(message: String) : IllegalStateException(message)
 
@@ -33,7 +36,7 @@ data class Project(
     val top: SourceFile get() = sourceFiles.firstOrNull { it.top } ?: throw Exception("Missing top module!")
     val projectFile = projectFolder.resolve("$projectName.alp")
     val buildDirectory = projectFolder.resolve("build")
-    val binFile = buildDirectory.resolve("alchitry.bin")
+    val binFile = buildDirectory.resolve("${board.binName}.bin")
 
     companion object {
         private val mutableCurrentFlow = MutableStateFlow<Project?>(null)
@@ -58,6 +61,94 @@ data class Project(
                 return null
             }
         }
+    }
+
+    suspend fun build(): Boolean {
+        val errorManger = ErrorManager()
+        val context = buildContext(errorManger)
+        val topModule = context?.top
+        if (context == null || topModule == null) {
+            Log.printlnError("Failed to build project context!")
+            Log.printlnError(errorManger.getReport())
+            return false
+        }
+
+        Log.println(errorManger.getReport())
+
+        val sourceFiles = try {
+            context.convertToVerilog()
+        } catch (e: Exception) {
+            Log.printlnError("Failed to convert source files to Verilog. This should be considered a bug!", e)
+            return false
+        }
+
+        val sourceDir = buildDirectory.resolve("source")
+
+        try {
+            buildDirectory.deleteRecursively()
+        } catch (e: Exception) {
+            Log.printlnError("Failed to delete build directory!", e)
+            return false
+        }
+
+        val vSourceFiles: List<File>
+        try {
+            sourceDir.toPath().createDirectories()
+            vSourceFiles = sourceFiles.map { (name, contents) ->
+                val file = sourceDir.resolve("$name.v")
+                file.outputStream().bufferedWriter().use {
+                    it.write(contents ?: error("Missing contents for file $name"))
+                }
+                file
+            }
+        } catch (e: Exception) {
+            Log.printlnError("Failed to write source files to ${sourceDir.absolutePath}", e)
+            return false
+        }
+
+        // TODO deal with other extensions for Cu
+        val constraintErrorManager = ErrorManager()
+        val constraints = try {
+            constraintFiles.associate {
+                when (it.language) {
+                    Languages.ACF ->
+                        it to XdcConverter.convert(it, topModule, board, constraintErrorManager.getCollector(it))
+
+                    Languages.XDC ->
+                        it to it.file.inputStream().bufferedReader().readText()
+                }
+            }
+        } catch (e: Exception) {
+            Log.printlnError("Failed to get constraint files!", e)
+            return false
+        }
+
+        if (constraints.values.contains(null)) {
+            Log.printlnError("Failed to convert all constraint files!")
+            Log.printlnError(constraintErrorManager.getReport())
+            return false
+        }
+
+        val constraintFiles: List<File>
+        val constraintDir = buildDirectory.resolve("constraint")
+        try {
+            constraintDir.toPath().createDirectories()
+            constraintFiles = constraints.map { (constraintFile, contents) ->
+                val name = constraintFile.name.split('.').first()
+                val file = constraintDir.resolve("$name.xdc")
+                file.outputStream().bufferedWriter().use {
+                    it.write(contents ?: error("Missing contents for file ${constraintFile.name}"))
+                }
+                file
+            }
+        } catch (e: Exception) {
+            Log.printlnError("Failed to write constraint files to ${constraintDir.absolutePath}", e)
+            return false
+        }
+
+        VivadoBuilder.buildProject(this, topModule.parameterizedModuleName, vSourceFiles, constraintFiles)
+
+        return true
     }
 
     fun parse(errorManger: ErrorManager): List<Pair<SourceFile, LucidParser.SourceContext>>? {

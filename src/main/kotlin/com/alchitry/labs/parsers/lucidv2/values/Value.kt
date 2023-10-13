@@ -84,7 +84,11 @@ sealed class Value : Measurable {
                 is ArrayValue -> selectElements(selection)
                 is BitListValue -> selectBits(selection)
                 is StructValue -> throw SignalSelectionException(selection, "Bit selection can't be used on a struct.")
-                is UndefinedValue -> TODO()
+                is UndefinedValue -> throw SignalSelectionException(
+                    selection,
+                    "Bit selection can't be used on an undefined value."
+                )
+
                 is BitValue -> throw SignalSelectionException(selection, "Bit selection can't be used on a single bit.")
             }
 
@@ -95,7 +99,11 @@ sealed class Value : Measurable {
                 )
 
                 is StructValue -> selectMember(selection)
-                is UndefinedValue -> TODO()
+                is UndefinedValue -> throw SignalSelectionException(
+                    selection,
+                    "Struct selection can't be used on an undefined value."
+                )
+
                 is BitValue -> throw SignalSelectionException(selection, "Bits don't have struct members.")
             }
         }

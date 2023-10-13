@@ -29,12 +29,12 @@ object Log {
         // TODO: Make this show a dialog
     }
 
-    fun println(message: Any?, color: Color) {
-        println(message, SpanStyle(color = color))
+    fun println(message: Any?, color: Color?) {
+        println(message, color?.let { SpanStyle(color = it) })
     }
 
-    fun print(message: Any?, color: Color) {
-        print(message, SpanStyle(color = color))
+    fun print(message: Any?, color: Color?) {
+        print(message, color?.let { SpanStyle(color = it) })
     }
 
     fun println(message: Any?, style: SpanStyle? = null) {

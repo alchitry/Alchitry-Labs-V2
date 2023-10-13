@@ -1,7 +1,7 @@
 grammar Acf;
 
 // starting rule
-source: (pin | clock | NL)* EOF;
+source: (pin | clock | NL)* EOF?;
 
 pin: 'pin' portName pinName (PULLUP|PULLDOWN)? semi;
 
@@ -20,7 +20,7 @@ number : INT | REAL;
 PULLUP: 'pullup';
 PULLDOWN: 'pulldown';
 
-semi: NL | (NL* SEMICOLON);
+semi: NL | (NL* SEMICOLON) | EOF;
 
 SEMICOLON : ';';
 NL : '\r' '\n' | '\n' | '\r';

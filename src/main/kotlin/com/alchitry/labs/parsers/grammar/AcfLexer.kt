@@ -1,6 +1,5 @@
 // Generated from java-escape by ANTLR 4.13.0
 package com.alchitry.labs.parsers.grammar
-
 import com.alchitry.kotlinmultiplatform.asCharArray
 import org.antlr.v4.kotlinruntime.CharStream
 import org.antlr.v4.kotlinruntime.Lexer

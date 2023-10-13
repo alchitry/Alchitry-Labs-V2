@@ -17,6 +17,8 @@ sealed class Board {
         val All: List<Board> get() = Board::class.allSealedObjects()
     }
 
+    val binName: String get() = name.lowercase().replace(" ", "_")
+
     abstract val name: String
     abstract val alias: String
     abstract val fpgaName: String

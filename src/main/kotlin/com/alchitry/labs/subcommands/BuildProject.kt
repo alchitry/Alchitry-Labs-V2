@@ -1,6 +1,5 @@
 package com.alchitry.labs.subcommands
 
-import com.alchitry.labs.parsers.errors.ErrorManager
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.project.openXml
 import com.alchitry.labs.showHelp
@@ -35,22 +34,8 @@ class BuildProject : Subcommand("build", "Build an Alchitry Project") {
             return
         }
 
-        if (!runBlocking {
-                val errorManager = ErrorManager()
-                val projectContext = project.buildContext(errorManager)
-                if (projectContext == null) {
-                    println("Failed to fully parse project!")
-                }
-                print(errorManager.getReport())
-                projectContext ?: return@runBlocking false
-                val verilog = projectContext.convertToVerilog()
-                verilog.forEach { (name, file) ->
-                    println("$name.v:")
-                    println(file)
-                    println()
-                }
-                true
-            }) return
+        if (!runBlocking { project.build() })
+            return
 
         if (flash || ram) {
             showHelp("Loading isn't implemented yet!")

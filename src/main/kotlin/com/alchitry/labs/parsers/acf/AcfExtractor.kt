@@ -10,7 +10,7 @@ import com.alchitry.labs.parsers.lucidv2.types.*
 import com.alchitry.labs.project.Board
 import kotlin.math.roundToInt
 
-class AcfParser(
+class AcfExtractor(
     val topModule: ModuleInstance,
     val board: Board,
     val errorCollector: ErrorCollector,
@@ -31,7 +31,11 @@ class AcfParser(
         val selectionMap = children.subList(1, children.size).associate {
             when (it) {
                 is AcfParser.NameContext -> SignalSelector.Struct(it.text) to it
-                is AcfParser.ArrayIndexContext -> SignalSelector.Bits(it.text.toInt(), SelectionContext.Constant) to it
+                is AcfParser.ArrayIndexContext -> SignalSelector.Bits(
+                    (it.INT() ?: return).text.toInt(),
+                    SelectionContext.Constant
+                ) to it
+
                 else -> error("Impossible as everything else should have been filtered out!")
             }
         }
@@ -46,6 +50,10 @@ class AcfParser(
                 errorCollector.reportError(selectionMap[e.selector]!!, e.message!!)
                 return
             }
+        }
+        if (selectedSignal.width.bitCount != 1) {
+            errorCollector.reportError(ctx, "This signal is wider than a single bit!")
+            return
         }
         signals[ctx] = selectedSignal
     }

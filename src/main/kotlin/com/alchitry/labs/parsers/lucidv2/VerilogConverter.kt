@@ -212,7 +212,7 @@ class VerilogConverter(
             rstGroupedDffs.forEach { (_, dffs) ->
                 append("if ((")
                 append(dffs.first().rst!!.expr.verilog)
-                append(") == 1b'1) begin")
+                append(") == 1'b1) begin")
                 tabCount++
                 dffs.forEach {
                     newLine()

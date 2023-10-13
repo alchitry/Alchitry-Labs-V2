@@ -45,11 +45,6 @@ object Languages {
         override val extension: String = "acf"
     }
 
-    object UCF : ConstraintLang() {
-        override val name: String = "ucf"
-        override val extension: String = "ucf"
-    }
-
     object XDC : ConstraintLang() {
         override val name: String = "xdc"
         override val extension: String = "xdc"

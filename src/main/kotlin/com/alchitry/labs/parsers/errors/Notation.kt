@@ -8,7 +8,7 @@ data class Notation(
     val type: NotationType
 ) {
     override fun toString(): String {
-        return "${type.label} at line ${range.start.line} offset ${range.start.offset}${message?.let { ": $it" } ?: ""}"
+        return "${type.label} at line ${range.start.line + 1} offset ${range.start.offset}${message?.let { ": $it" } ?: ""}"
     }
 }
 
