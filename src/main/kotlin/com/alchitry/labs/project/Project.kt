@@ -15,6 +15,7 @@ import com.alchitry.labs.project.files.ConstraintFile
 import com.alchitry.labs.project.files.IPCore
 import com.alchitry.labs.project.files.SourceFile
 import com.alchitry.labs.ui.misc.openFileDialog
+import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.windows.mainWindow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -69,11 +70,11 @@ data class Project(
         val topModule = context?.top
         if (context == null || topModule == null) {
             Log.printlnError("Failed to build project context!")
-            Log.printlnError(errorManger.getReport())
+            Log.print(errorManger.getReport(), AlchitryColors.current.Error)
             return false
         }
 
-        Log.println(errorManger.getReport())
+        Log.print(errorManger.getReport())
 
         val sourceFiles = try {
             context.convertToVerilog()
@@ -123,9 +124,8 @@ data class Project(
             return false
         }
 
-        if (constraints.values.contains(null)) {
-            Log.printlnError("Failed to convert all constraint files!")
-            Log.printlnError(constraintErrorManager.getReport())
+        if (!constraintErrorManager.hasNoMessages) {
+            Log.print(constraintErrorManager.getReport(), AlchitryColors.current.Error)
             return false
         }
 

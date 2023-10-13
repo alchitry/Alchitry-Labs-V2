@@ -87,7 +87,7 @@ object Log {
         println(message, AlchitryColors.current.Error)
         if (throwable != null) {
             throwable.message?.let { println(it, AlchitryColors.current.Error) }
-            throwable.printStackTrace()
+            println(throwable.stackTraceToString(), AlchitryColors.current.Error)
         }
     }
 
