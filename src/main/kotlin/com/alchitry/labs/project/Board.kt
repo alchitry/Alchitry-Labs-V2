@@ -1,11 +1,19 @@
 package com.alchitry.labs.project
 
+import com.alchitry.labs.Settings
 import com.alchitry.labs.allSealedObjects
 import com.alchitry.labs.hardware.pinout.AuPinConverter
 import com.alchitry.labs.hardware.pinout.CuPinConverter
 import com.alchitry.labs.hardware.pinout.PinConverter
 import com.alchitry.labs.hardware.usb.UsbUtil
 import com.alchitry.labs.hardware.usb.ftdi.enums.PortInterfaceType
+import com.alchitry.labs.parsers.acf.AcfConverter
+import com.alchitry.labs.parsers.acf.LatticeConverter
+import com.alchitry.labs.parsers.acf.XilinxConverter
+import com.alchitry.labs.project.builders.IceCubeBuilder
+import com.alchitry.labs.project.builders.IceStormBuilder
+import com.alchitry.labs.project.builders.ProjectBuilder
+import com.alchitry.labs.project.builders.VivadoBuilder
 
 
 sealed class Board {
@@ -24,6 +32,8 @@ sealed class Board {
     abstract val fpgaName: String
     abstract val usbDescriptor: UsbUtil.UsbDescriptor
     abstract val pinConverter: PinConverter
+    abstract val acfConverter: AcfConverter
+    abstract val projectBuilder: ProjectBuilder
 
     sealed interface XilinxBoard {
         val bridgeFile: String
@@ -45,6 +55,8 @@ sealed class Board {
         override val bridgeFile = "/bridges/au.bin"
         override val idCode = "0362D093"
         override val pinConverter = AuPinConverter
+        override val acfConverter = XilinxConverter(this)
+        override val projectBuilder = VivadoBuilder
     }
 
     data object AlchitryAuPlus : Board(), XilinxBoard {
@@ -62,6 +74,8 @@ sealed class Board {
         override val bridgeFile = "/bridges/au_plus.bin"
         override val idCode = "13631093"
         override val pinConverter = AuPinConverter
+        override val acfConverter = XilinxConverter(this)
+        override val projectBuilder = VivadoBuilder
     }
 
     data object AlchitryCu : Board() {
@@ -77,6 +91,8 @@ sealed class Board {
                 PortInterfaceType.INTERFACE_A
             )
         override val pinConverter = CuPinConverter
+        override val acfConverter = LatticeConverter(this)
+        override val projectBuilder get() = if (Settings.useIceCube) IceCubeBuilder else IceStormBuilder
     }
 }
 

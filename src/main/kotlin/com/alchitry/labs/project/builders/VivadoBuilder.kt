@@ -5,15 +5,11 @@ import com.alchitry.labs.Log
 import com.alchitry.labs.project.Locations
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.ui.theme.AlchitryColors
-import kotlinx.coroutines.*
+import kotlinx.coroutines.coroutineScope
 import java.io.File
-import java.io.IOException
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.nio.CharBuffer
 
-object VivadoBuilder {
-    suspend fun buildProject(
+data object VivadoBuilder : ProjectBuilder() {
+    override suspend fun buildProject(
         project: Project,
         topModuleName: String,
         sourceFiles: List<File>,
@@ -43,34 +39,7 @@ object VivadoBuilder {
         )
 
         Log.println("Starting Vivado...", AlchitryColors.current.Info)
-        val builder = ProcessBuilder(cmd)
-        val process = try {
-            withContext(Dispatchers.IO) {
-                builder.start()
-            }
-        } catch (e: Exception) {
-            Log.printlnError("Failed to start ${cmd.first()}", e)
-            return@coroutineScope
-        }
-
-        val inputStreamJob = launch {
-            startStreamPrinter(process, process.inputStream, false)
-        }
-        val errorStreamJob = launch {
-            startStreamPrinter(process, process.errorStream, true)
-        }
-
-        try {
-            while (process.isAlive)
-                delay(100)
-
-            inputStreamJob.join()
-            errorStreamJob.join()
-        } catch (e: CancellationException) {
-            process.destroyForcibly()
-            throw e
-        }
-
+        runProcess(cmd, this)
         Log.println("Vivado exited.", AlchitryColors.current.Info)
 
         Log.println("")
@@ -90,40 +59,6 @@ object VivadoBuilder {
             )
         }
     }
-
-    private suspend fun startStreamPrinter(process: Process, s: InputStream, red: Boolean) =
-        withContext(Dispatchers.IO) {
-            val color = if (red) AlchitryColors.current.Error else null
-            val stringBuffer = StringBuffer(512)
-            val buffer = CharBuffer.allocate(512)
-            InputStreamReader(s).use { stream ->
-                try {
-                    while (process.isAlive) {
-                        while (stream.ready()) {
-                            val ct = stream.read(buffer)
-                            buffer.flip()
-                            if (ct == -1) return@withContext
-                            val newText = buffer.toString()
-                            stringBuffer.append(newText)
-                            if (newText.contains("\n")) {
-                                val lines = stringBuffer.toString().split("\\r?\\n".toRegex())
-                                lines.forEachIndexed { i, it -> if (i != lines.size - 1) Log.println(it, color) }
-                                stringBuffer.delete(0, stringBuffer.length - lines.last().length)
-                            }
-                        }
-                        delay(100)
-                    }
-                    while (stream.ready()) {
-                        val ct = stream.read(buffer)
-                        buffer.flip()
-                        if (ct == -1) return@withContext
-                        Log.print(buffer.toString(), color)
-                    }
-                } catch (e: IOException) {
-                    Log.printlnError("Failed to monitor stream!", e)
-                }
-            }
-        }
 
     private fun generateProjectFile(project: Project, sourceFiles: List<File>, constraintFiles: List<File>): String =
         buildString {
@@ -149,18 +84,4 @@ object VivadoBuilder {
         }
 
 
-    private fun getSanitizedPath(f: File): String {
-        return getSanitizedPath(f.absolutePath)
-    }
-
-    private fun getSanitizedPath(f: String): String {
-        return f.replace("\\", "/").replace(" ", "\\ ")
-    }
-
-    private fun StringBuilder.addSpacedList(list: Collection<File>): StringBuilder {
-        for (s in list) {
-            append("\"").append(getSanitizedPath(s.absolutePath)).append("\" ")
-        }
-        return this
-    }
 }

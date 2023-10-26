@@ -2,7 +2,7 @@ package com.alchitry.labs.project
 
 import com.alchitry.labs.Log
 import com.alchitry.labs.parsers.ProjectContext
-import com.alchitry.labs.parsers.acf.XdcConverter
+import com.alchitry.labs.parsers.acf.NativeConstraint
 import com.alchitry.labs.parsers.errors.ErrorManager
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.parsers.grammar.LucidParser
@@ -10,7 +10,6 @@ import com.alchitry.labs.parsers.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleTypeContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
-import com.alchitry.labs.project.builders.VivadoBuilder
 import com.alchitry.labs.project.files.ConstraintFile
 import com.alchitry.labs.project.files.IPCore
 import com.alchitry.labs.project.files.SourceFile
@@ -107,16 +106,24 @@ data class Project(
             return false
         }
 
-        // TODO deal with other extensions for Cu
         val constraintErrorManager = ErrorManager()
         val constraints = try {
-            constraintFiles.associate {
-                when (it.language) {
-                    Languages.ACF ->
-                        it to XdcConverter.convert(it, topModule, board, constraintErrorManager.getCollector(it))
+            constraintFiles.flatMap { file ->
+                when (file.language) {
+                    Languages.ACF -> {
+                        val files =
+                            board.acfConverter.convert(file, topModule, constraintErrorManager.getCollector(file))
+                        files?.map { file.name to it } ?: listOf(file.name to null)
+                    }
 
-                    Languages.XDC ->
-                        it to it.file.inputStream().bufferedReader().readText()
+                    Languages.XDC, Languages.SDC, Languages.PCF ->
+                        listOf(
+                            file.name to NativeConstraint(
+                                file.name.split(".").first(),
+                                file.language,
+                                file.file.inputStream().bufferedReader().readText()
+                            )
+                        )
                 }
             }
         } catch (e: Exception) {
@@ -129,15 +136,55 @@ data class Project(
             return false
         }
 
+        val checkedConstraints = constraints.map {
+            it.second ?: error("Missing contents for file ${it.first}")
+        }
+
+        val mergedSdcBuilder = StringBuilder()
+        val mergedPcfBuilder = StringBuilder()
+        checkedConstraints.forEach { nativeConstraint ->
+            when (nativeConstraint.language) {
+                Languages.PCF -> mergedPcfBuilder.append(nativeConstraint.contents).appendLine()
+                Languages.SDC -> mergedSdcBuilder.append(nativeConstraint.contents).appendLine()
+                else -> {}
+            }
+        }
+
+        val mergedConstraints = checkedConstraints.filter {
+            when (it.language) {
+                Languages.PCF, Languages.SDC -> false
+                else -> true
+            }
+        }.toMutableList()
+
+        if (mergedPcfBuilder.isNotBlank()) {
+            mergedConstraints.add(
+                NativeConstraint(
+                    "merged_constraints",
+                    Languages.PCF,
+                    mergedPcfBuilder.toString()
+                )
+            )
+        }
+
+        if (mergedSdcBuilder.isNotBlank()) {
+            mergedConstraints.add(
+                NativeConstraint(
+                    "merged_constraints",
+                    Languages.SDC,
+                    mergedSdcBuilder.toString()
+                )
+            )
+        }
+
         val constraintFiles: List<File>
         val constraintDir = buildDirectory.resolve("constraint")
         try {
             constraintDir.toPath().createDirectories()
-            constraintFiles = constraints.map { (constraintFile, contents) ->
-                val name = constraintFile.name.split('.').first()
-                val file = constraintDir.resolve("$name.xdc")
+            constraintFiles = mergedConstraints.map { nativeConstraint ->
+                val file = constraintDir.resolve("${nativeConstraint.name}.${nativeConstraint.language.extension}")
                 file.outputStream().bufferedWriter().use {
-                    it.write(contents ?: error("Missing contents for file ${constraintFile.name}"))
+                    it.write(nativeConstraint.contents)
                 }
                 file
             }
@@ -146,7 +193,7 @@ data class Project(
             return false
         }
 
-        VivadoBuilder.buildProject(this, topModule.parameterizedModuleName, vSourceFiles, constraintFiles)
+        board.projectBuilder.buildProject(this, topModule.parameterizedModuleName, vSourceFiles, constraintFiles)
 
         return true
     }

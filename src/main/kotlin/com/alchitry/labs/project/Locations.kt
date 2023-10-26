@@ -37,7 +37,7 @@ object Locations {
 
     val vivado: String?
         get() {
-            val vivado = Settings.vivadoLoc
+            val vivado = Settings.vivadoLocation
             if (vivado != null) return vivado
             var path = when (Env.os) {
                 Env.OS.Windows -> File("C:\\Xilinx\\Vivado")
