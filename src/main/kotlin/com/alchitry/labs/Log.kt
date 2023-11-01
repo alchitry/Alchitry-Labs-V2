@@ -1,11 +1,10 @@
 package com.alchitry.labs
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import com.alchitry.labs.ui.main.Console
 import com.alchitry.labs.ui.theme.AlchitryColors
@@ -13,6 +12,8 @@ import com.alchitry.labs.windows.LoaderProgressBarConsumer
 import com.alchitry.labs.windows.LoaderProgressBarRender
 import com.alchitry.labs.windows.loaderStatus
 import me.tongfei.progressbar.*
+import org.fusesource.jansi.Ansi.ansi
+import org.fusesource.jansi.AnsiConsole
 import java.io.FileDescriptor
 import java.io.FileOutputStream
 import java.io.PrintStream
@@ -20,6 +21,10 @@ import java.time.Duration
 import kotlin.math.roundToInt
 
 object Log {
+    init {
+        AnsiConsole.systemInstall()
+    }
+
     fun exception(e: Throwable) {
         printlnError("", e)
     }
@@ -38,7 +43,12 @@ object Log {
     }
 
     fun println(message: Any?, style: SpanStyle? = null) {
-        print(message.toString() + "\n", style)
+        if (style != null) {
+            print(message.toString(), style)
+            print("\n")
+        } else {
+            print(message.toString() + "\n")
+        }
     }
 
     private fun String.withStyle(style: SpanStyle?): AnnotatedString = buildAnnotatedString {
@@ -55,29 +65,20 @@ object Log {
         if (Env.isLoader)
             loaderStatus = message.toString().replace("\n", "").withStyle(style)
 
-        if (style?.color != null) {
-            val codes = mutableListOf<String>()
-            codes.add(style.color.ansiCode())
-
-            if (style.fontStyle == FontStyle.Italic) {
-                codes.add("3")
-            }
-
-            if (style.textDecoration?.contains(TextDecoration.Underline) == true) {
-                codes.add("4")
-            }
-
-            if (style.textDecoration?.contains(TextDecoration.LineThrough) == true) {
-                codes.add("9")
-            }
-
+        if (style != null) {
+            var ansi = ansi()
             if (style.fontWeight?.weight?.let { it > 400 } == true) {
-                codes.add("1")
+                ansi = ansi.bold()
             }
-
-            val prefix = "\u001B[${codes.joinToString(";")}m"
-            val suffix = "\u001B[0m"
-            kotlin.io.print(prefix + message + suffix)
+            if (style.color != Color.Unspecified) {
+                ansi.fgRgb(style.color.toArgb())
+            }
+            if (style.background != Color.Unspecified) {
+                ansi.bgRgb(style.background.toArgb())
+            }
+            ansi.a(message)
+            ansi.reset()
+            kotlin.io.print(ansi)
         } else {
             kotlin.io.print(message)
         }

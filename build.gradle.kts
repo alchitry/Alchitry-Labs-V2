@@ -21,7 +21,7 @@ plugins {
     id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
 }
 
-val fullVersion = "2.0.1-PREVIEW"
+val fullVersion = "2.0.2-PREVIEW"
 val numOnlyVersion = fullVersion.split('-').first()
 
 group = "com.alchitry"
@@ -50,6 +50,7 @@ dependencies {
     implementation("com.fazecast:jSerialComm:2.10.3")
     implementation("com.github.alchitry.yad2xx:yad2xxJava:d2xx_only_with_lib-SNAPSHOT")
     implementation("me.tongfei:progressbar:0.10.0")
+    implementation("org.fusesource.jansi:jansi:2.4.1")
 
     linuxAmd64(compose.desktop.linux_x64)
     linuxAarch64(compose.desktop.linux_arm64)
@@ -93,13 +94,17 @@ compose.desktop {
     }
 }
 
-fun TaskContainer.registerConveyorTask(name: String) {
+fun TaskContainer.registerConveyorTask(name: String, arg: String? = null) {
     register(name) {
         group = "conveyor"
         dependsOn.add("jar")
         doLast {
             exec {
-                commandLine("conveyor", "--passphrase=${secrets.get("conveyorRootKey")}", "make", name)
+                if (arg == null) {
+                    commandLine("conveyor", "--passphrase=${secrets.get("conveyorRootKey")}", "make", name)
+                } else {
+                    commandLine("conveyor", "--passphrase=${secrets.get("conveyorRootKey")}", arg, "make", name)
+                }
             }
         }
     }
@@ -107,8 +112,10 @@ fun TaskContainer.registerConveyorTask(name: String) {
 
 tasks.registerConveyorTask("app")
 tasks.registerConveyorTask("site") // makes the site files locally
+tasks.registerConveyorTask("windows-msix") // builds a windows msix
+tasks.registerConveyorTask("windows-app") // builds a windows app
 tasks.registerConveyorTask("copied-site") // pushes the site files to GitHub
-
+tasks.registerConveyorTask("mac-app", "-Kapp.machines=mac.aarch64")
 
 val generatedVersionDir = "$buildDir/resources/main"
 

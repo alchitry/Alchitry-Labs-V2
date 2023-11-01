@@ -7,6 +7,7 @@ import com.alchitry.labs.project.Project
 import com.alchitry.labs.ui.theme.AlchitryColors
 import kotlinx.coroutines.coroutineScope
 import java.io.File
+import java.nio.file.Paths
 
 data class ClockConstraint(
     val port: String,
@@ -38,9 +39,18 @@ data object IceStormBuilder : ProjectBuilder() {
             Env.OS.Windows -> ".exe"
             Env.OS.Linux, Env.OS.MacOS, Env.OS.Unknown -> ""
         }
-        val yosys = javaClass.getResource("/bin/yosys$extension")?.file ?: "yosys"
-        val nextpnr = javaClass.getResource("/bin/nextpnr-ice40$extension")?.file ?: "nextpnr-ice40"
-        val icepack = javaClass.getResource("/bin/icepack$extension")?.file ?: "icepack"
+        val appProp: String? = System.getProperty("app.dir")
+        val appDir = appProp?.let { Paths.get(it).toFile() }
+        val binDir = appDir?.resolve("icestorm")?.resolve("bin")
+
+        val yosys = binDir?.resolve("yosys$extension")
+            .let { if (it?.exists() == true) it.absolutePath else "yosys" }
+
+        val nextpnr = binDir?.resolve("nextpnr-ice40$extension")
+            .let { if (it?.exists() == true) it.absolutePath else "nextpnr-ice40" }
+
+        val icepack = binDir?.resolve("icepack$extension")
+            .let { if (it?.exists() == true) it.absolutePath else "icepack" }
 
         val jsonFile = project.buildDirectory.resolve("alchitry.json")
 
