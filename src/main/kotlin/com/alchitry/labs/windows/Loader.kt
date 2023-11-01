@@ -19,6 +19,7 @@ import com.alchitry.labs.hardware.usb.BoardLoader
 import com.alchitry.labs.hardware.usb.UsbUtil
 import com.alchitry.labs.project.Board
 import com.alchitry.labs.ui.components.AlchitryToolTip
+import com.alchitry.labs.ui.components.WindowDecoration
 import com.alchitry.labs.ui.misc.openFileDialog
 import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTheme
@@ -65,8 +66,10 @@ fun ApplicationScope.loaderWindow() {
             Settings.commit()
         }
     ) {
-        CompositionLocalProvider(LocalScale provides 1.0f) {
-            AlchitryTheme {
+        AlchitryTheme {
+            Column {
+                WindowDecoration()
+
                 val focusManger = LocalFocusManager.current
                 Surface(
                     Modifier
@@ -120,7 +123,10 @@ fun ApplicationScope.loaderWindow() {
                                         try {
                                             board?.let { board ->
                                                 if (!BoardLoader.erase(board.board, board.index)) {
-                                                    Log.println("Failed to open board!", AlchitryColors.current.Error)
+                                                    Log.println(
+                                                        "Failed to open board!",
+                                                        AlchitryColors.current.Error
+                                                    )
                                                 }
                                             }
                                         } catch (e: Exception) {

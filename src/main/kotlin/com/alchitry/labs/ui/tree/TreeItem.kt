@@ -17,7 +17,6 @@ import com.alchitry.labs.ui.hiddenClickable
 import com.alchitry.labs.ui.selection.Selectable
 import com.alchitry.labs.ui.selection.SelectionContext
 import com.alchitry.labs.ui.theme.AlchitryColors
-import com.alchitry.labs.windows.LocalScale
 
 @Composable
 fun SelectionContext.TreeItem(
@@ -44,7 +43,7 @@ fun SelectionContext.TreeItem(
         )
 
         .padding(vertical = 5.dp)
-        .padding(start = 25.dp * LocalScale.current * indentLevel)
+        .padding(start = 25.dp * indentLevel)
     ) {
         Text(title)
     }

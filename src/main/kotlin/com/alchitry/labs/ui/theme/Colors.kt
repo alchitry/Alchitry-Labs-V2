@@ -62,6 +62,7 @@ data object DarkAlchitryColors : AlchitryColors {
         onBackground = Color.White,
         surface = Color(0xFF282828),
         onSurface = Color.White,
+        surfaceTint = Color.Black,
         surfaceVariant = Color(0xFF333333),
         onSurfaceVariant = Color(0xFFA1A1A1),
         error = Error,

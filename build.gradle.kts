@@ -15,8 +15,8 @@ val antlrKotlinVersion = extra.get("antlrKotlinVersion") as String
 
 
 plugins {
-    kotlin("jvm") version "1.9.0"
-    id("org.jetbrains.compose") version "1.5.2"
+    kotlin("jvm") version "1.9.20"
+    id("org.jetbrains.compose") version "1.5.10"
     id("dev.hydraulic.conveyor") version "1.5"
     id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
 }
@@ -59,7 +59,7 @@ dependencies {
     windowsAmd64(compose.desktop.windows_x64)
 
     // TODO: Replace with next full release
-    implementation("org.jetbrains.compose.material3:material3-desktop:1.5.10-beta02")
+    implementation("org.jetbrains.compose.material3:material3-desktop:1.5.10-rc02")
 
     testImplementation(kotlin("test"))
 }

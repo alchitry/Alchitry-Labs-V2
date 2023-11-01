@@ -7,17 +7,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.ApplicationScope
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowState
-import androidx.compose.ui.window.rememberWindowState
+import androidx.compose.ui.window.*
 import com.alchitry.labs.Env
 import kotlinx.coroutines.delay
 import java.awt.Dimension
 import javax.swing.ImageIcon
 import kotlin.math.roundToInt
 
-val LocalScale = compositionLocalOf { 1.0f }
 val LocalComposeWindow = compositionLocalOf<ComposeWindow> { error("No ComposeWindow set!") }
 lateinit var mainWindow: ComposeWindow
 
@@ -29,7 +25,7 @@ fun ApplicationScope.openWindow(
     minWidth: Dp = 150.dp,
     minHeight: Dp = 150.dp,
     onClose: (WindowState) -> Unit,
-    body: @Composable () -> Unit
+    body: @Composable FrameWindowScope.() -> Unit
 ) {
     val windowState = rememberWindowState(
         placement = initialWindowState.placement,
@@ -45,27 +41,24 @@ fun ApplicationScope.openWindow(
         onCloseRequest = {
             onClose(windowState)
             exitApplication()
-        }
+        },
+        undecorated = true
     ) {
         val density = LocalDensity.current
         var updateMinSize by remember { mutableStateOf(false) }
 
         LaunchedEffect(packContent) {
             if (!packContent) {
-                with(density) {
-                    // window sizes are in Dp even though they take Ints
-                    window.minimumSize = Dimension(minWidth.value.roundToInt(), minHeight.value.roundToInt())
-                }
+                // window sizes are in Dp even though they take Ints
+                window.minimumSize = Dimension(minWidth.value.roundToInt(), minHeight.value.roundToInt())
             }
             delay(50) // need to wait for the window to open then resize it to the size we want
 
-            with(density) {
-                window.size =
-                    Dimension(
-                        initialWindowState.size.width.value.roundToInt(),
-                        initialWindowState.size.height.value.roundToInt()
-                    )
-            }
+            window.size =
+                Dimension(
+                    initialWindowState.size.width.value.roundToInt(),
+                    initialWindowState.size.height.value.roundToInt()
+                )
             window.iconImage =
                 ImageIcon(this::class.java.getResource("/icons/icon.png")).image
             delay(100) // need to wait for the window to open then resize it to the size we want
@@ -74,14 +67,14 @@ fun ApplicationScope.openWindow(
         SideEffect { mainWindow = this.window }
 
         CompositionLocalProvider(LocalComposeWindow provides this.window) {
-            Layout(content = body) { measurables, constraints ->
+            Layout(content = { body() }) { measurables, constraints ->
                 if (packContent) {
                     val minX = measurables.maxOf { it.minIntrinsicWidth(Int.MAX_VALUE) }
                     val minY = measurables.maxOf { it.minIntrinsicHeight(minX) }
 
                     val minDim = Dimension(
-                        minX.coerceAtLeast(minWidth.value.roundToInt()),
-                        minY.coerceAtLeast(minHeight.value.roundToInt())
+                        minX.coerceAtLeast(minWidth.roundToPx()),
+                        minY.coerceAtLeast(minHeight.roundToPx())
                     )
                     if (updateMinSize) {
                         updateMinSize = false

@@ -26,7 +26,6 @@ import com.alchitry.labs.ui.hiddenClickable
 import com.alchitry.labs.ui.selection.Selectable
 import com.alchitry.labs.ui.selection.SelectionContext
 import com.alchitry.labs.ui.theme.AlchitryColors
-import com.alchitry.labs.windows.LocalScale
 
 @Composable
 fun SelectionContext.TreeSection(
@@ -64,7 +63,7 @@ fun SelectionContext.TreeSection(
                         0.15f
                     ) else Color.Transparent
                 )
-                .padding(start = 25.dp * LocalScale.current * indentLevel)
+                .padding(start = 25.dp * indentLevel)
                 .padding(vertical = 5.dp)
         ) {
             val imageSize = with(LocalDensity.current) { LocalTextStyle.current.fontSize.toPx().toDp() }
@@ -77,7 +76,7 @@ fun SelectionContext.TreeSection(
                 modifier = Modifier
                     .hiddenClickable { expanded = !expanded }
                     .padding(horizontal = 3.dp)
-                    .size(imageSize * LocalScale.current)
+                    .size(imageSize)
                     .rotate(arrowAngle)
             )
             Text(title)

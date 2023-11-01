@@ -19,7 +19,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs.ui.theme.AlchitryTheme
-import com.alchitry.labs.windows.LocalScale
 
 @Preview
 @Composable
@@ -43,8 +42,7 @@ fun ToolbarButton(
     modifier: Modifier = Modifier
 ) {
     LocalDensity.current.run {
-        val scale = LocalScale.current
-        val size = 40.dp * scale
+        val size = 40.dp
         TextTooltipArea(
             text = description
         ) {

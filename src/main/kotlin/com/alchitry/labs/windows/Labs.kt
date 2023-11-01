@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -41,32 +40,31 @@ fun ApplicationScope.labsWindow() {
             Settings.commit()
         }
     ) {
-        CompositionLocalProvider(LocalScale provides 1.0f) {
-            AlchitryTheme {
-                val focusManger = LocalFocusManager.current
-                Box(
-                    Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
-                        .pointerInput(Unit) { detectTapGestures { focusManger.clearFocus() } }
-                ) {
-                    Column {
-                        Toolbar()
-                        Sash(
-                            first = {
-                                Sash(
-                                    first = {
-                                        Surface(Modifier.matchParentSize()) {
-                                            ProjectTree()
-                                        }
-                                    },
-                                    second = {
-                                        Surface(Modifier.matchParentSize()) {
-                                            val state = rememberCodeEditorState(remember { LucidTokenizer() })
-                                            LaunchedEffect(state) {
+        AlchitryTheme {
+            val focusManger = LocalFocusManager.current
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+                    .pointerInput(Unit) { detectTapGestures { focusManger.clearFocus() } }
+            ) {
+                Column {
+                    Toolbar()
+                    Sash(
+                        first = {
+                            Sash(
+                                first = {
+                                    Surface(Modifier.matchParentSize()) {
+                                        ProjectTree()
+                                    }
+                                },
+                                second = {
+                                    Surface(Modifier.matchParentSize()) {
+                                        val state = rememberCodeEditorState(remember { LucidTokenizer() })
+                                        LaunchedEffect(state) {
 
-                                                val text =
-                                                    """
+                                            val text =
+                                                """
                                                     testBench myTestBench {
                                                         sig clk
                                                         
@@ -85,32 +83,31 @@ fun ApplicationScope.labsWindow() {
                                                     }
                                                 """.trimIndent()
 
-                                                state.setText(text)
-                                            }
-                                            CodeEditor(state)
+                                            state.setText(text)
                                         }
-                                    },
-                                    orientation = Orientation.Horizontal,
-                                    sashData = rememberSashData(
-                                        resizePriority = ResizePriority.SECOND,
-                                        first = Settings.fileListWidth.toFloat()
-                                    ),
-                                    onResize = { Settings.fileListWidth = it.size.first.toInt() }
-                                )
-                            },
-                            second = {
-                                Surface(Modifier.matchParentSize()) {
-                                    Console.show()
-                                }
-                            },
-                            orientation = Orientation.Vertical,
-                            sashData = rememberSashData(
-                                resizePriority = ResizePriority.FIRST,
-                                second = Settings.consoleHeight.toFloat()
-                            ),
-                            onResize = { Settings.consoleHeight = it.size.second.toInt() }
-                        )
-                    }
+                                        CodeEditor(state)
+                                    }
+                                },
+                                orientation = Orientation.Horizontal,
+                                sashData = rememberSashData(
+                                    resizePriority = ResizePriority.SECOND,
+                                    first = Settings.fileListWidth.toFloat()
+                                ),
+                                onResize = { Settings.fileListWidth = it.size.first.toInt() }
+                            )
+                        },
+                        second = {
+                            Surface(Modifier.matchParentSize()) {
+                                Console.show()
+                            }
+                        },
+                        orientation = Orientation.Vertical,
+                        sashData = rememberSashData(
+                            resizePriority = ResizePriority.FIRST,
+                            second = Settings.consoleHeight.toFloat()
+                        ),
+                        onResize = { Settings.consoleHeight = it.size.second.toInt() }
+                    )
                 }
             }
         }
