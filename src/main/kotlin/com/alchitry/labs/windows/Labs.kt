@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
 import com.alchitry.labs.Settings
 import com.alchitry.labs.ui.code_editor.CodeEditor
@@ -33,8 +34,8 @@ fun ApplicationScope.labsWindow() {
     openWindow(
         "Alchitry Labs",
         Settings.labsWindowState,
-        minWidth = 500,
-        minHeight = 500,
+        minWidth = 500.dp,
+        minHeight = 500.dp,
         onClose = {
             Settings.labsWindowState = it
             Settings.commit()

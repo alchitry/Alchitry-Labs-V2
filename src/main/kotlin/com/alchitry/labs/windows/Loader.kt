@@ -59,7 +59,7 @@ fun ApplicationScope.loaderWindow() {
         "Alchitry Loader",
         Settings.loaderWindowState,
         packContent = true,
-        minWidth = 700,
+        minWidth = 700.dp,
         onClose = {
             Settings.loaderWindowState = it
             Settings.commit()
