@@ -15,8 +15,11 @@ data object VivadoBuilder : ProjectBuilder() {
         sourceFiles: List<File>,
         constraintFiles: List<File>
     ) = coroutineScope {
+        if (Env.isMac)
+            error("Can't build with Vivado on a Mac!")
+
         val tclScript = project.buildDirectory.resolve("project.tcl")
-        tclScript.outputStream().bufferedWriter().use {
+        tclScript.bufferedWriter().use {
             it.write(generateProjectFile(project, sourceFiles, constraintFiles))
         }
 
@@ -29,7 +32,7 @@ data object VivadoBuilder : ProjectBuilder() {
         }
 
         val cmd = listOf(
-            File(vivado).resolve("bin").resolve(if (Env.isWindows) "vivado.bat" else "vivado").absolutePath,
+            vivado.resolve("bin").resolve(if (Env.isWindows) "vivado.bat" else "vivado").absolutePath,
             "-nojournal",
             "-nolog",
             "-mode",

@@ -8,7 +8,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
@@ -30,7 +29,6 @@ import kotlinx.coroutines.launch
 import me.tongfei.progressbar.ProgressBarConsumer
 import me.tongfei.progressbar.ProgressBarRenderer
 import me.tongfei.progressbar.ProgressState
-import java.awt.Color
 import java.io.File
 
 private val File.isValidBinFile: Boolean get() = exists() && isFile && canRead() && extension == "bin"
@@ -73,7 +71,6 @@ fun ApplicationScope.loaderWindow() {
             Env.mode = Env.Mode.Loader
         }
         AlchitryTheme {
-            window.contentPane.background = Color(MaterialTheme.colorScheme.surface.toArgb())
             Column {
                 WindowDecoration()
 

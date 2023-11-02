@@ -1,13 +1,12 @@
 package com.alchitry.labs.project.builders
 
-import com.alchitry.labs.Env
 import com.alchitry.labs.Log
 import com.alchitry.labs.project.Languages
+import com.alchitry.labs.project.Locations
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.ui.theme.AlchitryColors
 import kotlinx.coroutines.coroutineScope
 import java.io.File
-import java.nio.file.Paths
 
 data class ClockConstraint(
     val port: String,
@@ -35,22 +34,9 @@ data object IceStormBuilder : ProjectBuilder() {
         sourceFiles: List<File>,
         constraintFiles: List<File>
     ) = coroutineScope {
-        val extension = when (Env.os) {
-            Env.OS.Windows -> ".exe"
-            Env.OS.Linux, Env.OS.MacOS, Env.OS.Unknown -> ""
-        }
-        val appProp: String? = System.getProperty("app.dir")
-        val appDir = appProp?.let { Paths.get(it).toFile() }
-        val binDir = appDir?.resolve("icestorm")?.resolve("bin")
-
-        val yosys = binDir?.resolve("yosys$extension")
-            .let { if (it?.exists() == true) it.absolutePath else "yosys" }
-
-        val nextpnr = binDir?.resolve("nextpnr-ice40$extension")
-            .let { if (it?.exists() == true) it.absolutePath else "nextpnr-ice40" }
-
-        val icepack = binDir?.resolve("icepack$extension")
-            .let { if (it?.exists() == true) it.absolutePath else "icepack" }
+        val yosys = Locations.getToolNamed("yosys").absolutePath
+        val nextpnr = Locations.getToolNamed("nextpnr-ice40").absolutePath
+        val icepack = Locations.getToolNamed("icepack").absolutePath
 
         val jsonFile = project.buildDirectory.resolve("alchitry.json")
 
