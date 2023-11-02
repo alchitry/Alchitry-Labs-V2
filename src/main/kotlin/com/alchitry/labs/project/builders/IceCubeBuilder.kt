@@ -20,7 +20,7 @@ data object IceCubeBuilder : ProjectBuilder() {
         constraintFiles: List<File>
     ) = coroutineScope {
         if (Env.isMac)
-            error("Can't build with iceCube2 on a Mac!")
+            error("Can't build with iCEcube2 on a Mac!")
 
         val iceCube = Locations.iceCube2
         val iceCubeLicense = Locations.iceCubeLicense
@@ -76,14 +76,14 @@ data object IceCubeBuilder : ProjectBuilder() {
         }
     }
 
-    private fun generateBashScript(project: Project, icecube: File, license: File): String = buildString {
+    private fun generateBashScript(project: Project, iceCube: File, license: File): String = buildString {
         val export = when (Env.os) {
             Env.OS.Windows -> "SET"
             Env.OS.Linux -> "export"
             else -> error("Unsupported OS: ${Env.os}")
         }
 
-        val synpwrapDir = icecube.resolve("sbt_backend/bin/${if (Env.isWindows) "win32" else "linux"}/opt/synpwrap")
+        val synpwrapDir = iceCube.resolve("sbt_backend/bin/${if (Env.isWindows) "win32" else "linux"}/opt/synpwrap")
         val extension = when (Env.os) {
             Env.OS.Windows -> ".exe"
             Env.OS.Linux, Env.OS.MacOS, Env.OS.Unknown -> ""
@@ -96,8 +96,8 @@ data object IceCubeBuilder : ProjectBuilder() {
         }
 
         append(export).append(" LM_LICENSE_FILE=").appendLine(license.absolutePath)
-        append(export).append(" SYNPLIFY_PATH=").appendLine(icecube.resolve("synpbase").absolutePath)
-        append(export).append(" SBT_DIR=").appendLine(icecube.resolve("sbt_backend").absolutePath)
+        append(export).append(" SYNPLIFY_PATH=").appendLine(iceCube.resolve("synpbase").absolutePath)
+        append(export).append(" SBT_DIR=").appendLine(iceCube.resolve("sbt_backend").absolutePath)
 
         append(synpwrapDir.resolve("synpwrap$extension")).append(" -prj \"")
             .append(project.buildDirectory.resolve(SYN_PROJECT_FILE).absolutePath)
