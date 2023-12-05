@@ -4,12 +4,12 @@ import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.TooltipPlacement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.alchitry.labs.ui.theme.AlchitryColors
 
 @Composable
 fun AlchitryToolTip(
@@ -40,15 +40,9 @@ fun AlchitryToolTipContent(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-    Surface(
-        modifier,
-        shadowElevation = 10.dp,
-        tonalElevation = 10.dp,
-        color = AlchitryColors.current.TooltipBackground,
-        contentColor = AlchitryColors.current.TooltipContent
-    ) {
+    Surface(modifier, tonalElevation = 4.dp, shadowElevation = 4.dp, shape = RoundedCornerShape(5.dp)) {
         Box(
-            Modifier.padding(10.dp)
+            Modifier.padding(8.dp)
         ) {
             content()
         }

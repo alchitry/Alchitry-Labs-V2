@@ -1,7 +1,7 @@
 package com.alchitry.labs
 
 import androidx.compose.ui.window.application
-import com.alchitry.labs.windows.loaderWindow
+import com.alchitry.labs.windows.labsWindow
 
 fun main(args: Array<String>) {
 
@@ -12,6 +12,6 @@ fun main(args: Array<String>) {
     // TODO: open project files from command line
 
     application {
-        loaderWindow()
+        labsWindow()
     }
 }

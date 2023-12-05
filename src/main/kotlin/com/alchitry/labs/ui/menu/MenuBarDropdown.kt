@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
+import androidx.compose.ui.window.PopupProperties
 
 private val MenuElevation = 8.dp
 private val MenuVerticalMargin = 0.dp
@@ -58,19 +59,16 @@ fun MenuBarDropdown(
         val density = LocalDensity.current
         val popupPositionProvider = DesktopDropdownMenuPositionProvider(offset, density, dropDirection)
 
-        Popup(
-            focusable = focusable,
+        Popup(popupPositionProvider = popupPositionProvider,
             onDismissRequest = onDismissRequest,
-            popupPositionProvider = popupPositionProvider,
-            onKeyEvent = {
+            properties = PopupProperties(focusable = focusable), onPreviewKeyEvent = { false }, onKeyEvent = {
                 if (it.key == Key.Escape) {
                     onDismissRequest()
                     true
                 } else {
                     false
                 }
-            },
-        ) {
+            }) {
             DropdownMenuContent(
                 expandedStates = expandedStates,
                 modifier = modifier,

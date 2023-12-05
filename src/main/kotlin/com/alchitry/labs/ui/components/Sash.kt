@@ -72,7 +72,7 @@ fun Sash(
     second: @Composable BoxScope.() -> Unit,
     orientation: Orientation,
     sashData: SashData = rememberSashData(),
-    sashSize: Dp = 5.dp,
+    sashSize: Dp = 4.dp,
     onResize: ((SashData) -> Unit)? = null
 ) {
     when (orientation) {
@@ -86,7 +86,7 @@ fun HSash(
     left: @Composable BoxScope.() -> Unit,
     right: @Composable BoxScope.() -> Unit,
     sashData: SashData = rememberSashData(),
-    sashSize: Dp = 5.dp,
+    sashSize: Dp = 4.dp,
     onResize: ((SashData) -> Unit)? = null
 ) {
     LocalDensity.current.run {

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -28,7 +27,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.alchitry.labs.ui.theme.AlchitryColors
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
@@ -129,27 +127,18 @@ fun MenuBar(
         }
     }
     val requester = FocusRequester()
-
-    Surface(
-        Modifier.fillMaxWidth(),
-        color = AlchitryColors.current.MenuBarBackground,
-        contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
-        tonalElevation = 8.dp,
-        shadowElevation = 8.dp
-    ) {
-        Row(
-            Modifier
-                .focusable()
-                .focusRequester(requester)
-                .onFocusChanged {
-                    isActive.value = it.hasFocus
-                }
-                .focusTarget()
-                .pointerInput(Unit) { detectTapGestures { if (isActive.value) focusManger.clearFocus() else requester.requestFocus() } }
-        ) {
-            with(menuBarContext) {
-                content()
+    Row(
+        Modifier
+            .focusable()
+            .focusRequester(requester)
+            .onFocusChanged {
+                isActive.value = it.hasFocus
             }
+            .focusTarget()
+            .pointerInput(Unit) { detectTapGestures { if (isActive.value) focusManger.clearFocus() else requester.requestFocus() } }
+    ) {
+        with(menuBarContext) {
+            content()
         }
     }
 }

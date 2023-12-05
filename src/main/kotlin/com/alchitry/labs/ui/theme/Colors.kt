@@ -58,7 +58,7 @@ data object DarkAlchitryColors : AlchitryColors {
         onPrimary = Color.White,
         secondary = Color(0xFF4B4B41),
         onSecondary = Color.White,
-        background = Color(0xFF333333),
+        background = Color(0xFF424242),
         onBackground = Color.White,
         surface = Color(0xFF282828),
         onSurface = Color.White,

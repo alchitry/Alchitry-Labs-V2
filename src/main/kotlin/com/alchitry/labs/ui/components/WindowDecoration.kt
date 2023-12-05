@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
@@ -27,22 +26,29 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.FrameWindowScope
 import com.alchitry.labs.Env
+import com.alchitry.labs.ui.layout.LCR
 import com.alchitry.labs.ui.theme.AlchitryColors
 import java.awt.Frame
 import java.awt.event.WindowEvent
 
 @Composable
-fun FrameWindowScope.WindowDecoration() {
+fun FrameWindowScope.WindowDecoration(toolbar: (@Composable () -> Unit)? = null) {
     WindowDraggableArea {
         Surface(tonalElevation = 5.dp, modifier = Modifier.height(48.dp)) {
             Decorations(
-                content = {
-                    Image(
-                        painter = painterResource("icons/alchitry_icon.svg"),
-                        contentDescription = "Alchitry Logo",
-                        modifier = Modifier.size(45.dp).padding(start = 10.dp)
-                    )
-                    Text(window.title, Modifier.padding(start = 10.dp))
+                toolbar = {
+                    if (toolbar == null) {
+                        Image(
+                            painter = painterResource("icons/alchitry_icon.svg"),
+                            contentDescription = "Alchitry Logo",
+                            modifier = Modifier.padding(horizontal = 10.dp).size(35.dp)
+                        )
+                    } else {
+                        toolbar()
+                    }
+                },
+                title = {
+                    Text(window.title, Modifier.padding(horizontal = 10.dp))
                 },
                 buttons = {
                     WindowButton(
@@ -84,44 +90,29 @@ fun FrameWindowScope.WindowDecoration() {
 
 @Composable
 private fun FrameWindowScope.Decorations(
-    content: @Composable FrameWindowScope.() -> Unit,
+    toolbar: @Composable FrameWindowScope.() -> Unit,
+    title: @Composable FrameWindowScope.() -> Unit,
     buttons: @Composable FrameWindowScope.() -> Unit
 ) {
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         if (Env.isMac) {
-            Layout(
-                content = {
+            LCR(
+                left = {
                     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                         Row(horizontalArrangement = Arrangement.End) {
                             buttons()
                         }
                     }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        content()
-                    }
-                }
-            ) { measurables, constraints ->
-                val buttonPlaceable = measurables[0].measure(constraints)
-                val titlePlaceable = measurables[1].measure(constraints)
-
-                val width = if (constraints.hasBoundedWidth) {
-                    constraints.maxWidth
-                } else {
-                    buttonPlaceable.width + titlePlaceable.width
-                }
-
-                val height = buttonPlaceable.height.coerceAtLeast(titlePlaceable.height)
-
-                layout(width, constraints.maxHeight) {
-                    buttonPlaceable.placeRelative(0, height / 2 - buttonPlaceable.height / 2)
-                    val position = (width / 2 - titlePlaceable.width / 2).coerceAtLeast(buttonPlaceable.width)
-                    titlePlaceable.placeRelative(position, height / 2 - titlePlaceable.height / 2)
-                }
-            }
+                    toolbar()
+                },
+                center = { title() }
+            )
         } else {
-            content()
-            Spacer(Modifier.weight(1f))
-            buttons()
+            LCR(
+                left = { toolbar() },
+                center = { title() },
+                right = { buttons() }
+            )
         }
     }
 }

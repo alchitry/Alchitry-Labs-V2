@@ -17,6 +17,10 @@ const val PROJECT_VERSION = 4
 const val MIN_PROJECT_VERSION = 4
 
 fun Project.Companion.openXml(xmlFile: File): Project {
+    if (!xmlFile.exists()) {
+        error("The file ${xmlFile.path} does not exist!")
+    }
+
     if (!xmlFile.isFile || xmlFile.extension != "alp") {
         error("The file ${xmlFile.path} is not an Alchitry Labs project file (.alp)!")
     }
