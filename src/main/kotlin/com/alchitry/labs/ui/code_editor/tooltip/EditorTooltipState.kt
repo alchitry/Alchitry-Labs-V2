@@ -8,13 +8,11 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.window.rememberPopupPositionProviderAtPosition
 import com.alchitry.labs.ui.code_editor.CodeEditorState
 import com.alchitry.labs.ui.code_editor.EditorToken
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class EditorTooltipState(
-    val scope: CoroutineScope,
     val codeEditor: CodeEditorState,
 ) {
     var parentBounds by mutableStateOf(Rect.Zero)
@@ -32,7 +30,7 @@ class EditorTooltipState(
         if (activeToken != token)
             hide()
         job?.cancel()
-        job = scope.launch {
+        job = codeEditor.uiScope?.launch {
             delay(750)
             activeToken = token
             isVisible.animateTo(1f)
@@ -41,7 +39,7 @@ class EditorTooltipState(
 
     fun hide() {
         job?.cancel()
-        scope.launch {
+        codeEditor.uiScope?.launch {
             isVisible.animateTo(0f)
             activeToken = null
         }

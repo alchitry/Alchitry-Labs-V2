@@ -1,13 +1,11 @@
 package com.alchitry.labs.ui.code_editor
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.layout.LazyLayout
 import androidx.compose.foundation.lazy.layout.LazyLayoutItemProvider
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
@@ -33,122 +31,134 @@ import java.awt.Cursor
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CodeEditor(state: CodeEditorState = rememberCodeEditorState(remember { LucidTokenizer() })) {
+fun CodeEditor(
+    state: CodeEditorState = rememberCodeEditorState(remember { LucidTokenizer() }),
+    onSplit: (horizontal: Boolean) -> Unit
+) {
     state.clipboardManager = LocalClipboardManager.current
-    Box(contentAlignment = Alignment.TopStart) {
-        Canvas(
-            modifier = Modifier
-                .scrollable(state.scrollState, Orientation.Vertical, reverseDirection = true)
-                .fillMaxSize()
-        ) {
-            with(state.selectionManager) {
-                drawLineHighlight()
-            }
+    ContextMenuArea(
+        items = {
+            listOf(
+                ContextMenuItem("Split Horizontal") { onSplit(true) },
+                ContextMenuItem("Split Vertical") { onSplit(false) }
+            )
         }
+    ) {
+        Box(contentAlignment = Alignment.TopStart) {
+            Canvas(
+                modifier = Modifier
+                    .scrollable(state.scrollState, Orientation.Vertical, reverseDirection = true)
+                    .fillMaxSize()
+            ) {
+                with(state.selectionManager) {
+                    drawLineHighlight()
+                }
+            }
 
-        Row {
+            Row {
 
-            LazyLayout(
-                itemProvider = object : LazyLayoutItemProvider {
-                    override val itemCount: Int
-                        get() = state.lines.size
+                LazyLayout(
+                    itemProvider = object : LazyLayoutItemProvider {
+                        override val itemCount: Int
+                            get() = state.lines.size
 
-                    @Composable
-                    override fun Item(index: Int, key: Any) {
-                        val alpha =
-                            if (state.selectionManager.active && state.selectionManager.caret.line == index) 1f else 0.3f
-                        CompositionLocalProvider(
-                            LocalContentColor provides AlchitryColors.current.GutterForeground,
-                            LocalTextStyle provides AlchitryTypography.editor
-                        ) {
-                            // if the index is negative,
-                            // this means it is being used
-                            // to find the width the gutter should be
-                            // the value is the max number of digits,
-                            // so by using "8" we should be measuring the widest one
-                            // it is offset by -1 so that it will never be -1 as it is used as a flag by Compose
-                            val lineNumber = if (index < 0) "8".repeat(-(index + 1)) else (index + 1).toString()
-                            val density = LocalDensity.current
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    lineNumber,
-                                    textAlign = TextAlign.Right,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 10.dp)
-                                        .offset( // offset to make text centered
-                                            y = state.lineTopOffset.dp * density.density
-                                        )
-                                        .alpha(alpha)
-                                )
+                        @Composable
+                        override fun Item(index: Int, key: Any) {
+                            val alpha =
+                                if (state.selectionManager.active && state.selectionManager.caret.line == index) 1f else 0.3f
+                            CompositionLocalProvider(
+                                LocalContentColor provides AlchitryColors.current.GutterForeground,
+                                LocalTextStyle provides AlchitryTypography.editor
+                            ) {
+                                // if the index is negative,
+                                // this means it is being used
+                                // to find the width the gutter should be
+                                // the value is the max number of digits,
+                                // so by using "8" we should be measuring the widest one
+                                // it is offset by -1 so that it will never be -1 as it is used as a flag by Compose
+                                val lineNumber = if (index < 0) "8".repeat(-(index + 1)) else (index + 1).toString()
+                                val density = LocalDensity.current
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        lineNumber,
+                                        textAlign = TextAlign.Right,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 10.dp)
+                                            .offset( // offset to make text centered
+                                                y = state.lineTopOffset.dp * density.density
+                                            )
+                                            .alpha(alpha)
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    modifier = Modifier
+                        .scrollable(state.scrollState, Orientation.Vertical, reverseDirection = true)
+                ) { constraints ->
+                    with(state) {
+                        layout(constraints)
+                    }
+
+                    var y = -state.scrollState.value
+
+                    val placeables =
+                        state.lines.mapIndexedNotNull { lineNum, lineState ->
+                            val nextY = y + lineState.lineHeight
+
+                            val result = if (nextY > 0 && y < constraints.maxHeight) {
+                                val measured =
+                                    measure(lineNum, Constraints.fixed(state.gutterWidth, lineState.lineHeight))
+                                val yOffset = y + (lineState.lineHeight - (measured.maxOf { it.height })) / 2
+                                yOffset to measured
+                            } else null
+
+                            y = nextY
+                            result
+                        }
+
+                    layout(
+                        width = state.gutterWidth,
+                        height = constraints.maxHeight
+                    ) {
+                        placeables.forEach { p ->
+                            p.second.forEach {
+                                it.place(state.gutterWidth - it.width, p.first)
                             }
                         }
                     }
-                },
-                modifier = Modifier
-                    .scrollable(state.scrollState, Orientation.Vertical, reverseDirection = true)
-            ) { constraints ->
-                with(state) {
-                    layout(constraints)
                 }
 
-                var y = -state.scrollState.value
-
-                val placeables =
-                    state.lines.mapIndexedNotNull { lineNum, lineState ->
-                        val nextY = y + lineState.lineHeight
-
-                        val result = if (nextY > 0 && y < constraints.maxHeight) {
-                            val measured =
-                                measure(lineNum, Constraints.fixed(state.gutterWidth, lineState.lineHeight))
-                            val yOffset = y + (lineState.lineHeight - (measured.maxOf { it.height })) / 2
-                            yOffset to measured
-                        } else null
-
-                        y = nextY
-                        result
-                    }
-
-                layout(
-                    width = state.gutterWidth,
-                    height = constraints.maxHeight
+                val horizontalScroll = rememberScrollState()
+                Box(
+                    Modifier
+                        .scrollable(horizontalScroll, Orientation.Horizontal)
+                        .padding(start = 10.dp)
                 ) {
-                    placeables.forEach { p ->
-                        p.second.forEach {
-                            it.place(state.gutterWidth - it.width, p.first)
+                    state.subscribe(currentRecomposeScope)
+                    EditorTooltipArea(
+                        state = state.tooltipState,
+                        tooltip = {
+                            Text("Hovering: ${it.token.text}")
                         }
-                    }
-                }
-            }
-
-            val horizontalScroll = rememberScrollState()
-            Box(
-                Modifier
-                    .scrollable(horizontalScroll, Orientation.Horizontal)
-                    .padding(start = 10.dp)
-            ) {
-                state.subscribe(currentRecomposeScope)
-                EditorTooltipArea(
-                    state = state.tooltipState,
-                    tooltip = {
-                        Text("Hovering: ${it.token.text}")
-                    }
-                ) {
-                    Canvas(
-                        modifier = Modifier
-                            .scrollable(state.scrollState, Orientation.Vertical, reverseDirection = true)
-                            .fillMaxSize()
-                            .pointerHoverIcon(textCursor)
-                            .then(state.keyModifier())
-                            .then(state.tapModifier())
-
                     ) {
-                        with(state) {
-                            draw()
+                        Canvas(
+                            modifier = Modifier
+                                .scrollable(state.scrollState, Orientation.Vertical, reverseDirection = true)
+                                .fillMaxSize()
+                                .pointerHoverIcon(textCursor)
+                                .then(state.keyModifier())
+                                .then(state.tapModifier())
+
+                        ) {
+                            with(state) {
+                                draw()
+                            }
                         }
                     }
-                }
 
+                }
             }
         }
     }

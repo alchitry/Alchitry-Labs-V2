@@ -14,30 +14,34 @@ import androidx.compose.ui.unit.LayoutDirection
 @OptIn(InternalFoundationTextApi::class)
 class CodeLineState(
     val text: AnnotatedString,
-    val density: Density,
+    density: Density?,
     val highlights: MutableList<HighlightAnnotation>,
-    fontFamilyResolver: FontFamily.Resolver,
-    style: TextStyle
+    fontFamilyResolver: FontFamily.Resolver?,
+    style: TextStyle?
 ) {
     var layoutResult: TextLayoutResult? = null
     private var lastConstraints: Constraints? = null
     val lineHeight: Int get() = layoutResult?.size?.height ?: 0
 
     private val delegate by lazy {
-        TextDelegate(
-            text = text,
-            style = style,
-            density = density,
-            fontFamilyResolver = fontFamilyResolver
-        )
+        if (style != null && density != null && fontFamilyResolver != null) {
+            TextDelegate(
+                text = text,
+                style = style,
+                density = density,
+                fontFamilyResolver = fontFamilyResolver
+            )
+        } else {
+            null
+        }
     }
 
-    fun layout(constraints: Constraints): TextLayoutResult {
+    fun layout(constraints: Constraints): TextLayoutResult? {
         if (lastConstraints == constraints)
             layoutResult?.let { return it }
         lastConstraints = constraints
 
-        return delegate.layout(constraints, LayoutDirection.Ltr, layoutResult).also { layoutResult = it }
+        return delegate?.layout(constraints, LayoutDirection.Ltr, layoutResult).also { layoutResult = it }
     }
 
     context(DrawScope)

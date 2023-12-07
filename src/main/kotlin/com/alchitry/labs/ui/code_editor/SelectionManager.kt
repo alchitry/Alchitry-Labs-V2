@@ -11,16 +11,12 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.toOffset
 import com.alchitry.labs.ui.theme.AlchitryColors
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SelectionManager(
     private val editorState: CodeEditorState,
-    private val cursorColor: Color,
-    private val selectionColor: Color,
-    private val scope: CoroutineScope,
     private val onChange: () -> Unit
 ) {
     var active = false
@@ -211,7 +207,7 @@ class SelectionManager(
             val isTheLine = yPos <= y && bottomY >= y
             yPos = bottomY
             isTheLine
-        }.coerceIn(0, editorState.lines.size - 1)
+        }.coerceIn(0, (editorState.lines.size - 1).coerceAtLeast(0))
         val lineState = editorState.lines[line]
         val offset = lineState.layoutResult?.getOffsetForPosition(Offset(x, 0f)) ?: 0
         return TextPosition(line, offset)
@@ -233,7 +229,7 @@ class SelectionManager(
     private var blinkJob: Job? = null
     private fun launchBlinkCursor() {
         blinkJob?.cancel()
-        blinkJob = scope.launch {
+        blinkJob = editorState.uiScope?.launch {
             showCursor = true
             onChange()
             delay(1000)
@@ -246,7 +242,10 @@ class SelectionManager(
     }
 
     fun DrawScope.drawSelection() {
-        HighlightAnnotation(start.coerceAtMost(end)..end.coerceAtLeast(start), selectionColor).draw(editorState)
+        HighlightAnnotation(
+            start.coerceAtMost(end)..end.coerceAtLeast(start),
+            editorState.style?.selectionColor ?: Color.Transparent
+        ).draw(editorState)
     }
 
     fun DrawScope.drawLineHighlight() {
@@ -283,7 +282,7 @@ class SelectionManager(
 
         translate(top = -editorState.scrollState.value.toFloat()) {
             drawRect(
-                cursorColor,
+                editorState.style?.cursorColor ?: Color.Transparent,
                 topLeft = cursorRect.topLeft
                     .copy(y = cursorRect.topLeft.y + offset.y + margin)
                     .round()

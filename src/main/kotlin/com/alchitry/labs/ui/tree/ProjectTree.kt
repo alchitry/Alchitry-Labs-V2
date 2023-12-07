@@ -12,11 +12,13 @@ import androidx.compose.ui.Modifier
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.ui.fillMaxIntrinsic
 import com.alchitry.labs.ui.selection.SingleSelectionContext
+import com.alchitry.labs.windows.LocalWorkspace
 
 @Composable
 fun ProjectTree() {
     val project = Project.currentFlow.collectAsState().value ?: return
     val selectionContext = remember { SingleSelectionContext() }
+    val workspace = LocalWorkspace.current
 
     with(selectionContext) {
         Row(
@@ -28,8 +30,10 @@ fun ProjectTree() {
             Column(Modifier.fillMaxIntrinsic()) {
                 TreeSection(project.projectName, 0) {
                     TreeSection("Source Files", 1) {
-                        project.sourceFiles.forEach {
-                            TreeItem(it.name, 2)
+                        project.sourceFiles.sortedBy { it.name }.forEach {
+                            TreeItem(it.name, 2) {
+                                workspace.openFile(it.file)
+                            }
                         }
                     }
                 }

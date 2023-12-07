@@ -4,7 +4,6 @@ package com.alchitry.labs.ui.code_editor
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.lazy.layout.LazyLayoutMeasureScope
 import androidx.compose.foundation.text.*
 import androidx.compose.material3.LocalContentColor
@@ -43,6 +42,7 @@ import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTypography
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.log10
@@ -50,46 +50,50 @@ import kotlin.properties.Delegates
 
 @Composable
 fun rememberCodeEditorState(tokenizer: EditorTokenizer): CodeEditorState {
+    return remember(tokenizer) {
+        CodeEditorState(tokenizer)
+    }
+}
+
+@Composable
+private fun rememberCodeEditorStyle(): CodeEditorStyle {
     val density = LocalDensity.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
-    val scope = rememberCoroutineScope()
     val textColor = LocalTextStyle.current.color.takeOrElse {
         LocalContentColor.current
     }
-    val style = AlchitryTypography.editor.copy(color = textColor)
-    return remember(tokenizer) {
-        CodeEditorState(
-            tokenizer,
-            style,
+    val selectionColor = AlchitryColors.current.SelectionColor
+    return remember(density, textColor, fontFamilyResolver, selectionColor) {
+        CodeEditorStyle(
+            AlchitryTypography.editor.copy(color = textColor),
             density,
             fontFamilyResolver,
-            scope,
             textColor.copy(alpha = 0.7f),
-            AlchitryColors.current.SelectionColor
+            selectionColor
         )
     }
 }
 
 private val newLineRegex = Regex("(\\r\\n?)|\\n")
 
-class CodeEditorState(
-    private val tokenizer: EditorTokenizer,
-    private val style: TextStyle,
-    private val density: Density,
-    private val fontFamilyResolver: FontFamily.Resolver,
-    val scope: CoroutineScope,
-    cursorColor: Color,
-    selectionColor: Color
-) {
-    @OptIn(InternalFoundationTextApi::class)
-    val lineTopOffset: Float = TextDelegate(
-        text = AnnotatedString("123"),
-        style = style,
-        density = density,
-        fontFamilyResolver = fontFamilyResolver
-    ).layout(Constraints(), LayoutDirection.Ltr, null).size.height * -0.07f
+data class CodeEditorStyle(
+    val style: TextStyle,
+    val density: Density,
+    val fontFamilyResolver: FontFamily.Resolver,
+    val cursorColor: Color,
+    val selectionColor: Color
+)
 
-    val tooltipState = EditorTooltipState(scope, this)
+class CodeEditorState(
+    private val tokenizer: EditorTokenizer
+) {
+    var style: CodeEditorStyle? = null
+    var uiScope: CoroutineScope? = null
+    val scope = CoroutineScope(Dispatchers.Main)
+
+    var lineTopOffset: Float = 0f
+
+    val tooltipState = EditorTooltipState(this)
     val focusRequester = FocusRequester()
     val lines = ArrayList<CodeLineState>()
     private var gutterDigits = 0
@@ -109,9 +113,6 @@ class CodeEditorState(
 
     val selectionManager = SelectionManager(
         this,
-        cursorColor,
-        selectionColor,
-        scope,
         ::invalidate
     )
     private val undoManager = UndoManager(this, selectionManager)
@@ -185,6 +186,8 @@ class CodeEditorState(
      * Converts a screen space offset to the nearest token.
      */
     fun offsetToToken(offset: Offset, excludeRight: Boolean = false): EditorToken? {
+        if (lines.isEmpty())
+            return null
         val textPosition = screenOffsetToTextPosition(offset)
         if (excludeRight) {
             val line = lines[textPosition.line]
@@ -201,8 +204,26 @@ class CodeEditorState(
         return textPositionToToken(textPosition)
     }
 
+    @OptIn(InternalFoundationTextApi::class)
     @Composable
     internal fun subscribe(scope: RecomposeScope) {
+        val style = rememberCodeEditorStyle()
+        this.style = style
+        this.uiScope = rememberCoroutineScope()
+
+        lineTopOffset = remember(style) {
+            TextDelegate(
+                text = AnnotatedString("123"),
+                style = style.style,
+                density = style.density,
+                fontFamilyResolver = style.fontFamilyResolver
+            ).layout(Constraints(), LayoutDirection.Ltr, null).size.height * -0.07f
+        }
+
+        LaunchedEffect(style) {
+            refreshStyling()
+        }
+
         DisposableEffect(scope) {
             invalidator = {
                 scope.invalidate()
@@ -214,7 +235,7 @@ class CodeEditorState(
     }
 
     fun getText(): String {
-        return lines.map { it.text.text }.joinToString("\n")
+        return lines.joinToString("\n") { it.text.text }
     }
 
     fun onTextChange() {
@@ -234,7 +255,7 @@ class CodeEditorState(
         EditorSnapshot(lines.toImmutableList(), selectionManager.caret, selectionManager.start, selectionManager.end)
 
     internal fun newLineState(text: AnnotatedString) =
-        CodeLineState(text, density, mutableListOf(), fontFamilyResolver, style)
+        CodeLineState(text, style?.density, mutableListOf(), style?.fontFamilyResolver, style?.style)
 
     /**
      * Replaces the text covered by range with newText.
@@ -303,6 +324,17 @@ class CodeEditorState(
         onTextChange()
     }
 
+    private fun refreshStyling() {
+        val lines = this.lines.toImmutableList()
+        this.lines.clear()
+        lines.forEach {
+            this.lines.add(
+                newLineState(it.text)
+            )
+        }
+        onTextChange()
+    }
+
     fun lineHeight(line: Int): Int {
         return lines.getOrNull(line)?.lineHeight ?: 0
     }
@@ -336,7 +368,7 @@ class CodeEditorState(
             else -> return
         }
 
-        scope.launch {
+        uiScope?.launch {
             scrollState.animateScrollTo(destination)
         }
     }
@@ -437,7 +469,6 @@ class CodeEditorState(
                     selectionManager.onDrag(change.position)
                 }
             )
-            detectTapGestures()
         }
 
 

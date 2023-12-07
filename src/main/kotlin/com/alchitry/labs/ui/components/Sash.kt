@@ -33,8 +33,8 @@ data class SashSize(
     val firstWeight: Float get() = first / (first + second)
     val secondWeight: Float get() = second / (first + second)
 
-    val boundFirstWeight: Float get() = firstWeight.coerceIn(0.001f, 0.999f)
-    val boundSecondWeight: Float get() = secondWeight.coerceIn(0.001f, 0.999f)
+    val boundFirstWeight: Float get() = if (firstWeight.isNaN()) 0.5f else firstWeight.coerceIn(0.001f, 0.999f)
+    val boundSecondWeight: Float get() = if (secondWeight.isNaN()) 0.5f else secondWeight.coerceIn(0.001f, 0.999f)
 }
 
 class SashData(
@@ -54,7 +54,9 @@ class SashData(
 
     fun onResize(newSize: Float) {
         size = when (resizePriority) {
-            ResizePriority.EQUAL -> SashSize(newSize * size.second, newSize - size.first)
+            ResizePriority.EQUAL -> {
+                SashSize(newSize * size.boundFirstWeight, newSize * size.boundSecondWeight)
+            }
             ResizePriority.FIRST -> SashSize(newSize - size.second, size.second)
             ResizePriority.SECOND -> SashSize(size.first, newSize - size.first)
         }

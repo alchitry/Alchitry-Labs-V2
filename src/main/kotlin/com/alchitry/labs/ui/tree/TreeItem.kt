@@ -1,6 +1,7 @@
 package com.alchitry.labs.ui.tree
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,8 +13,8 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import com.alchitry.labs.ui.hiddenClickable
 import com.alchitry.labs.ui.selection.Selectable
 import com.alchitry.labs.ui.selection.SelectionContext
 import com.alchitry.labs.ui.theme.AlchitryColors
@@ -21,7 +22,8 @@ import com.alchitry.labs.ui.theme.AlchitryColors
 @Composable
 fun SelectionContext.TreeItem(
     title: String,
-    indentLevel: Int
+    indentLevel: Int,
+    onDoubleClick: () -> Unit,
 ) {
     val selectable = remember { Selectable() }
     val focusRequester = remember { FocusRequester() }
@@ -32,9 +34,16 @@ fun SelectionContext.TreeItem(
         .fillMaxWidth()
         .onFocusChanged { focused = it.hasFocus }
         .focusRequester(focusRequester)
-        .hiddenClickable {
-            requestSelection(selectable)
-            focusRequester.requestFocus()
+        .pointerInput(focusRequester) {
+            detectTapGestures(
+                onDoubleTap = {
+                    onDoubleClick()
+                },
+                onTap = {
+                    requestSelection(selectable)
+                    focusRequester.requestFocus()
+                },
+            )
         }
         .background(
             if (isSelected) (if (focused) AlchitryColors.current.Accent else LocalContentColor.current).copy(

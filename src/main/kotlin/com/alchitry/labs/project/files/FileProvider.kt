@@ -42,9 +42,16 @@ sealed class FileProvider {
             this::class.java.getResourceAsStream(resourcePath) ?: error("Invalid resource path: $resourcePath")
     }
 
-    fun getContents(): String {
+    fun readText(): String {
         return inputStream().use {
             String(it.readAllBytes())
+        }
+    }
+
+    fun writeText(text: String) {
+        when (this) {
+            is DiskFile -> file.writeText(text)
+            is ResourceFile -> error("Resource files are read-only!")
         }
     }
 }

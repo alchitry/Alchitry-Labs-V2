@@ -23,26 +23,41 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs.ui.theme.AlchitryColors
 
-class TabPanel {
+class TabPanel(parent: TabParent) : TabSection(parent) {
     private val tabs = mutableStateListOf<Tab>()
     private var activeTab by mutableStateOf<Tab?>(null)
 
     fun addTab(tab: Tab) {
         tabs.add(tab)
-        if (activeTab == null)
-            activeTab = tab
+        activeTab = tab
     }
 
+    fun splitHorizontal() {
+        val split = HorizontalSplit(parent, this, null)
+        parent.replaceTabSection(this, split)
+        parent = split
+    }
+
+    fun splitVertical() {
+        val split = VerticalSplit(parent, this, null)
+        parent.replaceTabSection(this, split)
+        parent = split
+    }
+
+    override fun getTabs(): List<Tab> = tabs.toList()
+
     @Composable
-    fun content(modifier: Modifier = Modifier) {
-        Surface(modifier) {
+    override fun content() {
+        Surface {
             Column {
                 Row(Modifier.fillMaxWidth()) {
                     tabs.forEach { Tab(it, activeTab === it, onClick = { activeTab = it }, onClose = {}) }
                 }
                 Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.background)
-                Box(Modifier.clipToBounds()) {
-                    activeTab?.content()
+                key(activeTab) {
+                    Box(Modifier.clipToBounds()) {
+                        activeTab?.content()
+                    }
                 }
             }
         }
