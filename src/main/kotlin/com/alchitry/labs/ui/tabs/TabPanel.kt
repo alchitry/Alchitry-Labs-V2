@@ -70,25 +70,30 @@ class TabPanel(parent: TabParent) : TabSection(parent) {
                     }
                     tabs.forEach { tab ->
                         key(tab) {
-                            Tab(
-                                tab,
-                                activeTab === tab,
-                                onClick = { activeTab = tab },
-                                onClose = {},
-                                onMoved = {
-                                    if (activeTab === tab) {
-                                        val idx = tabs.indexOf(tab) - 1
-                                        tabs.remove(tab)
-                                        activeTab = tabs.getOrNull(idx) ?: tabs.firstOrNull()
-                                    } else {
-                                        tabs.remove(tab)
+                            var dragging by remember { mutableStateOf(false) }
+                            Draggable(tab, onMoved = {
+                                if (activeTab === tab) {
+                                    val idx = tabs.indexOf(tab) - 1
+                                    tabs.remove(tab)
+                                    activeTab = tabs.getOrNull(idx) ?: tabs.firstOrNull()
+                                } else {
+                                    tabs.remove(tab)
+                                }
+                            }, onDragging = { dragging = it }) {
+                                Row {
+                                    Tab(
+                                        tab,
+                                        activeTab === tab,
+                                        dragging,
+                                        onClick = { activeTab = tab },
+                                        onClose = {},
+                                    )
+                                    DropZone(minimumSize = DpSize(width, TAB_HEIGHT)) {
+                                        tabs.add(tabs.indexOf(tab) + 1, it)
+                                        it.parent = this@TabPanel
+                                        activeTab = it
                                     }
                                 }
-                            )
-                            DropZone(minimumSize = DpSize(width, TAB_HEIGHT)) {
-                                tabs.add(tabs.indexOf(tab) + 1, it)
-                                it.parent = this@TabPanel
-                                activeTab = it
                             }
                         }
                     }
@@ -105,12 +110,12 @@ class TabPanel(parent: TabParent) : TabSection(parent) {
 }
 
 @Composable
-private fun DragAndDropContext<Tab>.Tab(
+private fun Tab(
     tab: Tab,
     active: Boolean,
+    dragging: Boolean,
     onClick: () -> Unit,
     onClose: () -> Unit,
-    onMoved: () -> Unit
 ) {
     var hovering by remember { mutableStateOf(false) }
     val hoverInteraction = remember { MutableInteractionSource() }
@@ -122,58 +127,61 @@ private fun DragAndDropContext<Tab>.Tab(
             }
         }
     }
-
-    var dragging by remember { mutableStateOf(false) }
-    Draggable(tab, onMoved = onMoved, onDragging = { dragging = it }) {
-        Surface(
+    Surface(
+        Modifier
+            .hoverable(hoverInteraction)
+            .clickable(
+                onClick = onClick,
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() })
+    ) {
+        Box(
             Modifier
+                .height(TAB_HEIGHT)
                 .background(
-                    if (hovering || dragging) MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp) else MaterialTheme.colorScheme.surfaceColorAtElevation(
-                        0.dp
-                    )
-                )
-                .hoverable(hoverInteraction)
-                .clickable(
-                    onClick = onClick,
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() })
+                    if (hovering || dragging)
+                        MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp)
+                    else
+                        MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp)
+                ), contentAlignment = Alignment.Center
         ) {
-            Box(Modifier.height(TAB_HEIGHT), contentAlignment = Alignment.Center) {
-                Row(
-                    Modifier
-                        .padding(8.dp)
-                        .alpha(if (hovering) 1f else 0.8f),
-                    horizontalArrangement = Arrangement.spacedBy(3.dp)
+            Row(
+                Modifier
+                    .padding(8.dp)
+                    .alpha(if (hovering || dragging) 1f else 0.8f),
+                horizontalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                tab.label()
+                val alpha by animateValueAsState(
+                    if (hovering || dragging || active) 0.7f else 0f,
+                    Float.VectorConverter
+                )
+                Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .padding(2.dp)
+                        .clip(CircleShape)
+                        .clickable(
+                            onClick = onClose,
+                            role = Role.Button,
+                        )
+                        .alpha(alpha),
+                    contentAlignment = Alignment.Center
                 ) {
-                    tab.label()
-                    val alpha by animateValueAsState(if (hovering || active) 0.7f else 0f, Float.VectorConverter)
-                    Box(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .padding(2.dp)
-                            .clip(CircleShape)
-                            .clickable(
-                                onClick = onClose,
-                                role = Role.Button,
-                            )
-                            .alpha(alpha),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painterResource("icons/close.svg"),
-                            "Close",
-                            modifier = Modifier.matchParentSize().padding(4.dp)
-                        )
-                    }
+                    Icon(
+                        painterResource("icons/close.svg"),
+                        "Close",
+                        modifier = Modifier.matchParentSize().padding(4.dp)
+                    )
                 }
-                if (active) {
-                    Box(Modifier.matchParentSize()) {
-                        Divider(
-                            Modifier.align(Alignment.BottomCenter),
-                            color = AlchitryColors.current.Accent,
-                            thickness = 2.dp
-                        )
-                    }
+            }
+            if (active) {
+                Box(Modifier.matchParentSize()) {
+                    Divider(
+                        Modifier.align(Alignment.BottomCenter),
+                        color = AlchitryColors.current.Accent,
+                        thickness = 2.dp
+                    )
                 }
             }
         }
