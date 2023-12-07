@@ -8,23 +8,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
 import com.alchitry.labs.Settings
+import com.alchitry.labs.project.Project
 import com.alchitry.labs.ui.components.*
 import com.alchitry.labs.ui.main.Console
 import com.alchitry.labs.ui.theme.AlchitryTheme
 import com.alchitry.labs.ui.tree.ProjectTree
 import com.alchitry.labs.workspace.Workspace
+import java.io.File
 
-val LocalWorkspace = compositionLocalOf<Workspace> { error("Workspace not set!") }
+val LocalWorkspace = staticCompositionLocalOf<Workspace> { error("Workspace not set!") }
 
 @Composable
 fun ApplicationScope.labsWindow() {
@@ -35,9 +34,18 @@ fun ApplicationScope.labsWindow() {
         minHeight = 500.dp,
         onClose = {
             Settings.labsWindowState = it
+            Settings.openProject = Project.current?.projectFile?.absolutePath
             Settings.commit()
         }
     ) {
+        LaunchedEffect(Unit) {
+            Settings.openProject?.let {
+                if (Project.current == null) {
+                    Project.openProject(File(it))
+                }
+            }
+        }
+
         val workspace = remember { Workspace() }
         CompositionLocalProvider(LocalWorkspace provides workspace) {
             AlchitryTheme {

@@ -15,11 +15,13 @@ interface Tab {
     fun content()
 
     fun onClose(): Boolean
+
+    var parent: TabPanel
 }
 
 class FileTab(
-    private val file: FileProvider,
-    var parent: TabPanel
+    val file: FileProvider,
+    override var parent: TabPanel
 ) : Tab {
     private val codeEditorState = CodeEditorState(LucidTokenizer())
 

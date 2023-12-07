@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.alchitry.labs.ui.components.HSash
 import com.alchitry.labs.ui.components.VSash
+import com.alchitry.labs.ui.drag_and_drop.DragAndDropContext
+import com.alchitry.labs.ui.drag_and_drop.DragAndDropZone
 
 class TabManager : TabParent {
     private var tabSection by mutableStateOf<TabSection>(TabPanel(this))
@@ -22,20 +24,28 @@ class TabManager : TabParent {
         }
     }
 
+    override fun getTabs(): List<Tab> {
+        return tabSection.getTabs()
+    }
+
     @Composable
     fun content() {
-        tabSection.content()
+        DragAndDropZone {
+            tabSection.content()
+        }
     }
 }
 
 sealed interface TabParent {
     fun replaceTabSection(original: TabSection, new: TabSection)
     fun activeTabPanel(): TabPanel
+    fun getTabs(): List<Tab>
 }
 
 sealed class TabSection(protected var parent: TabParent) {
     abstract fun getTabs(): List<Tab>
 
+    context(DragAndDropContext<Tab>)
     @Composable
     abstract fun content()
 }
@@ -50,6 +60,7 @@ class HorizontalSplit(
 
     override fun getTabs(): List<Tab> = left.getTabs() + right.getTabs()
 
+    context(DragAndDropContext<Tab>)
     @Composable
     override fun content() {
         HSash(left = { left.content() }, right = { right.content() })
@@ -82,6 +93,7 @@ class VerticalSplit(
 
     override fun getTabs(): List<Tab> = top.getTabs() + bottom.getTabs()
 
+    context(DragAndDropContext<Tab>)
     @Composable
     override fun content() {
         VSash(top = { top.content() }, bottom = { bottom.content() })
