@@ -21,9 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.alchitry.labs.ui.drag_and_drop.DragAndDropContext
-import com.alchitry.labs.ui.drag_and_drop.Draggable
-import com.alchitry.labs.ui.drag_and_drop.DropZone
+import com.alchitry.labs.ui.drag_and_drop.*
 import com.alchitry.labs.ui.theme.AlchitryColors
 
 val TAB_HEIGHT = 45.dp
@@ -37,18 +35,6 @@ class TabPanel(parent: TabParent) : TabSection(parent) {
         activeTab = tab
     }
 
-    fun splitHorizontal() {
-        val split = HorizontalSplit(parent, this, null)
-        parent.replaceTabSection(this, split)
-        parent = split
-    }
-
-    fun splitVertical() {
-        val split = VerticalSplit(parent, this, null)
-        parent.replaceTabSection(this, split)
-        parent = split
-    }
-
     fun focusTab(tab: Tab) {
         if (tabs.contains(tab))
             activeTab = tab
@@ -56,52 +42,109 @@ class TabPanel(parent: TabParent) : TabSection(parent) {
 
     override fun getTabs(): List<Tab> = tabs.toList()
 
+    private fun removeTab(tab: Tab) {
+        if (activeTab === tab) {
+            val idx = tabs.indexOf(tab) - 1
+            tabs.remove(tab)
+            activeTab = tabs.getOrNull(idx) ?: tabs.firstOrNull()
+        } else {
+            tabs.remove(tab)
+        }
+    }
+
+    private fun closeIfEmpty() {
+        if (tabs.isEmpty()) {
+            parent.replaceTabSection(this, null)
+        }
+    }
+
+    private fun addTab(tab: Tab, index: Int = tabs.size) {
+        tabs.add(index, tab)
+        tab.parent = this@TabPanel
+        activeTab = tab
+    }
+
     context(DragAndDropContext<Tab>)
     @Composable
     override fun content() {
-        Surface {
-            Column {
-                Row(Modifier.fillMaxWidth().height(TAB_HEIGHT)) {
-                    val width = LocalDensity.current.run { 1.toDp() }
-                    DropZone(minimumSize = DpSize(width, TAB_HEIGHT)) {
-                        tabs.add(0, it)
-                        it.parent = this@TabPanel
-                        activeTab = it
-                    }
-                    tabs.forEach { tab ->
-                        key(tab) {
-                            var dragging by remember { mutableStateOf(false) }
-                            Draggable(tab, onMoved = {
-                                if (activeTab === tab) {
-                                    val idx = tabs.indexOf(tab) - 1
-                                    tabs.remove(tab)
-                                    activeTab = tabs.getOrNull(idx) ?: tabs.firstOrNull()
-                                } else {
-                                    tabs.remove(tab)
-                                }
-                            }, onDragging = { dragging = it }) {
-                                Row {
-                                    Tab(
-                                        tab,
-                                        activeTab === tab,
-                                        dragging,
-                                        onClick = { activeTab = tab },
-                                        onClose = {},
-                                    )
-                                    DropZone(minimumSize = DpSize(width, TAB_HEIGHT)) {
-                                        tabs.add(tabs.indexOf(tab) + 1, it)
-                                        it.parent = this@TabPanel
-                                        activeTab = it
+        key(this) {
+            Surface {
+                Column {
+                    Row(Modifier.fillMaxWidth().height(TAB_HEIGHT)) {
+                        val width = LocalDensity.current.run { 1.toDp() }
+                        DropZone(minimumSize = DpSize(width, TAB_HEIGHT)) {
+                            addTab(it, 0)
+                        }
+                        tabs.forEach { tab ->
+                            key(tab) {
+                                var dragging by remember { mutableStateOf(false) }
+                                Draggable(tab, onMoved = {
+                                    removeTab(tab)
+                                }, onDragging = { dragging = it }) {
+                                    Row {
+                                        Tab(
+                                            tab,
+                                            activeTab === tab,
+                                            dragging,
+                                            onClick = { activeTab = tab },
+                                            onClose = {
+                                                tab.onClose()
+                                                removeTab(tab)
+                                                closeIfEmpty()
+                                            },
+                                        )
+                                        DropZone(minimumSize = DpSize(width, TAB_HEIGHT)) {
+                                            addTab(it, tabs.indexOf(tab) + 1)
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
-                Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.background)
-                key(activeTab) {
-                    Box(Modifier.clipToBounds()) {
-                        activeTab?.content()
+                    Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.background)
+
+                    PanelDropContainer(
+                        onDropped = { tab, region ->
+                            if (tabs.isEmpty()) {
+                                addTab(tab)
+                                return@PanelDropContainer
+                            }
+                            val parent = parent
+                            when (region) {
+                                DropRegion.TOP -> {
+                                    val split = VerticalSplit(parent, null, this@TabPanel)
+                                    parent.replaceTabSection(this@TabPanel, split)
+                                    (split.top as TabPanel).addTab(tab)
+                                }
+
+                                DropRegion.RIGHT -> {
+                                    val split = HorizontalSplit(parent, this@TabPanel, null)
+                                    parent.replaceTabSection(this@TabPanel, split)
+                                    (split.right as TabPanel).addTab(tab)
+                                }
+
+                                DropRegion.BOTTOM -> {
+                                    val split = VerticalSplit(parent, this@TabPanel, null)
+                                    parent.replaceTabSection(this@TabPanel, split)
+                                    (split.bottom as TabPanel).addTab(tab)
+                                }
+
+                                DropRegion.LEFT -> {
+                                    val split = HorizontalSplit(parent, null, this@TabPanel)
+                                    parent.replaceTabSection(this@TabPanel, split)
+                                    (split.left as TabPanel).addTab(tab)
+                                }
+
+                                DropRegion.CENTER -> addTab(tab)
+                            }
+                        },
+                        onDropEnd = ::closeIfEmpty
+                    ) {
+                        key(activeTab) {
+                            Box(Modifier.clipToBounds()) {
+                                activeTab?.content()
+                            }
+                        }
                     }
                 }
             }

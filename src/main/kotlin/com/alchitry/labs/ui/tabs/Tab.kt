@@ -36,17 +36,12 @@ class FileTab(
 
     @Composable
     override fun content() {
-        CodeEditor(codeEditorState) { horizontal ->
-            if (horizontal) {
-                parent.splitHorizontal()
-            } else {
-                parent.splitVertical()
-            }
-        }
+        CodeEditor(codeEditorState)
     }
 
     override fun onClose(): Boolean {
-        file.writeText(codeEditorState.getText())
+        if (file is FileProvider.DiskFile)
+            file.writeText(codeEditorState.getText())
         return true
     }
 

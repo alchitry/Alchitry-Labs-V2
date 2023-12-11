@@ -1,9 +1,6 @@
 package com.alchitry.labs.ui.tabs
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import com.alchitry.labs.ui.components.HSash
 import com.alchitry.labs.ui.components.VSash
 import com.alchitry.labs.ui.drag_and_drop.DragAndDropContext
@@ -12,9 +9,14 @@ import com.alchitry.labs.ui.drag_and_drop.DragAndDropZone
 class TabManager : TabParent {
     private var tabSection by mutableStateOf<TabSection>(TabPanel(this))
 
-    override fun replaceTabSection(original: TabSection, new: TabSection) {
-        if (original === tabSection)
-            tabSection = new
+    override fun replaceTabSection(original: TabSection, new: TabSection?) {
+        if (new == null) {
+            return
+        }
+        if (original !== tabSection)
+            error("original didn't match section")
+        tabSection = new
+        new.parent = this
     }
 
     override fun activeTabPanel(): TabPanel {
@@ -30,19 +32,21 @@ class TabManager : TabParent {
 
     @Composable
     fun content() {
-        DragAndDropZone {
-            tabSection.content()
+        key(this) {
+            DragAndDropZone {
+                tabSection.content()
+            }
         }
     }
 }
 
 sealed interface TabParent {
-    fun replaceTabSection(original: TabSection, new: TabSection)
+    fun replaceTabSection(original: TabSection, new: TabSection?)
     fun activeTabPanel(): TabPanel
     fun getTabs(): List<Tab>
 }
 
-sealed class TabSection(protected var parent: TabParent) {
+sealed class TabSection(var parent: TabParent) {
     abstract fun getTabs(): List<Tab>
 
     context(DragAndDropContext<Tab>)
@@ -55,24 +59,43 @@ class HorizontalSplit(
     left: TabSection?,
     right: TabSection?
 ) : TabSection(parent), TabParent {
-    private var left by mutableStateOf(left ?: TabPanel(this))
-    private var right by mutableStateOf(right ?: TabPanel(this))
+    var left by mutableStateOf(left ?: TabPanel(this))
+    var right by mutableStateOf(right ?: TabPanel(this))
+
+    init {
+        left?.parent = this
+        right?.parent = this
+    }
 
     override fun getTabs(): List<Tab> = left.getTabs() + right.getTabs()
 
     context(DragAndDropContext<Tab>)
     @Composable
     override fun content() {
-        HSash(left = { left.content() }, right = { right.content() })
+        key(this) {
+            HSash(left = { left.content() }, right = { right.content() })
+        }
     }
 
-    override fun replaceTabSection(original: TabSection, new: TabSection) {
+    override fun replaceTabSection(original: TabSection, new: TabSection?) {
+        if (new == null) {
+            if (original === left)
+                parent.replaceTabSection(this, right)
+            else if (original === right)
+                parent.replaceTabSection(this, left)
+            return
+        }
+
+        new.parent = this
         if (original === left) {
             left = new
             return
         }
-        if (original === right)
+        if (original === right) {
             right = new
+            return
+        }
+        error("original didn't match left or right")
     }
 
     override fun activeTabPanel(): TabPanel {
@@ -88,24 +111,43 @@ class VerticalSplit(
     top: TabSection?,
     bottom: TabSection?
 ) : TabSection(parent), TabParent {
-    private var top by mutableStateOf(top ?: TabPanel(this))
-    private var bottom by mutableStateOf(bottom ?: TabPanel(this))
+    var top by mutableStateOf(top ?: TabPanel(this))
+    var bottom by mutableStateOf(bottom ?: TabPanel(this))
+
+    init {
+        top?.parent = this
+        bottom?.parent = this
+    }
 
     override fun getTabs(): List<Tab> = top.getTabs() + bottom.getTabs()
 
     context(DragAndDropContext<Tab>)
     @Composable
     override fun content() {
-        VSash(top = { top.content() }, bottom = { bottom.content() })
+        key(this) {
+            VSash(top = { top.content() }, bottom = { bottom.content() })
+        }
     }
 
-    override fun replaceTabSection(original: TabSection, new: TabSection) {
+    override fun replaceTabSection(original: TabSection, new: TabSection?) {
+        if (new == null) {
+            if (original === top)
+                parent.replaceTabSection(this, bottom)
+            else if (original === bottom)
+                parent.replaceTabSection(this, top)
+            return
+        }
+
+        new.parent = this
         if (original === top) {
             top = new
             return
         }
-        if (original === bottom)
+        if (original === bottom) {
             bottom = new
+            return
+        }
+        error("original didn't match top or bottom")
     }
 
     override fun activeTabPanel(): TabPanel {

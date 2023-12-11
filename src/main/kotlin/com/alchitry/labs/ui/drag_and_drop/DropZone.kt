@@ -42,6 +42,7 @@ fun <T> DragAndDropContext<T>.DropZone(
     minimumSize: DpSize,
     dropMargin: Dp = 20.dp,
     content: @Composable () -> Unit = {},
+    onDropEnd: () -> Unit = {},
     onDropped: (T) -> Unit
 ) {
     var dragBounds by remember { mutableStateOf(Rect.Zero) }
@@ -126,6 +127,7 @@ fun <T> DragAndDropContext<T>.DropZone(
                     scope.launch {
                         animatedSize.snapTo(IntSize.Zero)
                     }
+                    onDropEnd()
                 }
 
                 override fun getBounds(): Rect {
