@@ -1,15 +1,16 @@
 package com.alchitry.labs.ui.main
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.drag
-import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import com.alchitry.labs.ui.theme.AlchitryTypography
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -84,21 +86,23 @@ object Console {
                 scrollToIdx = -1
             }
         }
-        Box(Modifier.fillMaxSize()) {
-            SelectionContainer {
-                LazyColumn(
-                    state = lazyListState,
-                    contentPadding = PaddingValues(10.dp),
-                    modifier = Modifier.fillMaxWidth(1f - scale)
-                ) {
-                    items(content) {
-                        Text(it)
+        CompositionLocalProvider(LocalTextStyle provides AlchitryTypography.editor) {
+            Box(Modifier.fillMaxSize()) {
+                SelectionContainer {
+                    LazyColumn(
+                        state = lazyListState,
+                        contentPadding = PaddingValues(10.dp),
+                        modifier = Modifier.fillMaxWidth(1f - scale)
+                    ) {
+                        items(content) {
+                            Text(it)
+                        }
                     }
                 }
-            }
 
-            LazyListMiniScrollBar(lazyListState, Modifier.fillMaxWidth(scale).align(Alignment.TopEnd)) {
-                MiniText(content, scale)
+                LazyListMiniScrollBar(lazyListState, Modifier.fillMaxWidth(scale).align(Alignment.TopEnd)) {
+                    MiniText(content, scale)
+                }
             }
         }
     }
@@ -171,14 +175,12 @@ fun MiniScrollBar(
         content = {
             Box(
                 Modifier.pointerInput(Unit) {
-                    forEachGesture {
-                        awaitPointerEventScope {
-                            val down = awaitFirstDown()
-                            down.consume()
-                            val offsetLoc = down.position.y
-                            val scrollPercent = (offsetLoc / miniTextHeight - scrollAmount.second / 2).coerceIn(0f, 1f)
-                            onScroll(scrollPercent, true)
-                        }
+                    awaitEachGesture {
+                        val down = awaitFirstDown()
+                        down.consume()
+                        val offsetLoc = down.position.y
+                        val scrollPercent = (offsetLoc / miniTextHeight - scrollAmount.second / 2).coerceIn(0f, 1f)
+                        onScroll(scrollPercent, true)
                     }
                 }
             ) {
@@ -190,18 +192,16 @@ fun MiniScrollBar(
                     .background(Color.White)
                     .fillMaxSize()
                     .pointerInput(Unit) {
-                        forEachGesture {
-                            awaitPointerEventScope {
-                                val down = awaitFirstDown()
-                                down.consume()
-                                var scrollPercent = scrollAmount.first
-                                drag(down.id) {
-                                    val visibleBoxSize = miniTextHeight * scrollAmount.second
-                                    val change =
-                                        (it.positionChange().y / (actualHeight - visibleBoxSize)) * (1f - scrollAmount.second)
-                                    scrollPercent += change
-                                    onScroll(scrollPercent, false)
-                                }
+                        awaitEachGesture {
+                            val down = awaitFirstDown()
+                            down.consume()
+                            var scrollPercent = scrollAmount.first
+                            drag(down.id) {
+                                val visibleBoxSize = miniTextHeight * scrollAmount.second
+                                val change =
+                                    (it.positionChange().y / (actualHeight - visibleBoxSize)) * (1f - scrollAmount.second)
+                                scrollPercent += change
+                                onScroll(scrollPercent, false)
                             }
                         }
                     }
