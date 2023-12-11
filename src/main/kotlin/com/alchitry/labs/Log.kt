@@ -18,6 +18,7 @@ import java.io.FileDescriptor
 import java.io.FileOutputStream
 import java.io.PrintStream
 import java.time.Duration
+import java.util.*
 import kotlin.math.roundToInt
 
 object Log {
@@ -51,20 +52,33 @@ object Log {
         }
     }
 
-    private fun String.withStyle(style: SpanStyle?): AnnotatedString = buildAnnotatedString {
-        if (style != null)
-            withStyle(style) innerLoop@{
-                append(this@withStyle)
+    fun print(message: AnnotatedString) {
+        if (Env.isLabs)
+            Console.append(message)
+        if (Env.isLoader)
+            loaderStatus = if (message.endsWith("\n"))
+                message.subSequence(0, message.length - 1)
+            else
+                message
+
+        val styles = LinkedList(message.spanStyles.sortedBy { it.start })
+        var currentIdx = 0
+        while (styles.isNotEmpty()) {
+            val style = styles.pop()
+            val range = currentIdx..<style.start
+            if (!range.isEmpty()) {
+                basicPrint(message.substring(range), null)
             }
-        else append(this@withStyle)
+            basicPrint(message.substring(style.start..<style.end), style.item)
+            currentIdx = style.end
+        }
+        val range = currentIdx..<message.length
+        if (!range.isEmpty()) {
+            basicPrint(message.substring(range), null)
+        }
     }
 
-    fun print(message: Any?, style: SpanStyle? = null) {
-        if (Env.isLabs)
-            Console.append(message.toString(), style)
-        if (Env.isLoader)
-            loaderStatus = message.toString().replace("\n", "").withStyle(style)
-
+    private fun basicPrint(message: String, style: SpanStyle?) {
         if (style != null) {
             var ansi = ansi()
             if (style.fontWeight?.weight?.let { it > 400 } == true) {
@@ -82,6 +96,18 @@ object Log {
         } else {
             kotlin.io.print(message)
         }
+    }
+
+    fun print(message: Any?, style: SpanStyle? = null) {
+        print(buildAnnotatedString {
+            if (style != null) {
+                withStyle(style) {
+                    append(message.toString())
+                }
+            } else {
+                append(message.toString())
+            }
+        })
     }
 
     fun printlnError(message: Any?, throwable: Throwable? = null) {

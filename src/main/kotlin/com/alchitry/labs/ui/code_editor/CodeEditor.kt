@@ -133,8 +133,8 @@ fun CodeEditor(
                 state.subscribe(currentRecomposeScope)
                 EditorTooltipArea(
                     state = state.tooltipState,
-                    tooltip = {
-                        Text("Hovering: ${it.token.text}")
+                    tooltip = { notation ->
+                        notation.message?.let { Text(it) }
                     }
                 ) {
                     Canvas(

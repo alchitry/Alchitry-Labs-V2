@@ -32,11 +32,12 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
+import com.alchitry.labs.parsers.errors.Notation
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.ui.code_editor.styles.CodeStyler
 import com.alchitry.labs.ui.code_editor.styles.EditorTokenizer
 import com.alchitry.labs.ui.code_editor.styles.lucid.LucidErrorChecker
-import com.alchitry.labs.ui.code_editor.tooltip.EditorTooltipState
+import com.alchitry.labs.ui.code_editor.tooltip.NotationTooltipProvider
 import com.alchitry.labs.ui.gestures.detectEditorActions
 import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTypography
@@ -93,7 +94,8 @@ class CodeEditorState(
 
     var lineTopOffset: Float = 0f
 
-    val tooltipState = EditorTooltipState(this)
+    val tooltipState = NotationTooltipProvider(this)
+    val notations = mutableListOf<Notation>()
     val focusRequester = FocusRequester()
     val lines = ArrayList<CodeLineState>()
     private var gutterDigits = 0
@@ -161,7 +163,7 @@ class CodeEditorState(
 
     private fun screenToTextOffset(offset: Offset) = Offset(offset.x, offset.y + scrollState.value)
 
-    private fun screenOffsetToTextPosition(offset: Offset): TextPosition {
+    fun screenOffsetToTextPosition(offset: Offset): TextPosition {
         val textOffset = screenToTextOffset(offset)
         if (lines.isEmpty())
             return TextPosition(0, 0)

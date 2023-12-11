@@ -30,6 +30,10 @@ class TabManager : TabParent {
         return tabSection.getTabs()
     }
 
+    override fun setActiveSection(tab: TabSection) {
+        check(tab === tabSection) { "setActiveSection called with mismatch tab!" }
+    }
+
     @Composable
     fun content() {
         key(this) {
@@ -44,6 +48,7 @@ sealed interface TabParent {
     fun replaceTabSection(original: TabSection, new: TabSection?)
     fun activeTabPanel(): TabPanel
     fun getTabs(): List<Tab>
+    fun setActiveSection(tab: TabSection)
 }
 
 sealed class TabSection(var parent: TabParent) {
@@ -54,20 +59,63 @@ sealed class TabSection(var parent: TabParent) {
     abstract fun content()
 }
 
+abstract class Split(
+    parent: TabParent,
+    first: TabSection?,
+    second: TabSection?
+) : TabSection(parent), TabParent {
+    var first by mutableStateOf(first ?: TabPanel(this))
+    var second by mutableStateOf(second ?: TabPanel(this))
+    private var active: TabSection = this.first
+
+    init {
+        first?.parent = this
+        second?.parent = this
+    }
+
+    override fun getTabs(): List<Tab> = first.getTabs() + second.getTabs()
+
+    override fun replaceTabSection(original: TabSection, new: TabSection?) {
+        if (new == null) {
+            if (original === first)
+                parent.replaceTabSection(this, second)
+            else if (original === second)
+                parent.replaceTabSection(this, first)
+            return
+        }
+
+        new.parent = this
+        if (original === first) {
+            first = new
+            return
+        }
+        if (original === second) {
+            second = new
+            return
+        }
+        error("original didn't match first or second")
+    }
+
+    override fun setActiveSection(tab: TabSection) {
+        check(tab === first || tab === second) { "setActive called with a tab that doesn't belong!" }
+        active = tab
+    }
+
+    override fun activeTabPanel(): TabPanel {
+        return when (val section = active) {
+            is TabParent -> section.activeTabPanel()
+            is TabPanel -> section
+        }
+    }
+}
+
 class HorizontalSplit(
     parent: TabParent,
     left: TabSection?,
     right: TabSection?
-) : TabSection(parent), TabParent {
-    var left by mutableStateOf(left ?: TabPanel(this))
-    var right by mutableStateOf(right ?: TabPanel(this))
-
-    init {
-        left?.parent = this
-        right?.parent = this
-    }
-
-    override fun getTabs(): List<Tab> = left.getTabs() + right.getTabs()
+) : Split(parent, left, right) {
+    var left by this::first
+    var right by this::second
 
     context(DragAndDropContext<Tab>)
     @Composable
@@ -76,84 +124,21 @@ class HorizontalSplit(
             HSash(left = { left.content() }, right = { right.content() })
         }
     }
-
-    override fun replaceTabSection(original: TabSection, new: TabSection?) {
-        if (new == null) {
-            if (original === left)
-                parent.replaceTabSection(this, right)
-            else if (original === right)
-                parent.replaceTabSection(this, left)
-            return
-        }
-
-        new.parent = this
-        if (original === left) {
-            left = new
-            return
-        }
-        if (original === right) {
-            right = new
-            return
-        }
-        error("original didn't match left or right")
-    }
-
-    override fun activeTabPanel(): TabPanel {
-        return when (val section = left) { // TODO: keep track of last used panel
-            is TabParent -> section.activeTabPanel()
-            is TabPanel -> section
-        }
-    }
 }
 
 class VerticalSplit(
     parent: TabParent,
     top: TabSection?,
     bottom: TabSection?
-) : TabSection(parent), TabParent {
-    var top by mutableStateOf(top ?: TabPanel(this))
-    var bottom by mutableStateOf(bottom ?: TabPanel(this))
-
-    init {
-        top?.parent = this
-        bottom?.parent = this
-    }
-
-    override fun getTabs(): List<Tab> = top.getTabs() + bottom.getTabs()
+) : Split(parent, top, bottom) {
+    var top by this::first
+    var bottom by this::second
 
     context(DragAndDropContext<Tab>)
     @Composable
     override fun content() {
         key(this) {
             VSash(top = { top.content() }, bottom = { bottom.content() })
-        }
-    }
-
-    override fun replaceTabSection(original: TabSection, new: TabSection?) {
-        if (new == null) {
-            if (original === top)
-                parent.replaceTabSection(this, bottom)
-            else if (original === bottom)
-                parent.replaceTabSection(this, top)
-            return
-        }
-
-        new.parent = this
-        if (original === top) {
-            top = new
-            return
-        }
-        if (original === bottom) {
-            bottom = new
-            return
-        }
-        error("original didn't match top or bottom")
-    }
-
-    override fun activeTabPanel(): TabPanel {
-        return when (val section = top) { // TODO: keep track of last used panel
-            is TabParent -> section.activeTabPanel()
-            is TabPanel -> section
         }
     }
 }

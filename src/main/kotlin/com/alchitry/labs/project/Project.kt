@@ -63,17 +63,23 @@ data class Project(
         }
     }
 
-    suspend fun build(): Boolean {
+    suspend fun check(): ProjectContext? {
         val errorManger = ErrorManager()
         val context = buildContext(errorManger)
         val topModule = context?.top
         if (context == null || topModule == null) {
             Log.printlnError("Failed to build project context!")
-            Log.print(errorManger.getReport(), AlchitryColors.current.Error)
-            return false
+            Log.print(errorManger.getReport())
+            return null
         }
 
         Log.print(errorManger.getReport())
+        return context
+    }
+
+    suspend fun build(): Boolean {
+        val context = check() ?: return false
+        val topModule = context.top ?: return false
 
         val sourceFiles = try {
             context.convertToVerilog()

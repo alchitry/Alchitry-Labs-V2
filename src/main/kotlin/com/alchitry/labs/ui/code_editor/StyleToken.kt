@@ -1,10 +1,10 @@
 package com.alchitry.labs.ui.code_editor
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.style.TextDecoration
 import com.alchitry.labs.parsers.errors.Notation
 import com.alchitry.labs.parsers.errors.NotationType
+import com.alchitry.labs.ui.theme.AlchitryColors
 import org.antlr.v4.kotlinruntime.Token
 
 
@@ -54,9 +54,9 @@ fun Token.toEditorToken(style: SpanStyle?): EditorToken {
 
 fun Notation.toStyleToken(): StyleToken {
     val color = when (type) {
-        NotationType.Error, NotationType.SyntaxError -> Color.Red
-        NotationType.Warning, NotationType.SyntaxAmbiguity -> Color.Yellow
-        NotationType.Info -> Color.Blue
+        NotationType.Error, NotationType.SyntaxError -> AlchitryColors.current.Error
+        NotationType.Warning, NotationType.SyntaxAmbiguity -> AlchitryColors.current.Warning
+        NotationType.Info -> AlchitryColors.current.Info
     }
     val style = SpanStyle(color = color, textDecoration = TextDecoration.Underline)
     return StyleToken(

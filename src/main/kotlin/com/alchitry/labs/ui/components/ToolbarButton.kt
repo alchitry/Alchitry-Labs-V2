@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
@@ -38,6 +39,7 @@ fun ToolbarButton(
     onClick: () -> Unit,
     icon: Painter,
     description: String,
+    enabled: Boolean = true,
     colorFilter: ColorFilter? = ColorFilter.tint(MaterialTheme.colorScheme.onBackground),
     modifier: Modifier = Modifier
 ) {
@@ -52,7 +54,7 @@ fun ToolbarButton(
                 Box(
                     modifier
                         //.background(color = backgroundColor)
-                        .clickable(onClick = onClick)
+                        .clickable(onClick = onClick, enabled = enabled)
                 ) {
                         ProvideTextStyle(
                             value = MaterialTheme.typography.labelLarge
@@ -66,7 +68,7 @@ fun ToolbarButton(
                                     contentDescription = description,
                                     colorFilter = colorFilter,
                                     contentScale = ContentScale.Fit,
-                                    modifier = Modifier.padding(6.dp).size(size)
+                                    modifier = Modifier.padding(6.dp).size(size).alpha(if (enabled) 1f else 0.5f)
                                 )
                             }
 

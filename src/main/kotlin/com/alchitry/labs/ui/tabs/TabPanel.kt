@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
@@ -68,7 +69,12 @@ class TabPanel(parent: TabParent) : TabSection(parent) {
     @Composable
     override fun content() {
         key(this) {
-            Surface {
+            Surface(
+                Modifier.onFocusEvent {
+                    if (it.hasFocus)
+                        parent.setActiveSection(this@TabPanel)
+                }
+            ) {
                 Column {
                     Row(Modifier.fillMaxWidth().height(TAB_HEIGHT)) {
                         val width = LocalDensity.current.run { 1.toDp() }
@@ -140,10 +146,8 @@ class TabPanel(parent: TabParent) : TabSection(parent) {
                         },
                         onDropEnd = ::closeIfEmpty
                     ) {
-                        key(activeTab) {
-                            Box(Modifier.clipToBounds()) {
-                                activeTab?.content()
-                            }
+                        Box(Modifier.clipToBounds()) {
+                            activeTab?.content()
                         }
                     }
                 }

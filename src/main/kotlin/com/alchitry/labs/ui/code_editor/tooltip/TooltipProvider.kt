@@ -6,27 +6,23 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.window.rememberPopupPositionProviderAtPosition
+import com.alchitry.labs.parsers.errors.Notation
 import com.alchitry.labs.ui.code_editor.CodeEditorState
-import com.alchitry.labs.ui.code_editor.EditorToken
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class EditorTooltipState(
-    val codeEditor: CodeEditorState,
-) {
+abstract class TooltipProvider<T>(val codeEditor: CodeEditorState) {
     var parentBounds by mutableStateOf(Rect.Zero)
     var popupPosition by mutableStateOf(Offset.Zero)
     var cursorPosition by mutableStateOf(Offset.Zero)
     var job: Job? by mutableStateOf(null)
-    var activeToken by mutableStateOf<EditorToken?>(null)
+    var activeToken by mutableStateOf<T?>(null)
     val isVisible = Animatable(0f)
 
-    fun tokenFromPosition(position: Offset): EditorToken? {
-        return codeEditor.offsetToToken(position, true)
-    }
+    abstract fun tokenFromPosition(position: Offset): T?
 
-    fun startShowing(token: EditorToken) {
+    fun startShowing(token: T) {
         if (activeToken != token)
             hide()
         job?.cancel()
@@ -51,12 +47,7 @@ class EditorTooltipState(
         }
     }
 
-    private fun getPopupAnchor(): Offset {
-        val token = activeToken ?: return cursorPosition
-        val line = token.range.start.line
-        val yOffset = codeEditor.offsetAtLineBottom(line)
-        return cursorPosition.copy(y = yOffset.toFloat())
-    }
+    abstract fun getPopupAnchor(): Offset
 
     @OptIn(ExperimentalComposeUiApi::class)
     @Composable
@@ -64,4 +55,21 @@ class EditorTooltipState(
         rememberPopupPositionProviderAtPosition(
             positionPx = remember { getPopupAnchor() }
         )
+}
+
+class NotationTooltipProvider(
+    codeEditor: CodeEditorState,
+) : TooltipProvider<Notation>(codeEditor) {
+
+    override fun tokenFromPosition(position: Offset): Notation? {
+        return codeEditor.notations.firstOrNull { it.range.contains(codeEditor.screenOffsetToTextPosition(position)) }
+            ?.let { if (it.message == null) null else it }
+    }
+
+    override fun getPopupAnchor(): Offset {
+        val token = activeToken ?: return cursorPosition
+        val line = token.range.start.line
+        val yOffset = codeEditor.offsetAtLineBottom(line)
+        return cursorPosition.copy(y = yOffset.toFloat())
+    }
 }

@@ -14,6 +14,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
+import com.alchitry.labs.Env
 import com.alchitry.labs.Settings
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.ui.components.*
@@ -39,6 +40,7 @@ fun ApplicationScope.labsWindow() {
         }
     ) {
         LaunchedEffect(Unit) {
+            Env.mode = Env.Mode.Labs
             Settings.openProject?.let {
                 if (Project.current == null) {
                     Project.openProject(File(it))

@@ -38,18 +38,37 @@ private data class StyledText(
 
 object Console {
     private val content = mutableStateListOf<AnnotatedString>()
+    private var appendToLastLine = true
     private var scrollToIdx by mutableStateOf(-1)
     private const val scale = 0.08f
 
+    fun append(annotatedString: AnnotatedString) {
+        val adjustedString = if (annotatedString.endsWith("\n")) {
+            annotatedString.subSequence(0, annotatedString.length - 1)
+        } else {
+            annotatedString
+        }
+
+        if (appendToLastLine) {
+            val last = content.removeLastOrNull() ?: buildAnnotatedString {}
+            content.add(last + adjustedString)
+        } else {
+            content.add(adjustedString)
+        }
+
+        appendToLastLine = !annotatedString.endsWith("\n")
+
+        scrollToIdx = content.size - 3
+    }
+
     fun append(text: String, style: SpanStyle? = null) {
-        content.add(buildAnnotatedString {
+        append(buildAnnotatedString {
             if (style != null)
                 withStyle(style) {
                     append(text)
                 }
             else append(text)
         })
-        scrollToIdx = content.size - 3
     }
 
     fun clear() {

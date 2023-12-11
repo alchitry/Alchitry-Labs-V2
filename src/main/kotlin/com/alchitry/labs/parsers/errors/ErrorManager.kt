@@ -1,6 +1,10 @@
 package com.alchitry.labs.parsers.errors
 
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.withStyle
 import com.alchitry.labs.project.files.ProjectFile
+import com.alchitry.labs.ui.theme.AlchitryColors
 
 class ErrorManager {
     private val errorCollectors = mutableMapOf<ProjectFile, ErrorCollector>()
@@ -9,20 +13,20 @@ class ErrorManager {
         return errorCollectors.getOrPut(file) { ErrorCollector(file) }
     }
 
-    fun getReport(): String {
-        val stringBuilder = StringBuilder()
-
-        errorCollectors.values.forEach { collector ->
-            collector.getReport()?.let { report ->
-                stringBuilder.append(report)
-                stringBuilder.append("\n")
+    fun getReport(): AnnotatedString {
+        return AnnotatedString.Builder().apply {
+            errorCollectors.values.forEach { collector ->
+                collector.getReport()?.let { report ->
+                    appendLine(report)
+                }
             }
-        }
 
-        if (stringBuilder.isEmpty())
-            return "No issues detected.\n"
+            if (this.length == 0)
+                withStyle(SpanStyle(color = AlchitryColors.current.Success)) {
+                    appendLine("No issues detected.")
+                }
 
-        return stringBuilder.toString()
+        }.toAnnotatedString()
     }
 
     val hasNoMessages: Boolean get() = errorCollectors.values.all { it.hasNoMessages }

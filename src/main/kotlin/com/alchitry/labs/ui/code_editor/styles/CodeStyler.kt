@@ -4,6 +4,7 @@ import androidx.compose.ui.text.AnnotatedString
 import com.alchitry.labs.ui.code_editor.CodeEditorState
 import com.alchitry.labs.ui.code_editor.LineStyle
 import com.alchitry.labs.ui.code_editor.StyleToken
+import com.alchitry.labs.ui.code_editor.toStyleToken
 import kotlinx.coroutines.runBlocking
 
 class CodeStyler(
@@ -15,9 +16,13 @@ class CodeStyler(
         val lines = editor.lines
         val styles = MutableList(lines.size) { mutableListOf<LineStyle>() }
 
+        val notations = runBlocking { codeParser.checkText(editor.getText()) }// TODO: do this async?
+        editor.notations.clear()
+        editor.notations.addAll(notations)
+
         val styleTokens = mutableListOf<StyleToken>().apply {
             addAll(editor.tokens.map { it.styleToken })
-            runBlocking { addAll(codeParser.checkText(editor.getText())) } // TODO: do this async?
+            addAll(notations.map { it.toStyleToken() })
         }
 
         styleTokens.forEach { token ->
@@ -60,9 +65,10 @@ class CodeStyler(
             }.toAnnotatedString()
         }
 
-        with(editor) {
+        with(editor)
+        {
             lines.forEachIndexed { index, lineState ->
-                // only update lines that changed (saves time to preventing remeasure)
+                // only update lines that changed (saves time to preventing remeasuring)
                 if (lineState.text != newLines[index]) {
                     lines[index] = newLineState(newLines[index])
                 }

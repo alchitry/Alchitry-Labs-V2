@@ -1,7 +1,11 @@
 package com.alchitry.labs.parsers.errors
 
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.withStyle
 import com.alchitry.kotlinmultiplatform.BitSet
 import com.alchitry.labs.project.files.ProjectFile
+import com.alchitry.labs.ui.theme.AlchitryColors
 import org.antlr.v4.kotlinruntime.*
 import org.antlr.v4.kotlinruntime.atn.ATNConfigSet
 import org.antlr.v4.kotlinruntime.dfa.DFA
@@ -46,20 +50,18 @@ class ErrorCollector private constructor(
         includeErrors: Boolean = true,
         includeWarnings: Boolean = true,
         includeInfos: Boolean = true
-    ): String? {
-        if (hasNoMessages)
-            return null
+    ): AnnotatedString? {
+        return AnnotatedString.Builder().apply {
+            if (hasNoMessages)
+                return null
 
-        val stringBuilder = StringBuilder()
-
-        appendChildReport("", stringBuilder, includeErrors, includeWarnings, includeInfos)
-
-        return stringBuilder.toString()
+            appendChildReport("", includeErrors, includeWarnings, includeInfos)
+        }.toAnnotatedString()
     }
 
+    context(AnnotatedString.Builder)
     private fun appendChildReport(
         prefix: String,
-        stringBuilder: StringBuilder,
         includeErrors: Boolean = true,
         includeWarnings: Boolean = true,
         includeInfos: Boolean = true
@@ -67,7 +69,7 @@ class ErrorCollector private constructor(
         if (hasNoMessages)
             return
 
-        stringBuilder.append("${prefix}Issues detected in $name:\n")
+        appendLine("${prefix}Issues detected in $name:")
 
         val notations =
             (if (includeErrors) errors else emptyList()) +
@@ -75,12 +77,20 @@ class ErrorCollector private constructor(
                     (if (includeInfos) infos else emptyList())
 
         notations.sortedBy { it.range.start }.forEach {
-            stringBuilder.append("$prefix    $it\n")
+            val style = when (it.type) {
+                NotationType.Error -> SpanStyle(color = AlchitryColors.current.Error)
+                NotationType.Warning -> SpanStyle(color = AlchitryColors.current.Warning)
+                NotationType.Info -> SpanStyle(color = AlchitryColors.current.Info)
+                NotationType.SyntaxError -> SpanStyle(color = AlchitryColors.current.Error)
+                NotationType.SyntaxAmbiguity -> SpanStyle(color = AlchitryColors.current.Warning)
+            }
+            withStyle(style) {
+                append("$prefix    $it\n")
+            }
         }
 
-
         children.forEach {
-            it.appendChildReport("$prefix    ", stringBuilder)
+            it.appendChildReport("$prefix    ")
         }
     }
 

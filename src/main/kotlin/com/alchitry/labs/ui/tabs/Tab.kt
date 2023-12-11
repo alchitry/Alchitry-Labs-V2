@@ -2,6 +2,7 @@ package com.alchitry.labs.ui.tabs
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import com.alchitry.labs.project.files.FileProvider
 import com.alchitry.labs.ui.code_editor.CodeEditor
 import com.alchitry.labs.ui.code_editor.CodeEditorState
@@ -36,7 +37,9 @@ class FileTab(
 
     @Composable
     override fun content() {
-        CodeEditor(codeEditorState)
+        key(this) {
+            CodeEditor(codeEditorState)
+        }
     }
 
     override fun onClose(): Boolean {

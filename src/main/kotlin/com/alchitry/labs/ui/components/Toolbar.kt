@@ -7,18 +7,22 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.alchitry.labs.Log
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.ui.menu.*
+import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun Toolbar() {
+    val scope = rememberCoroutineScope()
+    var running by remember { mutableStateOf(false) }
     Row {
         MenuBar {
             val menuBarItem = remember { MenuBarItem() }
@@ -64,30 +68,48 @@ fun Toolbar() {
             }
         }
 
+        fun runWithProject(block: suspend (Project) -> Unit) {
+            val project = Project.current
+            if (project == null) {
+                Log.println("Project must be open first!", AlchitryColors.current.Error)
+                return
+            }
+            running = true
+            scope.launch(Dispatchers.Default) {
+                try {
+                    block(project)
+                } finally {
+                    running = false
+                }
+            }
+        }
+
         ToolbarButton(
             onClick = {},
             icon = painterResource("icons/open.svg"),
             description = "New file"
         )
         ToolbarButton(
-            onClick = {},
-            icon = painterResource("icons/save.svg"),
-            description = "Save"
-        )
-        ToolbarButton(
-            onClick = {},
+            onClick = {
+                runWithProject { it.check() }
+            },
             icon = painterResource("icons/check.svg"),
-            description = "Check for Errors"
+            description = "Check for Errors",
+            enabled = !running
         )
         ToolbarButton(
-            onClick = {},
+            onClick = {
+                runWithProject { it.build() }
+            },
             icon = painterResource("icons/build.svg"),
-            description = "Build"
+            description = "Build",
+            enabled = !running
         )
         ToolbarButton(
             onClick = {},
             icon = painterResource("icons/simulate.svg"),
-            description = "Simulate"
+            description = "Simulate",
+            enabled = !running
         )
     }
 }

@@ -12,14 +12,13 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.window.Popup
-import com.alchitry.labs.ui.code_editor.EditorToken
 import com.alchitry.labs.ui.components.AlchitryToolTipContent
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun EditorTooltipArea(
-    tooltip: @Composable (EditorToken) -> Unit,
-    state: EditorTooltipState,
+fun <T> EditorTooltipArea(
+    tooltip: @Composable (T) -> Unit,
+    state: TooltipProvider<T>,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
