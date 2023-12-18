@@ -2,8 +2,8 @@ package com.alchitry.labs.parsers.lucidv2.context
 
 import com.alchitry.labs.parsers.Evaluable
 import com.alchitry.labs.parsers.ProjectContext
-import com.alchitry.labs.parsers.errors.ErrorCollector
 import com.alchitry.labs.parsers.errors.ErrorListener
+import com.alchitry.labs.parsers.errors.NotationCollector
 import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.VerilogConverter
 import com.alchitry.labs.parsers.lucidv2.parsers.*
@@ -18,7 +18,7 @@ class LucidBlockContext(
     val instance: TestOrModuleInstance,
     stage: ParseStage = ParseStage.ModuleInternals,
     override val evalContext: Evaluable? = null,
-    val errorCollector: ErrorCollector,
+    val notationCollector: NotationCollector,
     expr: ExprParser? = null,
     bitSelection: BitSelectionParser? = null,
     types: TypesParser? = null,
@@ -30,7 +30,7 @@ class LucidBlockContext(
     blockEvaluator: BlockEvaluator? = null,
     signalDriver: SignalDriverParser? = null,
     val localSignalResolver: SignalResolver? = null // Used in tests to simulate a full parse.
-) : LucidExprContext, ErrorListener by errorCollector {
+) : LucidExprContext, ErrorListener by notationCollector {
     var stage: ParseStage = stage
         private set
 
@@ -133,7 +133,7 @@ class LucidBlockContext(
         instance,
         ParseStage.Evaluation,
         evalContext,
-        errorCollector.createChild(name),
+        notationCollector.createChild(name),
         expr,
         bitSelection,
         types,
@@ -171,11 +171,11 @@ class LucidBlockContext(
     suspend fun initialWalk(t: ParseTree): Boolean {
         stage = ParseStage.ModuleInternals
         walk(t)
-        if (errorCollector.hasErrors)
+        if (notationCollector.hasErrors)
             return false
         stage = ParseStage.Drivers
         walk(t)
-        return errorCollector.hasNoErrors
+        return notationCollector.hasNoErrors
     }
 
     suspend fun walk(t: ParseTree) = ParseTreeMultiWalker.walk(getListeners(), t, getFilter())
@@ -188,7 +188,7 @@ class LucidBlockContext(
             param.constraint?.let {
                 walk(it)
                 if (resolve(it)?.isTrue()?.bit != Bit.B1) {
-                    errorCollector.reportError(it, "Parameter constraint failed for ${param.name}.")
+                    notationCollector.reportError(it, "Parameter constraint failed for ${param.name}.")
                     return false
                 }
             }

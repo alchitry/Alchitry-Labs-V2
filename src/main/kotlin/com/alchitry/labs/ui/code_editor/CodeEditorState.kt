@@ -34,25 +34,23 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import com.alchitry.labs.parsers.errors.Notation
 import com.alchitry.labs.parsers.grammar.LucidLexer
+import com.alchitry.labs.project.Project
+import com.alchitry.labs.project.files.ProjectFile
 import com.alchitry.labs.ui.code_editor.styles.CodeStyler
-import com.alchitry.labs.ui.code_editor.styles.EditorTokenizer
-import com.alchitry.labs.ui.code_editor.styles.lucid.LucidErrorChecker
 import com.alchitry.labs.ui.code_editor.tooltip.NotationTooltipProvider
 import com.alchitry.labs.ui.gestures.detectEditorActions
 import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTypography
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.math.abs
 import kotlin.math.log10
 import kotlin.properties.Delegates
 
 @Composable
-fun rememberCodeEditorState(tokenizer: EditorTokenizer): CodeEditorState {
-    return remember(tokenizer) {
-        CodeEditorState(tokenizer)
+fun rememberCodeEditorState(file: ProjectFile): CodeEditorState {
+    return remember(file) {
+        CodeEditorState(file)
     }
 }
 
@@ -86,11 +84,14 @@ data class CodeEditorStyle(
 )
 
 class CodeEditorState(
-    private val tokenizer: EditorTokenizer
+    val file: ProjectFile
 ) {
+    val readOnly = file.isReadOnly
+
     var style: CodeEditorStyle? = null
     var uiScope: CoroutineScope? = null
     val scope = CoroutineScope(Dispatchers.Main)
+    var saveJob: Job? = null
 
     var lineTopOffset: Float = 0f
 
@@ -119,9 +120,15 @@ class CodeEditorState(
     )
     private val undoManager = UndoManager(this, selectionManager)
 
-    private val styler = CodeStyler(this, LucidErrorChecker())
+    private val styler = CodeStyler(this)
 
     var clipboardManager: ClipboardManager? = null
+
+    init {
+        scope.launch {
+            setText(file.readText())
+        }
+    }
 
     fun getWindow() = Rect(
         0f,
@@ -226,6 +233,16 @@ class CodeEditorState(
             refreshStyling()
         }
 
+        val project by Project.currentFlow.collectAsState()
+        LaunchedEffect(project) {
+            project?.notationCollectorFlowForFile(file)?.collect {
+                notations.clear()
+                it?.getAllNotations()?.let { n -> notations.addAll(n) }
+                styler.updateStyle()
+                invalidate()
+            }
+        }
+
         DisposableEffect(scope) {
             invalidator = {
                 scope.invalidate()
@@ -241,9 +258,20 @@ class CodeEditorState(
     }
 
     fun onTextChange() {
+        if (!file.isReadOnly)
+            scope.launch {
+                saveJob?.cancelAndJoin()
+                saveJob = launch {
+                    notations.clear()
+                    styler.updateStyle()
+                    delay(100)
+                    file.writeText(getText())
+                    Project.current?.queueNotationsUpdate()
+                }
+            }
         lineOffsetCache.clear()
         lineOffsetCache.add(0)
-        tokens = tokenizer.getTokens(lines.toCharStream())
+        tokens = file.editorTokenizer.getTokens(lines.toCharStream())
         styler.updateStyle()
         updateHighlightTokens()
         invalidate()
@@ -254,7 +282,12 @@ class CodeEditorState(
     }
 
     fun getSnapshot() =
-        EditorSnapshot(lines.toImmutableList(), selectionManager.caret, selectionManager.start, selectionManager.end)
+        EditorSnapshot(
+            lines.map { it.text }.toImmutableList(),
+            selectionManager.caret,
+            selectionManager.start,
+            selectionManager.end
+        )
 
     internal fun newLineState(text: AnnotatedString) =
         CodeLineState(text, style?.density, mutableListOf(), style?.fontFamilyResolver, style?.style)
@@ -271,6 +304,9 @@ class CodeEditorState(
         newText: String, range: OpenEndRange<TextPosition> = selectionManager.selectedRange,
         updateCaret: Boolean = true
     ) {
+        if (readOnly)
+            return
+
         val start = range.start.coerceInRange()
         val end = range.endExclusive.coerceInRange()
 

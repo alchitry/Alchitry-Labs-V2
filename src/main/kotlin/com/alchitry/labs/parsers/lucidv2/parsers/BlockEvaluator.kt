@@ -75,7 +75,7 @@ data class BlockEvaluator(
         val truthBit = condition.isTrue().bit
 
         if (!truthBit.isNumber()) {
-            context.errorCollector.reportWarning(expr, "If condition evaluated to $truthBit!")
+            context.notationCollector.reportWarning(expr, "If condition evaluated to $truthBit!")
         }
 
         if (truthBit == Bit.B1) {

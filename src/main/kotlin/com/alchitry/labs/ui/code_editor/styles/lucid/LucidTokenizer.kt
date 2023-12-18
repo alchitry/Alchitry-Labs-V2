@@ -7,7 +7,9 @@ import com.alchitry.labs.ui.code_editor.toEditorToken
 import org.antlr.v4.kotlinruntime.CharStream
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 
-class LucidTokenizer : EditorTokenizer {
+object LucidTokenizer : EditorTokenizer {
+    private val operatorRegex = Regex("([*!~+#\\-/:@|&{}?^=><\\]\\[,();]+)|(c\\{|x\\{)")
+
     override fun getTokens(stream: CharStream): List<EditorToken> {
         val lexer = LucidLexer(stream)
         lexer.removeErrorListeners()
@@ -35,9 +37,5 @@ class LucidTokenizer : EditorTokenizer {
             }
             token.toEditorToken(style)
         }
-    }
-
-    companion object {
-        private val operatorRegex = Regex("([*!~+#\\-/:@|&{}?^=><\\]\\[,();]+)|(c\\{|x\\{)")
     }
 }

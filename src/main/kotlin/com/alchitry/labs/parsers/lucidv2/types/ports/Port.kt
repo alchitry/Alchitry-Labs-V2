@@ -18,7 +18,7 @@ data class Port(
 
     fun instantiate(parent: ModuleInstance, context: ProjectContext): PortInstance {
         val instWidth = if (width is ResolvableWidth) {
-            val eval = LucidExprEval(context, parent.context.errorCollector.createChild("PortEval")) {
+            val eval = LucidExprEval(context, parent.context.notationCollector.createChild("PortEval")) {
                 return@LucidExprEval parent.parameters[it]
             }
             // this is OK as the eval will never suspend (no calls to $TICK and such)

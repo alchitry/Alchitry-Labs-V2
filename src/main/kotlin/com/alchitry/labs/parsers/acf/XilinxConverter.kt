@@ -39,7 +39,7 @@ class XilinxConverter(override val board: Board) : AcfConverter {
         }
     }
 
-    override fun convert(
+    override suspend fun convert(
         name: String,
         clockConstraints: List<ClockConstraint>,
         pinConstraints: List<PinConstraint>

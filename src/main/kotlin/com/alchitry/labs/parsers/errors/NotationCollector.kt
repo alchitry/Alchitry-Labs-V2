@@ -22,17 +22,17 @@ import org.antlr.v4.kotlinruntime.tree.TerminalNode
  * Each thread should have its own child collector and the read methods
  * on a parent should only be called once all children have completed.
  */
-class ErrorCollector private constructor(
+class NotationCollector private constructor(
     val file: ProjectFile,
     val name: String,
-    private val parent: ErrorCollector?
+    private val parent: NotationCollector?
 ) : ErrorListener,
     ANTLRErrorListener {
     constructor(file: ProjectFile) : this(file, file.name, null)
 
-    private val children = mutableListOf<ErrorCollector>()
-    fun createChild(nane: String): ErrorCollector {
-        return ErrorCollector(file, nane, this)
+    private val children = mutableListOf<NotationCollector>()
+    fun createChild(nane: String): NotationCollector {
+        return NotationCollector(file, nane, this)
             .also { children.add(it) }
     }
 
@@ -105,7 +105,7 @@ class ErrorCollector private constructor(
     val hasInfos: Boolean get() = !hasNoInfos
 
     /**
-     * Checks that this [ErrorCollector] has no errors or warnings.
+     * Checks that this [NotationCollector] has no errors or warnings.
      * If it has errors, it throws an [AssertionError] with a report as the reason.
      */
     fun assertNoIssues() {
@@ -113,7 +113,7 @@ class ErrorCollector private constructor(
     }
 
     /**
-     * Checks that this [ErrorCollector] has no errors or warnings.
+     * Checks that this [NotationCollector] has no errors or warnings.
      * If it has errors, it throws an [AssertionError] with errors listed as the reason.
      */
     fun assertNoErrors() {

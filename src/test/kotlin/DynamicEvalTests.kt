@@ -182,7 +182,7 @@ class DynamicEvalTests {
             tester.project.processQueue()
             assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
 
-            assert(alwaysBlock.context.errorCollector.hasNoMessages)
+            assert(alwaysBlock.context.notationCollector.hasNoMessages)
 
             sig2.write(BitValue(Bit.Bx, constant = false, signed = false))
             assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
@@ -190,7 +190,7 @@ class DynamicEvalTests {
             tester.project.processQueue()
             assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
 
-            assert(alwaysBlock.context.errorCollector.hasWarnings) // warn about Bx value in if statement
+            assert(alwaysBlock.context.notationCollector.hasWarnings) // warn about Bx value in if statement
         }
     }
 }

@@ -40,7 +40,9 @@ class UndoManager(private val editor: CodeEditorState, private val selectionMana
 
     private fun restoreSnapshot(snapshot: EditorSnapshot) {
         editor.lines.clear()
-        editor.lines.addAll(snapshot.lines)
+        snapshot.lines.forEach { line ->
+            editor.lines.add(editor.newLineState(line))
+        }
         selectionManager.caret = snapshot.caret
         selectionManager.start = snapshot.selectionStart
         selectionManager.end = snapshot.selectionEnd

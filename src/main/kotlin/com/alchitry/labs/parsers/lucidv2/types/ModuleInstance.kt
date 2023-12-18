@@ -1,7 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
 import com.alchitry.labs.parsers.ProjectContext
-import com.alchitry.labs.parsers.errors.ErrorCollector
+import com.alchitry.labs.parsers.errors.NotationCollector
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotOrParent
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotParent
@@ -14,9 +14,9 @@ class ModuleInstance(
     val module: Module,
     parameters: Map<String, Value>,
     val connections: Map<String, SignalOrSubSignal>,
-    errorCollector: ErrorCollector
+    notationCollector: NotationCollector
 ) : ModuleInstanceOrArray, ListOrModuleInstance, TestOrModuleInstance {
-    override val context = LucidBlockContext(project, this, errorCollector = errorCollector)
+    override val context = LucidBlockContext(project, this, notationCollector = notationCollector)
 
     override fun takeSnapshot(): SnapshotParent {
         val snapshots = mutableListOf<SnapshotOrParent>()

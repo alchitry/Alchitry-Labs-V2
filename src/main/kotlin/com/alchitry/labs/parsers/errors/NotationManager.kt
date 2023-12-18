@@ -6,16 +6,16 @@ import androidx.compose.ui.text.withStyle
 import com.alchitry.labs.project.files.ProjectFile
 import com.alchitry.labs.ui.theme.AlchitryColors
 
-class ErrorManager {
-    private val errorCollectors = mutableMapOf<ProjectFile, ErrorCollector>()
+class NotationManager {
+    private val notationCollectors = mutableMapOf<ProjectFile, NotationCollector>()
 
-    fun getCollector(file: ProjectFile): ErrorCollector {
-        return errorCollectors.getOrPut(file) { ErrorCollector(file) }
+    fun getCollector(file: ProjectFile): NotationCollector {
+        return notationCollectors.getOrPut(file) { NotationCollector(file) }
     }
 
     fun getReport(): AnnotatedString {
         return AnnotatedString.Builder().apply {
-            errorCollectors.values.forEach { collector ->
+            notationCollectors.values.forEach { collector ->
                 collector.getReport()?.let { report ->
                     appendLine(report)
                 }
@@ -29,7 +29,7 @@ class ErrorManager {
         }.toAnnotatedString()
     }
 
-    val hasNoMessages: Boolean get() = errorCollectors.values.all { it.hasNoMessages }
-    val hasNoErrors: Boolean get() = errorCollectors.values.all { it.hasNoErrors }
+    val hasNoMessages: Boolean get() = notationCollectors.values.all { it.hasNoMessages }
+    val hasNoErrors: Boolean get() = notationCollectors.values.all { it.hasNoErrors }
     val hasErrors: Boolean get() = !hasNoErrors
 }

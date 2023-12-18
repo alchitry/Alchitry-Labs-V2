@@ -3,7 +3,8 @@ package com.alchitry.labs.project
 import com.alchitry.labs.Log
 import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.acf.NativeConstraint
-import com.alchitry.labs.parsers.errors.ErrorManager
+import com.alchitry.labs.parsers.errors.NotationCollector
+import com.alchitry.labs.parsers.errors.NotationManager
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.parsers.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.context.LucidGlobalContext
@@ -12,12 +13,16 @@ import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
 import com.alchitry.labs.project.files.ConstraintFile
 import com.alchitry.labs.project.files.IPCore
+import com.alchitry.labs.project.files.ProjectFile
 import com.alchitry.labs.project.files.SourceFile
 import com.alchitry.labs.ui.misc.openFileDialog
 import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.windows.mainWindow
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 import java.io.File
@@ -37,6 +42,11 @@ data class Project(
     val projectFile = projectFolder.resolve("$projectName.alp")
     val buildDirectory = projectFolder.resolve("build")
     val binFile = buildDirectory.resolve("${board.binName}.bin")
+    val notationManagerFlow = MutableStateFlow<NotationManager?>(null)
+    val scope = CoroutineScope(Dispatchers.Default)
+
+    fun notationCollectorFlowForFile(projectFile: ProjectFile): Flow<NotationCollector?> =
+        notationManagerFlow.map { it?.getCollector(projectFile) }
 
     companion object {
         private val mutableCurrentFlow = MutableStateFlow<Project?>(null)
@@ -54,6 +64,7 @@ data class Project(
                     file ?: openFileDialog(mainWindow, "Open Project", listOf(".alp"), allowMultiSelection = false)
                         .firstOrNull() ?: return null
                 val project = openXml(projectFile)
+                project.queueNotationsUpdate()
                 mutableCurrentFlow.tryEmit(project)
                 return project
             } catch (e: Exception) {
@@ -63,17 +74,26 @@ data class Project(
         }
     }
 
+    fun queueNotationsUpdate() {
+        scope.launch {
+            notationManagerFlow.tryEmit(null)
+            val notationManager = NotationManager()
+            buildContext(notationManager)
+            notationManagerFlow.tryEmit(notationManager)
+        }
+    }
+
     suspend fun check(): ProjectContext? {
-        val errorManger = ErrorManager()
-        val context = buildContext(errorManger)
+        val notationManager = NotationManager()
+        val context = buildContext(notationManager)
         val topModule = context?.top
         if (context == null || topModule == null) {
             Log.printlnError("Failed to build project context!")
-            Log.print(errorManger.getReport())
+            Log.print(notationManager.getReport())
             return null
         }
 
-        Log.print(errorManger.getReport())
+        Log.print(notationManager.getReport())
         return context
     }
 
@@ -112,13 +132,13 @@ data class Project(
             return false
         }
 
-        val constraintErrorManager = ErrorManager()
+        val constraintNotationManager = NotationManager()
         val constraints = try {
             constraintFiles.flatMap { file ->
                 when (file.language) {
                     Languages.ACF -> {
                         val files =
-                            board.acfConverter.convert(file, topModule, constraintErrorManager.getCollector(file))
+                            board.acfConverter.convert(file, topModule, constraintNotationManager.getCollector(file))
                         files?.map { file.name to it } ?: listOf(file.name to null)
                     }
 
@@ -127,7 +147,7 @@ data class Project(
                             file.name to NativeConstraint(
                                 file.name.split(".").first(),
                                 file.language,
-                                file.file.inputStream().bufferedReader().readText()
+                                file.readText()
                             )
                         )
                 }
@@ -137,8 +157,8 @@ data class Project(
             return false
         }
 
-        if (!constraintErrorManager.hasNoMessages) {
-            Log.print(constraintErrorManager.getReport(), AlchitryColors.current.Error)
+        if (!constraintNotationManager.hasNoMessages) {
+            Log.print(constraintNotationManager.getReport(), AlchitryColors.current.Error)
             return false
         }
 
@@ -204,21 +224,28 @@ data class Project(
         return true
     }
 
-    fun parse(errorManger: ErrorManager): List<Pair<SourceFile, LucidParser.SourceContext>>? {
-        val trees = sourceFiles.map { file ->
-            val parser = LucidParser(
-                CommonTokenStream(
-                    LucidLexer(
-                        CharStreams.fromStream(file.file.inputStream())
-                    ).also { it.removeErrorListeners() })
-            ).apply {
-                (tokenStream?.tokenSource as? LucidLexer)?.addErrorListener(errorManger.getCollector(file))
-                    ?: error("TokenSource was not a LucidLexer!")
-                removeErrorListeners()
-                addErrorListener(errorManger.getCollector(file))
-            }
+    suspend fun parse(errorManger: NotationManager): List<Pair<SourceFile, LucidParser.SourceContext>>? {
+        val trees = coroutineScope {
+            sourceFiles.map { file ->
+                async {
+                    val parser = LucidParser(
+                        CommonTokenStream(
+                            LucidLexer(
+                                CharStreams.fromString(
+                                    file.readText(),
+                                    file.name
+                                )
+                            ).also { it.removeErrorListeners() })
+                    ).apply {
+                        (tokenStream?.tokenSource as? LucidLexer)?.addErrorListener(errorManger.getCollector(file))
+                            ?: error("TokenSource was not a LucidLexer!")
+                        removeErrorListeners()
+                        addErrorListener(errorManger.getCollector(file))
+                    }
 
-            file to parser.source()
+                    file to parser.source()
+                }
+            }.awaitAll()
         }
         if (!errorManger.hasNoMessages)
             return null
@@ -226,19 +253,19 @@ data class Project(
     }
 
     suspend fun buildContext(
-        errorManger: ErrorManager,
-        trees: List<Pair<SourceFile, LucidParser.SourceContext>>? = parse(errorManger)
+        errorManger: NotationManager,
+        parsedTrees: List<Pair<SourceFile, LucidParser.SourceContext>>? = null
     ): ProjectContext? {
         val projectContext = ProjectContext()
         var success = false
+        val trees = parsedTrees ?: parse(errorManger)
 
         try {
             if (trees == null)
                 return null
 
             trees.forEach {
-                val globalContext = LucidGlobalContext(projectContext, errorManger.getCollector(it.first))
-                globalContext.walk(it.second)
+                LucidGlobalContext(projectContext, errorManger.getCollector(it.first)).walk(it.second)
             }
 
             if (errorManger.hasErrors)

@@ -102,8 +102,8 @@ class DynamicExpr(
 
         val newValue = context.expr.resolve(expr)
 
-        if (context.errorCollector.hasErrors) {
-            context.errorCollector.printReport()
+        if (context.notationCollector.hasErrors) {
+            context.notationCollector.printReport()
             error("Failed to parse DynamicValue $expr")
         }
 

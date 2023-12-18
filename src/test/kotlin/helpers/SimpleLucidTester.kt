@@ -33,18 +33,18 @@ class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = nul
         ),
         ParseStage.ErrorCheck,
         localSignalResolver = localSignalResolver,
-        errorCollector = testErrorCollector()
+        notationCollector = testErrorCollector()
     )
 
     init {
-        (parser.tokenStream?.tokenSource as LucidLexer).addErrorListener(context.errorCollector)
+        (parser.tokenStream?.tokenSource as LucidLexer).addErrorListener(context.notationCollector)
         parser.removeErrorListeners()
-        parser.addErrorListener(context.errorCollector)
+        parser.addErrorListener(context.notationCollector)
     }
 
-    val hasNoIssues: Boolean get() = context.errorCollector.hasNoIssues
-    val hasNoErrors: Boolean get() = context.errorCollector.hasNoErrors
-    val hasNoWarnings: Boolean get() = context.errorCollector.hasNoWarnings
-    val hasErrors: Boolean get() = context.errorCollector.hasErrors
-    val hasWarnings: Boolean get() = context.errorCollector.hasWarnings
+    val hasNoIssues: Boolean get() = context.notationCollector.hasNoIssues
+    val hasNoErrors: Boolean get() = context.notationCollector.hasNoErrors
+    val hasNoWarnings: Boolean get() = context.notationCollector.hasNoWarnings
+    val hasErrors: Boolean get() = context.notationCollector.hasErrors
+    val hasWarnings: Boolean get() = context.notationCollector.hasWarnings
 }

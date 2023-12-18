@@ -82,7 +82,7 @@ class TypesParser(
                     Connection(
                         paramCtx.name() ?: return@let,
                         try {
-                        DynamicExpr(paramCtx.expr() ?: return@let, context)
+                            DynamicExpr(paramCtx.expr() ?: return@let, context)
                         } catch (e: IllegalStateException) {
                             return@let
                         }
@@ -146,7 +146,7 @@ class TypesParser(
         if (extraParams.isNotEmpty()) {
             context.reportError(
                 ctx,
-                "The module \"${moduleTypeName}\" doesn't have these provided parameters: ${missingParams.joinToString(", ")}"
+                "The module \"${moduleTypeName}\" doesn't have these provided parameters: ${extraParams.joinToString(", ")}"
             )
             return
         }
@@ -215,14 +215,24 @@ class TypesParser(
                 moduleType,
                 instParams,
                 instPorts,
-                context.errorCollector.createChild("ModuleInstance($moduleInstanceName)")
+                context.notationCollector.createChild("ModuleInstance($moduleInstanceName)")
             ).apply {
                 checkParameters()
-                if (context.errorCollector.hasErrors)
+                if (context.notationCollector.hasErrors) {
+                    this@TypesParser.context.reportError(
+                        ctx.name(1) ?: ctx,
+                        context.notationCollector.getAllErrors().joinToString(", ") { it.message ?: "" }
+                    )
                     return
+                }
                 initialWalk()
-                if (context.errorCollector.hasErrors)
+                if (context.notationCollector.hasErrors) {
+                    this@TypesParser.context.reportError(
+                        ctx.name(1) ?: ctx,
+                        context.notationCollector.getAllErrors().joinToString(", ") { it.message ?: "" }
+                    )
                     return
+                }
             }
         } else {
             val dimensions = ctx.arraySize().map { arraySizes[it] ?: return }
@@ -299,7 +309,7 @@ class TypesParser(
                 moduleInstanceName,
                 context.project,
                 context.instance,
-                context.errorCollector.createChild("ModuleInstanceArray($moduleInstanceName)"),
+                context.notationCollector.createChild("ModuleInstanceArray($moduleInstanceName)"),
                 moduleType,
                 dimensions,
                 signalProvider = { idx ->
@@ -321,10 +331,10 @@ class TypesParser(
             )
                 .apply {
                     checkAllParameters()
-                    if (errorCollector.hasErrors)
+                    if (notationCollector.hasErrors)
                         return
                     initialWalkAll()
-                    if (errorCollector.hasErrors)
+                    if (notationCollector.hasErrors)
                         return
                     if (!checkPortDimensions()) {
                         context.reportError(ctx, "All module instances in an array must have identical port widths!")

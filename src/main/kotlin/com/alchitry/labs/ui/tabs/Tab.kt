@@ -3,10 +3,12 @@ package com.alchitry.labs.ui.tabs
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
-import com.alchitry.labs.project.files.FileProvider
+import com.alchitry.labs.project.files.ProjectFile
 import com.alchitry.labs.ui.code_editor.CodeEditor
 import com.alchitry.labs.ui.code_editor.CodeEditorState
-import com.alchitry.labs.ui.code_editor.styles.lucid.LucidTokenizer
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 interface Tab {
     @Composable
@@ -21,14 +23,10 @@ interface Tab {
 }
 
 class FileTab(
-    val file: FileProvider,
+    val file: ProjectFile,
     override var parent: TabPanel
 ) : Tab {
-    private val codeEditorState = CodeEditorState(LucidTokenizer())
-
-    init {
-        codeEditorState.setText(file.readText())
-    }
+    private val codeEditorState = CodeEditorState(file)
 
     @Composable
     override fun label() {
@@ -42,9 +40,10 @@ class FileTab(
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onClose(): Boolean {
-        if (file is FileProvider.DiskFile)
-            file.writeText(codeEditorState.getText())
+        if (!file.isReadOnly)
+            GlobalScope.launch { file.writeText(codeEditorState.getText()) }
         return true
     }
 

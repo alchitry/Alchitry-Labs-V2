@@ -1,6 +1,6 @@
 package com.alchitry.labs.subcommands
 
-import com.alchitry.labs.parsers.errors.ErrorManager
+import com.alchitry.labs.parsers.errors.NotationManager
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.project.openXml
 import kotlinx.cli.ArgType
@@ -25,12 +25,12 @@ class SimulateProject : Subcommand("sim", "Simulate a project") {
             return
         }
 
-        val errorManager = ErrorManager()
-        val projectContext = runBlocking { project.buildContext(errorManager) }
+        val notationManager = NotationManager()
+        val projectContext = runBlocking { project.buildContext(notationManager) }
 
         if (projectContext == null) {
             println("Failed to fully parse project!")
-            print(errorManager.getReport())
+            print(notationManager.getReport())
             return
         }
 
@@ -56,7 +56,7 @@ class SimulateProject : Subcommand("sim", "Simulate a project") {
             testBenches.forEach { testBench ->
                 testBench.getTestBlocks().forEach { test ->
                     runBlocking {
-                        val ec = testBench.context.errorCollector
+                        val ec = testBench.context.notationCollector
                         testBench.runTest(test.name)
                         if (ec.hasErrors) {
                             println("Test ${testBench.name}.${test.name} failed:")

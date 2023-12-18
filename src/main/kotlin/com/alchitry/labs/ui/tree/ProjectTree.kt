@@ -32,7 +32,7 @@ fun ProjectTree() {
                     TreeSection("Source Files", 1) {
                         project.sourceFiles.sortedBy { it.name }.forEach {
                             TreeItem(it.name, 2) {
-                                workspace.openFile(it.file)
+                                workspace.openFile(it)
                             }
                         }
                     }

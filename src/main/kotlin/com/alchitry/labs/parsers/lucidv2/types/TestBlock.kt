@@ -21,8 +21,8 @@ class TestBlock(
     override suspend fun evaluate() {
         context.walk(testBlockContext)
 
-        if (context.errorCollector.hasErrors) {
-            context.errorCollector.printReport()
+        if (context.notationCollector.hasErrors) {
+            context.notationCollector.printReport()
             error("Failed to evaluate test block!")
         }
 

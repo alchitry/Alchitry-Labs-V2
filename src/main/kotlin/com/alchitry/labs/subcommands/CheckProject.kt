@@ -1,6 +1,6 @@
 package com.alchitry.labs.subcommands
 
-import com.alchitry.labs.parsers.errors.ErrorManager
+import com.alchitry.labs.parsers.errors.NotationManager
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.project.openXml
 import kotlinx.cli.ArgType
@@ -22,13 +22,13 @@ class CheckProject : Subcommand("check", "Check a project for errors") {
             return
         }
 
-        val errorManager = ErrorManager()
-        val topModule = runBlocking { project.buildContext(errorManager) }
+        val notationManager = NotationManager()
+        val topModule = runBlocking { project.buildContext(notationManager) }
 
         if (topModule == null) {
             println("Failed to fully parse project!")
         }
 
-        print(errorManager.getReport())
+        print(notationManager.getReport())
     }
 }

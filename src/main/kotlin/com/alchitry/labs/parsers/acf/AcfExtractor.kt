@@ -3,7 +3,7 @@ package com.alchitry.labs.parsers.acf
 import com.alchitry.labs.parsers.acf.types.ClockConstraint
 import com.alchitry.labs.parsers.acf.types.PinConstraint
 import com.alchitry.labs.parsers.acf.types.PinPull
-import com.alchitry.labs.parsers.errors.ErrorCollector
+import com.alchitry.labs.parsers.errors.NotationCollector
 import com.alchitry.labs.parsers.grammar.AcfBaseListener
 import com.alchitry.labs.parsers.grammar.AcfParser
 import com.alchitry.labs.parsers.lucidv2.types.*
@@ -13,7 +13,7 @@ import kotlin.math.roundToInt
 class AcfExtractor(
     val topModule: ModuleInstance,
     val board: Board,
-    val errorCollector: ErrorCollector,
+    val notationCollector: NotationCollector,
 ) : AcfBaseListener() {
     private val signals = mutableMapOf<AcfParser.PortNameContext, SignalOrSubSignal>()
     val pins: MutableList<PinConstraint> = mutableListOf()
@@ -23,7 +23,7 @@ class AcfExtractor(
         val name = ctx.name(0)?.text ?: return
         val port = topModule.ports[name]
         if (port == null) {
-            errorCollector.reportError(ctx.name(0)!!, "Unknown port name \"$name\"!")
+            notationCollector.reportError(ctx.name(0)!!, "Unknown port name \"$name\"!")
             return
         }
         val children =
@@ -47,12 +47,12 @@ class AcfExtractor(
             try {
                 port.external.select(sigSelection)
             } catch (e: SignalSelectionException) {
-                errorCollector.reportError(selectionMap[e.selector]!!, e.message!!)
+                notationCollector.reportError(selectionMap[e.selector]!!, e.message!!)
                 return
             }
         }
         if (selectedSignal.width.bitCount != 1) {
-            errorCollector.reportError(ctx, "This signal is wider than a single bit!")
+            notationCollector.reportError(ctx, "This signal is wider than a single bit!")
             return
         }
         signals[ctx] = selectedSignal
@@ -62,7 +62,7 @@ class AcfExtractor(
         val signal = signals[ctx.portName() ?: return] ?: return
         val pinName = ctx.pinName()?.text ?: return
         if (board.pinConverter.AcfToFPGAPin(pinName) == null) {
-            errorCollector.reportError(ctx.pinName()!!, "Pin \"$pinName\" does not exist on the ${board.name}")
+            notationCollector.reportError(ctx.pinName()!!, "Pin \"$pinName\" does not exist on the ${board.name}")
             return
         }
         val pinPull = when {
@@ -77,7 +77,7 @@ class AcfExtractor(
         val signal = signals[ctx.portName() ?: return] ?: return
         val pinName = ctx.pinName()?.text ?: return
         if (board.pinConverter.AcfToFPGAPin(pinName) == null) {
-            errorCollector.reportError(ctx.pinName()!!, "Pin \"$pinName\" does not exist on the ${board.name}")
+            notationCollector.reportError(ctx.pinName()!!, "Pin \"$pinName\" does not exist on the ${board.name}")
             return
         }
         val pinPull = when {
@@ -92,14 +92,17 @@ class AcfExtractor(
             "mhz" -> 1000000
             "ghz" -> 1000000000
             else -> {
-                errorCollector.reportError(ctx.frequency()?.FREQ_UNIT()!!, "Unknown frequency unit \"$frequencyUnit\"!")
+                notationCollector.reportError(
+                    ctx.frequency()?.FREQ_UNIT()!!,
+                    "Unknown frequency unit \"$frequencyUnit\"!"
+                )
                 return
             }
         }
         val numCtx = ctx.frequency()?.number() ?: return
         val freq = numCtx.text.toDoubleOrNull()
         if (freq == null) {
-            errorCollector.reportError(numCtx, "Failed to parse number \"${numCtx.text}\"!")
+            notationCollector.reportError(numCtx, "Failed to parse number \"${numCtx.text}\"!")
             return
         }
         val hz = freq * frequencyScale

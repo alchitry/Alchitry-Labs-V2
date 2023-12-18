@@ -1,7 +1,7 @@
 package helpers
 
 import com.alchitry.labs.parsers.ProjectContext
-import com.alchitry.labs.parsers.errors.ErrorCollector
+import com.alchitry.labs.parsers.errors.NotationCollector
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.parsers.grammar.LucidParser
 import com.alchitry.labs.parsers.grammar.LucidParser.SourceContext
@@ -21,7 +21,7 @@ import org.antlr.v4.kotlinruntime.CommonTokenStream
 class LucidTester(vararg val files: String) {
     val project = ProjectContext()
 
-    fun parseText(errorCollector: ErrorCollector): List<SourceContext> {
+    fun parseText(notationCollector: NotationCollector): List<SourceContext> {
         return files.map {
             val parser = LucidParser(
                 CommonTokenStream(
@@ -29,9 +29,9 @@ class LucidTester(vararg val files: String) {
                         CharStreams.fromString(it)
                     ).also { it.removeErrorListeners() })
             ).apply {
-                (tokenStream?.tokenSource as LucidLexer).addErrorListener(errorCollector)
+                (tokenStream?.tokenSource as LucidLexer).addErrorListener(notationCollector)
                 removeErrorListeners()
-                addErrorListener(errorCollector)
+                addErrorListener(notationCollector)
             }
 
             parser.source()
@@ -39,55 +39,55 @@ class LucidTester(vararg val files: String) {
     }
 
     suspend fun globalParse(
-        errorCollector: ErrorCollector = testErrorCollector(),
-        trees: List<SourceContext> = parseText(errorCollector)
+        notationCollector: NotationCollector = testErrorCollector(),
+        trees: List<SourceContext> = parseText(notationCollector)
     ) {
-        assert(errorCollector.hasNoIssues) { errorCollector.printReport() }
+        assert(notationCollector.hasNoIssues) { notationCollector.printReport() }
 
         trees.forEach {
-            val globalContext = LucidGlobalContext(project, errorCollector)
+            val globalContext = LucidGlobalContext(project, notationCollector)
             globalContext.walk(it)
 
-            errorCollector.assertNoIssues()
+            notationCollector.assertNoIssues()
         }
     }
 
     private suspend fun testBenchParse(
-        errorCollector: ErrorCollector = testErrorCollector(),
-        trees: List<SourceContext> = parseText(errorCollector)
+        notationCollector: NotationCollector = testErrorCollector(),
+        trees: List<SourceContext> = parseText(notationCollector)
     ) {
-        assert(errorCollector.hasNoIssues) { errorCollector.printReport() }
+        assert(notationCollector.hasNoIssues) { notationCollector.printReport() }
 
         trees.forEach {
-            val testBenchContext = LucidTestBenchContext(project, errorCollector)
+            val testBenchContext = LucidTestBenchContext(project, notationCollector)
             testBenchContext.walk(it)
 
-            errorCollector.assertNoIssues()
+            notationCollector.assertNoIssues()
         }
     }
 
     suspend fun moduleTypeParse(
-        errorCollector: ErrorCollector = testErrorCollector(),
-        trees: List<SourceContext> = parseText(errorCollector)
+        notationCollector: NotationCollector = testErrorCollector(),
+        trees: List<SourceContext> = parseText(notationCollector)
     ): List<Module> {
-        assert(errorCollector.hasNoIssues) { errorCollector.printReport() }
+        assert(notationCollector.hasNoIssues) { notationCollector.printReport() }
 
         return trees.mapNotNull {
-            val moduleTypeContext = LucidModuleTypeContext(project, errorCollector)
+            val moduleTypeContext = LucidModuleTypeContext(project, notationCollector)
             val module = moduleTypeContext.extract(it)
 
-            errorCollector.assertNoIssues()
+            notationCollector.assertNoIssues()
             module
         }
     }
 
     /**
      * Performs a full parse on the file.
-     * @param errorCollector if null, the function will automatically check for errors. If provided, you should check
+     * @param notationCollector if null, the function will automatically check for errors. If provided, you should check
      * for errors after calling this function.
      */
-    suspend fun fullParse(errorCollector: ErrorCollector? = null): ModuleInstance {
-        val errors = errorCollector ?: testErrorCollector()
+    suspend fun fullParse(notationCollector: NotationCollector? = null): ModuleInstance {
+        val errors = notationCollector ?: testErrorCollector()
         val trees = parseText(errors)
 
         globalParse(errors, trees)
@@ -96,14 +96,14 @@ class LucidTester(vararg val files: String) {
         val moduleInstance = ModuleInstance("top", project, null, modules.first(), mapOf(), mapOf(), errors)
 
         moduleInstance.initialWalk()
-        if (errorCollector == null)
+        if (notationCollector == null)
             errors.assertNoIssues()
 
         return moduleInstance
     }
 
-    suspend fun runFirstTestBench(errorCollector: ErrorCollector? = null): SimParent {
-        val errors = errorCollector ?: testErrorCollector()
+    suspend fun runFirstTestBench(notationCollector: NotationCollector? = null): SimParent {
+        val errors = notationCollector ?: testErrorCollector()
         val tree = parseText(errors)
 
         globalParse(errors, tree)
@@ -118,12 +118,12 @@ class LucidTester(vararg val files: String) {
 
         val test = tests.first()
         return testBench.runTest(test.name).also {
-            test.context.errorCollector.assertNoIssues()
+            test.context.notationCollector.assertNoIssues()
         }
     }
 
-    suspend fun runTestBenches(errorCollector: ErrorCollector? = null) {
-        val errors = errorCollector ?: testErrorCollector()
+    suspend fun runTestBenches(notationCollector: NotationCollector? = null) {
+        val errors = notationCollector ?: testErrorCollector()
         val tree = parseText(errors)
 
         globalParse(errors, tree)
@@ -142,7 +142,7 @@ class LucidTester(vararg val files: String) {
             val tests = testBench.getTestBlocks()
             tests.forEach {
                 testBench.runTest(it.name)
-                it.context.errorCollector.assertNoIssues()
+                it.context.notationCollector.assertNoIssues()
             }
         }
     }
@@ -162,11 +162,11 @@ class LucidTester(vararg val files: String) {
         errors.assertNoErrors()
 
         bench.runTest(test)
-        bench.context.errorCollector.assertNoIssues()
+        bench.context.notationCollector.assertNoIssues()
     }
 
-    suspend fun parallelRunTestBenches(errorCollector: ErrorCollector? = null) {
-        val errors = errorCollector ?: testErrorCollector()
+    suspend fun parallelRunTestBenches(notationCollector: NotationCollector? = null) {
+        val errors = notationCollector ?: testErrorCollector()
         val tree = parseText(errors)
 
         globalParse(errors, tree)
@@ -194,8 +194,8 @@ class LucidTester(vararg val files: String) {
         }
     }
 
-    suspend fun getVerilog(errorCollector: ErrorCollector? = null): Map<String, String> {
-        val topInstance = fullParse(errorCollector)
+    suspend fun getVerilog(notationCollector: NotationCollector? = null): Map<String, String> {
+        val topInstance = fullParse(notationCollector)
         val instances = mutableMapOf<String, ModuleInstance>()
         fun add(instance: ModuleInstance) {
             instances[instance.parameterizedModuleName] = instance

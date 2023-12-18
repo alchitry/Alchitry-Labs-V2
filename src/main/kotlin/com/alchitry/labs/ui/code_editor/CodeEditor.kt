@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.currentRecomposeScope
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -25,7 +24,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import com.alchitry.labs.ui.code_editor.styles.lucid.LucidTokenizer
 import com.alchitry.labs.ui.code_editor.tooltip.EditorTooltipArea
 import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTypography
@@ -34,7 +32,7 @@ import java.awt.Cursor
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CodeEditor(
-    state: CodeEditorState = rememberCodeEditorState(remember { LucidTokenizer() })
+    state: CodeEditorState
 ) {
     state.clipboardManager = LocalClipboardManager.current
 

@@ -33,8 +33,8 @@ class AlwaysBlock(
     override suspend fun evaluate() {
         context.walk(alwaysBlockContext)
 
-        if (context.errorCollector.hasErrors) {
-            context.errorCollector.printReport()
+        if (context.notationCollector.hasErrors) {
+            context.notationCollector.printReport()
             error("Failed to evaluate always block!")
         }
 

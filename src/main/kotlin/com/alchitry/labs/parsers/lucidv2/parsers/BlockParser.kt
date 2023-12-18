@@ -183,7 +183,7 @@ data class BlockParser(
         val value = context.expr.resolve(exprCtx) ?: return
 
         if (value !is SimpleValue) {
-            context.errorCollector.reportError(exprCtx, "Case statement's value must be a simple value.")
+            context.notationCollector.reportError(exprCtx, "Case statement's value must be a simple value.")
             return
         }
 
@@ -191,11 +191,11 @@ data class BlockParser(
             val caseExprCtx = caseElemContext.expr() ?: return@forEach
             val condition = context.expr.resolve(caseExprCtx)
             if (condition !is SimpleValue) {
-                context.errorCollector.reportError(caseExprCtx, "Case statement conditions must be simple values.")
+                context.notationCollector.reportError(caseExprCtx, "Case statement conditions must be simple values.")
                 return
             }
             if (!condition.constant) {
-                context.errorCollector.reportError(caseExprCtx, "Case statement conditions must be constant.")
+                context.notationCollector.reportError(caseExprCtx, "Case statement conditions must be constant.")
                 return
             }
         }
@@ -206,7 +206,7 @@ data class BlockParser(
         val condition = context.expr.resolve(exprCtx) ?: return
 
         if (condition !is SimpleValue) {
-            context.errorCollector.reportError(exprCtx, "If condition must be a simple value.")
+            context.notationCollector.reportError(exprCtx, "If condition must be a simple value.")
             return
         }
     }
@@ -219,25 +219,25 @@ data class BlockParser(
         val countValue = context.resolve(exprCtx)
 
         if (countValue !is SimpleValue || !countValue.isNumber()) {
-            context.errorCollector.reportError(exprCtx, "Repeat count must be a number!")
+            context.notationCollector.reportError(exprCtx, "Repeat count must be a number!")
             return
         }
 
         val count = try {
             countValue.toBigInt()!!.intValueExact() // isNumber() check above makes !! safe
         } catch (e: ArithmeticException) {
-            context.errorCollector.reportError(exprCtx, "Repeat count doesn't fit in an integer.")
+            context.notationCollector.reportError(exprCtx, "Repeat count doesn't fit in an integer.")
             return
         }
 
         if (!inFunctionBlock && !inTestBlock) {
             if (count < 1) {
-                context.errorCollector.reportError(exprCtx, "Repeat count must be greater than 0.")
+                context.notationCollector.reportError(exprCtx, "Repeat count must be greater than 0.")
                 return
             }
 
             if (!countValue.constant) {
-                context.errorCollector.reportError(exprCtx, "Repeat count must be constant!")
+                context.notationCollector.reportError(exprCtx, "Repeat count must be constant!")
                 return
             }
         }

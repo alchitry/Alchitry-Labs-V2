@@ -5,24 +5,18 @@ import com.alchitry.labs.ui.code_editor.CodeEditorState
 import com.alchitry.labs.ui.code_editor.LineStyle
 import com.alchitry.labs.ui.code_editor.StyleToken
 import com.alchitry.labs.ui.code_editor.toStyleToken
-import kotlinx.coroutines.runBlocking
 
 class CodeStyler(
-    private val editor: CodeEditorState,
-    private val codeParser: CodeErrorChecker
+    private val editor: CodeEditorState
 ) {
 
     fun updateStyle() {
         val lines = editor.lines
         val styles = MutableList(lines.size) { mutableListOf<LineStyle>() }
 
-        val notations = runBlocking { codeParser.checkText(editor.getText()) }// TODO: do this async?
-        editor.notations.clear()
-        editor.notations.addAll(notations)
-
         val styleTokens = mutableListOf<StyleToken>().apply {
             addAll(editor.tokens.map { it.styleToken })
-            addAll(notations.map { it.toStyleToken() })
+            addAll(editor.notations.map { it.toStyleToken() })
         }
 
         styleTokens.forEach { token ->
