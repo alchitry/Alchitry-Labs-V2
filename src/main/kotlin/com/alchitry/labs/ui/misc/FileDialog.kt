@@ -18,8 +18,6 @@ fun openFileDialog(
     return FileDialog(window, title, FileDialog.LOAD).apply {
         isMultipleMode = allowMultiSelection
 
-
-        println("Starting Dir: $startingDirectory")
         startingDirectory?.let {
             directory = it.path
         }

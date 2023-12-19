@@ -36,6 +36,12 @@ class TabPanel(parent: TabParent) : TabSection(parent) {
         activeTab = tab
     }
 
+    override fun closeAll() {
+        tabs.forEach { it.onClose() }
+        tabs.clear()
+        activeTab = null
+    }
+
     fun focusTab(tab: Tab) {
         if (tabs.contains(tab))
             activeTab = tab

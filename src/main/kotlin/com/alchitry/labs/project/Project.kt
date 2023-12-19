@@ -1,6 +1,7 @@
 package com.alchitry.labs.project
 
 import com.alchitry.labs.Log
+import com.alchitry.labs.Settings
 import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.acf.NativeConstraint
 import com.alchitry.labs.parsers.errors.NotationCollector
@@ -61,7 +62,12 @@ data class Project(
         fun openProject(file: File? = null): Project? {
             try {
                 val projectFile =
-                    file ?: openFileDialog(mainWindow, "Open Project", listOf(".alp"), allowMultiSelection = false)
+                    file ?: openFileDialog(
+                        mainWindow,
+                        "Open Project",
+                        listOf(".alp"),
+                        allowMultiSelection = false,
+                        startingDirectory = Settings.workspace?.let { File(it) })
                         .firstOrNull() ?: return null
                 val project = openXml(projectFile)
                 project.queueNotationsUpdate()
@@ -71,6 +77,10 @@ data class Project(
                 Log.showError("Failed to open project: ${e.message}")
                 return null
             }
+        }
+
+        fun closeProject() {
+            mutableCurrentFlow.tryEmit(null)
         }
     }
 

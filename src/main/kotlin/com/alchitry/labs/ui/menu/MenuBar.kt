@@ -211,7 +211,9 @@ fun MenuBarContext.MenuItem(
             .padding(8.dp)
             .fillMaxWidth()
     ) {
-        label()
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
+            label()
+        }
     }
 }
 

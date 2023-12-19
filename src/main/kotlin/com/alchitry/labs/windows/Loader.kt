@@ -28,6 +28,7 @@ import com.alchitry.labs.ui.misc.openFileDialog
 import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTheme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import me.tongfei.progressbar.ProgressBarConsumer
 import me.tongfei.progressbar.ProgressBarRenderer
@@ -239,7 +240,7 @@ private fun BoardSelector(
         var boards by remember { mutableStateOf(mapOf<Board, Int>()) }
 
         LaunchedEffect(busy) {
-            while (true) {
+            while (isActive) {
                 if (!busy)
                     try {
                         boards = UsbUtil.detectAttachedBoards()

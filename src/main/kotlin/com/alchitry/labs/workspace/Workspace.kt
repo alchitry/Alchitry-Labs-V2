@@ -7,6 +7,10 @@ import com.alchitry.labs.ui.tabs.TabManager
 class Workspace {
     val tabManager = TabManager()
 
+    fun closeAll() {
+        tabManager.closeAll()
+    }
+
     fun openFile(
         file: ProjectFile
     ) {

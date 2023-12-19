@@ -13,22 +13,27 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs.Log
 import com.alchitry.labs.Settings
+import com.alchitry.labs.hardware.usb.BoardLoader
+import com.alchitry.labs.hardware.usb.UsbUtil
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.switchActiveWindow
 import com.alchitry.labs.ui.menu.*
 import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTheme
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 @Composable
 fun Toolbar() {
     val scope = rememberCoroutineScope()
     var running by remember { mutableStateOf(false) }
+    val project by Project.currentFlow.collectAsState()
     Row {
         AlchitryMenu {
             MenuItem({ Text("Open Project...") }) {
                 Project.openProject()
+            }
+            MenuItem({ Text("Close Project...") }) {
+                Project.closeProject()
             }
             MenuItem({ Text("Set Vivado Location") }) {
                 // TODO
@@ -51,6 +56,10 @@ fun Toolbar() {
             scope.launch(Dispatchers.Default) {
                 try {
                     block(project)
+                } catch (e: Exception) {
+                    if (e is CancellationException)
+                        throw e
+                    Log.printlnError(e.message)
                 } finally {
                     running = false
                 }
@@ -60,7 +69,8 @@ fun Toolbar() {
         ToolbarButton(
             onClick = {},
             icon = painterResource("icons/open.svg"),
-            description = "New file"
+            description = "New file",
+            enabled = project != null
         )
         ToolbarButton(
             onClick = {
@@ -68,7 +78,14 @@ fun Toolbar() {
             },
             icon = painterResource("icons/check.svg"),
             description = "Check for Errors",
-            enabled = !running
+            enabled = !running && project != null
+        )
+
+        ToolbarButton(
+            onClick = {},
+            icon = painterResource("icons/simulate.svg"),
+            description = "Simulate",
+            enabled = !running && project != null
         )
         ToolbarButton(
             onClick = {
@@ -76,13 +93,50 @@ fun Toolbar() {
             },
             icon = painterResource("icons/build.svg"),
             description = "Build",
-            enabled = !running
+            enabled = !running && project != null
         )
+
+        val board = project?.board
+        var boardDetected by remember { mutableStateOf(false) }
+        LaunchedEffect(board, running) {
+            if (board == null || running)
+                return@LaunchedEffect
+
+            while (isActive) {
+                val boards = UsbUtil.detectAttachedBoards()
+                boardDetected = boards.keys.contains(board)
+                delay(1000)
+            }
+        }
+
+        val canLoad = boardDetected && project?.binFile?.exists() == true
+
         ToolbarButton(
-            onClick = {},
-            icon = painterResource("icons/simulate.svg"),
-            description = "Simulate",
-            enabled = !running
+            onClick = {
+                runWithProject { BoardLoader.load(it.board, 0, it.binFile, true) }
+            },
+            icon = painterResource("icons/load.svg"),
+            description = "Load Flash",
+            enabled = !running && canLoad
+        )
+        if (project?.board?.supportsRamLoading == true) {
+            ToolbarButton(
+                onClick = {
+                    runWithProject { BoardLoader.load(it.board, 0, it.binFile, false) }
+                },
+                icon = painterResource("icons/load_temp.svg"),
+                description = "Load RAM",
+                enabled = !running && canLoad
+            )
+        }
+        ToolbarButton(
+            onClick = {
+                runWithProject { BoardLoader.erase(it.board, 0) }
+
+            },
+            icon = painterResource("icons/erase.svg"),
+            description = "Erase",
+            enabled = !running && canLoad
         )
     }
 }

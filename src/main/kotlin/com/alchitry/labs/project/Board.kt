@@ -34,6 +34,7 @@ sealed class Board {
     abstract val pinConverter: PinConverter
     abstract val acfConverter: AcfConverter
     abstract val projectBuilder: ProjectBuilder
+    abstract val supportsRamLoading: Boolean
 
     sealed interface XilinxBoard {
         val bridgeFile: String
@@ -57,6 +58,7 @@ sealed class Board {
         override val pinConverter = AuPinConverter
         override val acfConverter = XilinxConverter(this)
         override val projectBuilder = VivadoBuilder
+        override val supportsRamLoading = true
     }
 
     data object AlchitryAuPlus : Board(), XilinxBoard {
@@ -76,6 +78,7 @@ sealed class Board {
         override val pinConverter = AuPinConverter
         override val acfConverter = XilinxConverter(this)
         override val projectBuilder = VivadoBuilder
+        override val supportsRamLoading = true
     }
 
     data object AlchitryCu : Board() {
@@ -93,6 +96,7 @@ sealed class Board {
         override val pinConverter = CuPinConverter
         override val acfConverter = LatticeConverter(this)
         override val projectBuilder get() = if (Settings.useIceCube) IceCubeBuilder else IceStormBuilder
+        override val supportsRamLoading = false
     }
 }
 

@@ -9,6 +9,11 @@ import com.alchitry.labs.ui.drag_and_drop.DragAndDropZone
 class TabManager : TabParent {
     private var tabSection by mutableStateOf<TabSection>(TabPanel(this))
 
+    override fun closeAll() {
+        tabSection.closeAll()
+        tabSection = TabPanel(this)
+    }
+
     override fun replaceTabSection(original: TabSection, new: TabSection?) {
         if (new == null) {
             return
@@ -49,10 +54,12 @@ sealed interface TabParent {
     fun activeTabPanel(): TabPanel
     fun getTabs(): List<Tab>
     fun setActiveSection(tab: TabSection)
+    fun closeAll()
 }
 
 sealed class TabSection(var parent: TabParent) {
     abstract fun getTabs(): List<Tab>
+    abstract fun closeAll()
 
     context(DragAndDropContext<Tab>)
     @Composable
@@ -74,6 +81,11 @@ abstract class Split(
     }
 
     override fun getTabs(): List<Tab> = first.getTabs() + second.getTabs()
+
+    override fun closeAll() {
+        first.closeAll()
+        second.closeAll()
+    }
 
     override fun replaceTabSection(original: TabSection, new: TabSection?) {
         if (new == null) {
@@ -116,6 +128,7 @@ class HorizontalSplit(
 ) : Split(parent, left, right) {
     var left by this::first
     var right by this::second
+
 
     context(DragAndDropContext<Tab>)
     @Composable
