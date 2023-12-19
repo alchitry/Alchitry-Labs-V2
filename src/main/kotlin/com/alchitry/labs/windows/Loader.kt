@@ -19,8 +19,11 @@ import com.alchitry.labs.Settings
 import com.alchitry.labs.hardware.usb.BoardLoader
 import com.alchitry.labs.hardware.usb.UsbUtil
 import com.alchitry.labs.project.Board
+import com.alchitry.labs.switchActiveWindow
+import com.alchitry.labs.ui.components.AlchitryMenu
 import com.alchitry.labs.ui.components.AlchitryToolTip
 import com.alchitry.labs.ui.components.WindowDecoration
+import com.alchitry.labs.ui.menu.MenuItem
 import com.alchitry.labs.ui.misc.openFileDialog
 import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTheme
@@ -72,7 +75,13 @@ fun ApplicationScope.loaderWindow() {
         }
         AlchitryTheme {
             Column {
-                WindowDecoration()
+                WindowDecoration {
+                    AlchitryMenu {
+                        MenuItem({ Text("Switch to Alchitry Labs") }) {
+                            switchActiveWindow(Settings.WindowType.Labs)
+                        }
+                    }
+                }
 
                 val focusManger = LocalFocusManager.current
                 Surface(

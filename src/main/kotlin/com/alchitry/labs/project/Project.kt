@@ -42,7 +42,7 @@ data class Project(
     val projectFile = projectFolder.resolve("$projectName.alp")
     val buildDirectory = projectFolder.resolve("build")
     val binFile = buildDirectory.resolve("${board.binName}.bin")
-    val notationManagerFlow = MutableStateFlow<NotationManager?>(null)
+    private val notationManagerFlow = MutableStateFlow<NotationManager?>(null)
     val scope = CoroutineScope(Dispatchers.Default)
 
     fun notationCollectorFlowForFile(projectFile: ProjectFile): Flow<NotationCollector?> =

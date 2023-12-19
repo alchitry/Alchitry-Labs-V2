@@ -56,10 +56,11 @@ fun CodeEditor(
 
                     @Composable
                     override fun Item(index: Int, key: Any) {
+                        val notation = state.lineNotationLevel(index)
                         val alpha =
-                            if (state.selectionManager.active && state.selectionManager.caret.line == index) 1f else 0.3f
+                            if (state.selectionManager.active && state.selectionManager.caret.line == index || notation != null) 1f else 0.4f
                         CompositionLocalProvider(
-                            LocalContentColor provides AlchitryColors.current.GutterForeground,
+                            LocalContentColor provides (notation?.color ?: AlchitryColors.current.GutterForeground),
                             LocalTextStyle provides AlchitryTypography.editor
                         ) {
                             // if the index is negative,

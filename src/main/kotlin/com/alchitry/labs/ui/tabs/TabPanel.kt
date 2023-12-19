@@ -86,6 +86,7 @@ class TabPanel(parent: TabParent) : TabSection(parent) {
                                 var dragging by remember { mutableStateOf(false) }
                                 Draggable(tab, onMoved = {
                                     removeTab(tab)
+                                    dragging = false
                                 }, onDragging = { dragging = it }) {
                                     Row {
                                         Tab(

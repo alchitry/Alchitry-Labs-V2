@@ -39,16 +39,19 @@ fun ApplicationScope.labsWindow() {
             Settings.commit()
         }
     ) {
+        val workspace = remember { Workspace() }
+
         LaunchedEffect(Unit) {
             Env.mode = Env.Mode.Labs
             Settings.openProject?.let {
                 if (Project.current == null) {
-                    Project.openProject(File(it))
+                    Project.openProject(File(it))?.let { project ->
+                        workspace.openFile(project.top)
+                    }
                 }
             }
         }
 
-        val workspace = remember { Workspace() }
         CompositionLocalProvider(LocalWorkspace provides workspace) {
             AlchitryTheme {
                 Column {

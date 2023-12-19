@@ -12,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs.Log
+import com.alchitry.labs.Settings
 import com.alchitry.labs.project.Project
+import com.alchitry.labs.switchActiveWindow
 import com.alchitry.labs.ui.menu.*
 import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTheme
@@ -24,47 +26,18 @@ fun Toolbar() {
     val scope = rememberCoroutineScope()
     var running by remember { mutableStateOf(false) }
     Row {
-        MenuBar {
-            val menuBarItem = remember { MenuBarItem() }
-            val active = focused.value === menuBarItem && isActive.value
-
-            val subFocus = remember { mutableStateOf<MenuBarItem?>(null) }
-            val menuBarContext = remember {
-                object : MenuBarContext {
-                    override val isActive = this@MenuBar.isActive
-                    override val focused = subFocus
-                    override fun dismiss() {
-                        this@MenuBar.dismiss()
-                    }
-
-                    override fun requestFocus(item: MenuBarItem) {
-                        subFocus.value = item
-                    }
-                }
+        AlchitryMenu {
+            MenuItem({ Text("Open Project...") }) {
+                Project.openProject()
             }
-            ToolbarButton(
-                onClick = {
-                    requestFocus(menuBarItem)
-                },
-                icon = painterResource("icons/alchitry_icon.svg"),
-                description = "Menu",
-                colorFilter = null
-            )
-            with(menuBarContext) {
-                MenuBarDropdown(
-                    expanded = active,
-                    onDismissRequest = { dismiss() },
-                ) {
-                    MenuItem({ Text("Open Project...") }) {
-                        Project.openProject()
-                    }
-                    MenuItem({ Text("Set Vivado Location") }) {
-                        // TODO
-                    }
-                    MenuItem({ Text("Set iCEcube2 Location") }) {
-                        // TODO
-                    }
-                }
+            MenuItem({ Text("Set Vivado Location") }) {
+                // TODO
+            }
+            MenuItem({ Text("Set iCEcube2 Location") }) {
+                // TODO
+            }
+            MenuItem({ Text("Switch to Alchitry Loader") }) {
+                switchActiveWindow(Settings.WindowType.Loader)
             }
         }
 
@@ -120,6 +93,45 @@ fun ToolbarPreview() {
     AlchitryTheme {
         Box(Modifier.size(1000.dp).background(MaterialTheme.colorScheme.background)) {
             Toolbar()
+        }
+    }
+}
+
+@Composable
+fun AlchitryMenu(menu: @Composable MenuBarContext.() -> Unit) {
+    MenuBar {
+        val menuBarItem = remember { MenuBarItem() }
+        val active = focused.value === menuBarItem && isActive.value
+
+        val subFocus = remember { mutableStateOf<MenuBarItem?>(null) }
+        val menuBarContext = remember {
+            object : MenuBarContext {
+                override val isActive = this@MenuBar.isActive
+                override val focused = subFocus
+                override fun dismiss() {
+                    this@MenuBar.dismiss()
+                }
+
+                override fun requestFocus(item: MenuBarItem) {
+                    subFocus.value = item
+                }
+            }
+        }
+        ToolbarButton(
+            onClick = {
+                requestFocus(menuBarItem)
+            },
+            icon = painterResource("icons/alchitry_icon.svg"),
+            description = "Menu",
+            colorFilter = null
+        )
+        with(menuBarContext) {
+            MenuBarDropdown(
+                expanded = active,
+                onDismissRequest = { dismiss() },
+            ) {
+                menu()
+            }
         }
     }
 }

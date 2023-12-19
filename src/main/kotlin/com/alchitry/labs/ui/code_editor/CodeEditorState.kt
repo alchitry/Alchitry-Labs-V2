@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import com.alchitry.labs.parsers.errors.Notation
+import com.alchitry.labs.parsers.errors.NotationType
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.project.files.ProjectFile
@@ -141,10 +142,15 @@ class CodeEditorState(
         updateHighlightTokens()
     }
 
-    private fun updateHighlightTokens() {
-        val token = textPositionToToken(selectionManager.caret) ?: return
+    fun lineNotationLevel(line: Int): NotationType? {
+        return notations
+            .filter { (it.range.start.line..it.range.endInclusive.line).contains(line) }
+            .minByOrNull { it.type.ordinal }?.type
+    }
 
+    private fun updateHighlightTokens() {
         lines.forEach { it.highlights.clear() }
+        val token = textPositionToToken(selectionManager.caret) ?: return
 
         val tokens = when (token.token.type) {
             LucidLexer.Tokens.TYPE_ID.id, LucidLexer.Tokens.CONST_ID.id, LucidLexer.Tokens.SPACE_ID.id, LucidLexer.Tokens.FUNCTION_ID.id -> {
@@ -231,6 +237,10 @@ class CodeEditorState(
 
         LaunchedEffect(style) {
             refreshStyling()
+        }
+
+        LaunchedEffect(scrollState.value) {
+            tooltipState.hide()
         }
 
         val project by Project.currentFlow.collectAsState()

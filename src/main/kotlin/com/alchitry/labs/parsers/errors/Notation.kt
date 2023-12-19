@@ -1,6 +1,8 @@
 package com.alchitry.labs.parsers.errors
 
+import androidx.compose.ui.graphics.Color
 import com.alchitry.labs.ui.code_editor.TextPosition
+import com.alchitry.labs.ui.theme.AlchitryColors
 
 data class Notation(
     val message: String?,
@@ -14,8 +16,15 @@ data class Notation(
 
 enum class NotationType(val label: String) {
     Error("Error"),
-    Warning("Warning"),
-    Info("Info"),
     SyntaxError("Syntax error"),
-    SyntaxAmbiguity("Syntax ambiguity")
+    Warning("Warning"),
+    SyntaxAmbiguity("Syntax ambiguity"),
+    Info("Info");
+
+    val color: Color
+        get() = when (this) {
+            Error, SyntaxError -> AlchitryColors.current.Error
+            Warning, SyntaxAmbiguity -> AlchitryColors.current.Warning
+            Info -> AlchitryColors.current.Info
+        }
 }

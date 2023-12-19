@@ -1,6 +1,7 @@
 package com.alchitry.labs.ui.tree
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +24,7 @@ import com.alchitry.labs.ui.theme.AlchitryColors
 fun SelectionContext.TreeItem(
     title: String,
     indentLevel: Int,
+    color: Color? = null,
     onDoubleClick: () -> Unit,
 ) {
     val selectable = remember { Selectable() }
@@ -39,7 +41,7 @@ fun SelectionContext.TreeItem(
                 onDoubleTap = {
                     onDoubleClick()
                 },
-                onTap = {
+                onPress = {
                     requestSelection(selectable)
                     focusRequester.requestFocus()
                 },
@@ -50,10 +52,10 @@ fun SelectionContext.TreeItem(
                 0.15f
             ) else Color.Transparent
         )
-
         .padding(vertical = 5.dp)
         .padding(start = 25.dp * indentLevel)
+        .focusable()
     ) {
-        Text(title)
+        Text(title, color = color ?: LocalContentColor.current)
     }
 }

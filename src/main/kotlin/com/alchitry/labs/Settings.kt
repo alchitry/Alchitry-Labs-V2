@@ -33,6 +33,15 @@ object Settings {
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Float) = pref.putFloat(key, value)
     }
 
+    private class EnumSetting<E : Enum<E>>(private val key: String, private val default: E) {
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): E {
+            val storedName = pref.get(key, default.name)
+            return default::class.java.enumConstants.firstOrNull { it.name == storedName } ?: default
+        }
+
+        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: E) = pref.put(key, value.name)
+    }
+
     private class WindowStateSetting(private val prefix: String, private val default: WindowState) {
         private var width by FloatSetting("${prefix}_WINDOW_WIDTH", default.size.width.value)
         private var height by FloatSetting("${prefix}_WINDOW_HEIGHT", default.size.height.value)
@@ -70,11 +79,19 @@ object Settings {
         try {
             pref.flush()
         } catch (e: BackingStoreException) {
-            // TODO: Util.showError("Failed to save settings!")
+            Log.printlnError("Failed to save settings: ${e.message}")
         }
     }
 
+    enum class WindowType {
+        Labs,
+        Loader
+    }
+
     var version by StringSetting("VERSION", "0")
+
+    var openWindow by EnumSetting("OPEN_WINDOW", WindowType.Labs)
+
     var labsWindowState by WindowStateSetting("LABS", WindowState(size = DpSize(1000.dp, 700.dp)))
     var loaderWindowState by WindowStateSetting("LOADER", WindowState(size = DpSize(500.dp, 200.dp)))
     var fileListWidth by IntSetting("FILE_LIST_WIDTH", 200)

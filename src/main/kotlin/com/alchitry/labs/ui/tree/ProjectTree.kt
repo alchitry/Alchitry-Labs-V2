@@ -30,9 +30,15 @@ fun ProjectTree() {
             Column(Modifier.fillMaxIntrinsic()) {
                 TreeSection(project.projectName, 0) {
                     TreeSection("Source Files", 1) {
-                        project.sourceFiles.sortedBy { it.name }.forEach {
-                            TreeItem(it.name, 2) {
-                                workspace.openFile(it)
+                        project.sourceFiles.sortedBy { it.name }.forEach { file ->
+                            val color = project
+                                .notationCollectorFlowForFile(file)
+                                .collectAsState(null).value
+                                ?.getAllNotations()
+                                ?.minByOrNull { it.type.ordinal }
+                                ?.type?.color
+                            TreeItem(file.name, 2, color) {
+                                workspace.openFile(file)
                             }
                         }
                     }
