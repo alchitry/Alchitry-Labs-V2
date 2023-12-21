@@ -118,6 +118,10 @@ object Log {
         }
     }
 
+    fun info(message: Any?) = println(message, AlchitryColors.current.Info)
+    fun warn(message: Any?) = println(message, AlchitryColors.current.Warning)
+    fun error(message: Any?, throwable: Throwable? = null) = printlnError(message, throwable)
+
     val barStyle: ProgressBarStyle = if (Env.isWindows) {
         ProgressBarStyle.ASCII
     } else {
@@ -131,26 +135,40 @@ object Log {
     }
 
     inline fun progressBar(name: String, max: Long, block: (ProgressBar) -> Unit) {
-        val progressBar = if (Env.mode == Env.Mode.Loader) {
-            ProgressBar(
-                name,
-                max,
-                50,
-                false,
-                false,
-                0,
-                Duration.ZERO,
-                LoaderProgressBarRender,
-                LoaderProgressBarConsumer
-            )
-        } else {
-            ProgressBarBuilder().apply {
-                setStyle(barStyle)
-                setTaskName(name)
-                setInitialMax(max)
-                setUpdateIntervalMillis(250)
-                setConsumer(ConsoleProgressBarConsumer(PrintStream(FileOutputStream(FileDescriptor.out))))
-            }.build()
+        val progressBar = when (Env.mode) {
+            Env.Mode.Loader -> {
+                ProgressBar(
+                    name,
+                    max,
+                    50,
+                    false,
+                    false,
+                    0,
+                    Duration.ZERO,
+                    LoaderProgressBarRender,
+                    LoaderProgressBarConsumer
+                )
+            }
+
+            Env.Mode.Labs -> {
+                ProgressBarBuilder().apply {
+                    setStyle(ProgressBarStyle.COLORFUL_UNICODE_BLOCK)
+                    setTaskName(name)
+                    setInitialMax(max)
+                    setUpdateIntervalMillis(100)
+                    setConsumer(Console.progressBarConsumer)
+                }.build()
+            }
+
+            else -> {
+                ProgressBarBuilder().apply {
+                    setStyle(barStyle)
+                    setTaskName(name)
+                    setInitialMax(max)
+                    setUpdateIntervalMillis(250)
+                    setConsumer(ConsoleProgressBarConsumer(PrintStream(FileOutputStream(FileDescriptor.out))))
+                }.build()
+            }
         }
         progressBar.use(block)
     }

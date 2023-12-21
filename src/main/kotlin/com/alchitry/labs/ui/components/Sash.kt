@@ -21,10 +21,15 @@ enum class ResizePriority {
 }
 
 @Composable
-fun rememberSashData(resizePriority: ResizePriority = ResizePriority.EQUAL, first: Float = 1f, second: Float = 1f) =
-    remember {
-        SashData(resizePriority, SashSize(first, second))
+fun rememberSashData(
+    resizePriority: ResizePriority = ResizePriority.EQUAL, first: Float = 1f, second: Float = 1f,
+    minimumSize: Dp = 10.dp
+): SashData {
+    val minSizePx = LocalDensity.current.run { minimumSize.toPx() }
+    return remember(minSizePx) {
+        SashData(resizePriority, SashSize(first, second), minSizePx)
     }
+}
 
 data class SashSize(
     val first: Float = 1f,
@@ -40,15 +45,17 @@ data class SashSize(
 class SashData(
     val resizePriority: ResizePriority = ResizePriority.EQUAL,
     size: SashSize = SashSize(),
+    val minimumSize: Float
 ) {
     var size by mutableStateOf(size)
+    var dragSize = size
 
     fun clampToBounds() {
         val totalSize = size.first + size.second
-        if (size.first < 1f) {
-            size = SashSize(1f, totalSize - 1f)
-        } else if (size.second < 1f) {
-            size = SashSize(totalSize - 1f, 1f)
+        if (size.first < minimumSize) {
+            size = SashSize(minimumSize, totalSize - minimumSize)
+        } else if (size.second < minimumSize) {
+            size = SashSize(totalSize - minimumSize, minimumSize)
         }
     }
 
@@ -57,13 +64,21 @@ class SashData(
             ResizePriority.EQUAL -> {
                 SashSize(newSize * size.boundFirstWeight, newSize * size.boundSecondWeight)
             }
+
             ResizePriority.FIRST -> SashSize(newSize - size.second, size.second)
             ResizePriority.SECOND -> SashSize(size.first, newSize - size.first)
         }
+        clampToBounds()
+    }
+
+    fun onDragStart() {
+        dragSize = size
     }
 
     fun onDrag(delta: Float) {
-        size = SashSize(size.first + delta, size.second - delta)
+        dragSize = SashSize(dragSize.first + delta, dragSize.second - delta)
+        size = dragSize
+        clampToBounds()
     }
 }
 
@@ -116,8 +131,8 @@ fun HSash(
                             sashData.onDrag(it)
                         },
                         orientation = Orientation.Horizontal,
+                        onDragStarted = { sashData.onDragStart() },
                         onDragStopped = {
-                            sashData.clampToBounds()
                             onResize?.invoke(sashData)
                         }
                     )
@@ -169,11 +184,8 @@ fun VSash(
                             sashData.onDrag(it)
                         },
                         orientation = Orientation.Vertical,
-                        onDragStarted = {
-                            sashData.clampToBounds()
-                        },
+                        onDragStarted = { sashData.onDragStart() },
                         onDragStopped = {
-                            sashData.clampToBounds()
                             onResize?.invoke(sashData)
                         }
                     )

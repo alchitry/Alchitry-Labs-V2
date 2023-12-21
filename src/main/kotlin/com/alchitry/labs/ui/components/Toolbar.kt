@@ -47,15 +47,15 @@ fun Toolbar() {
         }
 
         fun runWithProject(block: suspend (Project) -> Unit) {
-            val project = Project.current
-            if (project == null) {
+            val currentProj = Project.current
+            if (currentProj == null) {
                 Log.println("Project must be open first!", AlchitryColors.current.Error)
                 return
             }
             running = true
             scope.launch(Dispatchers.Default) {
                 try {
-                    block(project)
+                    block(currentProj)
                 } catch (e: Exception) {
                     if (e is CancellationException)
                         throw e
@@ -83,7 +83,7 @@ fun Toolbar() {
 
         ToolbarButton(
             onClick = {},
-            icon = painterResource("icons/simulate.svg"),
+            icon = painterResource("icons/debug.svg"),
             description = "Simulate",
             enabled = !running && project != null
         )
@@ -109,11 +109,20 @@ fun Toolbar() {
             }
         }
 
-        val canLoad = boardDetected && project?.binFile?.exists() == true
+        val canLoad = boardDetected && project != null
 
         ToolbarButton(
             onClick = {
-                runWithProject { BoardLoader.load(it.board, 0, it.binFile, true) }
+                runWithProject {
+                    if (!it.binFileIsUpToDate()) {
+                        Log.info("Bin file is outdated. Building project...")
+                        if (!it.build()) {
+                            Log.error("Can't load the project because the build failed!")
+                            return@runWithProject
+                        }
+                    }
+                    BoardLoader.load(it.board, 0, it.binFile, true)
+                }
             },
             icon = painterResource("icons/load.svg"),
             description = "Load Flash",
@@ -122,7 +131,16 @@ fun Toolbar() {
         if (project?.board?.supportsRamLoading == true) {
             ToolbarButton(
                 onClick = {
-                    runWithProject { BoardLoader.load(it.board, 0, it.binFile, false) }
+                    runWithProject {
+                        if (!it.binFileIsUpToDate()) {
+                            Log.info("Bin file is outdated. Building project...")
+                            if (!it.build()) {
+                                Log.error("Can't load the project because the build failed!")
+                                return@runWithProject
+                            }
+                        }
+                        BoardLoader.load(it.board, 0, it.binFile, false)
+                    }
                 },
                 icon = painterResource("icons/load_temp.svg"),
                 description = "Load RAM",
@@ -132,11 +150,10 @@ fun Toolbar() {
         ToolbarButton(
             onClick = {
                 runWithProject { BoardLoader.erase(it.board, 0) }
-
             },
             icon = painterResource("icons/erase.svg"),
             description = "Erase",
-            enabled = !running && canLoad
+            enabled = !running && boardDetected
         )
     }
 }

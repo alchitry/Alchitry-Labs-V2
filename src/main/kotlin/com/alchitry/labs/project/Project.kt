@@ -12,10 +12,7 @@ import com.alchitry.labs.parsers.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleTypeContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
-import com.alchitry.labs.project.files.ConstraintFile
-import com.alchitry.labs.project.files.IPCore
-import com.alchitry.labs.project.files.ProjectFile
-import com.alchitry.labs.project.files.SourceFile
+import com.alchitry.labs.project.files.*
 import com.alchitry.labs.ui.misc.openFileDialog
 import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.windows.mainWindow
@@ -28,6 +25,7 @@ import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 import java.io.File
 import kotlin.io.path.createDirectories
+import kotlin.math.max
 
 class QueueExhaustionException(message: String) : IllegalStateException(message)
 
@@ -45,6 +43,18 @@ data class Project(
     val binFile = buildDirectory.resolve("${board.binName}.bin")
     private val notationManagerFlow = MutableStateFlow<NotationManager?>(null)
     val scope = CoroutineScope(Dispatchers.Default)
+
+    fun binFileIsUpToDate(): Boolean = binFile.lastModified() >= lastModified() && binFile.lastModified() > 0L
+    fun lastModified(): Long {
+        return max(
+            max(
+                sourceFiles.mapNotNull { (it.file as? FileProvider.DiskFile)?.file?.lastModified() }.maxOrNull() ?: 0L,
+                constraintFiles.mapNotNull { (it.file as? FileProvider.DiskFile)?.file?.lastModified() }.maxOrNull()
+                    ?: 0L
+            ),
+            ipCores.maxOfOrNull { it.files.maxOfOrNull { f -> f.lastModified() } ?: 0 } ?: 0L
+        )
+    }
 
     fun notationCollectorFlowForFile(projectFile: ProjectFile): Flow<NotationCollector?> =
         notationManagerFlow.map { it?.getCollector(projectFile) }

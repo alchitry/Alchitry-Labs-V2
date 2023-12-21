@@ -26,11 +26,14 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTypography
 import kotlinx.coroutines.launch
+import me.tongfei.progressbar.ProgressBarConsumer
 import kotlin.math.roundToInt
 
 private data class StyledText(
@@ -43,6 +46,55 @@ object Console {
     private var appendToLastLine = true
     private var scrollToIdx by mutableStateOf(-1)
     private const val scale = 0.08f
+    private var activeProgressBar: AnnotatedString? = null
+
+    val progressBarConsumer = object : ProgressBarConsumer {
+        override fun clear() {
+            if (content.lastOrNull() == activeProgressBar) {
+                content.removeLastOrNull()
+            }
+            activeProgressBar = null
+        }
+
+        override fun accept(rendered: String) {
+            // over-write the lines
+            val overloadedText = buildString {
+                rendered.split("\r").forEach { line ->
+                    replace(0, line.length.coerceAtMost(length), line)
+                }
+            }
+
+            val newLine = buildAnnotatedString {
+                val firstSplit = overloadedText.split("\u001b[33m")
+                val start = firstSplit.firstOrNull()
+                val secondSplit = firstSplit.getOrNull(1)?.split("\u001b[0m")
+                val middle = secondSplit?.firstOrNull()
+                val end = secondSplit?.getOrNull(1)
+                start?.let { append(it) }
+                middle?.let {
+                    withStyle(
+                        SpanStyle(
+                            color = AlchitryColors.current.ProgressBar,
+                            fontFamily = FontFamily.Monospace // Ubuntu font doesn't have the needed unicode characters
+                        )
+                    ) { append(it) }
+                }
+                end?.let { append(it) }
+            }
+
+            if (content.isNotEmpty() && content.last() == activeProgressBar) {
+                content.removeLastOrNull()
+            }
+            content.add(newLine)
+            activeProgressBar = newLine
+        }
+
+        override fun close() {
+            activeProgressBar = null
+        }
+
+        override fun getMaxRenderedLength(): Int = 80
+    }
 
     fun append(annotatedString: AnnotatedString) {
         val adjustedString = if (annotatedString.endsWith("\n")) {
@@ -222,10 +274,10 @@ fun MiniScrollBar(
 
         val overlayBox = measurables[1].measure(
             Constraints(
-                minWidth = actualWidth,
-                maxWidth = actualWidth,
-                minHeight = boxHeight,
-                maxHeight = boxHeight
+                minWidth = actualWidth.coerceAtLeast(1),
+                maxWidth = actualWidth.coerceAtLeast(1),
+                minHeight = boxHeight.coerceAtLeast(1),
+                maxHeight = boxHeight.coerceAtLeast(1)
             )
         )
 
