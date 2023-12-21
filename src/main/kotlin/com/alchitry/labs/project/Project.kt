@@ -246,26 +246,29 @@ data class Project(
 
     suspend fun parse(errorManger: NotationManager): List<Pair<SourceFile, LucidParser.SourceContext>>? {
         val trees = coroutineScope {
-            sourceFiles.map { file ->
-                async {
-                    val parser = LucidParser(
-                        CommonTokenStream(
-                            LucidLexer(
-                                CharStreams.fromString(
-                                    file.readText(),
-                                    file.name
-                                )
-                            ).also { it.removeErrorListeners() })
-                    ).apply {
-                        (tokenStream?.tokenSource as? LucidLexer)?.addErrorListener(errorManger.getCollector(file))
-                            ?: error("TokenSource was not a LucidLexer!")
-                        removeErrorListeners()
-                        addErrorListener(errorManger.getCollector(file))
-                    }
+            sourceFiles
+                .map { file -> file to errorManger.getCollector(file) } // do this first to avoid race conditions
+                .map { (file, collector) ->
+                    async {
+                        val parser = LucidParser(
+                            CommonTokenStream(
+                                LucidLexer(
+                                    CharStreams.fromString(
+                                        file.readText(),
+                                        file.name
+                                    )
+                                ).apply {
+                                    removeErrorListeners()
+                                    addErrorListener(collector)
+                                })
+                        ).apply {
+                            removeErrorListeners()
+                            addErrorListener(collector)
+                        }
 
-                    file to parser.source()
-                }
-            }.awaitAll()
+                        file to parser.source()
+                    }
+                }.awaitAll()
         }
         if (!errorManger.hasNoMessages)
             return null
@@ -281,7 +284,7 @@ data class Project(
         val trees = parsedTrees ?: parse(errorManger)
 
         try {
-            if (trees == null)
+            if (trees == null || errorManger.hasErrors)
                 return null
 
             trees.forEach {

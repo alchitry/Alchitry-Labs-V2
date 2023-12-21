@@ -125,9 +125,10 @@ class TypesParser(
 
         if (extraSignals.isNotEmpty()) {
             context.reportError(
-                ctx,
+                ctx.name(0) ?: ctx,
                 "The module \"${moduleTypeName}\" doesn't have these provided ports: ${extraSignals.joinToString(", ")}"
             )
+            return
         }
 
         val providedParams = localParamConnections.union(extParamConnections).map { it.port }
@@ -358,8 +359,14 @@ class TypesParser(
                         sigNameCtx,
                         "The port \"$name\" has already been assigned!"
                     )
-                else
-                    signals.add(Connection(sigNameCtx, DynamicExpr(sigCtx.expr() ?: return@let, context)))
+                else {
+                    val dynamicExpr = try {
+                        DynamicExpr(sigCtx.expr() ?: return@let, context)
+                    } catch (e: IllegalStateException) {
+                        return@let
+                    }
+                    signals.add(Connection(sigNameCtx, dynamicExpr))
+                }
             }
             connectionContext.paramCon()?.let { paramCtx ->
                 val paramNameCtx = paramCtx.name() ?: return@let
@@ -369,8 +376,14 @@ class TypesParser(
                         paramNameCtx,
                         "The parameter \"$name\" has already been assigned!"
                     )
-                else
-                    params.add(Connection(paramNameCtx, DynamicExpr(paramCtx.expr() ?: return@let, context)))
+                else {
+                    val dynamicExpr = try {
+                        DynamicExpr(paramCtx.expr() ?: return@let, context)
+                    } catch (e: IllegalStateException) {
+                        return@let
+                    }
+                    params.add(Connection(paramNameCtx, dynamicExpr))
+                }
             }
         }
         assignmentBlocks.add(AssignmentBlock(signals, params))
@@ -552,7 +565,7 @@ class TypesParser(
                     "clk" -> clk = sig.value // TODO: Check width fits to single bit
                     "rst" -> rst = sig.value
                     else -> context.reportError(
-                        sig.value.expr,
+                        sig.portCtx,
                         "DFFs don't have a signal named \"$sigName\"."
                     )
                 }
