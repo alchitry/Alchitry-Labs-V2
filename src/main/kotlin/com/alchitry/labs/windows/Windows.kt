@@ -2,6 +2,7 @@ package com.alchitry.labs.windows
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -9,7 +10,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import com.alchitry.labs.Env
+import com.alchitry.labs.ui.theme.AlchitryColors
 import kotlinx.coroutines.delay
+import java.awt.Color
 import java.awt.Dimension
 import javax.swing.ImageIcon
 import kotlin.math.roundToInt
@@ -47,6 +50,10 @@ fun ApplicationScope.openWindow(
     ) {
         val density = LocalDensity.current
         var updateMinSize by remember { mutableStateOf(false) }
+
+        LaunchedEffect(AlchitryColors.current.scheme.surface) {
+            window.background = Color(AlchitryColors.current.scheme.surface.toArgb())
+        }
 
         LaunchedEffect(packContent) {
             if (!packContent) {

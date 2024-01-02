@@ -1,5 +1,6 @@
 package com.alchitry.labs.windows
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -273,7 +274,11 @@ private fun BoardSelector(
             onBoardChanged(selected)
         }
 
-        ExposedDropdownMenuBox(expanded, onExpandedChange = { expanded = it }) {
+        ExposedDropdownMenuBox(
+            expanded,
+            onExpandedChange = { expanded = it },
+            Modifier.background(MaterialTheme.colorScheme.surfaceColorAtElevation(1000.dp))
+        ) {
             OutlinedTextField(
                 readOnly = true,
                 value = selected?.toString(boards) ?: "No boards detected",

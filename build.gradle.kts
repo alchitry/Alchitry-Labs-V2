@@ -19,6 +19,7 @@ plugins {
     id("org.jetbrains.compose") version "1.5.11"
     id("dev.hydraulic.conveyor") version "1.5"
     id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
+    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
 val fullVersion = "2.0.3-PREVIEW"
@@ -33,6 +34,11 @@ repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     maven("https://jitpack.io")
+}
+
+javafx {
+    version = "21.0.1"
+    modules("javafx.controls", "javafx.swing")
 }
 
 dependencies {
@@ -51,6 +57,7 @@ dependencies {
     implementation("com.github.alchitry.yad2xx:yad2xxJava:d2xx_only_with_lib-SNAPSHOT")
     implementation("me.tongfei:progressbar:0.10.0")
     implementation("org.fusesource.jansi:jansi:2.4.1")
+    implementation("li.flor:native-j-file-chooser:1.6.4")
 
     linuxAmd64(compose.desktop.linux_x64)
     linuxAarch64(compose.desktop.linux_arm64)

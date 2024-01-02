@@ -33,7 +33,7 @@ object ProjectCreator {
         }
     }
 
-    fun clone(sourceFolder: URL, sourceName: String, projName: String, workspace: File, board: Board? = null) {
+    fun clone(sourceFolder: URL, sourceName: String, projName: String, workspace: File, board: Board? = null): Project {
         val destination = File(workspace, projName)
         if (destination.exists())
             error("The destination ${destination.path} already exists")
@@ -60,7 +60,7 @@ object ProjectCreator {
         }
 
         val project = Project.openXml(newProjFile)
-        project.copy(projectName = projName, board = board ?: project.board).saveXML(newProjFile)
+        return project.copy(projectName = projName, board = board ?: project.board).apply { saveXML(newProjFile) }
     }
 }
 

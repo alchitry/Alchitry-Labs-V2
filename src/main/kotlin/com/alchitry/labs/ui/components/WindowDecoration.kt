@@ -24,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogWindowScope
 import androidx.compose.ui.window.FrameWindowScope
 import com.alchitry.labs.Env
 import com.alchitry.labs.ui.layout.LCR
@@ -140,5 +141,30 @@ fun WindowButton(
         contentAlignment = Alignment.Center
     ) {
         content()
+    }
+}
+
+@Composable
+fun DialogWindowScope.WindowDecoration(onClose: () -> Unit) {
+    WindowDraggableArea {
+        Surface(tonalElevation = 5.dp, modifier = Modifier.height(48.dp)) {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                LCR(
+                    center = { Text(window.title, Modifier.padding(horizontal = 10.dp)) },
+                    right = {
+                        WindowButton(
+                            onClick = onClose,
+                            color = AlchitryColors.current.Error
+                        ) {
+                            Icon(
+                                painterResource("icons/close.svg"),
+                                "Close",
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                )
+            }
+        }
     }
 }

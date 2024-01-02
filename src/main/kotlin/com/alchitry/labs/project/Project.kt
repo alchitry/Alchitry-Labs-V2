@@ -69,7 +69,13 @@ data class Project(
                 mutableCurrentFlow.tryEmit(value)
             }
 
-        fun openProject(file: File? = null): Project? {
+        fun open(project: Project): Project {
+            project.queueNotationsUpdate()
+            mutableCurrentFlow.tryEmit(project)
+            return project
+        }
+
+        fun open(file: File? = null): Project? {
             try {
                 val projectFile =
                     file ?: openFileDialog(
@@ -80,16 +86,14 @@ data class Project(
                         startingDirectory = Settings.workspace?.let { File(it) })
                         .firstOrNull() ?: return null
                 val project = openXml(projectFile)
-                project.queueNotationsUpdate()
-                mutableCurrentFlow.tryEmit(project)
-                return project
+                return open(project)
             } catch (e: Exception) {
                 Log.showError("Failed to open project: ${e.message}")
                 return null
             }
         }
 
-        fun closeProject() {
+        fun close() {
             mutableCurrentFlow.tryEmit(null)
         }
     }

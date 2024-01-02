@@ -3,9 +3,11 @@ package com.alchitry.labs.ui.misc
 import androidx.compose.ui.awt.ComposeWindow
 import kotlinx.coroutines.*
 import kotlinx.coroutines.swing.Swing
+import li.flor.nativejfilechooser.NativeJFileChooser
 import java.awt.FileDialog
 import java.awt.Point
 import java.io.File
+import javax.swing.JFileChooser
 
 fun openFileDialog(
     window: ComposeWindow,
@@ -46,4 +48,21 @@ fun openFileDialog(
 
         isVisible = true
     }.files.toSet().also { scope.cancel() }
+}
+
+fun openDirectoryDialog(
+    window: ComposeWindow,
+    title: String,
+    startingDirectory: File? = null
+): File? {
+    val scope = CoroutineScope(Dispatchers.Swing)
+    val chooser = NativeJFileChooser(startingDirectory)
+    chooser.dialogTitle = title
+    chooser.fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
+    scope.launch {
+        delay(100)
+        chooser.requestFocus()
+    }
+    chooser.showOpenDialog(window)
+    return chooser.selectedFile
 }

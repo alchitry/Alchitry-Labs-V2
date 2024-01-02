@@ -30,10 +30,10 @@ fun Toolbar() {
     Row {
         AlchitryMenu {
             MenuItem({ Text("Open Project...") }) {
-                Project.openProject()
+                Project.open()
             }
             MenuItem({ Text("Close Project...") }) {
-                Project.closeProject()
+                Project.close()
             }
             MenuItem({ Text("Set Vivado Location") }) {
                 // TODO
