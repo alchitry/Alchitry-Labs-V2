@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
@@ -21,8 +22,8 @@ import com.alchitry.labs.hardware.usb.BoardLoader
 import com.alchitry.labs.hardware.usb.UsbUtil
 import com.alchitry.labs.project.Board
 import com.alchitry.labs.switchActiveWindow
-import com.alchitry.labs.ui.components.AlchitryMenu
 import com.alchitry.labs.ui.components.AlchitryToolTip
+import com.alchitry.labs.ui.components.IconMenu
 import com.alchitry.labs.ui.components.WindowDecoration
 import com.alchitry.labs.ui.menu.MenuItem
 import com.alchitry.labs.ui.misc.openFileDialog
@@ -78,7 +79,7 @@ fun ApplicationScope.loaderWindow() {
         AlchitryTheme {
             Column {
                 WindowDecoration {
-                    AlchitryMenu {
+                    IconMenu(painterResource("icons/alchitry_icon.svg"), "Main Menu") {
                         MenuItem({ Text("Switch to Alchitry Labs") }) {
                             switchActiveWindow(Settings.WindowType.Labs)
                         }

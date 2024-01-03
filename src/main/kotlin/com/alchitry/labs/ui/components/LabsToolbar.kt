@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs.Log
@@ -17,6 +18,8 @@ import com.alchitry.labs.hardware.usb.BoardLoader
 import com.alchitry.labs.hardware.usb.UsbUtil
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.switchActiveWindow
+import com.alchitry.labs.ui.dialogs.AcfFileDialog
+import com.alchitry.labs.ui.dialogs.LucidFileDialog
 import com.alchitry.labs.ui.dialogs.NewProjectDialog
 import com.alchitry.labs.ui.menu.*
 import com.alchitry.labs.ui.theme.AlchitryColors
@@ -24,14 +27,14 @@ import com.alchitry.labs.ui.theme.AlchitryTheme
 import kotlinx.coroutines.*
 
 @Composable
-fun Toolbar() {
+fun LabsToolbar() {
     val scope = rememberCoroutineScope()
     var running by remember { mutableStateOf(false) }
     val project by Project.currentFlow.collectAsState()
     var showProjectDialog by remember { mutableStateOf(false) }
     NewProjectDialog(showProjectDialog) { showProjectDialog = false }
     Row {
-        AlchitryMenu {
+        IconMenu(painterResource("icons/alchitry_icon.svg"), "Menu") {
             MenuItem({ Text("New Project...") }) {
                 showProjectDialog = true
             }
@@ -39,10 +42,10 @@ fun Toolbar() {
                 Project.open()
             }
             MenuItem({ Text("Set Vivado Location") }) {
-                // TODO
+                Log.warn("Not implemented yet!") // TODO
             }
             MenuItem({ Text("Set iCEcube2 Location") }) {
-                // TODO
+                Log.warn("Not implemented yet!") // TODO
             }
             MenuItem({ Text("Switch to Alchitry Loader") }) {
                 switchActiveWindow(Settings.WindowType.Loader)
@@ -69,12 +72,20 @@ fun Toolbar() {
             }
         }
 
-        ToolbarButton(
-            onClick = {},
-            icon = painterResource("icons/open.svg"),
-            description = "New file",
-            enabled = project != null
-        )
+        var showLucidFileDialog by remember { mutableStateOf(false) }
+        LucidFileDialog(showLucidFileDialog) { showLucidFileDialog = false }
+
+        var showACFFileDialog by remember { mutableStateOf(false) }
+        AcfFileDialog(showACFFileDialog) { showACFFileDialog = false }
+
+        IconMenu(painterResource("icons/open.svg"), "New File", enabled = project != null) {
+            MenuItem({ Text("New Lucid Module") }) {
+                showLucidFileDialog = true
+            }
+            MenuItem({ Text("New Alchitry Constraints") }) {
+                showACFFileDialog = true
+            }
+        }
         ToolbarButton(
             onClick = {
                 runWithProject { it.check() }
@@ -85,7 +96,9 @@ fun Toolbar() {
         )
 
         ToolbarButton(
-            onClick = {},
+            onClick = {
+                Log.warn("Not implemented yet!") // TODO
+            },
             icon = painterResource("icons/debug.svg"),
             description = "Simulate",
             enabled = !running && project != null
@@ -166,13 +179,18 @@ fun Toolbar() {
 fun ToolbarPreview() {
     AlchitryTheme {
         Box(Modifier.size(1000.dp).background(MaterialTheme.colorScheme.background)) {
-            Toolbar()
+            LabsToolbar()
         }
     }
 }
 
 @Composable
-fun AlchitryMenu(menu: @Composable MenuBarContext.() -> Unit) {
+fun IconMenu(
+    iconPainter: Painter,
+    description: String,
+    enabled: Boolean = true,
+    menu: @Composable MenuBarContext.() -> Unit
+) {
     MenuBar {
         val menuBarItem = remember { MenuBarItem() }
         val active = focused.value === menuBarItem && isActive.value
@@ -195,9 +213,10 @@ fun AlchitryMenu(menu: @Composable MenuBarContext.() -> Unit) {
             onClick = {
                 requestFocus(menuBarItem)
             },
-            icon = painterResource("icons/alchitry_icon.svg"),
-            description = "Menu",
-            colorFilter = null
+            icon = iconPainter,
+            description = description,
+            colorFilter = null,
+            enabled = enabled
         )
         with(menuBarContext) {
             MenuBarDropdown(

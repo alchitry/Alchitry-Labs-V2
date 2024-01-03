@@ -40,6 +40,8 @@ data class Project(
     val top: SourceFile get() = sourceFiles.firstOrNull { it.top } ?: throw Exception("Missing top module!")
     val projectFile = projectFolder.resolve("$projectName.alp")
     val buildDirectory = projectFolder.resolve("build")
+    val sourceDirectory = projectFolder.resolve("source")
+    val constraintDirectory = projectFolder.resolve("constraint")
     val binFile = buildDirectory.resolve("${board.binName}.bin")
     private val notationManagerFlow = MutableStateFlow<NotationManager?>(null)
     val scope = CoroutineScope(Dispatchers.Default)
@@ -357,4 +359,6 @@ data class Project(
 
         return projectContext
     }
+
 }
+

@@ -65,13 +65,14 @@ private fun DialogButton(painter: Painter, label: String, onClick: () -> Unit) {
 
 @Composable
 fun NewProjectDialog(visible: Boolean, onClose: () -> Unit) {
-    var projectName by remember { mutableStateOf("") }
-    var workspace by remember { mutableStateOf(File(Locations.workspace)) }
-    var board by remember { mutableStateOf<Board>(Board.AlchitryAu) }
-    var template by remember { mutableStateOf<ProjectTemplate?>(null) }
-
-    val spacedBy = Arrangement.spacedBy(10.dp)
     AlchitryDialog(visible, "New Project", onClose = onClose) {
+        val spacedBy = Arrangement.spacedBy(10.dp)
+
+        var projectName by remember { mutableStateOf("") }
+        var workspace by remember { mutableStateOf(File(Locations.workspace)) }
+        var board by remember { mutableStateOf<Board>(Board.AlchitryAu) }
+        var template by remember { mutableStateOf<ProjectTemplate?>(null) }
+
         Column(Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = spacedBy) {
                 OutlinedTextField(

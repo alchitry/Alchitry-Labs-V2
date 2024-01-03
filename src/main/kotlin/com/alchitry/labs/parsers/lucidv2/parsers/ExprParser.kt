@@ -154,7 +154,7 @@ data class ExprParser(
 
                     else -> {
                         value = BitListValue(emptyList<Bit>(), constant = true, signed = false)
-                        context.reportError(ctx, ErrorStrings.STRING_CANNOT_BE_EMPTY)
+                        context.reportError(ctx, "String constants cannot be empty.")
                     }
                 }
                 values[ctx] = value

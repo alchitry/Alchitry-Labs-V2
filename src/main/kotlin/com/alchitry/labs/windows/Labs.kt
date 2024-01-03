@@ -8,7 +8,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -20,12 +21,10 @@ import com.alchitry.labs.project.Project
 import com.alchitry.labs.ui.components.*
 import com.alchitry.labs.ui.dialogs.ProjectDialog
 import com.alchitry.labs.ui.main.Console
+import com.alchitry.labs.ui.tabs.Workspace
 import com.alchitry.labs.ui.theme.AlchitryTheme
 import com.alchitry.labs.ui.tree.ProjectTree
-import com.alchitry.labs.workspace.Workspace
 import java.io.File
-
-val LocalWorkspace = staticCompositionLocalOf<Workspace> { error("Workspace not set!") }
 
 @Composable
 fun ApplicationScope.labsWindow() {
@@ -40,8 +39,6 @@ fun ApplicationScope.labsWindow() {
             Settings.commit()
         }
     ) {
-        val workspace = remember { Workspace() }
-
         LaunchedEffect(Unit) {
             Env.mode = Env.Mode.Labs
             Settings.openProject?.let {
@@ -55,62 +52,60 @@ fun ApplicationScope.labsWindow() {
             var lastProject: Project? = null
             Project.currentFlow.collect { project ->
                 if (project?.projectFile != lastProject?.projectFile) {
-                    workspace.closeAll()
-                    project?.top?.let { workspace.openFile(it) }
+                    Workspace.closeAll()
+                    project?.top?.let { Workspace.openFile(it) }
                 }
 
                 lastProject = project
             }
         }
 
-        CompositionLocalProvider(LocalWorkspace provides workspace) {
-            AlchitryTheme {
-                Column {
-                    WindowDecoration {
-                        Toolbar()
-                    }
+        AlchitryTheme {
+            Column {
+                WindowDecoration {
+                    LabsToolbar()
+                }
 
-                    ProjectDialog {
-                        val focusManger = LocalFocusManager.current
-                        Box(
-                            Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.background)
-                                .pointerInput(Unit) { detectTapGestures { focusManger.clearFocus() } }
-                        ) {
-                            Column {
-                                Sash(
-                                    first = {
-                                        Sash(
-                                            first = {
-                                                Surface(Modifier.matchParentSize()) {
-                                                    ProjectTree()
-                                                }
-                                            },
-                                            second = {
-                                                workspace.tabManager.content()
-                                            },
-                                            orientation = Orientation.Horizontal,
-                                            sashData = rememberSashData(
-                                                resizePriority = ResizePriority.SECOND,
-                                                first = Settings.fileListWidth.toFloat()
-                                            ),
-                                            onResize = { Settings.fileListWidth = it.size.first.toInt() }
-                                        )
-                                    },
-                                    second = {
-                                        Surface(Modifier.matchParentSize()) {
-                                            Console.show()
-                                        }
-                                    },
-                                    orientation = Orientation.Vertical,
-                                    sashData = rememberSashData(
-                                        resizePriority = ResizePriority.FIRST,
-                                        second = Settings.consoleHeight.toFloat()
-                                    ),
-                                    onResize = { Settings.consoleHeight = it.size.second.toInt() }
-                                )
-                            }
+                ProjectDialog {
+                    val focusManger = LocalFocusManager.current
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                            .pointerInput(Unit) { detectTapGestures { focusManger.clearFocus() } }
+                    ) {
+                        Column {
+                            Sash(
+                                first = {
+                                    Sash(
+                                        first = {
+                                            Surface(Modifier.matchParentSize()) {
+                                                ProjectTree()
+                                            }
+                                        },
+                                        second = {
+                                            Workspace.content()
+                                        },
+                                        orientation = Orientation.Horizontal,
+                                        sashData = rememberSashData(
+                                            resizePriority = ResizePriority.SECOND,
+                                            first = Settings.fileListWidth.toFloat()
+                                        ),
+                                        onResize = { Settings.fileListWidth = it.size.first.toInt() }
+                                    )
+                                },
+                                second = {
+                                    Surface(Modifier.matchParentSize()) {
+                                        Console.show()
+                                    }
+                                },
+                                orientation = Orientation.Vertical,
+                                sashData = rememberSashData(
+                                    resizePriority = ResizePriority.FIRST,
+                                    second = Settings.consoleHeight.toFloat()
+                                ),
+                                onResize = { Settings.consoleHeight = it.size.second.toInt() }
+                            )
                         }
                     }
                 }
