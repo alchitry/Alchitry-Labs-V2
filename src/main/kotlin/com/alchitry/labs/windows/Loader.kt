@@ -276,8 +276,7 @@ private fun BoardSelector(
 
         ExposedDropdownMenuBox(
             expanded,
-            onExpandedChange = { expanded = it },
-            Modifier.background(MaterialTheme.colorScheme.surfaceColorAtElevation(1000.dp))
+            onExpandedChange = { expanded = it }
         ) {
             OutlinedTextField(
                 readOnly = true,
@@ -296,7 +295,11 @@ private fun BoardSelector(
                     expanded = false
             }
             if (choices.isNotEmpty())
-                ExposedDropdownMenu(expanded, onDismissRequest = { expanded = false }) {
+                ExposedDropdownMenu(
+                    expanded,
+                    onDismissRequest = { expanded = false },
+                    Modifier.background(MaterialTheme.colorScheme.surfaceColorAtElevation(1000.dp))
+                ) {
                     choices.forEach {
                         DropdownMenuItem(
                             text = { Text(it.toString(boards)) },

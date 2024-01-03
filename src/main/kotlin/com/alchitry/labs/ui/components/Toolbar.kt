@@ -17,6 +17,7 @@ import com.alchitry.labs.hardware.usb.BoardLoader
 import com.alchitry.labs.hardware.usb.UsbUtil
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.switchActiveWindow
+import com.alchitry.labs.ui.dialogs.NewProjectDialog
 import com.alchitry.labs.ui.menu.*
 import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.ui.theme.AlchitryTheme
@@ -27,13 +28,15 @@ fun Toolbar() {
     val scope = rememberCoroutineScope()
     var running by remember { mutableStateOf(false) }
     val project by Project.currentFlow.collectAsState()
+    var showProjectDialog by remember { mutableStateOf(false) }
+    NewProjectDialog(showProjectDialog) { showProjectDialog = false }
     Row {
         AlchitryMenu {
+            MenuItem({ Text("New Project...") }) {
+                showProjectDialog = true
+            }
             MenuItem({ Text("Open Project...") }) {
                 Project.open()
-            }
-            MenuItem({ Text("Close Project...") }) {
-                Project.close()
             }
             MenuItem({ Text("Set Vivado Location") }) {
                 // TODO

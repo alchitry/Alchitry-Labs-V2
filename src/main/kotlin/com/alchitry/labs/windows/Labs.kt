@@ -54,9 +54,9 @@ fun ApplicationScope.labsWindow() {
         LaunchedEffect(Unit) {
             var lastProject: Project? = null
             Project.currentFlow.collect { project ->
-                if (project != null && project.projectFile != lastProject?.projectFile) {
+                if (project?.projectFile != lastProject?.projectFile) {
                     workspace.closeAll()
-                    workspace.openFile(project.top)
+                    project?.top?.let { workspace.openFile(it) }
                 }
 
                 lastProject = project

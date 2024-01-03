@@ -158,7 +158,6 @@ private fun BoardSelector(
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded)
             },
-            // colors = ExposedDropdownMenuDefaults.textFieldColors(),
             modifier = Modifier.menuAnchor().fillMaxWidth()
         )
         ExposedDropdownMenu(

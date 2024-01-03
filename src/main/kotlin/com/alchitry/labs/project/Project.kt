@@ -70,8 +70,11 @@ data class Project(
             }
 
         fun open(project: Project): Project {
+            if (current != null)
+                close()
             project.queueNotationsUpdate()
             mutableCurrentFlow.tryEmit(project)
+            Settings.openProject = project.projectFile.absolutePath
             return project
         }
 

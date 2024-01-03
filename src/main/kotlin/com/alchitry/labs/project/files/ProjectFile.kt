@@ -17,7 +17,7 @@ sealed class ProjectFile(val file: FileProvider) {
     val isReadOnly: Boolean get() = isLibFile
     abstract val language: Language
 
-    abstract val editorTokenizer: EditorTokenizer
+    val editorTokenizer: EditorTokenizer get() = language.tokenizer
 
     suspend fun readText(): String = lock.withLock {
         withContext(Dispatchers.IO) {

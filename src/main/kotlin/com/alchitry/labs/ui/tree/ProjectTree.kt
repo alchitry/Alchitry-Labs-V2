@@ -42,6 +42,13 @@ fun ProjectTree() {
                             }
                         }
                     }
+                    TreeSection("Constraint Files", 1) {
+                        project.constraintFiles.sortedBy { it.name }.forEach { file ->
+                            TreeItem(file.name, 2) {
+                                workspace.openFile(file)
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -18,5 +18,4 @@ object LucidStyle {
     val constant = SpanStyle(Color(212, 90, 218))
     val namespace = SpanStyle(Color(218, 90, 140))
     val function = SpanStyle(Color(27, 221, 175))
-
 }
