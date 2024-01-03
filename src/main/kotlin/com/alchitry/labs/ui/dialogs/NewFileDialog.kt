@@ -8,6 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs.Log
 import com.alchitry.labs.parsers.lucid.Lucid
@@ -73,6 +75,11 @@ private fun NewFileDialog(
         val spacedBy = Arrangement.spacedBy(10.dp)
 
         var fileName by remember { mutableStateOf("") }
+        val focusRequester = remember { FocusRequester() }
+
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus() // focus the text box on launch
+        }
 
         Column(Modifier.padding(10.dp), verticalArrangement = spacedBy) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = spacedBy) {
@@ -80,9 +87,9 @@ private fun NewFileDialog(
                     fileName,
                     onValueChange = { fileName = it },
                     isError = !validator(fileName),
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).focusRequester(focusRequester),
                     singleLine = true,
-                    label = { Text(label) }
+                    label = { Text(label) },
                 )
             }
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = spacedBy) {
