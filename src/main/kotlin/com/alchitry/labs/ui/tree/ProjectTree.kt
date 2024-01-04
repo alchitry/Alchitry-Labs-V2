@@ -1,16 +1,18 @@
 package com.alchitry.labs.ui.tree
 
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.key
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.alchitry.labs.project.Project
+import com.alchitry.labs.project.files.FileProvider
+import com.alchitry.labs.project.files.ProjectFile
+import com.alchitry.labs.project.removeFile
+import com.alchitry.labs.ui.dialogs.AcfFileDialog
+import com.alchitry.labs.ui.dialogs.DeleteFileDialog
+import com.alchitry.labs.ui.dialogs.LucidFileDialog
 import com.alchitry.labs.ui.fillMaxIntrinsic
 import com.alchitry.labs.ui.selection.SingleSelectionContext
 import com.alchitry.labs.ui.tabs.Workspace
@@ -27,28 +29,96 @@ fun ProjectTree() {
                 //.horizontalScroll(rememberScrollState())
                 .verticalScroll(rememberScrollState())
         ) {
+            var fileToDelete by remember { mutableStateOf<ProjectFile?>(null) }
+            DeleteFileDialog(fileToDelete) { fileToDelete = null }
             Column(Modifier.fillMaxIntrinsic()) {
+                var showNewLucidModule by remember { mutableStateOf(false) }
+                LucidFileDialog(showNewLucidModule) { showNewLucidModule = false }
+                var showNewAlchitryConstraint by remember { mutableStateOf(false) }
+                AcfFileDialog(showNewAlchitryConstraint) { showNewAlchitryConstraint = false }
                 TreeSection(project.projectName, 0) {
-                    TreeSection("Source Files", 1) {
-                        project.sourceFiles.sortedBy { it.name }.forEach { file ->
-                            key(file) {
-                                val color = project
-                                    .notationCollectorFlowForFile(file)
-                                    .collectAsState(null).value
-                                    ?.getAllNotations()
-                                    ?.minByOrNull { it.type.ordinal }
-                                    ?.type?.color
-                                TreeItem(file.name, 2, color) {
-                                    Workspace.openFile(file)
+                    ContextMenuDataProvider(
+                        items = {
+                            listOf(
+                                ContextMenuItem("New Lucid Module") {
+                                    showNewLucidModule = true
+                                }
+                            )
+                        }
+                    ) {
+                        TreeSection("Source Files", 1) {
+                            project.sourceFiles.sortedBy { it.name }.forEach { file ->
+                                key(file) {
+                                    val color = project
+                                        .notationCollectorFlowForFile(file)
+                                        .collectAsState(null).value
+                                        ?.getAllNotations()
+                                        ?.minByOrNull { it.type.ordinal }
+                                        ?.type?.color
+
+                                    ContextMenuArea(
+                                        items = {
+                                            when {
+                                                project.top == file -> emptyList()
+                                                file.isLibFile || file.isReadOnly -> listOf(
+                                                    ContextMenuItem("Remove ${file.name}") {
+                                                        project.removeFile(file, false)
+                                                    }
+                                                )
+
+                                                file.file is FileProvider.DiskFile -> listOf(
+                                                    ContextMenuItem("Delete ${file.name}") {
+                                                        fileToDelete = file
+                                                    }
+                                                )
+
+                                                else -> emptyList()
+                                            }
+                                        }
+                                    ) {
+                                        TreeItem(file.name, 2, color) {
+                                            Workspace.openFile(file)
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-                    TreeSection("Constraint Files", 1) {
-                        project.constraintFiles.sortedBy { it.name }.forEach { file ->
-                            key(file) {
-                                TreeItem(file.name, 2) {
-                                    Workspace.openFile(file)
+                    ContextMenuDataProvider(
+                        items = {
+                            listOf(
+                                ContextMenuItem("New Alchitry Constraint") {
+                                    showNewAlchitryConstraint = true
+                                }
+                            )
+                        }
+                    ) {
+                        TreeSection("Constraint Files", 1) {
+                            project.constraintFiles.sortedBy { it.name }.forEach { file ->
+                                key(file) {
+                                    ContextMenuArea(
+                                        items = {
+                                            when {
+                                                file.isLibFile || file.isReadOnly -> listOf(
+                                                    ContextMenuItem("Remove ${file.name}") {
+                                                        project.removeFile(file, false)
+                                                    }
+                                                )
+
+                                                file.file is FileProvider.DiskFile -> listOf(
+                                                    ContextMenuItem("Delete ${file.name}") {
+                                                        fileToDelete = file
+                                                    }
+                                                )
+
+                                                else -> emptyList()
+                                            }
+                                        }
+                                    ) {
+                                        TreeItem(file.name, 2) {
+                                            Workspace.openFile(file)
+                                        }
+                                    }
                                 }
                             }
                         }

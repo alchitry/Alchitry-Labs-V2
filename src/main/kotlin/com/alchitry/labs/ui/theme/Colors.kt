@@ -24,6 +24,17 @@ sealed interface AlchitryColors {
     val Error: Color
     val Info: Color
 
+    val dangerButton: ButtonColors
+        @Composable get() = ButtonDefaults.buttonColors(
+            DarkAlchitryColors.scheme.error,
+            DarkAlchitryColors.scheme.onError
+        )
+    val cancelButton: ButtonColors
+        @Composable get() = ButtonDefaults.buttonColors(
+            DarkAlchitryColors.scheme.secondary,
+            DarkAlchitryColors.scheme.onSecondary
+        )
+
     companion object {
         val current: AlchitryColors get() = if (Settings.darkTheme) DarkAlchitryColors else LightAlchitryColors
 
@@ -66,7 +77,7 @@ data object DarkAlchitryColors : AlchitryColors {
         surfaceVariant = Color(0xFF333333),
         onSurfaceVariant = Color(0xFFA1A1A1),
         error = Error,
-        onError = Color.Black,
+        onError = Color.White,
         primaryContainer = Color(0xFFFFFFFF),
         secondaryContainer = Color(0xFFFFFFFF)
     )
@@ -97,7 +108,7 @@ data object LightAlchitryColors : AlchitryColors {
     override val scheme = lightColorScheme(
         primary = Accent,
         error = Error,
-        onError = Color.Black,
+        onError = Color.White,
     )
 }
 

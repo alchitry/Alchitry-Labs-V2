@@ -2,7 +2,19 @@ package com.alchitry.labs.project
 
 import com.alchitry.labs.project.files.ConstraintFile
 import com.alchitry.labs.project.files.FileProvider
+import com.alchitry.labs.project.files.ProjectFile
 import com.alchitry.labs.project.files.SourceFile
+
+fun Project.removeFile(file: ProjectFile, delete: Boolean) {
+    if (delete && !file.isReadOnly && !file.isLibFile && file.file is FileProvider.DiskFile) {
+        file.file.file.delete()
+    }
+    val newSourceFiles = sourceFiles.toMutableSet().apply { remove(file) }
+    val newConstraintFiles = constraintFiles.toMutableSet().apply { remove(file) }
+    val newProj = copy(sourceFiles = newSourceFiles, constraintFiles = newConstraintFiles)
+    newProj.saveXML()
+    Project.open(newProj)
+}
 
 fun Project.addLucidModule(moduleName: String) = addSourceFile(
     name = "$moduleName.${Languages.Lucid.extension}",
