@@ -15,6 +15,8 @@ data class TextPosition(val line: Int, val offset: Int) : Comparable<TextPositio
      * provided text.
      */
     fun coerceInRange(lines: List<CodeLineState>): TextPosition {
+        if (lines.isEmpty())
+            return TextPosition(0, 0)
         val newLine = line.coerceIn(0, lines.size - 1)
         val newOffset = when {
             newLine > line -> 0
