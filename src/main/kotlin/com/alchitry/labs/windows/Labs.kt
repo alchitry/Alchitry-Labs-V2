@@ -18,9 +18,13 @@ import androidx.compose.ui.window.ApplicationScope
 import com.alchitry.labs.Env
 import com.alchitry.labs.Settings
 import com.alchitry.labs.project.Project
-import com.alchitry.labs.ui.components.*
+import com.alchitry.labs.ui.components.ResizePriority
+import com.alchitry.labs.ui.components.Sash
+import com.alchitry.labs.ui.components.WindowDecoration
+import com.alchitry.labs.ui.components.rememberSashData
 import com.alchitry.labs.ui.dialogs.ProjectDialog
 import com.alchitry.labs.ui.main.Console
+import com.alchitry.labs.ui.main.LabsToolbar
 import com.alchitry.labs.ui.tabs.Workspace
 import com.alchitry.labs.ui.theme.AlchitryTheme
 import com.alchitry.labs.ui.tree.ProjectTree

@@ -1,14 +1,14 @@
+import com.alchitry.labs.parsers.lucidv2.parsers.toSourceFile
 import com.alchitry.labs.parsers.lucidv2.types.Signal
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import helpers.LucidTester
-import helpers.testErrorCollector
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class SignalDriverTests {
     @Test
-    fun basicDriverTest() = runBlocking {
+    fun basicDriverTest(): Unit = runBlocking {
         val tester = LucidTester(
             """
                 module myModule (
@@ -23,7 +23,7 @@ class SignalDriverTests {
                         if (a) {}
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
         tester.fullParse()
     }
@@ -48,12 +48,11 @@ class SignalDriverTests {
                         if (a) {}
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
-        val errorCollector = testErrorCollector()
-        tester.fullParse(errorCollector)
-        assert(errorCollector.hasErrors)
-        assert(errorCollector.hasNoWarnings)
+        tester.fullParse()
+        assert(tester.notationManager.hasErrors)
+        assert(tester.notationManager.hasNoWarnings)
     }
 
     @Test
@@ -72,16 +71,15 @@ class SignalDriverTests {
                         if (a) {}
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
-        val errorCollector = testErrorCollector()
-        tester.fullParse(errorCollector)
-        assert(errorCollector.hasErrors) // should complain about test being partially driven
-        assert(errorCollector.hasNoWarnings)
+        tester.fullParse()
+        assert(tester.notationManager.hasErrors) // should complain about test being partially driven
+        assert(tester.notationManager.hasNoWarnings)
     }
 
     @Test
-    fun multiPartialDrivenTest() = runBlocking {
+    fun multiPartialDrivenTest(): Unit = runBlocking {
         val tester = LucidTester(
             """
                 module myModule (
@@ -97,7 +95,7 @@ class SignalDriverTests {
                         if (a) {}
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
         tester.fullParse()
     }
@@ -118,15 +116,14 @@ class SignalDriverTests {
                         if (a) {}
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
-        val errorCollector = testErrorCollector()
-        tester.fullParse(errorCollector)
-        assert(errorCollector.hasErrors) // should complain about test being partially driven
+        tester.fullParse()
+        assert(tester.notationManager.hasErrors) // should complain about test being partially driven
     }
 
     @Test
-    fun basicIfCompleteDrivenTest() = runBlocking {
+    fun basicIfCompleteDrivenTest(): Unit = runBlocking {
         val tester = LucidTester(
             """
                 module myModule (
@@ -144,7 +141,7 @@ class SignalDriverTests {
                         if (a) {}
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
         tester.fullParse()
     }
@@ -164,7 +161,7 @@ class SignalDriverTests {
                         if (a) {}
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
         val top = tester.fullParse()
 
@@ -190,12 +187,11 @@ class SignalDriverTests {
                         b = mySig
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
-        val errorCollector = testErrorCollector()
-        tester.fullParse(errorCollector)
-        assert(errorCollector.hasErrors)
-        assert(errorCollector.hasNoWarnings)
+        tester.fullParse()
+        assert(tester.notationManager.hasErrors)
+        assert(tester.notationManager.hasNoWarnings)
     }
 
     @Test
@@ -213,11 +209,10 @@ class SignalDriverTests {
                         b = mySig
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
-        val errorCollector = testErrorCollector()
-        tester.fullParse(errorCollector)
-        assert(errorCollector.hasNoErrors)
-        assert(errorCollector.hasWarnings)
+        tester.fullParse()
+        assert(tester.notationManager.hasNoErrors)
+        assert(tester.notationManager.hasWarnings)
     }
 }

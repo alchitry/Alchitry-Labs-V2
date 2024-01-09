@@ -1,3 +1,4 @@
+import com.alchitry.labs.parsers.lucidv2.parsers.toSourceFile
 import com.alchitry.labs.parsers.lucidv2.types.Dff
 import com.alchitry.labs.parsers.lucidv2.types.EnumType
 import com.alchitry.labs.parsers.lucidv2.types.Signal
@@ -31,7 +32,7 @@ class ModuleMultiPassTests {
                         if (a) {}
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile("myGlobal.luc")
         )
         val context = tester.fullParse().context
 
@@ -58,7 +59,7 @@ class ModuleMultiPassTests {
                         }
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile("myModule.luc")
         )
         val context = tester.fullParse().context
         val testSig = context.resolveSignal("endValue") as Signal
@@ -89,7 +90,7 @@ class ModuleMultiPassTests {
                         testA = 1
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
         val context = tester.fullParse().context
         val testSig = context.resolveSignal("testB") as Signal
@@ -120,7 +121,7 @@ class ModuleMultiPassTests {
                         testA = testB
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
         val top = tester.fullParse()
 
@@ -161,7 +162,7 @@ class ModuleMultiPassTests {
                         b = myFSM.RUN
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
         val top = tester.fullParse()
         val context = top.context
@@ -196,7 +197,7 @@ class ModuleMultiPassTests {
                         a = Enums.myFSM.RUN
                     }
                 }
-            """.trimIndent(),
+            """.trimIndent().toSourceFile(),
             """
                 global Enums {
                     enum myFSM {
@@ -206,7 +207,7 @@ class ModuleMultiPassTests {
                         STOP
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile("globals.luc")
         )
         val top = tester.fullParse()
         val context = top.context

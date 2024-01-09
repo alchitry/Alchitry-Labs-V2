@@ -664,7 +664,7 @@ class CodeEditorState(
             }
 
             KeyCommand.NEW_LINE -> replaceText("\n")
-            KeyCommand.TAB -> replaceText("    ")
+            KeyCommand.TAB -> replaceText("  ")
             KeyCommand.SELECT_ALL -> selectionManager.selectAll()
             KeyCommand.SELECT_LEFT_CHAR -> selectionManager.moveLeft().selectMovement()
             KeyCommand.SELECT_RIGHT_CHAR -> selectionManager.moveRight().selectMovement()

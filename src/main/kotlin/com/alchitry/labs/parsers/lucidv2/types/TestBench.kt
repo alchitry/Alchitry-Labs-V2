@@ -5,6 +5,7 @@ import com.alchitry.labs.parsers.errors.NotationCollector
 import com.alchitry.labs.parsers.grammar.LucidParser.TestBenchContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.*
+import com.alchitry.labs.project.files.SourceFile
 
 sealed interface TestOrModuleInstance {
     val name: String
@@ -13,11 +14,26 @@ sealed interface TestOrModuleInstance {
 
 class TestBench(
     override val name: String,
+    val sourceFile: SourceFile,
     project: ProjectContext,
     private val testBenchContext: TestBenchContext,
     notationCollector: NotationCollector
 ) : TestOrModuleInstance, Snapshotable {
-    override val context = LucidBlockContext(project, this, notationCollector = notationCollector)
+    override val context = LucidBlockContext(
+        project,
+        sourceFile,
+        this,
+        notationCollector = project.notationManager.getCollector(sourceFile)
+    )
+
+    fun getAllModules(): List<Module> {
+        return context.types.moduleInstances.values.flatMap { instOrArray ->
+            when (instOrArray) {
+                is ModuleInstance -> instOrArray.getAllModules()
+                is ModuleInstanceArray -> instOrArray.getAllInstances().first().getAllModules()
+            }
+        }.distinct()
+    }
 
     override fun takeSnapshot(): SnapshotParent {
         val snapshots = mutableListOf<SnapshotOrParent>()

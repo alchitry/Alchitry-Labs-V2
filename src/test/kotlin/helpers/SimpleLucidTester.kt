@@ -1,6 +1,7 @@
 package helpers
 
 import com.alchitry.labs.parsers.ProjectContext
+import com.alchitry.labs.parsers.errors.NotationManager
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.parsers.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
@@ -8,6 +9,8 @@ import com.alchitry.labs.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs.parsers.lucidv2.parsers.ParseStage
 import com.alchitry.labs.parsers.lucidv2.types.Module
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
+import com.alchitry.labs.project.files.FileProvider
+import com.alchitry.labs.project.files.SourceFile
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 
@@ -19,21 +22,22 @@ class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = nul
             ).also { it.removeErrorListeners() })
     )
 
-    val project = ProjectContext()
+    val project = ProjectContext(NotationManager())
+    val sourceFile = SourceFile(FileProvider.DiskFile("test.luc"), true)
     val context = LucidBlockContext(
         project,
+        sourceFile,
         ModuleInstance(
             "top",
             project,
             null,
-            Module("testModule", mapOf(), mapOf(), LucidParser.ModuleContext(null, 0)),
+            Module("testModule", mapOf(), mapOf(), LucidParser.ModuleContext(null, 0), sourceFile),
             mapOf(),
             mapOf(),
-            testErrorCollector()
+            //project.notationManager.getCollector(sourceFile)
         ),
         ParseStage.ErrorCheck,
-        localSignalResolver = localSignalResolver,
-        notationCollector = testErrorCollector()
+        localSignalResolver = localSignalResolver
     )
 
     init {

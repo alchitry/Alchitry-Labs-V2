@@ -117,7 +117,6 @@ data class Project(
         val context = buildContext(notationManager)
         val topModule = context?.top
         if (context == null || topModule == null) {
-            Log.printlnError("Failed to build project context!")
             Log.print(notationManager.getReport())
             return null
         }
@@ -285,69 +284,101 @@ data class Project(
     }
 
     suspend fun buildContext(
-        errorManger: NotationManager,
+        notationManager: NotationManager,
         parsedTrees: List<Pair<SourceFile, LucidParser.SourceContext>>? = null
     ): ProjectContext? {
-        val projectContext = ProjectContext()
+        val projectContext = ProjectContext(notationManager)
         var success = false
-        val trees = parsedTrees ?: parse(errorManger)
+        val trees = parsedTrees ?: parse(notationManager)
 
         try {
-            if (trees == null || errorManger.hasErrors)
+            if (trees == null || notationManager.hasErrors)
                 return null
 
             trees.forEach {
-                LucidGlobalContext(projectContext, errorManger.getCollector(it.first)).walk(it.second)
+                LucidGlobalContext(projectContext, it.first).walk(it.second)
             }
 
-            if (errorManger.hasErrors)
+            if (notationManager.hasErrors)
                 return null
 
             val modules = trees.mapNotNull {
-                val moduleTypeContext = LucidModuleTypeContext(projectContext, errorManger.getCollector(it.first))
+                val moduleTypeContext = LucidModuleTypeContext(projectContext, it.first)
                 val module = moduleTypeContext.extract(it.second)
 
                 it.first to (module ?: return@mapNotNull null)
             }
 
-            if (errorManger.hasErrors)
+            if (notationManager.hasErrors)
                 return null
 
             trees.forEach {
-                val testBenchContext = LucidTestBenchContext(projectContext, errorManger.getCollector(it.first))
-                testBenchContext.walk(it.second)
+                LucidTestBenchContext(projectContext, it.first).walk(it.second)
             }
 
-            if (errorManger.hasErrors)
+            if (notationManager.hasErrors)
                 return null
 
             projectContext.getTestBenches().forEach { it.initialWalk() }
 
-            if (errorManger.hasErrors)
+            if (notationManager.hasErrors)
                 return null
 
             val topModule = modules.firstOrNull { it.first == top }?.second
 
             if (topModule == null) {
-                errorManger.getCollector(top)
+                notationManager.getCollector(top)
                     .reportError(trees.first { it.first == top }.second, "Top file does not contain a module!")
                 return null
             }
 
             val moduleInstance =
                 ModuleInstance(
-                    top.name,
+                    "alchitryTop",
                     projectContext,
                     null,
                     topModule,
                     mapOf(),
                     mapOf(),
-                    errorManger.getCollector(top)
+                    //notationManager.getCollector(top)
                 )
 
             moduleInstance.initialWalk()
 
-            if (errorManger.hasErrors)
+            // if modules aren't used but are still in the project, we need to check it outside the initial walk
+            // of the top level instance
+            val usedModules =
+                (moduleInstance.getAllModules() + projectContext.getTestBenches()
+                    .flatMap { it.getAllModules() }).distinct()
+            val uncheckedModules = modules.map { it.second }.toMutableList().apply {
+                removeAll(usedModules)
+            }
+
+            uncheckedModules.forEach { module ->
+                projectContext.notationManager.getCollector(module.sourceFile)
+                    .reportWarning(
+                        module.context.name() ?: module.context,
+                        "The module \"${module.name}\" is not used."
+                    )
+            }
+
+            while (uncheckedModules.isNotEmpty()) {
+                val mod = uncheckedModules.first() // get the next one to check
+                ModuleInstance(
+                    mod.name,
+                    projectContext,
+                    null,
+                    mod,
+                    mapOf(),
+                    mapOf(),
+                    // notationManager.getCollector(mod.sourceFile)
+                ).apply {
+                    initialWalk()
+                    uncheckedModules.removeAll(getAllModules()) // remove this one plus any checked as its dependants
+                }
+            }
+
+            if (notationManager.hasErrors)
                 return null
 
             projectContext.top = moduleInstance

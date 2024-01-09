@@ -511,7 +511,7 @@ class VerilogConverter(
                             is SelectionContext.Single -> append(s.context.bit.verilog)
                             is SelectionContext.Fixed -> append(s.context.start.verilog)
                             is SelectionContext.DownTo -> append("(${s.context.stop.verilog})-${s.context.width - 1}")
-                            is SelectionContext.UpTo -> append(s.context.start)
+                            is SelectionContext.UpTo -> append(s.context.start.verilog)
                         }
                         append(")")
 

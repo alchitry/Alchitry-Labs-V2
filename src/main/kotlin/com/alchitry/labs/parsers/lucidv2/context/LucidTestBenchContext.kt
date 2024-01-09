@@ -2,16 +2,17 @@ package com.alchitry.labs.parsers.lucidv2.context
 
 import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.errors.ErrorListener
-import com.alchitry.labs.parsers.errors.NotationCollector
 import com.alchitry.labs.parsers.grammar.LucidParser.SourceContext
 import com.alchitry.labs.parsers.lucidv2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs.parsers.lucidv2.parsers.TestBenchParser
 import com.alchitry.labs.parsers.lucidv2.parsers.WalkerFilter
+import com.alchitry.labs.project.files.SourceFile
 
 class LucidTestBenchContext(
     val project: ProjectContext,
-    val notationCollector: NotationCollector
-) : ErrorListener by notationCollector {
+    val sourceFile: SourceFile
+) : ErrorListener by project.notationManager.getCollector(sourceFile) {
+    val notationCollector = project.notationManager.getCollector(sourceFile)
 
     val testBench = TestBenchParser(this)
 

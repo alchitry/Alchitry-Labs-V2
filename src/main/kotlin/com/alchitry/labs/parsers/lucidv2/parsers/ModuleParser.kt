@@ -143,7 +143,7 @@ data class ModuleParser(
             ports[portName] = Port(portName, direction, width, signed)
         }
 
-        module = Module(name, params, ports, ctx).also {
+        module = Module(name, params, ports, ctx, context.sourceFile).also {
             if (!context.project.addModule(it)) {
                 context.reportError(ctx.name() ?: ctx, "A module with name $name already exists!")
             }

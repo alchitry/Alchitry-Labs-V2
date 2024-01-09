@@ -95,13 +95,13 @@ class ModuleInstanceArray(
                         module = module,
                         parameters = paramProvider(curIdx),
                         connections = signalProvider(curIdx),
-                        notationCollector = testOrModuleParent.context.notationCollector.createChild(
-                            "[${
-                                curIdx.joinToString(
-                                    "]["
-                                )
-                            }]"
-                        )
+//                        notationCollector = testOrModuleParent.context.notationCollector.createChild(
+//                            "[${
+//                                curIdx.joinToString(
+//                                    "]["
+//                                )
+//                            }]"
+//                        )
                     )
                 })
             }

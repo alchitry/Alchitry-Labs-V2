@@ -17,6 +17,14 @@ class TestBenchParser(
             return
         }
 
-        context.project.addTestBench(TestBench(name, context.project, ctx, context.notationCollector))
+        context.project.addTestBench(
+            TestBench(
+                name,
+                context.sourceFile,
+                context.project,
+                ctx,
+                context.notationCollector
+            )
+        )
     }
 }

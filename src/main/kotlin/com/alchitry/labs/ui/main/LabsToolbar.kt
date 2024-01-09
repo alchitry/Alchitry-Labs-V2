@@ -1,4 +1,4 @@
-package com.alchitry.labs.ui.components
+package com.alchitry.labs.ui.main
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
@@ -18,8 +18,10 @@ import com.alchitry.labs.hardware.usb.BoardLoader
 import com.alchitry.labs.hardware.usb.UsbUtil
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.switchActiveWindow
+import com.alchitry.labs.ui.components.ToolbarButton
 import com.alchitry.labs.ui.dialogs.AcfFileDialog
 import com.alchitry.labs.ui.dialogs.LucidFileDialog
+import com.alchitry.labs.ui.dialogs.LucidTestBenchDialog
 import com.alchitry.labs.ui.dialogs.NewProjectDialog
 import com.alchitry.labs.ui.menu.*
 import com.alchitry.labs.ui.theme.AlchitryColors
@@ -75,12 +77,18 @@ fun LabsToolbar() {
         var showLucidFileDialog by remember { mutableStateOf(false) }
         LucidFileDialog(showLucidFileDialog) { showLucidFileDialog = false }
 
+        var showLucidTestBenchDialog by remember { mutableStateOf(false) }
+        LucidTestBenchDialog(showLucidTestBenchDialog) { showLucidTestBenchDialog = false }
+
         var showACFFileDialog by remember { mutableStateOf(false) }
         AcfFileDialog(showACFFileDialog) { showACFFileDialog = false }
 
         IconMenu(painterResource("icons/open.svg"), "New File", enabled = project != null) {
             MenuItem({ Text("New Lucid Module") }) {
                 showLucidFileDialog = true
+            }
+            MenuItem({ Text("New Lucid Test Bench") }) {
+                showLucidTestBenchDialog = true
             }
             MenuItem({ Text("New Alchitry Constraints") }) {
                 showACFFileDialog = true

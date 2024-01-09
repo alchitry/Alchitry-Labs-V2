@@ -23,8 +23,8 @@ import com.alchitry.labs.hardware.usb.UsbUtil
 import com.alchitry.labs.project.Board
 import com.alchitry.labs.switchActiveWindow
 import com.alchitry.labs.ui.components.AlchitryToolTip
-import com.alchitry.labs.ui.components.IconMenu
 import com.alchitry.labs.ui.components.WindowDecoration
+import com.alchitry.labs.ui.main.IconMenu
 import com.alchitry.labs.ui.menu.MenuItem
 import com.alchitry.labs.ui.misc.openFileDialog
 import com.alchitry.labs.ui.theme.AlchitryColors

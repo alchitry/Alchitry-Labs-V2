@@ -249,8 +249,12 @@ data class ExprParser(
         val signal = context.resolve(signalCtx) ?: return
 
         if (!signal.direction.canRead) {
-            context.reportError(signalCtx, "The signal ${signalCtx.text} can't be read!")
-            return
+            val functionCtx = ctx.firstParentOrNull { it is FunctionContext }
+            // exclude reads of the WIDTH function as this doesn't read the signal
+            if (functionCtx !is FunctionContext || functionCtx.FUNCTION_ID()?.text != "$" + Function.WIDTH.label) {
+                context.reportError(signalCtx, "The signal \"${signalCtx.text}\" can't be read!")
+                return
+            }
         }
 
         // mark this signal as not constant if any of the bit selections aren't constant

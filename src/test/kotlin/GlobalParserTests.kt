@@ -1,3 +1,4 @@
+import com.alchitry.labs.parsers.lucidv2.parsers.toSourceFile
 import com.alchitry.labs.parsers.lucidv2.types.StructMember
 import com.alchitry.labs.parsers.lucidv2.types.StructType
 import com.alchitry.labs.parsers.lucidv2.values.*
@@ -15,7 +16,7 @@ class GlobalParserTests {
                 global MyGlobal {
                     const ONE = 1
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
         tester.globalParse()
         val global = tester.project.resolveGlobal("MyGlobal")
@@ -32,7 +33,7 @@ class GlobalParserTests {
                     const ONE = 1
                     const TWO = ONE + ONE
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
         tester.globalParse()
         val global = tester.project.resolveGlobal("MyGlobal")
@@ -52,7 +53,7 @@ class GlobalParserTests {
                         b[6]
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
         tester.globalParse()
         val global = tester.project.resolveGlobal("MyGlobal")
@@ -82,7 +83,7 @@ class GlobalParserTests {
                     }
                     const BLUE = <rgb>(.r(0), .g(0), .b(255))
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
         tester.globalParse()
         val global = tester.project.resolveGlobal("MyGlobal")
@@ -124,7 +125,7 @@ class GlobalParserTests {
                         type[8]
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
         tester.globalParse()
         val global = tester.project.resolveGlobal("MyGlobal")

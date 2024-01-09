@@ -1,11 +1,16 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
+import com.alchitry.labs.parsers.errors.NotationCollector
 import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs.parsers.lucidv2.types.*
 import com.alchitry.labs.parsers.lucidv2.values.*
+import com.alchitry.labs.project.files.FileProvider
+import com.alchitry.labs.project.files.SourceFile
+
+fun String.toSourceFile(name: String = "alchitryTop.luc") = SourceFile(FileProvider.StringFile(name, contents = this))
 
 class TypesParser(
     private val context: LucidBlockContext
@@ -216,21 +221,22 @@ class TypesParser(
                 moduleType,
                 instParams,
                 instPorts,
-                context.notationCollector.createChild("ModuleInstance($moduleInstanceName)")
+                // context.notationCollector.createChild("ModuleInstance($moduleInstanceName)")
             ).apply {
-                checkParameters()
-                if (context.notationCollector.hasErrors) {
+                val errorCollector = NotationCollector(context.sourceFile)
+                checkParameters(errorCollector)
+                if (errorCollector.hasErrors) {
                     this@TypesParser.context.reportError(
                         ctx.name(1) ?: ctx,
-                        context.notationCollector.getAllErrors().joinToString(", ") { it.message ?: "" }
+                        errorCollector.getAllErrors().joinToString(", ") { it.message ?: "" }
                     )
                     return
                 }
                 initialWalk()
-                if (context.notationCollector.hasErrors) {
+                if (errorCollector.hasErrors) {
                     this@TypesParser.context.reportError(
                         ctx.name(1) ?: ctx,
-                        context.notationCollector.getAllErrors().joinToString(", ") { it.message ?: "" }
+                        errorCollector.getAllErrors().joinToString(", ") { it.message ?: "" }
                     )
                     return
                 }

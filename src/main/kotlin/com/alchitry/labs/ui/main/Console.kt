@@ -270,7 +270,8 @@ fun MiniScrollBar(
         val boxStart = (miniText.height * startPercent).roundToInt()
 
         val oversizeOffset =
-            ((miniText.height - actualHeight) * (startPercent / (1f - visiblePercent))).roundToInt().coerceAtLeast(0)
+            ((miniText.height - actualHeight) * (startPercent / (1f - visiblePercent))).let { if (it.isNaN()) 0f else it }
+                .roundToInt().coerceAtLeast(0)
 
         val overlayBox = measurables[1].measure(
             Constraints(

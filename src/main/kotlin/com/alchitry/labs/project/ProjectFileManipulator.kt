@@ -36,21 +36,21 @@ fun Project.addLucidTestBench(name: String) = addSourceFile(
     name = "$name.${Languages.Lucid.extension}",
     contents = """
         testBench $name {
-            sig clk
+          sig clk
 
-            fun tickClock() {
-                clk = 1
-                ${"$"}silentTick() // tick without capturing signals
-                clk = 0
-                ${"$"}tick()
-            }
+          fun tickClock() {
+            clk = 1
+            ${"$"}silentTick() // tick without capturing signals
+            clk = 0
+            ${"$"}tick()
+          }
 
-            test myTest {
-                clk = 0 // initialize the value
-                ${"$"}tick() // capture initial state
+          test myTest {
+            clk = 0 // initialize the value
+            ${"$"}tick() // capture initial state
 
-                // test goes here
-            }
+            // test goes here
+          }
         }
     """.trimIndent()
 )

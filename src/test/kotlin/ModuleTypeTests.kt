@@ -1,3 +1,4 @@
+import com.alchitry.labs.parsers.lucidv2.parsers.toSourceFile
 import com.alchitry.labs.parsers.lucidv2.types.Module
 import com.alchitry.labs.parsers.lucidv2.types.Parameter
 import com.alchitry.labs.parsers.lucidv2.types.SignalDirection
@@ -6,7 +7,6 @@ import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs.parsers.lucidv2.values.BitListWidth
 import com.alchitry.labs.parsers.lucidv2.values.BitWidth
 import helpers.LucidTester
-import helpers.testErrorCollector
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -28,12 +28,11 @@ class ModuleTypeTests {
                     inout a
                 ) {
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
 
-        val errorCollector = testErrorCollector()
-        val tree = test.parseText(errorCollector)
-        val module = test.moduleTypeParse(errorCollector, tree)
+        val tree = test.parseText()
+        val module = test.moduleTypeParse(tree)
 
         assertEquals(
             Module(
@@ -43,7 +42,7 @@ class ModuleTypeTests {
                         "CLK_FREQ",
                         BitListValue(100000000.toBigInteger(), true),
                         true,
-                        tree.first().module(0)?.paramList()?.paramDec(0)?.paramConstraint()?.expr()
+                        tree.first().second.module(0)?.paramList()?.paramDec(0)?.paramConstraint()?.expr()
                     ),
                     "MAX_CT" to Parameter(
                         "MAX_CT",
@@ -55,7 +54,7 @@ class ModuleTypeTests {
                         "NEG_TEST",
                         BitListValue((-100).toBigInteger(), true),
                         false,
-                        tree.first().module(0)?.paramList()?.paramDec(2)?.paramConstraint()?.expr()
+                        tree.first().second.module(0)?.paramList()?.paramDec(2)?.paramConstraint()?.expr()
                     )
                 ),
                 mapOf(
@@ -64,7 +63,8 @@ class ModuleTypeTests {
                     "count" to Port("count", SignalDirection.Write, BitListWidth(8), false),
                     "a" to Port("a", SignalDirection.Both, BitWidth, false)
                 ),
-                tree.first().module(0)!!
+                tree.first().second.module(0)!!,
+                test.files.first()
             ),
             module.first()
         )

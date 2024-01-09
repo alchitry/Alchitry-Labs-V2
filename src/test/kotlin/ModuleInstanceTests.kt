@@ -1,3 +1,4 @@
+import com.alchitry.labs.parsers.lucidv2.parsers.toSourceFile
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstanceArray
 import com.alchitry.labs.parsers.lucidv2.types.Signal
@@ -23,7 +24,7 @@ class ModuleInstanceTests {
                         if (myMod.a) { } // to remove unused signal warning
                     }
                 }
-            """.trimIndent(),
+            """.trimIndent().toSourceFile(),
             """
                 module testModule (
                     input clk,
@@ -33,7 +34,7 @@ class ModuleInstanceTests {
                         a = clk
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile("testModule.luc")
         )
 
         val top = tester.fullParse()
@@ -56,7 +57,7 @@ class ModuleInstanceTests {
                         if (myMod.a[0]) { } // to remove unused signal warning
                     }
                 }
-            """.trimIndent(),
+            """.trimIndent().toSourceFile(),
             """
                 module testModule (
                     input clk,
@@ -66,7 +67,7 @@ class ModuleInstanceTests {
                         a = clk
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile("testModule.luc")
         )
 
         val top = tester.fullParse()
@@ -89,7 +90,7 @@ class ModuleInstanceTests {
                         count = counter.q
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile()
         )
 
         val top = tester.fullParse()
@@ -131,7 +132,7 @@ class ModuleInstanceTests {
                         count = myMod.count
                     }
                 }
-            """.trimIndent(),
+            """.trimIndent().toSourceFile(),
             """
                 module testModule #(
                     INC ~ 1
@@ -146,7 +147,7 @@ class ModuleInstanceTests {
                         count = counter.q
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile("testModule.luc")
         )
 
         val top = tester.fullParse()

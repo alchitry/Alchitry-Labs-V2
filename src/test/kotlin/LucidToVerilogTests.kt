@@ -1,3 +1,4 @@
+import com.alchitry.labs.parsers.lucidv2.parsers.toSourceFile
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
 import helpers.LucidTester
@@ -68,7 +69,7 @@ internal class LucidToVerilogTests {
                     usb_tx = usb_rx        // echo the serial data
                   }
                 }
-            """.trimIndent(),
+            """.trimIndent().toSourceFile(),
             """
                 module reset_conditioner #(
                     STAGES = 4 : STAGES > 1, // number of stages
@@ -87,7 +88,7 @@ internal class LucidToVerilogTests {
                   }
                 }
 
-            """.trimIndent()
+            """.trimIndent().toSourceFile("reset.luc")
         )
 
         runBlocking {

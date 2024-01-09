@@ -1,6 +1,7 @@
 package com.alchitry.labs.parsers
 
 import com.alchitry.labs.Log
+import com.alchitry.labs.parsers.errors.NotationManager
 import com.alchitry.labs.parsers.lucidv2.types.*
 import com.alchitry.labs.project.QueueExhaustionException
 import kotlinx.coroutines.*
@@ -8,7 +9,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.Closeable
 
-class ProjectContext : Closeable {
+class ProjectContext(val notationManager: NotationManager) : Closeable {
     var top: ModuleInstance? = null
     private val globals = mutableMapOf<String, GlobalNamespace>()
     private val modules = mutableMapOf<String, Module>()

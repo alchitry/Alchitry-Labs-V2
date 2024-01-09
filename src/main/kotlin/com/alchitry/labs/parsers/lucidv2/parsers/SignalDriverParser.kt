@@ -4,6 +4,7 @@ import com.alchitry.labs.parsers.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.types.*
+import com.alchitry.labs.parsers.lucidv2.types.Function
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.Value
 import org.antlr.v4.kotlinruntime.tree.ParseTree
@@ -172,7 +173,11 @@ data class SignalDriverParser(
         if (expected.contains(fullSig)) { // should be driving this signal
             val drivenValue = signalStack.firstNotNullOfOrNull { it[fullSig] }
             if (drivenValue == null) {
-                context.reportError(ctx, "The signal \"${fullSig.fullName()}\" can't be read before it is written!")
+                val functionCtx = ctx.firstParentOrNull { it is FunctionContext }
+                // exclude reads of the WIDTH function as this doesn't read the signal
+                if (functionCtx !is FunctionContext || functionCtx.FUNCTION_ID()?.text != "$" + Function.WIDTH.label) {
+                    context.reportError(ctx, "The signal \"${fullSig.fullName()}\" can't be read before it is written!")
+                }
                 return
             }
             val selectedValue = when (sig) {

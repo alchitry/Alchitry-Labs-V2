@@ -31,5 +31,8 @@ class NotationManager {
 
     val hasNoMessages: Boolean get() = notationCollectors.values.all { it.hasNoMessages }
     val hasNoErrors: Boolean get() = notationCollectors.values.all { it.hasNoErrors }
+    val hasNoWarnings: Boolean get() = notationCollectors.values.all { it.hasNoWarnings }
+    val hasNoIssues: Boolean get() = notationCollectors.values.all { it.hasNoIssues }
     val hasErrors: Boolean get() = !hasNoErrors
+    val hasWarnings: Boolean get() = !hasNoWarnings
 }

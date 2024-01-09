@@ -11,14 +11,16 @@ import com.alchitry.labs.parsers.lucidv2.types.*
 import com.alchitry.labs.parsers.lucidv2.types.Function
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.Value
+import com.alchitry.labs.project.files.SourceFile
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 
 class LucidBlockContext(
     override val project: ProjectContext,
+    override val sourceFile: SourceFile,
     val instance: TestOrModuleInstance,
     stage: ParseStage = ParseStage.ModuleInternals,
     override val evalContext: Evaluable? = null,
-    val notationCollector: NotationCollector,
+    val notationCollector: NotationCollector = project.notationManager.getCollector(sourceFile),
     expr: ExprParser? = null,
     bitSelection: BitSelectionParser? = null,
     types: TypesParser? = null,
@@ -130,6 +132,7 @@ class LucidBlockContext(
 
     fun withEvalContext(evalContext: Evaluable, name: String) = LucidBlockContext(
         project,
+        sourceFile,
         instance,
         ParseStage.Evaluation,
         evalContext,
@@ -169,18 +172,19 @@ class LucidBlockContext(
     }
 
     suspend fun initialWalk(t: ParseTree): Boolean {
-        stage = ParseStage.ModuleInternals
+        require(stage == ParseStage.ModuleInternals) { "initialWalk called on an already initialized context!" }
         walk(t)
         if (notationCollector.hasErrors)
             return false
         stage = ParseStage.Drivers
         walk(t)
+        stage = ParseStage.Evaluation
         return notationCollector.hasNoErrors
     }
 
     suspend fun walk(t: ParseTree) = ParseTreeMultiWalker.walk(getListeners(), t, getFilter())
 
-    suspend fun checkParameters(): Boolean {
+    suspend fun checkParameters(errorListener: ErrorListener = notationCollector): Boolean {
         val instance = (instance as? ModuleInstance)
             ?: error("checkParameters() can only be called on contexts with a ModuleInstance!")
         stage = ParseStage.Evaluation
@@ -188,11 +192,16 @@ class LucidBlockContext(
             param.constraint?.let {
                 walk(it)
                 if (resolve(it)?.isTrue()?.bit != Bit.B1) {
-                    notationCollector.reportError(it, "Parameter constraint failed for ${param.name}.")
+                    errorListener.reportError(
+                        it,
+                        "Parameter constraint failed for ${param.name} (${param.constraint.text})"
+                    )
+                    stage = ParseStage.ModuleInternals
                     return false
                 }
             }
         }
+        stage = ParseStage.ModuleInternals
         return true
     }
 

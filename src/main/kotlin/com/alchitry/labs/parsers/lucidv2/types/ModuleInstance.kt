@@ -1,7 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
 import com.alchitry.labs.parsers.ProjectContext
-import com.alchitry.labs.parsers.errors.NotationCollector
+import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotOrParent
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotParent
@@ -13,10 +13,14 @@ class ModuleInstance(
     override val parent: ModuleInstance?,
     val module: Module,
     parameters: Map<String, Value>,
-    val connections: Map<String, SignalOrSubSignal>,
-    notationCollector: NotationCollector
+    val connections: Map<String, SignalOrSubSignal>
 ) : ModuleInstanceOrArray, ListOrModuleInstance, TestOrModuleInstance {
-    override val context = LucidBlockContext(project, this, notationCollector = notationCollector)
+    override val context = LucidBlockContext(
+        project,
+        module.sourceFile,
+        this,
+        notationCollector = project.notationManager.getCollector(module.sourceFile)
+    )
 
     override fun takeSnapshot(): SnapshotParent {
         val snapshots = mutableListOf<SnapshotOrParent>()
@@ -27,8 +31,19 @@ class ModuleInstance(
         return SnapshotParent(name, snapshots)
     }
 
-    suspend fun checkParameters(): Boolean = context.checkParameters()
+    suspend fun checkParameters(errorListener: ErrorListener = context.notationCollector): Boolean =
+        context.checkParameters(errorListener)
+
     suspend fun initialWalk() = context.initialWalk(module.context)
+
+    fun getAllModules(): List<Module> {
+        return (context.types.moduleInstances.values.flatMap { instOrArray ->
+            when (instOrArray) {
+                is ModuleInstance -> instOrArray.getAllModules()
+                is ModuleInstanceArray -> instOrArray.getAllInstances().first().getAllModules()
+            }
+        } + listOf(module)).distinct()
+    }
 
     // Use the provided parameters or the default value from the module is it is missing
     val parameters = module.parameters.mapValues { (name, param) ->

@@ -1,3 +1,4 @@
+import com.alchitry.labs.parsers.lucidv2.parsers.toSourceFile
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SimParent
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SimValue
 import com.alchitry.labs.parsers.lucidv2.values.BitListValue
@@ -27,7 +28,7 @@ class TestBenchTests {
                         ${"$"}assert(dut.count == 100)
                     }
                 }
-            """.trimIndent(),
+            """.trimIndent().toSourceFile(),
             """
                 module counter (
                     input clk,
@@ -40,7 +41,7 @@ class TestBenchTests {
                         count = counter.q
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile("counter.luc")
         )
 
         tester.runTestBenches()
@@ -73,7 +74,7 @@ class TestBenchTests {
                         ${"$"}assert(dut.count == 100)
                     }
                 }
-            """.trimIndent(),
+            """.trimIndent().toSourceFile(),
             """
                 module counter (
                     input clk,
@@ -86,7 +87,7 @@ class TestBenchTests {
                         count = counter.q
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile("counter.luc")
         )
 
         val result = tester.runFirstTestBench()
@@ -122,7 +123,7 @@ class TestBenchTests {
                         ${"$"}assert(dut.count == 100)
                     }
                 }
-            """.trimIndent(),
+            """.trimIndent().toSourceFile(),
             """
                 module counter (
                     input clk,
@@ -135,7 +136,7 @@ class TestBenchTests {
                         count = counter.q
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile("counter.luc")
         )
 
         tester.runTestBenches()
@@ -177,7 +178,7 @@ class TestBenchTests {
                         ${"$"}assert(dut.count == 200)
                     }
                 }
-            """.trimIndent(),
+            """.trimIndent().toSourceFile(),
             """
                 module counter (
                     input clk,
@@ -190,7 +191,7 @@ class TestBenchTests {
                         count = counter.q
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile("counter.luc")
         )
 
         tester.runTestBenches()
@@ -304,7 +305,7 @@ class TestBenchTests {
                         ${"$"}assert(dut.count == 200)
                     }
                 }
-            """.trimIndent(),
+            """.trimIndent().toSourceFile(),
             """
                 module counter (
                     input clk,
@@ -317,7 +318,7 @@ class TestBenchTests {
                         count = counter.q
                     }
                 }
-            """.trimIndent()
+            """.trimIndent().toSourceFile("counter.luc")
         )
 
         tester.parallelRunTestBenches()

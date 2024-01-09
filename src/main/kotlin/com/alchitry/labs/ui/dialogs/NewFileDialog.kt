@@ -13,10 +13,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs.Log
 import com.alchitry.labs.parsers.lucid.Lucid
-import com.alchitry.labs.project.Languages
-import com.alchitry.labs.project.Project
-import com.alchitry.labs.project.addAlchitryConstraint
-import com.alchitry.labs.project.addLucidModule
+import com.alchitry.labs.project.*
 import com.alchitry.labs.ui.tabs.Workspace
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,6 +33,27 @@ fun LucidFileDialog(visible: Boolean, onClose: () -> Unit) {
         },
         { name ->
             project?.addLucidModule(name)?.also {
+                Workspace.openFile(it)
+            }
+        }
+    )
+}
+
+@Composable
+fun LucidTestBenchDialog(visible: Boolean, onClose: () -> Unit) {
+    val project by Project.currentFlow.collectAsState()
+    NewFileDialog(
+        visible,
+        onClose,
+        "New Lucid Test Bench",
+        "Test Bench Name",
+        {
+            it.matches(Regex("[a-z][a-zA-Z0-9_]*")) &&
+                    !Lucid.RESERVED_WORDS.contains(it) &&
+                    project?.sourceFiles?.none { f -> f.name == "$it.${Languages.Lucid.extension}" } == true
+        },
+        { name ->
+            project?.addLucidTestBench(name)?.also {
                 Workspace.openFile(it)
             }
         }

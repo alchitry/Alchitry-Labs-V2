@@ -36,13 +36,13 @@ class NotationCollector private constructor(
             .also { children.add(it) }
     }
 
-    private val errors = mutableListOf<Notation>()
-    private val warnings = mutableListOf<Notation>()
-    private val infos = mutableListOf<Notation>()
+    private val errors = mutableSetOf<Notation>()
+    private val warnings = mutableSetOf<Notation>()
+    private val infos = mutableSetOf<Notation>()
 
-    fun getAllErrors(): List<Notation> = children.flatMap { it.getAllErrors() } + errors
-    fun getAllWarnings(): List<Notation> = children.flatMap { it.getAllWarnings() } + warnings
-    fun getAllInfos(): List<Notation> = children.flatMap { it.getAllInfos() } + infos
+    fun getAllErrors(): List<Notation> = (children.flatMap { it.getAllErrors() } + errors).distinct()
+    fun getAllWarnings(): List<Notation> = (children.flatMap { it.getAllWarnings() } + warnings).distinct()
+    fun getAllInfos(): List<Notation> = (children.flatMap { it.getAllInfos() } + infos).distinct()
 
     fun getAllNotations() = (getAllErrors() + getAllWarnings() + getAllInfos()).sortedBy { it.range.start }
 
