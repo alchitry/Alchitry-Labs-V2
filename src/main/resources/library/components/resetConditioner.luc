@@ -37,7 +37,7 @@
    for most applications.
 */
 
-module reset_conditioner #(
+module resetConditioner #(
     STAGES = 4 : STAGES > 1 // number of stages
   )(
     input clk,  // clock

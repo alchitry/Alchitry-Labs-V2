@@ -11,5 +11,5 @@ pin led[5] LED5
 pin led[6] LED6
 pin led[7] LED7
 
-pin usb_rx USB_RX
-pin usb_tx USB_TX
+pin usbRx USB_RX
+pin usbTx USB_TX

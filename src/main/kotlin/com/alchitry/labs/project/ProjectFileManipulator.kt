@@ -32,6 +32,29 @@ fun Project.addLucidModule(moduleName: String) = addSourceFile(
             """.trimIndent()
 )
 
+fun Project.addLucidTestBench(name: String) = addSourceFile(
+    name = "$name.${Languages.Lucid.extension}",
+    contents = """
+        testBench $name {
+            sig clk
+
+            fun tickClock() {
+                clk = 1
+                ${"$"}silentTick() // tick without capturing signals
+                clk = 0
+                ${"$"}tick()
+            }
+
+            test myTest {
+                clk = 0 // initialize the value
+                ${"$"}tick() // capture initial state
+
+                // test goes here
+            }
+        }
+    """.trimIndent()
+)
+
 fun Project.addAlchitryConstraint(name: String) = addConstraintFile("$name.${Languages.ACF.extension}")
 
 private fun Project.addSourceFile(name: String, contents: String): SourceFile {
