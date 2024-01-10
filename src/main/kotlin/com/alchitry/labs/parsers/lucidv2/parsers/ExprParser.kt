@@ -3,6 +3,8 @@ package com.alchitry.labs.parsers.lucidv2.parsers
 import com.alchitry.labs.parsers.BigFunctions
 import com.alchitry.labs.parsers.BitUtil.widthOfMult
 import com.alchitry.labs.parsers.errors.ErrorStrings
+import com.alchitry.labs.parsers.errors.Notation
+import com.alchitry.labs.parsers.errors.NotationType
 import com.alchitry.labs.parsers.errors.WarningStrings
 import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.grammar.SuspendLucidBaseListener
@@ -153,7 +155,7 @@ data class ExprParser(
                     }
 
                     else -> {
-                        value = BitListValue(emptyList<Bit>(), constant = true, signed = false)
+                        value = BitListValue(0, 8, constant = true, signed = false)
                         context.reportError(ctx, "String constants cannot be empty.")
                     }
                 }
@@ -258,10 +260,10 @@ data class ExprParser(
         }
 
         // mark this signal as not constant if any of the bit selections aren't constant
-        val variable = (signal is SubSignal) && signalCtx.bitSelection().any {
-            it.arrayIndex().any {
-                it.expr()?.let { values[it] }?.constant == false
-            } || it.bitSelector()?.children?.any { it is ExprContext && values[it]?.constant == false } == true
+        val variable = (signal is SubSignal) && signalCtx.bitSelection().any { bitSelectionContext ->
+            bitSelectionContext.arrayIndex().any { arrayIndexContext ->
+                arrayIndexContext.expr()?.let { values[it] }?.constant == false
+            } || bitSelectionContext.bitSelector()?.children?.any { it is ExprContext && values[it]?.constant == false } == true
         }
 
         values[ctx] = signal.read(context.evalContext).let { if (variable) it.asMutable() else it }
@@ -606,6 +608,7 @@ data class ExprParser(
         val op2Width = op2.width
 
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
+            println("undefined")
             if (op1Width is SimpleWidth && op2Width is SimpleWidth)
                 values[ctx] =
                     UndefinedValue(
@@ -625,19 +628,23 @@ data class ExprParser(
         val signed = op1.signed && op2.signed
 
         values[ctx] = when {
-            !op1.isNumber() || !op2.isNumber() -> BitListValue(width, signed, constant) { Bit.Bx }
+            !op1.isNumber() || !op2.isNumber() -> BitListValue(
+                size = width,
+                constant = constant,
+                signed = signed
+            ) { Bit.Bx }
             operand == "+" -> BitListValue(
-                op1.toBigInt()!!.add(op2.toBigInt()),
-                constant,
-                signed,
-                width
+                bigInt = op1.toBigInt()!!.add(op2.toBigInt()),
+                constant = constant,
+                signed = signed,
+                width = width
             )
 
             else -> BitListValue(
-                op1.toBigInt()!!.subtract(op2.toBigInt()),
-                constant,
-                signed,
-                width
+                bigInt = op1.toBigInt()!!.subtract(op2.toBigInt()),
+                constant = constant,
+                signed = signed,
+                width = width
             )
         }
     }
@@ -690,9 +697,14 @@ data class ExprParser(
         values[ctx] = if (multOp) {
             val width = widthOfMult(op1.size, op2.size)
             if (!op1.isNumber() || !op2.isNumber())
-                BitListValue(width, constant, signed) { Bit.Bx }
+                BitListValue(size = width, constant = constant, signed = signed) { Bit.Bx }
             else
-                BitListValue(op1.toBigInt(signed)!!.multiply(op2.toBigInt(signed)), constant, signed, width)
+                BitListValue(
+                    bigInt = op1.toBigInt(signed)!!.multiply(op2.toBigInt(signed)),
+                    constant = constant,
+                    signed = signed,
+                    width = width
+                )
         } else {
             val op2BigInt = op2.toBigInt(signed)!!
 
@@ -702,9 +714,14 @@ data class ExprParser(
 
             val width = op1.size
             if (!op1.isNumber() || !op2.isNumber() || op2BigInt == BigInteger.ZERO)
-                BitListValue(width, constant, signed) { Bit.Bx }
+                BitListValue(size = width, constant = constant, signed = signed) { Bit.Bx }
             else
-                BitListValue(op1.toBigInt(signed)!!.divide(op2BigInt), constant, signed, width)
+                BitListValue(
+                    bigInt = op1.toBigInt(signed)!!.divide(op2BigInt),
+                    constant = constant,
+                    signed = signed,
+                    width = width
+                )
         }
         debug(ctx)
     }
@@ -1552,7 +1569,12 @@ data class ExprParser(
                     is FunctionArg.ValueArg -> arg.value.isTrue().bit == Bit.B1
                 }
                 if (!passed) {
-                    context.reportError(ctx, "Assert failed: \"${ctx.functionExpr(0)?.text}\"")
+                    val notation = Notation.from(
+                        ctx,
+                        "Assert failed: \"${ctx.functionExpr(0)?.text}\"",
+                        NotationType.Error
+                    )
+                    context.printError(notation.toString())
                     context.abortTest()
                 }
             }
@@ -1561,11 +1583,91 @@ data class ExprParser(
                 if (context !is LucidBlockContext)
                     return
 
-                val value = when (val arg = args[0]) {
-                    is FunctionArg.RealArg -> arg.value.toString()
-                    is FunctionArg.ValueArg -> arg.value.toString()
+                val string = (ctx.functionExpr(0)?.expr() as? ExprNumContext)?.number()?.STRING()?.let {
+                    it.text.substring(1, it.text.length - 1)
                 }
-                context.print("${ctx.functionExpr(0)?.text} = $value")
+
+                if (args.size == 1) {
+                    if (string != null) {
+                        context.print(string)
+                        return
+                    }
+
+                    context.print("${ctx.functionExpr(0)?.text} = ${args[0]}")
+
+                    return
+                }
+
+                if (string == null) {
+                    context.reportError(
+                        ctx.functionExpr(0) ?: ctx,
+                        "The first argument to print must be a string when more than one argument is provided."
+                    )
+                    return
+                }
+
+                val regex = Regex("(%d)|(%h)|(%b)|(%\\d*?f)")
+                val matches = regex.findAll(string).toList()
+
+                if (matches.size != args.size - 1) {
+                    context.reportError(
+                        ctx.functionExpr(0) ?: ctx,
+                        "Unexpected number of arguments given the format string. Expected ${matches.size + 1} but found ${args.size}."
+                    )
+                    return
+                }
+
+                context.print(buildString {
+                    var lastIdx = 0
+                    matches.forEachIndexed { idx, match ->
+                        append(string.subSequence(lastIdx, match.range.first))
+                        lastIdx = match.range.endInclusive + 1
+                        val value = when (val arg = args[idx + 1]) {
+                            is FunctionArg.RealArg -> when {
+                                match.groups[1] != null -> { // decimal
+                                    arg.value.roundToLong().toString()
+                                }
+
+                                match.groups[2] != null -> { // hex
+                                    arg.value.roundToLong().toString(16)
+                                }
+
+                                match.groups[3] != null -> { // binary
+                                    arg.value.roundToLong().toString(2)
+                                }
+
+                                match.groups[4] != null -> { // fractional
+                                    if (match.groups[4]!!.value.length > 2) {
+                                        context.reportWarning(
+                                            ctx.functionExpr(idx + 1) ?: ctx,
+                                            "The number portion of the format flag %f is ignored for real numbers."
+                                        )
+                                    }
+                                    arg.value.toString()
+                                }
+
+                                else -> ""
+                            }
+
+                            is FunctionArg.ValueArg -> {
+                                val format = when {
+                                    match.groups[1] != null -> ValueFormat.Decimal
+                                    match.groups[2] != null -> ValueFormat.Hex
+                                    match.groups[3] != null -> ValueFormat.Binary
+                                    match.groups[4] != null -> { // fractional
+                                        val fractional =
+                                            match.groups[4]!!.value.run { substring(1, length - 1) }.toIntOrNull() ?: 0
+                                        ValueFormat.Fractional(fractional)
+                                    }
+
+                                    else -> error("Unknown format!")
+                                }
+                                arg.value.toString(format)
+                            }
+                        }
+                        append(value)
+                    }
+                })
             }
 
             is Function.Custom -> {

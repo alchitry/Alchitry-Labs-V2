@@ -112,6 +112,20 @@ data class Project(
         }
     }
 
+    suspend fun runAllTestBenches() = withContext(Dispatchers.Default) {
+        check()?.use { context ->
+            context.getTestBenches().forEach { testBench ->
+                Log.println("Starting test bench: ${testBench.name}...")
+                testBench.getTestBlocks().forEach { testBlock ->
+                    Log.println("Running ${testBlock.name}...")
+                    testBench.runTest(testBlock.name)
+                }
+            }
+            Log.println()
+            Log.println("Done.", AlchitryColors.current.Success)
+        }
+    }
+
     suspend fun check(): ProjectContext? {
         val notationManager = NotationManager()
         val context = buildContext(notationManager)
@@ -125,15 +139,15 @@ data class Project(
         return context
     }
 
-    suspend fun build(): Boolean {
-        val context = check() ?: return false
-        val topModule = context.top ?: return false
+    suspend fun build(): Boolean = withContext(Dispatchers.Default) {
+        val context = check() ?: return@withContext false
+        val topModule = context.top ?: return@withContext false
 
         val sourceFiles = try {
             context.convertToVerilog()
         } catch (e: Exception) {
             Log.printlnError("Failed to convert source files to Verilog. This should be considered a bug!", e)
-            return false
+            return@withContext false
         }
 
         val sourceDir = buildDirectory.resolve("source")
@@ -142,7 +156,7 @@ data class Project(
             buildDirectory.deleteRecursively()
         } catch (e: Exception) {
             Log.printlnError("Failed to delete build directory!", e)
-            return false
+            return@withContext false
         }
 
         val vSourceFiles: List<File>
@@ -157,7 +171,7 @@ data class Project(
             }
         } catch (e: Exception) {
             Log.printlnError("Failed to write source files to ${sourceDir.absolutePath}", e)
-            return false
+            return@withContext false
         }
 
         val constraintNotationManager = NotationManager()
@@ -182,12 +196,12 @@ data class Project(
             }
         } catch (e: Exception) {
             Log.printlnError("Failed to get constraint files!", e)
-            return false
+            return@withContext false
         }
 
         if (!constraintNotationManager.hasNoMessages) {
             Log.print(constraintNotationManager.getReport(), AlchitryColors.current.Error)
-            return false
+            return@withContext false
         }
 
         val checkedConstraints = constraints.map {
@@ -244,12 +258,17 @@ data class Project(
             }
         } catch (e: Exception) {
             Log.printlnError("Failed to write constraint files to ${constraintDir.absolutePath}", e)
-            return false
+            return@withContext false
         }
 
-        board.projectBuilder.buildProject(this, topModule.parameterizedModuleName, vSourceFiles, constraintFiles)
+        board.projectBuilder.buildProject(
+            this@Project,
+            topModule.parameterizedModuleName,
+            vSourceFiles,
+            constraintFiles
+        )
 
-        return true
+        return@withContext true
     }
 
     suspend fun parse(errorManger: NotationManager): List<Pair<SourceFile, LucidParser.SourceContext>>? {

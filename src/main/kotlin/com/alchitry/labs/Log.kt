@@ -43,6 +43,8 @@ object Log {
         print(message, color?.let { SpanStyle(color = it) })
     }
 
+    fun println() = print("\n")
+
     fun println(message: Any?, style: SpanStyle? = null) {
         if (style != null) {
             print(message.toString(), style)

@@ -145,32 +145,32 @@ class NotationCollector private constructor(
 
     override fun reportError(node: TerminalNode, message: String) {
         node.symbol?.let {
-            errors.add(ErrorListener.getNotation(it, message, NotationType.Error))
+            errors.add(Notation.from(it, message, NotationType.Error))
         }
     }
 
     override fun reportError(ctx: ParserRuleContext, message: String) {
-        ErrorListener.getNotation(ctx, message, NotationType.Error)?.let { errors.add(it) }
+        Notation.from(ctx, message, NotationType.Error)?.let { errors.add(it) }
     }
 
     override fun reportWarning(node: TerminalNode, message: String) {
         node.symbol?.let {
-            warnings.add(ErrorListener.getNotation(it, message, NotationType.Warning))
+            warnings.add(Notation.from(it, message, NotationType.Warning))
         }
     }
 
     override fun reportWarning(ctx: ParserRuleContext, message: String) {
-        ErrorListener.getNotation(ctx, message, NotationType.Warning)?.let { warnings.add(it) }
+        Notation.from(ctx, message, NotationType.Warning)?.let { warnings.add(it) }
     }
 
     override fun reportInfo(node: TerminalNode, message: String) {
         node.symbol?.let {
-            infos.add(ErrorListener.getNotation(it, message, NotationType.Info))
+            infos.add(Notation.from(it, message, NotationType.Info))
         }
     }
 
     override fun reportInfo(ctx: ParserRuleContext, message: String) {
-        ErrorListener.getNotation(ctx, message, NotationType.Info)?.let { infos.add(it) }
+        Notation.from(ctx, message, NotationType.Info)?.let { infos.add(it) }
     }
 
     override fun syntaxError(
@@ -182,7 +182,7 @@ class NotationCollector private constructor(
         e: RecognitionException?
     ) {
         val token = (offendingSymbol as? Token) ?: return
-        errors.add(ErrorListener.getNotation(token, msg, NotationType.SyntaxError))
+        errors.add(Notation.from(token, msg, NotationType.SyntaxError))
     }
 
     override fun reportAmbiguity(
@@ -195,7 +195,7 @@ class NotationCollector private constructor(
         configs: ATNConfigSet
     ) {
         val token = recognizer.tokenStream?.get(startIndex) ?: return
-        errors.add(ErrorListener.getNotation(token, null, NotationType.SyntaxAmbiguity))
+        errors.add(Notation.from(token, null, NotationType.SyntaxAmbiguity))
     }
 
     override fun reportAttemptingFullContext(

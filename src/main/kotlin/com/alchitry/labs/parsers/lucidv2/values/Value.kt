@@ -2,6 +2,14 @@ package com.alchitry.labs.parsers.lucidv2.values
 
 import com.alchitry.labs.parsers.lucidv2.types.*
 
+sealed class ValueFormat {
+    data object Binary : ValueFormat()
+    data object Hex : ValueFormat()
+    data object Decimal : ValueFormat()
+    data class Fractional(val fractionalBits: Int) : ValueFormat()
+}
+
+
 sealed class Value : Measurable {
     abstract val constant: Boolean
     abstract fun isNumber(): Boolean
@@ -14,6 +22,8 @@ sealed class Value : Measurable {
     abstract infix fun and(other: Value): Value
     abstract infix fun or(other: Value): Value
     abstract infix fun xor(other: Value): Value
+
+    abstract fun toString(format: ValueFormat): String
 
     /**
      * Returns a same sized Value with B1 where the bits match the given bit and B0 everywhere else.

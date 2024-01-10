@@ -18,6 +18,8 @@ data class UndefinedValue(
     override fun where(bit: Bit) = this.width.filledWith(Bit.B0, constant, false)
     override fun replace(mask: Value, bit: Bit) = this
 
+    override fun toString(format: ValueFormat): String = "UndefinedValue"
+
     override infix fun and(other: Value): Value = when (other) {
         is ArrayValue -> TODO()
         is BitListValue -> TODO()

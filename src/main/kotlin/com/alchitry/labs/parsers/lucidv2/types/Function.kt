@@ -22,7 +22,7 @@ sealed class Function(val label: String, val argCount: Int, val constOnly: Boole
     object TICK : Function("tick", 0, constOnly = false, testOnly = true)
     object SILENTTICK : Function("silentTick", 0, false, true)
     object ASSERT : Function("assert", 1, constOnly = false, testOnly = true)
-    object PRINT : Function("print", 1, constOnly = false, testOnly = true)
+    object PRINT : Function("print", -1, constOnly = false, testOnly = true)
 
     class Custom(label: String, val args: List<CustomArg>, val functionBlock: FunctionBlockContext) :
         Function(label, args.size, false, true)
@@ -39,6 +39,13 @@ data class CustomArg(
 )
 
 sealed class FunctionArg {
-    class ValueArg(val value: Value) : FunctionArg()
-    class RealArg(val value: Double) : FunctionArg()
+    class ValueArg(val value: Value) : FunctionArg() {
+        override fun toString() = value.toString()
+    }
+
+    class RealArg(val value: Double) : FunctionArg() {
+        override fun toString() = value.toString()
+    }
+
+    abstract override fun toString(): String
 }

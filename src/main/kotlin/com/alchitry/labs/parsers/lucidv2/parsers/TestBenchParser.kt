@@ -17,14 +17,16 @@ class TestBenchParser(
             return
         }
 
-        context.project.addTestBench(
+        if (!context.project.addTestBench(
             TestBench(
                 name,
                 context.sourceFile,
                 context.project,
-                ctx,
-                context.notationCollector
+                ctx
             )
-        )
+            )
+        ) {
+            context.reportError(nameCtx, "Test bench name \"$name\" is already in use.")
+        }
     }
 }

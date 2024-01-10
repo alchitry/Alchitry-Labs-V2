@@ -13,6 +13,8 @@ data class StructValue(
         check(type.keys.containsAll(valueMap.keys)) { "A StructValue's value must contain only the keys in the StructType!" }
     }
 
+    override fun toString(format: ValueFormat): String = valueMap.mapValues { it.value.toString(format) }.toString()
+
     override val constant: Boolean
         get() = valueMap.values.all { it.constant }
 

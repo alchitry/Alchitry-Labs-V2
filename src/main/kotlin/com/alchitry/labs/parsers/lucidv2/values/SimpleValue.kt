@@ -206,25 +206,23 @@ sealed class SimpleValue(
         return sb.toString()
     }
 
-    override fun toString(): String {
-        val sb = StringBuilder()
+    override fun toString() = buildString {
         if (constant)
-            sb.append("const ")
+            append("const ")
         if (signed)
-            sb.append("signed ")
-        sb.append('{')
+            append("signed ")
+        append('{')
         for (i in bits.indices.reversed()) {
             val bv = bits[i]
-            sb.append(bv.char)
+            append(bv.char)
         }
-        sb.append('}')
+        append('}')
 
         if (isNumber()) {
-            sb.append(" : ")
-            sb.append(toBigInt().toString())
+            append(" : ")
+            append(toBigInt().toString())
         }
 
-        return sb.toString()
     }
 
     fun isPowerOf2() = isNumber() && bits.count { it == Bit.B1 } == 1

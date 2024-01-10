@@ -1,7 +1,7 @@
 package com.alchitry.labs.parsers.lucidv2
 
 import com.alchitry.labs.Env
-import com.alchitry.labs.parsers.errors.ErrorListener
+import com.alchitry.labs.parsers.errors.Notation
 import com.alchitry.labs.parsers.errors.NotationType
 import com.alchitry.labs.parsers.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.grammar.LucidParser
@@ -24,7 +24,7 @@ class VerilogConverter(
      * Throws an [IllegalStateException] with the provided message and line/offset of the provided context.
      */
     private fun error(ctx: ParserRuleContext, message: String): Nothing {
-        val notation = ErrorListener.getNotation(ctx, message, NotationType.Error)
+        val notation = Notation.from(ctx, message, NotationType.Error)
         error(notation.toString())
     }
 

@@ -23,6 +23,8 @@ data class BitValue(
     infix fun or(other: BitValue) = doOp(other, bit or other.bit)
     infix fun xor(other: BitValue) = doOp(other, bit xor other.bit)
 
+    override fun toString(format: ValueFormat): String = bit.char.toString()
+
     override fun where(bit: Bit) = copy(bit = if (this.bit == bit) Bit.B1 else Bit.B0)
     override fun replace(mask: Value, bit: Bit): Value {
         require(mask is BitValue)

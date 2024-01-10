@@ -1,5 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.context
 
+import com.alchitry.labs.Log
 import com.alchitry.labs.parsers.Evaluable
 import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.errors.ErrorListener
@@ -62,7 +63,13 @@ class LucidBlockContext(
     fun print(text: String) {
         if (stage != ParseStage.Evaluation)
             return
-        println(text)
+        Log.println(text)
+    }
+
+    fun printError(text: String) {
+        if (stage != ParseStage.Evaluation)
+            return
+        Log.printlnError(text)
     }
 
     // These will be run multiple times during evaluation, so they need their context updated

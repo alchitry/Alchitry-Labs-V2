@@ -84,6 +84,17 @@ internal class ExprParserTests {
     }
 
     @Test
+    fun testSignedSubtraction() = runBlocking {
+        val test = SimpleLucidTester("${"$"}signed(16d10) - ${"$"}signed(8d50)")
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        assertEquals(
+            BitListValue("11111111111011000", 2, 17, constant = true, signed = true),
+            test.context.expr.resolve(tree)
+        )
+        assert(test.hasNoIssues)
+    }
+
+    @Test
     fun testConcat() = runBlocking {
         var test = SimpleLucidTester("c{b1101, b0010, 0}")
         var tree = test.parser.expr().also { test.context.walk(it) }

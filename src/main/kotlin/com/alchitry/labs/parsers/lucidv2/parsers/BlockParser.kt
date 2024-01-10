@@ -72,6 +72,11 @@ data class BlockParser(
             return
         }
 
+        if (testBlocks.values.any { it.name == name }) {
+            context.reportError(nameCtx, "Test name \"$name\" is already in use.")
+            return
+        }
+
         testBlocks[ctx] =
             TestBlock(name, context, dependencies.toSet(), drivenSignals.toSet(), ctx)
     }

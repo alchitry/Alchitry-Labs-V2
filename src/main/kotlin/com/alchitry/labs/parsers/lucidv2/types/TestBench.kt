@@ -1,7 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
 import com.alchitry.labs.parsers.ProjectContext
-import com.alchitry.labs.parsers.errors.NotationCollector
 import com.alchitry.labs.parsers.grammar.LucidParser.TestBenchContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.*
@@ -16,8 +15,7 @@ class TestBench(
     override val name: String,
     val sourceFile: SourceFile,
     project: ProjectContext,
-    private val testBenchContext: TestBenchContext,
-    notationCollector: NotationCollector
+    private val testBenchContext: TestBenchContext
 ) : TestOrModuleInstance, Snapshotable {
     override val context = LucidBlockContext(
         project,
@@ -54,9 +52,7 @@ class TestBench(
             context.blockParser.testBlocks.values.first { it.name == name }
 
         val snapshots = mutableListOf<SnapshotParent>()
-
         test.context.setSnapshotCallback { snapshots.add(takeSnapshot()) }
-
         test.context.initialize()
         try {
             test.evaluate()

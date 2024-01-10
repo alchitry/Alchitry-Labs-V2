@@ -105,7 +105,7 @@ fun LabsToolbar() {
 
         ToolbarButton(
             onClick = {
-                Log.warn("Not implemented yet!") // TODO
+                runWithProject { it.runAllTestBenches() }
             },
             icon = painterResource("icons/debug.svg"),
             description = "Simulate",

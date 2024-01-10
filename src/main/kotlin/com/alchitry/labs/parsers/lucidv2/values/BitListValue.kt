@@ -15,6 +15,31 @@ data class BitListValue(
         signed
     )
 
+    override fun toString(format: ValueFormat): String = when (format) {
+        ValueFormat.Binary -> buildString {
+            bits.asReversed().forEach { append(it.char) }
+        }
+
+        ValueFormat.Decimal -> toBigInt()?.toString() ?: "NaN"
+
+        is ValueFormat.Fractional -> toBigInt()?.toBigDecimal()?.divide(2f.toBigDecimal().pow(format.fractionalBits))
+            ?.toString() ?: "NaN"
+
+        ValueFormat.Hex -> buildString {
+            bits.chunked(4).asReversed().forEach {
+                val value = BitListValue(it, constant, false)
+                append(
+                    when {
+                        value.isNumber() -> value.toBigInt()?.toString(16) ?: "?"
+                        value.contains(Bit.Bx) -> "x"
+                        value.contains(Bit.Bz) -> "z"
+                        else -> "?"
+                    }
+                )
+            }
+        }
+    }
+
     override val lsb: Bit = bits.first()
     override val msb: Bit = bits.last()
 

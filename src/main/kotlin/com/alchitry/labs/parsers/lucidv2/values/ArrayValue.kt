@@ -13,6 +13,10 @@ data class ArrayValue(
             require(elements.all { value -> value::class == elements.first()::class }) { "ArrayValue elements must all be the same class!" }
     }
 
+    override fun toString(format: ValueFormat): String = joinToString(", ", "[", "]") {
+        it.toString(format)
+    }
+
     override val constant: Boolean
         get() = all { it.constant }
 
