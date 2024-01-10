@@ -1646,7 +1646,7 @@ data class ExprParser(
                                     arg.value.toString()
                                 }
 
-                                else -> ""
+                                else -> error("Unknown format!")
                             }
 
                             is FunctionArg.ValueArg -> {
@@ -1667,6 +1667,7 @@ data class ExprParser(
                         }
                         append(value)
                     }
+                    append(string.subSequence(lastIdx, string.length))
                 })
             }
 
