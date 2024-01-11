@@ -2,7 +2,7 @@ package com.alchitry.labs.ui.code_editor
 
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.style.TextDecoration
-import com.alchitry.labs.parsers.errors.Notation
+import com.alchitry.labs.parsers.notations.Notation
 import org.antlr.v4.kotlinruntime.Token
 
 

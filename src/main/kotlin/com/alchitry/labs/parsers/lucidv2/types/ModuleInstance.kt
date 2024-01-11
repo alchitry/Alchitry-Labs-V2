@@ -1,11 +1,11 @@
 package com.alchitry.labs.parsers.lucidv2.types
 
 import com.alchitry.labs.parsers.ProjectContext
-import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotOrParent
 import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SnapshotParent
 import com.alchitry.labs.parsers.lucidv2.values.Value
+import com.alchitry.labs.parsers.notations.ErrorListener
 
 class ModuleInstance(
     override val name: String,

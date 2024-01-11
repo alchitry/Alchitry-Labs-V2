@@ -3,10 +3,10 @@ package com.alchitry.labs.parsers.acf
 import com.alchitry.labs.parsers.acf.types.ClockConstraint
 import com.alchitry.labs.parsers.acf.types.PinConstraint
 import com.alchitry.labs.parsers.acf.types.PinPull
-import com.alchitry.labs.parsers.errors.NotationCollector
 import com.alchitry.labs.parsers.grammar.AcfBaseListener
 import com.alchitry.labs.parsers.grammar.AcfParser
 import com.alchitry.labs.parsers.lucidv2.types.*
+import com.alchitry.labs.parsers.notations.NotationCollector
 import com.alchitry.labs.project.Board
 import kotlin.math.roundToInt
 

@@ -1,8 +1,8 @@
 package com.alchitry.labs.parsers
 
 import com.alchitry.labs.Log
-import com.alchitry.labs.parsers.errors.NotationManager
 import com.alchitry.labs.parsers.lucidv2.types.*
+import com.alchitry.labs.parsers.notations.NotationManager
 import com.alchitry.labs.project.QueueExhaustionException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex

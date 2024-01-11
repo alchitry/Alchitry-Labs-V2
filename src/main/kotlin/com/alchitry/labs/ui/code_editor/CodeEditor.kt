@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.currentRecomposeScope
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -70,19 +71,39 @@ fun CodeEditor(
                             // so by using "8" we should be measuring the widest one
                             // it is offset by -1 so that it will never be -1 as it is used as a flag by Compose
                             val lineNumber = if (index < 0) "8".repeat(-(index + 1)) else (index + 1).toString()
+                            val lineActions = state.lineActions?.get(index)
+
                             val density = LocalDensity.current
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
+                                horizontalArrangement = Arrangement.spacedBy(5.dp)
+                            ) {
                                 Text(
                                     lineNumber,
                                     textAlign = TextAlign.Right,
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 10.dp)
                                         .offset( // offset to make text centered
                                             y = state.lineTopOffset.dp * density.density
                                         )
                                         .alpha(alpha)
                                 )
+                                if (state.maxLineActions > 0) {
+                                    Box(
+                                        Modifier.aspectRatio(
+                                            state.maxLineActions.toFloat(),
+                                            matchHeightConstraintsFirst = true
+                                        )
+                                    ) {
+                                        lineActions?.forEach { action ->
+                                            key(action) {
+                                                Box(Modifier.aspectRatio(1f, matchHeightConstraintsFirst = true)) {
+                                                    action.content(this)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -127,7 +148,6 @@ fun CodeEditor(
             Box(
                 Modifier
                     .scrollable(horizontalScroll, Orientation.Horizontal)
-                    .padding(start = 10.dp)
             ) {
                 state.subscribe(currentRecomposeScope)
                 EditorTooltipArea(

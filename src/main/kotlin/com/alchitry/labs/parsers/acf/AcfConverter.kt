@@ -2,13 +2,13 @@ package com.alchitry.labs.parsers.acf
 
 import com.alchitry.labs.parsers.acf.types.ClockConstraint
 import com.alchitry.labs.parsers.acf.types.PinConstraint
-import com.alchitry.labs.parsers.errors.NotationCollector
 import com.alchitry.labs.parsers.grammar.AcfLexer
 import com.alchitry.labs.parsers.grammar.AcfParser
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
 import com.alchitry.labs.parsers.lucidv2.types.Signal
 import com.alchitry.labs.parsers.lucidv2.types.SignalOrSubSignal
 import com.alchitry.labs.parsers.lucidv2.types.SubSignal
+import com.alchitry.labs.parsers.notations.NotationCollector
 import com.alchitry.labs.project.Board
 import com.alchitry.labs.project.ConstraintLang
 import com.alchitry.labs.project.files.ConstraintFile

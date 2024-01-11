@@ -1,12 +1,12 @@
 package com.alchitry.labs.parsers.lucidv2.parsers
 
-import com.alchitry.labs.parsers.errors.*
 import com.alchitry.labs.parsers.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.lucidv2.context.LucidExprContext
 import com.alchitry.labs.parsers.lucidv2.types.SelectionContext
 import com.alchitry.labs.parsers.lucidv2.values.Bit
 import com.alchitry.labs.parsers.lucidv2.values.SimpleValue
+import com.alchitry.labs.parsers.notations.*
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 

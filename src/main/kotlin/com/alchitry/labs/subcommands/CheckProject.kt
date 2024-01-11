@@ -1,6 +1,6 @@
 package com.alchitry.labs.subcommands
 
-import com.alchitry.labs.parsers.errors.NotationManager
+import com.alchitry.labs.parsers.notations.NotationManager
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.project.openXml
 import kotlinx.cli.ArgType

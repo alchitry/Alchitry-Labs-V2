@@ -1,4 +1,4 @@
-package com.alchitry.labs.parsers.errors
+package com.alchitry.labs.parsers.notations
 
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.tree.TerminalNode

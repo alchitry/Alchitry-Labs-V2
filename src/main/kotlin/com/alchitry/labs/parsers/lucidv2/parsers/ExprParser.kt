@@ -2,10 +2,6 @@ package com.alchitry.labs.parsers.lucidv2.parsers
 
 import com.alchitry.labs.parsers.BigFunctions
 import com.alchitry.labs.parsers.BitUtil.widthOfMult
-import com.alchitry.labs.parsers.errors.ErrorStrings
-import com.alchitry.labs.parsers.errors.Notation
-import com.alchitry.labs.parsers.errors.NotationType
-import com.alchitry.labs.parsers.errors.WarningStrings
 import com.alchitry.labs.parsers.grammar.LucidParser.*
 import com.alchitry.labs.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
@@ -15,6 +11,10 @@ import com.alchitry.labs.parsers.lucidv2.types.FunctionArg
 import com.alchitry.labs.parsers.lucidv2.types.Signal
 import com.alchitry.labs.parsers.lucidv2.types.SubSignal
 import com.alchitry.labs.parsers.lucidv2.values.*
+import com.alchitry.labs.parsers.notations.ErrorStrings
+import com.alchitry.labs.parsers.notations.Notation
+import com.alchitry.labs.parsers.notations.NotationType
+import com.alchitry.labs.parsers.notations.WarningStrings
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 import org.antlr.v4.kotlinruntime.tree.TerminalNode

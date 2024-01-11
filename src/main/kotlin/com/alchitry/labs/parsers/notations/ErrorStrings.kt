@@ -1,4 +1,4 @@
-package com.alchitry.labs.parsers.errors
+package com.alchitry.labs.parsers.notations
 
 // TODO: Replace these inline
 object ErrorStrings {

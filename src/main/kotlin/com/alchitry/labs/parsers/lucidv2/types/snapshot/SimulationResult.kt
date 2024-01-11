@@ -2,8 +2,8 @@ package com.alchitry.labs.parsers.lucidv2.signals.snapshot
 
 import com.alchitry.labs.parsers.lucidv2.values.Value
 
-fun snapshotsToSimResult(snapshots: List<SnapshotParent>): SimParent {
-    val result = buildEmptyTree(snapshots.first()) as SimParent
+fun snapshotsToSimResult(snapshots: List<SnapshotParent>): SimParent? {
+    val result = buildEmptyTree(snapshots.firstOrNull() ?: return null) as SimParent
 
     snapshots.forEach { snapshot ->
         addToTree(result, snapshot)

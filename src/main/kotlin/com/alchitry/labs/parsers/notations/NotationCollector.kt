@@ -1,11 +1,14 @@
-package com.alchitry.labs.parsers.errors
+package com.alchitry.labs.parsers.notations
 
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.withStyle
 import com.alchitry.kotlinmultiplatform.BitSet
 import com.alchitry.labs.project.files.ProjectFile
 import com.alchitry.labs.ui.theme.AlchitryColors
+import kotlinx.collections.immutable.toImmutableMap
 import org.antlr.v4.kotlinruntime.*
 import org.antlr.v4.kotlinruntime.atn.ATNConfigSet
 import org.antlr.v4.kotlinruntime.dfa.DFA
@@ -39,12 +42,19 @@ class NotationCollector private constructor(
     private val errors = mutableSetOf<Notation>()
     private val warnings = mutableSetOf<Notation>()
     private val infos = mutableSetOf<Notation>()
+    private val lineActions = mutableMapOf<Int, MutableList<LineAction>>()
 
     fun getAllErrors(): List<Notation> = (children.flatMap { it.getAllErrors() } + errors).distinct()
     fun getAllWarnings(): List<Notation> = (children.flatMap { it.getAllWarnings() } + warnings).distinct()
     fun getAllInfos(): List<Notation> = (children.flatMap { it.getAllInfos() } + infos).distinct()
 
     fun getAllNotations() = (getAllErrors() + getAllWarnings() + getAllInfos()).sortedBy { it.range.start }
+
+    fun getLineActions() = lineActions.toImmutableMap()
+
+    fun addLineAction(line: Int, content: @Composable BoxScope.() -> Unit) {
+        lineActions.getOrPut(line) { mutableListOf() }.add(LineAction(line, content))
+    }
 
     fun getReport(
         includeErrors: Boolean = true,
@@ -141,6 +151,7 @@ class NotationCollector private constructor(
         errors.clear()
         warnings.clear()
         infos.clear()
+        lineActions.clear()
     }
 
     override fun reportError(node: TerminalNode, message: String) {

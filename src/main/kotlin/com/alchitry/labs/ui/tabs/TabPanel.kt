@@ -154,7 +154,9 @@ class TabPanel(parent: TabParent) : TabSection(parent) {
                         onDropEnd = ::closeIfEmpty
                     ) {
                         Box(Modifier.clipToBounds()) {
-                            activeTab?.content()
+                            key(activeTab) {
+                                activeTab?.content()
+                            }
                         }
                     }
                 }

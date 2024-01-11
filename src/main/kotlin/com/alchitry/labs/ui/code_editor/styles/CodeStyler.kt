@@ -17,7 +17,7 @@ class CodeStyler(
         val styleTokens = mutableListOf<StyleToken>().apply {
             addAll(editor.tokens.map { it.styleToken })
             // sort the notations so more severe ones override less severe ones
-            addAll(editor.notations.sortedBy { it.type }.asReversed().map { it.toStyleToken() })
+            editor.notations?.sortedBy { it.type }?.asReversed()?.map { it.toStyleToken() }?.let { addAll(it) }
         }
 
         styleTokens.forEach { token ->

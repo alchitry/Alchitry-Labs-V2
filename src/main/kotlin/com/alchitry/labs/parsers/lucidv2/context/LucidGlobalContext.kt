@@ -2,12 +2,12 @@ package com.alchitry.labs.parsers.lucidv2.context
 
 import com.alchitry.labs.parsers.Evaluable
 import com.alchitry.labs.parsers.ProjectContext
-import com.alchitry.labs.parsers.errors.ErrorListener
 import com.alchitry.labs.parsers.grammar.LucidParser
 import com.alchitry.labs.parsers.grammar.LucidParser.SourceContext
 import com.alchitry.labs.parsers.lucidv2.parsers.*
 import com.alchitry.labs.parsers.lucidv2.types.GlobalNamespace
 import com.alchitry.labs.parsers.lucidv2.types.SignalOrParent
+import com.alchitry.labs.parsers.notations.ErrorListener
 import com.alchitry.labs.project.files.SourceFile
 
 class LucidGlobalContext(

@@ -32,9 +32,11 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
-import com.alchitry.labs.parsers.errors.Notation
-import com.alchitry.labs.parsers.errors.NotationType
 import com.alchitry.labs.parsers.grammar.LucidLexer
+import com.alchitry.labs.parsers.notations.LineAction
+import com.alchitry.labs.parsers.notations.Notation
+import com.alchitry.labs.parsers.notations.NotationCollector
+import com.alchitry.labs.parsers.notations.NotationType
 import com.alchitry.labs.project.Project
 import com.alchitry.labs.project.files.ProjectFile
 import com.alchitry.labs.ui.code_editor.styles.CodeStyler
@@ -97,7 +99,11 @@ class CodeEditorState(
     var lineTopOffset: Float = 0f
 
     val tooltipState = NotationTooltipProvider(this)
-    val notations = mutableListOf<Notation>()
+    var notations: List<Notation>? = null
+    var lineActions: Map<Int, List<LineAction>>? = null
+
+    var maxLineActions = 0
+
     val focusRequester = FocusRequester()
     val lines = ArrayList<CodeLineState>()
     private var gutterDigits = 0
@@ -126,9 +132,19 @@ class CodeEditorState(
     var clipboardManager: ClipboardManager? = null
 
     init {
+        Project.current?.currentNotationCollectorForFile(file)?.let { collector ->
+            updateNotations(collector)
+        }
         scope.launch {
             setText(file.readText())
+            styler.updateStyle()
         }
+    }
+
+    private fun updateNotations(collector: NotationCollector) {
+        notations = collector.getAllNotations()
+        lineActions = collector.getLineActions()
+        maxLineActions = lineActions?.values?.maxOfOrNull { actions -> actions.size } ?: 0
     }
 
     fun getWindow() = Rect(
@@ -144,8 +160,8 @@ class CodeEditorState(
 
     fun lineNotationLevel(line: Int): NotationType? {
         return notations
-            .filter { (it.range.start.line..it.range.endInclusive.line).contains(line) }
-            .minByOrNull { it.type.ordinal }?.type
+            ?.filter { (it.range.start.line..it.range.endInclusive.line).contains(line) }
+            ?.minByOrNull { it.type.ordinal }?.type
     }
 
     private fun updateHighlightTokens() {
@@ -246,8 +262,8 @@ class CodeEditorState(
         val project by Project.currentFlow.collectAsState()
         LaunchedEffect(project) {
             project?.notationCollectorFlowForFile(file)?.collect {
-                notations.clear()
-                it?.getAllNotations()?.let { n -> notations.addAll(n) }
+                it?.let { updateNotations(it) }
+
                 styler.updateStyle()
                 invalidate()
             }
@@ -272,8 +288,6 @@ class CodeEditorState(
             scope.launch {
                 saveJob?.cancelAndJoin()
                 saveJob = launch {
-                    notations.clear()
-                    styler.updateStyle()
                     delay(100)
                     file.writeText(getText())
                     Project.current?.queueNotationsUpdate()
@@ -469,16 +483,21 @@ class CodeEditorState(
         else -> log10(abs(toDouble())).toInt() + 1
     }
 
+    private fun defaultLineHeight(): Int =
+        newLineState(AnnotatedString("0")).apply { layout(Constraints()) }.lineHeight
+
 
     fun LazyLayoutMeasureScope.layout(constraints: Constraints) {
         size = IntSize(constraints.maxWidth, constraints.maxHeight)
 
-        val maxDigits = lines.size.length()
-        if (gutterDigits != maxDigits) {
-            val placeables = measure(-maxDigits - 1, Constraints())
-            gutterWidth = placeables.maxOf { it.width }
-            gutterDigits = maxDigits
+        val lineHeight = lines.firstOrNull()?.lineHeight.let {
+            if (it == null || it == 0) defaultLineHeight() else it
         }
+
+        val maxDigits = lines.size.length()
+        val placeables = measure(-maxDigits - 1, Constraints(maxHeight = lineHeight))
+        gutterWidth = placeables.maxOf { it.width }
+        gutterDigits = maxDigits
 
         val lineConstraints =
             if (softWrap)

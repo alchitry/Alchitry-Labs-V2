@@ -1,4 +1,4 @@
-package com.alchitry.labs.parsers.errors
+package com.alchitry.labs.parsers.notations
 
 import com.alchitry.labs.parsers.grammar.LucidParser.BitSelectorConstContext
 import com.alchitry.labs.parsers.grammar.LucidParser.ExprContext

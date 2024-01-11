@@ -1,4 +1,4 @@
-package com.alchitry.labs.parsers.errors
+package com.alchitry.labs.parsers.notations
 
 import androidx.compose.ui.graphics.Color
 import com.alchitry.labs.ui.code_editor.TextPosition

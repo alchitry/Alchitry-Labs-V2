@@ -1,8 +1,6 @@
 package com.alchitry.labs.parsers.lucidv2
 
 import com.alchitry.labs.Env
-import com.alchitry.labs.parsers.errors.Notation
-import com.alchitry.labs.parsers.errors.NotationType
 import com.alchitry.labs.parsers.grammar.LucidBaseListener
 import com.alchitry.labs.parsers.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
@@ -10,6 +8,8 @@ import com.alchitry.labs.parsers.lucidv2.parsers.ExprParser
 import com.alchitry.labs.parsers.lucidv2.types.*
 import com.alchitry.labs.parsers.lucidv2.types.Function
 import com.alchitry.labs.parsers.lucidv2.values.*
+import com.alchitry.labs.parsers.notations.Notation
+import com.alchitry.labs.parsers.notations.NotationType
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 

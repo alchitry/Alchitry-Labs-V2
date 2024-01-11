@@ -9,7 +9,7 @@ class TestBlock(
     context: LucidBlockContext,
     dependencies: Set<Signal>,
     drivenSignals: Set<Signal>,
-    private val testBlockContext: TestBlockContext
+    val testBlockContext: TestBlockContext
 ) : Evaluable {
     val context = context.withEvalContext(this, "TestBlock")
 

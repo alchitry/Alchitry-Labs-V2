@@ -47,7 +47,7 @@ class TestBench(
         return context.blockParser.testBlocks.values.toList()
     }
 
-    suspend fun runTest(name: String): SimParent {
+    suspend fun runTest(name: String): SimParent? {
         val test =
             context.blockParser.testBlocks.values.first { it.name == name }
 

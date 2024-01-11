@@ -6,7 +6,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.window.rememberPopupPositionProviderAtPosition
-import com.alchitry.labs.parsers.errors.Notation
+import com.alchitry.labs.parsers.notations.Notation
 import com.alchitry.labs.ui.code_editor.CodeEditorState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -62,7 +62,7 @@ class NotationTooltipProvider(
 ) : TooltipProvider<Notation>(codeEditor) {
 
     override fun tokenFromPosition(position: Offset): Notation? {
-        return codeEditor.notations.firstOrNull { it.range.contains(codeEditor.screenOffsetToTextPosition(position)) }
+        return codeEditor.notations?.firstOrNull { it.range.contains(codeEditor.screenOffsetToTextPosition(position)) }
             ?.let { if (it.message == null) null else it }
     }
 

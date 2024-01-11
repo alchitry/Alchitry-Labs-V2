@@ -4,16 +4,19 @@ import com.alchitry.labs.Log
 import com.alchitry.labs.Settings
 import com.alchitry.labs.parsers.ProjectContext
 import com.alchitry.labs.parsers.acf.NativeConstraint
-import com.alchitry.labs.parsers.errors.NotationCollector
-import com.alchitry.labs.parsers.errors.NotationManager
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.parsers.grammar.LucidParser
 import com.alchitry.labs.parsers.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleTypeContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
+import com.alchitry.labs.parsers.notations.NotationCollector
+import com.alchitry.labs.parsers.notations.NotationManager
 import com.alchitry.labs.project.files.*
+import com.alchitry.labs.ui.code_editor.line_actions.LineActionButton
 import com.alchitry.labs.ui.misc.openFileDialog
+import com.alchitry.labs.ui.tabs.SimulationResultTab
+import com.alchitry.labs.ui.tabs.Workspace
 import com.alchitry.labs.ui.theme.AlchitryColors
 import com.alchitry.labs.windows.mainWindow
 import kotlinx.coroutines.*
@@ -61,6 +64,9 @@ data class Project(
     fun notationCollectorFlowForFile(projectFile: ProjectFile): Flow<NotationCollector?> =
         notationManagerFlow.map { it?.getCollector(projectFile) }
 
+    fun currentNotationCollectorForFile(projectFile: ProjectFile): NotationCollector? =
+        notationManagerFlow.value?.getCollector(projectFile)
+
     companion object {
         private val mutableCurrentFlow = MutableStateFlow<Project?>(null)
         val currentFlow = mutableCurrentFlow.asStateFlow()
@@ -105,7 +111,7 @@ data class Project(
 
     fun queueNotationsUpdate() {
         scope.launch {
-            notationManagerFlow.tryEmit(null)
+            //notationManagerFlow.tryEmit(null)
             val notationManager = NotationManager()
             buildContext(notationManager)
             notationManagerFlow.tryEmit(notationManager)
@@ -338,7 +344,32 @@ data class Project(
             if (notationManager.hasErrors)
                 return null
 
-            projectContext.getTestBenches().forEach { it.initialWalk() }
+            projectContext.getTestBenches().forEach { testBench ->
+                testBench.initialWalk()
+                val collector = notationManager.getCollector(testBench.sourceFile)
+                testBench.getTestBlocks().forEach forEachTest@{ test ->
+                    val line = test.testBlockContext.start?.line ?: return@forEachTest
+                    collector.addLineAction(line - 1) {
+                        LineActionButton("icons/play.svg", "Run ${test.name}") {
+                            projectContext.scope.launch {
+                                Log.println("Running ${testBench.name}.${test.name}...")
+                                testBench.runTest(test.name)?.let { result ->
+                                    Workspace.activeTabPanel().apply {
+                                        addTab(
+                                            SimulationResultTab(
+                                                "${testBench.name}.${test.name}",
+                                                result,
+                                                this
+                                            )
+                                        )
+                                    }
+                                }
+                                Log.println("Done.", AlchitryColors.current.Success)
+                            }
+                        }
+                    }
+                }
+            }
 
             if (notationManager.hasErrors)
                 return null

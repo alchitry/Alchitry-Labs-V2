@@ -1,8 +1,6 @@
 package helpers
 
 import com.alchitry.labs.parsers.ProjectContext
-import com.alchitry.labs.parsers.errors.NotationCollector
-import com.alchitry.labs.parsers.errors.NotationManager
 import com.alchitry.labs.parsers.grammar.LucidLexer
 import com.alchitry.labs.parsers.grammar.LucidParser
 import com.alchitry.labs.parsers.grammar.LucidParser.SourceContext
@@ -13,6 +11,8 @@ import com.alchitry.labs.parsers.lucidv2.signals.snapshot.SimParent
 import com.alchitry.labs.parsers.lucidv2.types.Module
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstanceArray
+import com.alchitry.labs.parsers.notations.NotationCollector
+import com.alchitry.labs.parsers.notations.NotationManager
 import com.alchitry.labs.project.files.SourceFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -101,7 +101,7 @@ class LucidTester(vararg val files: SourceFile) {
         return moduleInstance
     }
 
-    suspend fun runFirstTestBench(): SimParent {
+    suspend fun runFirstTestBench(): SimParent? {
         val tree = parseText()
 
         globalParse(tree)
