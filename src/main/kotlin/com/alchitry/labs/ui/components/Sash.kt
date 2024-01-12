@@ -35,8 +35,9 @@ data class SashSize(
     val first: Float = 1f,
     val second: Float = 1f
 ) {
-    val firstWeight: Float get() = first / (first + second)
-    val secondWeight: Float get() = second / (first + second)
+    val total: Float = first + second
+    val firstWeight: Float = first / total
+    val secondWeight: Float = second / total
 
     val boundFirstWeight: Float get() = if (firstWeight.isNaN()) 0.5f else firstWeight.coerceIn(0.001f, 0.999f)
     val boundSecondWeight: Float get() = if (secondWeight.isNaN()) 0.5f else secondWeight.coerceIn(0.001f, 0.999f)
@@ -51,12 +52,21 @@ class SashData(
     var dragSize = size
 
     fun clampToBounds() {
-        val totalSize = size.first + size.second
         if (size.first < minimumSize) {
-            size = SashSize(minimumSize, totalSize - minimumSize)
+            size = SashSize(minimumSize, size.total - minimumSize)
         } else if (size.second < minimumSize) {
-            size = SashSize(totalSize - minimumSize, minimumSize)
+            size = SashSize(size.total - minimumSize, minimumSize)
         }
+    }
+
+    fun resizeFirst(first: Float) {
+        size = SashSize(first, size.total - first)
+        clampToBounds()
+    }
+
+    fun resizeSecond(second: Float) {
+        size = SashSize(size.total - second, second)
+        clampToBounds()
     }
 
     fun onResize(newSize: Float) {

@@ -10,6 +10,8 @@ import com.alchitry.labs.parsers.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidModuleTypeContext
 import com.alchitry.labs.parsers.lucidv2.context.LucidTestBenchContext
 import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
+import com.alchitry.labs.parsers.lucidv2.types.TestBench
+import com.alchitry.labs.parsers.lucidv2.types.TestBlock
 import com.alchitry.labs.parsers.notations.NotationCollector
 import com.alchitry.labs.parsers.notations.NotationManager
 import com.alchitry.labs.project.files.*
@@ -118,17 +120,29 @@ data class Project(
         }
     }
 
+    private suspend fun runTest(testBench: TestBench, test: TestBlock) {
+        Log.println("Running ${testBench.name}.${test.name}...")
+        val result = testBench.runTest(test.name)
+        if (result == null) {
+            Log.warn("Simulation resulted in no snapshots. Make sure you call ${"$"}tick() if this wasn't intentional.")
+        } else {
+            Workspace.activeTabPanel().apply {
+                addTab(
+                    SimulationResultTab("${testBench.name}.${test.name}", result, this)
+                )
+            }
+        }
+        Log.success("Done.")
+        Log.println()
+    }
+
     suspend fun runAllTestBenches() = withContext(Dispatchers.Default) {
         check()?.use { context ->
             context.getTestBenches().forEach { testBench ->
-                Log.println("Starting test bench: ${testBench.name}...")
                 testBench.getTestBlocks().forEach { testBlock ->
-                    Log.println("Running ${testBlock.name}...")
-                    testBench.runTest(testBlock.name)
+                    runTest(testBench, testBlock)
                 }
             }
-            Log.println()
-            Log.println("Done.", AlchitryColors.current.Success)
         }
     }
 
@@ -352,19 +366,7 @@ data class Project(
                     collector.addLineAction(line - 1) {
                         LineActionButton("icons/play.svg", "Run ${test.name}") {
                             projectContext.scope.launch {
-                                Log.println("Running ${testBench.name}.${test.name}...")
-                                testBench.runTest(test.name)?.let { result ->
-                                    Workspace.activeTabPanel().apply {
-                                        addTab(
-                                            SimulationResultTab(
-                                                "${testBench.name}.${test.name}",
-                                                result,
-                                                this
-                                            )
-                                        )
-                                    }
-                                }
-                                Log.println("Done.", AlchitryColors.current.Success)
+                                runTest(testBench, test)
                             }
                         }
                     }

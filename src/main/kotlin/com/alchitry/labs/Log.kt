@@ -123,6 +123,7 @@ object Log {
     fun info(message: Any?) = println(message, AlchitryColors.current.Info)
     fun warn(message: Any?) = println(message, AlchitryColors.current.Warning)
     fun error(message: Any?, throwable: Throwable? = null) = printlnError(message, throwable)
+    fun success(message: Any?) = println(message, AlchitryColors.current.Success)
 
     val barStyle: ProgressBarStyle = if (Env.isWindows) {
         ProgressBarStyle.ASCII

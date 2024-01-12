@@ -5,6 +5,7 @@ import java.util.*
 import kotlin.experimental.and
 import kotlin.experimental.or
 import kotlin.math.ceil
+import kotlin.math.pow
 
 sealed class SimpleValue(
     override val constant: Boolean,
@@ -244,4 +245,18 @@ sealed class SimpleValue(
         }
         return 1
     }
+
+    fun maxValue(): Double =
+        if (signed) {
+            2.0.pow(size - 1) - 1
+        } else {
+            2.0.pow(size) - 1
+        }
+
+    fun minValue(): Double =
+        if (signed) {
+            -(2.0.pow(size - 1))
+        } else {
+            0.0
+        }
 }

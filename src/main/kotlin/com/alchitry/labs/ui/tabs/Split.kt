@@ -91,6 +91,7 @@ abstract class Split(
         return when (val section = active) {
             is TabParent -> section.activeTabPanel()
             is TabPanel -> section
+            else -> error("IMPOSSIBLE") // TODO: remove - added to avoid a compiler bug
         }
     }
 }
