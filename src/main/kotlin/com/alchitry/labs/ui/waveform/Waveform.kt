@@ -9,11 +9,12 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -26,9 +27,7 @@ import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.isIdentity
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -41,10 +40,11 @@ import com.alchitry.labs.ui.components.ExpandArrow
 import com.alchitry.labs.ui.components.rememberConditionally
 import com.alchitry.labs.ui.hiddenClickable
 import com.alchitry.labs.ui.theme.AlchitryColors
-import kotlinx.coroutines.delay
+import kotlin.math.roundToInt
 
 val LocalWaveformScale = compositionLocalOf { 100.dp }
 val LocalWaveformDragging = compositionLocalOf { false }
+val LocalCursorPosition = compositionLocalOf<Offset?> { null }
 
 sealed interface WaveformOrParent {
     val name: String
@@ -137,41 +137,42 @@ data class Waveform(
         }
     }
 
-    @OptIn(ExperimentalComposeUiApi::class)
+    private fun valueToOffset(canvasSize: Size, value: Value): Float {
+        if (canvasSize.isUnspecified)
+            return Float.NaN
+        if (value is SimpleValue) {
+            val vd = value.toBigInt()?.toDouble() ?: return Float.NaN
+            val min = value.minValue()
+            val max = value.maxValue()
+            val normalized = (vd - min) / (max - min)
+            return normalized.toFloat() * -canvasSize.height + canvasSize.height
+        }
+        return Float.NaN
+    }
+
     @Composable
     override fun waveform() {
-        var cursor by remember { mutableStateOf<Offset?>(null) }
         var canvasSize by remember { mutableStateOf(Size.Unspecified) }
         val widthScale = LocalWaveformScale.current
         val isDragging = LocalWaveformDragging.current
         with(LocalDensity.current) {
+
+            val cursorPosition = LocalCursorPosition.current
+
+            val cursorValue = cursorPosition?.x?.let {
+                values.getOrNull((it / widthScale.toPx()).toInt())
+            }
+
+            val valuePosition = cursorValue?.let { valueToOffset(canvasSize, it) } ?: Float.NaN
+
+            val graphPadding = 15.dp
+
             Box(
                 Modifier
                     .width(widthScale * values.size)
                     .height(height.toDp())
-                    .padding(vertical = 10.dp)
-                    .onPointerEvent(PointerEventType.Move, PointerEventPass.Initial) {
-                        if (isDragging && cursor == null) {
-                            return@onPointerEvent
-                        }
-                        val mouse = it.changes.first().position
-                        val value = values.getOrNull((mouse.x / widthScale.toPx()).toInt()) ?: return@onPointerEvent
-
-                        if (canvasSize.isUnspecified)
-                            return@onPointerEvent
-
-                        if (value is SimpleValue) {
-                            val vd = value.toBigInt()?.toDouble() ?: return@onPointerEvent
-                            val min = value.minValue()
-                            val max = value.maxValue()
-                            val normalized = (vd - min) / (max - min)
-                            val y = normalized.toFloat() * -canvasSize.height + canvasSize.height
-                            cursor = Offset(mouse.x, y)
-                        }
-                    }
-                    .onPointerEvent(PointerEventType.Exit, PointerEventPass.Initial) { cursor = null }
             ) {
-                Canvas(Modifier.matchParentSize()) {
+                Canvas(Modifier.padding(vertical = graphPadding).matchParentSize()) {
                     canvasSize = this.size
                     val matrix = Matrix().apply {
                         translate(0f, size.height)
@@ -181,30 +182,67 @@ data class Waveform(
                         path.draw(matrix)
                     }
                 }
-                val lastCursor = rememberConditionally(cursor != null) { cursor }
-
-                LaunchedEffect(isDragging) {
-                    if (isDragging) {
-                        delay(500)
-                        cursor = null
-                    }
-                }
+                val lastValuePosition = rememberConditionally(cursorPosition != null) { valuePosition }
+                val lastCursorLocation = rememberConditionally(cursorPosition != null) { cursorPosition }
+                val lastValue = rememberConditionally(cursorPosition != null) { cursorValue }
 
                 AnimatedVisibility(
                     !isDragging,
-                    modifier = Modifier.offset(
-                        (lastCursor?.x?.toDp() ?: 0.dp) - 5.dp,
-                        (lastCursor?.y?.toDp() ?: 0.dp) - 5.dp
-                    ),
                     enter = fadeIn(spring(stiffness = 3000f)),
                     exit = fadeOut(spring(stiffness = 3000f))
                 ) {
-                    if (cursor != null)
-                        Box(
-                            Modifier
-                                .size(10.dp)
-                                .background(MaterialTheme.colorScheme.onSurface, CircleShape)
-                        )
+                    Layout(
+                        modifier = Modifier.matchParentSize().offset(y = graphPadding),
+                        content = {
+                            if (cursorPosition != null) {
+                                Box(
+                                    Modifier
+                                        .size(10.dp)
+                                        .background(MaterialTheme.colorScheme.onSurface, CircleShape)
+                                )
+
+                                Surface(
+                                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                                    tonalElevation = 5.dp,
+                                    shadowElevation = 5.dp,
+                                    shape = RoundedCornerShape(10.dp)
+                                ) {
+                                    Box(Modifier.padding(2.5.dp)) {
+                                        Text(lastValue?.toString() ?: "Unknown")
+                                    }
+                                }
+                            }
+                        }
+                    ) { measurables, constraints ->
+                        val placeables = measurables.map { it.measure(constraints) }
+
+                        layout(constraints.maxWidth, constraints.maxHeight) {
+                            val cursor = lastCursorLocation ?: return@layout
+                            val dotPosition = lastValuePosition ?: return@layout
+                            if (dotPosition.isFinite()) {
+                                placeables.getOrNull(0)?.let { dot ->
+                                    dot.place(
+                                        cursor.x.roundToInt() - dot.width / 2,
+                                        dotPosition.roundToInt() - dot.height / 2
+                                    )
+                                }
+                            }
+
+                            val labelPosition = if (dotPosition.isFinite()) {
+                                dotPosition.roundToInt()
+                            } else {
+                                constraints.maxHeight / 2 - graphPadding.roundToPx()
+                            }
+
+                            placeables.getOrNull(1)?.let { tooltip ->
+                                tooltip.place(
+                                    cursor.x.roundToInt() + 10.dp.roundToPx(),
+                                    labelPosition - tooltip.height / 2
+                                )
+                            }
+
+                        }
+                    }
                 }
             }
         }
