@@ -1,6 +1,9 @@
 package com.alchitry.labs2.ui.code_editor.styles
 
+import com.alchitry.labs2.parsers.grammar.IndentDetectorLexer
 import com.alchitry.labs2.ui.code_editor.CodeEditorState
+import org.antlr.v4.kotlinruntime.CharStreams
+import org.antlr.v4.kotlinruntime.CommonTokenStream
 
 /**
  * Interface for line indenters.
@@ -24,7 +27,7 @@ interface LineIndenter {
          * @param indents The number of indents to include in the indent string.
          * @return The indent string with the specified number of indents.
          */
-        fun indentString(indents: Int): String = INDENT_STRING.repeat(indents)
+        fun indentString(indents: Int): String = INDENT_STRING.repeat(indents.coerceAtLeast(0))
 
         fun countIndentsIn(string: String): Int {
             var counter = 0
@@ -50,5 +53,30 @@ class BasicIndenter(private val codeEditorState: CodeEditorState) : LineIndenter
     override fun getIndentFor(line: Int): String {
         val previousLine = codeEditorState.lines.getOrNull(line - 1)?.text?.text ?: return ""
         return LineIndenter.indentString(LineIndenter.countIndentsIn(previousLine))
+    }
+}
+
+class BracketIndenter(private val codeEditorState: CodeEditorState) : LineIndenter {
+    override fun getIndentFor(line: Int): String {
+        val text = codeEditorState.getText()
+        val lineStartChar = codeEditorState.lines.getOrNull(line)?.text?.text?.trim()?.firstOrNull()
+        val adjustment = if (lineStartChar?.let { "}])".contains(it) } == true) -1 else 0
+        var indents = 0
+        CommonTokenStream(IndentDetectorLexer(CharStreams.fromString(text))).apply { fill() }.tokens.forEach {
+            if (it.line - 1 >= line)
+                return LineIndenter.indentString(indents + adjustment)
+            when (it.type) {
+                IndentDetectorLexer.Tokens.OPEN_BRACKET.id -> {
+                    indents += 1
+                }
+
+                IndentDetectorLexer.Tokens.CLOSED_BRACKET.id -> {
+                    indents -= 1
+                }
+
+                else -> {}
+            }
+        }
+        return LineIndenter.indentString(indents + adjustment)
     }
 }

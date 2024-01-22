@@ -37,9 +37,11 @@ import com.alchitry.labs2.parsers.notations.LineAction
 import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.parsers.notations.NotationType
+import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.files.ProjectFile
 import com.alchitry.labs2.ui.code_editor.styles.BasicIndenter
+import com.alchitry.labs2.ui.code_editor.styles.BracketIndenter
 import com.alchitry.labs2.ui.code_editor.styles.CodeStyler
 import com.alchitry.labs2.ui.code_editor.styles.LineIndenter
 import com.alchitry.labs2.ui.code_editor.tooltip.NotationTooltipProvider
@@ -145,7 +147,7 @@ class CodeEditorState(
         }
 
         lineIndenter = when (file.language) {
-            // TODO: Add smarter indenters for each language
+            Languages.ACF, Languages.Lucid, Languages.Verilog -> BracketIndenter(this)
             else -> BasicIndenter(this)
         }
     }

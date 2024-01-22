@@ -157,11 +157,11 @@ tasks.register<com.alchitry.antlrkotlin.gradleplugin.AntlrKotlinTask>("generateK
         project.dependencies.create("com.github.alchitry.antlr-kotlin:antlr-kotlin-target:$antlrKotlinVersion")
     )
     maxHeapSize = "64m"
-    packageName = "com.alchitry.labs.parsers.grammar"
+    packageName = "com.alchitry.labs2.parsers.grammar"
     arguments = listOf("-no-visitor", "-listener")
     source = project.objects
         .sourceDirectorySet("antlr", "antlr")
-        .srcDir("src/main/kotlin/com/alchitry/labs/parsers/grammar").apply {
+        .srcDir("src/main/kotlin/com/alchitry/labs2/parsers/grammar").apply {
             include("*.g4")
         }
     // outputDirectory is required, put it into the build directory
