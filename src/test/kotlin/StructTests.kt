@@ -1,8 +1,8 @@
-import com.alchitry.labs.parsers.lucidv2.types.StructMember
-import com.alchitry.labs.parsers.lucidv2.types.StructType
-import com.alchitry.labs.parsers.lucidv2.values.ArrayWidth
-import com.alchitry.labs.parsers.lucidv2.values.BitListWidth
-import com.alchitry.labs.parsers.lucidv2.values.BitWidth
+import com.alchitry.labs2.parsers.lucidv2.types.StructMember
+import com.alchitry.labs2.parsers.lucidv2.types.StructType
+import com.alchitry.labs2.parsers.lucidv2.values.ArrayWidth
+import com.alchitry.labs2.parsers.lucidv2.values.BitListWidth
+import com.alchitry.labs2.parsers.lucidv2.values.BitWidth
 import helpers.SimpleLucidTester
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test

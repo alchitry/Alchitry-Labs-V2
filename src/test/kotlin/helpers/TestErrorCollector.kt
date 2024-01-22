@@ -1,7 +1,7 @@
 package helpers
 
-import com.alchitry.labs.parsers.notations.NotationCollector
-import com.alchitry.labs.project.files.FileProvider
-import com.alchitry.labs.project.files.SourceFile
+import com.alchitry.labs2.parsers.notations.NotationCollector
+import com.alchitry.labs2.project.files.FileProvider
+import com.alchitry.labs2.project.files.SourceFile
 
 fun testErrorCollector(): NotationCollector = NotationCollector(SourceFile(FileProvider.DiskFile("test.luc"), true))

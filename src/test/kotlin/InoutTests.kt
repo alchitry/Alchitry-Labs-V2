@@ -1,8 +1,8 @@
-import com.alchitry.labs.parsers.ProjectContext
-import com.alchitry.labs.parsers.lucidv2.types.ports.Inout
-import com.alchitry.labs.parsers.lucidv2.values.BitListValue
-import com.alchitry.labs.parsers.lucidv2.values.BitListWidth
-import com.alchitry.labs.parsers.notations.NotationManager
+import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.lucidv2.types.ports.Inout
+import com.alchitry.labs2.parsers.lucidv2.values.BitListValue
+import com.alchitry.labs2.parsers.lucidv2.values.BitListWidth
+import com.alchitry.labs2.parsers.notations.NotationManager
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking

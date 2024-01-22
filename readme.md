@@ -38,7 +38,7 @@ You may want to install the Antlr plugin for syntax highlighting of the Lucid.g4
 Once the gradle sync is done, you should be able to run the tests by opening the test file and clicking the green arrow
 in the code editor gutter or right-clicking on the test folder in the project tree and selecting "Run 'Tests in ...'"
 
-You can start the IDE by going to [Main.kt](src/main/kotlin/com/alchitry/labs/Main.kt) and clicking the green arrow in
+You can start the IDE by going to [Main.kt](src/main/kotlin/com/alchitry/labs2/Main.kt) and clicking the green arrow in
 the gutter next to `fun main()`.
 The current environment is set up for Linux, and you may need to change some things if you are on something else.
 
@@ -83,5 +83,5 @@ For example, I should be able to make tooltips popup showing not only the error 
 implement a suggested fix.
 
 I've started the basic work by creating a custom
-[CodeEditor](src/main/kotlin/com/alchitry/labs/ui/code_editor/CodeEditor.kt) that is still efficient with thousands of
+[CodeEditor](src/main/kotlin/com/alchitry/labs2/ui/code_editor/CodeEditor.kt) that is still efficient with thousands of
 lines of code (the built-in TextField's performance scales terribly).

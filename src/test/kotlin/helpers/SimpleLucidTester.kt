@@ -1,16 +1,16 @@
 package helpers
 
-import com.alchitry.labs.parsers.ProjectContext
-import com.alchitry.labs.parsers.grammar.LucidLexer
-import com.alchitry.labs.parsers.grammar.LucidParser
-import com.alchitry.labs.parsers.lucidv2.context.LucidBlockContext
-import com.alchitry.labs.parsers.lucidv2.context.SignalResolver
-import com.alchitry.labs.parsers.lucidv2.parsers.ParseStage
-import com.alchitry.labs.parsers.lucidv2.types.Module
-import com.alchitry.labs.parsers.lucidv2.types.ModuleInstance
-import com.alchitry.labs.parsers.notations.NotationManager
-import com.alchitry.labs.project.files.FileProvider
-import com.alchitry.labs.project.files.SourceFile
+import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.grammar.LucidLexer
+import com.alchitry.labs2.parsers.grammar.LucidParser
+import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
+import com.alchitry.labs2.parsers.lucidv2.context.SignalResolver
+import com.alchitry.labs2.parsers.lucidv2.parsers.ParseStage
+import com.alchitry.labs2.parsers.lucidv2.types.Module
+import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstance
+import com.alchitry.labs2.parsers.notations.NotationManager
+import com.alchitry.labs2.project.files.FileProvider
+import com.alchitry.labs2.project.files.SourceFile
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 
