@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
+import com.alchitry.labs2.Log
 import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.notations.LineAction
 import com.alchitry.labs2.parsers.notations.Notation
@@ -341,7 +342,8 @@ class CodeEditorState(
      * @return the position of the end of the new text
      */
     fun replaceText(
-        newText: String, range: OpenEndRange<TextPosition> = selectionManager.selectedRange,
+        newText: String,
+        range: OpenEndRange<TextPosition> = selectionManager.selectedRange,
         updateCaret: Boolean = true
     ) {
         if (readOnly)
@@ -575,7 +577,7 @@ class CodeEditorState(
      * Returns a TextPosition that is the closest valid position for the
      * current text.
      */
-    fun TextPosition.coerceInRange() = coerceInRange(lines = lines)
+    private fun TextPosition.coerceInRange() = coerceInRange(lines = lines)
 
     fun TextPosition.getPrevious(): TextPosition {
         val currentOffset = offset.coerceIn(0, lines[line].text.length)
@@ -609,7 +611,30 @@ class CodeEditorState(
         deleteIfSelectedOr { }
     }
 
+    fun adjustIndents() {
+        if (lines.isNotEmpty())
+            replaceText( // use replaceText so this ends up on the undo/redo stack
+                lineIndenter.indentAll(),
+                TextPosition(0, 0)..<TextPosition(lines.size - 1, lines.last().text.length),
+                false
+            )
+    }
+
     private fun processKey(event: KeyEvent): Boolean {
+        if (event.type == KeyEventType.KeyDown &&
+            event.isCtrlPressed &&
+            event.isAltPressed &&
+            !event.isShiftPressed &&
+            !event.isMetaPressed
+        ) {
+            when (event.key) {
+                Key.L -> {
+                    adjustIndents()
+                    return true
+                }
+            }
+        }
+
         if (event.isTypedEvent) {
             val text = StringBuilder().appendCodePoint(event.utf16CodePoint).toString()
             replaceText(text)
@@ -731,7 +756,7 @@ class CodeEditorState(
             //}
             else -> {
                 consumed = false
-                println("Command $command not implemented yet!")
+                Log.warn("Command $command not implemented yet!")
             }
         }
         //undoManager?.forceNextSnapshot()

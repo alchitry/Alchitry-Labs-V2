@@ -18,6 +18,13 @@ interface LineIndenter {
      */
     fun getIndentFor(line: Int): String
 
+    /**
+     * Indents every line using the line indenter.
+     *
+     * @return The indented text.
+     */
+    fun indentAll(): String
+
     companion object {
         const val INDENT_STRING = "    "
 
@@ -54,6 +61,8 @@ class BasicIndenter(private val codeEditorState: CodeEditorState) : LineIndenter
         val previousLine = codeEditorState.lines.getOrNull(line - 1)?.text?.text ?: return ""
         return LineIndenter.indentString(LineIndenter.countIndentsIn(previousLine))
     }
+
+    override fun indentAll(): String = codeEditorState.getText()
 }
 
 class BracketIndenter(private val codeEditorState: CodeEditorState) : LineIndenter {
@@ -78,5 +87,32 @@ class BracketIndenter(private val codeEditorState: CodeEditorState) : LineIndent
             }
         }
         return LineIndenter.indentString(indents + adjustment)
+    }
+
+    override fun indentAll(): String {
+        val text = codeEditorState.getText()
+        val tokens = CommonTokenStream(IndentDetectorLexer(CharStreams.fromString(text))).apply { fill() }.tokens
+        var tokenIdx = 0
+        var indents = 0
+        return buildString {
+            codeEditorState.lines.forEachIndexed { idx, line ->
+                var token = tokens.getOrNull(tokenIdx)
+                val lineStartChar = line.text.text.trim().firstOrNull()
+                val adjustment = if (lineStartChar?.let { "}])".contains(it) } == true) -1 else 0
+                while (token?.line?.let { it <= idx } == true) {
+                    when (token.type) {
+                        IndentDetectorLexer.Tokens.OPEN_BRACKET.id -> indents += 1
+                        IndentDetectorLexer.Tokens.CLOSED_BRACKET.id -> indents -= 1
+                        else -> {}
+                    }
+                    tokenIdx += 1
+                    token = tokens.getOrNull(tokenIdx)
+                }
+                append(LineIndenter.indentString(indents + adjustment))
+                append(line.text.text.trim())
+                if (idx != codeEditorState.lines.size - 1)
+                    appendLine()
+            }
+        }
     }
 }
