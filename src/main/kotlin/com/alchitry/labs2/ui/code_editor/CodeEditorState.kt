@@ -39,7 +39,9 @@ import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.parsers.notations.NotationType
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.files.ProjectFile
+import com.alchitry.labs2.ui.code_editor.styles.BasicIndenter
 import com.alchitry.labs2.ui.code_editor.styles.CodeStyler
+import com.alchitry.labs2.ui.code_editor.styles.LineIndenter
 import com.alchitry.labs2.ui.code_editor.tooltip.NotationTooltipProvider
 import com.alchitry.labs2.ui.gestures.detectEditorActions
 import com.alchitry.labs2.ui.theme.AlchitryColors
@@ -131,6 +133,8 @@ class CodeEditorState(
 
     var clipboardManager: ClipboardManager? = null
 
+    val lineIndenter: LineIndenter
+
     init {
         Project.current?.currentNotationCollectorForFile(file)?.let { collector ->
             updateNotations(collector)
@@ -138,6 +142,11 @@ class CodeEditorState(
         scope.launch {
             setText(file.readText())
             styler.updateStyle()
+        }
+
+        lineIndenter = when (file.language) {
+            // TODO: Add smarter indenters for each language
+            else -> BasicIndenter(this)
         }
     }
 
@@ -687,8 +696,12 @@ class CodeEditorState(
                 replaceText("", selectionManager.caret..<endOfLine)
             }
 
-            KeyCommand.NEW_LINE -> replaceText("\n")
-            KeyCommand.TAB -> replaceText("  ")
+            KeyCommand.NEW_LINE -> {
+                replaceText("\n")
+                replaceText(lineIndenter.getIndentFor(selectionManager.caret.line))
+            }
+
+            KeyCommand.TAB -> replaceText(LineIndenter.INDENT_STRING)
             KeyCommand.SELECT_ALL -> selectionManager.selectAll()
             KeyCommand.SELECT_LEFT_CHAR -> selectionManager.moveLeft().selectMovement()
             KeyCommand.SELECT_RIGHT_CHAR -> selectionManager.moveRight().selectMovement()
