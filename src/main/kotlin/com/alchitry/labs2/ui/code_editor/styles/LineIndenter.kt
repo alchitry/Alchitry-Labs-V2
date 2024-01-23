@@ -90,8 +90,8 @@ class BracketIndenter(private val codeEditorState: CodeEditorState) : LineIndent
                 }
 
                 else -> {
-                    startOffset = tokenStream[interval.a].startIndex + 1
-                    endOffset = tokenStream[interval.b].stopIndex - 1
+                    startOffset = tokenStream[interval.a].startIndex
+                    endOffset = tokenStream[interval.b].stopIndex
                 }
             }
             val adjEndOffset = if (endOffset < 0) Int.MAX_VALUE else endOffset
@@ -139,8 +139,11 @@ class BracketIndenter(private val codeEditorState: CodeEditorState) : LineIndent
                 lineOffset += line.text.length + 1
                 val indents = countTypeInHierarchy<BracketParser.BlockContext>(node)
 
-                append(LineIndenter.indentString(indents))
-                append(line.text.text.trim())
+                val lineText = line.text.text.trim()
+                if (lineText.isNotBlank()) {
+                    append(LineIndenter.indentString(indents))
+                    append(lineText)
+                }
                 if (idx != codeEditorState.lines.size - 1)
                     appendLine()
             }
