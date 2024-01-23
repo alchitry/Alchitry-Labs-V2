@@ -94,6 +94,7 @@ class BracketIndenter(private val codeEditorState: CodeEditorState) : LineIndent
                     endOffset = tokenStream[interval.b].stopIndex
                 }
             }
+            // endOffset will be negative if the bracket isn't matched
             val adjEndOffset = if (endOffset < 0) Int.MAX_VALUE else endOffset
             if (location in startOffset..adjEndOffset) {
                 return findFinalNode(child, tokenStream, location)

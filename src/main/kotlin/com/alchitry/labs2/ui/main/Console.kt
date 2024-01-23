@@ -1,5 +1,7 @@
 package com.alchitry.labs2.ui.main
 
+import androidx.compose.foundation.ContextMenuDataProvider
+import androidx.compose.foundation.ContextMenuItem
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -96,7 +98,34 @@ object Console {
         override fun getMaxRenderedLength(): Int = 80
     }
 
-    fun append(annotatedString: AnnotatedString) {
+    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+    private fun AnnotatedString.split(
+        vararg delimiters: String,
+        ignoreCase: Boolean = false,
+        limit: Int = 0
+    ): List<AnnotatedString> {
+        val rawStrings = this.text.split(delimiters = delimiters, ignoreCase, limit)
+        val result = mutableListOf<AnnotatedString>()
+        val spans = this.spanStyles
+        var currentIndex = 0
+
+        for (rawString in rawStrings) {
+            val builder = AnnotatedString.Builder(rawString)
+
+            for (span in spans) {
+                if (span.start >= currentIndex || span.end <= currentIndex + rawString.length) {
+                    builder.addStyle(span.item, span.start - currentIndex, span.end - currentIndex)
+                }
+            }
+            currentIndex += rawString.length + 1
+
+            result.add(builder.toAnnotatedString())
+        }
+
+        return result
+    }
+
+    private fun appendSingleLine(annotatedString: AnnotatedString) {
         val adjustedString = if (annotatedString.endsWith("\n")) {
             annotatedString.subSequence(0, annotatedString.length - 1)
         } else {
@@ -113,6 +142,20 @@ object Console {
         appendToLastLine = !annotatedString.endsWith("\n")
 
         scrollToIdx = content.size - 3
+    }
+
+    fun append(annotatedString: AnnotatedString) {
+        val lines = annotatedString.split("\n")
+        val adjLines = lines.mapIndexed { idx, line ->
+            buildAnnotatedString {
+                append(line)
+                if (idx != lines.size - 1) {
+                    appendLine()
+                }
+            }
+        }.toMutableList().apply { if (last().isEmpty()) removeLast() }
+
+        adjLines.forEach { appendSingleLine(it) }
     }
 
     fun append(text: String, style: SpanStyle? = null) {
@@ -140,20 +183,29 @@ object Console {
         }
         CompositionLocalProvider(LocalTextStyle provides AlchitryTypography.editor) {
             Box(Modifier.fillMaxSize()) {
-                SelectionContainer {
-                    LazyColumn(
-                        state = lazyListState,
-                        contentPadding = PaddingValues(10.dp),
-                        modifier = Modifier.fillMaxWidth(1f - scale)
-                    ) {
-                        items(content) {
-                            Text(it)
+                ContextMenuDataProvider(items = {
+                    listOf(
+                        ContextMenuItem("Clear") { clear() }
+                    )
+                }) {
+                    SelectionContainer {
+                        LazyColumn(
+                            state = lazyListState,
+                            contentPadding = PaddingValues(10.dp),
+                            modifier = Modifier.fillMaxWidth(1f - scale)
+                        ) {
+                            items(content) {
+                                Text(buildAnnotatedString {
+                                    append(it)
+                                    appendLine()
+                                }, maxLines = 1)
+                            }
                         }
                     }
-                }
 
-                LazyListMiniScrollBar(lazyListState, Modifier.fillMaxWidth(scale).align(Alignment.TopEnd)) {
-                    MiniText(content, scale)
+                    LazyListMiniScrollBar(lazyListState, Modifier.fillMaxWidth(scale).align(Alignment.TopEnd)) {
+                        MiniText(content, scale)
+                    }
                 }
             }
         }

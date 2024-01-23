@@ -45,10 +45,10 @@ module resetConditioner #(
     output out  // sync reset
 ) {
 
-    dff stage[STAGES] (.clk(clk), .rst(in), #INIT(STAGESx{1}));
+    dff stage[STAGES] (.clk(clk), .rst(in), #INIT(STAGESx{1}))
 
     always {
-        stage.d = c{stage.q[STAGES-2:0],0};
-        out = stage.q[STAGES-1];
+        stage.d = c{stage.q[STAGES-2:0],0}
+        out = stage.q[STAGES-1]
     }
 }
