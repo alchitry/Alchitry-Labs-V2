@@ -98,7 +98,6 @@ object Console {
         override fun getMaxRenderedLength(): Int = 80
     }
 
-    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
     private fun AnnotatedString.split(
         vararg delimiters: String,
         ignoreCase: Boolean = false,
@@ -141,21 +140,22 @@ object Console {
 
         appendToLastLine = !annotatedString.endsWith("\n")
 
-        scrollToIdx = content.size - 3
+        scrollToIdx = content.size - 1
     }
 
     fun append(annotatedString: AnnotatedString) {
         val lines = annotatedString.split("\n")
-        val adjLines = lines.mapIndexed { idx, line ->
-            buildAnnotatedString {
-                append(line)
-                if (idx != lines.size - 1) {
-                    appendLine()
+        lines
+            .mapIndexed { idx, line ->
+                buildAnnotatedString {
+                    append(line)
+                    if (idx != lines.size - 1) {
+                        appendLine()
+                    }
                 }
             }
-        }.toMutableList().apply { if (last().isEmpty()) removeLast() }
-
-        adjLines.forEach { appendSingleLine(it) }
+            .toMutableList().apply { if (last().isEmpty()) removeLast() }
+            .forEach { appendSingleLine(it) }
     }
 
     fun append(text: String, style: SpanStyle? = null) {

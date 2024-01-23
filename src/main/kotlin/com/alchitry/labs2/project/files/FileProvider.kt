@@ -11,6 +11,9 @@ sealed class FileProvider {
 
     val extension: String get() = name.split('.').last()
 
+    abstract fun readText(): String
+    abstract fun writeText(text: String)
+
     /**
      * A standard file on disk.
      */
@@ -24,6 +27,27 @@ sealed class FileProvider {
         override fun inputStream() = file.inputStream()
 
         override fun isValid(): Boolean = file.exists() && file.canRead()
+
+        private var cachedContents: String? = null
+        private var readTime: Long = 0
+
+        override fun readText(): String {
+            cachedContents?.let {
+                if (readTime == file.lastModified())
+                    return it
+            }
+            readTime = file.lastModified()
+            return file.readText().also { cachedContents = it }
+        }
+
+        override fun writeText(text: String) {
+            if (text == cachedContents && readTime == file.lastModified())
+                return
+
+            file.writeText(text)
+            cachedContents = text
+            readTime = file.lastModified()
+        }
     }
 
     /**
@@ -40,6 +64,12 @@ sealed class FileProvider {
 
         override fun inputStream(): InputStream =
             this::class.java.getResourceAsStream(resourcePath) ?: error("Invalid resource path: $resourcePath")
+
+        override fun readText(): String = inputStream().use { String(it.readAllBytes()) }
+
+        override fun writeText(text: String) {
+            error("Resource files are read-only!")
+        }
     }
 
     data class StringFile(
@@ -49,18 +79,11 @@ sealed class FileProvider {
     ) : FileProvider() {
         override fun inputStream() = contents.byteInputStream()
         override fun isValid() = true
-    }
 
-    fun readText(): String {
-        return inputStream().use {
-            String(it.readAllBytes())
-        }
-    }
+        override fun readText(): String = contents
 
-    fun writeText(text: String) {
-        when (this) {
-            is DiskFile -> file.writeText(text)
-            is ResourceFile, is StringFile -> error("Resource files are read-only!")
+        override fun writeText(text: String) {
+            error("String files are read-only!")
         }
     }
 }
