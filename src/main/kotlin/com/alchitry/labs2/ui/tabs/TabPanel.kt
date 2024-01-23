@@ -37,7 +37,7 @@ class TabPanel(parent: TabParent) : TabSection(parent) {
     }
 
     override fun closeAll() {
-        tabs.forEach { it.onClose() }
+        tabs.forEach { it.onClose(true) }
         tabs.clear()
         activeTab = null
     }
@@ -48,6 +48,12 @@ class TabPanel(parent: TabParent) : TabSection(parent) {
     }
 
     override fun getTabs(): List<Tab> = tabs.toList()
+
+    fun closeTab(tab: Tab, save: Boolean) {
+        tab.onClose(save)
+        removeTab(tab)
+        closeIfEmpty()
+    }
 
     private fun removeTab(tab: Tab) {
         if (activeTab === tab) {
@@ -100,11 +106,7 @@ class TabPanel(parent: TabParent) : TabSection(parent) {
                                             activeTab === tab,
                                             dragging,
                                             onClick = { activeTab = tab },
-                                            onClose = {
-                                                tab.onClose()
-                                                removeTab(tab)
-                                                closeIfEmpty()
-                                            },
+                                            onClose = { closeTab(tab, true) },
                                         )
                                         DropZone(minimumSize = DpSize(width, TAB_HEIGHT)) {
                                             addTab(it, tabs.indexOf(tab) + 1)

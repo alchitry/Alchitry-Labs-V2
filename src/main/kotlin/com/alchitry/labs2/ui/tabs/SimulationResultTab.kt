@@ -202,7 +202,7 @@ class SimulationResultTab(
         }
     }
 
-    override fun onClose(): Boolean {
+    override fun onClose(save: Boolean): Boolean {
         return true
     }
 }

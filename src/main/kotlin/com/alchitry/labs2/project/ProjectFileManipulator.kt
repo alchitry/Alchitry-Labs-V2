@@ -4,11 +4,13 @@ import com.alchitry.labs2.project.files.ConstraintFile
 import com.alchitry.labs2.project.files.FileProvider
 import com.alchitry.labs2.project.files.ProjectFile
 import com.alchitry.labs2.project.files.SourceFile
+import com.alchitry.labs2.ui.tabs.Workspace
 
 fun Project.removeFile(file: ProjectFile, delete: Boolean) {
     if (delete && !file.isReadOnly && !file.isLibFile && file.file is FileProvider.DiskFile) {
         file.file.file.delete()
     }
+    Workspace.closeFile(file, false)
     val newSourceFiles = sourceFiles.toMutableSet().apply { remove(file) }
     val newConstraintFiles = constraintFiles.toMutableSet().apply { remove(file) }
     val newProj = copy(sourceFiles = newSourceFiles, constraintFiles = newConstraintFiles)

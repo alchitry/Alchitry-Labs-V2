@@ -420,9 +420,11 @@ class CodeEditorState(
     }
 
     fun offsetAtLineTop(line: Int): Int {
+        if (lineOffsetCache.isEmpty())
+            lineOffsetCache.add(0)
         if (!lineOffsetCache.indices.contains(line)) {
             for (i in lineOffsetCache.size..line) {
-                lineOffsetCache.add((lineOffsetCache.getOrNull(i - 1) ?: 0) + lineHeight(i))
+                lineOffsetCache.add(lineOffsetCache.last() + lineHeight(i))
             }
         }
         return lineOffsetCache[line]

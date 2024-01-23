@@ -1,9 +1,12 @@
 package com.alchitry.labs2.ui.code_editor.styles
 
-import com.alchitry.labs2.parsers.grammar.IndentDetectorLexer
+import com.alchitry.labs2.parsers.grammar.BracketLexer
+import com.alchitry.labs2.parsers.grammar.BracketParser
 import com.alchitry.labs2.ui.code_editor.CodeEditorState
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
+import org.antlr.v4.kotlinruntime.TokenStream
+import org.antlr.v4.kotlinruntime.tree.ParseTree
 
 /**
  * Interface for line indenters.
@@ -36,7 +39,7 @@ interface LineIndenter {
          */
         fun indentString(indents: Int): String = INDENT_STRING.repeat(indents.coerceAtLeast(0))
 
-        fun countIndentsIn(string: String): Int {
+        fun whitespaceStarting(string: String): Int {
             var counter = 0
             for (c in string.toCharArray()) {
                 if (c.isWhitespace()) {
@@ -45,7 +48,7 @@ interface LineIndenter {
                     break
                 }
             }
-            return counter / INDENT_STRING.length
+            return counter
         }
     }
 }
@@ -59,56 +62,84 @@ interface LineIndenter {
 class BasicIndenter(private val codeEditorState: CodeEditorState) : LineIndenter {
     override fun getIndentFor(line: Int): String {
         val previousLine = codeEditorState.lines.getOrNull(line - 1)?.text?.text ?: return ""
-        return LineIndenter.indentString(LineIndenter.countIndentsIn(previousLine))
+        return LineIndenter.indentString(
+            LineIndenter.whitespaceStarting(previousLine) / LineIndenter.INDENT_STRING.length
+        )
     }
 
     override fun indentAll(): String = codeEditorState.getText()
 }
 
+
 class BracketIndenter(private val codeEditorState: CodeEditorState) : LineIndenter {
-    override fun getIndentFor(line: Int): String {
-        val text = codeEditorState.getText()
-        val lineStartChar = codeEditorState.lines.getOrNull(line)?.text?.text?.trim()?.firstOrNull()
-        val adjustment = if (lineStartChar?.let { "}])".contains(it) } == true) -1 else 0
-        var indents = 0
-        CommonTokenStream(IndentDetectorLexer(CharStreams.fromString(text))).apply { fill() }.tokens.forEach {
-            if (it.line - 1 >= line)
-                return LineIndenter.indentString(indents + adjustment)
-            when (it.type) {
-                IndentDetectorLexer.Tokens.OPEN_BRACKET.id -> {
-                    indents += 1
+    private fun findFinalNode(parseTree: ParseTree, tokenStream: TokenStream, location: Int): ParseTree {
+        for (i in 0..<parseTree.childCount) {
+            val child = parseTree.getChild(i) ?: error("getChild() failed for a child that should exist!")
+            val interval = child.sourceInterval
+            val startOffset: Int
+            val endOffset: Int
+            when (child) {
+                is BracketParser.ParenBlockContext, is BracketParser.CurlyBlockContext, is BracketParser.SquareBlockContext -> {
+                    startOffset = tokenStream[interval.a].startIndex + 1
+                    endOffset = tokenStream[interval.b].stopIndex - 1
                 }
 
-                IndentDetectorLexer.Tokens.CLOSED_BRACKET.id -> {
-                    indents -= 1
+                is BracketParser.CommentBlockContext -> {
+                    startOffset = tokenStream[interval.a].startIndex + 2
+                    endOffset = tokenStream[interval.b].stopIndex - 2
                 }
 
-                else -> {}
+                else -> {
+                    startOffset = tokenStream[interval.a].startIndex + 1
+                    endOffset = tokenStream[interval.b].stopIndex - 1
+                }
+            }
+            val adjEndOffset = if (endOffset < 0) Int.MAX_VALUE else endOffset
+            if (location in startOffset..adjEndOffset) {
+                return findFinalNode(child, tokenStream, location)
             }
         }
-        return LineIndenter.indentString(indents + adjustment)
+        if (parseTree.childCount > 0 && parseTree is BracketParser.BlockContext) {
+            return parseTree.readParent() ?: parseTree
+        }
+        return parseTree
+    }
+
+    private inline fun <reified T : ParseTree> countTypeInHierarchy(parseTree: ParseTree): Int {
+        var current: ParseTree? = parseTree
+        var count = 0
+        while (current != null) {
+            if (current is T) {
+                count += 1
+            }
+            current = current.readParent()
+        }
+        return count
+    }
+
+    override fun getIndentFor(line: Int): String {
+        val text = codeEditorState.getText()
+        val lineOffset = codeEditorState.lines.subList(0, line).sumOf { it.text.length + 1 }
+        val tokenStream = CommonTokenStream(BracketLexer(CharStreams.fromString(text)))
+        val source = BracketParser(tokenStream).source()
+        val node = findFinalNode(source, tokenStream, lineOffset)
+        val indents = countTypeInHierarchy<BracketParser.BlockContext>(node)
+        return LineIndenter.indentString(indents)
     }
 
     override fun indentAll(): String {
         val text = codeEditorState.getText()
-        val tokens = CommonTokenStream(IndentDetectorLexer(CharStreams.fromString(text))).apply { fill() }.tokens
-        var tokenIdx = 0
-        var indents = 0
+        val tokenStream = CommonTokenStream(BracketLexer(CharStreams.fromString(text)))
+        val source = BracketParser(tokenStream).source()
+        var lineOffset = 0
         return buildString {
             codeEditorState.lines.forEachIndexed { idx, line ->
-                var token = tokens.getOrNull(tokenIdx)
-                val lineStartChar = line.text.text.trim().firstOrNull()
-                val adjustment = if (lineStartChar?.let { "}])".contains(it) } == true) -1 else 0
-                while (token?.line?.let { it <= idx } == true) {
-                    when (token.type) {
-                        IndentDetectorLexer.Tokens.OPEN_BRACKET.id -> indents += 1
-                        IndentDetectorLexer.Tokens.CLOSED_BRACKET.id -> indents -= 1
-                        else -> {}
-                    }
-                    tokenIdx += 1
-                    token = tokens.getOrNull(tokenIdx)
-                }
-                append(LineIndenter.indentString(indents + adjustment))
+                val node =
+                    findFinalNode(source, tokenStream, lineOffset + LineIndenter.whitespaceStarting(line.text.text))
+                lineOffset += line.text.length + 1
+                val indents = countTypeInHierarchy<BracketParser.BlockContext>(node)
+
+                append(LineIndenter.indentString(indents))
                 append(line.text.text.trim())
                 if (idx != codeEditorState.lines.size - 1)
                     appendLine()

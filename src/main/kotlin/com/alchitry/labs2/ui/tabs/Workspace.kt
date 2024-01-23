@@ -19,6 +19,15 @@ data object Workspace : TabParent {
         panel.addTab(FileTab(file, panel))
     }
 
+    fun closeFile(
+        file: ProjectFile,
+        save: Boolean
+    ) {
+        getTabs().firstOrNull { it is FileTab && it.file == file }?.let {
+            it.parent.closeTab(it, save)
+        }
+    }
+
     override fun closeAll() {
         tabSection.closeAll()
         tabSection = TabPanel(this)

@@ -9,7 +9,7 @@ interface Tab {
     @Composable
     fun content()
 
-    fun onClose(): Boolean
+    fun onClose(save: Boolean): Boolean
 
     var parent: TabPanel
 }

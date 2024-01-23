@@ -26,8 +26,8 @@ class FileTab(
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    override fun onClose(): Boolean {
-        if (!file.isReadOnly)
+    override fun onClose(save: Boolean): Boolean {
+        if (!file.isReadOnly && save)
             GlobalScope.launch { file.writeText(codeEditorState.getText()) }
         return true
     }
