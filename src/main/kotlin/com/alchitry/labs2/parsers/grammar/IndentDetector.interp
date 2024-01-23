@@ -11,10 +11,10 @@ token symbolic names:
 null
 OPEN_BRACKET
 CLOSED_BRACKET
-JUNK
 BLOCK_COMMENT
 COMMENT
 WS
+JUNK
 
 rule names:
 source

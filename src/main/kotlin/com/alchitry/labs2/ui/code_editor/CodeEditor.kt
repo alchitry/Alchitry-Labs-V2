@@ -1,13 +1,11 @@
 package com.alchitry.labs2.ui.code_editor
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.layout.LazyLayout
 import androidx.compose.foundation.lazy.layout.LazyLayoutItemProvider
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
@@ -150,27 +148,38 @@ fun CodeEditor(
                     .scrollable(horizontalScroll, Orientation.Horizontal)
             ) {
                 state.subscribe(currentRecomposeScope)
-                EditorTooltipArea(
-                    state = state.tooltipState,
-                    tooltip = { notation ->
-                        notation.message?.let { Text(it) }
+                ContextMenuArea(
+                    items = {
+                        listOf(
+                            ContextMenuItem("Cut") { state.cut() },
+                            ContextMenuItem("Copy") { state.copy() },
+                            ContextMenuItem("Paste") { state.paste() },
+                            ContextMenuItem("Select All") { state.selectionManager.selectAll() },
+                            ContextMenuItem("Format") { state.adjustIndents() },
+                        )
                     }
                 ) {
-                    Canvas(
-                        modifier = Modifier
-                            .scrollable(state.scrollState, Orientation.Vertical, reverseDirection = true)
-                            .fillMaxSize()
-                            .pointerHoverIcon(textCursor)
-                            .then(state.keyModifier())
-                            .then(state.tapModifier())
-
+                    EditorTooltipArea(
+                        state = state.tooltipState,
+                        tooltip = { notation ->
+                            notation.message?.let { Text(it) }
+                        }
                     ) {
-                        with(state) {
-                            draw()
+                        Canvas(
+                            modifier = Modifier
+                                .scrollable(state.scrollState, Orientation.Vertical, reverseDirection = true)
+                                .fillMaxSize()
+                                .pointerHoverIcon(textCursor)
+                                .then(state.keyModifier())
+                                .then(state.tapModifier())
+
+                        ) {
+                            with(state) {
+                                draw()
+                            }
                         }
                     }
                 }
-
             }
         }
     }

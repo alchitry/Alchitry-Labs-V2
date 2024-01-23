@@ -1,6 +1,5 @@
 // Generated from java-escape by ANTLR 4.13.0
 package com.alchitry.labs2.parsers.grammar;
-
 import com.alchitry.kotlinmultiplatform.asCharArray
 import com.alchitry.kotlinmultiplatform.scoped
 import org.antlr.v4.kotlinruntime.*
@@ -28,10 +27,10 @@ class IndentDetectorParser(input: TokenStream) : Parser(input) {
         EOF(-1),
         OPEN_BRACKET(1),
         CLOSED_BRACKET(2),
-        JUNK(3),
-        BLOCK_COMMENT(4),
-        COMMENT(5),
-        WS(6)
+        BLOCK_COMMENT(3),
+        COMMENT(4),
+        WS(5),
+        JUNK(6)
     }
 
     enum class Rules(val id: Int) {
@@ -48,8 +47,9 @@ class IndentDetectorParser(input: TokenStream) : Parser(input) {
         private val SYMBOLIC_NAMES: List<String?> = listOf(
             null, "OPEN_BRACKET",
             "CLOSED_BRACKET",
-            "JUNK", "BLOCK_COMMENT",
-            "COMMENT", "WS"
+            "BLOCK_COMMENT",
+            "COMMENT", "WS",
+            "JUNK"
         )
 
         val VOCABULARY = VocabularyImpl(LITERAL_NAMES.toTypedArray(), SYMBOLIC_NAMES.toTypedArray())
@@ -70,7 +70,6 @@ class IndentDetectorParser(input: TokenStream) : Parser(input) {
             "\u0004\u0001\u0006\u000c\u0002\u0000\u0007\u0000\u0001\u0000\u0005\u0000\u0004\u0008\u0000\u000a\u0000\u000c\u0000\u0007\u0009\u0000\u0001\u0000\u0003\u0000\u000a\u0008\u0000\u0001\u0000\u0000\u0000\u0001\u0000\u0000\u0001\u0001\u0000\u0001\u0002\u000c\u0000\u0005\u0001\u0000\u0000\u0000\u0002\u0004\u0007\u0000\u0000\u0000\u0003\u0002\u0001\u0000\u0000\u0000\u0004\u0007\u0001\u0000\u0000\u0000\u0005\u0003\u0001\u0000\u0000\u0000\u0005\u0006\u0001\u0000\u0000\u0000\u0006\u0009\u0001\u0000\u0000\u0000\u0007\u0005\u0001\u0000\u0000\u0000\u0008\u000a\u0005\u0000\u0000\u0001\u0009\u0008\u0001\u0000\u0000\u0000\u0009\u000a\u0001\u0000\u0000\u0000\u000a\u0001\u0001\u0000\u0000\u0000\u0002\u0005\u0009"
 
         val ATN = ATNDeserializer().deserialize(serializedATN.asCharArray())
-
         init {
             decisionToDFA = Array<DFA>(ATN.numberOfDecisions, {
                 DFA(ATN.getDecisionState(it)!!, it)
@@ -82,10 +81,10 @@ class IndentDetectorParser(input: TokenStream) : Parser(input) {
 
     private val OPEN_BRACKET = Tokens.OPEN_BRACKET.id
     private val CLOSED_BRACKET = Tokens.CLOSED_BRACKET.id
-    private val JUNK = Tokens.JUNK.id
     private val BLOCK_COMMENT = Tokens.BLOCK_COMMENT.id
     private val COMMENT = Tokens.COMMENT.id
     private val WS = Tokens.WS.id
+    private val JUNK = Tokens.JUNK.id
 
     /* Named actions */
     init {
