@@ -1,11 +1,9 @@
 package com.alchitry.labs2.project.files
 
 import java.io.File
-import java.io.InputStream
 
 sealed class FileProvider {
     abstract val name: String
-    abstract fun inputStream(): InputStream
     abstract fun isValid(): Boolean
     abstract val path: String
 
@@ -24,7 +22,6 @@ sealed class FileProvider {
 
         override val name: String get() = file.name
         override val path: String get() = file.path
-        override fun inputStream() = file.inputStream()
 
         override fun isValid(): Boolean = file.exists() && file.canRead()
 
@@ -62,10 +59,13 @@ sealed class FileProvider {
         override fun isValid(): Boolean =
             this::class.java.getResource(resourcePath) != null
 
-        override fun inputStream(): InputStream =
-            this::class.java.getResourceAsStream(resourcePath) ?: error("Invalid resource path: $resourcePath")
-
-        override fun readText(): String = inputStream().use { String(it.readAllBytes()) }
+        override fun readText(): String {
+            val stream =
+                this::class.java.getResourceAsStream(resourcePath) ?: error("Invalid resource path: $resourcePath")
+            return stream.use {
+                String(it.readAllBytes())
+            }
+        }
 
         override fun writeText(text: String) {
             error("Resource files are read-only!")
@@ -77,7 +77,6 @@ sealed class FileProvider {
         override val path: String = name,
         val contents: String
     ) : FileProvider() {
-        override fun inputStream() = contents.byteInputStream()
         override fun isValid() = true
 
         override fun readText(): String = contents
