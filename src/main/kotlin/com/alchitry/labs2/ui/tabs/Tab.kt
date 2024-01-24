@@ -12,5 +12,9 @@ interface Tab {
     fun onClose(save: Boolean): Boolean
 
     var parent: TabPanel
+
+    fun focus() {
+        parent.focusTab(this)
+    }
 }
 

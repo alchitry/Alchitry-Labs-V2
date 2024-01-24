@@ -5,8 +5,8 @@ import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.lucidv2.types.Function
-import com.alchitry.labs2.parsers.lucidv2.values.Bit
-import com.alchitry.labs2.parsers.lucidv2.values.Value
+import com.alchitry.labs2.parsers.lucidv2.values.*
+import kotlinx.coroutines.runBlocking
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 
 
@@ -159,7 +159,11 @@ data class SignalDriverParser(
             if (driven.andReduce().bit != Bit.B1) {
                 context.reportError(
                     ctx,
-                    "The signal \"${signal.fullName()}\" was only partially driven. Bits marked as 0 weren't driven: $driven"
+                    "The signal \"${signal.fullName()}\" was only partially driven. Bits marked as 0 weren't driven: ${
+                        driven.toString(
+                            ValueFormat.Binary
+                        )
+                    }"
                 )
             }
         }
@@ -203,8 +207,16 @@ data class SignalDriverParser(
         drivenSignals[ctx] = signals
     }
 
-    override fun enterBlock(ctx: BlockContext) = startBlock()
-    override fun exitBlock(ctx: BlockContext) = stopBlock(ctx)
+    override fun enterBlock(ctx: BlockContext) {
+        if (ctx.parent !is RepeatBlockContext)
+            startBlock()
+    }
+
+    override fun exitBlock(ctx: BlockContext) {
+        if (ctx.parent !is RepeatBlockContext)
+            stopBlock(ctx)
+    }
+
     override fun enterCaseBlock(ctx: CaseBlockContext) = startBlock()
     override fun exitCaseBlock(ctx: CaseBlockContext) = stopBlock(ctx)
 
@@ -223,7 +235,49 @@ data class SignalDriverParser(
     }
 
     override fun exitRepeatStat(ctx: RepeatStatContext) {
-        drivenSignals[ctx.repeatBlock()?.block() ?: return]?.let { signals.putAll(it) }
+        val block = ctx.repeatBlock()?.block() ?: return
+        val countValue = ctx.expr()?.let { context.expr.resolve(it) } as? SimpleValue ?: return
+        val count = countValue.toBigInt()?.toInt() ?: return
+
+        val signalName = ctx.name()?.text
+        val width = (count - 1).toBigInteger().minBits()
+
+        val signal =
+            signalName?.let {
+                Signal(
+                    signalName,
+                    SignalDirection.Read,
+                    null,
+                    BitListValue(0, width, false, false)
+                )
+            }
+
+        startBlock()
+
+        signal?.let { context.localSignals[it.name] = it }
+        runBlocking {
+            repeat(count) {
+                signal?.quietWrite(
+                    BitListValue(
+                        value = it,
+                        width = signal.width.bitCount ?: error("Repeat signal has an undefined width!"),
+                        constant = false,
+                        signed = false
+                    ),
+                    context.evalContext
+                )
+                context.walk(block)
+            }
+        }
+        signal?.let { context.localSignals.remove(it.name) }
+        stopBlock(block)
+        drivenSignals[ctx.repeatBlock()?.block() ?: return]?.let { drivers ->
+            drivers.forEach { driver ->
+                val currentValue = signals[driver.key]
+                    ?: driver.value.width.filledWith(Bit.B0, constant = false, signed = false)
+                signals[driver.key] = currentValue.or(driver.value)
+            }
+        }
     }
 
     override fun exitIfStat(ctx: IfStatContext) {

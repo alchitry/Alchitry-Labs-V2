@@ -262,7 +262,7 @@ data class BlockParser(
             return
         }
 
-        val sigWidth = (count - 1).toBigInteger().minBits()
+        val sigWidth = count.toBigInteger().minBits()
 
         val repSignal = RepeatSignal(sigName, sigWidth, repCtx)
 

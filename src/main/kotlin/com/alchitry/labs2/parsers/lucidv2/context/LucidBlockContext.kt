@@ -40,8 +40,8 @@ class LucidBlockContext(
     private val localSignalStack = mutableListOf<MutableMap<String, Signal>>(mutableMapOf())
     val localSignals: MutableMap<String, Signal> get() = localSignalStack.last()
 
-    private var takeSnapshot: () -> Unit = {}
-    fun setSnapshotCallback(onSnapshot: () -> Unit) {
+    private var takeSnapshot: suspend () -> Unit = {}
+    fun setSnapshotCallback(onSnapshot: suspend () -> Unit) {
         takeSnapshot = onSnapshot
     }
 
@@ -125,6 +125,7 @@ class LucidBlockContext(
         )
 
         ParseStage.Convert -> listOf(
+            signal,
             verilogConverter
         )
     }

@@ -156,7 +156,7 @@ class VerilogConverter(
     }
 
     private fun StringBuilder.addSigs() {
-        context.types.sigs.values.forEach { sig ->
+        (context.types.sigs.values + context.blockParser.repeatSignals.values).forEach { sig ->
             val dynamicExpr = context.types.signalDynamicExprs[sig]
             if (dynamicExpr != null) {
                 append("wire ")
@@ -181,6 +181,7 @@ class VerilogConverter(
             append(";")
             newLine()
         }
+
     }
 
     private fun StringBuilder.addSequentialBlocks() {
@@ -471,7 +472,7 @@ class VerilogConverter(
                         "M_${parent.name}_${baseSignal.name}"
                 }
 
-                is RepeatSignal -> "R_${parent.name}_${baseSignal.name}\""
+                is RepeatSignal -> "R_${parent.name}_${baseSignal.name}"
                 is DynamicExpr -> parent.expr.verilog
             }
         }
@@ -684,7 +685,7 @@ class VerilogConverter(
 
     override fun exitElseStat(ctx: LucidParser.ElseStatContext) {
         ctx.verilog = buildString {
-            append("else")
+            append("else ")
             append(ctx.block().requireNotNull(ctx).verilog)
         }
     }

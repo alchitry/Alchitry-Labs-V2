@@ -24,6 +24,8 @@ import com.alchitry.labs2.ui.dialogs.LucidFileDialog
 import com.alchitry.labs2.ui.dialogs.LucidTestBenchDialog
 import com.alchitry.labs2.ui.dialogs.NewProjectDialog
 import com.alchitry.labs2.ui.menu.*
+import com.alchitry.labs2.ui.tabs.BoardSimulationTab
+import com.alchitry.labs2.ui.tabs.Workspace
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.ui.theme.AlchitryTheme
 import kotlinx.coroutines.*
@@ -105,7 +107,17 @@ fun LabsToolbar() {
 
         ToolbarButton(
             onClick = {
-                runWithProject { it.runAllTestBenches() }
+                Workspace.getTabs().firstOrNull { it is BoardSimulationTab }?.let {
+                    it.focus()
+                    return@ToolbarButton
+                }
+                runWithProject { project ->
+                    val context = project.check() ?: return@runWithProject
+                    Workspace.activeTabPanel().apply {
+                        addTab(BoardSimulationTab(this, context))
+                    }
+                }
+
             },
             icon = painterResource("icons/debug.svg"),
             description = "Simulate",

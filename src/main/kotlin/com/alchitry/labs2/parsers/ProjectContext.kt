@@ -41,6 +41,7 @@ class ProjectContext(val notationManager: NotationManager) : Closeable {
     }
 
     suspend fun processQueue() {
+        val maxJobs = (Runtime.getRuntime().availableProcessors() - 2).coerceAtLeast(1)
         repeat(1000) {
             val items = queueLock.withLock {
                 if (evaluationQueue.isEmpty())
@@ -50,10 +51,15 @@ class ProjectContext(val notationManager: NotationManager) : Closeable {
                     evaluationQueue.clear()
                 }
             }
-            coroutineScope {
-                items.forEach {
-                    launch(Dispatchers.Default) {
-                        it.evaluate()
+            val jobs = (items.size / 100).coerceIn(1, maxJobs)
+            if (jobs == 1) {
+                items.forEach { it.evaluate() }
+            } else {
+                coroutineScope {
+                    items.chunked((items.size / jobs).coerceAtLeast(1)).forEach { list ->
+                        launch(Dispatchers.Default) {
+                            list.forEach { it.evaluate() }
+                        }
                     }
                 }
             }
