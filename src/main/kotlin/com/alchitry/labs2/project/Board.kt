@@ -56,7 +56,7 @@ sealed class Board {
         override val bridgeFile = "/bridges/au.bin"
         override val idCode = "0362D093"
         override val pinConverter = AuPinConverter
-        override val acfConverter = XilinxConverter(this)
+        override val acfConverter = XilinxConverter
         override val projectBuilder = VivadoBuilder
         override val supportsRamLoading = true
     }
@@ -76,7 +76,7 @@ sealed class Board {
         override val bridgeFile = "/bridges/au_plus.bin"
         override val idCode = "13631093"
         override val pinConverter = AuPinConverter
-        override val acfConverter = XilinxConverter(this)
+        override val acfConverter = XilinxConverter
         override val projectBuilder = VivadoBuilder
         override val supportsRamLoading = true
     }
@@ -94,7 +94,7 @@ sealed class Board {
                 PortInterfaceType.INTERFACE_A
             )
         override val pinConverter = CuPinConverter
-        override val acfConverter = LatticeConverter(this)
+        override val acfConverter = LatticeConverter
         override val projectBuilder get() = if (Settings.useIceCube) IceCubeBuilder else IceStormBuilder
         override val supportsRamLoading = false
     }

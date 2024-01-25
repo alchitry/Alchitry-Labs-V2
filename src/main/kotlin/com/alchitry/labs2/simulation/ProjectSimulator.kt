@@ -29,7 +29,7 @@ private data class SampleAccumulator(var runningSum: Long, var count: Long, var 
     }
 }
 
-class AuSimulator(val projectContext: ProjectContext) : Closeable {
+class ProjectSimulator(val projectContext: ProjectContext) : Closeable {
     private val resetValueFlow = MutableStateFlow(false)
     private var ledAccumulators = List(8) { SampleAccumulator(0, 0) }
     private val accumulatorLock = Mutex()
@@ -37,7 +37,10 @@ class AuSimulator(val projectContext: ProjectContext) : Closeable {
     val evalRateFlow = mutableEvalRateFlow.asStateFlow()
 
     suspend fun start() {
+        require(projectContext.scope.isActive) { "The simulator has been closed!" }
         withContext(Dispatchers.Default) {
+
+
             val leds = Signal(
                 "led",
                 SignalDirection.Read,
@@ -94,6 +97,7 @@ class AuSimulator(val projectContext: ProjectContext) : Closeable {
             while (isActive) {
                 clk.write(high)
                 reset.write(if (resetValueFlow.value) low else high)
+
                 projectContext.processQueue()
                 accumulatorLock.withLock {
                     (leds.read() as SimpleValue).bits.forEachIndexed { index, bit ->

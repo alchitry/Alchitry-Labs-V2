@@ -96,6 +96,12 @@ fun ProjectTree() {
                         TreeSection("Constraint Files", 1) {
                             project.constraintFiles.sortedBy { it.name }.forEach { file ->
                                 key(file) {
+                                    val color = project
+                                        .notationCollectorFlowForFile(file)
+                                        .collectAsState(null).value
+                                        ?.getAllNotations()
+                                        ?.minByOrNull { it.type.ordinal }
+                                        ?.type?.color
                                     ContextMenuArea(
                                         items = {
                                             when {
@@ -115,7 +121,7 @@ fun ProjectTree() {
                                             }
                                         }
                                     ) {
-                                        TreeItem(file.name, 2) {
+                                        TreeItem(file.name, 2, color) {
                                             Workspace.openFile(file)
                                         }
                                     }

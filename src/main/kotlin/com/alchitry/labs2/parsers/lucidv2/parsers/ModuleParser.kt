@@ -140,7 +140,7 @@ data class ModuleParser(
                 return@forEach
             }
 
-            ports[portName] = Port(portName, direction, width, signed)
+            ports[portName] = Port(portName, direction, width, signed, portCtx)
         }
 
         module = Module(name, params, ports, ctx, context.sourceFile).also {

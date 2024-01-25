@@ -185,7 +185,7 @@ object Console {
             Box(Modifier.fillMaxSize()) {
                 ContextMenuDataProvider(items = {
                     listOf(
-                        ContextMenuItem("Clear") { clear() }
+                        ContextMenuItem("Clear All") { clear() }
                     )
                 }) {
                     SelectionContainer {

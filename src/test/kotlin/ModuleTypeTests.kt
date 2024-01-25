@@ -32,7 +32,9 @@ class ModuleTypeTests {
         )
 
         val tree = test.parseText()
-        val module = test.moduleTypeParse(tree)
+        val module = test.moduleTypeParse(tree).first()
+
+
 
         assertEquals(
             Module(
@@ -58,15 +60,21 @@ class ModuleTypeTests {
                     )
                 ),
                 mapOf(
-                    "clk" to Port("clk", SignalDirection.Read, BitWidth, false),
-                    "rst" to Port("rst", SignalDirection.Read, BitWidth, true),
-                    "count" to Port("count", SignalDirection.Write, BitListWidth(8), false),
-                    "a" to Port("a", SignalDirection.Both, BitWidth, false)
+                    "clk" to Port("clk", SignalDirection.Read, BitWidth, false, module.ports["clk"]!!.context),
+                    "rst" to Port("rst", SignalDirection.Read, BitWidth, true, module.ports["rst"]!!.context),
+                    "count" to Port(
+                        "count",
+                        SignalDirection.Write,
+                        BitListWidth(8),
+                        false,
+                        module.ports["count"]!!.context
+                    ),
+                    "a" to Port("a", SignalDirection.Both, BitWidth, false, module.ports["a"]!!.context)
                 ),
                 tree.first().second.module(0)!!,
                 test.files.first()
             ),
-            module.first()
+            module
         )
     }
 

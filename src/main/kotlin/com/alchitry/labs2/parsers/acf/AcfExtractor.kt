@@ -1,23 +1,84 @@
 package com.alchitry.labs2.parsers.acf
 
+import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.acf.types.ClockConstraint
+import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.acf.types.PinConstraint
 import com.alchitry.labs2.parsers.acf.types.PinPull
 import com.alchitry.labs2.parsers.grammar.AcfBaseListener
+import com.alchitry.labs2.parsers.grammar.AcfLexer
 import com.alchitry.labs2.parsers.grammar.AcfParser
 import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.project.Board
+import com.alchitry.labs2.project.files.ConstraintFile
+import org.antlr.v4.kotlinruntime.CommonTokenStream
+import org.antlr.v4.kotlinruntime.ParserRuleContext
+import org.antlr.v4.kotlinruntime.tree.ParseTreeWalker
 import kotlin.math.roundToInt
 
 class AcfExtractor(
+    val context: ProjectContext,
     val topModule: ModuleInstance,
     val board: Board,
     val notationCollector: NotationCollector,
 ) : AcfBaseListener() {
     private val signals = mutableMapOf<AcfParser.PortNameContext, SignalOrSubSignal>()
-    val pins: MutableList<PinConstraint> = mutableListOf()
-    val clocks: MutableList<ClockConstraint> = mutableListOf()
+    val constraints: MutableList<Constraint> = mutableListOf()
+
+    companion object {
+        suspend fun extract(
+            context: ProjectContext,
+            file: ConstraintFile,
+            topModule: ModuleInstance,
+            board: Board,
+            notationCollector: NotationCollector,
+        ): AcfExtractor? {
+            val parser =
+                AcfParser(
+                    CommonTokenStream(
+                        AcfLexer(
+                            file.toCharStream()
+                        ).also { it.removeErrorListeners() }
+                    )
+                ).apply {
+                    (tokenStream?.tokenSource as? AcfLexer)?.addErrorListener(notationCollector)
+                        ?: error("TokenSource was not an AcfLexer!")
+                    removeErrorListeners()
+                    addErrorListener(notationCollector)
+                }
+
+            val tree = parser.source()
+
+            if (notationCollector.hasErrors) {
+                return null
+            }
+
+            val extractor = AcfExtractor(context, topModule, board, notationCollector)
+            ParseTreeWalker.walk(extractor, tree)
+
+            if (notationCollector.hasErrors) {
+                return null
+            }
+
+            return extractor
+        }
+    }
+
+    private fun addConstraint(constraint: Constraint, pinContext: ParserRuleContext, portContext: ParserRuleContext) {
+        when (context.addConstraint(constraint)) {
+            ProjectContext.AddConstraintResult.Success -> constraints.add(constraint)
+            ProjectContext.AddConstraintResult.PinTaken -> notationCollector.reportError(
+                pinContext,
+                "The pin \"${constraint.acfPin}\" has already been connected!"
+            )
+
+            ProjectContext.AddConstraintResult.PortTaken -> notationCollector.reportError(
+                portContext,
+                "The port \"${constraint.port}\" has already been connected!"
+            )
+        }
+    }
 
     override fun exitPortName(ctx: AcfParser.PortNameContext) {
         val name = ctx.name(0)?.text ?: return
@@ -70,7 +131,7 @@ class AcfExtractor(
             ctx.PULLDOWN() != null -> PinPull.PullDown
             else -> null
         }
-        pins.add(PinConstraint(pinName, signal, pinPull))
+        addConstraint(PinConstraint(pinName, signal, pinPull, ctx), ctx.pinName() ?: ctx, ctx.portName() ?: ctx)
     }
 
     override fun exitClock(ctx: AcfParser.ClockContext) {
@@ -106,6 +167,10 @@ class AcfExtractor(
             return
         }
         val hz = freq * frequencyScale
-        clocks.add(ClockConstraint(PinConstraint(pinName, signal, pinPull), hz.roundToInt()))
+        addConstraint(
+            ClockConstraint(pinName, signal, pinPull, hz.roundToInt(), ctx),
+            ctx.pinName() ?: ctx,
+            ctx.portName() ?: ctx
+        )
     }
 }

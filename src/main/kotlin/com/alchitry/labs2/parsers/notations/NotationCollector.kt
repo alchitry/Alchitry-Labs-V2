@@ -184,6 +184,14 @@ class NotationCollector private constructor(
         Notation.from(ctx, message, NotationType.Info)?.let { infos.add(it) }
     }
 
+    fun addNotation(notation: Notation) {
+        when (notation.type) {
+            NotationType.Error, NotationType.SyntaxError, NotationType.SyntaxAmbiguity -> errors.add(notation)
+            NotationType.Warning -> warnings.add(notation)
+            NotationType.Info -> infos.add(notation)
+        }
+    }
+
     override fun syntaxError(
         recognizer: Recognizer<*, *>,
         offendingSymbol: Any?,

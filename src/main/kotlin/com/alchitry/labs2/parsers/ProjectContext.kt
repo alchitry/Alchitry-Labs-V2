@@ -1,9 +1,11 @@
 package com.alchitry.labs2.parsers
 
 import com.alchitry.labs2.Log
+import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.notations.NotationManager
 import com.alchitry.labs2.project.QueueExhaustionException
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -11,6 +13,7 @@ import java.io.Closeable
 
 class ProjectContext(val notationManager: NotationManager) : Closeable {
     var top: ModuleInstance? = null
+    private val constraints = mutableListOf<Constraint>()
     private val globals = mutableMapOf<String, GlobalNamespace>()
     private val modules = mutableMapOf<String, Module>()
     private val testBenches = mutableMapOf<String, TestBench>()
@@ -41,7 +44,6 @@ class ProjectContext(val notationManager: NotationManager) : Closeable {
     }
 
     suspend fun processQueue() {
-        val maxJobs = (Runtime.getRuntime().availableProcessors() - 2).coerceAtLeast(1)
         repeat(1000) {
             val items = queueLock.withLock {
                 if (evaluationQueue.isEmpty())
@@ -51,15 +53,11 @@ class ProjectContext(val notationManager: NotationManager) : Closeable {
                     evaluationQueue.clear()
                 }
             }
-            val jobs = (items.size / 100).coerceIn(1, maxJobs)
-            if (jobs == 1) {
-                items.forEach { it.evaluate() }
-            } else {
-                coroutineScope {
-                    items.chunked((items.size / jobs).coerceAtLeast(1)).forEach { list ->
-                        launch(Dispatchers.Default) {
-                            list.forEach { it.evaluate() }
-                        }
+
+            coroutineScope {
+                items.forEach {
+                    launch(Dispatchers.Default) {
+                        it.evaluate()
                     }
                 }
             }
@@ -98,6 +96,24 @@ class ProjectContext(val notationManager: NotationManager) : Closeable {
         return testBenches.values.toList()
     }
 
+    /**
+     * Overrides the global namespace with the given [GlobalNamespace].
+     * This should only be used during simulations.
+     * Use [addGlobal] to check for existing namespaces.
+     *
+     * @param globalNamespace the [GlobalNamespace] to override in the project.
+     */
+    fun overrideGlobal(globalNamespace: GlobalNamespace) {
+        globals[globalNamespace.name] = globalNamespace
+    }
+
+    /**
+     * Adds the provided [GlobalNamespace] to the global namespace map if it doesn't already exist.
+     *
+     * @param globalNamespace the [GlobalNamespace] to be added to the global namespace map.
+     *
+     * @return true if the [globalNamespace] is added successfully, otherwise false.
+     */
     fun addGlobal(globalNamespace: GlobalNamespace): Boolean =
         globals.putIfAbsent(globalNamespace.name, globalNamespace) == null
 
@@ -115,4 +131,31 @@ class ProjectContext(val notationManager: NotationManager) : Closeable {
     fun resolveGlobal(name: String) = globals[name]
 
     fun resolveModuleType(name: String): Module? = modules[name]
+
+    private fun areOverlapping(a: SignalOrSubSignal, b: SignalOrSubSignal): Boolean {
+        if (a.getSignal().name != b.getSignal().name)
+            return false
+
+        val selectionA = (a as? SubSignal)?.selection ?: emptyList()
+        val selectionB = (b as? SubSignal)?.selection ?: emptyList()
+        return selectionA.overlaps(selectionB)
+    }
+
+    enum class AddConstraintResult {
+        Success,
+        PinTaken,
+        PortTaken
+    }
+
+    fun addConstraint(constraint: Constraint): AddConstraintResult {
+        if (constraints.any { it.acfPin == constraint.acfPin })
+            return AddConstraintResult.PinTaken
+        if (constraints.any { areOverlapping(it.port, constraint.port) })
+            return AddConstraintResult.PortTaken
+        constraints.add(constraint)
+        return AddConstraintResult.Success
+    }
+
+    fun getConstraints(): List<Constraint> = constraints.toImmutableList()
 }
+

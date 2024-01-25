@@ -66,4 +66,5 @@ sealed interface SignalOrSubSignal : Measurable {
             }
         }
     }
+
 }

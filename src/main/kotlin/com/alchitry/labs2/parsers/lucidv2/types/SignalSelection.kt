@@ -6,7 +6,18 @@ typealias SignalSelection = List<SignalSelector>
 
 class SignalSelectionException(val selector: SignalSelector, message: String) : Exception(message)
 
+fun SignalSelection.overlaps(other: SignalSelection): Boolean {
+    val minDim = size.coerceAtMost(other.size)
+    for (i in 0..<minDim) {
+        if (!this[i].overlaps(other[i]))
+            return false
+    }
+    return true
+}
+
 sealed class SignalSelector {
+    abstract fun overlaps(other: SignalSelector): Boolean
+
     data class Bits(val range: IntRange, val context: SelectionContext) : SignalSelector() {
         constructor(bit: Int, context: SelectionContext) : this(bit..bit, context)
 
@@ -22,12 +33,25 @@ sealed class SignalSelector {
                 "[${range.last}:${range.first}]"
             }
         }
+
+        override fun overlaps(other: SignalSelector): Boolean =
+            when (other) {
+                is Bits -> range.first <= other.range.last && other.range.first <= range.last
+                else -> false
+            }
+
     }
 
     data class Struct(val member: String) : SignalSelector() {
         override fun toString(): String {
-            return member
+            return ".$member"
         }
+
+        override fun overlaps(other: SignalSelector): Boolean =
+            when (other) {
+                is Struct -> member == other.member
+                else -> false
+            }
     }
 }
 

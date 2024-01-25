@@ -1,20 +1,20 @@
 package com.alchitry.labs2.parsers.acf
 
 import com.alchitry.labs2.parsers.acf.types.ClockConstraint
-import com.alchitry.labs2.parsers.acf.types.PinConstraint
+import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.Languages
 
-class LatticeConverter(override val board: Board) : AcfConverter {
+data object LatticeConverter : AcfConverter {
     override suspend fun convert(
         name: String,
-        clockConstraints: List<ClockConstraint>,
-        pinConstraints: List<PinConstraint>
+        board: Board,
+        constraints: List<Constraint>
     ): List<NativeConstraint> {
         val pinConverter = board.pinConverter
         val sdc = buildString {
-            clockConstraints.forEachIndexed { index, clock ->
-                val portName = clock.pinConstraint.port.fullPortName
+            constraints.mapNotNull { it as? ClockConstraint }.forEachIndexed { index, clock ->
+                val portName = clock.port.fullPortName
                 append("# ")
                 append(portName)
                 append(" => ")
@@ -35,7 +35,7 @@ class LatticeConverter(override val board: Board) : AcfConverter {
         }
 
         val pcf = buildString {
-            (clockConstraints.map { it.pinConstraint } + pinConstraints).forEach { pin ->
+            constraints.forEach { pin ->
                 append("set_io ")
                 append(pin.port.fullPortName)
                 append(" ")

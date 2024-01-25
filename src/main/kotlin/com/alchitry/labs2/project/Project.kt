@@ -3,18 +3,22 @@ package com.alchitry.labs2.project
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
 import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.acf.AcfExtractor
 import com.alchitry.labs2.parsers.acf.NativeConstraint
 import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs2.parsers.lucidv2.context.LucidModuleTypeContext
 import com.alchitry.labs2.parsers.lucidv2.context.LucidTestBenchContext
-import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstance
-import com.alchitry.labs2.parsers.lucidv2.types.TestBench
-import com.alchitry.labs2.parsers.lucidv2.types.TestBlock
+import com.alchitry.labs2.parsers.lucidv2.types.*
+import com.alchitry.labs2.parsers.lucidv2.values.Bit
+import com.alchitry.labs2.parsers.lucidv2.values.ValueFormat
+import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.parsers.notations.NotationManager
+import com.alchitry.labs2.parsers.notations.NotationType
 import com.alchitry.labs2.project.files.*
+import com.alchitry.labs2.ui.code_editor.TextPosition
 import com.alchitry.labs2.ui.code_editor.line_actions.LineActionButton
 import com.alchitry.labs2.ui.misc.openFileDialog
 import com.alchitry.labs2.ui.tabs.SimulationResultTab
@@ -48,6 +52,7 @@ data class Project(
     val sourceDirectory = projectFolder.resolve("source")
     val constraintDirectory = projectFolder.resolve("constraint")
     val binFile = buildDirectory.resolve("${board.binName}.bin")
+    private val ideProjectContextFlow = MutableStateFlow<ProjectContext?>(null)
     private val notationManagerFlow = MutableStateFlow<NotationManager?>(null)
     val scope = CoroutineScope(Dispatchers.Default)
 
@@ -115,8 +120,24 @@ data class Project(
         scope.launch {
             //notationManagerFlow.tryEmit(null)
             val notationManager = NotationManager()
-            buildContext(notationManager)
+            ideProjectContextFlow.value?.close() // close the old one
+            val context = buildContext(notationManager)
             notationManagerFlow.tryEmit(notationManager)
+            ideProjectContextFlow.tryEmit(context)
+            context?.getTestBenches()?.forEach { testBench ->
+                val collector = notationManager.getCollector(testBench.sourceFile)
+                testBench.getTestBlocks().forEach forEachTest@{ test ->
+                    val line = test.testBlockContext.start?.line ?: return@forEachTest
+                    collector.addLineAction(line - 1) {
+                        LineActionButton("icons/play.svg", "Run ${test.name}") {
+                            // TODO: move this scope somewhere else as this could be canceled while running
+                            context.scope.launch {
+                                runTest(testBench, test)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -195,18 +216,14 @@ data class Project(
         }
 
         val constraintNotationManager = NotationManager()
+
         val constraints = try {
             constraintFiles.flatMap { file ->
                 when (file.language) {
-                    Languages.ACF -> {
-                        val files =
-                            board.acfConverter.convert(file, topModule, constraintNotationManager.getCollector(file))
-                        files?.map { file.name to it } ?: listOf(file.name to null)
-                    }
-
+                    Languages.ACF -> emptyList()
                     Languages.XDC, Languages.SDC, Languages.PCF ->
                         listOf(
-                            file.name to NativeConstraint(
+                            NativeConstraint(
                                 file.name.split(".").first(),
                                 file.language,
                                 file.readText()
@@ -217,20 +234,16 @@ data class Project(
         } catch (e: Exception) {
             Log.printlnError("Failed to get constraint files!", e)
             return@withContext false
-        }
+        } + board.acfConverter.convert("alchitry", board, context.getConstraints())
 
         if (!constraintNotationManager.hasNoMessages) {
             Log.print(constraintNotationManager.getReport(), AlchitryColors.current.Error)
             return@withContext false
         }
 
-        val checkedConstraints = constraints.map {
-            it.second ?: error("Missing contents for file ${it.first}")
-        }
-
         val mergedSdcBuilder = StringBuilder()
         val mergedPcfBuilder = StringBuilder()
-        checkedConstraints.forEach { nativeConstraint ->
+        constraints.forEach { nativeConstraint ->
             when (nativeConstraint.language) {
                 Languages.PCF -> mergedPcfBuilder.append(nativeConstraint.contents).appendLine()
                 Languages.SDC -> mergedSdcBuilder.append(nativeConstraint.contents).appendLine()
@@ -238,7 +251,7 @@ data class Project(
             }
         }
 
-        val mergedConstraints = checkedConstraints.filter {
+        val mergedConstraints = constraints.filter {
             when (it.language) {
                 Languages.PCF, Languages.SDC -> false
                 else -> true
@@ -360,17 +373,6 @@ data class Project(
 
             projectContext.getTestBenches().forEach { testBench ->
                 testBench.initialWalk()
-                val collector = notationManager.getCollector(testBench.sourceFile)
-                testBench.getTestBlocks().forEach forEachTest@{ test ->
-                    val line = test.testBlockContext.start?.line ?: return@forEachTest
-                    collector.addLineAction(line - 1) {
-                        LineActionButton("icons/play.svg", "Run ${test.name}") {
-                            projectContext.scope.launch {
-                                runTest(testBench, test)
-                            }
-                        }
-                    }
-                }
             }
 
             if (notationManager.hasErrors)
@@ -384,7 +386,7 @@ data class Project(
                 return null
             }
 
-            val moduleInstance =
+            val topModuleInstance =
                 ModuleInstance(
                     "alchitryTop",
                     projectContext,
@@ -395,12 +397,12 @@ data class Project(
                     //notationManager.getCollector(top)
                 )
 
-            moduleInstance.initialWalk()
+            topModuleInstance.initialWalk()
 
             // if modules aren't used but are still in the project, we need to check it outside the initial walk
             // of the top level instance
             val usedModules =
-                (moduleInstance.getAllModules() + projectContext.getTestBenches()
+                (topModuleInstance.getAllModules() + projectContext.getTestBenches()
                     .flatMap { it.getAllModules() }).distinct()
             val uncheckedModules = modules.map { it.second }.toMutableList().apply {
                 removeAll(usedModules)
@@ -433,7 +435,81 @@ data class Project(
             if (notationManager.hasErrors)
                 return null
 
-            projectContext.top = moduleInstance
+            projectContext.top = topModuleInstance
+
+            constraintFiles.sortedBy {
+                val prefix = if (it.isLibFile) "a" else "b"
+                prefix + it.name
+            }.forEach { constraintFile ->
+                when (constraintFile.language) {
+                    Languages.ACF -> {
+                        AcfExtractor.extract(
+                            projectContext,
+                            constraintFile,
+                            topModuleInstance,
+                            board,
+                            notationManager.getCollector(constraintFile)
+                        ) ?: return@forEach
+                    }
+
+                    Languages.PCF, Languages.SDC, Languages.XDC -> notationManager.getCollector(constraintFile)
+                        .addNotation(
+                            Notation(
+                                "${constraintFile.language.name} constraints are not supported yet!",
+                                TextPosition(1, 1)..TextPosition(1, 1),
+                                NotationType.Warning
+                            )
+                        )
+                }
+            }
+
+            if (notationManager.hasErrors)
+                return null
+
+            val ports = topModule.ports.values.associate {
+                it.name to Signal(
+                    name = it.name,
+                    direction = SignalDirection.Read,
+                    parent = null,
+                    initialValue = it.width.filledWith(Bit.B0, constant = false, signed = false),
+                    signed = false
+                )
+            }
+
+            projectContext.getConstraints().forEach {
+                val port = it.port
+                val signal = ports[port.getSignal().name] ?: return@forEach // error should already be caught
+
+                when (port) {
+                    is Signal -> signal.write(signal.width.filledWith(Bit.B1, constant = false, signed = false))
+                    is SubSignal -> signal.select(port.selection)
+                        .apply { write(width.filledWith(Bit.B1, constant = false, signed = false)) }
+                }
+            }
+
+            ports.values.forEach {
+                val constrained = it.read()
+                if (constrained.andReduce().bit != Bit.B1) {
+                    val portCtx = topModule.ports[it.name]?.context ?: error("Missing context for port \"${it.name}\"!")
+
+                    if (constrained.orReduce().bit == Bit.B1) {
+                        notationManager.getCollector(topModule.sourceFile).reportError(
+                            portCtx,
+                            "Top level port \"${it.name}\" isn't fully constrained. Bits marked as 0 aren't constrained: ${
+                                constrained.toString(ValueFormat.Binary)
+                            }"
+                        )
+                    } else {
+                        notationManager.getCollector(topModule.sourceFile)
+                            .reportError(portCtx, "Top level port \"${it.name}\" isn't constrained.")
+
+                    }
+                }
+            }
+
+            if (notationManager.hasErrors)
+                return null
+
             success = true
         } finally {
             if (!success)

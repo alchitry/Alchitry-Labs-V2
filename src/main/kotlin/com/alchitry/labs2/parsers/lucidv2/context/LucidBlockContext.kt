@@ -87,55 +87,49 @@ class LucidBlockContext(
     val signalDriver = signalDriver ?: SignalDriverParser(this)
     val verilogConverter = VerilogConverter(this)
 
-    private fun getListeners() = when (stage) {
-        ParseStage.ModuleInternals -> listOf(
-            expr,
-            bitSelection,
-            struct,
-            enum,
-            constant,
-            types,
-            blockParser,
-            signal
-        )
+    private val listenerMap = ParseStage.entries.associateWith {
+        when (it) {
+            ParseStage.ModuleInternals -> listOf(
+                this.expr,
+                this.bitSelection,
+                this.struct,
+                this.enum,
+                this.constant,
+                this.types,
+                this.blockParser,
+                this.signal
+            )
 
-        ParseStage.Drivers -> listOf(
-            expr,
-            bitSelection,
-            signal,
-            signalDriver
-        )
+            ParseStage.Drivers -> listOf(
+                this.expr,
+                this.bitSelection,
+                this.signal,
+                this.signalDriver
+            )
 
-        ParseStage.Evaluation -> listOf(
-            expr,
-            bitSelection,
-            signal,
-            blockEvaluator
-        )
+            ParseStage.Evaluation -> listOf(
+                this.expr,
+                this.bitSelection,
+                this.signal,
+                this.blockEvaluator
+            )
 
-        ParseStage.ErrorCheck -> listOf(
-            expr,
-            bitSelection,
-            struct,
-            enum,
-            constant,
-            signal,
-            types,
-            blockParser
-        )
+            ParseStage.ErrorCheck -> listOf(
+                this.expr,
+                this.bitSelection,
+                this.struct,
+                this.enum,
+                this.constant,
+                this.signal,
+                this.types,
+                this.blockParser
+            )
 
-        ParseStage.Convert -> listOf(
-            signal,
-            verilogConverter
-        )
-    }
-
-    private fun getFilter(): WalkerFilter = when (stage) {
-        ParseStage.ModuleInternals -> WalkerFilter.SkipGlobals
-        ParseStage.Drivers -> WalkerFilter.SkipGlobals
-        ParseStage.Evaluation -> WalkerFilter.join(WalkerFilter.SkipControlBlocks, WalkerFilter.SkipGlobals)
-        ParseStage.ErrorCheck -> WalkerFilter.SkipGlobals
-        ParseStage.Convert -> WalkerFilter.ModulesOnly
+            ParseStage.Convert -> listOf(
+                this.signal,
+                this.verilogConverter
+            )
+        }
     }
 
     fun withEvalContext(evalContext: Evaluable, name: String) = LucidBlockContext(
@@ -190,7 +184,7 @@ class LucidBlockContext(
         return notationCollector.hasNoErrors
     }
 
-    suspend fun walk(t: ParseTree) = ParseTreeMultiWalker.walk(getListeners(), t, getFilter())
+    suspend fun walk(t: ParseTree) = ParseTreeMultiWalker.walk(listenerMap[stage]!!, t, stage.filter)
 
     suspend fun checkParameters(errorListener: ErrorListener = notationCollector): Boolean {
         val instance = (instance as? ModuleInstance)

@@ -2,15 +2,15 @@ package com.alchitry.labs2.parsers.acf
 
 import com.alchitry.labs2.hardware.pinout.PinConverter
 import com.alchitry.labs2.parsers.acf.types.ClockConstraint
-import com.alchitry.labs2.parsers.acf.types.PinConstraint
+import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.acf.types.PinPull
 import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.Languages
 
 
-class XilinxConverter(override val board: Board) : AcfConverter {
+data object XilinxConverter : AcfConverter {
     context (StringBuilder)
-    private fun PinConstraint.toXdc(pinConverter: PinConverter) {
+    private fun Constraint.toXdc(pinConverter: PinConverter) {
         val portName = port.fullPortName
         append("set_property PACKAGE_PIN ")
         append(pinConverter.AcfToFPGAPin(acfPin))
@@ -41,36 +41,36 @@ class XilinxConverter(override val board: Board) : AcfConverter {
 
     override suspend fun convert(
         name: String,
-        clockConstraints: List<ClockConstraint>,
-        pinConstraints: List<PinConstraint>
+        board: Board,
+        constraints: List<Constraint>
     ): List<NativeConstraint> = listOf(
         NativeConstraint(
             name,
             Languages.XDC,
             buildString {
                 val pinConverter = board.pinConverter
-                clockConstraints.forEachIndexed { index, clock ->
-                    clock.pinConstraint.toXdc(pinConverter)
-                    val portName = clock.pinConstraint.port.fullPortName
-                    append("# ")
-                    append(portName)
-                    append(" => ")
-                    append(clock.frequency)
-                    append("Hz\n")
+                constraints.forEachIndexed { index, constraint ->
+                    constraint.toXdc(pinConverter)
 
-                    append("create_clock -period ")
-                    val nsPeriod = 1000000000.0 / clock.frequency
-                    append(nsPeriod)
-                    append(" -name ")
-                    append(portName.replace("[", "_").replace("]", "_"))
-                    append("_")
-                    append(index)
-                    append(" -waveform {0.000 5.000} [get_ports ")
-                    append(portName)
-                    append("]\n")
-                }
-                pinConstraints.forEach { pin ->
-                    pin.toXdc(pinConverter)
+                    if (constraint is ClockConstraint) {
+                        val portName = constraint.port.fullPortName
+                        append("# ")
+                        append(portName)
+                        append(" => ")
+                        append(constraint.frequency)
+                        append("Hz\n")
+
+                        append("create_clock -period ")
+                        val nsPeriod = 1000000000.0 / constraint.frequency
+                        append(nsPeriod)
+                        append(" -name ")
+                        append(portName.replace("[", "_").replace("]", "_"))
+                        append("_")
+                        append(index)
+                        append(" -waveform {0.000 5.000} [get_ports ")
+                        append(portName)
+                        append("]\n")
+                    }
                 }
             }
         )

@@ -1,9 +1,7 @@
 package com.alchitry.labs2.parsers.acf
 
-import com.alchitry.labs2.parsers.acf.types.ClockConstraint
-import com.alchitry.labs2.parsers.acf.types.PinConstraint
-import com.alchitry.labs2.parsers.grammar.AcfLexer
-import com.alchitry.labs2.parsers.grammar.AcfParser
+import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstance
 import com.alchitry.labs2.parsers.lucidv2.types.Signal
 import com.alchitry.labs2.parsers.lucidv2.types.SignalOrSubSignal
@@ -12,8 +10,6 @@ import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.ConstraintLang
 import com.alchitry.labs2.project.files.ConstraintFile
-import org.antlr.v4.kotlinruntime.CommonTokenStream
-import org.antlr.v4.kotlinruntime.tree.ParseTreeWalker
 
 data class NativeConstraint(
     val name: String,
@@ -28,42 +24,21 @@ sealed interface AcfConverter {
             is SubSignal -> "P_${parent.name}[${flatSelectionData.offset}]"
         }
 
-    val board: Board
-
     suspend fun convert(
+        context: ProjectContext,
+        board: Board,
         file: ConstraintFile,
         topModule: ModuleInstance,
         notationCollector: NotationCollector,
     ): List<NativeConstraint>? {
-        val parser =
-            AcfParser(
-                CommonTokenStream(
-                    AcfLexer(
-                        file.toCharStream()
-                    ).also { it.removeErrorListeners() }
-                )
-            ).apply {
-                (tokenStream?.tokenSource as? AcfLexer)?.addErrorListener(notationCollector)
-                    ?: error("TokenSource was not an AcfLexer!")
-                removeErrorListeners()
-                addErrorListener(notationCollector)
-            }
-
-        val tree = parser.source()
-
-        if (notationCollector.hasErrors) {
-            return null
-        }
-
-        val extractor = AcfExtractor(topModule, board, notationCollector)
-        ParseTreeWalker.walk(extractor, tree)
+        val extractor = AcfExtractor.extract(context, file, topModule, board, notationCollector) ?: return null
         val name = file.name.split(".").first()
-        return convert(name, extractor.clocks, extractor.pins)
+        return convert(name, board, extractor.constraints)
     }
 
     suspend fun convert(
         name: String,
-        clockConstraints: List<ClockConstraint>,
-        pinConstraints: List<PinConstraint>
+        board: Board,
+        constraints: List<Constraint>
     ): List<NativeConstraint>
 }
