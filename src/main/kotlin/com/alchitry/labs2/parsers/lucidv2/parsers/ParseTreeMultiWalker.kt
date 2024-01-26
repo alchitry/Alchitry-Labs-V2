@@ -30,13 +30,15 @@ object ParseTreeMultiWalker {
         }
 
         val r = t as RuleNode
-        enterRule(listeners, r)
-        for (i in 0 until r.childCount) {
-            val child = r.getChild(i) ?: continue
-            if (!filter.shouldSkip(r, child))
-                walk(listeners, child, filter)
+        if (!r.skip) {
+            enterRule(listeners, r)
+            for (i in 0 until r.childCount) {
+                val child = r.getChild(i) ?: continue
+                if (!filter.shouldSkip(r, child))
+                    walk(listeners, child, filter)
+            }
+            exitRule(listeners, r)
         }
-        exitRule(listeners, r)
     }
 
 

@@ -15,8 +15,10 @@ class TestBench(
     override val name: String,
     val sourceFile: SourceFile,
     project: ProjectContext,
-    private val testBenchContext: TestBenchContext
+    context: TestBenchContext
 ) : TestOrModuleInstance, Snapshotable {
+    private val testBenchContext: TestBenchContext = context//.deepCopy()
+
     override val context = LucidBlockContext(
         project,
         sourceFile,

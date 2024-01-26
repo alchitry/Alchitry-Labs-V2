@@ -1,6 +1,5 @@
 // Generated from java-escape by ANTLR 4.13.0
 package com.alchitry.labs2.parsers.grammar;
-
 import com.alchitry.kotlinmultiplatform.asCharArray
 import com.alchitry.kotlinmultiplatform.scoped
 import org.antlr.v4.kotlinruntime.*
@@ -90,7 +89,6 @@ class BracketParser(input: TokenStream) : Parser(input) {
             "\u0004\u0001\u000b\u0040\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002\u0005\u0007\u0005\u0001\u0000\u0005\u0000\u000e\u0008\u0000\u000a\u0000\u000c\u0000\u0011\u0009\u0000\u0001\u0000\u0003\u0000\u0014\u0008\u0000\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0003\u0001\u001a\u0008\u0001\u0001\u0002\u0001\u0002\u0005\u0002\u001e\u0008\u0002\u000a\u0002\u000c\u0002\u0021\u0009\u0002\u0001\u0002\u0001\u0002\u0001\u0003\u0001\u0003\u0005\u0003\u0027\u0008\u0003\u000a\u0003\u000c\u0003\u002a\u0009\u0003\u0001\u0003\u0001\u0003\u0001\u0004\u0001\u0004\u0005\u0004\u0030\u0008\u0004\u000a\u0004\u000c\u0004\u0033\u0009\u0004\u0001\u0004\u0001\u0004\u0001\u0005\u0001\u0005\u0005\u0005\u0039\u0008\u0005\u000a\u0005\u000c\u0005\u003c\u0009\u0005\u0001\u0005\u0001\u0005\u0001\u0005\u0001\u003a\u0000\u0006\u0000\u0002\u0004\u0006\u0008\u000a\u0000\u0000\u0042\u0000\u000f\u0001\u0000\u0000\u0000\u0002\u0019\u0001\u0000\u0000\u0000\u0004\u001b\u0001\u0000\u0000\u0000\u0006\u0024\u0001\u0000\u0000\u0000\u0008\u002d\u0001\u0000\u0000\u0000\u000a\u0036\u0001\u0000\u0000\u0000\u000c\u000e\u0003\u0002\u0001\u0000\u000d\u000c\u0001\u0000\u0000\u0000\u000e\u0011\u0001\u0000\u0000\u0000\u000f\u000d\u0001\u0000\u0000\u0000\u000f\u0010\u0001\u0000\u0000\u0000\u0010\u0013\u0001\u0000\u0000\u0000\u0011\u000f\u0001\u0000\u0000\u0000\u0012\u0014\u0005\u0000\u0000\u0001\u0013\u0012\u0001\u0000\u0000\u0000\u0013\u0014\u0001\u0000\u0000\u0000\u0014\u0001\u0001\u0000\u0000\u0000\u0015\u001a\u0003\u0004\u0002\u0000\u0016\u001a\u0003\u0006\u0003\u0000\u0017\u001a\u0003\u0008\u0004\u0000\u0018\u001a\u0003\u000a\u0005\u0000\u0019\u0015\u0001\u0000\u0000\u0000\u0019\u0016\u0001\u0000\u0000\u0000\u0019\u0017\u0001\u0000\u0000\u0000\u0019\u0018\u0001\u0000\u0000\u0000\u001a\u0003\u0001\u0000\u0000\u0000\u001b\u001f\u0005\u0001\u0000\u0000\u001c\u001e\u0003\u0002\u0001\u0000\u001d\u001c\u0001\u0000\u0000\u0000\u001e\u0021\u0001\u0000\u0000\u0000\u001f\u001d\u0001\u0000\u0000\u0000\u001f\u0020\u0001\u0000\u0000\u0000\u0020\u0022\u0001\u0000\u0000\u0000\u0021\u001f\u0001\u0000\u0000\u0000\u0022\u0023\u0005\u0002\u0000\u0000\u0023\u0005\u0001\u0000\u0000\u0000\u0024\u0028\u0005\u0003\u0000\u0000\u0025\u0027\u0003\u0002\u0001\u0000\u0026\u0025\u0001\u0000\u0000\u0000\u0027\u002a\u0001\u0000\u0000\u0000\u0028\u0026\u0001\u0000\u0000\u0000\u0028\u0029\u0001\u0000\u0000\u0000\u0029\u002b\u0001\u0000\u0000\u0000\u002a\u0028\u0001\u0000\u0000\u0000\u002b\u002c\u0005\u0004\u0000\u0000\u002c\u0007\u0001\u0000\u0000\u0000\u002d\u0031\u0005\u0005\u0000\u0000\u002e\u0030\u0003\u0002\u0001\u0000\u002f\u002e\u0001\u0000\u0000\u0000\u0030\u0033\u0001\u0000\u0000\u0000\u0031\u002f\u0001\u0000\u0000\u0000\u0031\u0032\u0001\u0000\u0000\u0000\u0032\u0034\u0001\u0000\u0000\u0000\u0033\u0031\u0001\u0000\u0000\u0000\u0034\u0035\u0005\u0006\u0000\u0000\u0035\u0009\u0001\u0000\u0000\u0000\u0036\u003a\u0005\u0007\u0000\u0000\u0037\u0039\u0009\u0000\u0000\u0000\u0038\u0037\u0001\u0000\u0000\u0000\u0039\u003c\u0001\u0000\u0000\u0000\u003a\u003b\u0001\u0000\u0000\u0000\u003a\u0038\u0001\u0000\u0000\u0000\u003b\u003d\u0001\u0000\u0000\u0000\u003c\u003a\u0001\u0000\u0000\u0000\u003d\u003e\u0005\u0008\u0000\u0000\u003e\u000b\u0001\u0000\u0000\u0000\u0007\u000f\u0013\u0019\u001f\u0028\u0031\u003a"
 
         val ATN = ATNDeserializer().deserialize(serializedATN.asCharArray())
-
         init {
             decisionToDFA = Array<DFA>(ATN.numberOfDecisions, {
                 DFA(ATN.getDecisionState(it)!!, it)
@@ -130,6 +128,14 @@ class BracketParser(input: TokenStream) : Parser(input) {
         fun EOF(): TerminalNode? = getToken(Tokens.EOF.id, 0)
 
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): SourceContext {
+            return SourceContext().also {
+                deepCopyInto(it)
+            }
         }
 
         override fun enterRule(listener: ParseTreeListener) {
@@ -202,6 +208,14 @@ class BracketParser(input: TokenStream) : Parser(input) {
         fun commentBlock(): CommentBlockContext? = getRuleContext(CommentBlockContext::class, 0)
 
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): BlockContext {
+            return BlockContext().also {
+                deepCopyInto(it)
+            }
         }
 
         override fun enterRule(listener: ParseTreeListener) {
@@ -285,6 +299,14 @@ class BracketParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
+        constructor() : super() {}
+
+        override fun deepCopy(): ParenBlockContext {
+            return ParenBlockContext().also {
+                deepCopyInto(it)
+            }
+        }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is BracketListener) listener.enterParenBlock(this)
         }
@@ -349,6 +371,14 @@ class BracketParser(input: TokenStream) : Parser(input) {
         fun block(i: Int): BlockContext? = getRuleContext(BlockContext::class, i)
 
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): SquareBlockContext {
+            return SquareBlockContext().also {
+                deepCopyInto(it)
+            }
         }
 
         override fun enterRule(listener: ParseTreeListener) {
@@ -417,6 +447,14 @@ class BracketParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
+        constructor() : super() {}
+
+        override fun deepCopy(): CurlyBlockContext {
+            return CurlyBlockContext().also {
+                deepCopyInto(it)
+            }
+        }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is BracketListener) listener.enterCurlyBlock(this)
         }
@@ -478,6 +516,14 @@ class BracketParser(input: TokenStream) : Parser(input) {
             }
 
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): CommentBlockContext {
+            return CommentBlockContext().also {
+                deepCopyInto(it)
+            }
         }
 
         override fun enterRule(listener: ParseTreeListener) {

@@ -15,6 +15,9 @@ class ModuleInstance(
     parameters: Map<String, Value>,
     val connections: Map<String, SignalOrSubSignal>
 ) : ModuleInstanceOrArray, ListOrModuleInstance, TestOrModuleInstance {
+    // make a copy of the module context tree, so we can prune it without disrupting others
+    val moduleContext = module.context.deepCopy()
+
     override val context = LucidBlockContext(
         project,
         module.sourceFile,
@@ -34,7 +37,7 @@ class ModuleInstance(
     suspend fun checkParameters(errorListener: ErrorListener = context.notationCollector): Boolean =
         context.checkParameters(errorListener)
 
-    suspend fun initialWalk() = context.initialWalk(module.context)
+    suspend fun initialWalk() = context.initialWalk(moduleContext)
 
     fun getAllModules(): List<Module> {
         return (context.types.moduleInstances.values.flatMap { instOrArray ->

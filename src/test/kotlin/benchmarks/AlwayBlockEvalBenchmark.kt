@@ -1,0 +1,114 @@
+package benchmarks
+
+import com.alchitry.labs2.parsers.lucidv2.parsers.toSourceFile
+import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstance
+import com.alchitry.labs2.parsers.lucidv2.types.Signal
+import com.alchitry.labs2.parsers.lucidv2.types.SignalDirection
+import com.alchitry.labs2.parsers.lucidv2.values.Bit
+import com.alchitry.labs2.parsers.lucidv2.values.BitListValue
+import helpers.LucidTester
+import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
+
+private val waveSource = """
+    module wave #(
+        RES = 8 : RES > 1,
+        CTR_LEN = 25 : CTR_LEN >= RES+1
+    )(
+        input clk,     // clock
+        input rst,     // reset
+        output out[8]  // LED output
+    ) {
+
+
+        // counter
+        dff ctr[CTR_LEN](.clk(clk),.rst(rst));
+
+        sig acmp[RES];   // intermediate value
+        sig result[RES+1]; // intermediate value
+
+        always {
+            // increment the counter
+            ctr.d = ctr.q +1;
+            out = 0;
+
+            // for each output
+            repeat (8, i) {
+                // take the top bits of the counter and
+                // offset differently them for each output
+                result = ctr.q[CTR_LEN-1-:RES+1] + i * ${'$'}pow(2,RES) / 4;
+
+                // invert the result to count down
+                acmp = result[RES]? ~result[RES-1:0] : result[RES-1:0];
+
+                // PWM output
+                out[i] = acmp > ctr.q[RES-1:0];
+            }
+        }
+    }
+""".trimIndent().toSourceFile("wave.luc")
+
+class EvaluationBenchmarks {
+    @Test
+    fun benchmarkWaveSimulation() = runBlocking {
+        val tester = LucidTester(waveSource)
+        val reset = Signal(
+            "rst",
+            SignalDirection.Write,
+            null,
+            BitListValue(0, 1, false, false),
+            false
+        )
+
+        val clk = Signal(
+            "clk",
+            SignalDirection.Write,
+            null,
+            BitListValue(0, 1, false, false),
+            false
+        )
+        val leds = Signal(
+            "led",
+            SignalDirection.Read,
+            null,
+            BitListValue(0, 8, constant = false, signed = false),
+            false
+        )
+
+        val trees = tester.parseText()
+        tester.globalParse(trees)
+        val modules = tester.moduleTypeParse(trees)
+
+        val top = ModuleInstance(
+            "auSimulator",
+            tester.project,
+            null,
+            modules.first(),
+            mapOf(),
+            mapOf(
+                "out" to leds,
+                "rst" to reset,
+                "clk" to clk
+            )
+        )
+
+        top.initialWalk()
+        top.context.initialize()
+
+        val low = Bit.B0.toBitValue(constant = false, signed = false)
+        val high = Bit.B1.toBitValue(constant = false, signed = false)
+
+        val startTime = TimeSource.Monotonic.markNow()
+        var loopCount = 0
+        while (startTime.elapsedNow() < 10.seconds) {
+            clk.write(high)
+            tester.project.processQueue()
+            clk.write(low)
+            tester.project.processQueue()
+            loopCount += 1
+        }
+        println("Evaluation rate: ${loopCount / 10} hz")
+    }
+}

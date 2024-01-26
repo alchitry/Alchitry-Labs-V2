@@ -153,6 +153,14 @@ class AcfParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
+        constructor() : super() {}
+
+        override fun deepCopy(): SourceContext {
+            return SourceContext().also {
+                deepCopyInto(it)
+            }
+        }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) listener.enterSource(this)
         }
@@ -248,6 +256,14 @@ class AcfParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
+        constructor() : super() {}
+
+        override fun deepCopy(): PinContext {
+            return PinContext().also {
+                deepCopyInto(it)
+            }
+        }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) listener.enterPin(this)
         }
@@ -325,6 +341,14 @@ class AcfParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
+        constructor() : super() {}
+
+        override fun deepCopy(): ClockContext {
+            return ClockContext().also {
+                deepCopyInto(it)
+            }
+        }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) listener.enterClock(this)
         }
@@ -400,6 +424,14 @@ class AcfParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
+        constructor() : super() {}
+
+        override fun deepCopy(): NameContext {
+            return NameContext().also {
+                deepCopyInto(it)
+            }
+        }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) listener.enterName(this)
         }
@@ -457,6 +489,14 @@ class AcfParser(input: TokenStream) : Parser(input) {
         fun arrayIndex(i: Int): ArrayIndexContext? = getRuleContext(ArrayIndexContext::class, i)
 
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): PortNameContext {
+            return PortNameContext().also {
+                deepCopyInto(it)
+            }
         }
 
         override fun enterRule(listener: ParseTreeListener) {
@@ -552,6 +592,14 @@ class AcfParser(input: TokenStream) : Parser(input) {
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
+        constructor() : super() {}
+
+        override fun deepCopy(): PinNameContext {
+            return PinNameContext().also {
+                deepCopyInto(it)
+            }
+        }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) listener.enterPinName(this)
         }
@@ -599,6 +647,14 @@ class AcfParser(input: TokenStream) : Parser(input) {
         fun FREQ_UNIT(): TerminalNode? = getToken(Tokens.FREQ_UNIT.id, 0)
 
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): FrequencyContext {
+            return FrequencyContext().also {
+                deepCopyInto(it)
+            }
         }
 
         override fun enterRule(listener: ParseTreeListener) {
@@ -649,6 +705,14 @@ class AcfParser(input: TokenStream) : Parser(input) {
         fun INT(): TerminalNode? = getToken(Tokens.INT.id, 0)
 
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ArrayIndexContext {
+            return ArrayIndexContext().also {
+                deepCopyInto(it)
+            }
         }
 
         override fun enterRule(listener: ParseTreeListener) {
@@ -702,6 +766,14 @@ class AcfParser(input: TokenStream) : Parser(input) {
         fun REAL(): TerminalNode? = getToken(Tokens.REAL.id, 0)
 
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): NumberContext {
+            return NumberContext().also {
+                deepCopyInto(it)
+            }
         }
 
         override fun enterRule(listener: ParseTreeListener) {
@@ -761,6 +833,14 @@ class AcfParser(input: TokenStream) : Parser(input) {
         fun EOF(): TerminalNode? = getToken(Tokens.EOF.id, 0)
 
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): SemiContext {
+            return SemiContext().also {
+                deepCopyInto(it)
+            }
         }
 
         override fun enterRule(listener: ParseTreeListener) {

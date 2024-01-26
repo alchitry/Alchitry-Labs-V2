@@ -7,7 +7,7 @@ import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.lucidv2.types.Function
 import com.alchitry.labs2.parsers.lucidv2.values.*
 import kotlinx.coroutines.runBlocking
-import org.antlr.v4.kotlinruntime.tree.ParseTree
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 
 /**
@@ -16,7 +16,7 @@ import org.antlr.v4.kotlinruntime.tree.ParseTree
 data class SignalDriverParser(
     private val context: LucidBlockContext
 ) : LucidBaseListener() {
-    private val drivenSignals = mutableMapOf<ParseTree, Map<Signal, Value>>()
+    private val drivenSignals = mutableMapOf<ParserRuleContext, Map<Signal, Value>>()
     private val signalStack = mutableListOf<MutableMap<Signal, Value>>()
     private val signals: MutableMap<Signal, Value> get() = signalStack.last()
 
@@ -202,7 +202,7 @@ data class SignalDriverParser(
         signalStack.add(mutableMapOf()) // push new map onto the stack
     }
 
-    private fun stopBlock(ctx: ParseTree) {
+    private fun stopBlock(ctx: ParserRuleContext) {
         val signals = signalStack.removeLast() // pop map from stack
         drivenSignals[ctx] = signals
     }

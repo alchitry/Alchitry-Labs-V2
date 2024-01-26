@@ -5,5 +5,6 @@ enum class ParseStage(val filter: WalkerFilter) {
     Drivers(WalkerFilter.SkipGlobals), // check for driven signals
     Evaluation(WalkerFilter.join(WalkerFilter.SkipControlBlocks, WalkerFilter.SkipGlobals)), // runtime
     ErrorCheck(WalkerFilter.SkipGlobals), // IDE error check
-    Convert(WalkerFilter.ModulesOnly) // convert to Verilog
+    Convert(WalkerFilter.ModulesOnly), // convert to Verilog
+    Prune(WalkerFilter.None) // remove unnecessary branches
 }

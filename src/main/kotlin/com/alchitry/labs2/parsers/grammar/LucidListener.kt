@@ -963,15 +963,15 @@ interface LucidListener : ParseTreeListener {
 	 */
 	fun exitSemi(ctx: LucidParser.SemiContext)
 
-	override fun asSuspend(): SuspendLucidListener = object : SuspendLucidListener {
+    override fun asSuspend(): SuspendLucidListener = object : SuspendLucidListener {
         override suspend fun enterSource(ctx: LucidParser.SourceContext) = this@LucidListener.enterSource(ctx)
         override suspend fun exitSource(ctx: LucidParser.SourceContext) = this@LucidListener.exitSource(ctx)
 
         override suspend fun enterGlobal(ctx: LucidParser.GlobalContext) = this@LucidListener.enterGlobal(ctx)
         override suspend fun exitGlobal(ctx: LucidParser.GlobalContext) = this@LucidListener.exitGlobal(ctx)
 
-		override suspend fun enterGlobalStat(ctx: LucidParser.GlobalStatContext) =
-			this@LucidListener.enterGlobalStat(ctx)
+        override suspend fun enterGlobalStat(ctx: LucidParser.GlobalStatContext) =
+            this@LucidListener.enterGlobalStat(ctx)
         override suspend fun exitGlobalStat(ctx: LucidParser.GlobalStatContext) = this@LucidListener.exitGlobalStat(ctx)
 
         override suspend fun enterModule(ctx: LucidParser.ModuleContext) = this@LucidListener.enterModule(ctx)
@@ -989,54 +989,54 @@ interface LucidListener : ParseTreeListener {
         override suspend fun enterParamDec(ctx: LucidParser.ParamDecContext) = this@LucidListener.enterParamDec(ctx)
         override suspend fun exitParamDec(ctx: LucidParser.ParamDecContext) = this@LucidListener.exitParamDec(ctx)
 
-		override suspend fun enterParamDefault(ctx: LucidParser.ParamDefaultContext) =
-			this@LucidListener.enterParamDefault(ctx)
+        override suspend fun enterParamDefault(ctx: LucidParser.ParamDefaultContext) =
+            this@LucidListener.enterParamDefault(ctx)
 
-		override suspend fun exitParamDefault(ctx: LucidParser.ParamDefaultContext) =
-			this@LucidListener.exitParamDefault(ctx)
+        override suspend fun exitParamDefault(ctx: LucidParser.ParamDefaultContext) =
+            this@LucidListener.exitParamDefault(ctx)
 
-		override suspend fun enterParamConstraint(ctx: LucidParser.ParamConstraintContext) =
-			this@LucidListener.enterParamConstraint(ctx)
+        override suspend fun enterParamConstraint(ctx: LucidParser.ParamConstraintContext) =
+            this@LucidListener.enterParamConstraint(ctx)
 
-		override suspend fun exitParamConstraint(ctx: LucidParser.ParamConstraintContext) =
-			this@LucidListener.exitParamConstraint(ctx)
+        override suspend fun exitParamConstraint(ctx: LucidParser.ParamConstraintContext) =
+            this@LucidListener.exitParamConstraint(ctx)
 
         override suspend fun enterPortDec(ctx: LucidParser.PortDecContext) = this@LucidListener.enterPortDec(ctx)
         override suspend fun exitPortDec(ctx: LucidParser.PortDecContext) = this@LucidListener.exitPortDec(ctx)
 
-		override suspend fun enterPortDirection(ctx: LucidParser.PortDirectionContext) =
-			this@LucidListener.enterPortDirection(ctx)
+        override suspend fun enterPortDirection(ctx: LucidParser.PortDirectionContext) =
+            this@LucidListener.enterPortDirection(ctx)
 
-		override suspend fun exitPortDirection(ctx: LucidParser.PortDirectionContext) =
-			this@LucidListener.exitPortDirection(ctx)
+        override suspend fun exitPortDirection(ctx: LucidParser.PortDirectionContext) =
+            this@LucidListener.exitPortDirection(ctx)
 
-		override suspend fun enterSignalWidth(ctx: LucidParser.SignalWidthContext) =
-			this@LucidListener.enterSignalWidth(ctx)
+        override suspend fun enterSignalWidth(ctx: LucidParser.SignalWidthContext) =
+            this@LucidListener.enterSignalWidth(ctx)
 
-		override suspend fun exitSignalWidth(ctx: LucidParser.SignalWidthContext) =
-			this@LucidListener.exitSignalWidth(ctx)
+        override suspend fun exitSignalWidth(ctx: LucidParser.SignalWidthContext) =
+            this@LucidListener.exitSignalWidth(ctx)
 
         override suspend fun enterArraySize(ctx: LucidParser.ArraySizeContext) = this@LucidListener.enterArraySize(ctx)
         override suspend fun exitArraySize(ctx: LucidParser.ArraySizeContext) = this@LucidListener.exitArraySize(ctx)
 
-		override suspend fun enterStructType(ctx: LucidParser.StructTypeContext) =
-			this@LucidListener.enterStructType(ctx)
+        override suspend fun enterStructType(ctx: LucidParser.StructTypeContext) =
+            this@LucidListener.enterStructType(ctx)
         override suspend fun exitStructType(ctx: LucidParser.StructTypeContext) = this@LucidListener.exitStructType(ctx)
 
-		override suspend fun enterStructMemberConst(ctx: LucidParser.StructMemberConstContext) =
-			this@LucidListener.enterStructMemberConst(ctx)
+        override suspend fun enterStructMemberConst(ctx: LucidParser.StructMemberConstContext) =
+            this@LucidListener.enterStructMemberConst(ctx)
 
-		override suspend fun exitStructMemberConst(ctx: LucidParser.StructMemberConstContext) =
-			this@LucidListener.exitStructMemberConst(ctx)
+        override suspend fun exitStructMemberConst(ctx: LucidParser.StructMemberConstContext) =
+            this@LucidListener.exitStructMemberConst(ctx)
 
-		override suspend fun enterStructConst(ctx: LucidParser.StructConstContext) =
-			this@LucidListener.enterStructConst(ctx)
+        override suspend fun enterStructConst(ctx: LucidParser.StructConstContext) =
+            this@LucidListener.enterStructConst(ctx)
 
-		override suspend fun exitStructConst(ctx: LucidParser.StructConstContext) =
-			this@LucidListener.exitStructConst(ctx)
+        override suspend fun exitStructConst(ctx: LucidParser.StructConstContext) =
+            this@LucidListener.exitStructConst(ctx)
 
-		override suspend fun enterModuleBody(ctx: LucidParser.ModuleBodyContext) =
-			this@LucidListener.enterModuleBody(ctx)
+        override suspend fun enterModuleBody(ctx: LucidParser.ModuleBodyContext) =
+            this@LucidListener.enterModuleBody(ctx)
         override suspend fun exitModuleBody(ctx: LucidParser.ModuleBodyContext) = this@LucidListener.exitModuleBody(ctx)
 
         override suspend fun enterStatConst(ctx: LucidParser.StatConstContext) = this@LucidListener.enterStatConst(ctx)
@@ -1051,41 +1051,41 @@ interface LucidListener : ParseTreeListener {
         override suspend fun enterStatDFF(ctx: LucidParser.StatDFFContext) = this@LucidListener.enterStatDFF(ctx)
         override suspend fun exitStatDFF(ctx: LucidParser.StatDFFContext) = this@LucidListener.exitStatDFF(ctx)
 
-		override suspend fun enterStatModuleInst(ctx: LucidParser.StatModuleInstContext) =
-			this@LucidListener.enterStatModuleInst(ctx)
+        override suspend fun enterStatModuleInst(ctx: LucidParser.StatModuleInstContext) =
+            this@LucidListener.enterStatModuleInst(ctx)
 
-		override suspend fun exitStatModuleInst(ctx: LucidParser.StatModuleInstContext) =
-			this@LucidListener.exitStatModuleInst(ctx)
+        override suspend fun exitStatModuleInst(ctx: LucidParser.StatModuleInstContext) =
+            this@LucidListener.exitStatModuleInst(ctx)
 
-		override suspend fun enterStatAssign(ctx: LucidParser.StatAssignContext) =
-			this@LucidListener.enterStatAssign(ctx)
+        override suspend fun enterStatAssign(ctx: LucidParser.StatAssignContext) =
+            this@LucidListener.enterStatAssign(ctx)
         override suspend fun exitStatAssign(ctx: LucidParser.StatAssignContext) = this@LucidListener.exitStatAssign(ctx)
 
-		override suspend fun enterStatAlways(ctx: LucidParser.StatAlwaysContext) =
-			this@LucidListener.enterStatAlways(ctx)
+        override suspend fun enterStatAlways(ctx: LucidParser.StatAlwaysContext) =
+            this@LucidListener.enterStatAlways(ctx)
         override suspend fun exitStatAlways(ctx: LucidParser.StatAlwaysContext) = this@LucidListener.exitStatAlways(ctx)
 
-		override suspend fun enterStatStruct(ctx: LucidParser.StatStructContext) =
-			this@LucidListener.enterStatStruct(ctx)
+        override suspend fun enterStatStruct(ctx: LucidParser.StatStructContext) =
+            this@LucidListener.enterStatStruct(ctx)
         override suspend fun exitStatStruct(ctx: LucidParser.StatStructContext) = this@LucidListener.exitStatStruct(ctx)
 
         override suspend fun enterStatTest(ctx: LucidParser.StatTestContext) = this@LucidListener.enterStatTest(ctx)
         override suspend fun exitStatTest(ctx: LucidParser.StatTestContext) = this@LucidListener.exitStatTest(ctx)
 
-		override suspend fun enterStatFunction(ctx: LucidParser.StatFunctionContext) =
-			this@LucidListener.enterStatFunction(ctx)
+        override suspend fun enterStatFunction(ctx: LucidParser.StatFunctionContext) =
+            this@LucidListener.enterStatFunction(ctx)
 
-		override suspend fun exitStatFunction(ctx: LucidParser.StatFunctionContext) =
-			this@LucidListener.exitStatFunction(ctx)
+        override suspend fun exitStatFunction(ctx: LucidParser.StatFunctionContext) =
+            this@LucidListener.exitStatFunction(ctx)
 
         override suspend fun enterConstDec(ctx: LucidParser.ConstDecContext) = this@LucidListener.enterConstDec(ctx)
         override suspend fun exitConstDec(ctx: LucidParser.ConstDecContext) = this@LucidListener.exitConstDec(ctx)
 
-		override suspend fun enterAssignBlock(ctx: LucidParser.AssignBlockContext) =
-			this@LucidListener.enterAssignBlock(ctx)
+        override suspend fun enterAssignBlock(ctx: LucidParser.AssignBlockContext) =
+            this@LucidListener.enterAssignBlock(ctx)
 
-		override suspend fun exitAssignBlock(ctx: LucidParser.AssignBlockContext) =
-			this@LucidListener.exitAssignBlock(ctx)
+        override suspend fun exitAssignBlock(ctx: LucidParser.AssignBlockContext) =
+            this@LucidListener.exitAssignBlock(ctx)
 
         override suspend fun enterSigCon(ctx: LucidParser.SigConContext) = this@LucidListener.enterSigCon(ctx)
         override suspend fun exitSigCon(ctx: LucidParser.SigConContext) = this@LucidListener.exitSigCon(ctx)
@@ -1102,8 +1102,8 @@ interface LucidListener : ParseTreeListener {
         override suspend fun enterEnumDec(ctx: LucidParser.EnumDecContext) = this@LucidListener.enterEnumDec(ctx)
         override suspend fun exitEnumDec(ctx: LucidParser.EnumDecContext) = this@LucidListener.exitEnumDec(ctx)
 
-		override suspend fun enterModuleInst(ctx: LucidParser.ModuleInstContext) =
-			this@LucidListener.enterModuleInst(ctx)
+        override suspend fun enterModuleInst(ctx: LucidParser.ModuleInstContext) =
+            this@LucidListener.enterModuleInst(ctx)
         override suspend fun exitModuleInst(ctx: LucidParser.ModuleInstContext) = this@LucidListener.exitModuleInst(ctx)
 
         override suspend fun enterInstCons(ctx: LucidParser.InstConsContext) = this@LucidListener.enterInstCons(ctx)
@@ -1112,99 +1112,99 @@ interface LucidListener : ParseTreeListener {
         override suspend fun enterConList(ctx: LucidParser.ConListContext) = this@LucidListener.enterConList(ctx)
         override suspend fun exitConList(ctx: LucidParser.ConListContext) = this@LucidListener.exitConList(ctx)
 
-		override suspend fun enterConnection(ctx: LucidParser.ConnectionContext) =
-			this@LucidListener.enterConnection(ctx)
+        override suspend fun enterConnection(ctx: LucidParser.ConnectionContext) =
+            this@LucidListener.enterConnection(ctx)
         override suspend fun exitConnection(ctx: LucidParser.ConnectionContext) = this@LucidListener.exitConnection(ctx)
 
-		override suspend fun enterStructMember(ctx: LucidParser.StructMemberContext) =
-			this@LucidListener.enterStructMember(ctx)
+        override suspend fun enterStructMember(ctx: LucidParser.StructMemberContext) =
+            this@LucidListener.enterStructMember(ctx)
 
-		override suspend fun exitStructMember(ctx: LucidParser.StructMemberContext) =
-			this@LucidListener.exitStructMember(ctx)
+        override suspend fun exitStructMember(ctx: LucidParser.StructMemberContext) =
+            this@LucidListener.exitStructMember(ctx)
 
         override suspend fun enterStructDec(ctx: LucidParser.StructDecContext) = this@LucidListener.enterStructDec(ctx)
         override suspend fun exitStructDec(ctx: LucidParser.StructDecContext) = this@LucidListener.exitStructDec(ctx)
 
-		override suspend fun enterFunctionArg(ctx: LucidParser.FunctionArgContext) =
-			this@LucidListener.enterFunctionArg(ctx)
+        override suspend fun enterFunctionArg(ctx: LucidParser.FunctionArgContext) =
+            this@LucidListener.enterFunctionArg(ctx)
 
-		override suspend fun exitFunctionArg(ctx: LucidParser.FunctionArgContext) =
-			this@LucidListener.exitFunctionArg(ctx)
+        override suspend fun exitFunctionArg(ctx: LucidParser.FunctionArgContext) =
+            this@LucidListener.exitFunctionArg(ctx)
 
-		override suspend fun enterFunctionBlock(ctx: LucidParser.FunctionBlockContext) =
-			this@LucidListener.enterFunctionBlock(ctx)
+        override suspend fun enterFunctionBlock(ctx: LucidParser.FunctionBlockContext) =
+            this@LucidListener.enterFunctionBlock(ctx)
 
-		override suspend fun exitFunctionBlock(ctx: LucidParser.FunctionBlockContext) =
-			this@LucidListener.exitFunctionBlock(ctx)
+        override suspend fun exitFunctionBlock(ctx: LucidParser.FunctionBlockContext) =
+            this@LucidListener.exitFunctionBlock(ctx)
 
-		override suspend fun enterFunctionBody(ctx: LucidParser.FunctionBodyContext) =
-			this@LucidListener.enterFunctionBody(ctx)
+        override suspend fun enterFunctionBody(ctx: LucidParser.FunctionBodyContext) =
+            this@LucidListener.enterFunctionBody(ctx)
 
-		override suspend fun exitFunctionBody(ctx: LucidParser.FunctionBodyContext) =
-			this@LucidListener.exitFunctionBody(ctx)
+        override suspend fun exitFunctionBody(ctx: LucidParser.FunctionBodyContext) =
+            this@LucidListener.exitFunctionBody(ctx)
 
         override suspend fun enterTestBlock(ctx: LucidParser.TestBlockContext) = this@LucidListener.enterTestBlock(ctx)
         override suspend fun exitTestBlock(ctx: LucidParser.TestBlockContext) = this@LucidListener.exitTestBlock(ctx)
 
-		override suspend fun enterAlwaysBlock(ctx: LucidParser.AlwaysBlockContext) =
-			this@LucidListener.enterAlwaysBlock(ctx)
+        override suspend fun enterAlwaysBlock(ctx: LucidParser.AlwaysBlockContext) =
+            this@LucidListener.enterAlwaysBlock(ctx)
 
-		override suspend fun exitAlwaysBlock(ctx: LucidParser.AlwaysBlockContext) =
-			this@LucidListener.exitAlwaysBlock(ctx)
+        override suspend fun exitAlwaysBlock(ctx: LucidParser.AlwaysBlockContext) =
+            this@LucidListener.exitAlwaysBlock(ctx)
 
-		override suspend fun enterAlwaysAssign(ctx: LucidParser.AlwaysAssignContext) =
-			this@LucidListener.enterAlwaysAssign(ctx)
+        override suspend fun enterAlwaysAssign(ctx: LucidParser.AlwaysAssignContext) =
+            this@LucidListener.enterAlwaysAssign(ctx)
 
-		override suspend fun exitAlwaysAssign(ctx: LucidParser.AlwaysAssignContext) =
-			this@LucidListener.exitAlwaysAssign(ctx)
+        override suspend fun exitAlwaysAssign(ctx: LucidParser.AlwaysAssignContext) =
+            this@LucidListener.exitAlwaysAssign(ctx)
 
-		override suspend fun enterAlwaysCase(ctx: LucidParser.AlwaysCaseContext) =
-			this@LucidListener.enterAlwaysCase(ctx)
+        override suspend fun enterAlwaysCase(ctx: LucidParser.AlwaysCaseContext) =
+            this@LucidListener.enterAlwaysCase(ctx)
         override suspend fun exitAlwaysCase(ctx: LucidParser.AlwaysCaseContext) = this@LucidListener.exitAlwaysCase(ctx)
 
         override suspend fun enterAlwaysIf(ctx: LucidParser.AlwaysIfContext) = this@LucidListener.enterAlwaysIf(ctx)
         override suspend fun exitAlwaysIf(ctx: LucidParser.AlwaysIfContext) = this@LucidListener.exitAlwaysIf(ctx)
 
-		override suspend fun enterAlwaysRepeat(ctx: LucidParser.AlwaysRepeatContext) =
-			this@LucidListener.enterAlwaysRepeat(ctx)
+        override suspend fun enterAlwaysRepeat(ctx: LucidParser.AlwaysRepeatContext) =
+            this@LucidListener.enterAlwaysRepeat(ctx)
 
-		override suspend fun exitAlwaysRepeat(ctx: LucidParser.AlwaysRepeatContext) =
-			this@LucidListener.exitAlwaysRepeat(ctx)
+        override suspend fun exitAlwaysRepeat(ctx: LucidParser.AlwaysRepeatContext) =
+            this@LucidListener.exitAlwaysRepeat(ctx)
 
-		override suspend fun enterAlwaysFunction(ctx: LucidParser.AlwaysFunctionContext) =
-			this@LucidListener.enterAlwaysFunction(ctx)
+        override suspend fun enterAlwaysFunction(ctx: LucidParser.AlwaysFunctionContext) =
+            this@LucidListener.enterAlwaysFunction(ctx)
 
-		override suspend fun exitAlwaysFunction(ctx: LucidParser.AlwaysFunctionContext) =
-			this@LucidListener.exitAlwaysFunction(ctx)
+        override suspend fun exitAlwaysFunction(ctx: LucidParser.AlwaysFunctionContext) =
+            this@LucidListener.exitAlwaysFunction(ctx)
 
         override suspend fun enterBlock(ctx: LucidParser.BlockContext) = this@LucidListener.enterBlock(ctx)
         override suspend fun exitBlock(ctx: LucidParser.BlockContext) = this@LucidListener.exitBlock(ctx)
 
-		override suspend fun enterAssignStat(ctx: LucidParser.AssignStatContext) =
-			this@LucidListener.enterAssignStat(ctx)
+        override suspend fun enterAssignStat(ctx: LucidParser.AssignStatContext) =
+            this@LucidListener.enterAssignStat(ctx)
         override suspend fun exitAssignStat(ctx: LucidParser.AssignStatContext) = this@LucidListener.exitAssignStat(ctx)
 
-		override suspend fun enterArrayIndex(ctx: LucidParser.ArrayIndexContext) =
-			this@LucidListener.enterArrayIndex(ctx)
+        override suspend fun enterArrayIndex(ctx: LucidParser.ArrayIndexContext) =
+            this@LucidListener.enterArrayIndex(ctx)
         override suspend fun exitArrayIndex(ctx: LucidParser.ArrayIndexContext) = this@LucidListener.exitArrayIndex(ctx)
 
-		override suspend fun enterBitSelectorConst(ctx: LucidParser.BitSelectorConstContext) =
-			this@LucidListener.enterBitSelectorConst(ctx)
+        override suspend fun enterBitSelectorConst(ctx: LucidParser.BitSelectorConstContext) =
+            this@LucidListener.enterBitSelectorConst(ctx)
 
-		override suspend fun exitBitSelectorConst(ctx: LucidParser.BitSelectorConstContext) =
-			this@LucidListener.exitBitSelectorConst(ctx)
+        override suspend fun exitBitSelectorConst(ctx: LucidParser.BitSelectorConstContext) =
+            this@LucidListener.exitBitSelectorConst(ctx)
 
-		override suspend fun enterBitSelectorFixWidth(ctx: LucidParser.BitSelectorFixWidthContext) =
-			this@LucidListener.enterBitSelectorFixWidth(ctx)
+        override suspend fun enterBitSelectorFixWidth(ctx: LucidParser.BitSelectorFixWidthContext) =
+            this@LucidListener.enterBitSelectorFixWidth(ctx)
 
-		override suspend fun exitBitSelectorFixWidth(ctx: LucidParser.BitSelectorFixWidthContext) =
-			this@LucidListener.exitBitSelectorFixWidth(ctx)
+        override suspend fun exitBitSelectorFixWidth(ctx: LucidParser.BitSelectorFixWidthContext) =
+            this@LucidListener.exitBitSelectorFixWidth(ctx)
 
-		override suspend fun enterBitSelection(ctx: LucidParser.BitSelectionContext) =
-			this@LucidListener.enterBitSelection(ctx)
+        override suspend fun enterBitSelection(ctx: LucidParser.BitSelectionContext) =
+            this@LucidListener.enterBitSelection(ctx)
 
-		override suspend fun exitBitSelection(ctx: LucidParser.BitSelectionContext) =
-			this@LucidListener.exitBitSelection(ctx)
+        override suspend fun exitBitSelection(ctx: LucidParser.BitSelectionContext) =
+            this@LucidListener.exitBitSelection(ctx)
 
         override suspend fun enterSignal(ctx: LucidParser.SignalContext) = this@LucidListener.enterSignal(ctx)
         override suspend fun exitSignal(ctx: LucidParser.SignalContext) = this@LucidListener.exitSignal(ctx)
@@ -1224,53 +1224,53 @@ interface LucidListener : ParseTreeListener {
         override suspend fun enterElseStat(ctx: LucidParser.ElseStatContext) = this@LucidListener.enterElseStat(ctx)
         override suspend fun exitElseStat(ctx: LucidParser.ElseStatContext) = this@LucidListener.exitElseStat(ctx)
 
-		override suspend fun enterRepeatStat(ctx: LucidParser.RepeatStatContext) =
-			this@LucidListener.enterRepeatStat(ctx)
+        override suspend fun enterRepeatStat(ctx: LucidParser.RepeatStatContext) =
+            this@LucidListener.enterRepeatStat(ctx)
         override suspend fun exitRepeatStat(ctx: LucidParser.RepeatStatContext) = this@LucidListener.exitRepeatStat(ctx)
 
-		override suspend fun enterRepeatBlock(ctx: LucidParser.RepeatBlockContext) =
-			this@LucidListener.enterRepeatBlock(ctx)
+        override suspend fun enterRepeatBlock(ctx: LucidParser.RepeatBlockContext) =
+            this@LucidListener.enterRepeatBlock(ctx)
 
-		override suspend fun exitRepeatBlock(ctx: LucidParser.RepeatBlockContext) =
-			this@LucidListener.exitRepeatBlock(ctx)
+        override suspend fun exitRepeatBlock(ctx: LucidParser.RepeatBlockContext) =
+            this@LucidListener.exitRepeatBlock(ctx)
 
         override suspend fun enterFunction(ctx: LucidParser.FunctionContext) = this@LucidListener.enterFunction(ctx)
         override suspend fun exitFunction(ctx: LucidParser.FunctionContext) = this@LucidListener.exitFunction(ctx)
 
-		override suspend fun enterFunctionExpr(ctx: LucidParser.FunctionExprContext) =
-			this@LucidListener.enterFunctionExpr(ctx)
+        override suspend fun enterFunctionExpr(ctx: LucidParser.FunctionExprContext) =
+            this@LucidListener.enterFunctionExpr(ctx)
 
-		override suspend fun exitFunctionExpr(ctx: LucidParser.FunctionExprContext) =
-			this@LucidListener.exitFunctionExpr(ctx)
+        override suspend fun exitFunctionExpr(ctx: LucidParser.FunctionExprContext) =
+            this@LucidListener.exitFunctionExpr(ctx)
 
         override suspend fun enterNumber(ctx: LucidParser.NumberContext) = this@LucidListener.enterNumber(ctx)
         override suspend fun exitNumber(ctx: LucidParser.NumberContext) = this@LucidListener.exitNumber(ctx)
 
-		override suspend fun enterExprTernary(ctx: LucidParser.ExprTernaryContext) =
-			this@LucidListener.enterExprTernary(ctx)
+        override suspend fun enterExprTernary(ctx: LucidParser.ExprTernaryContext) =
+            this@LucidListener.enterExprTernary(ctx)
 
-		override suspend fun exitExprTernary(ctx: LucidParser.ExprTernaryContext) =
-			this@LucidListener.exitExprTernary(ctx)
+        override suspend fun exitExprTernary(ctx: LucidParser.ExprTernaryContext) =
+            this@LucidListener.exitExprTernary(ctx)
 
         override suspend fun enterExprNum(ctx: LucidParser.ExprNumContext) = this@LucidListener.enterExprNum(ctx)
         override suspend fun exitExprNum(ctx: LucidParser.ExprNumContext) = this@LucidListener.exitExprNum(ctx)
 
-		override suspend fun enterExprConcat(ctx: LucidParser.ExprConcatContext) =
-			this@LucidListener.enterExprConcat(ctx)
+        override suspend fun enterExprConcat(ctx: LucidParser.ExprConcatContext) =
+            this@LucidListener.enterExprConcat(ctx)
         override suspend fun exitExprConcat(ctx: LucidParser.ExprConcatContext) = this@LucidListener.exitExprConcat(ctx)
 
-		override suspend fun enterExprReduction(ctx: LucidParser.ExprReductionContext) =
-			this@LucidListener.enterExprReduction(ctx)
+        override suspend fun enterExprReduction(ctx: LucidParser.ExprReductionContext) =
+            this@LucidListener.enterExprReduction(ctx)
 
-		override suspend fun exitExprReduction(ctx: LucidParser.ExprReductionContext) =
-			this@LucidListener.exitExprReduction(ctx)
+        override suspend fun exitExprReduction(ctx: LucidParser.ExprReductionContext) =
+            this@LucidListener.exitExprReduction(ctx)
 
-		override suspend fun enterExprInvert(ctx: LucidParser.ExprInvertContext) =
-			this@LucidListener.enterExprInvert(ctx)
+        override suspend fun enterExprInvert(ctx: LucidParser.ExprInvertContext) =
+            this@LucidListener.enterExprInvert(ctx)
         override suspend fun exitExprInvert(ctx: LucidParser.ExprInvertContext) = this@LucidListener.exitExprInvert(ctx)
 
-		override suspend fun enterExprStruct(ctx: LucidParser.ExprStructContext) =
-			this@LucidListener.enterExprStruct(ctx)
+        override suspend fun enterExprStruct(ctx: LucidParser.ExprStructContext) =
+            this@LucidListener.enterExprStruct(ctx)
         override suspend fun exitExprStruct(ctx: LucidParser.ExprStructContext) = this@LucidListener.exitExprStruct(ctx)
 
         override suspend fun enterExprArray(ctx: LucidParser.ExprArrayContext) = this@LucidListener.enterExprArray(ctx)
@@ -1279,52 +1279,52 @@ interface LucidListener : ParseTreeListener {
         override suspend fun enterExprShift(ctx: LucidParser.ExprShiftContext) = this@LucidListener.enterExprShift(ctx)
         override suspend fun exitExprShift(ctx: LucidParser.ExprShiftContext) = this@LucidListener.exitExprShift(ctx)
 
-		override suspend fun enterExprAddSub(ctx: LucidParser.ExprAddSubContext) =
-			this@LucidListener.enterExprAddSub(ctx)
+        override suspend fun enterExprAddSub(ctx: LucidParser.ExprAddSubContext) =
+            this@LucidListener.enterExprAddSub(ctx)
         override suspend fun exitExprAddSub(ctx: LucidParser.ExprAddSubContext) = this@LucidListener.exitExprAddSub(ctx)
 
-		override suspend fun enterExprLogical(ctx: LucidParser.ExprLogicalContext) =
-			this@LucidListener.enterExprLogical(ctx)
+        override suspend fun enterExprLogical(ctx: LucidParser.ExprLogicalContext) =
+            this@LucidListener.enterExprLogical(ctx)
 
-		override suspend fun exitExprLogical(ctx: LucidParser.ExprLogicalContext) =
-			this@LucidListener.exitExprLogical(ctx)
+        override suspend fun exitExprLogical(ctx: LucidParser.ExprLogicalContext) =
+            this@LucidListener.exitExprLogical(ctx)
 
-		override suspend fun enterExprNegate(ctx: LucidParser.ExprNegateContext) =
-			this@LucidListener.enterExprNegate(ctx)
+        override suspend fun enterExprNegate(ctx: LucidParser.ExprNegateContext) =
+            this@LucidListener.enterExprNegate(ctx)
         override suspend fun exitExprNegate(ctx: LucidParser.ExprNegateContext) = this@LucidListener.exitExprNegate(ctx)
 
         override suspend fun enterExprGroup(ctx: LucidParser.ExprGroupContext) = this@LucidListener.enterExprGroup(ctx)
         override suspend fun exitExprGroup(ctx: LucidParser.ExprGroupContext) = this@LucidListener.exitExprGroup(ctx)
 
-		override suspend fun enterExprBitwise(ctx: LucidParser.ExprBitwiseContext) =
-			this@LucidListener.enterExprBitwise(ctx)
+        override suspend fun enterExprBitwise(ctx: LucidParser.ExprBitwiseContext) =
+            this@LucidListener.enterExprBitwise(ctx)
 
-		override suspend fun exitExprBitwise(ctx: LucidParser.ExprBitwiseContext) =
-			this@LucidListener.exitExprBitwise(ctx)
+        override suspend fun exitExprBitwise(ctx: LucidParser.ExprBitwiseContext) =
+            this@LucidListener.exitExprBitwise(ctx)
 
-		override suspend fun enterExprFunction(ctx: LucidParser.ExprFunctionContext) =
-			this@LucidListener.enterExprFunction(ctx)
+        override suspend fun enterExprFunction(ctx: LucidParser.ExprFunctionContext) =
+            this@LucidListener.enterExprFunction(ctx)
 
-		override suspend fun exitExprFunction(ctx: LucidParser.ExprFunctionContext) =
-			this@LucidListener.exitExprFunction(ctx)
+        override suspend fun exitExprFunction(ctx: LucidParser.ExprFunctionContext) =
+            this@LucidListener.exitExprFunction(ctx)
 
-		override suspend fun enterExprCompare(ctx: LucidParser.ExprCompareContext) =
-			this@LucidListener.enterExprCompare(ctx)
+        override suspend fun enterExprCompare(ctx: LucidParser.ExprCompareContext) =
+            this@LucidListener.enterExprCompare(ctx)
 
-		override suspend fun exitExprCompare(ctx: LucidParser.ExprCompareContext) =
-			this@LucidListener.exitExprCompare(ctx)
+        override suspend fun exitExprCompare(ctx: LucidParser.ExprCompareContext) =
+            this@LucidListener.exitExprCompare(ctx)
 
         override suspend fun enterExprDup(ctx: LucidParser.ExprDupContext) = this@LucidListener.enterExprDup(ctx)
         override suspend fun exitExprDup(ctx: LucidParser.ExprDupContext) = this@LucidListener.exitExprDup(ctx)
 
-		override suspend fun enterExprMultDiv(ctx: LucidParser.ExprMultDivContext) =
-			this@LucidListener.enterExprMultDiv(ctx)
+        override suspend fun enterExprMultDiv(ctx: LucidParser.ExprMultDivContext) =
+            this@LucidListener.enterExprMultDiv(ctx)
 
-		override suspend fun exitExprMultDiv(ctx: LucidParser.ExprMultDivContext) =
-			this@LucidListener.exitExprMultDiv(ctx)
+        override suspend fun exitExprMultDiv(ctx: LucidParser.ExprMultDivContext) =
+            this@LucidListener.exitExprMultDiv(ctx)
 
-		override suspend fun enterExprSignal(ctx: LucidParser.ExprSignalContext) =
-			this@LucidListener.enterExprSignal(ctx)
+        override suspend fun enterExprSignal(ctx: LucidParser.ExprSignalContext) =
+            this@LucidListener.enterExprSignal(ctx)
         override suspend fun exitExprSignal(ctx: LucidParser.ExprSignalContext) = this@LucidListener.exitExprSignal(ctx)
 
         override suspend fun enterName(ctx: LucidParser.NameContext) = this@LucidListener.enterName(ctx)

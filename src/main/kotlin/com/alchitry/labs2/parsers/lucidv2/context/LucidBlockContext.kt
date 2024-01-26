@@ -86,6 +86,7 @@ class LucidBlockContext(
     val blockParser = blockParser ?: BlockParser(this)
     val signalDriver = signalDriver ?: SignalDriverParser(this)
     val verilogConverter = VerilogConverter(this)
+    val pruner = LucidPruner(this)
 
     private val listenerMap = ParseStage.entries.associateWith {
         when (it) {
@@ -128,6 +129,10 @@ class LucidBlockContext(
             ParseStage.Convert -> listOf(
                 this.signal,
                 this.verilogConverter
+            )
+
+            ParseStage.Prune -> listOf(
+                this.pruner
             )
         }
     }
@@ -179,6 +184,8 @@ class LucidBlockContext(
         if (notationCollector.hasErrors)
             return false
         stage = ParseStage.Drivers
+        walk(t)
+        stage = ParseStage.Prune
         walk(t)
         stage = ParseStage.Evaluation
         return notationCollector.hasNoErrors
