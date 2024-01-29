@@ -27,7 +27,7 @@ data class Dff(
         context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             clk.valueFlow.collect {
                 if (!context.initializing)
-                    context.queueEvaluation(this@Dff)
+                    context.evaluationQueue.add(this@Dff)
             }
         }
     }

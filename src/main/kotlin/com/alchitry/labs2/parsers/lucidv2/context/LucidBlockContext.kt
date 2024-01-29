@@ -185,13 +185,14 @@ class LucidBlockContext(
             return false
         stage = ParseStage.Drivers
         walk(t)
-        stage = ParseStage.Prune
-        walk(t)
+//        stage = ParseStage.Prune
+//        walk(t)
         stage = ParseStage.Evaluation
         return notationCollector.hasNoErrors
     }
 
-    suspend fun walk(t: ParseTree) = ParseTreeMultiWalker.walk(listenerMap[stage]!!, t, stage.filter)
+    suspend fun walk(t: ParseTree) =
+        ParseTreeMultiWalker.walk(listenerMap[stage]!!, t, stage.filter, stage == ParseStage.Convert)
 
     suspend fun checkParameters(errorListener: ErrorListener = notationCollector): Boolean {
         val instance = (instance as? ModuleInstance)

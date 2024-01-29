@@ -25,7 +25,7 @@ class AlwaysBlock(
         }
         this.context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             onAnyChange(dependencies.map { it.valueFlow }) {
-                this@AlwaysBlock.context.project.queueEvaluation(this@AlwaysBlock)
+                this@AlwaysBlock.context.project.evaluationQueue.add(this@AlwaysBlock)
             }
         }
     }

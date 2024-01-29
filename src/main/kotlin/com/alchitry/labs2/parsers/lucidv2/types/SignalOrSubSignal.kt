@@ -62,7 +62,7 @@ sealed interface SignalOrSubSignal : Measurable {
 
         context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             valueFlow.collect {
-                context.queueEvaluation(evaluable)
+                context.evaluationQueue.add(evaluable)
             }
         }
     }

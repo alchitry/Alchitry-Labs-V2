@@ -7,9 +7,8 @@ import com.alchitry.labs2.parsers.notations.NotationManager
 import com.alchitry.labs2.project.QueueExhaustionException
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.*
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.io.Closeable
+import java.util.concurrent.ConcurrentHashMap
 
 class ProjectContext(val notationManager: NotationManager) : Closeable {
     var top: ModuleInstance? = null
@@ -19,8 +18,7 @@ class ProjectContext(val notationManager: NotationManager) : Closeable {
     private val testBenches = mutableMapOf<String, TestBench>()
     val scope = CoroutineScope(Dispatchers.Default)
 
-    private val evaluationQueue = mutableSetOf<Evaluable>()
-    private val queueLock = Mutex()
+    val evaluationQueue = ConcurrentHashMap.newKeySet<Evaluable>()
 
     var initializing: Boolean = false
         private set
@@ -31,28 +29,13 @@ class ProjectContext(val notationManager: NotationManager) : Closeable {
         initializing = false
     }
 
-    suspend fun clearQueue() {
-        queueLock.withLock {
-            evaluationQueue.clear()
-        }
-    }
-
-    suspend fun queueEvaluation(evaluable: Evaluable) {
-        queueLock.withLock {
-            evaluationQueue.add(evaluable)
-        }
-    }
-
     suspend fun processQueue() {
         repeat(1000) {
-            val items = queueLock.withLock {
-                if (evaluationQueue.isEmpty())
-                    return
+            if (evaluationQueue.isEmpty())
+                return
 
-                evaluationQueue.toList().also {
-                    evaluationQueue.clear()
-                }
-            }
+            val items = evaluationQueue.toList()
+            evaluationQueue.clear()
 
             coroutineScope {
                 items.forEach {

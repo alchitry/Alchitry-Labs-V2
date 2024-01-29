@@ -9,6 +9,7 @@ import com.alchitry.labs2.parsers.lucidv2.values.BitListValue
 import helpers.LucidTester
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
 
@@ -109,6 +110,9 @@ class EvaluationBenchmarks {
             tester.project.processQueue()
             loopCount += 1
         }
-        println("Evaluation rate: ${loopCount / 10} hz")
+        val rate = loopCount / 10
+        val relative = (rate.toFloat() / 845f * 100f).roundToInt()
+        println("Evaluation rate: $rate hz")
+        println("Relative performance: $relative%")
     }
 }

@@ -8,29 +8,34 @@ import org.antlr.v4.kotlinruntime.tree.*
  * Used to walk through a ParseTree with multiple listeners just like when doing the actual parse.
  */
 object ParseTreeMultiWalker {
-    suspend fun walk(listeners: List<AnyParseTreeListener>, t: ParseTree, filter: WalkerFilter = WalkerFilter.None) {
-        if (t is ErrorNode) {
-            for (listener in listeners) {
-                when (listener) {
-                    is ParseTreeListener -> listener.visitErrorNode(t)
-                    is SuspendParseTreeListener -> listener.visitErrorNode(t)
-                }
-            }
-            return
-        }
+    suspend fun walk(
+        listeners: List<AnyParseTreeListener>,
+        t: ParseTree,
+        filter: WalkerFilter = WalkerFilter.None,
+        ignoreSkip: Boolean = false
+    ) {
+//        if (t is ErrorNode) {
+//            for (listener in listeners) {
+//                when (listener) {
+//                    is ParseTreeListener -> listener.visitErrorNode(t)
+//                    is SuspendParseTreeListener -> listener.visitErrorNode(t)
+//                }
+//            }
+//            return
+//        }
 
-        if (t is TerminalNode) {
-            for (listener in listeners) {
-                when (listener) {
-                    is ParseTreeListener -> listener.visitTerminal(t)
-                    is SuspendParseTreeListener -> listener.visitTerminal(t)
-                }
-            }
-            return
-        }
+//        if (t is TerminalNode) {
+//            for (listener in listeners) {
+//                when (listener) {
+//                    is ParseTreeListener -> listener.visitTerminal(t)
+//                    is SuspendParseTreeListener -> listener.visitTerminal(t)
+//                }
+//            }
+//            return
+//        }
 
-        val r = t as RuleNode
-        if (!r.skip) {
+        val r = t as? RuleNode ?: return
+        if (ignoreSkip || !r.skip) {
             enterRule(listeners, r)
             for (i in 0 until r.childCount) {
                 val child = r.getChild(i) ?: continue

@@ -50,7 +50,7 @@ class DynamicExpr(
         dependencies.forEach { it.isRead = true }
         context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             onAnyChange(dependencies.map { it.valueFlow }) {
-                context.project.queueEvaluation(this@DynamicExpr)
+                context.project.evaluationQueue.add(this@DynamicExpr)
             }
         }
     }
@@ -63,7 +63,7 @@ class DynamicExpr(
             val evaluable = Evaluable { signal.write(value) }
             context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
                 valueFlow.collect {
-                    context.project.queueEvaluation(evaluable)
+                    context.project.evaluationQueue.add(evaluable)
                 }
             }
         }
@@ -83,7 +83,7 @@ class DynamicExpr(
         val evaluable = Evaluable { signal.write(value) }
         context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
             valueFlow.collect {
-                context.project.queueEvaluation(evaluable)
+                context.project.evaluationQueue.add(evaluable)
             }
         }
     }

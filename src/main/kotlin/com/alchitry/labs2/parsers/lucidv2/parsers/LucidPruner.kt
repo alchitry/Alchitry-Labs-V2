@@ -26,6 +26,14 @@ data class LucidPruner(
         }
     }
 
+    override fun enterSemi(ctx: LucidParser.SemiContext) {
+        ctx.skip = true
+    }
+
+    override fun enterName(ctx: LucidParser.NameContext) {
+        ctx.skip = true
+    }
+
     override fun enterEveryRule(ctx: ParserRuleContext) {
         if (ctx is LucidParser.ExprContext) {
             val value = context.expr.resolve(ctx)
