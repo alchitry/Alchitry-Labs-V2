@@ -254,7 +254,7 @@ data class ExprParser(
     }
 
     override suspend fun exitExprSignal(ctx: ExprSignalContext) {
-        if (canSkip(ctx)) return
+        //if (canSkip(ctx)) return
         val signalCtx = ctx.signal() ?: return
 
         val signal = context.resolve(signalCtx) ?: return
@@ -268,14 +268,7 @@ data class ExprParser(
             }
         }
 
-        // mark this signal as not constant if any of the bit selections aren't constant
-        val variable = (signal is SubSignal) && signalCtx.bitSelection().any { bitSelectionContext ->
-            bitSelectionContext.arrayIndex().any { arrayIndexContext ->
-                arrayIndexContext.expr()?.let { values[it] }?.constant == false
-            } || bitSelectionContext.bitSelector()?.children?.any { it is ExprContext && values[it]?.constant == false } == true
-        }
-
-        values[ctx] = signal.read(context.evalContext).let { if (variable) it.asMutable() else it }
+        values[ctx] = signal.read(context.evalContext)
 
         // add dependencies for all signals used in bit selection as well as this signal
         if (dependencies[ctx] == null) {

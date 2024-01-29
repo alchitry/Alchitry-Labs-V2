@@ -141,13 +141,15 @@ data class SignalParser(
             }
         }.toMap()
 
-//        ctx.skip = selectionChildren.all {
-//            when (it) {
-//                is NameContext -> true
-//                is BitSelectionContext -> it.skip
-//                else -> error("Signal child was not a NameContext or BitSelectionContext")
-//            }
-//        }
+        // don't skip local signals as they change
+        if (context !is LucidBlockContext || !context.localSignals.contains(signal.name))
+            ctx.skip = selectionChildren.all {
+                when (it) {
+                    is NameContext -> true
+                    is BitSelectionContext -> it.skip
+                    else -> error("Signal child was not a NameContext or BitSelectionContext")
+                }
+            }
 
         val sigSelection = selectionMap.keys.toList()
 

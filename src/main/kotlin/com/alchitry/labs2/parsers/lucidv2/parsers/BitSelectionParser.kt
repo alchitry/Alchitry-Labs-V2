@@ -52,7 +52,6 @@ data class BitSelectionParser(
         val expr = ctx.expr()
         if (expr.size != 2) return
 
-
         val maxCtx = ctx.expr(0) ?: return
         val minCtx = ctx.expr(1) ?: return
 
