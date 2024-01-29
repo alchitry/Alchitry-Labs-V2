@@ -1,10 +1,8 @@
 package com.alchitry.labs2.parsers.lucidv2.types
 
 import com.alchitry.labs2.parsers.Evaluable
-import com.alchitry.labs2.parsers.SynchronizedSharedFlow
 import com.alchitry.labs2.parsers.lucidv2.values.SimpleValue
 import com.alchitry.labs2.parsers.lucidv2.values.Value
-import kotlinx.coroutines.flow.Flow
 
 /**
  * A signal whose reads are delegated to a proxy. This is used by inout ports on modules since the read value
@@ -22,11 +20,21 @@ class ProxySignal(
     override fun read(evalContext: Evaluable?): Value = onRead(evalContext)
     fun baseRead(evalContext: Evaluable?) = super.read(evalContext)
 
-    private val mutableReadFlow = SynchronizedSharedFlow<Value>()
-    override val valueFlow: Flow<Value> = mutableReadFlow.asFlow()
-    val writeFlow = super.valueFlow
+    fun addWriteDependant(evaluable: Evaluable) {
+        super.addDependant(evaluable)
+    }
 
-    suspend fun updateRead(value: Value = read()) {
-        mutableReadFlow.emit(value)
+    private var proxyDependants = mutableSetOf<Evaluable>()
+
+    override fun addDependant(dependant: Evaluable) {
+        proxyDependants.add(dependant)
+    }
+
+    override fun removeDependant(dependant: Evaluable) {
+        proxyDependants.remove(dependant)
+    }
+
+    suspend fun updateRead() {
+        proxyDependants.forEach { it.evaluate() }
     }
 }

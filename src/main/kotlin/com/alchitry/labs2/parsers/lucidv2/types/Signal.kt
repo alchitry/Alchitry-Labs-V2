@@ -1,13 +1,11 @@
 package com.alchitry.labs2.parsers.lucidv2.types
 
 import com.alchitry.labs2.parsers.Evaluable
-import com.alchitry.labs2.parsers.SynchronizedSharedFlow
 import com.alchitry.labs2.parsers.lucidv2.signals.snapshot.Snapshot
 import com.alchitry.labs2.parsers.lucidv2.signals.snapshot.Snapshotable
 import com.alchitry.labs2.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs2.parsers.lucidv2.values.SimpleValue
 import com.alchitry.labs2.parsers.lucidv2.values.Value
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.sync.Mutex
 
 open class Signal(
@@ -19,8 +17,7 @@ open class Signal(
 ) : SignalOrSubSignal, SignalOrParent, Snapshotable {
     fun select(selection: SignalSelection) = SubSignal(this, selection)
 
-    private val mutableValueFlow = SynchronizedSharedFlow<Value>()
-    override val valueFlow: Flow<Value> get() = mutableValueFlow.asFlow()
+    private var dependants = mutableSetOf<Evaluable>()
 
     private var setEvalContext: Evaluable? = null
     private var nextValue: Value? = null
@@ -30,6 +27,14 @@ open class Signal(
 
     var hasDriver: Boolean = false
     var isRead: Boolean = false
+
+    override fun addDependant(dependant: Evaluable) {
+        dependants.add(dependant)
+    }
+
+    override fun removeDependant(dependant: Evaluable) {
+        dependants.remove(dependant)
+    }
 
     override fun takeSnapshot() = Snapshot(name, read())
 
@@ -53,10 +58,14 @@ open class Signal(
         nextValue = resizedValue.withSign(signed).asMutable()
     }
 
+    var lastValue: Value? = null
     override suspend fun publish() {
         nextValue?.let {
             value = it
-            mutableValueFlow.emit(it)
+            if (lastValue != it) { // only do something on a change
+                dependants.forEach { evaluable -> evaluable.evaluate() }
+                lastValue = it
+            }
         }
         nextValue = null
         setEvalContext = null

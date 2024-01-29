@@ -128,7 +128,7 @@ class ModuleInstanceArray(
             when (port) {
                 is Input -> Input(port.name, project, this, width, port.signed)
                 is Output -> Output(port.name, project, this, width, port.signed)
-                is Inout -> Inout(port.name, project, this, width, port.signed)
+                is Inout -> Inout(port.name, this, width, port.signed)
             }
         }
 

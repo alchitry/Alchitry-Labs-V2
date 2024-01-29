@@ -50,7 +50,11 @@ data class ExprParser(
      * Returns true if the value at this node doesn't need to be recalculated
      */
     private fun canSkip(ctx: ParseTree): Boolean {
-        return values[ctx]?.constant == true
+        if (values[ctx]?.constant == true) {
+            ctx.skip = true
+            return true
+        }
+        return false
     }
 
     override suspend fun enterTestBlock(ctx: TestBlockContext) {
@@ -70,22 +74,26 @@ data class ExprParser(
     }
 
     override suspend fun exitBitSelectorFixWidth(ctx: BitSelectorFixWidthContext) {
+        if (dependencies[ctx] != null) return
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
     }
 
     override suspend fun exitBitSelectorConst(ctx: BitSelectorConstContext) {
+        if (dependencies[ctx] != null) return
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
     }
 
     override suspend fun exitArrayIndex(ctx: ArrayIndexContext) {
+        if (dependencies[ctx] != null) return
         dependencies[ctx.expr() ?: return]?.let { dependencies[ctx] = it }
     }
 
     override suspend fun exitNumber(ctx: NumberContext) {
+        ctx.skip = true
         if (canSkip(ctx)) return
         dependencies[ctx] = emptySet()
 
@@ -194,6 +202,7 @@ data class ExprParser(
     }
 
     override suspend fun exitStructConst(ctx: StructConstContext) {
+        ctx.skip = true
         if (canSkip(ctx)) return
 
         val type = ctx.structType()?.let { context.resolve(it) } ?: return
@@ -268,15 +277,17 @@ data class ExprParser(
 
         values[ctx] = signal.read(context.evalContext).let { if (variable) it.asMutable() else it }
 
-        val parentSig = when (signal) {
-            is Signal -> signal
-            is SubSignal -> signal.parent
-        }
-
         // add dependencies for all signals used in bit selection as well as this signal
-        dependencies[ctx] = mutableSetOf(parentSig).apply {
-            signalCtx.bitSelection().forEach { child ->
-                dependencies[child]?.let { addAll(it) }
+        if (dependencies[ctx] == null) {
+            val parentSig = when (signal) {
+                is Signal -> signal
+                is SubSignal -> signal.parent
+            }
+
+            dependencies[ctx] = mutableSetOf(parentSig).apply {
+                signalCtx.bitSelection().forEach { child ->
+                    dependencies[child]?.let { addAll(it) }
+                }
             }
         }
     }
@@ -633,6 +644,7 @@ data class ExprParser(
                 constant = constant,
                 signed = signed
             ) { Bit.Bx }
+
             operand == "+" -> BitListValue(
                 bigInt = op1.toBigInt()!!.add(op2.toBigInt()),
                 constant = constant,

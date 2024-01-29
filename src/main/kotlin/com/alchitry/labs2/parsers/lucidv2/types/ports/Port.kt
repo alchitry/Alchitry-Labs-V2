@@ -34,7 +34,7 @@ data class Port(
         return when (direction) {
             SignalDirection.Read -> Input(name, context, parent, instWidth, signed)
             SignalDirection.Write -> Output(name, context, parent, instWidth, signed)
-            SignalDirection.Both -> Inout(name, context, parent, instWidth, signed)
+            SignalDirection.Both -> Inout(name, parent, instWidth, signed)
         }
     }
 }

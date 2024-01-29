@@ -4,7 +4,6 @@ import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.lucidv2.values.Value
 import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 sealed interface SignalOrSubSignal : Measurable {
@@ -17,7 +16,13 @@ sealed interface SignalOrSubSignal : Measurable {
     fun read(evalContext: Evaluable? = null): Value
     suspend fun write(v: Value)
 
-    val valueFlow: Flow<Value>
+    /**
+     * Adds an [Evaluable] to be queued every time the value of this signal changes.
+     */
+    fun addDependant(dependant: Evaluable)
+    fun addDependant(onChange: suspend () -> Unit) = addDependant(Evaluable(onChange))
+
+    fun removeDependant(dependant: Evaluable)
 
     /**
      * Sets the value of this signal without publishing the change. This value will only be accessible when the same
@@ -56,15 +61,8 @@ sealed interface SignalOrSubSignal : Measurable {
             sig.write(read())
         }
 
-        val evaluable = Evaluable {
+        addDependant {
             sig.write(read())
         }
-
-        context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
-            valueFlow.collect {
-                context.evaluationQueue.add(evaluable)
-            }
-        }
     }
-
 }

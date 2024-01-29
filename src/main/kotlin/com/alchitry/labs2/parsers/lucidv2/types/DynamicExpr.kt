@@ -1,14 +1,11 @@
 package com.alchitry.labs2.parsers.lucidv2.types
 
 import com.alchitry.labs2.parsers.Evaluable
-import com.alchitry.labs2.parsers.SynchronizedSharedFlow
 import com.alchitry.labs2.parsers.grammar.LucidParser.ExprContext
 import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs2.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs2.parsers.lucidv2.values.Value
-import com.alchitry.labs2.parsers.onAnyChange
 import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 /**
@@ -26,8 +23,13 @@ class DynamicExpr(
     override val name = "DynamicExpr(${expr.text})"
     override val parent: SignalParent? = null
     private val context = context.withEvalContext(this, name)
-    private val mutableValueFlow = SynchronizedSharedFlow<Value>()
-    val valueFlow: Flow<Value> get() = mutableValueFlow.asFlow()
+
+    private val dependants = mutableSetOf<Evaluable>()
+    fun addDependant(dependent: Evaluable) {
+        dependants.add(dependent)
+    }
+
+    fun addDependant(onChange: suspend () -> Unit) = addDependant(Evaluable(onChange))
 
     fun withContext(context: LucidBlockContext) = DynamicExpr(expr, context, widthConstraint)
 
@@ -48,11 +50,8 @@ class DynamicExpr(
         val dependencies =
             context.expr.resolveDependencies(expr) ?: error("Failed to resolve dependencies for ${expr.text}")
         dependencies.forEach { it.isRead = true }
-        context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
-            onAnyChange(dependencies.map { it.valueFlow }) {
-                context.project.evaluationQueue.add(this@DynamicExpr)
-            }
-        }
+        val evaluable = Evaluable { context.project.evaluationQueue.add(this@DynamicExpr) }
+        dependencies.forEach { it.addDependant(evaluable) }
     }
 
     override fun getSignal(name: String): Signal = asSignal(name)
@@ -61,10 +60,8 @@ class DynamicExpr(
         return Signal(name, SignalDirection.Read, this, value).also { signal ->
             signal.hasDriver = true
             val evaluable = Evaluable { signal.write(value) }
-            context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
-                valueFlow.collect {
-                    context.project.evaluationQueue.add(evaluable)
-                }
+            addDependant {
+                context.project.evaluationQueue.add(evaluable)
             }
         }
     }
@@ -81,10 +78,8 @@ class DynamicExpr(
         }
 
         val evaluable = Evaluable { signal.write(value) }
-        context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
-            valueFlow.collect {
-                context.project.evaluationQueue.add(evaluable)
-            }
+        addDependant {
+            context.project.evaluationQueue.add(evaluable)
         }
     }
 
@@ -97,6 +92,7 @@ class DynamicExpr(
         return DynamicExpr(expr, context, width)
     }
 
+    private var lastValue: Value? = null
     override suspend fun evaluate() {
         context.walk(expr)
 
@@ -113,6 +109,9 @@ class DynamicExpr(
             error("Dynamic expression value attempted to change widths to something incompatible!")
 
         value = newValue.resizeToMatch(width)
-        mutableValueFlow.emit(newValue)
+        if (lastValue != value) {
+            dependants.forEach { it.evaluate() }
+            lastValue = value
+        }
     }
 }

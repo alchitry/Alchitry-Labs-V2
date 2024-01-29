@@ -58,7 +58,8 @@ class LucidExprEval(
         ParseTreeMultiWalker.walk(
             listeners,
             t,
-            WalkerFilter.None
+            WalkerFilter.None,
+            ignoreSkip = false
         )
     }
 

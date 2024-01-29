@@ -31,16 +31,24 @@ data class BitSelectionParser(
         } ?: emptyList()
     }
 
-    private fun canSkip(ctx: ParserRuleContext): Boolean {
+    private fun setSkip(ctx: ParserRuleContext): Boolean {
         bounds[ctx] ?: return false
-        return ctx.children?.filterIsInstance(ExprContext::class.java)?.all { context.resolve(it)?.constant == true }
-            ?: return false
+        val skip =
+            ctx.children?.all { it !is ExprContext || context.resolve(it)?.constant == true }
+                ?: return false
+        if (skip)
+            ctx.skip = true
+        return skip
+    }
+
+    override fun exitBitSelection(ctx: BitSelectionContext) {
+        if (ctx.children?.all { it.skip } == true) {
+            ctx.skip = true
+        }
     }
 
     /* Bounds Section */
     override fun exitBitSelectorConst(ctx: BitSelectorConstContext) {
-        if (canSkip(ctx)) return
-
         val expr = ctx.expr()
         if (expr.size != 2) return
 
@@ -83,11 +91,10 @@ data class BitSelectionParser(
             return
         }
         bounds[ctx] = BitSelection(minInt..maxInt, ctx, SelectionContext.Fixed(minCtx, maxCtx))
+        setSkip(ctx)
     }
 
     override fun exitBitSelectorFixWidth(ctx: BitSelectorFixWidthContext) {
-        if (canSkip(ctx)) return
-
         val expr = ctx.expr()
         if (expr.size != 2) return
 
@@ -148,11 +155,10 @@ data class BitSelectionParser(
         }
 
         bounds[ctx] = BitSelection(selection, ctx, selectionContext)
+        setSkip(ctx)
     }
 
     override fun exitArrayIndex(ctx: ArrayIndexContext) {
-        if (canSkip(ctx)) return
-
         val expr = ctx.expr() ?: return
 
         val index = context.resolve(expr) ?: return
@@ -175,5 +181,6 @@ data class BitSelectionParser(
         }
 
         bounds[ctx] = BitSelection(value..value, ctx, SelectionContext.Single(expr))
+        setSkip(ctx)
     }
 }

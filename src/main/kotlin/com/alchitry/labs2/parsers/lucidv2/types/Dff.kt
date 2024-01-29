@@ -7,8 +7,6 @@ import com.alchitry.labs2.parsers.lucidv2.signals.snapshot.Snapshotable
 import com.alchitry.labs2.parsers.lucidv2.values.Bit
 import com.alchitry.labs2.parsers.lucidv2.values.SimpleValue
 import com.alchitry.labs2.parsers.lucidv2.values.Value
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.launch
 
 data class Dff(
     private val context: ProjectContext,
@@ -24,11 +22,9 @@ data class Dff(
     private var lastClk: Bit? = null
 
     init {
-        context.scope.launch(start = CoroutineStart.UNDISPATCHED) {
-            clk.valueFlow.collect {
-                if (!context.initializing)
-                    context.evaluationQueue.add(this@Dff)
-            }
+        clk.addDependant {
+            if (!context.initializing)
+                context.evaluationQueue.add(this@Dff)
         }
     }
 

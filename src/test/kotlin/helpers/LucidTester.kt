@@ -202,6 +202,9 @@ class LucidTester(vararg val files: SourceFile) {
             }
         }
         add(topInstance)
-        return instances.mapValues { it.value.context.convertToVerilog() ?: error("Missing verilog for ${it.key}") }
+        return instances.mapValues {
+            assert(project.notationManager.hasNoErrors) { project.notationManager.getReport() }
+            it.value.context.convertToVerilog() ?: error("Missing verilog for ${it.key}")
+        }.also { assert(project.notationManager.hasNoErrors) { project.notationManager.getReport() } }
     }
 }

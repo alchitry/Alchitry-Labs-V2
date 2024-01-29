@@ -64,21 +64,21 @@ class DynamicEvalTests {
         val dff = Dff(test.project, "myDff", b0, clkExpr, null, false)
 
 
-            clk.write(b0)
+        clk.write(b0)
         test.project.processQueue()
-            dff.d.write(b1)
-            clk.write(b1)
+        dff.d.write(b1)
+        clk.write(b1)
         test.project.processQueue()
-            assertEquals(b1, dff.q.read())
+        assertEquals(b1, dff.q.read())
 
-            clk.write(b0)
-            dff.d.write(b0)
+        clk.write(b0)
+        dff.d.write(b0)
         test.project.processQueue()
-            assertEquals(b1, dff.q.read())
+        assertEquals(b1, dff.q.read())
 
-            clk.write(b1)
+        clk.write(b1)
         test.project.processQueue()
-            assertEquals(b0, dff.q.read())
+        assertEquals(b0, dff.q.read())
 
     }
 

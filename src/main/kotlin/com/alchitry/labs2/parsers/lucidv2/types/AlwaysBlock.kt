@@ -4,9 +4,6 @@ import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.grammar.LucidParser.AlwaysBlockContext
 import com.alchitry.labs2.parsers.grammar.LucidParser.RepeatStatContext
 import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
-import com.alchitry.labs2.parsers.onAnyChange
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.launch
 
 class AlwaysBlock(
     context: LucidBlockContext,
@@ -23,11 +20,10 @@ class AlwaysBlock(
             require(!it.hasDriver) { "Signal \"${it.name}\" is already driven!" }
             it.hasDriver = true
         }
-        this.context.project.scope.launch(start = CoroutineStart.UNDISPATCHED) {
-            onAnyChange(dependencies.map { it.valueFlow }) {
-                this@AlwaysBlock.context.project.evaluationQueue.add(this@AlwaysBlock)
-            }
+        val evaluable = Evaluable {
+            this@AlwaysBlock.context.project.evaluationQueue.add(this@AlwaysBlock)
         }
+        dependencies.forEach { it.addDependant(evaluable) }
     }
 
     override suspend fun evaluate() {

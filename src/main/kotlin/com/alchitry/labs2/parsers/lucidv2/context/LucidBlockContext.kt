@@ -185,14 +185,14 @@ class LucidBlockContext(
             return false
         stage = ParseStage.Drivers
         walk(t)
-//        stage = ParseStage.Prune
-//        walk(t)
+        stage = ParseStage.Prune
+        walk(t)
         stage = ParseStage.Evaluation
         return notationCollector.hasNoErrors
     }
 
-    suspend fun walk(t: ParseTree) =
-        ParseTreeMultiWalker.walk(listenerMap[stage]!!, t, stage.filter, stage == ParseStage.Convert)
+    suspend fun walk(t: ParseTree, ignoreSkip: Boolean = stage != ParseStage.Evaluation) =
+        ParseTreeMultiWalker.walk(listenerMap[stage]!!, t, stage.filter, ignoreSkip)
 
     suspend fun checkParameters(errorListener: ErrorListener = notationCollector): Boolean {
         val instance = (instance as? ModuleInstance)
@@ -200,7 +200,7 @@ class LucidBlockContext(
         stage = ParseStage.Evaluation
         instance.module.parameters.values.forEach { param ->
             param.constraint?.let {
-                walk(it)
+                walk(it, true)
                 if (resolve(it)?.isTrue()?.bit != Bit.B1) {
                     errorListener.reportError(
                         it,
@@ -219,8 +219,8 @@ class LucidBlockContext(
         val instance = (instance as? ModuleInstance)
             ?: error("convertToVerilog() can only be called on contexts with a ModuleInstance!")
         stage = ParseStage.Convert
-        walk(instance.module.context)
-        return verilogConverter.verilog[instance.module.context]
+        walk(instance.moduleContext)
+        return verilogConverter.verilog[instance.moduleContext]
     }
 
     override fun resolve(exprCtx: ExprContext) = expr.resolve(exprCtx)

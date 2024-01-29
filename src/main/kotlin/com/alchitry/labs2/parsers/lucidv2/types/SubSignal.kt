@@ -2,9 +2,6 @@ package com.alchitry.labs2.parsers.lucidv2.types
 
 import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.lucidv2.values.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.withLock
 
 data class SubSignal(
@@ -18,8 +15,30 @@ data class SubSignal(
     override val direction: SignalDirection
         get() = parent.direction
 
-    override val valueFlow: Flow<Value>
-        get() = parent.valueFlow.map { it.select(selection) }.distinctUntilChanged()
+    private var dependants = mutableSetOf<Evaluable>()
+    private var lastValue: Value? = null
+    private val evaluable = object : Evaluable {
+        override suspend fun evaluate() {
+            val current = read()
+            if (current != lastValue) {
+                dependants.forEach { it.evaluate() }
+                lastValue = current
+            }
+        }
+    }
+
+    override fun addDependant(dependant: Evaluable) {
+        if (dependants.isEmpty()) { // only add this as a dependant if we have dependants
+            parent.addDependant(evaluable)
+        }
+        dependants.add(dependant)
+    }
+
+    override fun removeDependant(dependant: Evaluable) {
+        dependants.remove(dependant)
+        if (dependants.isEmpty())
+            parent.removeDependant(evaluable)
+    }
 
     /**
      * Generates the full value for the parent signal with the value v applied to the selected portion of the signal.

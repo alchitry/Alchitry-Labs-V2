@@ -12,7 +12,7 @@ object ParseTreeMultiWalker {
         listeners: List<AnyParseTreeListener>,
         t: ParseTree,
         filter: WalkerFilter = WalkerFilter.None,
-        ignoreSkip: Boolean = false
+        ignoreSkip: Boolean = true
     ) {
 //        if (t is ErrorNode) {
 //            for (listener in listeners) {
@@ -40,7 +40,7 @@ object ParseTreeMultiWalker {
             for (i in 0 until r.childCount) {
                 val child = r.getChild(i) ?: continue
                 if (!filter.shouldSkip(r, child))
-                    walk(listeners, child, filter)
+                    walk(listeners, child, filter, ignoreSkip)
             }
             exitRule(listeners, r)
         }
