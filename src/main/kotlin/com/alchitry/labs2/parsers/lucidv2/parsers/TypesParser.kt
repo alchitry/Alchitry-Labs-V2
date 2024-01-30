@@ -421,6 +421,11 @@ class TypesParser(
             return
         }
 
+        if (size < 1) {
+            context.reportError(ctx, "Array size must be greater than 0.")
+            return
+        }
+
         arraySizes[ctx] = size
     }
 

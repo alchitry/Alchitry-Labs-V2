@@ -44,6 +44,7 @@ sealed interface SignalOrSubSignal : Measurable {
 
     /**
      * Connects this signal's value to the provided signal.
+     * Be careful not to introduce loops via circularly connected signals.
      */
     fun connectTo(sig: SignalOrSubSignal, context: ProjectContext) {
         require(sig.width.canAssign(width)) {

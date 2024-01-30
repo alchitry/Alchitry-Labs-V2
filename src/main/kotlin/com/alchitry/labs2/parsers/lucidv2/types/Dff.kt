@@ -15,7 +15,7 @@ data class Dff(
     val clk: DynamicExpr,
     val rst: DynamicExpr?,
     val signed: Boolean
-) : SignalParent, Evaluable, Snapshotable {
+) : SignalParent, Snapshotable {
     override val parent: SignalParent? = null
     val d = Signal("d", SignalDirection.Write, this, init.asMutable(), signed)
     val q = Signal("q", SignalDirection.Read, this, init.asMutable(), signed).also { it.hasDriver = true }
@@ -24,7 +24,7 @@ data class Dff(
     init {
         clk.addDependant {
             if (!context.initializing)
-                context.evaluationQueue.add(this@Dff)
+                context.queue(evaluable)
         }
     }
 
@@ -45,7 +45,9 @@ data class Dff(
             else -> null
         }
 
-    override suspend fun evaluate() {
+    // use separate Evaluable instead of extending the interface so equal/hash operations are faster on it
+    // since this is a data class
+    private val evaluable = Evaluable {
         val clkValue = clk.value
         val rstValue = rst?.value
         require(clkValue is SimpleValue) { "Dff clk was not a SimpleValue!" }

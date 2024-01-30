@@ -30,7 +30,7 @@ data class BlockParser(
 
     suspend fun queueEval() {
         alwaysBlocks.values.forEach {
-            context.project.evaluationQueue.add(it)
+            context.project.queue(it)
         }
     }
 

@@ -21,7 +21,7 @@ class AlwaysBlock(
             it.hasDriver = true
         }
         val evaluable = Evaluable {
-            this@AlwaysBlock.context.project.evaluationQueue.add(this@AlwaysBlock)
+            this@AlwaysBlock.context.project.queue(this@AlwaysBlock)
         }
         dependencies.forEach { it.addDependant(evaluable) }
     }

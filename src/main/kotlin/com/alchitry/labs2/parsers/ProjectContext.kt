@@ -18,7 +18,11 @@ class ProjectContext(val notationManager: NotationManager) : Closeable {
     private val testBenches = mutableMapOf<String, TestBench>()
     val scope = CoroutineScope(Dispatchers.Default)
 
-    val evaluationQueue = ConcurrentHashMap.newKeySet<Evaluable>()
+    private val evaluationQueue = ConcurrentHashMap.newKeySet<Evaluable>()
+
+    fun queue(evaluable: Evaluable) {
+        evaluationQueue.add(evaluable)
+    }
 
     var initializing: Boolean = false
         private set
@@ -37,10 +41,15 @@ class ProjectContext(val notationManager: NotationManager) : Closeable {
             val items = evaluationQueue.toList()
             evaluationQueue.clear()
 
-            coroutineScope {
-                items.forEach {
-                    launch(Dispatchers.Default) {
-                        it.evaluate()
+            // if the queue is small, it's faster to just process it here instead of launching jobs
+            if (items.size < 4) {
+                items.forEach { it.evaluate() }
+            } else {
+                coroutineScope {
+                    items.forEach {
+                        launch(Dispatchers.Default) {
+                            it.evaluate()
+                        }
                     }
                 }
             }

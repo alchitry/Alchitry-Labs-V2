@@ -50,7 +50,7 @@ class DynamicExpr(
         val dependencies =
             context.expr.resolveDependencies(expr) ?: error("Failed to resolve dependencies for ${expr.text}")
         dependencies.forEach { it.isRead = true }
-        val evaluable = Evaluable { context.project.evaluationQueue.add(this@DynamicExpr) }
+        val evaluable = Evaluable { context.project.queue(this@DynamicExpr) }
         dependencies.forEach { it.addDependant(evaluable) }
     }
 
@@ -61,7 +61,7 @@ class DynamicExpr(
             signal.hasDriver = true
             val evaluable = Evaluable { signal.write(value) }
             addDependant {
-                context.project.evaluationQueue.add(evaluable)
+                context.project.queue(evaluable)
             }
         }
     }
@@ -79,7 +79,7 @@ class DynamicExpr(
 
         val evaluable = Evaluable { signal.write(value) }
         addDependant {
-            context.project.evaluationQueue.add(evaluable)
+            context.project.queue(evaluable)
         }
     }
 
