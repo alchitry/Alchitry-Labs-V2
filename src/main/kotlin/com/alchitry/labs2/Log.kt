@@ -11,6 +11,8 @@ import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.windows.LoaderProgressBarConsumer
 import com.alchitry.labs2.windows.LoaderProgressBarRender
 import com.alchitry.labs2.windows.loaderStatus
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import me.tongfei.progressbar.*
 import org.fusesource.jansi.Ansi.ansi
 import org.fusesource.jansi.AnsiConsole
@@ -21,9 +23,48 @@ import java.time.Duration
 import java.util.*
 import kotlin.math.roundToInt
 
+@OptIn(DelicateCoroutinesApi::class)
 object Log {
+    private val messageChannel = Channel<AnnotatedString>(capacity = Channel.UNLIMITED)
     init {
         AnsiConsole.systemInstall()
+        GlobalScope.launch(Dispatchers.Main) {
+            while (isActive) {
+                mainPrint(messageChannel.receive())
+            }
+        }
+    }
+
+    /**
+     * Not thread safe. Should be only called on the Main thread.
+     *
+     * All print methods channel their messages into the message channel that
+     * then dispatches them on the Main thread.
+     */
+    private fun mainPrint(message: AnnotatedString) {
+        if (Env.isLabs)
+            Console.append(message)
+        if (Env.isLoader)
+            loaderStatus = if (message.endsWith("\n"))
+                message.subSequence(0, message.length - 1)
+            else
+                message
+
+        val styles = LinkedList(message.spanStyles.sortedBy { it.start })
+        var currentIdx = 0
+        while (styles.isNotEmpty()) {
+            val style = styles.pop()
+            val range = currentIdx..<style.start
+            if (!range.isEmpty()) {
+                basicPrint(message.substring(range), null)
+            }
+            basicPrint(message.substring(style.start..<style.end), style.item)
+            currentIdx = style.end
+        }
+        val range = currentIdx..<message.length
+        if (!range.isEmpty()) {
+            basicPrint(message.substring(range), null)
+        }
     }
 
     fun exception(e: Throwable) {
@@ -55,29 +96,7 @@ object Log {
     }
 
     fun print(message: AnnotatedString) {
-        if (Env.isLabs)
-            Console.append(message)
-        if (Env.isLoader)
-            loaderStatus = if (message.endsWith("\n"))
-                message.subSequence(0, message.length - 1)
-            else
-                message
-
-        val styles = LinkedList(message.spanStyles.sortedBy { it.start })
-        var currentIdx = 0
-        while (styles.isNotEmpty()) {
-            val style = styles.pop()
-            val range = currentIdx..<style.start
-            if (!range.isEmpty()) {
-                basicPrint(message.substring(range), null)
-            }
-            basicPrint(message.substring(style.start..<style.end), style.item)
-            currentIdx = style.end
-        }
-        val range = currentIdx..<message.length
-        if (!range.isEmpty()) {
-            basicPrint(message.substring(range), null)
-        }
+        messageChannel.trySend(message)
     }
 
     private fun basicPrint(message: String, style: SpanStyle?) {
