@@ -140,7 +140,7 @@ class ProjectContext(val notationManager: NotationManager) : Closeable {
     }
 
     fun addConstraint(constraint: Constraint): AddConstraintResult {
-        if (constraints.any { it.acfPin == constraint.acfPin })
+        if (constraints.any { it.pin == constraint.pin })
             return AddConstraintResult.PinTaken
         if (constraints.any { areOverlapping(it.port, constraint.port) })
             return AddConstraintResult.PortTaken

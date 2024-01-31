@@ -2,8 +2,8 @@ package com.alchitry.labs2.project
 
 import com.alchitry.labs2.Settings
 import com.alchitry.labs2.allSealedObjects
-import com.alchitry.labs2.hardware.pinout.AuPinConverter
-import com.alchitry.labs2.hardware.pinout.CuPinConverter
+import com.alchitry.labs2.hardware.pinout.AuPin
+import com.alchitry.labs2.hardware.pinout.CuPin
 import com.alchitry.labs2.hardware.pinout.PinConverter
 import com.alchitry.labs2.hardware.usb.UsbUtil
 import com.alchitry.labs2.hardware.usb.ftdi.enums.PortInterfaceType
@@ -55,7 +55,7 @@ sealed class Board {
             )
         override val bridgeFile = "/bridges/au.bin"
         override val idCode = "0362D093"
-        override val pinConverter = AuPinConverter
+        override val pinConverter = AuPin
         override val acfConverter = XilinxConverter
         override val projectBuilder = VivadoBuilder
         override val supportsRamLoading = true
@@ -75,7 +75,7 @@ sealed class Board {
             )
         override val bridgeFile = "/bridges/au_plus.bin"
         override val idCode = "13631093"
-        override val pinConverter = AuPinConverter
+        override val pinConverter = AuPin
         override val acfConverter = XilinxConverter
         override val projectBuilder = VivadoBuilder
         override val supportsRamLoading = true
@@ -93,7 +93,7 @@ sealed class Board {
                 "Alchitry Cu",
                 PortInterfaceType.INTERFACE_A
             )
-        override val pinConverter = CuPinConverter
+        override val pinConverter = CuPin
         override val acfConverter = LatticeConverter
         override val projectBuilder get() = if (Settings.useIceCube) IceCubeBuilder else IceStormBuilder
         override val supportsRamLoading = false

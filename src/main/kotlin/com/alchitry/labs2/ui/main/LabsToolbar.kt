@@ -97,40 +97,40 @@ fun LabsToolbar() {
             }
         }
         ToolbarButton(
-            onClick = {
-                runWithProject { it.check() }
-            },
             icon = painterResource("icons/check.svg"),
             description = "Check for Errors",
             enabled = !running && project != null
-        )
+        ) { runWithProject { it.check() } }
 
         ToolbarButton(
-            onClick = {
-                Workspace.getTabs().firstOrNull { it is BoardSimulationTab }?.let {
-                    it.focus()
-                    return@ToolbarButton
-                }
-                runWithProject { project ->
-                    val context = project.check() ?: return@runWithProject
-                    Workspace.activeTabPanel().apply {
-                        addTab(BoardSimulationTab(this, context))
-                    }
-                }
-
-            },
             icon = painterResource("icons/debug.svg"),
             description = "Simulate",
             enabled = !running && project != null
-        )
+        ) {
+            // close open tab
+            Workspace.getTabs().firstOrNull { it is BoardSimulationTab }?.let {
+                it.parent.closeTab(it, false)
+            }
+            runWithProject { project ->
+                val context = project.check() ?: return@runWithProject
+                Workspace.activeTabPanel().apply {
+                    try { // BoardSimulationTab throws if the project can't be simulated
+                        addTab(BoardSimulationTab(this, context))
+                    } catch (e: IllegalStateException) {
+                        Log.error(e.message)
+                    }
+                }
+            }
+
+        }
+
         ToolbarButton(
-            onClick = {
-                runWithProject { it.build() }
-            },
             icon = painterResource("icons/build.svg"),
             description = "Build",
             enabled = !running && project != null
-        )
+        ) {
+            runWithProject { it.build() }
+        }
 
         val board = project?.board
         var boardDetected by remember { mutableStateOf(false) }
@@ -148,22 +148,22 @@ fun LabsToolbar() {
         val canLoad = boardDetected && project != null
 
         ToolbarButton(
-            onClick = {
-                runWithProject {
-                    if (!it.binFileIsUpToDate()) {
-                        Log.info("Bin file is outdated. Building project...")
-                        if (!it.build()) {
-                            Log.error("Can't load the project because the build failed!")
-                            return@runWithProject
-                        }
-                    }
-                    BoardLoader.load(it.board, 0, it.binFile, true)
-                }
-            },
             icon = painterResource("icons/load.svg"),
             description = "Load Flash",
             enabled = !running && canLoad
-        )
+        ) {
+            runWithProject {
+                if (!it.binFileIsUpToDate()) {
+                    Log.info("Bin file is outdated. Building project...")
+                    if (!it.build()) {
+                        Log.error("Can't load the project because the build failed!")
+                        return@runWithProject
+                    }
+                }
+                BoardLoader.load(it.board, 0, it.binFile, true)
+            }
+        }
+
         if (project?.board?.supportsRamLoading == true) {
             ToolbarButton(
                 onClick = {

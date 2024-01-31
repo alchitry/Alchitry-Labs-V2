@@ -70,7 +70,7 @@ class AcfExtractor(
             ProjectContext.AddConstraintResult.Success -> constraints.add(constraint)
             ProjectContext.AddConstraintResult.PinTaken -> notationCollector.reportError(
                 pinContext,
-                "The pin \"${constraint.acfPin}\" has already been connected!"
+                "The pin \"${constraint.pin.name}\" has already been connected!"
             )
 
             ProjectContext.AddConstraintResult.PortTaken -> notationCollector.reportError(
@@ -122,7 +122,8 @@ class AcfExtractor(
     override fun exitPin(ctx: AcfParser.PinContext) {
         val signal = signals[ctx.portName() ?: return] ?: return
         val pinName = ctx.pinName()?.text ?: return
-        if (board.pinConverter.AcfToFPGAPin(pinName) == null) {
+        val pin = board.pinConverter.acfToPin(pinName)
+        if (pin == null) {
             notationCollector.reportError(ctx.pinName()!!, "Pin \"$pinName\" does not exist on the ${board.name}")
             return
         }
@@ -131,13 +132,14 @@ class AcfExtractor(
             ctx.PULLDOWN() != null -> PinPull.PullDown
             else -> null
         }
-        addConstraint(PinConstraint(pinName, signal, pinPull, ctx), ctx.pinName() ?: ctx, ctx.portName() ?: ctx)
+        addConstraint(PinConstraint(pin, signal, pinPull, ctx), ctx.pinName() ?: ctx, ctx.portName() ?: ctx)
     }
 
     override fun exitClock(ctx: AcfParser.ClockContext) {
         val signal = signals[ctx.portName() ?: return] ?: return
         val pinName = ctx.pinName()?.text ?: return
-        if (board.pinConverter.AcfToFPGAPin(pinName) == null) {
+        val pin = board.pinConverter.acfToPin(pinName)
+        if (pin == null) {
             notationCollector.reportError(ctx.pinName()!!, "Pin \"$pinName\" does not exist on the ${board.name}")
             return
         }
@@ -168,7 +170,7 @@ class AcfExtractor(
         }
         val hz = freq * frequencyScale
         addConstraint(
-            ClockConstraint(pinName, signal, pinPull, hz.roundToInt(), ctx),
+            ClockConstraint(pin, signal, pinPull, hz.roundToInt(), ctx),
             ctx.pinName() ?: ctx,
             ctx.portName() ?: ctx
         )

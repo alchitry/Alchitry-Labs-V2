@@ -4,21 +4,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.alchitry.labs2.parsers.ProjectContext
-import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.simulation.ProjectSimulator
-import com.alchitry.labs2.ui.simulation.AlchitryBoard
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 
 class BoardSimulationTab(
     override var parent: TabPanel,
-    val context: ProjectContext
+    val context: ProjectContext,
+    private val simulator: ProjectSimulator = ProjectSimulator(context)
 ) : Tab {
-    private val simulator = ProjectSimulator(context)
-
     @Composable
     override fun label() {
         Text("Simulation")
@@ -28,22 +23,7 @@ class BoardSimulationTab(
     override fun content() {
         Surface {
             Box(Modifier.fillMaxSize())
-            var leds by remember { mutableStateOf(List(8) { 0f }) }
-
-            LaunchedEffect(Unit) {
-                simulator.start()
-            }
-
-            LaunchedEffect(Unit) {
-                while (isActive) {
-                    delay(1000 / 30)
-                    leds = simulator.getLedValues()
-                }
-            }
-
-            AlchitryBoard(Board.AlchitryAu, leds, 1.0f) {
-                simulator.setResetButton(it)
-            }
+            simulator.contents()
         }
     }
 

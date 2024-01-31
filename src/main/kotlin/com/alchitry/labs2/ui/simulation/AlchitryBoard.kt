@@ -15,6 +15,8 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
@@ -38,13 +40,21 @@ fun AlchitryBoard(
     }
 
     Box(modifier.aspectRatio(65.0f / 45.0f), contentAlignment = Alignment.Center) {
+        val darkenFilter = remember {
+            ColorFilter.colorMatrix(
+                ColorMatrix().apply {
+                    setToScale(0.8f, 0.8f, 0.8f, 1f)
+                }
+            )
+        }
         Image(
             painterResource("boards/$boardImage"),
             "Alchitry Board",
-            Modifier.fillMaxSize()
+            Modifier.fillMaxSize(),
+            colorFilter = darkenFilter
         )
 
-        BoxWithConstraints {
+        BoxWithConstraints(Modifier.fillMaxSize()) {
             val scale = maxWidth / 65f
             var buttonPressed by remember { mutableStateOf(false) }
 
@@ -74,8 +84,6 @@ fun AlchitryBoard(
                         }
                     }
             )
-
-            Box(Modifier.fillMaxSize().alpha(0.2f).background(Color.Black))
 
             val ledX = scale * 61.089f
             val ledY = scale * 10.366f

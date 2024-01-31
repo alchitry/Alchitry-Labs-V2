@@ -1,6 +1,5 @@
 package com.alchitry.labs2.parsers.acf
 
-import com.alchitry.labs2.hardware.pinout.PinConverter
 import com.alchitry.labs2.parsers.acf.types.ClockConstraint
 import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.acf.types.PinPull
@@ -10,10 +9,10 @@ import com.alchitry.labs2.project.Languages
 
 data object XilinxConverter : AcfConverter {
     context (StringBuilder)
-    private fun Constraint.toXdc(pinConverter: PinConverter) {
+    private fun Constraint.toXdc() {
         val portName = port.fullPortName
         append("set_property PACKAGE_PIN ")
-        append(pinConverter.AcfToFPGAPin(acfPin))
+        append(pin.fpgaPin)
         append(" [get_ports {")
         append(portName)
         append("}]\n")
@@ -48,9 +47,8 @@ data object XilinxConverter : AcfConverter {
             name,
             Languages.XDC,
             buildString {
-                val pinConverter = board.pinConverter
                 constraints.forEachIndexed { index, constraint ->
-                    constraint.toXdc(pinConverter)
+                    constraint.toXdc()
 
                     if (constraint is ClockConstraint) {
                         val portName = constraint.port.fullPortName

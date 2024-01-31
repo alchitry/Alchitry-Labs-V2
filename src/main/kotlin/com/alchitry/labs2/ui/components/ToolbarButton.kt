@@ -36,12 +36,12 @@ fun ToolbarButtonPreview() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ToolbarButton(
-    onClick: () -> Unit,
     icon: Painter,
     description: String,
     enabled: Boolean = true,
     colorFilter: ColorFilter? = ColorFilter.tint(MaterialTheme.colorScheme.onBackground),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     LocalDensity.current.run {
         val size = 40.dp
