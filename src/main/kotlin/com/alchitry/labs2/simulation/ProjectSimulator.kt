@@ -111,34 +111,39 @@ class ProjectSimulator(private val projectContext: ProjectContext) : Closeable {
     }
 
     @Composable
+    private fun ControllerBar() {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surfaceColorAtElevation(20.dp))
+                .padding(end = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ToolbarButton(painterResource("icons/play.svg"), "Start") {
+
+            }
+            val targetRate by targetRateFlow.collectAsState()
+            TextField(
+                value = targetRate.toString(),
+                onValueChange = {
+                    it.toDoubleOrNull()?.let { d -> targetRateFlow.tryEmit(d) }
+                },
+                label = { Text("Target Rate") },
+                suffix = { Text("Hz") },
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+            )
+            Spacer(Modifier.weight(1f))
+            Text("Running at ${evalRateFlow.collectAsState().value.roundToInt()} Hz")
+        }
+    }
+
+    @Composable
     fun contents() {
         LaunchedEffect(Unit) {
             run()
         }
         Column {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(20.dp))
-                    .padding(end = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                ToolbarButton(painterResource("icons/play.svg"), "Start") {
-
-                }
-                val targetRate by targetRateFlow.collectAsState()
-                TextField(
-                    value = targetRate.toString(),
-                    onValueChange = {
-                        it.toDoubleOrNull()?.let { d -> targetRateFlow.tryEmit(d) }
-                    },
-                    label = { Text("Target Rate") },
-                    suffix = { Text("Hz") },
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-                )
-                Spacer(Modifier.weight(1f))
-                Text("Running at ${evalRateFlow.collectAsState().value.roundToInt()} Hz")
-            }
+            ControllerBar()
             alchitrySimulator.contents()
         }
 

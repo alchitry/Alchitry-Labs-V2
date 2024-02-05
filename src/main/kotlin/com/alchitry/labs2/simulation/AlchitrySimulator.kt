@@ -1,5 +1,6 @@
 package com.alchitry.labs2.simulation
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.hardware.pinout.AuPin
@@ -9,11 +10,13 @@ import com.alchitry.labs2.parsers.lucidv2.values.Bit
 import com.alchitry.labs2.parsers.lucidv2.values.BitValue
 import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.ui.simulation.AlchitryBoard
+import com.alchitry.labs2.ui.simulation.IoBoard
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlin.time.TimeSource
 
 @Suppress("DataClassPrivateConstructor")
 data class AlchitrySimulator private constructor(
@@ -79,6 +82,8 @@ data class AlchitrySimulator private constructor(
         }
     }
 
+    private var lastTime: TimeSource.Monotonic.ValueTimeMark? = null
+
     @Composable
     fun contents() {
         var leds by remember { mutableStateOf(List(8) { 0f }) }
@@ -90,8 +95,27 @@ data class AlchitrySimulator private constructor(
             }
         }
 
-        AlchitryBoard(Board.AlchitryAu, leds, 1.0f) {
-            resetValueFlow.tryEmit(it)
+
+
+        Box {
+            AlchitryBoard(Board.AlchitryAu, leds = {
+                if (it == 0) {
+                    lastTime?.let {
+                        //println("fps: ${(1.seconds / it.elapsedNow()).roundToInt()}")
+                    }
+                    lastTime = TimeSource.Monotonic.markNow()
+                }
+                leds[it]
+            }, 1.0f) {
+                resetValueFlow.tryEmit(it)
+            }
+
+            IoBoard(
+                leds = { it.toFloat() / 24f },
+                digits = { digit, segment -> 0.5f },
+                onButtonChange = { idx, clicked -> },
+                onSwitchChange = {}
+            )
         }
     }
 
