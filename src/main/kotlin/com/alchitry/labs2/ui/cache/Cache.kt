@@ -1,6 +1,8 @@
 package com.alchitry.labs2.ui.cache
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.ImageComposeScene
 import androidx.compose.ui.Modifier
@@ -73,6 +75,10 @@ fun CachedImage(
 
     LaunchedEffect(size) {
         size?.let {
+            if (it.width == 0 || it.height == 0) {
+                image = null
+                return@LaunchedEffect
+            }
             withContext(Dispatchers.Default) {
                 val bitmap = ImageBitmap(it.width, it.height)
                 Canvas(bitmap).apply {
@@ -99,6 +105,11 @@ fun CachedImage(
                     )
                 }
             }
-    )
+    ) {
+        // use a real image as the cache is being populated to prevent pop-in
+        if (image == null) {
+            Image(painter, null, Modifier.fillMaxSize(), alpha = alpha, colorFilter = colorFilter)
+        }
+    }
 }
 

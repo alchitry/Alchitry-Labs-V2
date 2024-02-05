@@ -1,7 +1,12 @@
 package com.alchitry.labs2.simulation
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.hardware.pinout.AuPin
 import com.alchitry.labs2.parsers.ProjectContext
@@ -95,9 +100,24 @@ data class AlchitrySimulator private constructor(
             }
         }
 
+        Box(
+            Modifier.padding(10.dp).shadow(
+                2.dp, GenericShape { size, _ ->
+                    val scale = size.width / 65f
 
+                    moveTo(1.5f * scale, 0f * scale)
+                    lineTo(63.5f * scale, 0f * scale)
+                    lineTo(65f * scale, 1.5f * scale)
+                    lineTo(65f * scale, 43.5f * scale)
+                    lineTo(63.5f * scale, 45f * scale)
+                    lineTo(1.5f * scale, 45f * scale)
+                    lineTo(0f * scale, 43.5f * scale)
+                    close()
 
-        Box {
+                },
+                clip = false
+            )
+        ) {
             AlchitryBoard(Board.AlchitryAu, leds = {
                 if (it == 0) {
                     lastTime?.let {
