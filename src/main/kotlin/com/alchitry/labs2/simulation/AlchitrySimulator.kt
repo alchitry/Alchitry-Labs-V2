@@ -1,12 +1,6 @@
 package com.alchitry.labs2.simulation
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.hardware.pinout.AuPin
 import com.alchitry.labs2.parsers.ProjectContext
@@ -15,20 +9,17 @@ import com.alchitry.labs2.parsers.lucidv2.values.Bit
 import com.alchitry.labs2.parsers.lucidv2.values.BitValue
 import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.ui.simulation.AlchitryBoard
-import com.alchitry.labs2.ui.simulation.IoBoard
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlin.time.TimeSource
 
 @Suppress("DataClassPrivateConstructor")
 data class AlchitrySimulator private constructor(
     val rstN: SignalOrSubSignal?,
     val leds: List<SignalOrSubSignal?>
 ) {
-    private val resetValueFlow = MutableStateFlow(false)
+    private var resetValue by mutableStateOf(false)
     private var ledAccumulators = List(8) { SampleAccumulator(0, 0) }
     private val accumulatorLock = Mutex()
 
@@ -46,7 +37,7 @@ data class AlchitrySimulator private constructor(
             ledAccumulators.forEach { it.reset() }
         }
 
-        rstN?.write(ProjectSimulator.high)
+        rstN?.write(if (resetValue) ProjectSimulator.low else ProjectSimulator.high)
 
         clk.addDependant {
             onClkChange(clk.read().isTrue().bit == Bit.B1)
@@ -54,88 +45,35 @@ data class AlchitrySimulator private constructor(
     }
 
     private suspend fun onClkChange(rising: Boolean) {
-        rstN?.write(if (resetValueFlow.value) ProjectSimulator.low else ProjectSimulator.high)
+        rstN?.write(if (resetValue) ProjectSimulator.low else ProjectSimulator.high)
         if (rising)
             accumulatorLock.withLock {
                 leds.forEachIndexed { index, led ->
-                    val bit = (led?.read() as? BitValue)?.bit ?: return@forEachIndexed
-                    val accumulator = ledAccumulators[index]
-                    accumulator.runningSum += when (bit) {
-                        Bit.B0 -> 0
-                        Bit.B1 -> 1
-                        Bit.Bx -> {
-                            accumulator.invalid = true
-                            0
-                        }
-
-                        Bit.Bz -> 0
-                    }
-                    accumulator.count += 1
+                    ledAccumulators[index] += (led?.read() as? BitValue)?.bit ?: return@forEachIndexed
                 }
             }
     }
 
-    private suspend fun getLedValues(): List<Float?> {
+    private var ledStates by mutableStateOf(List(8) { 0f })
+    private suspend fun updateLedValues() {
         return accumulatorLock.withLock {
-            ledAccumulators.map { accumulator ->
-                when {
-                    accumulator.invalid -> Float.NaN
-                    accumulator.count == 0L -> null
-                    else -> accumulator.runningSum.toFloat() / accumulator.count.toFloat()
-                }.also { accumulator.reset() }
+            ledStates = ledAccumulators.mapIndexed { index, accumulator ->
+                accumulator.collectRunningAverage() ?: ledStates[index]
             }
         }
     }
-
-    private var lastTime: TimeSource.Monotonic.ValueTimeMark? = null
 
     @Composable
     fun contents() {
-        var leds by remember { mutableStateOf(List(8) { 0f }) }
-
         LaunchedEffect(Unit) {
             while (isActive) {
                 delay(1000 / 30)
-                leds = getLedValues().mapIndexed { i, v -> v ?: leds[i] }
+                updateLedValues()
             }
         }
 
-        Box(
-            Modifier.padding(10.dp).shadow(
-                2.dp, GenericShape { size, _ ->
-                    val scale = size.width / 65f
-
-                    moveTo(1.5f * scale, 0f * scale)
-                    lineTo(63.5f * scale, 0f * scale)
-                    lineTo(65f * scale, 1.5f * scale)
-                    lineTo(65f * scale, 43.5f * scale)
-                    lineTo(63.5f * scale, 45f * scale)
-                    lineTo(1.5f * scale, 45f * scale)
-                    lineTo(0f * scale, 43.5f * scale)
-                    close()
-
-                },
-                clip = false
-            )
-        ) {
-            AlchitryBoard(Board.AlchitryAu, leds = {
-                if (it == 0) {
-                    lastTime?.let {
-                        //println("fps: ${(1.seconds / it.elapsedNow()).roundToInt()}")
-                    }
-                    lastTime = TimeSource.Monotonic.markNow()
-                }
-                leds[it]
-            }, 1.0f) {
-                resetValueFlow.tryEmit(it)
-            }
-
-            IoBoard(
-                leds = { it.toFloat() / 24f },
-                digits = { digit, segment -> 0.5f },
-                onButtonChange = { idx, clicked -> },
-                onSwitchChange = {}
-            )
+        AlchitryBoard(Board.AlchitryAu, leds = { ledStates[it] }, 1.0f) {
+            resetValue = it
         }
     }
 

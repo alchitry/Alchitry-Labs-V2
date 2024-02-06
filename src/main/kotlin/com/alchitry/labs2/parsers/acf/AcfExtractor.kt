@@ -89,7 +89,7 @@ class AcfExtractor(
         }
         val children =
             ctx.children?.filter { it is AcfParser.NameContext || it is AcfParser.ArrayIndexContext } ?: emptyList()
-        val selectionMap = children.subList(1, children.size).associate {
+        val selectionMap = children.subList(1, children.size).map {
             when (it) {
                 is AcfParser.NameContext -> SignalSelector.Struct(it.text) to it
                 is AcfParser.ArrayIndexContext -> SignalSelector.Bits(
@@ -100,7 +100,7 @@ class AcfExtractor(
                 else -> error("Impossible as everything else should have been filtered out!")
             }
         }
-        val sigSelection = selectionMap.keys.toList()
+        val sigSelection = selectionMap.map { it.first }
 
         val selectedSignal = if (sigSelection.isEmpty()) {
             port.external
@@ -108,12 +108,17 @@ class AcfExtractor(
             try {
                 port.external.select(sigSelection)
             } catch (e: SignalSelectionException) {
-                notationCollector.reportError(selectionMap[e.selector]!!, e.message!!)
+                notationCollector.reportError(
+                    selectionMap.firstOrNull { it.first === e.selector }?.second ?: ctx,
+                    e.message!!
+                )
                 return
             }
         }
         if (selectedSignal.width.bitCount != 1) {
-            notationCollector.reportError(ctx, "This signal is wider than a single bit!")
+            notationCollector.reportError(
+                ctx, "The signal \"${children.joinToString("") { it.text }}\" is wider than a single bit!"
+            )
             return
         }
         signals[ctx] = selectedSignal

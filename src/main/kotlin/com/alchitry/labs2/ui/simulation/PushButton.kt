@@ -48,7 +48,7 @@ fun PushButton(
             .drawBehind {
                 if (buttonPressed) {
                     drawCircle(
-                        Color(0xFFDC8B22),
+                        Color(0xFFAB6E1D),
                         size.width * 0.243386f,
                         center = Offset(size.width / 2f, size.height / 2f)
                     )

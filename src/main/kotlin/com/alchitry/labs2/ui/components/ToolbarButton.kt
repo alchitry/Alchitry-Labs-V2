@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.ui.theme.AlchitryTheme
 
@@ -41,10 +42,10 @@ fun ToolbarButton(
     enabled: Boolean = true,
     colorFilter: ColorFilter? = ColorFilter.tint(MaterialTheme.colorScheme.onBackground),
     modifier: Modifier = Modifier,
+    size: Dp = 40.dp,
     onClick: () -> Unit
 ) {
     LocalDensity.current.run {
-        val size = 40.dp
         TextTooltipArea(
             text = description
         ) {

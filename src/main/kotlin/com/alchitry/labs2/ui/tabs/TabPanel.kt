@@ -33,6 +33,7 @@ class TabPanel(parent: TabParent) : TabSection(parent) {
 
     fun addTab(tab: Tab) {
         tabs.add(tab)
+        tab.parent = this
         activeTab = tab
     }
 

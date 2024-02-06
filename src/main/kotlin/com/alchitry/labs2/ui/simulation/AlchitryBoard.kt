@@ -30,7 +30,7 @@ fun AlchitryBoard(
         val darkenFilter = remember {
             ColorFilter.colorMatrix(
                 ColorMatrix().apply {
-                    setToScale(0.8f, 0.8f, 0.8f, 1f)
+                    setToScale(0.85f, 0.85f, 0.85f, 1f)
                 }
             )
         }

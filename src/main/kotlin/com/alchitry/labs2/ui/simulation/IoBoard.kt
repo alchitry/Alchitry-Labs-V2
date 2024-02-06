@@ -1,19 +1,26 @@
 package com.alchitry.labs2.ui.simulation
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import com.alchitry.labs2.ui.cache.Cached
 import com.alchitry.labs2.ui.cache.CachedImage
+import com.alchitry.labs2.ui.hiddenClickable
 import kotlin.math.pow
 
 
@@ -23,14 +30,15 @@ fun IoBoard(
     digits: (digit: Int, segment: Int) -> Float,
     modifier: Modifier = Modifier,
     onButtonChange: (Int, Boolean) -> Unit,
-    onSwitchChange: (List<Boolean>) -> Unit
+    onSwitchChange: (Int) -> Unit,
+    switchState: (Int) -> Boolean
 ) {
 
     BoxWithConstraints(modifier.aspectRatio(65.0f / 45.0f).fillMaxSize()) {
         val darkenFilter = remember {
             ColorFilter.colorMatrix(
                 ColorMatrix().apply {
-                    setToScale(0.8f, 0.8f, 0.8f, 1f)
+                    setToScale(0.85f, 0.85f, 0.85f, 1f)
                 }
             )
         }
@@ -51,20 +59,32 @@ fun IoBoard(
         var ledX = scale * 54.366f
         val ledY = scale * 24.841f
         val ledSpacing = scale * -2f
-        val groupSpacing = scale * (36.371f - 40.366f)
+        val ledGroupSpacing = scale * (36.371f - 40.366f)
         for (j in 0..2) {
             for (i in 0..7) {
                 Led(ledX, ledY, scale, rotate = true) { leds(j * 8 + i) }
                 ledX += ledSpacing
             }
-            ledX += groupSpacing - ledSpacing
+            ledX += ledGroupSpacing - ledSpacing
         }
 
         val digitX = scale * 29f
         val digitY = scale * 10.5f
-        val digitSpacing = scale * (21.25f - 29f)
+        val digitSpacing = scale * -7.75f
         for (i in 0..3) {
             SegmentDigit(digitX + digitSpacing * i, digitY, scale) { digits(i, it) }
+        }
+
+        var dipX = scale * 52.150f
+        val dipY = scale * 33.900f
+        val dipSpacing = scale * -1.3f
+        val dipGroupSpacing = scale * -8.9f
+        for (j in 0..2) {
+            for (i in 0..7) {
+                DipSwitch(dipX, dipY, scale, state = { switchState(i + j * 8) }) { onSwitchChange(i + j * 8) }
+                dipX += dipSpacing
+            }
+            dipX += dipGroupSpacing - dipSpacing
         }
     }
 
@@ -94,5 +114,30 @@ private fun SegmentDigit(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun DipSwitch(
+    x: Dp,
+    y: Dp,
+    scale: Dp,
+    state: () -> Boolean,
+    onToggle: () -> Unit
+) {
+    Box(
+        Modifier
+            .offset(x, y)
+            .size(scale * 0.8f, scale * 3.2f)
+            .hiddenClickable(onClick = onToggle)
+            .pointerHoverIcon(PointerIcon.Hand)
+    ) {
+        val animatedPosition by animateFloatAsState(targetValue = if (state()) 0.675f else 1.725f)
+        Box(
+            Modifier
+                .offset(scale * 0.1f, scale * animatedPosition)
+                .size(scale * 0.6f)
+                .background(Color.White)
+        )
     }
 }

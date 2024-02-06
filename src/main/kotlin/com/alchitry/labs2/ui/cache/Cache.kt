@@ -18,7 +18,9 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.use
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /**
@@ -73,13 +75,15 @@ fun CachedImage(
     val density = LocalDensity.current
     val layout = LocalLayoutDirection.current
 
+    var renderJob: Job? by remember { mutableStateOf(null) }
     LaunchedEffect(size) {
+        renderJob?.cancelAndJoin()
         size?.let {
             if (it.width == 0 || it.height == 0) {
                 image = null
                 return@LaunchedEffect
             }
-            withContext(Dispatchers.Default) {
+            renderJob = launch(Dispatchers.Default) {
                 val bitmap = ImageBitmap(it.width, it.height)
                 Canvas(bitmap).apply {
                     val fSize = it.toSize()

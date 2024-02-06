@@ -107,18 +107,15 @@ fun LabsToolbar() {
             description = "Simulate",
             enabled = !running && project != null
         ) {
-            // close open tab
-            Workspace.getTabs().firstOrNull { it is BoardSimulationTab }?.let {
-                it.parent.closeTab(it, false)
-            }
             runWithProject { project ->
                 val context = project.check() ?: return@runWithProject
-                Workspace.activeTabPanel().apply {
-                    try { // BoardSimulationTab throws if the project can't be simulated
-                        addTab(BoardSimulationTab(this, context))
-                    } catch (e: IllegalStateException) {
-                        Log.error(e.message)
-                    }
+                val existingTab = Workspace.getTabs().firstOrNull { it is BoardSimulationTab }
+                val tabPanel = existingTab?.parent ?: Workspace.activeTabPanel()
+                try {
+                    tabPanel.addTab(BoardSimulationTab(tabPanel, context))
+                    existingTab?.let { it.parent.closeTab(it, false) }
+                } catch (e: IllegalStateException) {
+                    Log.error(e.message)
                 }
             }
 
