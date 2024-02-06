@@ -84,7 +84,10 @@ class AcfExtractor(
         val name = ctx.name(0)?.text ?: return
         val port = topModule.ports[name]
         if (port == null) {
-            notationCollector.reportError(ctx.name(0)!!, "Unknown port name \"$name\"!")
+            notationCollector.reportWarning(
+                ctx.name(0)!!,
+                "Unknown port name \"$name\". This constraint will be ignored."
+            )
             return
         }
         val children =
