@@ -89,7 +89,7 @@ class ProjectSimulator(private val projectContext: ProjectContext) : Closeable {
             initialized.first { true } // wait for initialization
             var sampleCount = 0
             var lastRate = TimeSource.Monotonic.markNow()
-            var duration = (1.0 / targetRateFlow.value).seconds
+            var duration: Duration = (1.0 / targetRateFlow.value.toDouble()).seconds
             var stepsPerDelay = (targetRateFlow.value.toDouble() / 100.0).roundToInt().coerceAtLeast(1)
             mutableEvalRateFlow.tryEmit(targetRateFlow.value.toDouble())
 
@@ -113,11 +113,11 @@ class ProjectSimulator(private val projectContext: ProjectContext) : Closeable {
                     }
                     delay(duration * stepsPerDelay)
                 }
-                val currentTarget = targetRateFlow.value
+                val currentTarget = targetRateFlow.value.toDouble()
                 val targetDuration = (stepsPerDelay.toDouble() / currentTarget).seconds
                 val error = (targetDuration - elapsedTime) / stepsPerDelay
                 duration = (duration + error).coerceAtLeast(Duration.ZERO)
-                stepsPerDelay = (currentTarget.toDouble() / 100.0).roundToInt()
+                stepsPerDelay = (currentTarget / 100.0).roundToInt().coerceAtLeast(1)
             }
         }
     }
