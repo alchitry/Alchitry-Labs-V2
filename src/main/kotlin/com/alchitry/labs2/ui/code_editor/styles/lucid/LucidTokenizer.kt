@@ -8,7 +8,7 @@ import org.antlr.v4.kotlinruntime.CharStream
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 
 object LucidTokenizer : EditorTokenizer {
-    private val operatorRegex = Regex("([*!~+#\\-/:@|&{}?^=><\\]\\[,();]+)|(c\\{|x\\{)")
+    private val operatorRegex = Regex("([*!~+#\\-/:@|&{}?^=><\\]\\[,()]+)|(c\\{|x\\{)")
 
     override fun getTokens(stream: CharStream): List<EditorToken> {
         val lexer = LucidLexer(stream)
@@ -26,6 +26,7 @@ object LucidTokenizer : EditorTokenizer {
                 LucidLexer.Tokens.CONST_ID.id -> LucidStyle.constant
                 LucidLexer.Tokens.SPACE_ID.id -> LucidStyle.namespace
                 LucidLexer.Tokens.FUNCTION_ID.id -> LucidStyle.function
+                LucidLexer.Tokens.SEMICOLON.id -> LucidStyle.deadCode
                 else -> when (token.text) {
                     "input", "output", "inout", "dff", "sig", "const", "struct", "enum" -> LucidStyle.variable
                     "always", "if", "else", "repeat", "case", "test", "fun" -> LucidStyle.keyword

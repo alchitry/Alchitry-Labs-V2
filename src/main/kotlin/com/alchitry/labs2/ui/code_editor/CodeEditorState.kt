@@ -330,6 +330,10 @@ class CodeEditorState(
             selectionManager.end
         )
 
+    private fun TextPosition.charAt(): Char? {
+        return lines.getOrNull(line)?.text?.getOrNull(offset)
+    }
+
     internal fun newLineState(text: AnnotatedString) =
         CodeLineState(text, style?.density, mutableListOf(), style?.fontFamilyResolver, style?.style)
 
@@ -424,7 +428,7 @@ class CodeEditorState(
             lineOffsetCache.add(0)
         if (!lineOffsetCache.indices.contains(line)) {
             for (i in lineOffsetCache.size..line) {
-                lineOffsetCache.add(lineOffsetCache.last() + lineHeight(i))
+                lineOffsetCache.add(i, lineOffsetCache[i - 1] + lineHeight(i))
             }
         }
         return lineOffsetCache[line]
@@ -536,6 +540,7 @@ class CodeEditorState(
 
         scrollTarget?.let { startScrollToLine(it) }
         scrollTarget = null
+
     }
 
     fun tapModifier() = Modifier
@@ -639,7 +644,28 @@ class CodeEditorState(
 
         if (event.isTypedEvent) {
             val text = StringBuilder().appendCodePoint(event.utf16CodePoint).toString()
-            replaceText(text)
+
+            val modifiedText = when (text) {
+                "{" -> "{}"
+                "(" -> "()"
+                "[" -> "[]"
+                else -> text
+            }
+
+            val lineNum = selectionManager.caret.line
+            val line = lines.getOrNull(lineNum)?.text?.text
+            replaceText(modifiedText)
+            if (line?.isBlank() == true) {
+                val current = lines[lineNum].text.text
+                replaceText(
+                    lineIndenter.getIndentFor(lineNum) + current.trim(),
+                    TextPosition(lineNum, 0)..<TextPosition(lineNum, current.length)
+                )
+            }
+            for (i in 1..(modifiedText.length - text.length)) {
+                selectionManager.moveLeft()
+            }
+
             return true
         }
 
@@ -726,8 +752,17 @@ class CodeEditorState(
             }
 
             KeyCommand.NEW_LINE -> {
-                replaceText("\n")
-                replaceText(lineIndenter.getIndentFor(selectionManager.caret.line))
+                val nextChar = selectionManager.caret.charAt()
+                val prevChar = selectionManager.caret.getPrevious().charAt()
+                if (nextChar == '}' && prevChar == '{') {
+                    replaceText("\n\n")
+                    replaceText(lineIndenter.getIndentFor(selectionManager.caret.line))
+                    selectionManager.moveUp()
+                    replaceText(lineIndenter.getIndentFor(selectionManager.caret.line))
+                } else {
+                    replaceText("\n")
+                    replaceText(lineIndenter.getIndentFor(selectionManager.caret.line))
+                }
             }
 
             KeyCommand.TAB -> replaceText(LineIndenter.INDENT_STRING)

@@ -121,9 +121,10 @@ class BracketIndenter(private val codeEditorState: CodeEditorState) : LineIndent
     override fun getIndentFor(line: Int): String {
         val text = codeEditorState.getText()
         val lineOffset = codeEditorState.lines.subList(0, line).sumOf { it.text.length + 1 }
+        val lineText = codeEditorState.lines[line].text.text
         val tokenStream = CommonTokenStream(BracketLexer(CharStreams.fromString(text)))
         val source = BracketParser(tokenStream).source()
-        val node = findFinalNode(source, tokenStream, lineOffset)
+        val node = findFinalNode(source, tokenStream, lineOffset + LineIndenter.whitespaceStarting(lineText))
         val indents = countTypeInHierarchy<BracketParser.BlockContext>(node)
         return LineIndenter.indentString(indents)
     }
