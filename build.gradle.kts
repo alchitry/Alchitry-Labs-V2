@@ -97,7 +97,7 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "com.alchitry.labs.GUIKt"
+        mainClass = "com.alchitry.labs2.GUIKt"
     }
 }
 
