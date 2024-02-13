@@ -1,5 +1,6 @@
 package com.alchitry.labs2.ui.code_editor.styles
 
+import com.alchitry.labs2.parsers.findFinalNode
 import com.alchitry.labs2.parsers.grammar.BracketLexer
 import com.alchitry.labs2.parsers.grammar.BracketParser
 import com.alchitry.labs2.ui.code_editor.CodeEditorState
@@ -72,38 +73,35 @@ class BasicIndenter(private val codeEditorState: CodeEditorState) : LineIndenter
 
 
 class BracketIndenter(private val codeEditorState: CodeEditorState) : LineIndenter {
+    private fun bracketOffsetProvider(parseTree: ParseTree, tokenStream: TokenStream): IntRange {
+        val interval = parseTree.sourceInterval
+        val startOffset: Int
+        val endOffset: Int
+        when (parseTree) {
+            is BracketParser.ParenBlockContext, is BracketParser.CurlyBlockContext, is BracketParser.SquareBlockContext -> {
+                startOffset = tokenStream[interval.a].startIndex + 1
+                endOffset = tokenStream[interval.b].stopIndex - 1
+            }
+
+            is BracketParser.CommentBlockContext -> {
+                startOffset = tokenStream[interval.a].startIndex + 2
+                endOffset = tokenStream[interval.b].stopIndex - 2
+            }
+
+            else -> {
+                startOffset = tokenStream[interval.a].startIndex
+                endOffset = tokenStream[interval.b].stopIndex
+            }
+        }
+        return startOffset..endOffset
+    }
+
     private fun findFinalNode(parseTree: ParseTree, tokenStream: TokenStream, location: Int): ParseTree {
-        for (i in 0..<parseTree.childCount) {
-            val child = parseTree.getChild(i) ?: error("getChild() failed for a child that should exist!")
-            val interval = child.sourceInterval
-            val startOffset: Int
-            val endOffset: Int
-            when (child) {
-                is BracketParser.ParenBlockContext, is BracketParser.CurlyBlockContext, is BracketParser.SquareBlockContext -> {
-                    startOffset = tokenStream[interval.a].startIndex + 1
-                    endOffset = tokenStream[interval.b].stopIndex - 1
-                }
-
-                is BracketParser.CommentBlockContext -> {
-                    startOffset = tokenStream[interval.a].startIndex + 2
-                    endOffset = tokenStream[interval.b].stopIndex - 2
-                }
-
-                else -> {
-                    startOffset = tokenStream[interval.a].startIndex
-                    endOffset = tokenStream[interval.b].stopIndex
-                }
-            }
-            // endOffset will be negative if the bracket isn't matched
-            val adjEndOffset = if (endOffset < 0) Int.MAX_VALUE else endOffset
-            if (location in startOffset..adjEndOffset) {
-                return findFinalNode(child, tokenStream, location)
-            }
+        val tree = parseTree.findFinalNode(tokenStream, location, ::bracketOffsetProvider)
+        if (tree.childCount > 0 && tree is BracketParser.BlockContext) {
+            return tree.readParent() ?: tree
         }
-        if (parseTree.childCount > 0 && parseTree is BracketParser.BlockContext) {
-            return parseTree.readParent() ?: parseTree
-        }
-        return parseTree
+        return tree
     }
 
     private inline fun <reified T : ParseTree> countTypeInHierarchy(parseTree: ParseTree): Int {

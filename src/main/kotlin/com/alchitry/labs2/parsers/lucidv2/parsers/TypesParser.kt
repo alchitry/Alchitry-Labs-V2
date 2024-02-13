@@ -53,6 +53,18 @@ class TypesParser(
             return
         }
 
+        val parentModules = mutableListOf<Module>()
+        var currentModule = (context.instance as? ModuleInstance)
+        while (currentModule != null) {
+            parentModules.add(currentModule.module)
+            currentModule = currentModule.parent
+        }
+
+        if (parentModules.contains(moduleType)) {
+            context.reportError(nameCtx[0], "Instantiating \"${moduleTypeName}\" would cause an instantiation loop.")
+            return
+        }
+
         if (nameCtx[1].TYPE_ID() == null) {
             context.reportError(nameCtx[1], "Module instance names must start with a lowercase letter.")
             return

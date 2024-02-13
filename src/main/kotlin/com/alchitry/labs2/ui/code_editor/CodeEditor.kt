@@ -37,9 +37,7 @@ fun CodeEditor(
 
     Box(contentAlignment = Alignment.TopStart) {
         Canvas(
-            modifier = Modifier
-                .scrollable(state.scrollState, Orientation.Vertical, reverseDirection = true)
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             with(state.selectionManager) {
                 drawLineHighlight()
@@ -178,6 +176,7 @@ fun CodeEditor(
                                 draw()
                             }
                         }
+                        state.autocomplete?.suggestionOverlay()
                     }
                 }
             }

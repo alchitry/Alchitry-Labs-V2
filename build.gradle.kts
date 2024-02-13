@@ -22,7 +22,7 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
-val fullVersion = "2.0.5-PREVIEW"
+val fullVersion = "2.0.6-PREVIEW"
 val numOnlyVersion = fullVersion.split('-').first()
 
 group = "com.alchitry"

@@ -41,6 +41,8 @@ import com.alchitry.labs2.parsers.notations.NotationType
 import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.files.ProjectFile
+import com.alchitry.labs2.ui.code_editor.autocomplete.Autocomplete
+import com.alchitry.labs2.ui.code_editor.autocomplete.LucidAutocomplete
 import com.alchitry.labs2.ui.code_editor.styles.BasicIndenter
 import com.alchitry.labs2.ui.code_editor.styles.BracketIndenter
 import com.alchitry.labs2.ui.code_editor.styles.CodeStyler
@@ -103,6 +105,8 @@ class CodeEditorState(
 
     var lineTopOffset: Float = 0f
 
+    val autocomplete: Autocomplete?
+
     val tooltipState = NotationTooltipProvider(this)
     var notations: List<Notation>? = null
     var lineActions: Map<Int, List<LineAction>>? = null
@@ -147,6 +151,11 @@ class CodeEditorState(
             styler.updateStyle()
         }
 
+        autocomplete = when (file.language) {
+            Languages.Lucid -> LucidAutocomplete(this)
+            else -> null
+        }
+
         lineIndenter = when (file.language) {
             Languages.ACF, Languages.Lucid, Languages.Verilog -> BracketIndenter(this)
             else -> BasicIndenter(this)
@@ -173,6 +182,7 @@ class CodeEditorState(
 
     fun onCaretChanged() {
         updateHighlightTokens()
+        //autocomplete?.reset()
     }
 
     fun lineNotationLevel(line: Int): NotationType? {
@@ -205,6 +215,15 @@ class CodeEditorState(
             }
             lines[it.range.start.line].highlights.add(it)
         }
+    }
+
+    fun textPositionToScreenOffset(position: TextPosition): Offset? {
+        val line = lines.getOrNull(position.line) ?: return null
+        if (line.layoutResult == null)
+            line.layout(Constraints())
+        val layout = line.layoutResult ?: return null
+        val rect = layout.getCursorRect(position.offset)
+        return Offset(rect.left, offsetAtLineBottom(position.line).toFloat() - scrollState.value)
     }
 
     private fun screenToTextOffset(offset: Offset) = Offset(offset.x, offset.y + scrollState.value)
@@ -274,6 +293,7 @@ class CodeEditorState(
 
         LaunchedEffect(scrollState.value) {
             tooltipState.hide()
+            autocomplete?.reset()
         }
 
         val project by Project.currentFlow.collectAsState()
@@ -666,6 +686,8 @@ class CodeEditorState(
                 selectionManager.moveLeft()
             }
 
+            autocomplete?.updateSuggestions()
+
             return true
         }
 
@@ -673,30 +695,39 @@ class CodeEditorState(
             return false
         }
 
+        if (event.key == Key.Escape) {
+            autocomplete?.reset()
+        }
+
         // compose ignores the number-pad enter key so check for it here
         val command: KeyCommand = platformDefaultKeyMapping.map(event)
             ?: if (event.key.nativeKeyCode == java.awt.event.KeyEvent.VK_ENTER) KeyCommand.NEW_LINE else return false
 
         var consumed = true
+        var resetAutocomplete = true
         //commandExecutionContext {
         when (command) {
             KeyCommand.COPY -> copy()
             KeyCommand.PASTE -> paste()
             KeyCommand.CUT -> cut()
-            KeyCommand.LEFT_CHAR ->
-                selectionManager.setCaretToSelectionOr(true) { moveLeft() }
-
-            KeyCommand.RIGHT_CHAR ->
-                selectionManager.setCaretToSelectionOr(false) { moveRight() }
+            KeyCommand.LEFT_CHAR -> selectionManager.setCaretToSelectionOr(true) { moveLeft() }
+            KeyCommand.RIGHT_CHAR -> selectionManager.setCaretToSelectionOr(false) { moveRight() }
 //            KeyCommand.LEFT_WORD -> moveCursorLeftByWord()
 //            KeyCommand.RIGHT_WORD -> moveCursorRightByWord()
 //            KeyCommand.PREV_PARAGRAPH -> moveCursorPrevByParagraph()
 //            KeyCommand.NEXT_PARAGRAPH -> moveCursorNextByParagraph()
-            KeyCommand.UP ->
-                selectionManager.setCaretToSelectionOr(true) { moveUp() }
+            KeyCommand.UP -> {
+                if (autocomplete?.selectionUp() != true)
+                    selectionManager.setCaretToSelectionOr(true) { moveUp() }
+                resetAutocomplete = false
+            }
 
-            KeyCommand.DOWN ->
-                selectionManager.setCaretToSelectionOr(false) { moveDown() }
+            KeyCommand.DOWN -> {
+                if (autocomplete?.selectionDown() != true)
+                    selectionManager.setCaretToSelectionOr(false) { moveDown() }
+                resetAutocomplete = false
+            }
+
 //            KeyCommand.PAGE_UP -> moveCursorUpByPage()
 //            KeyCommand.PAGE_DOWN -> moveCursorDownByPage()
 //            KeyCommand.LINE_START -> moveCursorToLineStart()
@@ -719,10 +750,16 @@ class CodeEditorState(
 
             KeyCommand.DELETE_PREV_CHAR -> deleteIfSelectedOr {
                 replaceText("", selectionManager.caret.getPrevious()..<selectionManager.caret)
+                if (autocomplete?.active == true)
+                    autocomplete.updateSuggestions()
+                resetAutocomplete = false
             }
 
             KeyCommand.DELETE_NEXT_CHAR -> deleteIfSelectedOr {
                 replaceText("", selectionManager.caret..<selectionManager.caret.getNext())
+                if (autocomplete?.active == true)
+                    autocomplete.updateSuggestions()
+                resetAutocomplete = false
             }
 
 //            KeyCommand.DELETE_PREV_WORD ->
@@ -752,6 +789,13 @@ class CodeEditorState(
             }
 
             KeyCommand.NEW_LINE -> {
+                resetAutocomplete = false
+
+                autocomplete?.select()?.let {
+                    replaceText(it.nextText, it.range)
+                    return true
+                }
+
                 val nextChar = selectionManager.caret.charAt()
                 val prevChar = selectionManager.caret.getPrevious().charAt()
                 if (nextChar == '}' && prevChar == '{') {
@@ -765,7 +809,14 @@ class CodeEditorState(
                 }
             }
 
-            KeyCommand.TAB -> replaceText(LineIndenter.INDENT_STRING)
+            KeyCommand.TAB -> {
+                if (lines.getOrNull(selectionManager.caret.line)?.text?.isBlank() == true) {
+                    replaceText(lineIndenter.getIndentFor(selectionManager.caret.line))
+                } else {
+                    replaceText(LineIndenter.INDENT_STRING)
+                }
+            }
+
             KeyCommand.SELECT_ALL -> selectionManager.selectAll()
             KeyCommand.SELECT_LEFT_CHAR -> selectionManager.moveLeft().selectMovement()
             KeyCommand.SELECT_RIGHT_CHAR -> selectionManager.moveRight().selectMovement()
@@ -796,6 +847,8 @@ class CodeEditorState(
                 Log.warn("Command $command not implemented yet!")
             }
         }
+        if (resetAutocomplete)
+            autocomplete?.reset()
         //undoManager?.forceNextSnapshot()
         return consumed
     }

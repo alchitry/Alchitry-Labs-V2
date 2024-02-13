@@ -26,10 +26,7 @@ import com.alchitry.labs2.ui.tabs.Workspace
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.windows.mainWindow
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 import java.io.File
@@ -52,9 +49,16 @@ data class Project(
     val sourceDirectory = projectFolder.resolve("source")
     val constraintDirectory = projectFolder.resolve("constraint")
     val binFile = buildDirectory.resolve("${board.binName}.bin")
-    private val ideProjectContextFlow = MutableStateFlow<ProjectContext?>(null)
+    private val mutableProjectContextFlow = MutableStateFlow<ProjectContext?>(null)
     private val notationManagerFlow = MutableStateFlow<NotationManager?>(null)
     val scope = CoroutineScope(Dispatchers.Default)
+
+    /**
+     * The last non-null project context. It is only null if the project context was never successfully built.
+     */
+    val cachedProjectContextFlow =
+        mutableProjectContextFlow.filterNotNull().stateIn(scope, started = SharingStarted.Eagerly, null)
+
 
     fun binFileIsUpToDate(): Boolean = binFile.lastModified() >= lastModified() && binFile.lastModified() > 0L
     fun lastModified(): Long {
@@ -120,10 +124,10 @@ data class Project(
         scope.launch {
             //notationManagerFlow.tryEmit(null)
             val notationManager = NotationManager()
-            ideProjectContextFlow.value?.close() // close the old one
+            mutableProjectContextFlow.value?.close() // close the old one
             val context = buildContext(notationManager)
             notationManagerFlow.tryEmit(notationManager)
-            ideProjectContextFlow.tryEmit(context)
+            mutableProjectContextFlow.tryEmit(context)
             context?.getTestBenches()?.forEach { testBench ->
                 val collector = notationManager.getCollector(testBench.sourceFile)
                 testBench.getTestBlocks().forEach forEachTest@{ test ->
