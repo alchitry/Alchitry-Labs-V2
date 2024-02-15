@@ -1,5 +1,3 @@
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-
 package com.alchitry.labs2.ui.code_editor.autocomplete
 
 import androidx.compose.foundation.background
