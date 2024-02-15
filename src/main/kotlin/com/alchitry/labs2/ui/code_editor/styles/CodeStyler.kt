@@ -28,9 +28,11 @@ class CodeStyler(
             val end = token.range.endInclusive.coerceInRange(lines)
 
             if (token.isSingleLine) {
-                styles[start.line].add(
-                    LineStyle(start.offset, end.offset, token.style)
-                )
+                if (styles.size > 0) {
+                    styles[start.line].add(
+                        LineStyle(start.offset, end.offset, token.style)
+                    )
+                }
                 return@forEach
             }
 
