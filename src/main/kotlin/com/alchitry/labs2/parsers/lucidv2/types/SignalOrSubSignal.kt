@@ -48,7 +48,7 @@ sealed interface SignalOrSubSignal : Measurable {
      */
     fun connectTo(sig: SignalOrSubSignal, context: ProjectContext) {
         require(sig.width.canAssign(width)) {
-            "Cannot assign this signal's value ($width) to the provided signal (${sig.width})!"
+            "Cannot assign this signal's width ($width) to the provided signal (${sig.width})!"
         }
 
         // only check for drivers on full signals since sub-signal assignments will be done multiple times

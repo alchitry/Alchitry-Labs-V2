@@ -125,7 +125,7 @@ class ModuleInstanceTests {
                     output count[8]
                 ) {
                     .clk(clk) {
-                        testModule myMod (#INC(2))
+                        testModule myMod (#INC(2), #CTR_SIZE(8))
                     }
                    
                     always {
@@ -135,10 +135,11 @@ class ModuleInstanceTests {
             """.trimIndent().toSourceFile(),
             """
                 module testModule #(
-                    INC ~ 1
+                    INC ~ 1,
+                    CTR_SIZE ~ 4
                 )(
                     input clk,
-                    output count[8]
+                    output count[CTR_SIZE]
                 ) {
                     dff counter[8] (.clk(clk))
                     

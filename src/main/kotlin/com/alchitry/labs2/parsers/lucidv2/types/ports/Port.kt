@@ -28,7 +28,7 @@ data class Port(
                 return@LucidExprEval parent.parameters[it]
             }
             // this is OK as the eval will never suspend (no calls to $TICK and such)
-            runBlocking { eval.walk(width.context) }
+            runBlocking { eval.walk(width.context, ignoreSkip = true) }
             eval.resolve(width.context) ?: error("Failed to resolve port width: $width")
         } else width
         return when (direction) {

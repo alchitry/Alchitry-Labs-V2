@@ -3,7 +3,6 @@ package com.alchitry.labs2.parsers.lucidv2.context
 import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs2.parsers.ProjectContext
-import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.lucidv2.parsers.*
 import com.alchitry.labs2.parsers.lucidv2.types.*
@@ -55,25 +54,25 @@ class LucidExprEval(
         this.module
     )
 
-    suspend fun walk(t: ParseTree) {
+    suspend fun walk(t: ParseTree, ignoreSkip: Boolean = false) {
         ParseTreeMultiWalker.walk(
             listeners,
             t,
             WalkerFilter.None,
-            ignoreSkip = false
+            ignoreSkip = ignoreSkip
         )
     }
 
-    override fun resolve(exprCtx: LucidParser.ExprContext) = expr.resolve(exprCtx)
+    override fun resolve(exprCtx: ExprContext) = expr.resolve(exprCtx)
 
-    override fun resolve(signalCtx: LucidParser.SignalContext) = signal.resolve(signalCtx)
-    override fun resolve(signalWidthContext: LucidParser.SignalWidthContext) = signal.resolve(signalWidthContext)
-    override fun resolve(structTypeContext: LucidParser.StructTypeContext) = struct.resolve(structTypeContext)
-    override fun resolve(structDecContext: LucidParser.StructDecContext) = struct.resolve(structDecContext)
-    override fun resolve(enumDecContext: LucidParser.EnumDecContext): EnumType? = null
-    override fun resolve(constDecContext: LucidParser.ConstDecContext): Constant? = null
+    override fun resolve(signalCtx: SignalContext) = signal.resolve(signalCtx)
+    override fun resolve(signalWidthContext: SignalWidthContext) = signal.resolve(signalWidthContext)
+    override fun resolve(structTypeContext: StructTypeContext) = struct.resolve(structTypeContext)
+    override fun resolve(structDecContext: StructDecContext) = struct.resolve(structDecContext)
+    override fun resolve(enumDecContext: EnumDecContext): EnumType? = null
+    override fun resolve(constDecContext: ConstDecContext): Constant? = null
 
-    override fun resolve(bitSelectionContext: LucidParser.BitSelectionContext) =
+    override fun resolve(bitSelectionContext: BitSelectionContext) =
         bitSelection.resolve(bitSelectionContext)
 
     /**
