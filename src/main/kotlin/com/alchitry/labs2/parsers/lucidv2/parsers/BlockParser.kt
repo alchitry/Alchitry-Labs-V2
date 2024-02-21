@@ -182,9 +182,7 @@ data class BlockParser(
             }
         }
 
-        if (assignee.direction.canRead) {
-            assignee.write(newValue)
-        }
+        assignee.write(newValue)
     }
 
     override suspend fun exitCaseStat(ctx: CaseStatContext) {
