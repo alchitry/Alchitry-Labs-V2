@@ -8,7 +8,12 @@ data class SubSignal(
     val parent: Signal,
     val selection: SignalSelection
 ) : SignalOrSubSignal {
-    override fun read(evalContext: Evaluable?): Value = parent.read(evalContext).select(selection)
+    override fun read(evalContext: Evaluable?): Value {
+        val value = parent.read(evalContext).select(selection)
+        if (selection.isUndefined())
+            return value.width.filledWith(Bit.Bx, value.constant, false)
+        return value
+    }
 
     override val width: SignalWidth = read().width
 
@@ -47,7 +52,10 @@ data class SubSignal(
         require(width.canAssign(v.width)) {
             "Cannot set value $v to selected subsignal!"
         }
-        return parent.read(evalContext).write(selection, v.resizeToMatch(width))
+        val current = parent.read(evalContext)
+        if (selection.isUndefined())
+            return current.width.filledWith(Bit.Bx, current.constant, false)
+        return current.write(selection, v.resizeToMatch(width))
     }
 
     // this performs a read-modify-write just like write() does, but we can assume it will always be from the same thread

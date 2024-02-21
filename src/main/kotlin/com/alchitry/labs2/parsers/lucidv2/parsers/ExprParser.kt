@@ -50,7 +50,8 @@ data class ExprParser(
      * Returns true if the value at this node doesn't need to be recalculated
      */
     private fun canSkip(ctx: ParseTree): Boolean {
-        if (values[ctx]?.constant == true) {
+        val value = values[ctx] ?: return false
+        if (value.constant && value !is UndefinedValue) {
             ctx.skip = true
             return true
         }
@@ -373,7 +374,7 @@ data class ExprParser(
 
                 operands.forEach {
                     val sigWidth = it.first.width
-                    if (sigWidth !is SimpleWidth) {
+                    if (sigWidth !is SimpleWidth && sigWidth !is UndefinedWidth) {
                         context.reportError(
                             it.second,
                             "Each element in an array concatenation must have the same dimensions"
@@ -438,7 +439,7 @@ data class ExprParser(
             return
         }
 
-        if (dupCount.width !is SimpleWidth) {
+        if (dupCount.width !is SimpleWidth && dupCount.width !is UndefinedWidth) {
             context.reportError(exprCtx[0], "The array duplication index must be one dimensional")
             return
         }

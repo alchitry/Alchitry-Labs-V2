@@ -6,6 +6,10 @@ typealias SignalSelection = List<SignalSelector>
 
 class SignalSelectionException(val selector: SignalSelector, message: String) : Exception(message)
 
+fun SignalSelection.isUndefined(): Boolean = any {
+    it is SignalSelector.Bits && it.undefined
+}
+
 fun SignalSelection.overlaps(other: SignalSelection): Boolean {
     val minDim = size.coerceAtMost(other.size)
     for (i in 0..<minDim) {
@@ -18,8 +22,13 @@ fun SignalSelection.overlaps(other: SignalSelection): Boolean {
 sealed class SignalSelector {
     abstract fun overlaps(other: SignalSelector): Boolean
 
-    data class Bits(val range: IntRange, val context: SelectionContext) : SignalSelector() {
-        constructor(bit: Int, context: SelectionContext) : this(bit..bit, context)
+    data class Bits(val range: IntRange, val context: SelectionContext, val undefined: Boolean = false) :
+        SignalSelector() {
+        constructor(bit: Int, context: SelectionContext, undefined: Boolean = false) : this(
+            bit..bit,
+            context,
+            undefined
+        )
 
         /**
          * The number of elements selected

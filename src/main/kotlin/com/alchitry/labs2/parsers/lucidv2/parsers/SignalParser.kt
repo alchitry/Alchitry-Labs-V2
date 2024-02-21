@@ -135,7 +135,7 @@ data class SignalParser(
             when (child) {
                 is NameContext -> listOf(SignalSelector.Struct(child.text) to child)
                 is BitSelectionContext -> context.resolve(child)
-                    .map { SignalSelector.Bits(it.range, it.selectionCtx) to it.ctx }
+                    .map { SignalSelector.Bits(it.range, it.selectionCtx, it.undefined) to it.ctx }
 
                 else -> error("Signal child was not a NameContext or BitSelectionContext")
             }

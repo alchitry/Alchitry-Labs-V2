@@ -13,7 +13,8 @@ import org.antlr.v4.kotlinruntime.tree.ParseTree
 data class BitSelection(
     val range: IntRange,
     val ctx: ParserRuleContext,
-    val selectionCtx: SelectionContext
+    val selectionCtx: SelectionContext,
+    val undefined: Boolean
 )
 
 /**
@@ -89,7 +90,7 @@ data class BitSelectionParser(
             context.reportArraySizeTooBig(expr[1])
             return
         }
-        bounds[ctx] = BitSelection(minInt..maxInt, ctx, SelectionContext.Fixed(minCtx, maxCtx))
+        bounds[ctx] = BitSelection(minInt..maxInt, ctx, SelectionContext.Fixed(minCtx, maxCtx), false)
         setSkip(ctx)
     }
 
@@ -117,11 +118,6 @@ data class BitSelectionParser(
             return
         }
 
-        if (!start.isNumber()) {
-            context.reportBitSelectorNotANumber(expr[0])
-            return
-        }
-
         val widthInt = try {
             width.toBigInt()!!.intValueExact()
         } catch (e: ArithmeticException) {
@@ -129,11 +125,15 @@ data class BitSelectionParser(
             return
         }
 
-        val startInt = try {
-            start.toBigInt()!!.intValueExact()
-        } catch (e: ArithmeticException) {
-            context.reportArraySizeTooBig(expr[0])
-            return
+        val startInt = if (start.isNumber()) {
+            try {
+                start.toBigInt()!!.intValueExact()
+            } catch (e: ArithmeticException) {
+                context.reportArraySizeTooBig(expr[0])
+                return
+            }
+        } else {
+            0
         }
 
         if (widthInt <= 0) {
@@ -143,17 +143,17 @@ data class BitSelectionParser(
 
         val isUpTo = ctx.getChild(2)?.text == "+"
 
-        val selection = if (isUpTo)
-            startInt until widthInt + startInt
-        else
-            (startInt - widthInt + 1)..startInt
-
         val selectionContext = when (isUpTo) {
             true -> SelectionContext.UpTo(expr[0], widthInt)
             false -> SelectionContext.DownTo(expr[0], widthInt)
         }
 
-        bounds[ctx] = BitSelection(selection, ctx, selectionContext)
+        val selection = if (isUpTo)
+            startInt until widthInt + startInt
+        else
+            (startInt - widthInt + 1)..startInt
+
+        bounds[ctx] = BitSelection(selection, ctx, selectionContext, undefined = !start.isNumber())
         setSkip(ctx)
     }
 
@@ -168,7 +168,7 @@ data class BitSelectionParser(
         }
 
         if (!index.isNumber()) {
-            context.reportBitSelectorNotANumber(expr)
+            bounds[ctx] = BitSelection(0..0, ctx, SelectionContext.Single(expr), undefined = true)
             return
         }
 
@@ -179,7 +179,7 @@ data class BitSelectionParser(
             return
         }
 
-        bounds[ctx] = BitSelection(value..value, ctx, SelectionContext.Single(expr))
+        bounds[ctx] = BitSelection(value..value, ctx, SelectionContext.Single(expr), undefined = false)
         setSkip(ctx)
     }
 }

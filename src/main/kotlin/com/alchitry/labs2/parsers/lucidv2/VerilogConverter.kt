@@ -693,7 +693,7 @@ class VerilogConverter(
     override fun exitRepeatStat(ctx: LucidParser.RepeatStatContext) {
         val repeatSignal =
             context.blockParser.repeatSignals[ctx] ?: error(ctx, "Missing repeat signal for repeat block!")
-        val repValue = context.resolve(ctx.expr().requireNotNull(ctx)) as? SimpleValue ?: error(
+        val repExpr = ctx.expr()?.verilog ?: error(
             ctx,
             "Missing repeat count for repeat block!"
         )
@@ -704,7 +704,7 @@ class VerilogConverter(
             append(" = 0; ")
             append(repSigName)
             append(" < ")
-            append(repValue.asVerilog() ?: error(ctx, "Repeat value \"$repValue\" could not be converted to verilog!"))
+            append(repExpr)
             append("; ")
             append(repSigName)
             append(" = ")

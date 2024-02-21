@@ -117,6 +117,56 @@ class ModuleInstanceTests {
     }
 
     @Test
+    fun complexParamTest() = runBlocking {
+        val tester = LucidTester(
+            """
+                module alchitryTop (
+                    input clk,
+                    output count[8]
+                ) {
+                    decoder myMod (#WIDTH(3))
+                    
+                    always {
+                        myMod.in = 3
+                        count = myMod.out
+                    }
+                }
+            """.trimIndent().toSourceFile(),
+            """
+                module decoder #(
+                    WIDTH ~ 4 : WIDTH > 0
+                )(
+                    input in[WIDTH],
+                    output out[c{1, WIDTHx{1b0}}]
+                ) {
+                    always {
+                        out = 0
+                        out[in] = 1
+                    }
+                }
+            """.trimIndent().toSourceFile("testModule.luc")
+        )
+
+        val top = tester.fullParse()
+
+        val clk = top.getSignal("clk") as Signal
+        val count = top.getSignal("count") as Signal
+
+        val b0 = BitValue(Bit.B0, false, false)
+        val b1 = BitValue(Bit.B1, false, false)
+
+
+        top.context.initialize()
+
+        clk.write(b0)
+        tester.project.processQueue()
+        clk.write(b1)
+        tester.project.processQueue()
+
+        assertEquals(BitListValue(8, 8, false, false), count.read())
+    }
+
+    @Test
     fun counterParamTest() = runBlocking {
         val tester = LucidTester(
             """
@@ -159,18 +209,17 @@ class ModuleInstanceTests {
         val b0 = BitValue(Bit.B0, false, false)
         val b1 = BitValue(Bit.B1, false, false)
 
-        runBlocking {
-            top.context.initialize()
 
-            (0..127).forEach {
-                assertEquals(BitListValue(it * 2, 8, false, false), count.read())
+        top.context.initialize()
 
-                clk.write(b0)
-                tester.project.processQueue()
-                clk.write(b1)
-                tester.project.processQueue()
-            }
-            assertEquals(BitListValue(0, 8, false, false), count.read())
+        (0..127).forEach {
+            assertEquals(BitListValue(it * 2, 8, false, false), count.read())
+
+            clk.write(b0)
+            tester.project.processQueue()
+            clk.write(b1)
+            tester.project.processQueue()
         }
+        assertEquals(BitListValue(0, 8, false, false), count.read())
     }
 }

@@ -8,6 +8,7 @@ import com.alchitry.labs2.parsers.lucidv2.types.Function
 import com.alchitry.labs2.parsers.lucidv2.values.*
 import kotlinx.coroutines.runBlocking
 import org.antlr.v4.kotlinruntime.ParserRuleContext
+import org.antlr.v4.kotlinruntime.tree.TerminalNode
 
 
 /**
@@ -158,7 +159,7 @@ data class SignalDriverParser(
             }
             if (driven.andReduce().bit != Bit.B1) {
                 context.reportError(
-                    ctx,
+                    ctx.children?.first() as TerminalNode,
                     "The signal \"${signal.fullName()}\" was only partially driven. Bits marked as 0 weren't driven: ${
                         driven.toString(
                             ValueFormat.Binary
@@ -232,6 +233,11 @@ data class SignalDriverParser(
                 assignee.width.filledWith(Bit.B1, constant = false, signed = false)
             )
         }
+
+        val exprCtx = ctx.expr() ?: return
+        val newValue = context.resolve(exprCtx) ?: return
+        // runBlocking should be fine since this isn't run during evaluation (multi-thread)
+        runBlocking { assignee.write(newValue) }
     }
 
     override fun exitRepeatStat(ctx: RepeatStatContext) {

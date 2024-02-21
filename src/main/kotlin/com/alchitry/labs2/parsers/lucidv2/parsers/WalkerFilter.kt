@@ -38,6 +38,12 @@ interface WalkerFilter {
             }
         }
 
+        val SkipRepeatBlocks = object : WalkerFilter {
+            override fun shouldSkip(parent: RuleNode, child: ParseTree): Boolean {
+                return child is RepeatBlockContext
+            }
+        }
+
         val SkipModuleBodies = object : WalkerFilter {
             override fun shouldSkip(parent: RuleNode, child: ParseTree): Boolean {
                 return child is ModuleBodyContext

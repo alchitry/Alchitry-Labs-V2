@@ -181,6 +181,10 @@ data class BlockParser(
                 )
             }
         }
+
+        if (assignee.direction.canRead) {
+            assignee.write(newValue)
+        }
     }
 
     override suspend fun exitCaseStat(ctx: CaseStatContext) {
@@ -235,13 +239,16 @@ data class BlockParser(
             return
         }
 
+        val dependencies = context.expr.resolveDependencies(exprCtx)
+        val constant = countValue.constant || dependencies?.all { repeatSignals.values.contains(it) } != false
+
         if (!inFunctionBlock && !inTestBlock) {
             if (count < 1) {
                 context.notationCollector.reportError(exprCtx, "Repeat count must be greater than 0.")
                 return
             }
 
-            if (!countValue.constant) {
+            if (!constant) {
                 context.notationCollector.reportError(exprCtx, "Repeat count must be constant!")
                 return
             }
@@ -262,7 +269,10 @@ data class BlockParser(
             return
         }
 
-        val sigWidth = count.toBigInteger().minBits()
+        val sigWidth = if (countValue.constant)
+            count.toBigInteger().minBits()
+        else
+            countValue.bits.size
 
         val repSignal = RepeatSignal(sigName, sigWidth, repCtx)
 

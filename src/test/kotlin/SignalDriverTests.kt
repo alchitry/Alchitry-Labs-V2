@@ -29,6 +29,31 @@ class SignalDriverTests {
     }
 
     @Test
+    fun checkSigInRepeat() = runBlocking {
+        val tester = LucidTester(
+            """
+                module errorTest (
+                    input in[32],
+                    output out[32]
+                ) {
+                    sig currentIdx[6]
+                    always {
+                        currentIdx = 0
+                        //out = 0
+                        repeat(16, i) {
+                            out[currentIdx] = 0
+                            out[currentIdx+1] = 1
+                            currentIdx = currentIdx + 2
+                        }
+                    }
+                }
+            """.trimIndent().toSourceFile()
+        )
+        tester.fullParse()
+        assert(tester.notationManager.hasNoErrors)
+    }
+
+    @Test
     fun doubleDriverTest() = runBlocking {
         val tester = LucidTester(
             """
