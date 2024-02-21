@@ -12,6 +12,9 @@ class CodeStyler(
 
     fun updateStyle() {
         val lines = editor.lines
+        if (lines.size == 0) // no text to show
+            return
+
         val styles = MutableList(lines.size) { mutableListOf<LineStyle>() }
 
         val styleTokens = mutableListOf<StyleToken>().apply {
@@ -28,11 +31,9 @@ class CodeStyler(
             val end = token.range.endInclusive.coerceInRange(lines)
 
             if (token.isSingleLine) {
-                if (styles.size > 0) {
-                    styles[start.line].add(
-                        LineStyle(start.offset, end.offset, token.style)
-                    )
-                }
+                styles[start.line].add(
+                    LineStyle(start.offset, end.offset, token.style)
+                )
                 return@forEach
             }
 
