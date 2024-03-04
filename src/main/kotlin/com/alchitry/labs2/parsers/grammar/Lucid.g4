@@ -14,8 +14,8 @@ globalStat
 module: 'module' NL* name NL* paramList? NL* portList NL* moduleBody;
 testBench: 'testBench' NL* name NL* moduleBody;
 
-paramList: '#(' NL* paramDec (NL* ',' NL* paramDec)* NL* ')';
-portList: '(' (NL* portDec (NL* ',' NL* portDec)*)? NL* ')';
+paramList: '#(' ((NL* paramDec NL* ',')* (NL* paramDec (NL* ',')?))? NL* ')';
+portList: '(' ((NL* portDec NL* ',')* (NL* portDec (NL* ',')?))? NL* ')';
 
 paramDec: name (NL* paramDefault)? (NL* ':' NL* paramConstraint)?;
 paramDefault: ('='|'~') NL* expr;
@@ -29,7 +29,7 @@ signalWidth: arraySize* structType?;
 arraySize: '[' NL* expr NL* ']';
 structType: '<' NL* name NL* ('.' NL* name NL*)? '>';
 structMemberConst: '.' name NL* '(' NL* expr NL* ')';
-structConst: structType NL* '(' NL* structMemberConst NL* (',' NL* structMemberConst NL*)* ')';
+structConst: structType NL* '(' ((NL* structMemberConst NL* ',')* (NL* structMemberConst (NL* ',')?))? NL* ')';
 
 moduleBody: '{' (stat | NL)* '}';
 
@@ -54,7 +54,7 @@ paramCon: '#' name NL* '(' NL* expr NL* ')';
 
 sigDec: (SIGNED NL*)? 'sig' NL* name signalWidth (NL* '=' NL* expr)? semi;
 dffDec: (SIGNED NL*)? 'dff' NL* name signalWidth (NL* instCons)? semi;
-enumDec: 'enum' NL* name NL* '{' NL* name (NL* ',' NL* name)* NL* '}' semi;
+enumDec: 'enum' NL* name NL* '{' ((NL* name NL* ',')* (NL* name (NL* ',')?))? NL* '}' semi;
 
 moduleInst: name NL* name (NL* arraySize)* (NL* instCons)? semi;
 
@@ -63,10 +63,10 @@ conList  : connection (NL* ',' NL* connection)*;
 connection: paramCon | sigCon;
 
 structMember: (SIGNED NL*)? name signalWidth;
-structDec: 'struct' NL* name NL* '{' NL* structMember (NL* ',' NL* structMember)* NL* '}' semi;
+structDec: 'struct' NL* name NL* '{' ((NL* structMember NL* ',')* (NL* structMember (NL* ',')?))? NL* '}' semi;
 
 functionArg: SIGNED? name signalWidth;
-functionBlock: 'fun' NL* name NL* '(' (NL* functionArg (NL* ',' NL* functionArg)*)? NL* ')' functionBody;
+functionBlock: 'fun' NL* name NL* '(' ((NL* functionArg NL* ',')* (NL* functionArg (NL* ',')?))? NL* ')' functionBody;
 functionBody: block;
 
 testBlock: 'test' NL* name NL* block;
@@ -107,7 +107,7 @@ elseStat: 'else' NL* block;
 repeatStat: 'repeat' NL* '(' NL* expr NL* (',' NL* name NL*)? ')' NL* repeatBlock;
 repeatBlock: block;
 
-function: FUNCTION_ID NL* '(' (NL* functionExpr (NL* ',' NL* functionExpr)*)? NL* ')';
+function: FUNCTION_ID NL* '(' ((NL* functionExpr NL* ',')* (NL* functionExpr (NL* ',')?))? NL* ')';
 functionExpr: expr | REAL;
 
 number: HEX | BIN | DEC | INT | STRING;
