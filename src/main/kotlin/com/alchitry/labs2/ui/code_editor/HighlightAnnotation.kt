@@ -36,7 +36,7 @@ data class HighlightAnnotation(
             )
         )
 
-        drawRect(color, Offset(xStart, 0f), Size(xEnd - xStart, lineState.lineHeight.toFloat()))
+        drawRect(color, Offset(xStart, 0f), Size(xEnd - xStart, (lineState.lineHeight ?: 0).toFloat()))
     }
 
     context(DrawScope)
@@ -64,7 +64,7 @@ data class HighlightAnnotation(
             val end = if (secondPos.line == firstPos.line) {
                 with(editorState) { secondPos.getBottomOffset() }
             } else {
-                Offset(size.width, start.y + (editorState.lineHeight(firstPos.line)).toFloat())
+                Offset(size.width, start.y + (editorState.lineHeight(firstPos.line) ?: 0).toFloat())
             }
 
             val firstRect = Rect(topLeft = start, bottomRight = end)

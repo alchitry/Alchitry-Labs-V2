@@ -44,7 +44,7 @@ data class TextPosition(val line: Int, val offset: Int) : Comparable<TextPositio
     fun getBottomOffset(): Offset {
         return getTopOffset().let {
             it.copy(
-                y = it.y + (lineHeight(line)).toFloat()
+                y = it.y + (lineHeight(line) ?: 0).toFloat()
             )
         }
     }

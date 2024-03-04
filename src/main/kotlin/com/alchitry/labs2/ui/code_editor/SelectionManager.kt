@@ -203,7 +203,7 @@ class SelectionManager(
         val x = x
         var yPos = 0
         val line = editorState.lines.indexOfFirst {
-            val bottomY = yPos + it.lineHeight
+            val bottomY = yPos + (it.lineHeight ?: 0)
             val isTheLine = yPos <= y && bottomY >= y
             yPos = bottomY
             isTheLine
@@ -252,7 +252,7 @@ class SelectionManager(
         if (!active) return
 
         val lineTop = editorState.offsetAtLineTop(caret.line).toFloat()
-        val lineBottom = lineTop + editorState.lines[caret.line].lineHeight
+        val lineBottom = lineTop + (editorState.lines[caret.line].lineHeight ?: 0)
 
         val lineBounds = Rect(
             topLeft = Offset(0f, lineTop),

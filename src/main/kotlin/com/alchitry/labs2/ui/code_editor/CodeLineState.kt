@@ -21,7 +21,7 @@ class CodeLineState(
 ) {
     var layoutResult: TextLayoutResult? = null
     private var lastConstraints: Constraints? = null
-    val lineHeight: Int get() = layoutResult?.size?.height ?: 0
+    val lineHeight: Int? get() = layoutResult?.size?.height
 
     private val delegate by lazy {
         if (style != null && density != null && fontFamilyResolver != null) {

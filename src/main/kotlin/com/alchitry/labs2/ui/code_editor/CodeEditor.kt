@@ -115,12 +115,12 @@ fun CodeEditor(
 
                 val placeables =
                     state.lines.mapIndexedNotNull { lineNum, lineState ->
-                        val nextY = y + lineState.lineHeight
+                        val nextY = y + (lineState.lineHeight ?: 0)
 
                         val result = if (nextY > 0 && y < constraints.maxHeight) {
                             val measured =
-                                measure(lineNum, Constraints.fixed(state.gutterWidth, lineState.lineHeight))
-                            val yOffset = y + (lineState.lineHeight - (measured.maxOf { it.height })) / 2
+                                measure(lineNum, Constraints.fixed(state.gutterWidth, lineState.lineHeight ?: 0))
+                            val yOffset = y + ((lineState.lineHeight ?: 0) - (measured.maxOf { it.height })) / 2
                             yOffset to measured
                         } else null
 

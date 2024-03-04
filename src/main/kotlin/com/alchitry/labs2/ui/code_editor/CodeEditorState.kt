@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import com.alchitry.labs2.Log
+import com.alchitry.labs2.noNulls
 import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.notations.LineAction
 import com.alchitry.labs2.parsers.notations.Notation
@@ -128,7 +129,7 @@ class CodeEditorState(
     var tokens: List<EditorToken> = emptyList()
         private set
 
-    private var lineOffsetCache = mutableListOf<Int>()
+    private var lineOffsetCache: List<Int>? = null
 
     val selectionManager = SelectionManager(
         this,
@@ -234,7 +235,7 @@ class CodeEditorState(
             return TextPosition(0, 0)
         var lineBottom = 0
         val lineNumber = lines.indexOfFirst {
-            lineBottom += it.lineHeight
+            lineBottom += it.lineHeight ?: 0
             lineBottom > textOffset.y
         }.let { if (it < 0) lines.size - 1 else it }
 
@@ -330,8 +331,7 @@ class CodeEditorState(
                     Project.current?.queueNotationsUpdate()
                 }
             }
-        lineOffsetCache.clear()
-        lineOffsetCache.add(0)
+        lineOffsetCache = null
         tokens = file.editorTokenizer.getTokens(lines.toCharStream())
         styler.updateStyle()
         updateHighlightTokens()
@@ -439,19 +439,22 @@ class CodeEditorState(
         onTextChange()
     }
 
-    fun lineHeight(line: Int): Int {
-        return lines.getOrNull(line)?.lineHeight ?: 0
+    fun lineHeight(line: Int): Int? {
+        return lines.getOrNull(line)?.lineHeight
     }
 
     fun offsetAtLineTop(line: Int): Int {
-        if (lineOffsetCache.isEmpty())
-            lineOffsetCache.add(0)
-        if (!lineOffsetCache.indices.contains(line)) {
-            for (i in lineOffsetCache.size..line) {
-                lineOffsetCache.add(i, lineOffsetCache[i - 1] + lineHeight(i))
-            }
+        if (line == 0)
+            return 0
+        var cache = lineOffsetCache
+        if (cache == null || !cache.indices.contains(line)) {
+            val lineHeights = lines.map { it.lineHeight }
+            val validLineHeights = lineHeights.noNulls()
+                ?: return lineHeights.subList(0, line).reduce { acc, i -> (acc ?: 0) + (i ?: 0) } ?: 0
+            cache = validLineHeights.runningReduce { acc, line -> acc + line }
+            lineOffsetCache = cache
         }
-        return lineOffsetCache[line]
+        return cache.getOrElse(line - 1) { cache.lastOrNull() ?: 0 }
     }
 
     fun offsetAtLineBottom(line: Int): Int =
@@ -463,7 +466,7 @@ class CodeEditorState(
 
     private fun startScrollToLine(line: Int) {
         val top = offsetAtLineTop(line)
-        val bottom = top + lineHeight(line)
+        val bottom = top + (lineHeight(line) ?: 0)
 
         val viewTop = scrollState.value
         val viewBottom = viewTop + size.height
@@ -483,7 +486,7 @@ class CodeEditorState(
         if (!lines.indices.contains(line))
             return false
         val top = offsetAtLineTop(line)
-        val bottom = top + lines[line].lineHeight
+        val bottom = top + (lines[line].lineHeight ?: 0)
         return bottom > scrollState.value || top < scrollState.value + size.height
     }
 
@@ -499,16 +502,16 @@ class CodeEditorState(
             for (line in lines) {
                 val layout = line.layoutResult ?: continue
                 val margin = lineTopOffset
-                val nextY = currentY + line.lineHeight
+                val nextY = currentY + (line.lineHeight ?: 0)
                 val visible = nextY > 0 && currentY < size.height
                 if (visible) {
                     wasVisible = true
                     line.drawHighlights()
                     canvas.translate(dx = 0f, dy = margin)
                     TextPainter.paint(canvas, layout)
-                    canvas.translate(dx = 0f, dy = line.lineHeight.toFloat() - margin)
+                    canvas.translate(dx = 0f, dy = (line.lineHeight ?: 0).toFloat() - margin)
                 } else {
-                    canvas.translate(dx = 0f, dy = line.lineHeight.toFloat())
+                    canvas.translate(dx = 0f, dy = (line.lineHeight ?: 0).toFloat())
                     if (wasVisible)
                         break
                 }
@@ -528,7 +531,7 @@ class CodeEditorState(
     }
 
     private fun defaultLineHeight(): Int =
-        newLineState(AnnotatedString("0")).apply { layout(Constraints()) }.lineHeight
+        newLineState(AnnotatedString("0")).apply { layout(Constraints()) }.lineHeight ?: 0
 
 
     fun LazyLayoutMeasureScope.layout(constraints: Constraints) {
@@ -553,7 +556,7 @@ class CodeEditorState(
             it.layout(lineConstraints)
         }
 
-        val totalHeight = lines.sumOf { it.lineHeight }
+        val totalHeight = lines.sumOf { it.lineHeight ?: 0 }
 
         @Suppress("INVISIBLE_SETTER")
         scrollState.maxValue = (totalHeight - constraints.maxHeight).coerceAtLeast(0)
