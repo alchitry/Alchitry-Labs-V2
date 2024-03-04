@@ -15,8 +15,8 @@ val antlrKotlinVersion = extra.get("antlrKotlinVersion") as String
 
 
 plugins {
-    kotlin("jvm") version "1.9.21"
-    id("org.jetbrains.compose") version "1.5.11"
+    kotlin("jvm") version "1.9.22"
+    id("org.jetbrains.compose") version "1.6.0"
     id("dev.hydraulic.conveyor") version "1.5"
     id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
     id("org.openjfx.javafxplugin") version "0.1.0"
@@ -44,9 +44,9 @@ javafx {
 dependencies {
     implementation("com.github.alchitry.antlr-kotlin:antlr-kotlin-runtime:$antlrKotlinVersion")
     implementation("org.apache.commons:commons-text:1.11.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.7")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.0")
 
     implementation(kotlin("reflect"))
     implementation("org.jdom:jdom2:2.0.6.1")
@@ -56,7 +56,7 @@ dependencies {
     implementation("com.fazecast:jSerialComm:2.10.4")
     implementation("com.github.alchitry.yad2xx:yad2xxJava:d2xx_only_with_lib-SNAPSHOT")
     implementation("me.tongfei:progressbar:0.10.0")
-    implementation("org.jline:jline:3.25.0")
+    implementation("org.jline:jline:3.25.1")
     implementation("org.fusesource.jansi:jansi:2.4.1")
     implementation("li.flor:native-j-file-chooser:1.6.4")
 
@@ -66,7 +66,7 @@ dependencies {
     macAarch64(compose.desktop.macos_arm64)
     windowsAmd64(compose.desktop.windows_x64)
 
-    implementation("org.jetbrains.compose.material3:material3-desktop:1.5.11")
+    implementation("org.jetbrains.compose.material3:material3-desktop:1.6.0")
 
     testImplementation(kotlin("test"))
 }
