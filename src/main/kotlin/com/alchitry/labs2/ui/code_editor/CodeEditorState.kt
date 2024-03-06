@@ -451,7 +451,7 @@ class CodeEditorState(
             val lineHeights = lines.map { it.lineHeight }
             val validLineHeights = lineHeights.noNulls()
                 ?: return lineHeights.subList(0, line).reduce { acc, i -> (acc ?: 0) + (i ?: 0) } ?: 0
-            cache = validLineHeights.runningReduce { acc, line -> acc + line }
+            cache = validLineHeights.runningReduce { acc, l -> acc + l }
             lineOffsetCache = cache
         }
         return cache.getOrElse(line - 1) { cache.lastOrNull() ?: 0 }

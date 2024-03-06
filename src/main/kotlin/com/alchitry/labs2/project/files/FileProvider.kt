@@ -1,11 +1,37 @@
 package com.alchitry.labs2.project.files
 
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import java.io.File
 
+@Serializable
+@SerialName("FileProvider")
 sealed class FileProvider {
+    /**
+     * Name of the file including the extension.
+     */
     abstract val name: String
+
+    /**
+     * Returns true if this is a valid file (exists, can be read, etc.)
+     */
     abstract fun isValid(): Boolean
+
+    /**
+     * Path to the file including the file name.
+     */
     abstract val path: String
+
+    /**
+     * True if the file can't be written.
+     */
+    val readOnly: Boolean get() = this !is DiskFile || !this.file.canWrite()
 
     val extension: String get() = name.split('.').last()
 
@@ -15,6 +41,8 @@ sealed class FileProvider {
     /**
      * A standard file on disk.
      */
+    @Serializable(with = DiskFile.Companion::class)
+    @SerialName("DiskFile")
     data class DiskFile(
         val file: File
     ) : FileProvider() {
@@ -45,11 +73,25 @@ sealed class FileProvider {
             cachedContents = text
             readTime = file.lastModified()
         }
+
+        companion object : KSerializer<DiskFile> {
+            override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("DiskFile", PrimitiveKind.STRING)
+
+            override fun deserialize(decoder: Decoder): DiskFile {
+                return DiskFile(File("source").resolve(decoder.decodeString()))
+            }
+
+            override fun serialize(encoder: Encoder, value: DiskFile) {
+                encoder.encodeString(value.name)
+            }
+        }
     }
 
     /**
      * A file stored in the jar. These can't be accessed via a File() like normal files can.
      */
+    @Serializable
+    @SerialName("ResourceFile")
     data class ResourceFile(
         override val name: String,
         val resourcePath: String
@@ -72,6 +114,8 @@ sealed class FileProvider {
         }
     }
 
+    @Serializable
+    @SerialName("StringFile")
     data class StringFile(
         override val name: String,
         override val path: String = name,

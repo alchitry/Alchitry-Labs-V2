@@ -1,3 +1,7 @@
+/**
+    "name" : "Reset Conditioner",
+    "description" : "This will take an asynchronous reset input (such as a button) and synchronize the falling edge to the clock. This is important to ensure that the entire FPGA comes out of reset at the same time."
+**/
 /******************************************************************************
 
     The MIT License (MIT)

@@ -20,6 +20,7 @@ plugins {
     id("dev.hydraulic.conveyor") version "1.5"
     id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
     id("org.openjfx.javafxplugin") version "0.1.0"
+    kotlin("plugin.serialization") version "1.9.22"
 }
 
 val fullVersion = "2.0.6-PREVIEW"
@@ -47,6 +48,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.7")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
     implementation(kotlin("reflect"))
     implementation("org.jdom:jdom2:2.0.6.1")
@@ -85,6 +87,7 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = "17"
         freeCompilerArgs += "-opt-in=kotlin.ExperimentalStdlibApi"
+        freeCompilerArgs += "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
         freeCompilerArgs += "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi"
         freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
         freeCompilerArgs += "-Xcontext-receivers"
