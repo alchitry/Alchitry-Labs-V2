@@ -24,9 +24,9 @@ import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.switchActiveWindow
 import com.alchitry.labs2.ui.components.AlchitryToolTip
 import com.alchitry.labs2.ui.components.WindowDecoration
+import com.alchitry.labs2.ui.dialogs.openFileDialog
 import com.alchitry.labs2.ui.main.IconMenu
 import com.alchitry.labs2.ui.menu.MenuItem
-import com.alchitry.labs2.ui.misc.openFileDialog
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.ui.theme.AlchitryTheme
 import kotlinx.coroutines.delay

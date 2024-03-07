@@ -18,7 +18,7 @@ data object VivadoBuilder : ProjectBuilder() {
         if (Env.isMac)
             error("Can't build with Vivado on a Mac!")
 
-        val tclScript = project.buildDirectory.resolve("project.tcl")
+        val tclScript = project.buildDirectory.resolve("project.tcl").toFile()
         tclScript.bufferedWriter().use {
             it.write(generateProjectFile(project, sourceFiles, constraintFiles))
         }
@@ -49,9 +49,9 @@ data object VivadoBuilder : ProjectBuilder() {
         val binFile =
             project.buildDirectory
                 .resolve("vivado")
-                .resolve("${project.projectName}.runs")
+                .resolve("${project.data.projectName}.runs")
                 .resolve("impl_1")
-                .resolve("$topModuleName.bin")
+                .resolve("$topModuleName.bin").toFile()
         if (binFile.exists()) {
             binFile.copyTo(project.binFile)
             Log.println("Project built successfully.", AlchitryColors.current.Success)
@@ -66,9 +66,9 @@ data object VivadoBuilder : ProjectBuilder() {
     private fun generateProjectFile(project: Project, sourceFiles: List<File>, constraintFiles: List<File>): String =
         buildString {
             append("set projDir \"").append(getSanitizedPath(project.buildDirectory)).append("/vivado\"").appendLine()
-            append("set projName \"").append(project.projectName).append("\"").appendLine()
+            append("set projName \"").append(project.data.projectName).append("\"").appendLine()
             appendLine("set topName top")
-            append("set device ").append(project.board.fpgaName).appendLine()
+            append("set device ").append(project.data.board.fpgaName).appendLine()
             appendLine("if {[file exists \"\$projDir\"]} { file delete -force \"\$projDir\" }")
             appendLine("create_project \$projName \"\$projDir\" -part \$device")
             appendLine("set_property design_mode RTL [get_filesets sources_1]")

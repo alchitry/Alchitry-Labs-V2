@@ -7,6 +7,7 @@ import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import kotlinx.coroutines.coroutineScope
 import java.io.File
+import kotlin.io.path.absolutePathString
 
 data object IceCubeBuilder : ProjectBuilder() {
     private val IMP_DIR = "alchitry_imp"
@@ -37,17 +38,17 @@ data object IceCubeBuilder : ProjectBuilder() {
             return@coroutineScope
         }
 
-        val synProjectFile = project.buildDirectory.resolve(SYN_PROJECT_FILE)
+        val synProjectFile = project.buildDirectory.resolve(SYN_PROJECT_FILE).toFile()
         synProjectFile.bufferedWriter().use {
             it.write(generateProjectFile(topModuleName, sourceFiles, constraintFiles))
         }
 
-        val tclScript = project.buildDirectory.resolve(TCL_SCRIPT)
+        val tclScript = project.buildDirectory.resolve(TCL_SCRIPT).toFile()
         tclScript.bufferedWriter().use {
             it.write(generateTclScript(project, topModuleName, constraintFiles))
         }
 
-        val bashScript = project.buildDirectory.resolve(if (Env.isWindows) "build.cmd" else "build.sh")
+        val bashScript = project.buildDirectory.resolve(if (Env.isWindows) "build.cmd" else "build.sh").toFile()
         bashScript.bufferedWriter().use {
             it.write(generateBashScript(project, iceCube, iceCubeLicense))
         }
@@ -64,7 +65,7 @@ data object IceCubeBuilder : ProjectBuilder() {
 
         val binFile =
             project.buildDirectory
-                .resolve("$IMP_DIR/sbt/outputs/bitmap/${topModuleName}_bitmap.bin")
+                .resolve("$IMP_DIR/sbt/outputs/bitmap/${topModuleName}_bitmap.bin").toFile()
         if (binFile.exists()) {
             binFile.copyTo(project.binFile)
             Log.println("Project built successfully.", AlchitryColors.current.Success)
@@ -100,12 +101,13 @@ data object IceCubeBuilder : ProjectBuilder() {
         append(export).append(" SBT_DIR=").appendLine(iceCube.resolve("sbt_backend").absolutePath)
 
         append(synpwrapDir.resolve("synpwrap$extension")).append(" -prj \"")
-            .append(project.buildDirectory.resolve(SYN_PROJECT_FILE).absolutePath)
+            .append(project.buildDirectory.resolve(SYN_PROJECT_FILE).absolutePathString())
             .appendLine("\"")
 
         val tclKit = Locations.getToolNamed("tclkit-8.5.17").absolutePath
 
-        append("\"").append(tclKit).append("\" \"").append(project.buildDirectory.resolve(TCL_SCRIPT).absolutePath)
+        append("\"").append(tclKit).append("\" \"")
+            .append(project.buildDirectory.resolve(TCL_SCRIPT).absolutePathString())
             .appendLine("\"")
     }
 

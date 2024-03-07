@@ -48,7 +48,7 @@ class SourceFile(
                         else -> error("Unexpected index: $index")
                     }
                 }
-                require(file != null) { "Missing file entry for SourceFile!" }
+                check(file != null) { "Missing file entry for SourceFile!" }
                 SourceFile(file, top)
             }
         }

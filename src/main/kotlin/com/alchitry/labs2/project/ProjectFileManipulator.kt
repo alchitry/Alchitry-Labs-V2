@@ -11,10 +11,10 @@ fun Project.removeFile(file: ProjectFile, delete: Boolean) {
         file.file.file.delete()
     }
     Workspace.closeFile(file, false)
-    val newSourceFiles = sourceFiles.toMutableSet().apply { remove(file) }
-    val newConstraintFiles = constraintFiles.toMutableSet().apply { remove(file) }
-    val newProj = copy(sourceFiles = newSourceFiles, constraintFiles = newConstraintFiles)
-    newProj.saveXML()
+    val newSourceFiles = data.sourceFiles.toMutableSet().apply { remove(file) }
+    val newConstraintFiles = data.constraintFiles.toMutableSet().apply { remove(file) }
+    val newProj = copy(data = data.copy(sourceFiles = newSourceFiles, constraintFiles = newConstraintFiles))
+    newProj.save()
     Project.open(newProj)
 }
 
@@ -60,27 +60,27 @@ fun Project.addLucidTestBench(name: String) = addSourceFile(
 fun Project.addAlchitryConstraint(name: String) = addConstraintFile("$name.${Languages.ACF.extension}")
 
 private fun Project.addSourceFile(name: String, contents: String): SourceFile {
-    val newFile = sourceDirectory.resolve(name)
-    newFile.writeText(contents)
-    val newSourceFile = SourceFile(FileProvider.DiskFile(newFile))
-    val newSourceFiles = sourceFiles.toMutableSet().apply {
+    val newFilePath = sourceDirectory.resolve(name)
+    newFilePath.toFile().writeText(contents)
+    val newSourceFile = SourceFile(FileProvider.DiskFile(newFilePath))
+    val newSourceFiles = data.sourceFiles.toMutableSet().apply {
         add(newSourceFile)
     }
-    val newProj = copy(sourceFiles = newSourceFiles)
-    newProj.saveXML()
+    val newProj = copy(data = data.copy(sourceFiles = newSourceFiles))
+    newProj.save()
     Project.open(newProj)
     return newSourceFile
 }
 
 private fun Project.addConstraintFile(name: String, contents: String = ""): ConstraintFile {
-    val newFile = constraintDirectory.resolve(name)
-    newFile.writeText(contents)
-    val newConstraintFile = ConstraintFile(FileProvider.DiskFile(newFile))
-    val newConstraintFiles = constraintFiles.toMutableSet().apply {
+    val newFilePath = constraintDirectory.resolve(name)
+    newFilePath.toFile().writeText(contents)
+    val newConstraintFile = ConstraintFile(FileProvider.DiskFile(newFilePath))
+    val newConstraintFiles = data.constraintFiles.toMutableSet().apply {
         add(newConstraintFile)
     }
-    val newProj = copy(constraintFiles = newConstraintFiles)
-    newProj.saveXML()
+    val newProj = copy(data = data.copy(constraintFiles = newConstraintFiles))
+    newProj.save()
     Project.open(newProj)
     return newConstraintFile
 }

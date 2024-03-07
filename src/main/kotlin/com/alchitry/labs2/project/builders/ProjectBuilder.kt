@@ -9,6 +9,8 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.nio.CharBuffer
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 
 sealed class ProjectBuilder {
     abstract suspend fun buildProject(
@@ -54,6 +56,10 @@ sealed class ProjectBuilder {
 
     protected fun getSanitizedPath(f: File): String {
         return getSanitizedPath(f.absolutePath)
+    }
+
+    protected fun getSanitizedPath(f: Path): String {
+        return getSanitizedPath(f.absolutePathString())
     }
 
     protected fun getSanitizedPath(f: String): String {

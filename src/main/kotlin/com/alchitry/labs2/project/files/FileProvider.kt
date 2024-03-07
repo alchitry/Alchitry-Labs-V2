@@ -1,14 +1,18 @@
 package com.alchitry.labs2.project.files
 
+import com.alchitry.labs2.project.Project
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.encoding.*
 import java.io.File
+import java.nio.file.Path
+import java.nio.file.Paths
+import kotlin.io.path.name
 
 @Serializable
 @SerialName("FileProvider")
@@ -22,11 +26,6 @@ sealed class FileProvider {
      * Returns true if this is a valid file (exists, can be read, etc.)
      */
     abstract fun isValid(): Boolean
-
-    /**
-     * Path to the file including the file name.
-     */
-    abstract val path: String
 
     /**
      * True if the file can't be written.
@@ -44,19 +43,25 @@ sealed class FileProvider {
     @Serializable(with = DiskFile.Companion::class)
     @SerialName("DiskFile")
     data class DiskFile(
-        val file: File
+        val path: Path
     ) : FileProvider() {
-        constructor(path: String) : this(File(path))
+        constructor(path: String) : this(Paths.get(path))
 
-        override val name: String get() = file.name
-        override val path: String get() = file.path
+        override val name: String get() = path.name
+        val file: File
+            get() {
+                val projectPath =
+                    Project.current?.path ?: error("DiskFile.file can only be accessed when a project is open!")
+                return projectPath.resolve(path).toFile()
+            }
 
-        override fun isValid(): Boolean = file.exists() && file.canRead()
+        override fun isValid(): Boolean = file.run { exists() && canRead() }
 
         private var cachedContents: String? = null
         private var readTime: Long = 0
 
         override fun readText(): String {
+            val file = file
             cachedContents?.let {
                 if (readTime == file.lastModified())
                     return it
@@ -66,6 +71,7 @@ sealed class FileProvider {
         }
 
         override fun writeText(text: String) {
+            val file = file
             if (text == cachedContents && readTime == file.lastModified())
                 return
 
@@ -75,42 +81,28 @@ sealed class FileProvider {
         }
 
         companion object : KSerializer<DiskFile> {
-            override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("DiskFile", PrimitiveKind.STRING)
+            override val descriptor: SerialDescriptor = buildClassSerialDescriptor("DiskFile") {
+                element("path", PrimitiveSerialDescriptor("path", PrimitiveKind.STRING))
+            }
 
             override fun deserialize(decoder: Decoder): DiskFile {
-                return DiskFile(File("source").resolve(decoder.decodeString()))
+                return decoder.decodeStructure(descriptor) {
+                    val idx = decodeElementIndex(descriptor)
+                    check(idx == 0) { "Unknown index: $idx" }
+                    val path = decodeStringElement(descriptor, 0)
+                    check(decodeElementIndex(descriptor) == CompositeDecoder.DECODE_DONE) { "Unexpected number of elements!" }
+
+                    DiskFile(Paths.get(path))
+                }
+
             }
 
             override fun serialize(encoder: Encoder, value: DiskFile) {
-                encoder.encodeString(value.name)
+                encoder.encodeStructure(descriptor) {
+                    encodeStringElement(descriptor, 0, value.path.toString())
+                }
+
             }
-        }
-    }
-
-    /**
-     * A file stored in the jar. These can't be accessed via a File() like normal files can.
-     */
-    @Serializable
-    @SerialName("ResourceFile")
-    data class ResourceFile(
-        override val name: String,
-        val resourcePath: String
-    ) : FileProvider() {
-        override val path: String get() = resourcePath
-
-        override fun isValid(): Boolean =
-            this::class.java.getResource(resourcePath) != null
-
-        override fun readText(): String {
-            val stream =
-                this::class.java.getResourceAsStream(resourcePath) ?: error("Invalid resource path: $resourcePath")
-            return stream.use {
-                String(it.readAllBytes())
-            }
-        }
-
-        override fun writeText(text: String) {
-            error("Resource files are read-only!")
         }
     }
 
@@ -118,7 +110,6 @@ sealed class FileProvider {
     @SerialName("StringFile")
     data class StringFile(
         override val name: String,
-        override val path: String = name,
         val contents: String
     ) : FileProvider() {
         override fun isValid() = true

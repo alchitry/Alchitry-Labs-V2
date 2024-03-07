@@ -5,7 +5,6 @@ import com.alchitry.labs2.hardware.usb.BoardLoader
 import com.alchitry.labs2.hardware.usb.UsbUtil
 import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.Project
-import com.alchitry.labs2.project.openXml
 import com.alchitry.labs2.showHelp
 import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
@@ -66,7 +65,7 @@ class LoadProject : Subcommand("load", "Load a project or .bin file") {
 
         val project = project?.let {
             try {
-                Project.openXml(File(it))
+                Project.open(File(it))
             } catch (e: Exception) {
                 Log.printlnError("Failed to open project:")
                 Log.printlnError("     ${e.message}")
@@ -75,7 +74,7 @@ class LoadProject : Subcommand("load", "Load a project or .bin file") {
         }
 
         if (erase) {
-            val boardType = project?.board ?: board ?: run {
+            val boardType = project?.data?.board ?: board ?: run {
                 showHelp("A board must be specified when erasing.")
                 return
             }
@@ -98,7 +97,7 @@ class LoadProject : Subcommand("load", "Load a project or .bin file") {
                 return
             }
 
-            val boardType = project?.board ?: board ?: run {
+            val boardType = project?.data?.board ?: board ?: run {
                 showHelp("A board must be specified when providing a raw .bin file.")
                 return
             }

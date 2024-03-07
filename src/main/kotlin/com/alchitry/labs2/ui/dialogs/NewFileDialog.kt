@@ -29,7 +29,7 @@ fun LucidFileDialog(visible: Boolean, onClose: () -> Unit) {
         {
             it.matches(Regex("[a-z][a-zA-Z0-9_]*")) &&
                     !Lucid.RESERVED_WORDS.contains(it) &&
-                    project?.sourceFiles?.none { f -> f.name == "$it.${Languages.Lucid.extension}" } == true
+                    project?.data?.sourceFiles?.none { f -> f.name == "$it.${Languages.Lucid.extension}" } == true
         },
         { name ->
             project?.addLucidModule(name)?.also {
@@ -50,7 +50,7 @@ fun LucidTestBenchDialog(visible: Boolean, onClose: () -> Unit) {
         {
             it.matches(Regex("[a-z][a-zA-Z0-9_]*")) &&
                     !Lucid.RESERVED_WORDS.contains(it) &&
-                    project?.sourceFiles?.none { f -> f.name == "$it.${Languages.Lucid.extension}" } == true
+                    project?.data?.sourceFiles?.none { f -> f.name == "$it.${Languages.Lucid.extension}" } == true
         },
         { name ->
             project?.addLucidTestBench(name)?.also {
@@ -70,7 +70,7 @@ fun AcfFileDialog(visible: Boolean, onClose: () -> Unit) {
         "Constraint Name",
         {
             it.isNotBlank() &&
-                    project?.constraintFiles?.none { f -> f.name == "$it.${Languages.ACF.extension}" } == true
+                    project?.data?.constraintFiles?.none { f -> f.name == "$it.${Languages.ACF.extension}" } == true
         },
         { name ->
             project?.addAlchitryConstraint(name)?.also {

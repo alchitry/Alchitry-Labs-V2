@@ -1,4 +1,4 @@
-package com.alchitry.labs2.ui.misc
+package com.alchitry.labs2.ui.dialogs
 
 import androidx.compose.ui.awt.ComposeWindow
 import kotlinx.coroutines.*

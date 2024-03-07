@@ -2,7 +2,6 @@ package com.alchitry.labs2.subcommands
 
 import com.alchitry.labs2.parsers.notations.NotationManager
 import com.alchitry.labs2.project.Project
-import com.alchitry.labs2.project.openXml
 import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.Subcommand
@@ -15,7 +14,7 @@ class CheckProject : Subcommand("check", "Check a project for errors") {
 
     override fun execute() {
         val project = try {
-            Project.openXml(File(project))
+            Project.open(File(project))
         } catch (e: Exception) {
             System.err.println("Failed to open project:")
             System.err.println("     ${e.message}")

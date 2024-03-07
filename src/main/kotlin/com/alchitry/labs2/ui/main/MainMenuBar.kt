@@ -5,11 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.awt.ComposeWindow
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.project.Project
-import com.alchitry.labs2.project.openXml
+import com.alchitry.labs2.ui.dialogs.openFileDialog
 import com.alchitry.labs2.ui.menu.MenuBar
 import com.alchitry.labs2.ui.menu.MenuItem
 import com.alchitry.labs2.ui.menu.TopMenuItem
-import com.alchitry.labs2.ui.misc.openFileDialog
 import com.alchitry.labs2.windows.LocalComposeWindow
 
 @Composable
@@ -31,12 +30,11 @@ private fun openProject(window: ComposeWindow) {
     )
     val project = files.firstOrNull()?.let {
         try {
-            Project.openXml(it)
+            Project.open(it)
         } catch (e: Throwable) {
             Log.printlnError("Failed to open project file!", e)
             null
         }
     } ?: return
-
-    Project.current = project
+    Project.open(project)
 }

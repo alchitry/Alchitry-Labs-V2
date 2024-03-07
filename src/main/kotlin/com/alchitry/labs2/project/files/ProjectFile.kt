@@ -17,8 +17,8 @@ sealed class ProjectFile(val file: FileProvider) {
     protected val lock = Mutex(false)
 
     val name: String get() = file.name
-    val isLibFile: Boolean get() = file is FileProvider.ResourceFile
-    val isReadOnly: Boolean get() = isLibFile
+    val isLibFile: Boolean get() = file is Component
+    val isReadOnly: Boolean get() = file.readOnly
     abstract val language: Language
 
     val editorTokenizer: EditorTokenizer get() = language.tokenizer

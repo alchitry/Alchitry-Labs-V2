@@ -20,7 +20,7 @@ import kotlinx.serialization.json.Json
 private data class ComponentDescriptor(
     val name: String,
     val description: String,
-    val supportedBoards: List<Board>? = null,
+    val supportedBoards: Set<Board>? = null,
 )
 
 @Serializable(with = Component.Companion::class)
@@ -28,12 +28,12 @@ data class Component(
     override val name: String,
     val componentName: String,
     val description: String,
-    val supportedBoards: List<Board>? = null,
+    val supportedBoards: Set<Board>? = null,
     val categories: List<String>,
     val content: String
 ) : FileProvider() {
     override fun isValid(): Boolean = true
-    override val path: String = categories.toMutableList().apply { add(name) }.joinToString("/")
+    val path: String = categories.toMutableList().apply { add(name) }.joinToString("/")
     override fun readText(): String = content
     override fun writeText(text: String) {
         error("Components are read-only!")
@@ -41,14 +41,10 @@ data class Component(
 
     companion object : KSerializer<Component> {
         fun fromResource(resourcePath: String): Component {
-            val reducedPath = if (resourcePath.startsWith("/"))
-                resourcePath.substring(1)
-            else
-                resourcePath
-            val pieces = reducedPath.split("/")
+            val pieces = resourcePath.split("/")
             val fileName = pieces.last()
             val categories = pieces.subList(0, pieces.size - 1)
-            val path = "${Locations.components}/$reducedPath"
+            val path = "${Locations.components}/$resourcePath"
             val fileContents = this::class.java.getResourceAsStream(path)?.let { String(it.readAllBytes()) }
             requireNotNull(fileContents) { "Failed to read resource stream: $path" }
 

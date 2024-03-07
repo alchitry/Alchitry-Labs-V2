@@ -36,7 +36,7 @@ fun ProjectTree() {
                 LucidFileDialog(showNewLucidModule) { showNewLucidModule = false }
                 var showNewAlchitryConstraint by remember { mutableStateOf(false) }
                 AcfFileDialog(showNewAlchitryConstraint) { showNewAlchitryConstraint = false }
-                TreeSection(project.projectName, 0) {
+                TreeSection(project.data.projectName, 0) {
                     ContextMenuDataProvider(
                         items = {
                             listOf(
@@ -47,7 +47,7 @@ fun ProjectTree() {
                         }
                     ) {
                         TreeSection("Source Files", 1) {
-                            project.sourceFiles.sortedBy { it.name }.forEach { file ->
+                            project.data.sourceFiles.sortedBy { it.name }.forEach { file ->
                                 key(file) {
                                     val color = project
                                         .notationCollectorFlowForFile(file)
@@ -94,7 +94,7 @@ fun ProjectTree() {
                         }
                     ) {
                         TreeSection("Constraint Files", 1) {
-                            project.constraintFiles.sortedBy { it.name }.forEach { file ->
+                            project.data.constraintFiles.sortedBy { it.name }.forEach { file ->
                                 key(file) {
                                     val color = project
                                         .notationCollectorFlowForFile(file)

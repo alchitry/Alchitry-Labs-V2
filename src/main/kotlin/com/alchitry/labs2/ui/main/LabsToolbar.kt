@@ -19,10 +19,7 @@ import com.alchitry.labs2.hardware.usb.UsbUtil
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.switchActiveWindow
 import com.alchitry.labs2.ui.components.ToolbarButton
-import com.alchitry.labs2.ui.dialogs.AcfFileDialog
-import com.alchitry.labs2.ui.dialogs.LucidFileDialog
-import com.alchitry.labs2.ui.dialogs.LucidTestBenchDialog
-import com.alchitry.labs2.ui.dialogs.NewProjectDialog
+import com.alchitry.labs2.ui.dialogs.*
 import com.alchitry.labs2.ui.menu.*
 import com.alchitry.labs2.ui.tabs.BoardSimulationTab
 import com.alchitry.labs2.ui.tabs.Workspace
@@ -43,7 +40,7 @@ fun LabsToolbar() {
                 showProjectDialog = true
             }
             MenuItem({ Text("Open Project...") }) {
-                Project.open()
+                openProjectDialog()
             }
             MenuItem({ Text("Set Vivado Location") }) {
                 Log.warn("Not implemented yet!") // TODO
@@ -129,7 +126,7 @@ fun LabsToolbar() {
             runWithProject { it.build() }
         }
 
-        val board = project?.board
+        val board = project?.data?.board
         var boardDetected by remember { mutableStateOf(false) }
         LaunchedEffect(board, running) {
             if (board == null || running)
@@ -157,11 +154,11 @@ fun LabsToolbar() {
                         return@runWithProject
                     }
                 }
-                BoardLoader.load(it.board, 0, it.binFile, true)
+                BoardLoader.load(it.data.board, 0, it.binFile, true)
             }
         }
 
-        if (project?.board?.supportsRamLoading == true) {
+        if (project?.data?.board?.supportsRamLoading == true) {
             ToolbarButton(
                 onClick = {
                     runWithProject {
@@ -172,7 +169,7 @@ fun LabsToolbar() {
                                 return@runWithProject
                             }
                         }
-                        BoardLoader.load(it.board, 0, it.binFile, false)
+                        BoardLoader.load(it.data.board, 0, it.binFile, false)
                     }
                 },
                 icon = painterResource("icons/load_temp.svg"),
@@ -182,7 +179,7 @@ fun LabsToolbar() {
         }
         ToolbarButton(
             onClick = {
-                runWithProject { BoardLoader.erase(it.board, 0) }
+                runWithProject { BoardLoader.erase(it.data.board, 0) }
             },
             icon = painterResource("icons/erase.svg"),
             description = "Erase",

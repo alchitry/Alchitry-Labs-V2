@@ -17,19 +17,22 @@ import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.parsers.notations.NotationManager
 import com.alchitry.labs2.parsers.notations.NotationType
-import com.alchitry.labs2.project.files.*
+import com.alchitry.labs2.project.files.FileProvider
+import com.alchitry.labs2.project.files.ProjectFile
+import com.alchitry.labs2.project.files.SourceFile
 import com.alchitry.labs2.ui.code_editor.TextPosition
 import com.alchitry.labs2.ui.code_editor.line_actions.LineActionButton
-import com.alchitry.labs2.ui.misc.openFileDialog
 import com.alchitry.labs2.ui.tabs.SimulationResultTab
 import com.alchitry.labs2.ui.tabs.Workspace
 import com.alchitry.labs2.ui.theme.AlchitryColors
-import com.alchitry.labs2.windows.mainWindow
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.serialization.json.Json
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.createDirectories
 import kotlin.math.max
 
@@ -37,19 +40,15 @@ class QueueExhaustionException(message: String) : IllegalStateException(message)
 
 
 data class Project(
-    val projectName: String,
-    val projectFolder: File,
-    val board: Board,
-    val sourceFiles: Set<SourceFile>,
-    val constraintFiles: Set<ConstraintFile>,
-    val ipCores: Set<IPCore>
+    val path: Path,
+    val data: ProjectData1V0
 ) {
-    val top: SourceFile get() = sourceFiles.firstOrNull { it.top } ?: throw Exception("Missing top module!")
-    val projectFile = projectFolder.resolve("$projectName.alp")
-    val buildDirectory = projectFolder.resolve("build")
-    val sourceDirectory = projectFolder.resolve("source")
-    val constraintDirectory = projectFolder.resolve("constraint")
-    val binFile = buildDirectory.resolve("${board.binName}.bin")
+    val top: SourceFile get() = data.sourceFiles.firstOrNull { it.top } ?: throw Exception("Missing top module!")
+    val projectFile: File = path.resolve("${data.projectName}.alp").toFile()
+    val buildDirectory: Path = path.resolve("build")
+    val sourceDirectory: Path = path.resolve("source")
+    val constraintDirectory: Path = path.resolve("constraint")
+    val binFile: File = buildDirectory.resolve("${data.board.binName}.bin").toFile()
     private val mutableProjectContextFlow = MutableStateFlow<ProjectContext?>(null)
     private val notationManagerFlow = MutableStateFlow<NotationManager?>(null)
     val scope = CoroutineScope(Dispatchers.Default)
@@ -64,12 +63,10 @@ data class Project(
     fun binFileIsUpToDate(): Boolean = binFile.lastModified() >= lastModified() && binFile.lastModified() > 0L
     fun lastModified(): Long {
         return max(
-            max(
-                sourceFiles.mapNotNull { (it.file as? FileProvider.DiskFile)?.file?.lastModified() }.maxOrNull() ?: 0L,
-                constraintFiles.mapNotNull { (it.file as? FileProvider.DiskFile)?.file?.lastModified() }.maxOrNull()
-                    ?: 0L
-            ),
-            ipCores.maxOfOrNull { it.files.maxOfOrNull { f -> f.lastModified() } ?: 0 } ?: 0L
+            data.sourceFiles.mapNotNull { (it.file as? FileProvider.DiskFile)?.file?.lastModified() }.maxOrNull()
+                ?: 0L,
+            data.constraintFiles.mapNotNull { (it.file as? FileProvider.DiskFile)?.file?.lastModified() }
+                .maxOrNull() ?: 0L
         )
     }
 
@@ -79,15 +76,23 @@ data class Project(
     fun currentNotationCollectorForFile(projectFile: ProjectFile): NotationCollector? =
         notationManagerFlow.value?.getCollector(projectFile)
 
+    fun save() = saveAs(projectFile)
+
+    fun saveAs(file: File) {
+        val alpData = AlchitryLabsProjectData(data)
+        val text = json.encodeToString(AlchitryLabsProjectData.serializer(), alpData)
+        file.writeText(text)
+    }
+
     companion object {
+        private val json = Json { prettyPrint = true }
         private val mutableCurrentFlow = MutableStateFlow<Project?>(null)
         val currentFlow = mutableCurrentFlow.asStateFlow()
 
-        var current: Project?
+        val current: Project?
             get() = mutableCurrentFlow.value
-            set(value) {
-                mutableCurrentFlow.tryEmit(value)
-            }
+
+        fun open(file: File): Project = open(load(file))
 
         fun open(project: Project): Project {
             if (current != null)
@@ -98,22 +103,25 @@ data class Project(
             return project
         }
 
-        fun open(file: File? = null): Project? {
-            try {
-                val projectFile =
-                    file ?: openFileDialog(
-                        mainWindow,
-                        "Open Project",
-                        listOf(".alp"),
-                        allowMultiSelection = false,
-                        startingDirectory = Settings.workspace?.let { File(it) })
-                        .firstOrNull() ?: return null
-                val project = openXml(projectFile)
-                return open(project)
-            } catch (e: Exception) {
-                Log.showError("Failed to open project: ${e.message}")
-                return null
+        private fun validateProjectFile(file: File): Boolean {
+            if (!file.exists()) {
+                error("The file ${file.path} does not exist!")
             }
+
+            if (!file.isFile || file.extension != "alp") {
+                error("The file ${file.path} is not an Alchitry Labs project file (.alp)!")
+            }
+            return true
+        }
+
+        fun load(file: File): Project {
+            validateProjectFile(file)
+            if (isXmlProject(file)) {
+                val projectData = openXml(file)
+                return Project(file.parentFile.toPath(), projectData)
+            }
+            val alpData = Json.decodeFromString(AlchitryLabsProjectData.serializer(), file.readText())
+            return Project(file.parentFile.toPath(), alpData.project.upgradeToLatest())
         }
 
         fun close() {
@@ -199,7 +207,7 @@ data class Project(
         val sourceDir = buildDirectory.resolve("source")
 
         try {
-            buildDirectory.deleteRecursively()
+            buildDirectory.toFile().deleteRecursively()
         } catch (e: Exception) {
             Log.printlnError("Failed to delete build directory!", e)
             return@withContext false
@@ -207,23 +215,23 @@ data class Project(
 
         val vSourceFiles: List<File>
         try {
-            sourceDir.toPath().createDirectories()
+            sourceDir.createDirectories()
             vSourceFiles = sourceFiles.map { (name, contents) ->
-                val file = sourceDir.resolve("$name.v")
+                val file = sourceDir.resolve("$name.v").toFile()
                 file.outputStream().bufferedWriter().use {
                     it.write(contents ?: error("Missing contents for file $name"))
                 }
                 file
             }
         } catch (e: Exception) {
-            Log.printlnError("Failed to write source files to ${sourceDir.absolutePath}", e)
+            Log.printlnError("Failed to write source files to ${sourceDir.absolutePathString()}", e)
             return@withContext false
         }
 
         val constraintNotationManager = NotationManager()
 
         val constraints = try {
-            constraintFiles.flatMap { file ->
+            data.constraintFiles.flatMap { file ->
                 when (file.language) {
                     Languages.ACF -> emptyList()
                     Languages.XDC, Languages.SDC, Languages.PCF ->
@@ -239,7 +247,7 @@ data class Project(
         } catch (e: Exception) {
             Log.printlnError("Failed to get constraint files!", e)
             return@withContext false
-        } + board.acfConverter.convert("alchitry", board, context.getConstraints())
+        } + data.board.acfConverter.convert("alchitry", data.board, context.getConstraints())
 
         if (!constraintNotationManager.hasNoMessages) {
             Log.print(constraintNotationManager.getReport(), AlchitryColors.current.Error)
@@ -286,20 +294,21 @@ data class Project(
         val constraintFiles: List<File>
         val constraintDir = buildDirectory.resolve("constraint")
         try {
-            constraintDir.toPath().createDirectories()
+            constraintDir.createDirectories()
             constraintFiles = mergedConstraints.map { nativeConstraint ->
-                val file = constraintDir.resolve("${nativeConstraint.name}.${nativeConstraint.language.extension}")
+                val file =
+                    constraintDir.resolve("${nativeConstraint.name}.${nativeConstraint.language.extension}").toFile()
                 file.outputStream().bufferedWriter().use {
                     it.write(nativeConstraint.contents)
                 }
                 file
             }
         } catch (e: Exception) {
-            Log.printlnError("Failed to write constraint files to ${constraintDir.absolutePath}", e)
+            Log.printlnError("Failed to write constraint files to ${constraintDir.absolutePathString()}", e)
             return@withContext false
         }
 
-        board.projectBuilder.buildProject(
+        data.board.projectBuilder.buildProject(
             this@Project,
             topModule.parameterizedModuleName,
             vSourceFiles,
@@ -311,7 +320,7 @@ data class Project(
 
     suspend fun parse(errorManger: NotationManager): List<Pair<SourceFile, LucidParser.SourceContext>>? {
         val trees = coroutineScope {
-            sourceFiles
+            data.sourceFiles
                 .map { file -> file to errorManger.getCollector(file) } // do this first to avoid race conditions
                 .map { (file, collector) ->
                     async {
@@ -442,7 +451,7 @@ data class Project(
 
             projectContext.top = topModuleInstance
 
-            constraintFiles.sortedBy {
+            data.constraintFiles.sortedBy {
                 val prefix = if (it.isLibFile) "a" else "b"
                 prefix + it.name
             }.forEach { constraintFile ->
@@ -452,7 +461,7 @@ data class Project(
                             projectContext,
                             constraintFile,
                             topModuleInstance,
-                            board,
+                            data.board,
                             notationManager.getCollector(constraintFile)
                         ) ?: return@forEach
                     }

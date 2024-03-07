@@ -1,7 +1,6 @@
 package com.alchitry.labs2.subcommands
 
 import com.alchitry.labs2.project.Project
-import com.alchitry.labs2.project.openXml
 import com.alchitry.labs2.showHelp
 import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
@@ -27,7 +26,7 @@ class BuildProject : Subcommand("build", "Build an Alchitry Project") {
         }
 
         val project = try {
-            Project.openXml(File(project))
+            Project.open(File(project))
         } catch (e: Exception) {
             System.err.println("Failed to open project:")
             System.err.println("     ${e.message}")

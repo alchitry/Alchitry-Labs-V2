@@ -16,7 +16,6 @@ import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
 import com.alchitry.labs2.project.*
 import com.alchitry.labs2.switchActiveWindow
-import com.alchitry.labs2.ui.misc.openDirectoryDialog
 import com.alchitry.labs2.windows.mainWindow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,7 +38,7 @@ fun ProjectDialog(mainContent: @Composable BoxScope.() -> Unit) {
                     Column {
                         Row(horizontalArrangement = Arrangement.SpaceBetween) {
                             DialogButton(painterResource("icons/add.svg"), "Create Project") { show = true }
-                            DialogButton(painterResource("icons/open.svg"), "Open Project") { Project.open() }
+                            DialogButton(painterResource("icons/open.svg"), "Open Project") { openProjectDialog() }
                             DialogButton(
                                 painterResource("icons/load.svg"),
                                 "Alchitry Loader"

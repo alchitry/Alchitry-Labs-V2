@@ -59,8 +59,9 @@ object ProjectCreator {
             error("Failed to rename project file")
         }
 
-        val project = Project.openXml(newProjFile)
-        return project.copy(projectName = projName, board = board ?: project.board).apply { saveXML(newProjFile) }
+        val project = Project.load(newProjFile)
+        return project.copy(data = project.data.copy(projectName = projName, board = board ?: project.data.board))
+            .apply { save() }
     }
 }
 

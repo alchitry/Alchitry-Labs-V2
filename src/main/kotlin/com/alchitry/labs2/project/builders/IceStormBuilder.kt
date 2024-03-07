@@ -7,6 +7,7 @@ import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import kotlinx.coroutines.coroutineScope
 import java.io.File
+import kotlin.io.path.absolutePathString
 
 data class ClockConstraint(
     val port: String,
@@ -43,7 +44,7 @@ data object IceStormBuilder : ProjectBuilder() {
         val yosysCmd = mutableListOf(
             yosys,
             "-p",
-            "synth_ice40 -json ${jsonFile.absolutePath} -top $topModuleName",
+            "synth_ice40 -json ${jsonFile.absolutePathString()} -top $topModuleName",
         )
         yosysCmd.addAll(sourceFiles.map { it.absolutePath })
 
@@ -64,7 +65,7 @@ data object IceStormBuilder : ProjectBuilder() {
             ?: error("Missing sdc constraint file!")
         val clockConstraints = getClockConstraints(sdcFile)
 
-        val pythonConstraintFile = project.buildDirectory.resolve("clocks.py")
+        val pythonConstraintFile = project.buildDirectory.resolve("clocks.py").toFile()
 
         pythonConstraintFile.writeText(
             buildString {
@@ -86,11 +87,11 @@ data object IceStormBuilder : ProjectBuilder() {
             "--pre-pack",
             pythonConstraintFile.absolutePath,
             "--json",
-            jsonFile.absolutePath,
+            jsonFile.absolutePathString(),
             "--pcf",
             pcf.absolutePath,
             "--asc",
-            ascFile.absolutePath
+            ascFile.absolutePathString()
         )
 
         Log.println("Starting nextpnr...", AlchitryColors.current.Info)
@@ -103,7 +104,7 @@ data object IceStormBuilder : ProjectBuilder() {
 
         val icepackCmd = listOf(
             icepack,
-            ascFile.absolutePath,
+            ascFile.absolutePathString(),
             project.binFile.absolutePath
         )
 
