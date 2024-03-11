@@ -3,7 +3,7 @@ package com.alchitry.labs2.subcommands
 import com.alchitry.labs2.allSealedObjects
 import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.Locations
-import com.alchitry.labs2.project.ProjectCreator
+import com.alchitry.labs2.project.ProjectTemplate
 import com.alchitry.labs2.showHelp
 import kotlinx.cli.*
 import java.io.File
@@ -32,7 +32,7 @@ class CreateProject : Subcommand("new", "Create a new project") {
 
     override fun execute() {
         fun printTemplates(board: Board? = null) {
-            val templates = ProjectCreator.getTemplates()
+            val templates = ProjectTemplate.getTemplates()
             val boards = board?.let { listOf(board) } ?: Board::class.allSealedObjects()
             boards.forEach { b ->
                 println("${b.name} Project Templates:")
@@ -66,7 +66,7 @@ class CreateProject : Subcommand("new", "Create a new project") {
             return
         }
 
-        val template = ProjectCreator.getTemplates().filter { it.boards.contains(board) }.getOrNull(templateIndex)
+        val template = ProjectTemplate.getTemplates().filter { it.boards.contains(board) }.getOrNull(templateIndex)
 
         if (template == null) {
             println("Invalid template index $templateIndex!")

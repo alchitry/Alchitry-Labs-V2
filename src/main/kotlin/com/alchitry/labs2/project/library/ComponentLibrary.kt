@@ -1,66 +1,37 @@
 package com.alchitry.labs2.project.library
 
+import com.alchitry.labs2.JarUtils
 import com.alchitry.labs2.project.Locations
 import com.alchitry.labs2.project.files.Component
-import org.apache.commons.lang3.StringUtils
-import java.io.File
-import java.net.JarURLConnection
-import java.nio.file.Files
-import java.util.*
-import java.util.jar.JarEntry
-import java.util.jar.JarFile
-import kotlin.io.path.absolutePathString
 
 object ComponentLibrary {
     val components: List<Component>
 
     init {
-        val componentsFolder =
-            this::class.java.getResource(Locations.components) ?: error("Failed to find components directory!")
-
-        val urlConnection = componentsFolder.openConnection()
-        if (urlConnection is JarURLConnection) {
-            components = buildLibFromJar(urlConnection)
-        } else {
-            components = buildLibFromDir(File(componentsFolder.toURI()))
+        val components = mutableListOf<Component>()
+        JarUtils.traverserResourceRecursively(Locations.components) { relativePath, isDirectory ->
+            if (isDirectory)
+                return@traverserResourceRecursively
+            val nameSections = relativePath.split("/")
+            check(nameSections.size >= 2) { "All library files should be in a category!" }
+            components.add(Component.fromResource(relativePath))
         }
+        this.components = components
     }
 
-    private fun buildLibFromJar(jarConnection: JarURLConnection): List<Component> {
-        val jarFile: JarFile = jarConnection.jarFile
-        val e: Enumeration<JarEntry> = jarFile.entries()
-        val components = mutableListOf<Component>()
-        while (e.hasMoreElements()) {
-            val entry: JarEntry = e.nextElement()
-            if (entry.name.startsWith(jarConnection.entryName) && !entry.isDirectory) {
-                val filename: String = StringUtils.removeStart(
-                    entry.name,
-                    jarConnection.entryName
-                )
-                val nameSections = filename.split("/")
-                check(nameSections.size >= 2) { "All library files should be in a category!" }
-
-                components.add(Component.fromResource(filename))
-            }
-        }
-        return components
-    }
-
-    private fun buildLibFromDir(componentDir: File): List<Component> {
-        val components = mutableListOf<Component>()
-        Files.walk(componentDir.toPath()).forEach { p ->
-            if (p != null && Files.isRegularFile(p)) {
-                val filename = StringUtils.removeStart(
-                    p.absolutePathString(),
-                    componentDir.absolutePath
-                ).replace("\\", "/").substring(1) // remove first "/"
-                val nameSections = filename.split("/")
-                check(nameSections.size >= 2) { "All library files should be in a category!" }
-
-                components.add(Component.fromResource(filename))
-            }
-        }
-        return components
+    /**
+     * Finds a component by its path (categories and filename) or just filename if no exact matches are found.
+     *
+     * @param path The path of the component, including the categories and the name (e.g., "category1/category2/componentName").
+     * @return The component found by the path, or null if no component is found.
+     */
+    fun findByPath(path: String): Component? {
+        val parts = path.split("/")
+        val name = parts.last()
+        val categories = parts.subList(0, parts.size - 1).map { it.lowercase() }
+        return components.firstOrNull { component ->
+            (component.categories.map { it.lowercase() } == categories) && (component.name == name)
+        } ?: components.firstOrNull { it.name == name }
     }
 }
 

@@ -4,11 +4,6 @@ package com.alchitry.labs2.parsers.notations
 object ErrorStrings {
     const val ARRAY_BUILDING_DIM_MISMATCH = "Each element in an array builder must have the same dimensions"
     const val ARRAY_NOT_DIVISIBLE = "The array \"%s\" can't be split evenly"
-    const val NEG_MULTI_DIM = "Only single dimensional arrays can be negated"
-    const val MUL_MULTI_DIM = "Only single dimensional arrays can be multiplied"
-    const val DIV_MULTI_DIM = "Only single dimensional arrays can be divided"
-    const val ADD_MULTI_DIM = "Only single dimensional arrays can be added"
-    const val SUB_MULTI_DIM = "Only single dimensional arrays can be subtracted"
     const val SHIFT_MULTI_DIM = "Only single dimensional arrays can be shifted"
     const val BUILD_MULTI_DIM = "Only single dimensional arrays can be built"
     const val SIGNED_MULTI_DIM = "Only single dimensional values can use \$signed()"

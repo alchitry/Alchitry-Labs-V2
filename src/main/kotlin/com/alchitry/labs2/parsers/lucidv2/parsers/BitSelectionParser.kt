@@ -6,6 +6,7 @@ import com.alchitry.labs2.parsers.lucidv2.context.LucidExprContext
 import com.alchitry.labs2.parsers.lucidv2.types.SelectionContext
 import com.alchitry.labs2.parsers.lucidv2.values.Bit
 import com.alchitry.labs2.parsers.lucidv2.values.SimpleValue
+import com.alchitry.labs2.parsers.lucidv2.values.UndefinedValue
 import com.alchitry.labs2.parsers.notations.*
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree
@@ -62,9 +63,17 @@ data class BitSelectionParser(
         if (!max.constant) context.reportExprNotConstant(expr[0])
         if (!min.constant) context.reportExprNotConstant(expr[1])
 
-        if (!context.checkSimpleValue(*ctx.expr().toTypedArray()) {
-                context.reportBitSelectionNotSimpleValue(it)
+        if (!context.checkSimpleWidth(*ctx.expr().toTypedArray()) {
+                context.reportError(
+                    it,
+                    "The value used in bit selection must be a defined simple value (no arrays or structs)."
+                )
             }) return
+
+        if (min is UndefinedValue || max is UndefinedValue) {
+            bounds[ctx] = BitSelection(0..0, ctx, SelectionContext.Fixed(minCtx, maxCtx), false)
+            return
+        }
 
         max as SimpleValue
         min as SimpleValue
@@ -101,17 +110,30 @@ data class BitSelectionParser(
         val start = context.resolve(expr[0]) ?: return
         val width = context.resolve(expr[1]) ?: return
 
+        val isUpTo = ctx.getChild(2)?.text == "+"
+
         if (!width.constant) {
             context.reportExprNotConstant(expr[1])
             return
         }
 
-        if (!context.checkSimpleValue(*expr.toTypedArray()) {
-                context.reportBitSelectionNotSimpleValue(it)
+        if (!context.checkSimpleWidth(*expr.toTypedArray()) {
+                context.reportError(
+                    it,
+                    "The value used in bit selection must be a simple value (no arrays or structs)."
+                )
             }) return
 
+        if (width is UndefinedValue) {
+            val selectionContext = when (isUpTo) {
+                true -> SelectionContext.UpTo(expr[0], 1)
+                false -> SelectionContext.DownTo(expr[0], 1)
+            }
+            bounds[ctx] = BitSelection(0..0, ctx, selectionContext, undefined = true)
+            return
+        }
+
         width as SimpleValue
-        start as SimpleValue
 
         if (!width.isNumber()) {
             context.reportBitSelectorNotANumber(expr[1])
@@ -125,8 +147,19 @@ data class BitSelectionParser(
             return
         }
 
+        if (widthInt <= 0) {
+            context.reportBitSelectorZeroWidth(expr[1])
+            return
+        }
+
+        val selectionContext = when (isUpTo) {
+            true -> SelectionContext.UpTo(expr[0], widthInt)
+            false -> SelectionContext.DownTo(expr[0], widthInt)
+        }
+
         val startInt = if (start.isNumber()) {
             try {
+                start as SimpleValue
                 start.toBigInt()!!.intValueExact()
             } catch (e: ArithmeticException) {
                 context.reportArraySizeTooBig(expr[0])
@@ -134,18 +167,6 @@ data class BitSelectionParser(
             }
         } else {
             0
-        }
-
-        if (widthInt <= 0) {
-            context.reportBitSelectorZeroWidth(expr[1])
-            return
-        }
-
-        val isUpTo = ctx.getChild(2)?.text == "+"
-
-        val selectionContext = when (isUpTo) {
-            true -> SelectionContext.UpTo(expr[0], widthInt)
-            false -> SelectionContext.DownTo(expr[0], widthInt)
         }
 
         val selection = if (isUpTo)
@@ -162,8 +183,16 @@ data class BitSelectionParser(
 
         val index = context.resolve(expr) ?: return
 
+        if (index is UndefinedValue) {
+            bounds[ctx] = BitSelection(0..0, ctx, SelectionContext.Single(expr), undefined = true)
+            return
+        }
+
         if (index !is SimpleValue) {
-            context.reportBitSelectionNotSimpleValue(expr)
+            context.reportError(
+                expr,
+                "The value used as array index must be a defined simple value (no arrays or structs)."
+            )
             return
         }
 

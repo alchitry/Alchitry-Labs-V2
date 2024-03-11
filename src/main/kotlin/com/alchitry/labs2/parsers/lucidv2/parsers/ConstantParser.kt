@@ -8,6 +8,8 @@ import com.alchitry.labs2.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs2.parsers.lucidv2.types.Constant
 import com.alchitry.labs2.parsers.lucidv2.types.Signal
 import com.alchitry.labs2.parsers.lucidv2.types.SignalDirection
+import com.alchitry.labs2.parsers.lucidv2.values.UndefinedSimpleWidth
+import com.alchitry.labs2.parsers.lucidv2.values.UndefinedValue
 
 data class ConstantParser(
     private val context: LucidExprContext,
@@ -32,11 +34,7 @@ data class ConstantParser(
             context.reportError(nameCtx, "Constant names must be all uppercase letters.")
 
         val exprCtx = ctx.expr() ?: return
-        val value = context.resolve(exprCtx)
-        if (value == null) {
-            context.reportError(exprCtx, "Failed to resolve constant value!")
-            return
-        }
+        val value = context.resolve(exprCtx) ?: UndefinedValue(true, UndefinedSimpleWidth())
         if (!value.constant) {
             context.reportError(
                 exprCtx,

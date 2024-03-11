@@ -2,6 +2,7 @@ package com.alchitry.labs2.project.files
 
 import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.Locations
+import com.alchitry.labs2.project.library.ComponentLibrary
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -75,7 +76,7 @@ data class Component(
                 if (index != 0)
                     error("Unexpected index: $index")
                 val resourcePath = decodeStringElement(descriptor, 0)
-                fromResource(resourcePath)
+                ComponentLibrary.findByPath(resourcePath) ?: error("Failed to find component: $resourcePath")
             }
         }
 

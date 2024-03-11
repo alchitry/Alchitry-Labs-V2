@@ -6,6 +6,7 @@ import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.lucidv2.types.Function
 import com.alchitry.labs2.parsers.lucidv2.values.SimpleValue
+import com.alchitry.labs2.parsers.lucidv2.values.UndefinedValue
 import com.alchitry.labs2.parsers.lucidv2.values.minBits
 
 /**
@@ -212,7 +213,7 @@ data class BlockParser(
         val exprCtx = ctx.expr() ?: return
         val condition = context.expr.resolve(exprCtx) ?: return
 
-        if (condition !is SimpleValue) {
+        if (condition !is SimpleValue && condition !is UndefinedValue) {
             context.notationCollector.reportError(exprCtx, "If condition must be a simple value.")
             return
         }

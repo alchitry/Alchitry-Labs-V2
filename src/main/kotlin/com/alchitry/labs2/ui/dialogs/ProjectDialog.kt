@@ -14,7 +14,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
-import com.alchitry.labs2.project.*
+import com.alchitry.labs2.project.Board
+import com.alchitry.labs2.project.Locations
+import com.alchitry.labs2.project.Project
+import com.alchitry.labs2.project.ProjectTemplate
 import com.alchitry.labs2.switchActiveWindow
 import com.alchitry.labs2.windows.mainWindow
 import kotlinx.coroutines.Dispatchers
@@ -189,7 +192,7 @@ private fun TemplateSelector(
     LaunchedEffect(Unit) {
         templates = withContext(Dispatchers.IO) {
             try {
-                ProjectCreator.getTemplates()
+                ProjectTemplate.getTemplates()
             } catch (e: IllegalStateException) {
                 Log.showError("Failed to load templates!", e)
                 emptyList()
@@ -206,7 +209,7 @@ private fun TemplateSelector(
     ExposedDropdownMenuBox(expanded, onExpandedChange = { expanded = it }) {
         OutlinedTextField(
             readOnly = true,
-            value = template?.name ?: "",
+            value = template?.let { "${it.name} - ${it.description}" } ?: "",
             onValueChange = {},
             label = { Text("Template") },
             isError = templates.isEmpty(),
@@ -227,7 +230,7 @@ private fun TemplateSelector(
             ) {
                 validTemplates.forEach {
                     DropdownMenuItem(
-                        text = { Text(it.name) },
+                        text = { Text("${it.name} - ${it.description}") },
                         onClick = {
                             onTemplateChanged(it)
                             expanded = false

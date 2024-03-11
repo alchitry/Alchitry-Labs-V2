@@ -551,7 +551,7 @@ class VerilogConverter(
                         selectedBitCount = currentWidth.bitCount!!
                     }
 
-                    is UndefinedWidth -> error("Undefined width during verilog conversion!")
+                    is UndefinedSimpleWidth -> error("Undefined width during verilog conversion!")
                     null -> error("Too many selectors for the signal width!")
                 }
             }

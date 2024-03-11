@@ -127,7 +127,7 @@ class NotationCollector private constructor(
      * If it has errors, it throws an [AssertionError] with errors listed as the reason.
      */
     fun assertNoErrors() {
-        assert(hasNoIssues) {
+        assert(hasNoErrors) {
             "\n" + (getReport(includeWarnings = false, includeInfos = false) ?: "No errors in $name")
         }
     }

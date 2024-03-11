@@ -4,20 +4,20 @@ import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.lucidv2.context.LucidExprContext
 import com.alchitry.labs2.parsers.lucidv2.values.SimpleValue
 import com.alchitry.labs2.parsers.lucidv2.values.SimpleWidth
-import com.alchitry.labs2.parsers.lucidv2.values.UndefinedWidth
+import com.alchitry.labs2.parsers.lucidv2.values.UndefinedSimpleWidth
 
 /**
  * This will return true when all the expressions are flat. Aka they are all 1D arrays.
  *
  * The values themselves may be undefined.
  */
-fun LucidExprContext.checkFlat(
+fun LucidExprContext.checkSimpleWidth(
     vararg exprCtx: LucidParser.ExprContext,
     onError: (LucidParser.ExprContext) -> Unit
 ): Boolean {
     return exprCtx.map {
         val op = resolve(it) ?: throw IllegalArgumentException("exprCtx wasn't defined")
-        if (op.width is SimpleWidth) {
+        if (op.width.isSimple()) {
             true
         } else {
             onError(it)
@@ -77,8 +77,8 @@ fun LucidExprContext.checkUndefinedMatchingDims(
 ): Boolean {
     val widths =
         exprCtx.map { resolve(it)?.width ?: throw IllegalArgumentException("exprCtx wasn't defined") }
-    val hasUndefinedWidth = widths.any { it is UndefinedWidth }
-    if (!hasUndefinedWidth)
+    val hasUndefinedSimpleWidth = widths.any { it is UndefinedSimpleWidth }
+    if (!hasUndefinedSimpleWidth)
         return true
 
     return !widths.mapIndexed { index, signalWidth ->

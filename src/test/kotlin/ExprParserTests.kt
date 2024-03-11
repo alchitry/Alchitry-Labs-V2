@@ -1,15 +1,12 @@
 import com.alchitry.labs2.parsers.BitUtil
 import com.alchitry.labs2.parsers.lucidv2.types.Signal
 import com.alchitry.labs2.parsers.lucidv2.types.SignalDirection
-import com.alchitry.labs2.parsers.lucidv2.values.ArrayValue
-import com.alchitry.labs2.parsers.lucidv2.values.Bit
-import com.alchitry.labs2.parsers.lucidv2.values.BitListValue
-import com.alchitry.labs2.parsers.lucidv2.values.BitValue
+import com.alchitry.labs2.parsers.lucidv2.values.*
 import helpers.SimpleLucidTester
 import helpers.TestSignalResolver
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 internal class ExprParserTests {
     @Test
@@ -186,7 +183,13 @@ internal class ExprParserTests {
         // values of different sizes = error
         test = SimpleLucidTester("{0, 2b10, 2b11}")
         tree = test.parser.expr().also { test.context.walk(it) }
-        assertEquals(null, test.context.expr.resolve(tree))
+        val result = test.context.expr.resolve(tree)
+        assert(result is ArrayValue)
+        result as ArrayValue
+        assertEquals(3, result.width.size)
+        assertEquals(BitListValue(0, 1, constant = true, signed = false), result.elements[2])
+        assert(result.elements[1] is UndefinedValue)
+        assert(result.elements[0] is UndefinedValue)
         assert(test.hasErrors)
         assert(test.hasNoWarnings)
 

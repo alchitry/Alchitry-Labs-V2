@@ -1,8 +1,36 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project name="Base Project" board="Alchitry Au" language="Lucid" version="4">
-  <files>
-    <src top="true">alchitryTop.luc</src>
-    <constraint lib="true">alchitry.acf</constraint>
-    <component>resetConditioner.luc</component>
-  </files>
-</project>
+{
+    "template": {
+        "name": "Base Project",
+        "description": "Minimum boilerplate project for Alchitry boards",
+        "boards": ["Au", "Au+", "Cu"],
+        "priority": 0
+    },
+    "project": {
+        "type": "V1.0",
+        "projectName": "Base",
+        "board": "Alchitry Au",
+        "sourceFiles": [
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/alchitryTop.luc"
+                },
+                "top": true
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Conditioning/resetConditioner.luc"
+                }
+            }
+        ],
+        "constraintFiles": [
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Constraints/alchitry.acf"
+                }
+            }
+        ]
+    }
+}

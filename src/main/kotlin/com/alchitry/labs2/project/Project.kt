@@ -85,7 +85,9 @@ data class Project(
     }
 
     companion object {
-        private val json = Json { prettyPrint = true }
+        private val json = Json {
+            prettyPrint = true
+        }
         private val mutableCurrentFlow = MutableStateFlow<Project?>(null)
         val currentFlow = mutableCurrentFlow.asStateFlow()
 
@@ -114,17 +116,18 @@ data class Project(
             return true
         }
 
-        fun load(file: File): Project {
+        fun load(file: File, json: Json = this.json): Project {
             validateProjectFile(file)
             if (isXmlProject(file)) {
                 val projectData = openXml(file)
                 return Project(file.parentFile.toPath(), projectData)
             }
-            val alpData = Json.decodeFromString(AlchitryLabsProjectData.serializer(), file.readText())
+            val alpData = json.decodeFromString(AlchitryLabsProjectData.serializer(), file.readText())
             return Project(file.parentFile.toPath(), alpData.project.upgradeToLatest())
         }
 
         fun close() {
+            Workspace.closeAll()
             mutableCurrentFlow.tryEmit(null)
         }
     }
@@ -439,6 +442,7 @@ data class Project(
                     mod,
                     mapOf(),
                     mapOf(),
+                    testing = true
                     // notationManager.getCollector(mod.sourceFile)
                 ).apply {
                     initialWalk()

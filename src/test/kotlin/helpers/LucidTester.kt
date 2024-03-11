@@ -46,39 +46,39 @@ class LucidTester(vararg val files: SourceFile) {
     suspend fun globalParse(
         trees: List<Pair<SourceFile, SourceContext>> = parseText()
     ) {
-        assert(notationManager.hasNoIssues) { notationManager.getReport() }
+        assert(notationManager.hasNoErrors) { notationManager.getReport() }
 
         trees.forEach {
             val globalContext = LucidGlobalContext(project, it.first)
             globalContext.walk(it.second)
 
-            assert(notationManager.hasNoIssues) { notationManager.getReport() }
+            assert(notationManager.hasNoErrors) { notationManager.getReport() }
         }
     }
 
     private suspend fun testBenchParse(
         trees: List<Pair<SourceFile, SourceContext>> = parseText()
     ) {
-        assert(notationManager.hasNoIssues) { notationManager.getReport() }
+        assert(notationManager.hasNoErrors) { notationManager.getReport() }
 
         trees.forEach {
             val testBenchContext = LucidTestBenchContext(project, it.first)
             testBenchContext.walk(it.second)
 
-            assert(notationManager.hasNoIssues) { notationManager.getReport() }
+            assert(notationManager.hasNoErrors) { notationManager.getReport() }
         }
     }
 
     suspend fun moduleTypeParse(
         trees: List<Pair<SourceFile, SourceContext>> = parseText()
     ): List<Module> {
-        assert(notationManager.hasNoIssues) { notationManager.getReport() }
+        assert(notationManager.hasNoErrors) { notationManager.getReport() }
 
         return trees.mapNotNull {
             val moduleTypeContext = LucidModuleTypeContext(project, it.first)
             val module = moduleTypeContext.extract(it.second)
 
-            assert(notationManager.hasNoIssues) { notationManager.getReport() }
+            assert(notationManager.hasNoErrors) { notationManager.getReport() }
             module
         }
     }
@@ -88,13 +88,13 @@ class LucidTester(vararg val files: SourceFile) {
      * @param notationCollector if null, the function will automatically check for errors. If provided, you should check
      * for errors after calling this function.
      */
-    suspend fun fullParse(): ModuleInstance {
+    suspend fun fullParse(testing: Boolean = false): ModuleInstance {
         val trees = parseText()
 
         globalParse(trees)
         val modules = moduleTypeParse(trees)
 
-        val moduleInstance = ModuleInstance("top", project, null, modules.first(), mapOf(), mapOf())
+        val moduleInstance = ModuleInstance("top", project, null, modules.first(), mapOf(), mapOf(), testing = testing)
 
         moduleInstance.initialWalk()
 

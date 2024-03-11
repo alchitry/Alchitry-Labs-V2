@@ -1,6 +1,6 @@
 /**
     "name" : "Alchitry",
-    "description" : "This file contains the basic pin and clock constraints for the Alchitry Au, Au+, and Cu.",
+    "description" : "Basic pin and clock constraints for the Alchitry Au, Au+, and Cu.",
     "supportedBoards" : ["Au", "Au+", "Cu"]
 **/
 clock clk CLOCK 100MHz

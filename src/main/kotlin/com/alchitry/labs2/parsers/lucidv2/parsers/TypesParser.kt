@@ -421,6 +421,9 @@ class TypesParser(
         if (!expr.constant)
             context.reportError(ctx, "Array sizes must be a constant value.")
 
+        if (expr is UndefinedValue)
+            return
+
         if (expr !is SimpleValue || !expr.isNumber()) {
             context.reportError(ctx, "Array sizes must be a number.")
             return

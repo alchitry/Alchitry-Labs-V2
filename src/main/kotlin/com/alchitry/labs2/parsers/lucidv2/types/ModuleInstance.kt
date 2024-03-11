@@ -4,6 +4,7 @@ import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs2.parsers.lucidv2.signals.snapshot.SnapshotOrParent
 import com.alchitry.labs2.parsers.lucidv2.signals.snapshot.SnapshotParent
+import com.alchitry.labs2.parsers.lucidv2.values.UndefinedValue
 import com.alchitry.labs2.parsers.lucidv2.values.Value
 import com.alchitry.labs2.parsers.notations.ErrorListener
 
@@ -13,7 +14,8 @@ class ModuleInstance(
     override val parent: ModuleInstance?,
     val module: Module,
     parameters: Map<String, Value>,
-    val connections: Map<String, SignalOrSubSignal>
+    val connections: Map<String, SignalOrSubSignal>,
+    val testing: Boolean = false
 ) : ModuleInstanceOrArray, ListOrModuleInstance, TestOrModuleInstance {
     // make a copy of the module context tree, so we can prune it without disrupting others
     val moduleContext = module.context.deepCopy()
@@ -55,8 +57,8 @@ class ModuleInstance(
             SignalDirection.Read,
             this,
             parameters[name]
-                ?: (if (param.defaultTestOnly) null else param.default)
-                ?: error("Missing module parameter!")
+                ?: (if (param.defaultTestOnly && !testing) null else param.default)
+                ?: if (testing) UndefinedValue(true) else error("Missing value for parameter \"${name}\" in module \"${this.name}\" of type \"${module.name}\".")
         )
     }
 
@@ -70,13 +72,14 @@ class ModuleInstance(
         .mapValues { it.value.external }
 
     init {
-        connections.forEach { (name, sig) ->
-            val port = ports[name]?.external ?: error("No matching port for given connection \"$name\"!")
-            if (port.direction.canWrite)
-                sig.connectTo(port, project)
-            if (port.direction.canRead)
-                port.connectTo(sig, project)
-        }
+        if (!testing)
+            connections.forEach { (name, sig) ->
+                val port = ports[name]?.external ?: error("No matching port for given connection \"$name\"!")
+                if (port.direction.canWrite)
+                    sig.connectTo(port, project)
+                if (port.direction.canRead)
+                    port.connectTo(sig, project)
+            }
     }
 
 

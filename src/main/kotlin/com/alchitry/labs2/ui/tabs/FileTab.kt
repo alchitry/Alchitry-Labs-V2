@@ -5,9 +5,6 @@ import androidx.compose.runtime.Composable
 import com.alchitry.labs2.project.files.ProjectFile
 import com.alchitry.labs2.ui.code_editor.CodeEditor
 import com.alchitry.labs2.ui.code_editor.CodeEditorState
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class FileTab(
     val file: ProjectFile,
@@ -25,11 +22,9 @@ class FileTab(
         CodeEditor(codeEditorState)
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun onClose(save: Boolean): Boolean {
         if (!file.isReadOnly && save)
-            GlobalScope.launch { file.writeText(codeEditorState.getText()) }
+            file.file.writeText(codeEditorState.getText())
         return true
     }
-
 }

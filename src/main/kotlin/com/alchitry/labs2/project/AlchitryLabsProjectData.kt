@@ -4,5 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AlchitryLabsProjectData(
-    val project: ProjectData
+    val project: ProjectData,
+    val template: ProjectTemplate? = null
 )

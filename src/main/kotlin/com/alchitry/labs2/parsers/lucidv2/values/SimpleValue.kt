@@ -101,17 +101,23 @@ sealed class SimpleValue(
     }
 
     override infix fun and(other: Value): Value {
-        require(other is SimpleValue) {"And can only be performed with another SimpleValue!"}
+        if (other is UndefinedValue)
+            return UndefinedValue(other.constant && constant)
+        require(other is SimpleValue) { "And can only be performed with Undefined or another SimpleValue!" }
         return and(other)
     }
 
     override infix fun or(other: Value): Value {
-        require(other is SimpleValue) {"Or can only be performed with another SimpleValue!"}
+        if (other is UndefinedValue)
+            return UndefinedValue(other.constant && constant)
+        require(other is SimpleValue) { "Or can only be performed with Undefined or another SimpleValue!" }
         return or(other)
     }
 
     override infix fun xor(other: Value): Value {
-        require(other is SimpleValue) {"Xor can only be performed with another SimpleValue!"}
+        if (other is UndefinedValue)
+            return UndefinedValue(other.constant && constant)
+        require(other is SimpleValue) { "Xor can only be performed with Undefined or another SimpleValue!" }
         return xor(other)
     }
 
@@ -120,7 +126,7 @@ sealed class SimpleValue(
         is BitListWidth -> asBitListValue().resize(newWidth.size)
         BitWidth -> BitValue(lsb, constant, signed)
         is StructWidth -> error("Cannot resize SimpleValue to fit a StructValue!")
-        is UndefinedWidth -> UndefinedValue(constant)
+        is UndefinedSimpleWidth -> UndefinedValue(constant)
     }
 
     private inline fun doOp(b: SimpleValue, crossinline op: (Bit, Bit) -> Bit): SimpleValue {

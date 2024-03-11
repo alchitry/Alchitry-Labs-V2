@@ -2,9 +2,13 @@ package com.alchitry.labs2.parsers.lucidv2.values
 
 import com.alchitry.labs2.parsers.lucidv2.types.SignalSelector
 
+/**
+ * Used to represent values that WILL be defined but currently aren't.
+ * This should only happen from parameters without a default or test value and any values derived from them.
+ */
 data class UndefinedValue(
     override val constant: Boolean,
-    override val width: SignalWidth = UndefinedWidth()
+    override val width: SignalWidth = UndefinedSimpleWidth()
 ) : Value() {
     override fun isNumber() = false
 
@@ -18,30 +22,29 @@ data class UndefinedValue(
     override fun where(bit: Bit) = this.width.filledWith(Bit.B0, constant, false)
     override fun replace(mask: Value, bit: Bit) = this
 
-    override fun toString(format: ValueFormat): String = "UndefinedValue"
+    override fun toString(format: ValueFormat): String = "UndefinedValue($width)"
 
-    override infix fun and(other: Value): Value = when (other) {
-        is ArrayValue -> TODO()
-        is BitListValue -> TODO()
-        is BitValue -> TODO()
-        is StructValue -> TODO()
-        is UndefinedValue -> TODO()
+    fun selectBits(selection: SignalSelector.Bits): UndefinedValue {
+        if (width !is SimpleWidth)
+            return this
+        if (selection.count == 1)
+            return UndefinedValue(constant, BitWidth)
+        return UndefinedValue(constant, BitListWidth(selection.count))
     }
 
-    override fun or(other: Value): Value = when (other) {
-        is ArrayValue -> TODO()
-        is BitListValue -> TODO()
-        is BitValue -> TODO()
-        is StructValue -> TODO()
-        is UndefinedValue -> TODO()
+    override infix fun and(other: Value): UndefinedValue {
+        require(other is SimpleValue || other is UndefinedValue) { "And can only be performed with Undefined or Simple values." }
+        return UndefinedValue(other.constant && constant)
     }
 
-    override fun xor(other: Value): Value = when (other) {
-        is ArrayValue -> TODO()
-        is BitListValue -> TODO()
-        is BitValue -> TODO()
-        is StructValue -> TODO()
-        is UndefinedValue -> TODO()
+    override fun or(other: Value): UndefinedValue {
+        require(other is SimpleValue || other is UndefinedValue) { "Or can only be performed with Undefined or Simple values." }
+        return UndefinedValue(other.constant && constant)
+    }
+
+    override fun xor(other: Value): UndefinedValue {
+        require(other is SimpleValue || other is UndefinedValue) { "Xor can only be performed with Undefined or Simple values." }
+        return UndefinedValue(other.constant && constant)
     }
 
     override fun reverse(): UndefinedValue =

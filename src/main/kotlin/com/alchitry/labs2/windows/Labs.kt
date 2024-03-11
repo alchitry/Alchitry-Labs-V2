@@ -47,7 +47,10 @@ fun ApplicationScope.labsWindow() {
             Env.mode = Env.Mode.Labs
             Settings.openProject?.let {
                 if (Project.current == null) {
-                    Project.open(File(it))
+                    try {
+                        Project.open(File(it))
+                    } catch (_: Exception) {
+                    }
                 }
             }
         }

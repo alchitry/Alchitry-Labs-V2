@@ -1,38 +1,10 @@
 package com.alchitry.labs2.project
 
 import com.alchitry.labs2.JarUtils
-import org.jdom2.Document
-import org.jdom2.JDOMException
-import org.jdom2.input.SAXBuilder
 import java.io.File
 import java.net.URL
 
 object ProjectCreator {
-    fun getTemplates(): List<ProjectTemplate> {
-        val projectsResource = this::class.java.getResourceAsStream("${Locations.lucidProjects}/projects.xml")
-            ?: error("Failed to load projects.xml")
-        val builder = SAXBuilder()
-        val document: Document = try {
-            builder.build(projectsResource) as Document
-        } catch (e: JDOMException) {
-            error(e.message ?: "Failed to parse projects.xml")
-        }
-        val projectsXml = document.rootElement
-
-        return projectsXml.children.map { project ->
-            if (project.name != Tags.project)
-                error("Projects child was not a project!")
-
-            val name = project.getAttribute(Tags.Attributes.name)?.value ?: error("Project name was missing!")
-            val boards = project.children.map { board ->
-                if (board.name != Tags.board)
-                    error("Expected board tag but found ${board.name}")
-                Board.fromName(board.textNormalize) ?: error("Unknown board type \"${board.textNormalize}\"")
-            }
-            ProjectTemplate(name, boards)
-        }
-    }
-
     fun clone(sourceFolder: URL, sourceName: String, projName: String, workspace: File, board: Board? = null): Project {
         val destination = File(workspace, projName)
         if (destination.exists())

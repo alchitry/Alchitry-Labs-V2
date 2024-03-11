@@ -157,7 +157,7 @@ data class SignalDriverParser(
                 )
                 return@forEach
             }
-            if (driven.andReduce().bit != Bit.B1) {
+            if (driven !is UndefinedValue && driven.andReduce().bit != Bit.B1) {
                 context.reportError(
                     ctx.children?.first() as TerminalNode,
                     "The signal \"${signal.fullName()}\" was only partially driven. Bits marked as 0 weren't driven: ${

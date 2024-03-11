@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.lucidv2.types.ports
 
 import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstance
 import com.alchitry.labs2.parsers.lucidv2.types.Signal
 import com.alchitry.labs2.parsers.lucidv2.types.SignalDirection
 import com.alchitry.labs2.parsers.lucidv2.types.SignalParent
@@ -18,6 +19,7 @@ class Output(
     override val external = Signal(name, SignalDirection.Read, parent, width.filledWith(Bit.Bx, false, signed), signed)
 
     init {
-        internal.connectTo(external, context)
+        if (parent !is ModuleInstance || !parent.testing)
+            internal.connectTo(external, context)
     }
 }
