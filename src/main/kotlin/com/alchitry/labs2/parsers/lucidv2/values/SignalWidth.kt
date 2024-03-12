@@ -17,13 +17,6 @@ sealed class SignalWidth {
     }
 
     /**
-     *  Returns true if this is JUST an array (no structs) and defined
-     */
-    fun isDefinedSimpleArray(): Boolean {
-        return (this is SimpleWidth || (this is ArrayWidth && next.isDefinedSimpleArray()))
-    }
-
-    /**
      * Returns true if this is an array. It may be an array of anything, including structs.
      */
     fun isArray(): Boolean {
@@ -60,10 +53,10 @@ sealed class SignalWidth {
      * Returns a Value whose elements match the dimensions of this width.
      */
     fun toValue(): Value {
+        require(isSimpleArray()) { "toValue() can only be called on arrays" }
         if (this is UndefinedSimpleWidth) {
             return UndefinedValue(true)
         }
-        require(isDefinedSimpleArray()) { "toValue() can only be called on arrays" }
         val dims = mutableListOf<Int>()
         var array: SignalWidth = this
         while (true) {
@@ -98,9 +91,12 @@ sealed class SignalWidth {
             return BitListValue(dims.first(), constant = true, signed = false)
         }
 
-        val width = BitUtil.minWidthNum(dims.max())
+        val width = BitUtil.minWidthNum(dims.max().coerceAtLeast(1))
 
-        return ArrayValue(dims.map { BitListValue(it, width, constant = true, signed = false) })
+        return ArrayValue(dims.map {
+            if (it < 0) UndefinedValue(true) else
+                BitListValue(it, width, constant = true, signed = false)
+        })
     }
 
 
