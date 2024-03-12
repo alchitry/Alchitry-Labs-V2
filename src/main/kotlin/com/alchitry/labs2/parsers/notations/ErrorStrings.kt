@@ -10,7 +10,6 @@ object ErrorStrings {
     const val UNSIGNED_MULTI_DIM = "Only single dimensional values can use \$unsigned()"
     const val TERN_SELECTOR_MULTI_DIM = "Only single dimensional arrays can be used as the selector"
     const val OP_DIM_MISMATCH = "When performing an %s operation the argument's dimensions must match"
-    const val OP_NOT_NUMBER = "The operator \"%s\" can only be used on simple values"
     const val OP_TERN_DIM_MISMATCH = "The dimensions of both results must match for the ternary operator"
     const val TRUNC_WARN = "The signal \"%s\" is wider than \"%s\" and the most significant bits will be dropped"
     const val UNKNOWN_FUNCTION = "The function \"%s\" is unknown"

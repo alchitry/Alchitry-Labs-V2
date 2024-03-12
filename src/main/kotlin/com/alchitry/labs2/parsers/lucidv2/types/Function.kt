@@ -15,7 +15,7 @@ sealed class Function(val label: String, val argCount: Int, val constOnly: Boole
     object UNSIGNED : Function("unsigned", 1, false)
     object CDIV : Function("cdiv", 2, true)
     object RESIZE : Function("resize", 2, true)
-    object WIDTH : Function("widthOf", 1, false)
+    object WIDTH : Function("width", 1, false)
     object FIXEDPOINT : Function("fixedPoint", 3, true)
     object CFIXEDPOINT : Function("cFixedPoint", 3, true)
     object FFIXEDPOINT : Function("fFixedPoint", 3, true)

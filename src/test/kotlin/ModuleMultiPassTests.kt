@@ -154,7 +154,7 @@ class ModuleMultiPassTests {
                     }
                     
                     sig w[2] = myFSM.WIDTH
-                    sig t[2] = ${"$"}widthOf(myFSM.IDLE)
+                    sig t[2] = ${"$"}width(myFSM.IDLE)
                 
                     always {
                         if (a) {}

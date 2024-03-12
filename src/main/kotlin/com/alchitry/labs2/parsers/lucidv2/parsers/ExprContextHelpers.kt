@@ -3,8 +3,6 @@ package com.alchitry.labs2.parsers.lucidv2.parsers
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.lucidv2.context.LucidExprContext
 import com.alchitry.labs2.parsers.lucidv2.values.SimpleValue
-import com.alchitry.labs2.parsers.lucidv2.values.SimpleWidth
-import com.alchitry.labs2.parsers.lucidv2.values.UndefinedSimpleWidth
 
 /**
  * This will return true when all the expressions are flat. Aka they are all 1D arrays.
@@ -29,7 +27,7 @@ fun LucidExprContext.checkSimpleWidth(
 /**
  * This will return true when all expressions are SimpleValues.
  *
- * This differs from checkFlat in that the values may not be undefined.
+ * This differs from checkSimpleWidth in that the values may not be undefined.
  */
 fun LucidExprContext.checkSimpleValue(
     vararg exprCtx: LucidParser.ExprContext,
@@ -49,7 +47,7 @@ fun LucidExprContext.checkSimpleValue(
 /**
  * checks that all expressions have the same widths or are flat arrays
  */
-fun LucidExprContext.checkFlatOrMatchingDims(
+fun LucidExprContext.checkSimpleOrMatchingDims(
     vararg exprCtx: LucidParser.ExprContext,
     onError: (LucidParser.ExprContext) -> Unit
 ): Boolean {
@@ -60,33 +58,10 @@ fun LucidExprContext.checkFlatOrMatchingDims(
 
     return exprCtx.map {
         val op = resolve(it)?.width ?: throw IllegalArgumentException("exprCtx wasn't defined")
-        if (!((op is SimpleWidth && first is SimpleWidth) || op == first)) {
+        if (!(op == first || (op.isSimple() && first.isSimple()))) {
             onError(it)
             return@map false
         }
         return@map true
     }.all { it }
-}
-
-/**
- * Checks if any widths are undefined and if so, flags any non-flat widths as errors
- */
-fun LucidExprContext.checkUndefinedMatchingDims(
-    vararg exprCtx: LucidParser.ExprContext,
-    onError: (LucidParser.ExprContext) -> Unit
-): Boolean {
-    val widths =
-        exprCtx.map { resolve(it)?.width ?: throw IllegalArgumentException("exprCtx wasn't defined") }
-    val hasUndefinedSimpleWidth = widths.any { it is UndefinedSimpleWidth }
-    if (!hasUndefinedSimpleWidth)
-        return true
-
-    return !widths.mapIndexed { index, signalWidth ->
-        if (signalWidth !is SimpleWidth) {
-            onError(exprCtx[index])
-            true
-        } else {
-            false
-        }
-    }.any { it }
 }

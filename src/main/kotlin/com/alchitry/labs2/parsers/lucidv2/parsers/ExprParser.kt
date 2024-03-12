@@ -843,33 +843,29 @@ data class ExprParser(
 
         val operand = getOperator(ctx) ?: return
 
-        if (!context.checkUndefinedMatchingDims(exprCtx[0], exprCtx[1]) {
+        if (!context.checkSimpleOrMatchingDims(exprCtx[0], exprCtx[1]) {
                 context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
             }) return
 
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
-            if (!context.checkSimpleWidth(*exprCtx.toTypedArray()) {
-                    context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
-                }) return
-
             val op1Width = op1.width
             val op2Width = op2.width
 
-            if (op1Width.isDefinedArray() && op2Width.isDefinedArray()) {
-                if (op1Width != op2Width) {
-                    context.reportError(exprCtx[1], ErrorStrings.OP_DIM_MISMATCH.format(operand))
-                    return
+            values[ctx] = if (op1Width !is UndefinedSimpleWidth || op2Width !is UndefinedSimpleWidth) {
+                // at least one width is defined
+                if (op1Width.isSimple() && op2Width.isSimple()) {
+                    // widths are simple, so use the largest bitCount as the result will be resized to match
+                    val bits = (op1Width.bitCount ?: -1).coerceAtLeast(op2Width.bitCount ?: -1)
+                    check(bits > 0) { "Failed to resolve width of undefined shift. Should be impossible." }
+                    UndefinedValue(constant, SimpleWidth(bits))
+                } else {
+                    UndefinedValue(constant, op1Width)
                 }
-                values[ctx] = UndefinedValue(constant, op1Width)
             } else {
-                values[ctx] = UndefinedValue(constant)
+                UndefinedValue(constant)
             }
             return
         }
-
-        if (!context.checkFlatOrMatchingDims(*exprCtx.toTypedArray()) {
-                context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
-            }) return
 
         values[ctx] = when (operand) {
             "&" -> op1 and op2
@@ -933,23 +929,18 @@ data class ExprParser(
         val op1 = values[exprCtx[0]] ?: return
         val op2 = values[exprCtx[1]] ?: return
 
-        if (op1 is UndefinedValue || op2 is UndefinedValue) {
-            values[ctx] = UndefinedValue(constant, BitWidth)
-            return
-        }
-
         val operand = getOperator(ctx) ?: return
 
         when (operand) {
             "<", ">", "<=", ">=" -> {
                 if (!context.checkSimpleWidth(*exprCtx.toTypedArray()) {
-                        context.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
+                        context.reportError(it, "The operator \"$operand\" can only be used on simple values.")
                     }) return
 
-
-                if (!context.checkSimpleValue(*exprCtx.toTypedArray()) {
-                        context.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
-                    }) return
+                if (op1 is UndefinedValue || op2 is UndefinedValue) {
+                    values[ctx] = UndefinedValue(constant, BitWidth)
+                    return
+                }
 
                 op1 as SimpleValue
                 op2 as SimpleValue
@@ -964,13 +955,14 @@ data class ExprParser(
             }
 
             "==", "!=" -> {
-                if (!context.checkUndefinedMatchingDims(exprCtx[0], exprCtx[1]) {
+                if (!context.checkSimpleOrMatchingDims(*exprCtx.toTypedArray()) {
                         context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
                     }) return
 
-                if (!context.checkFlatOrMatchingDims(*exprCtx.toTypedArray()) {
-                        context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
-                    }) return
+                if (op1 is UndefinedValue || op2 is UndefinedValue) {
+                    values[ctx] = UndefinedValue(constant, BitWidth)
+                    return
+                }
 
                 values[ctx] = when (operand) {
                     "==" -> op1 isEqualTo op2
@@ -1000,16 +992,16 @@ data class ExprParser(
         val op1 = values[exprCtx[0]] ?: return
         val op2 = values[exprCtx[1]] ?: return
 
+        val operand = getOperator(ctx) ?: return
+
+        if (!context.checkSimpleWidth(*exprCtx.toTypedArray()) {
+                context.reportError(it, "The operator \"$operand\" can only be used on simple values.")
+            }) return
+
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
             values[ctx] = UndefinedValue(constant, BitWidth)
             return
         }
-
-        val operand = getOperator(ctx) ?: return
-
-        if (!context.checkSimpleValue(*exprCtx.toTypedArray()) {
-                context.reportError(it, ErrorStrings.OP_NOT_NUMBER.format(operand))
-            }) return
 
         op1 as SimpleValue
         op2 as SimpleValue
@@ -1044,23 +1036,26 @@ data class ExprParser(
         val op1Width = op1.width
         val op2Width = op2.width
 
-        if (cond.width !is SimpleWidth) {
+        if (!cond.width.isSimple()) {
             context.reportError(exprCtx[0], ErrorStrings.TERN_SELECTOR_MULTI_DIM)
             return
         }
 
-        if (!context.checkFlatOrMatchingDims(exprCtx[1], exprCtx[2]) {
+        if (!context.checkSimpleOrMatchingDims(exprCtx[1], exprCtx[2]) {
                 context.reportError(it, ErrorStrings.OP_TERN_DIM_MISMATCH)
             }) return
 
         val width = when {
             op1Width == op2Width -> op1Width
-            op1Width is SimpleWidth && op2Width is SimpleWidth ->
-                BitListWidth(op1Width.size.coerceAtLeast(op2Width.size))
-
+            op1Width.isSimple() && op2Width.isSimple() -> {
+                val bits = (op1Width.bitCount ?: -1).coerceAtLeast(op2Width.bitCount ?: -1)
+                if (bits >= 0)
+                    BitListWidth(bits)
+                else
+                    UndefinedSimpleWidth()
+            }
             else -> {
-                context.reportError(ctx, ErrorStrings.UNKNOWN_WIDTH.format(ctx))
-                return
+                error("Unknown width condition! Should be impossible!")
             }
         }
 
@@ -1071,14 +1066,7 @@ data class ExprParser(
 
         val value = if (cond.isTrue().lsb == Bit.B1) op1 else op2
         if (value.width != width) {
-            if (value !is SimpleValue || width !is SimpleWidth) {
-                context.reportError(
-                    ctx,
-                    "BUG in exitExprTernary! Width of value couldn't be determined after passing checks!"
-                )
-                return
-            }
-            values[ctx] = value.asBitListValue().resize(width.size)
+            values[ctx] = value.resizeToMatch(width)
         } else {
             values[ctx] = value
         }

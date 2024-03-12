@@ -138,6 +138,18 @@ sealed class SignalWidth {
     abstract fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): Value
 }
 
+/**
+ * Creates a SimpleWidth with the given number of bits.
+ * If bits == 1, then it returns BitWidth.
+ * Otherwise, it returns a BitListWidth.
+ */
+fun SimpleWidth(bits: Int): SimpleWidth {
+    if (bits == 1) {
+        return BitWidth
+    }
+    return BitListWidth(bits)
+}
+
 sealed class SimpleWidth : SignalWidth() {
     abstract val size: Int
 

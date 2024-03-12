@@ -16,7 +16,7 @@ class ProjectTests {
         )
         val json = Json { prettyPrint = true }
         val encoded = json.encodeToString(ProjectFile.serializer(), testFile)
-        println(encoded)
+        //println(encoded)
         val decoded = json.decodeFromString<ProjectFile>(encoded)
         assertEquals(testFile, decoded)
     }
@@ -26,7 +26,7 @@ class ProjectTests {
         val projectData = ProjectData1V0("Blinker", Board.AlchitryCu, emptySet(), emptySet())
         val json = Json { prettyPrint = true }
         val encoded = json.encodeToString(ProjectData.serializer(), projectData)
-        println(encoded)
+        //println(encoded)
         val decoded = json.decodeFromString<ProjectData>(encoded)
         assertEquals(projectData, decoded)
     }
@@ -56,7 +56,7 @@ class ProjectTests {
         val projectData = Project.openXml(tempFile.toFile())
         val json = Json { prettyPrint = true }
         val encoded = json.encodeToString(ProjectData.serializer(), projectData)
-        println(encoded)
+        //println(encoded)
 
         projectDir.deleteRecursively()
     }
