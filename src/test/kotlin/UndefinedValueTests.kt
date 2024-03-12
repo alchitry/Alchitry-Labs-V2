@@ -500,13 +500,12 @@ class UndefinedValueTests {
         assert(result is UndefinedValue) { "Result $result" }
         val width = result?.width
         assert(
-            width is ArrayWidth &&
+            width is UndefinedArrayWidth &&
                     width.next is ArrayWidth &&
                     (width.next as ArrayWidth).size == 2 &&
                     (width.next as ArrayWidth).next is UndefinedSimpleWidth
         )
         assert(test.hasNoErrors)
-        assert(test.hasWarnings)
     }
 
     @Test

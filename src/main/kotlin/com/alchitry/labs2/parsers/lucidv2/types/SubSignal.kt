@@ -110,7 +110,7 @@ data class SubSignal(
                         selectedBits = currentWidth.bitCount!!
                     }
 
-                    is UndefinedSimpleWidth -> error("Undefined width in flatSelectionData!")
+                    is UndefinedWidth -> error("Undefined width in flatSelectionData!")
                     null -> error("Too many selectors for the signal width!")
                 }
             }

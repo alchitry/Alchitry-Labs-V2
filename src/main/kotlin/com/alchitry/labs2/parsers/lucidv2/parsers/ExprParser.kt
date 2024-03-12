@@ -1443,11 +1443,7 @@ data class ExprParser(
                 }
                 val dims = dimArgs.mapIndexed { i, it ->
                     if (it is UndefinedValue) {
-                        context.reportWarning(
-                            ctx.functionExpr(i + 1) ?: ctx,
-                            "The value \"$it\" is undefined. Testing with dimension size of ${Int.MAX_VALUE}."
-                        )
-                        Int.MAX_VALUE
+                        null
                     } else {
                         try {
                             val bigInt = (it as SimpleValue).toBigInt()
@@ -1470,6 +1466,8 @@ data class ExprParser(
                 }
 
                 dims.forEachIndexed { i, dim ->
+                    if (dim == null)
+                        return@forEachIndexed
                     if (dim < 0) {
                         context.reportError(
                             ctx.functionExpr(i + 1) ?: ctx,
@@ -1489,11 +1487,14 @@ data class ExprParser(
                 if (dimArgs.any { it is UndefinedValue }) {
                     var width: SignalWidth = UndefinedSimpleWidth()
                     dims.asReversed().forEach { d ->
-                        width = ArrayWidth(d, width)
+                        width = d?.let { ArrayWidth(it, width) } ?: UndefinedArrayWidth(width)
                     }
                     values[ctx] = UndefinedValue(constant, width)
                     return
                 }
+
+                @Suppress("UNCHECKED_CAST")
+                dims as List<Int>
 
                 val factor = dims.foldRight(1L) { dim, acc -> dim * acc }
 

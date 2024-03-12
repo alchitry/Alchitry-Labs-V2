@@ -168,12 +168,6 @@ data class SignalParser(
     }
 
     override fun exitSignalWidth(ctx: SignalWidthContext) {
-        val dims = ctx.arraySize()
-            .asReversed()
-            .map {
-                (it.expr()?.let { it1 -> context.resolve(it1) } as? SimpleValue)?.toBigInt()?.intValueExact()
-            }
-
         val structType = ctx.structType()?.let {
             context.resolve(it).also { v ->
                 if (v == null)
@@ -184,33 +178,30 @@ data class SignalParser(
             }
         }
 
-        if (dims.contains(null)) {
-            signalWidths[ctx] = ResolvableWidth(ctx)
-            return
-        }
-        @Suppress("UNCHECKED_CAST")
-        dims as List<Int>
+        val dims = ctx.arraySize().asReversed().map { it.expr() ?: return }
 
         if (dims.isEmpty()) {
             signalWidths[ctx] = structType?.let { StructWidth(it) } ?: BitWidth
             return
         }
 
-        val base = structType?.let { StructWidth(it) } ?: BitListWidth(dims[0])
+        var current: SignalWidth? = structType?.let { StructWidth(it) }
+        dims.forEach { d ->
+            val v = context.resolve(d)
+            current = when (v) {
+                is SimpleValue -> {
+                    val size = v.toBigInt()?.toInt() ?: return
+                    current?.let { ArrayWidth(size, it) } ?: BitListWidth(size)
+                }
 
-        if (dims.size == 1 && structType == null) {
-            signalWidths[ctx] = base
-            return
+                is UndefinedValue -> {
+                    current?.let { ResolvableArrayWidth(d, it) } ?: ResolvableSimpleWidth(d)
+                }
+
+                else -> return
+            }
         }
 
-        var lastWidth: SignalWidth = base
-
-        val offset = if (structType == null) 1 else 0
-
-        repeat(dims.size - offset) {
-            lastWidth = ArrayWidth(dims[it + offset], lastWidth)
-        }
-
-        signalWidths[ctx] = lastWidth
+        signalWidths[ctx] = current ?: return
     }
 }
