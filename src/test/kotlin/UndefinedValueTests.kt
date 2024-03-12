@@ -403,4 +403,189 @@ class UndefinedValueTests {
         assertEquals(BitListWidth(4), result?.width)
         assert(test.hasNoIssues)
     }
+
+    @Test
+    fun undefinedClog2() = runBlocking {
+        val test = testExprWithLocalValues("${'$'}clog2(SIZE)", undefinedSignal("SIZE"))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue)
+        assert(result?.width is UndefinedSimpleWidth)
+        assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun undefinedPow() = runBlocking {
+        val test = testExprWithLocalValues("${'$'}pow(2,SIZE)", undefinedSignal("SIZE"))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue)
+        assert(result?.width is UndefinedSimpleWidth)
+        assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun undefinedPow2() = runBlocking {
+        val test = testExprWithLocalValues("${'$'}pow(SIZE,2)", undefinedSignal("SIZE"))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue)
+        assert(result?.width is UndefinedSimpleWidth)
+        assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun undefinedReverse() = runBlocking {
+        val test = testExprWithLocalValues("${'$'}reverse(SIZE)", undefinedSignal("SIZE"))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue)
+        assert(result?.width is UndefinedSimpleWidth)
+        assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun undefinedFlatten() = runBlocking {
+        val test = testExprWithLocalValues("${'$'}flatten(SIZE)", undefinedSignal("SIZE"))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue)
+        assert(result?.width is UndefinedSimpleWidth)
+        assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun undefinedFlattenDefinedWidth() = runBlocking {
+        val test =
+            testExprWithLocalValues("${'$'}flatten(SIZE)", undefinedSignal("SIZE", ArrayWidth(2, BitListWidth(4))))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue)
+        assertEquals(BitListWidth(8), result?.width)
+        assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun undefinedBuild() = runBlocking {
+        val test = testExprWithLocalValues("${'$'}build(SIZE, 3, 2)", undefinedSignal("SIZE"))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue) { "Result $result" }
+        val width = result?.width
+        assert(
+            width is ArrayWidth &&
+                    width.size == 3 &&
+                    width.next is ArrayWidth &&
+                    (width.next as ArrayWidth).size == 2 &&
+                    (width.next as ArrayWidth).next is UndefinedSimpleWidth
+        )
+        assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun undefinedBuildDefinedWidth() = runBlocking {
+        val test = testExprWithLocalValues("${'$'}build(SIZE, 3, 2)", undefinedSignal("SIZE", BitListWidth(3 * 2 * 4)))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue) { "Result $result" }
+        assertEquals(ArrayWidth(3, ArrayWidth(2, BitListWidth(4))), result?.width)
+        assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun undefinedBuild2() = runBlocking {
+        val test = testExprWithLocalValues("${'$'}build(b111100001111, SIZE, 2)", undefinedSignal("SIZE"))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue) { "Result $result" }
+        val width = result?.width
+        assert(
+            width is ArrayWidth &&
+                    width.next is ArrayWidth &&
+                    (width.next as ArrayWidth).size == 2 &&
+                    (width.next as ArrayWidth).next is UndefinedSimpleWidth
+        )
+        assert(test.hasNoErrors)
+        assert(test.hasWarnings)
+    }
+
+    @Test
+    fun undefinedSigned() = runBlocking {
+        val test = testExprWithLocalValues("${'$'}signed(SIZE)", undefinedSignal("SIZE"))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue)
+        assert(result?.width is UndefinedSimpleWidth)
+        assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun undefinedUnsigned() = runBlocking {
+        val test = testExprWithLocalValues("${'$'}unsigned(SIZE)", undefinedSignal("SIZE"))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue)
+        assert(result?.width is UndefinedSimpleWidth)
+        assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun undefinedCdiv() = runBlocking {
+        val test = testExprWithLocalValues("${'$'}cdiv(SIZE, 2)", undefinedSignal("SIZE"))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue)
+        assert(result?.width is UndefinedSimpleWidth)
+        assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun undefinedResize() = runBlocking {
+        val test = testExprWithLocalValues("${'$'}resize(SIZE, 8)", undefinedSignal("SIZE"))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue)
+        assertEquals(BitListWidth(8), result?.width)
+        assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun undefinedWidth() = runBlocking {
+        val test = testExprWithLocalValues("${'$'}width(SIZE)", undefinedSignal("SIZE"))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue)
+        assert(result?.width is UndefinedSimpleWidth)
+        assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun undefinedFixedPoint() = runBlocking {
+        val test = testExprWithLocalValues("${'$'}fixedPoint(3.145, SIZE, 4)", undefinedSignal("SIZE"))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue)
+        assert(result?.width is UndefinedSimpleWidth)
+        assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun undefinedCFixedPoint() = runBlocking {
+        val test = testExprWithLocalValues("${'$'}cFixedPoint(3.145, SIZE, 4)", undefinedSignal("SIZE"))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue)
+        assert(result?.width is UndefinedSimpleWidth)
+        assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun undefinedFFixedPoint() = runBlocking {
+        val test = testExprWithLocalValues("${'$'}fFixedPoint(3.145, SIZE, 4)", undefinedSignal("SIZE"))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue)
+        assert(result?.width is UndefinedSimpleWidth)
+        assert(test.hasNoIssues)
+    }
 }

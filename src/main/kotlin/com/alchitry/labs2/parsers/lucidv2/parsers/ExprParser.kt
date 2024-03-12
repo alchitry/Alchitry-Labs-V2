@@ -1308,13 +1308,25 @@ data class ExprParser(
             Function.CLOG2 -> {
                 val valArgs = checkNoReal() ?: return
                 val arg = valArgs[0]
-                if (arg !is SimpleValue) {
+                if (!arg.width.isSimple()) {
                     context.reportError(
                         ctx.functionExpr(0) ?: ctx,
-                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(0)?.text, arg.toString())
+                        "The argument \"${ctx.functionExpr(0)?.text}\" with value \"$arg\" must be a number."
                     )
                     return
                 }
+                if (arg is UndefinedValue) {
+                    values[ctx] = UndefinedValue(constant)
+                    return
+                }
+                if (!arg.isNumber()) {
+                    context.reportError(
+                        ctx.functionExpr(0) ?: ctx,
+                        "The argument \"${ctx.functionExpr(0)?.text}\" with value \"$arg\" must be a number."
+                    )
+                    return
+                }
+                arg as SimpleValue
                 val bigInt = arg.toBigInt()
                 if (bigInt == BigInteger.ZERO) {
                     values[ctx] = BitValue(Bit.B0, constant, false)
@@ -1331,20 +1343,44 @@ data class ExprParser(
                 val valArgs = checkNoReal() ?: return
                 val arg1 = valArgs[0]
                 val arg2 = valArgs[1]
-                if (arg1 !is SimpleValue || !arg1.isNumber()) {
+                if (!arg1.width.isSimple()) {
                     context.reportError(
                         ctx.functionExpr(0) ?: ctx,
                         ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(0)?.text, arg1.toString())
                     )
                     return
                 }
-                if (arg2 !is SimpleValue || !arg2.isNumber()) {
+                if (!arg2.width.isSimple()) {
                     context.reportError(
                         ctx.functionExpr(1) ?: ctx,
                         ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(1)?.text, arg2.toString())
                     )
                     return
                 }
+
+                if (arg1 is UndefinedValue || arg2 is UndefinedValue) {
+                    values[ctx] = UndefinedValue(constant)
+                    return
+                }
+
+                if (!arg1.isNumber()) {
+                    context.reportError(
+                        ctx.functionExpr(0) ?: ctx,
+                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(0)?.text, arg1.toString())
+                    )
+                    return
+                }
+                if (!arg2.isNumber()) {
+                    context.reportError(
+                        ctx.functionExpr(1) ?: ctx,
+                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(1)?.text, arg2.toString())
+                    )
+                    return
+                }
+
+                arg1 as SimpleValue
+                arg2 as SimpleValue
+
                 val b1 = arg1.toBigInt()!!
                 val b2 = arg2.toBigInt()!!
                 try {
@@ -1372,25 +1408,32 @@ data class ExprParser(
 
             Function.FLATTEN -> {
                 val valArgs = checkNoReal() ?: return
-                if (!valArgs[0].width.isDefined()) {
-                    context.reportError(
-                        ctx.functionExpr(0) ?: ctx,
-                        ErrorStrings.UNKNOWN_WIDTH.format(ctx.functionExpr(0)?.text)
-                    )
-                    return
+                values[ctx] = if (valArgs[0].width.isDefined()) {
+                    if (valArgs[0] is UndefinedValue) {
+                        UndefinedValue(
+                            constant,
+                            SimpleWidth(
+                                valArgs[0].width.bitCount ?: error("Failed to get bit count. Should be impossible.")
+                            )
+                        )
+                    } else {
+                        valArgs[0].flatten()
+                    }
+                } else {
+                    UndefinedValue(constant)
                 }
-                values[ctx] = valArgs[0].flatten()
             }
 
             Function.BUILD -> {
                 val valArgs = checkNoReal() ?: return
                 val value = valArgs[0]
-                if (value !is BitListValue) {
+                val dimArgs = valArgs.subList(1, valArgs.size)
+                if (!value.width.isSimple()) {
                     context.reportError(ctx.functionExpr(0) ?: ctx, ErrorStrings.BUILD_MULTI_DIM)
                     return
                 }
                 for (i in 1 until valArgs.size) {
-                    if (!valArgs[i].isNumber() || valArgs[i] !is BitListValue) {
+                    if (valArgs[i] !is UndefinedValue && (!valArgs[i].isNumber() || valArgs[i] !is SimpleValue)) {
                         context.reportError(
                             ctx.functionExpr(i) ?: ctx,
                             ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(i)?.text, valArgs[i].toString())
@@ -1398,20 +1441,31 @@ data class ExprParser(
                         return
                     }
                 }
-                val dims = valArgs.subList(1, valArgs.size).mapIndexed { i, it ->
-                    try {
-                        val bigInt = (it as BitListValue).toBigInt()
-                        if (bigInt == null) {
-                            context.reportError(ctx.functionExpr(i + 1) ?: ctx, "The value \"$it\" is not a number.")
+                val dims = dimArgs.mapIndexed { i, it ->
+                    if (it is UndefinedValue) {
+                        context.reportWarning(
+                            ctx.functionExpr(i + 1) ?: ctx,
+                            "The value \"$it\" is undefined. Testing with dimension size of ${Int.MAX_VALUE}."
+                        )
+                        Int.MAX_VALUE
+                    } else {
+                        try {
+                            val bigInt = (it as SimpleValue).toBigInt()
+                            if (bigInt == null) {
+                                context.reportError(
+                                    ctx.functionExpr(i + 1) ?: ctx,
+                                    "The value \"$it\" is not a number."
+                                )
+                                return
+                            }
+                            bigInt.intValueExact()
+                        } catch (e: ArithmeticException) {
+                            context.reportError(
+                                ctx.functionExpr(i + 1) ?: ctx,
+                                ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.functionExpr(i + 1)?.text)
+                            )
                             return
                         }
-                        bigInt.intValueExact()
-                    } catch (e: ArithmeticException) {
-                        context.reportError(
-                            ctx.functionExpr(i + 1) ?: ctx,
-                            ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.functionExpr(i + 1)?.text)
-                        )
-                        return
                     }
                 }
 
@@ -1431,7 +1485,39 @@ data class ExprParser(
                         return
                     }
                 }
+
+                if (dimArgs.any { it is UndefinedValue }) {
+                    var width: SignalWidth = UndefinedSimpleWidth()
+                    dims.asReversed().forEach { d ->
+                        width = ArrayWidth(d, width)
+                    }
+                    values[ctx] = UndefinedValue(constant, width)
+                    return
+                }
+
                 val factor = dims.foldRight(1L) { dim, acc -> dim * acc }
+
+                if (value is UndefinedValue) {
+                    val bitCount = value.width.bitCount
+                    var width: SignalWidth = if (bitCount != null) {
+                        if (bitCount % factor != 0L) {
+                            context.reportError(
+                                ctx.functionExpr(0) ?: ctx,
+                                ErrorStrings.ARRAY_NOT_DIVISIBLE.format(ctx.functionExpr(0)?.text)
+                            )
+                            return
+                        }
+                        BitListWidth((bitCount / factor).toInt())
+                    } else {
+                        UndefinedSimpleWidth()
+                    }
+                    dims.asReversed().forEach { d ->
+                        width = ArrayWidth(d, width)
+                    }
+                    values[ctx] = UndefinedValue(constant, width)
+                    return
+                }
+                value as SimpleValue
 
                 if (value.size % factor != 0L) {
                     context.reportError(
@@ -1442,7 +1528,7 @@ data class ExprParser(
                 }
 
                 fun buildRecursive(bits: List<Bit>, dims: List<Int>): ArrayValue {
-                    val d = dims.last()
+                    val d = dims.first()
                     val vCt = bits.size
                     val step = vCt / d
                     val root = mutableListOf<Value>()
@@ -1456,7 +1542,7 @@ data class ExprParser(
                             root.add(
                                 buildRecursive(
                                     bits.subList(step * it, step * it + step),
-                                    dims.subList(0, dims.size - 1)
+                                    dims.subList(1, dims.size)
                                 )
                             )
                         }
@@ -1491,20 +1577,42 @@ data class ExprParser(
                 val valArgs = checkNoReal() ?: return
                 val arg1 = valArgs[0]
                 val arg2 = valArgs[1]
-                if (arg1 !is SimpleValue) {
+                if (!arg1.width.isSimple()) {
                     context.reportError(
                         ctx.functionExpr(0) ?: ctx,
                         ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(0)?.text, arg1.toString())
                     )
                     return
                 }
-                if (arg2 !is SimpleValue) {
+                if (!arg2.width.isSimple()) {
                     context.reportError(
                         ctx.functionExpr(1) ?: ctx,
                         ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(1)?.text, arg2.toString())
                     )
                     return
                 }
+
+                if (arg1 is UndefinedValue || arg2 is UndefinedValue) {
+                    values[ctx] = UndefinedValue(constant)
+                    return
+                }
+
+                if (!arg1.isNumber() || arg1 !is SimpleValue) {
+                    context.reportError(
+                        ctx.functionExpr(0) ?: ctx,
+                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(0)?.text, arg1.toString())
+                    )
+                    return
+                }
+
+                if (!arg2.isNumber() || arg2 !is SimpleValue) {
+                    context.reportError(
+                        ctx.functionExpr(1) ?: ctx,
+                        ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(1)?.text, arg2.toString())
+                    )
+                    return
+                }
+
                 val b1 = arg1.toBigInt()
                 val b2 = arg2.toBigInt()
 
@@ -1553,7 +1661,7 @@ data class ExprParser(
                         )
                         return
                     }
-                    if (value.width !is SimpleWidth) {
+                    if (!value.width.isSimple()) {
                         context.reportError(
                             ctx.functionExpr(0) ?: ctx,
                             ErrorStrings.FUNCTION_NOT_FLAT.format(functionIdCtx.text)
@@ -1568,7 +1676,7 @@ data class ExprParser(
                     }
                     values[ctx] = when (value) {
                         is SimpleValue -> value.asBitListValue().resize(numBits)
-                        is UndefinedValue -> value.copy(width = BitListWidth(numBits))
+                        is UndefinedValue -> value.copy(width = SimpleWidth(numBits))
                         else -> error("Previous error checks failed. This shouldn't be reached!")
                     }
                 }

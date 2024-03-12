@@ -60,6 +60,9 @@ sealed class SignalWidth {
      * Returns a Value whose elements match the dimensions of this width.
      */
     fun toValue(): Value {
+        if (this is UndefinedSimpleWidth) {
+            return UndefinedValue(true)
+        }
         require(isDefinedSimpleArray()) { "toValue() can only be called on arrays" }
         val dims = mutableListOf<Int>()
         var array: SignalWidth = this
@@ -202,7 +205,7 @@ open class UndefinedSimpleWidth : SignalWidth() {
     }
 
     override fun toString(): String {
-        return "UndefinedWidth"
+        return "UndefinedSimpleWidth"
     }
 
     override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): UndefinedValue =
