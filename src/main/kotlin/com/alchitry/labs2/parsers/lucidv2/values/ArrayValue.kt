@@ -9,13 +9,12 @@ data class ArrayValue(
 ) : Value(), List<Value> by elements {
     init {
         require(elements.none { it is BitValue }) { "ArrayValue should never have BitValue elements!" }
-        if (elements.isNotEmpty())
+        if (elements.isNotEmpty()) {
+            val base = elements.first().width
             require(elements.all { value ->
-                value::class == elements.first()::class || (
-                        (value is UndefinedValue || elements.first() is UndefinedValue) &&
-                                (value.width.isSimple() && elements.first().width.isSimple())
-                        )
-            }) { "ArrayValue elements must all be the same class!" }
+                base.isCompatibleWith(value.width)
+            }) { "ArrayValue elements must all be the same size!" }
+        }
     }
 
     override fun toString(format: ValueFormat): String = joinToString(", ", "[", "]") {
@@ -31,8 +30,8 @@ data class ArrayValue(
 
     override fun withSign(signed: Boolean): ArrayValue = copy(elements = elements.map { it.withSign(signed) })
 
-    override val width: ArrayWidth =
-        ArrayWidth(
+    override val width: DefinedArrayWidth =
+        DefinedArrayWidth(
             elements.size,
             elements.firstOrNull { it.width !is UndefinedSimpleWidth }?.width ?: UndefinedSimpleWidth()
         )

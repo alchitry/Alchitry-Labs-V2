@@ -191,7 +191,7 @@ data class SignalParser(
             current = when (v) {
                 is SimpleValue -> {
                     val size = v.toBigInt()?.toInt() ?: return
-                    current?.let { ArrayWidth(size, it) } ?: BitListWidth(size)
+                    current?.let { DefinedArrayWidth(size, it) } ?: BitListWidth(size)
                 }
 
                 is UndefinedValue -> {

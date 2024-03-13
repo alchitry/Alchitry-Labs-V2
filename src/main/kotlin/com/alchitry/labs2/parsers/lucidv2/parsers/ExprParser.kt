@@ -316,6 +316,11 @@ data class ExprParser(
         dependencies[exprCtx]?.let { dependencies[ctx] = it }
     }
 
+    private fun SignalWidth.canConcat(other: SignalWidth): Boolean = when (this) {
+        is ArrayWidth -> other is ArrayWidth && next.isCompatibleWith(other.next)
+        is SimpleWidth -> other is SimpleWidth
+        is StructWidth -> false
+    }
     // always returns an unsigned value
     override suspend fun exitExprConcat(ctx: ExprConcatContext) {
         if (canSkip(ctx)) return
@@ -338,75 +343,68 @@ data class ExprParser(
         if (operands.isEmpty())
             return
 
-        val base = operands[0].first
-        val baseSigWidth = base.width
+        val baseSigWidth = operands.map { it.first.width }.firstMostDefined()
         var error = false
 
-        if (baseSigWidth is StructWidth) {
+        if (!baseSigWidth.isArrayOrSimple()) {
             context.reportError(operands[0].second, "Concatenation can't be performed on structs")
             return
         }
 
-        // if width is array, value is array or simple
-        assert(baseSigWidth.isArray())
-        when (base) {
-            is ArrayValue -> {
-                assert(baseSigWidth is ArrayWidth) { "The ArrayValue has a width that isn't an ArrayWidth" }
-                operands.forEach {
-                    val sigWidth = it.first.width
-                    if (sigWidth !is ArrayWidth || sigWidth.next != (baseSigWidth as ArrayWidth).next) {
-                        context.reportError(
-                            it.second,
-                            "Each element in an array concatenation must have the same dimensions"
-                        )
-                        error = true
-                    }
-                }
-                if (error) return
+        var dimSize = 0
+        var definedWidth = true
 
-                val valueList = mutableListOf<Value>()
-                operands.asReversed().forEach { valueList.addAll((it.first as ArrayValue).elements) }
-                values[ctx] = ArrayValue(valueList)
+        operands.forEach {
+            val sigWidth = it.first.width
+            if (!sigWidth.canConcat(baseSigWidth)) {
+                context.reportError(
+                    it.second,
+                    "Each element in an array concatenation must have the same dimensions"
+                )
+                error = true
             }
+            when (sigWidth) {
+                is UndefinedWidth -> definedWidth = false
+                is DefinedArrayWidth -> dimSize += sigWidth.size
+                is DefinedSimpleWidth -> dimSize += sigWidth.size
+                is StructWidth -> error("[BUG] Width was StructWidth. Should be impossible.")
+            }
+        }
 
-            is SimpleValue, is UndefinedValue -> {
-                var bitCount = 0
-                var definedWidth = true
+        if (error) return
 
-                operands.forEach {
-                    val sigWidth = it.first.width
-                    if (sigWidth !is SimpleWidth && sigWidth !is UndefinedSimpleWidth) {
-                        context.reportError(
-                            it.second,
-                            "Each element in an array concatenation must have the same dimensions"
-                        )
-                        error = true
-                    }
-                    if (sigWidth is SimpleWidth)
-                        bitCount += sigWidth.size
-                    else // UndefinedWidth
-                        definedWidth = false
+        if (operands.any { it.first is UndefinedValue }) {
+            val width = if (definedWidth) {
+                when (baseSigWidth) {
+                    is SimpleWidth -> BitListWidth(dimSize)
+                    is ArrayWidth -> DefinedArrayWidth(dimSize, baseSigWidth.next)
+                    is StructWidth -> error("[BUG] Width was StructWidth. Should be impossible.")
                 }
-
-                if (error) return
-
-                if (operands.any { it.first is UndefinedValue }) {
-                    values[ctx] = if (definedWidth)
-                        UndefinedValue(constant, BitListWidth(bitCount))
-                    else
-                        UndefinedValue(constant)
-
-                    return
+            } else {
+                when (baseSigWidth) {
+                    is SimpleWidth -> UndefinedSimpleWidth()
+                    is ArrayWidth -> UndefinedArrayWidth(baseSigWidth.next)
+                    is StructWidth -> error("[BUG] Width was StructWidth. Should be impossible.")
                 }
+            }
+            values[ctx] = UndefinedValue(constant, width)
+            return
+        }
 
+        values[ctx] = when (baseSigWidth) {
+            is SimpleWidth -> {
                 val bits = mutableListOf<Bit>()
                 operands.asReversed().forEach { bits.addAll((it.first as SimpleValue).bits) }
-                values[ctx] = BitListValue(bits, constant, signed = false)
+                BitListValue(bits, constant, signed = false)
             }
 
-            else -> {
-                error("Value with array width isn't an array or simple value")
+            is ArrayWidth -> {
+                val valueList = mutableListOf<Value>()
+                operands.asReversed().forEach { valueList.addAll((it.first as ArrayValue).elements) }
+                ArrayValue(valueList)
             }
+
+            is StructWidth -> error("[BUG] Width was StructWidth. Should be impossible.")
         }
     }
 
@@ -435,12 +433,12 @@ data class ExprParser(
 
         val valWidth = dupValue.width
 
-        if (!valWidth.isArray()) {
+        if (!valWidth.isArrayOrSimple()) {
             context.reportError(exprCtx[0], "Duplication can't be performed on structs")
             return
         }
 
-        if (dupCount.width !is SimpleWidth && dupCount.width !is UndefinedSimpleWidth) {
+        if (dupCount.width !is SimpleWidth) {
             context.reportError(exprCtx[0], "The array duplication index must be one dimensional")
             return
         }
@@ -470,9 +468,11 @@ data class ExprParser(
             values[ctx] = UndefinedValue(
                 constant,
                 width = when (valWidth) {
-                    is ArrayWidth -> ArrayWidth(valWidth.size * dupTimes, valWidth.next)
-                    is SimpleWidth -> BitListWidth(valWidth.size * dupTimes)
-                    else -> UndefinedSimpleWidth()
+                    is DefinedArrayWidth -> DefinedArrayWidth(valWidth.size * dupTimes, valWidth.next)
+                    is DefinedSimpleWidth -> BitListWidth(valWidth.size * dupTimes)
+                    is UndefinedSimpleWidth -> valWidth
+                    is UndefinedArrayWidth -> valWidth
+                    is StructWidth -> error("[BUG] Width was StructWidth. Should be impossible.")
                 }
             )
             return
@@ -518,30 +518,25 @@ data class ExprParser(
         if (operands.isEmpty())
             return
 
-        val arrayDim =
-            operands.firstOrNull { it.first.width !is UndefinedSimpleWidth }?.first?.width ?: UndefinedSimpleWidth()
+        val filteredValues = operands.map {
+            val v = (it.first as? BitValue)?.asBitListValue() ?: it.first
+            v
+        }
+
+        val arrayDim = filteredValues.map { it.width }.firstMostDefined()
 
         val errors = operands.map {
             // check if the widths match, or at least one is an UndefinedSimpleWidth, and they're both simple
-            if (!(it.first.width == arrayDim ||
-                        ((it.first.width is UndefinedSimpleWidth || arrayDim is UndefinedSimpleWidth) &&
-                                it.first.width.isSimple() && arrayDim.isSimple())
-                        )
-            ) {
-                context.reportError(it.second, ErrorStrings.ARRAY_BUILDING_DIM_MISMATCH)
+            if (!it.first.width.isCompatibleWith(arrayDim)) {
+                context.reportError(it.second, "Each element in an array builder must have the same dimensions")
                 true
             } else {
                 false
             }
         }
 
-        val filteredValues = operands.map {
-            val v = (it.first as? BitValue)?.asBitListValue() ?: it.first
-            v
-        }
-
         values[ctx] = ArrayValue(filteredValues.mapIndexed { index, value ->
-            if (errors[index])
+            if (errors[index] || value.width is UndefinedWidth)
                 UndefinedValue(value.constant, arrayDim)
             else
                 value
@@ -631,7 +626,7 @@ data class ExprParser(
         val op2Width = op2.width
 
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
-            if (op1Width is SimpleWidth && op2Width is SimpleWidth)
+            if (op1Width is DefinedSimpleWidth && op2Width is DefinedSimpleWidth)
                 values[ctx] =
                     UndefinedValue(
                         constant,
@@ -705,12 +700,12 @@ data class ExprParser(
 
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
             values[ctx] = when {
-                multOp && op1Width is SimpleWidth && op2Width is SimpleWidth -> UndefinedValue(
+                multOp && op1Width is DefinedSimpleWidth && op2Width is DefinedSimpleWidth -> UndefinedValue(
                     constant,
                     BitListWidth(widthOfMult(op1Width.size, op2Width.size))
                 )
 
-                !multOp && op1Width is SimpleWidth -> UndefinedValue(constant, BitListWidth(op1Width.size))
+                !multOp && op1Width is DefinedSimpleWidth -> UndefinedValue(constant, BitListWidth(op1Width.size))
                 else -> UndefinedValue(constant)
             }
             return
@@ -785,7 +780,7 @@ data class ExprParser(
 
         if (value is UndefinedValue) {
             val vWidth = value.width
-            values[ctx] = if (vWidth is SimpleWidth && shift.isNumber()) {
+            values[ctx] = if (vWidth is DefinedSimpleWidth && shift.isNumber()) {
                 val w = if (operand == "<<" || operand == "<<<") vWidth.size + shift.toBigInt()!!
                     .toInt() else vWidth.size
                 UndefinedValue(constant, BitListWidth(w))
@@ -824,6 +819,34 @@ data class ExprParser(
         debug(ctx)
     }
 
+    /**
+     * Merges two compatible widths into one replacing [UndefinedWidth] with defined ones where possible.
+     */
+    private fun SignalWidth.mergeWith(other: SignalWidth): SignalWidth {
+        require(this.canAssign(other)) { "mergeWith() can only be used on assignable widths!" }
+        return when (this) {
+            is DefinedArrayWidth -> copy(next = next.mergeWith((other as ArrayWidth).next))
+            is BitWidth -> when (other) {
+                is BitWidth, is UndefinedSimpleWidth -> BitWidth
+                is BitListWidth -> other
+                else -> error("[BUG] Impossible case if compatible!")
+            }
+
+            is BitListWidth -> BitListWidth(size.coerceAtLeast(other.bitCount ?: 0))
+            is StructWidth -> this
+            is UndefinedArrayWidth -> when (other) {
+                is DefinedArrayWidth -> other.copy(next = next.mergeWith(other.next))
+                is UndefinedArrayWidth -> UndefinedArrayWidth(next.mergeWith(other.next))
+                else -> error("[BUG] Impossible case if compatible!")
+            }
+
+            is UndefinedSimpleWidth -> when (other) {
+                is BitWidth, is BitListWidth, is UndefinedSimpleWidth -> other
+                else -> error("[BUG] Impossible case if compatible!")
+            }
+        }
+    }
+
     override suspend fun exitExprBitwise(ctx: ExprBitwiseContext) {
         if (canSkip(ctx)) return
 
@@ -843,27 +866,12 @@ data class ExprParser(
 
         val operand = getOperator(ctx) ?: return
 
-        if (!context.checkSimpleOrMatchingDims(exprCtx[0], exprCtx[1]) {
+        if (!context.checkSimpleOrCompatible(exprCtx[0], exprCtx[1]) {
                 context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
             }) return
 
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
-            val op1Width = op1.width
-            val op2Width = op2.width
-
-            values[ctx] = if (op1Width !is UndefinedSimpleWidth || op2Width !is UndefinedSimpleWidth) {
-                // at least one width is defined
-                if (op1Width.isSimple() && op2Width.isSimple()) {
-                    // widths are simple, so use the largest bitCount as the result will be resized to match
-                    val bits = (op1Width.bitCount ?: -1).coerceAtLeast(op2Width.bitCount ?: -1)
-                    check(bits > 0) { "Failed to resolve width of undefined shift. Should be impossible." }
-                    UndefinedValue(constant, SimpleWidth(bits))
-                } else {
-                    UndefinedValue(constant, op1Width)
-                }
-            } else {
-                UndefinedValue(constant)
-            }
+            values[ctx] = UndefinedValue(constant, op1.width.mergeWith(op2.width))
             return
         }
 
@@ -955,7 +963,7 @@ data class ExprParser(
             }
 
             "==", "!=" -> {
-                if (!context.checkSimpleOrMatchingDims(*exprCtx.toTypedArray()) {
+                if (!context.checkSimpleOrCompatible(*exprCtx.toTypedArray()) {
                         context.reportError(it, ErrorStrings.OP_DIM_MISMATCH.format(operand))
                     }) return
 
@@ -993,10 +1001,6 @@ data class ExprParser(
         val op2 = values[exprCtx[1]] ?: return
 
         val operand = getOperator(ctx) ?: return
-
-        if (!context.checkSimpleWidth(*exprCtx.toTypedArray()) {
-                context.reportError(it, "The operator \"$operand\" can only be used on simple values.")
-            }) return
 
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
             values[ctx] = UndefinedValue(constant, BitWidth)
@@ -1041,23 +1045,11 @@ data class ExprParser(
             return
         }
 
-        if (!context.checkSimpleOrMatchingDims(exprCtx[1], exprCtx[2]) {
+        if (!context.checkSimpleOrCompatible(exprCtx[1], exprCtx[2]) {
                 context.reportError(it, ErrorStrings.OP_TERN_DIM_MISMATCH)
             }) return
 
-        val width = when {
-            op1Width == op2Width -> op1Width
-            op1Width.isSimple() && op2Width.isSimple() -> {
-                val bits = (op1Width.bitCount ?: -1).coerceAtLeast(op2Width.bitCount ?: -1)
-                if (bits >= 0)
-                    BitListWidth(bits)
-                else
-                    UndefinedSimpleWidth()
-            }
-            else -> {
-                error("Unknown width condition! Should be impossible!")
-            }
-        }
+        val width = op1Width.mergeWith(op2Width)
 
         if (cond is UndefinedValue) {
             values[ctx] = UndefinedValue(constant, width)
@@ -1143,7 +1135,7 @@ data class ExprParser(
         if (function.testOnly && !(inTestBlock || inFunctionBlock)) {
             context.reportError(
                 functionIdCtx,
-                "The function \"\$${function.label}\" can only be used in test or function blocks."
+                "The function \"$$${function.label}\" can only be used in test or function blocks."
             )
             return
         }
@@ -1167,7 +1159,10 @@ data class ExprParser(
                 val arg = valArgs[0]
                 val width = arg.width
                 if (!width.isSimpleArray()) {
-                    context.reportError(ctx.functionExpr(0) ?: ctx, "The function widthOf() can't be used on structs.")
+                    context.reportError(
+                        ctx.functionExpr(0) ?: ctx,
+                        "The function \$${Function.WIDTH.label}() can't be used on structs."
+                    )
                     return
                 }
                 values[ctx] = width.toValue()
@@ -1181,14 +1176,15 @@ data class ExprParser(
                     }
 
                     is FunctionArg.ValueArg -> {
+                        if (!w.value.width.isSimple()) {
+                            context.reportError(ctx.functionExpr(1) ?: ctx, "The width value must be a simple value.")
+                            return
+                        }
                         if (w.value is UndefinedValue) {
                             values[ctx] = UndefinedValue(true)
                             return
                         }
-                        if (w.value !is SimpleValue) {
-                            context.reportError(ctx.functionExpr(1) ?: ctx, "The width value must be a simple value.")
-                            return
-                        }
+                        w.value as SimpleValue // implied by width.isSimple and !is UndefinedValue
                         if (!w.value.isNumber()) {
                             context.reportError(ctx.functionExpr(1) ?: ctx, "The width value must be a number.")
                             return
@@ -1396,7 +1392,7 @@ data class ExprParser(
             Function.REVERSE -> {
                 val valArgs = checkNoReal() ?: return
                 val arg = valArgs[0]
-                if (!arg.width.isArray()) {
+                if (!arg.width.isArrayOrSimple()) {
                     context.reportError(
                         ctx.functionExpr(0) ?: ctx,
                         ErrorStrings.FUNCTION_ARG_NOT_ARRAY.format(ctx.functionExpr(0)?.text)
@@ -1412,7 +1408,7 @@ data class ExprParser(
                     if (valArgs[0] is UndefinedValue) {
                         UndefinedValue(
                             constant,
-                            SimpleWidth(
+                            DefinedSimpleWidth(
                                 valArgs[0].width.bitCount ?: error("Failed to get bit count. Should be impossible.")
                             )
                         )
@@ -1487,7 +1483,7 @@ data class ExprParser(
                 if (dimArgs.any { it is UndefinedValue }) {
                     var width: SignalWidth = UndefinedSimpleWidth()
                     dims.asReversed().forEach { d ->
-                        width = d?.let { ArrayWidth(it, width) } ?: UndefinedArrayWidth(width)
+                        width = d?.let { DefinedArrayWidth(it, width) } ?: UndefinedArrayWidth(width)
                     }
                     values[ctx] = UndefinedValue(constant, width)
                     return
@@ -1513,7 +1509,7 @@ data class ExprParser(
                         UndefinedSimpleWidth()
                     }
                     dims.asReversed().forEach { d ->
-                        width = ArrayWidth(d, width)
+                        width = DefinedArrayWidth(d, width)
                     }
                     values[ctx] = UndefinedValue(constant, width)
                     return
@@ -1556,21 +1552,32 @@ data class ExprParser(
 
             Function.SIGNED -> {
                 val valArgs = checkNoReal() ?: return
-                when (val arg = valArgs[0]) {
+                val arg = valArgs[0]
+                if (!arg.width.isSimple()) {
+                    context.reportError(ctx.functionExpr(0) ?: ctx, "Only single dimensional values can use \$signed()")
+                }
+                when (arg) {
                     is BitValue -> values[ctx] = arg.copy(signed = true)
                     is BitListValue -> values[ctx] = arg.copy(signed = true)
                     is UndefinedValue -> values[ctx] = arg.copy()
-                    else -> context.reportError(ctx.functionExpr(0) ?: ctx, ErrorStrings.SIGNED_MULTI_DIM)
+                    else -> {}
                 }
             }
 
             Function.UNSIGNED -> {
                 val valArgs = checkNoReal() ?: return
-                when (val arg = valArgs[0]) {
+                val arg = valArgs[0]
+                if (!arg.width.isSimple()) {
+                    context.reportError(
+                        ctx.functionExpr(0) ?: ctx,
+                        "Only single dimensional values can use \$unsigned()"
+                    )
+                }
+                when (arg) {
                     is BitValue -> values[ctx] = arg.copy(signed = false)
                     is BitListValue -> values[ctx] = arg.copy(signed = false)
                     is UndefinedValue -> values[ctx] = arg.copy()
-                    else -> context.reportError(ctx.functionExpr(0) ?: ctx, ErrorStrings.UNSIGNED_MULTI_DIM)
+                    else -> {}
                 }
             }
 
@@ -1677,7 +1684,7 @@ data class ExprParser(
                     }
                     values[ctx] = when (value) {
                         is SimpleValue -> value.asBitListValue().resize(numBits)
-                        is UndefinedValue -> value.copy(width = SimpleWidth(numBits))
+                        is UndefinedValue -> value.copy(width = DefinedSimpleWidth(numBits))
                         else -> error("Previous error checks failed. This shouldn't be reached!")
                     }
                 }

@@ -147,7 +147,7 @@ class UndefinedValueTests {
         val result = test.context.expr.resolve(tree)
         assert(result is ArrayValue && result.elements.all { it is UndefinedValue }) { "Value: $result" }
         val width = result?.width
-        assert(width is ArrayWidth && width.size == 1 && width.next is UndefinedSimpleWidth) { "Width: $width" }
+        assert(width is DefinedArrayWidth && width.size == 1 && width.next is UndefinedSimpleWidth) { "Width: $width" }
         assert(test.hasNoIssues)
     }
 
@@ -355,8 +355,18 @@ class UndefinedValueTests {
     }
 
     @Test
-    fun undefinedCompare() = runBlocking {
+    fun undefinedEqual2() = runBlocking {
         val test = testExprWithLocalValues("4b0101 == SIZE", undefinedSignal("SIZE"))
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)
+        assert(result is UndefinedValue) { "Result $result" }
+        assert(result?.width is BitWidth)
+        assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun undefinedCompare() = runBlocking {
+        val test = testExprWithLocalValues("4b0101 <= SIZE", undefinedSignal("SIZE"))
         val tree = test.parser.expr().also { test.context.walk(it) }
         val result = test.context.expr.resolve(tree)
         assert(result is UndefinedValue) { "Result $result" }
@@ -457,7 +467,10 @@ class UndefinedValueTests {
     @Test
     fun undefinedFlattenDefinedWidth() = runBlocking {
         val test =
-            testExprWithLocalValues("${'$'}flatten(SIZE)", undefinedSignal("SIZE", ArrayWidth(2, BitListWidth(4))))
+            testExprWithLocalValues(
+                "${'$'}flatten(SIZE)",
+                undefinedSignal("SIZE", DefinedArrayWidth(2, BitListWidth(4)))
+            )
         val tree = test.parser.expr().also { test.context.walk(it) }
         val result = test.context.expr.resolve(tree)
         assert(result is UndefinedValue)
@@ -473,11 +486,11 @@ class UndefinedValueTests {
         assert(result is UndefinedValue) { "Result $result" }
         val width = result?.width
         assert(
-            width is ArrayWidth &&
+            width is DefinedArrayWidth &&
                     width.size == 3 &&
-                    width.next is ArrayWidth &&
-                    (width.next as ArrayWidth).size == 2 &&
-                    (width.next as ArrayWidth).next is UndefinedSimpleWidth
+                    width.next is DefinedArrayWidth &&
+                    (width.next as DefinedArrayWidth).size == 2 &&
+                    (width.next as DefinedArrayWidth).next is UndefinedSimpleWidth
         )
         assert(test.hasNoIssues)
     }
@@ -488,7 +501,7 @@ class UndefinedValueTests {
         val tree = test.parser.expr().also { test.context.walk(it) }
         val result = test.context.expr.resolve(tree)
         assert(result is UndefinedValue) { "Result $result" }
-        assertEquals(ArrayWidth(3, ArrayWidth(2, BitListWidth(4))), result?.width)
+        assertEquals(DefinedArrayWidth(3, DefinedArrayWidth(2, BitListWidth(4))), result?.width)
         assert(test.hasNoIssues)
     }
 
@@ -501,9 +514,9 @@ class UndefinedValueTests {
         val width = result?.width
         assert(
             width is UndefinedArrayWidth &&
-                    width.next is ArrayWidth &&
-                    (width.next as ArrayWidth).size == 2 &&
-                    (width.next as ArrayWidth).next is UndefinedSimpleWidth
+                    width.next is DefinedArrayWidth &&
+                    (width.next as DefinedArrayWidth).size == 2 &&
+                    (width.next as DefinedArrayWidth).next is UndefinedSimpleWidth
         )
         assert(test.hasNoErrors)
     }

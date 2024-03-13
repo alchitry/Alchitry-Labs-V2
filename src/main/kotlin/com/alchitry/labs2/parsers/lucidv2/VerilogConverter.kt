@@ -255,7 +255,7 @@ class VerilogConverter(
                     append("signed ")
 
                 val bitCount = port.width.bitCount ?: 1
-                if (port.width is ArrayWidth || bitCount > 1) {
+                if (port.width is DefinedArrayWidth || bitCount > 1) {
                     append("[")
                     append(bitCount - 1)
                     append(":0] ")
@@ -503,7 +503,7 @@ class VerilogConverter(
                     first = false
 
                 when (currentWidth) {
-                    is ArrayWidth, is SimpleWidth -> {
+                    is DefinedArrayWidth, is DefinedSimpleWidth -> {
                         val s = selector as? SignalSelector.Bits ?: error("Struct selector used on an array!")
 
                         append("(")
@@ -516,7 +516,7 @@ class VerilogConverter(
                         }
                         append(")")
 
-                        val elementSize = if (currentWidth is ArrayWidth) currentWidth.next.bitCount!! else 1
+                        val elementSize = if (currentWidth is DefinedArrayWidth) currentWidth.next.bitCount!! else 1
 
                         // scale the offset by the size of each element
                         if (elementSize > 1) {
@@ -526,7 +526,7 @@ class VerilogConverter(
 
                         signed = false
                         selectedBitCount = s.count * elementSize
-                        currentWidth = if (currentWidth is ArrayWidth)
+                        currentWidth = if (currentWidth is DefinedArrayWidth)
                             when (s.context) {
                                 is SelectionContext.Constant,
                                 is SelectionContext.Single ->

@@ -170,7 +170,7 @@ class TypesParser(
         }
 
         extParamConnections.forEach { param ->
-            if (param.value.width !is SimpleWidth) {
+            if (param.value.width !is DefinedSimpleWidth) {
                 context.reportError(param.portCtx, "Parameter \"${param.port}\" is not a simple value.")
                 return
             }
@@ -218,7 +218,7 @@ class TypesParser(
 
         val instance = if (ctx.arraySize().isEmpty()) {
             localParamConnections.forEach { param ->
-                if (param.value.width !is SimpleWidth) {
+                if (param.value.width !is DefinedSimpleWidth) {
                     context.reportError(param.portCtx, "Parameter \"${param.port}\" is not a simple value.")
                     return
                 }
@@ -263,7 +263,7 @@ class TypesParser(
                     val curWidth = width
                     // special case for single bit wide ports
                     // this allows them to be assigned a value instead of an array aka sig[8] instead of sig[8][1]
-                    if (curWidth is SimpleWidth && port.width is BitWidth && curWidth.size == dim) {
+                    if (curWidth is DefinedSimpleWidth && port.width is BitWidth && curWidth.size == dim) {
                         if (index != dimensions.size - 1) {
                             context.reportError(
                                 connection.portCtx,
@@ -272,7 +272,7 @@ class TypesParser(
                         }
                         width = BitWidth
                     } else {
-                        if (curWidth !is ArrayWidth || curWidth.size != dim) {
+                        if (curWidth !is DefinedArrayWidth || curWidth.size != dim) {
                             context.reportError(
                                 connection.portCtx,
                                 "The signal \"${signal.name}\" does not match the dimensions of this module instance."
@@ -296,7 +296,7 @@ class TypesParser(
                 var width = param.value.width
                 dimensions.forEach {
                     val curWidth = width
-                    if (curWidth !is ArrayWidth || curWidth.size != it) {
+                    if (curWidth !is DefinedArrayWidth || curWidth.size != it) {
                         context.reportError(
                             param.portCtx,
                             "The parameter ${param.port} does not match the dimensions of this module instance."
@@ -305,7 +305,7 @@ class TypesParser(
                     }
                     width = curWidth.next
                 }
-                if (width !is SimpleWidth) {
+                if (width !is DefinedSimpleWidth) {
                     context.reportError(param.portCtx, "Parameter ${param.port} does not index to a simple value.")
                     return
                 }

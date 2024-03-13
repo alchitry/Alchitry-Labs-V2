@@ -5,16 +5,21 @@ import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.lucidv2.context.LucidExprEval
 import com.alchitry.labs2.parsers.lucidv2.types.StructType
 import kotlinx.coroutines.runBlocking
+import kotlin.contracts.contract
 
 sealed class SignalWidth {
     /**
-     *  Returns true if this is JUST an array (no structs)
+     *  Returns true if this is JUST an array (no structs).
+     *  This differs from [isArrayOrSimple] in that it recursively checks arrays.
      */
     fun isSimpleArray(): Boolean {
+        contract {
+            returns(true) implies (this@SignalWidth is SimpleWidth || this@SignalWidth is ArrayWidth)
+            returns(false) implies (this@SignalWidth is StructWidth)
+        }
         return when (this) {
             is ArrayWidth -> next.isSimpleArray()
-            is UndefinedArrayWidth -> next.isSimpleArray()
-            is SimpleWidth, is UndefinedSimpleWidth -> true
+            is SimpleWidth -> true
             is StructWidth -> false
         }
     }
@@ -22,33 +27,75 @@ sealed class SignalWidth {
     /**
      * Returns true if this is an array. It may be an array of anything, including structs.
      */
-    fun isArray(): Boolean {
-        return this is ArrayWidth || this is SimpleWidth || this is UndefinedSimpleWidth
-    }
-
-    /**
-     * Returns true if this is a defined array. It may be an array of anything, including structs.
-     */
-    fun isDefinedArray(): Boolean {
-        return this is ArrayWidth || this is SimpleWidth
+    fun isArrayOrSimple(): Boolean {
+        contract {
+            returns(true) implies (this@SignalWidth is SimpleWidth || this@SignalWidth is ArrayWidth)
+            returns(false) implies (this@SignalWidth is StructWidth)
+        }
+        return when (this) {
+            is ArrayWidth, is SimpleWidth -> true
+            is StructWidth -> false
+        }
     }
 
     /**
      * Returns true if this is a simple width. It may be undefined.
      */
     fun isSimple(): Boolean {
-        return this is SimpleWidth || this is UndefinedSimpleWidth
+        contract {
+            returns(true) implies (this@SignalWidth is SimpleWidth)
+            returns(false) implies (this@SignalWidth is StructWidth || this@SignalWidth is ArrayWidth)
+        }
+        return when (this) {
+            is SimpleWidth -> true
+            is StructWidth, is ArrayWidth -> false
+        }
     }
 
     /**
      * Returns true if the width is well-defined.
      */
     fun isDefined(): Boolean {
+        contract {
+            returns(true) implies (this@SignalWidth !is UndefinedWidth)
+        }
         return when (this) {
-            is SimpleWidth -> true
-            is ArrayWidth -> next.isDefined()
+            is DefinedSimpleWidth -> true
+            is DefinedArrayWidth -> next.isDefined()
             is StructWidth -> type.values.all { it.width.isDefined() }
             is UndefinedWidth -> false
+        }
+    }
+
+    /**
+     * This checks if two widths should be considered equal in size.
+     * It takes into account [UndefinedWidth] and assumes these are always
+     * compatible with their corresponding defined types.
+     *
+     * @param other The SignalWidth object to compare compatibility with.
+     * @return true if the current SignalWidth is compatible with the given SignalWidth, false otherwise.
+     */
+    fun isCompatibleWith(other: SignalWidth): Boolean {
+        return when (this) {
+            is DefinedArrayWidth -> when (other) {
+                is UndefinedArrayWidth -> next.isCompatibleWith(other.next)
+                is DefinedArrayWidth -> size == other.size && next.isCompatibleWith(other.next)
+                else -> false
+            }
+
+            is DefinedSimpleWidth -> when (other) {
+                is DefinedSimpleWidth -> this.size == other.size
+                is UndefinedSimpleWidth -> true
+                else -> false
+            }
+
+            is StructWidth -> this == other
+            is UndefinedArrayWidth -> when (other) {
+                is ArrayWidth -> next.isCompatibleWith(other.next)
+                else -> false
+            }
+
+            is UndefinedSimpleWidth -> other is SimpleWidth
         }
     }
 
@@ -60,22 +107,22 @@ sealed class SignalWidth {
             is ResolvableSimpleWidth -> true
             is ResolvableArrayWidth -> next.isResolvable()
             is UndefinedWidth -> false
-            is SimpleWidth -> true
+            is DefinedSimpleWidth -> true
             is StructWidth -> isDefined() // structs should be defined or never resolved
-            is ArrayWidth -> next.isResolvable()
+            is DefinedArrayWidth -> next.isResolvable()
         }
     }
 
     fun resolve(exprEval: LucidExprEval): SignalWidth {
         return when (this) {
-            is SimpleWidth -> this
+            is DefinedSimpleWidth -> this
             is ResolvableWidth -> {
                 runBlocking { exprEval.walk(context, ignoreSkip = true) }
                 val value = exprEval.resolve(context) ?: error("Failed to resolve width: $this!")
                 val size = (value as? SimpleValue)?.toBigInt()?.intValueExact()
                 if (size != null)
                     when (this) {
-                        is ResolvableArrayWidth -> ArrayWidth(size, next)
+                        is ResolvableArrayWidth -> DefinedArrayWidth(size, next)
                         is ResolvableSimpleWidth -> BitListWidth(size)
                     }
                 else
@@ -85,7 +132,7 @@ sealed class SignalWidth {
                     }
             }
 
-            is ArrayWidth -> ArrayWidth(size, next.resolve(exprEval))
+            is DefinedArrayWidth -> DefinedArrayWidth(size, next.resolve(exprEval))
             is StructWidth -> StructWidth(type.copy(members = type.mapValuesTo(LinkedHashMap()) {
                 it.value.copy(
                     width = it.value.width.resolve(
@@ -107,7 +154,7 @@ sealed class SignalWidth {
         var array: SignalWidth = this
         while (true) {
             when (array) {
-                is ArrayWidth -> {
+                is DefinedArrayWidth -> {
                     dims.add(array.size)
                     array = array.next
                 }
@@ -124,9 +171,14 @@ sealed class SignalWidth {
                 }
 
                 is StructWidth -> error("toValue() doesn't work on structs!")
-                is UndefinedWidth -> {
+                is UndefinedSimpleWidth -> {
                     dims.add(null)
                     break
+                }
+
+                is UndefinedArrayWidth -> {
+                    dims.add(null)
+                    array = array.next
                 }
             }
         }
@@ -151,10 +203,10 @@ sealed class SignalWidth {
         get() {
             return when (this) {
                 is BitWidth -> 1
-                is ArrayWidth -> size * (next.bitCount ?: return null)
+                is DefinedArrayWidth -> size * (next.bitCount ?: return null)
                 is StructWidth -> type.values.sumOf { it.width.bitCount ?: return null }
                 is UndefinedSimpleWidth, is UndefinedArrayWidth -> null
-                is SimpleWidth -> size
+                is DefinedSimpleWidth -> size
             }
         }
 
@@ -162,14 +214,14 @@ sealed class SignalWidth {
     fun canAssign(other: SignalWidth): Boolean =
         when {
             this.isSimple() -> other.isSimple()
-            else -> this == other
+            else -> this.isCompatibleWith(other)
         }
 
     /** Returns true if bits of other will be dropped during an assignment. */
     fun willTruncate(other: SignalWidth): Boolean {
         return when (this) {
-            is ArrayWidth, is StructWidth, is UndefinedArrayWidth -> false
-            BitWidth, is SimpleWidth, is UndefinedSimpleWidth ->
+            is DefinedArrayWidth, is StructWidth, is UndefinedArrayWidth -> false
+            BitWidth, is DefinedSimpleWidth, is UndefinedSimpleWidth ->
                 (bitCount ?: return false) < (other.bitCount ?: return false)
         }
     }
@@ -183,23 +235,25 @@ sealed class SignalWidth {
     abstract fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): Value
 }
 
+
+sealed interface SimpleWidth
 /**
- * Creates a SimpleWidth with the given number of bits.
- * If bits == 1, then it returns BitWidth.
- * Otherwise, it returns a BitListWidth.
+ * Creates a [DefinedSimpleWidth] with the given number of bits.
+ * If bits == 1, then it returns [BitWidth].
+ * Otherwise, it returns a [BitListWidth].
  */
-fun SimpleWidth(bits: Int): SimpleWidth {
+fun DefinedSimpleWidth(bits: Int): DefinedSimpleWidth {
     if (bits == 1) {
         return BitWidth
     }
     return BitListWidth(bits)
 }
 
-sealed class SimpleWidth : SignalWidth() {
+sealed class DefinedSimpleWidth : SignalWidth(), SimpleWidth {
     abstract val size: Int
 
     override fun equals(other: Any?): Boolean {
-        return other is SimpleWidth && size == other.size
+        return other is DefinedSimpleWidth && size == other.size
     }
 
     override fun hashCode(): Int {
@@ -207,7 +261,7 @@ sealed class SimpleWidth : SignalWidth() {
     }
 }
 
-data object BitWidth : SimpleWidth() {
+data object BitWidth : DefinedSimpleWidth() {
     override val size = 1
     override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): BitValue =
         BitValue(bit, constant, signed)
@@ -215,15 +269,19 @@ data object BitWidth : SimpleWidth() {
 
 data class BitListWidth(
     override val size: Int
-) : SimpleWidth() {
+) : DefinedSimpleWidth() {
     override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): BitListValue =
         BitListValue(size, constant, signed) { bit }
 }
 
-data class ArrayWidth(
-    val size: Int,
+sealed interface ArrayWidth {
     val next: SignalWidth
-) : SignalWidth() {
+}
+
+data class DefinedArrayWidth(
+    val size: Int,
+    override val next: SignalWidth
+) : SignalWidth(), ArrayWidth {
     override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): ArrayValue =
         ArrayValue(List(size) { next.filledWith(bit, constant, signed) })
 }
@@ -240,7 +298,7 @@ sealed class UndefinedWidth : SignalWidth()
 /**
  * An undefined 1D width.
  */
-open class UndefinedSimpleWidth : UndefinedWidth() {
+open class UndefinedSimpleWidth : UndefinedWidth(), SimpleWidth {
     override fun equals(other: Any?): Boolean {
         return other is UndefinedSimpleWidth
     }
@@ -257,7 +315,7 @@ open class UndefinedSimpleWidth : UndefinedWidth() {
     }
 }
 
-open class UndefinedArrayWidth(val next: SignalWidth) : UndefinedWidth() {
+open class UndefinedArrayWidth(override val next: SignalWidth) : UndefinedWidth(), ArrayWidth {
     override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean) =
         UndefinedValue(constant, this)
 
@@ -290,3 +348,12 @@ class ResolvableArrayWidth(override val context: LucidParser.ExprContext, next: 
         return "ResolvableArrayWidth(context=${context.text}, next=${next})"
     }
 }
+
+/**
+ * Returns the first well-defined [SignalWidth] or the first best defined [SignalWidth]
+ * if none are well-defined.
+ */
+fun Collection<SignalWidth>.firstMostDefined() =
+    firstOrNull { it.isDefined() }
+        ?: firstOrNull { it !is UndefinedWidth }
+        ?: first()

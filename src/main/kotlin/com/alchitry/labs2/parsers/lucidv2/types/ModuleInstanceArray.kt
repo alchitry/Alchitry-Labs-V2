@@ -123,7 +123,7 @@ class ModuleInstanceArray(
                 width = if (width is BitWidth)
                     BitListWidth(it)
                 else
-                    ArrayWidth(it, width)
+                    DefinedArrayWidth(it, width)
             }
             when (port) {
                 is Input -> Input(port.name, project, this, width, port.signed)

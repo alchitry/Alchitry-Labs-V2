@@ -229,7 +229,7 @@ internal class TypesParserTests {
         val struct = StructType(
             "myStruct", linkedMapOf(
                 "a" to StructMember("a", BitWidth, false),
-                "b" to StructMember("b", ArrayWidth(2, BitListWidth(3)), false),
+                "b" to StructMember("b", DefinedArrayWidth(2, BitListWidth(3)), false),
                 "c" to StructMember("c", BitListWidth(4), false)
             )
         )
@@ -258,11 +258,11 @@ internal class TypesParserTests {
         val struct = StructType(
             "myStruct", linkedMapOf(
                 "a" to StructMember("a", BitWidth, false),
-                "b" to StructMember("b", ArrayWidth(2, BitListWidth(3)), false),
+                "b" to StructMember("b", DefinedArrayWidth(2, BitListWidth(3)), false),
                 "c" to StructMember("c", BitListWidth(4), false)
             )
         )
-        val width = ArrayWidth(6, StructWidth(struct))
+        val width = DefinedArrayWidth(6, StructWidth(struct))
 
         val dff = tester.context.types.resolve("testing")
         dff as Dff

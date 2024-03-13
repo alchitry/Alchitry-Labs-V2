@@ -86,6 +86,7 @@ tasks.test {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = "17"
+        freeCompilerArgs += "-opt-in=kotlin.contracts.ExperimentalContracts"
         freeCompilerArgs += "-opt-in=kotlin.ExperimentalStdlibApi"
         freeCompilerArgs += "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
         freeCompilerArgs += "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi"

@@ -25,7 +25,7 @@ data class UndefinedValue(
     override fun toString(format: ValueFormat): String = "UndefinedValue($width)"
 
     fun selectBits(selection: SignalSelector.Bits): UndefinedValue {
-        if (width !is SimpleWidth)
+        if (width !is DefinedSimpleWidth)
             return this
         if (selection.count == 1)
             return UndefinedValue(constant, BitWidth)
@@ -48,7 +48,7 @@ data class UndefinedValue(
     }
 
     override fun reverse(): UndefinedValue =
-        if (this.width.isArray()) this else error("reverse() can't be called on UndefinedValues that aren't arrays.")
+        if (this.width.isArrayOrSimple()) this else error("reverse() can't be called on UndefinedValues that aren't arrays.")
 
     override fun resizeToMatch(newWidth: SignalWidth): UndefinedValue {
         check(this.width.canAssign(newWidth)) { "UndefinedValue width ${this.width} could not be resized to new width of $newWidth!" }

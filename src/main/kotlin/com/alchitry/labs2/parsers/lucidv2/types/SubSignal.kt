@@ -83,12 +83,12 @@ data class SubSignal(
             var selectedBits = currentWidth.bitCount!!
             for (selector in selection) {
                 when (currentWidth) {
-                    is ArrayWidth, is SimpleWidth -> {
+                    is DefinedArrayWidth, is DefinedSimpleWidth -> {
                         val s = selector as? SignalSelector.Bits ?: error("Struct selector used on an array!")
-                        val elementSize = ((currentWidth as? ArrayWidth)?.next?.bitCount ?: 1)
+                        val elementSize = ((currentWidth as? DefinedArrayWidth)?.next?.bitCount ?: 1)
                         offset += s.range.first * elementSize
                         selectedBits = s.count * elementSize
-                        currentWidth = if (currentWidth is ArrayWidth)
+                        currentWidth = if (currentWidth is DefinedArrayWidth)
                             when (s.context) {
                                 is SelectionContext.Constant,
                                 is SelectionContext.Single ->
