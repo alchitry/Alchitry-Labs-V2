@@ -348,8 +348,8 @@ data class Project(
     suspend fun parse(notationManager: NotationManager): List<Pair<SourceFile, LucidParser.SourceContext>>? {
         val trees = coroutineScope {
             data.sourceFiles
-                .map { file -> file to notationManager.getCollector(file) } // do this first to avoid race conditions
-                .map { (file, collector) ->
+                .map { file ->
+                    val collector = notationManager.getCollector(file)
                     async {
                         file to parseLucidFile(file, collector)
                     }
