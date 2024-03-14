@@ -26,7 +26,10 @@ import com.alchitry.labs2.ui.tabs.SimulationResultTab
 import com.alchitry.labs2.ui.tabs.Workspace
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
@@ -53,12 +56,12 @@ data class Project(
     private val notationManagerFlow = MutableStateFlow<NotationManager?>(null)
     val scope = CoroutineScope(Dispatchers.Default)
 
-    /**
-     * The last non-null project context. It is only null if the project context was never successfully built.
-     */
-    val cachedProjectContextFlow =
-        mutableProjectContextFlow.filterNotNull().stateIn(scope, started = SharingStarted.Eagerly, null)
 
+    private val mutableGlobalMapFlow = MutableStateFlow<Map<String, GlobalNamespace>>(emptyMap())
+    val globalMapFlow = mutableGlobalMapFlow.asStateFlow()
+
+    private val mutableModuleMapFlow = MutableStateFlow<Map<SourceFile, Module>>(emptyMap())
+    val moduleMapFlow = mutableModuleMapFlow.asStateFlow()
 
     fun binFileIsUpToDate(): Boolean = binFile.lastModified() >= lastModified() && binFile.lastModified() > 0L
     fun lastModified(): Long {
@@ -321,35 +324,68 @@ data class Project(
         return@withContext true
     }
 
-    suspend fun parse(errorManger: NotationManager): List<Pair<SourceFile, LucidParser.SourceContext>>? {
+    private suspend fun parseLucidFile(
+        file: SourceFile,
+        notationCollector: NotationCollector
+    ): LucidParser.SourceContext {
+        return LucidParser(
+            CommonTokenStream(
+                LucidLexer(
+                    CharStreams.fromString(
+                        file.readText(),
+                        file.name
+                    )
+                ).apply {
+                    removeErrorListeners()
+                    addErrorListener(notationCollector)
+                })
+        ).apply {
+            removeErrorListeners()
+            addErrorListener(notationCollector)
+        }.source()
+    }
+
+    suspend fun parse(notationManager: NotationManager): List<Pair<SourceFile, LucidParser.SourceContext>>? {
         val trees = coroutineScope {
             data.sourceFiles
-                .map { file -> file to errorManger.getCollector(file) } // do this first to avoid race conditions
+                .map { file -> file to notationManager.getCollector(file) } // do this first to avoid race conditions
                 .map { (file, collector) ->
                     async {
-                        val parser = LucidParser(
-                            CommonTokenStream(
-                                LucidLexer(
-                                    CharStreams.fromString(
-                                        file.readText(),
-                                        file.name
-                                    )
-                                ).apply {
-                                    removeErrorListeners()
-                                    addErrorListener(collector)
-                                })
-                        ).apply {
-                            removeErrorListeners()
-                            addErrorListener(collector)
-                        }
-
-                        file to parser.source()
+                        file to parseLucidFile(file, collector)
                     }
                 }.awaitAll()
         }
-        if (!errorManger.hasNoMessages)
+        if (!notationManager.hasNoMessages)
             return null
         return trees
+    }
+
+    suspend fun getTypesForLucidFile(file: SourceFile): ProjectContext {
+        val modules = moduleMapFlow.value
+        val globals = globalMapFlow.value
+        val notationManager = NotationManager()
+        ProjectContext(notationManager).use { projectContext ->
+            globals.forEach { (_, global) -> projectContext.addGlobal(global) }
+            modules.forEach { (_, module) -> projectContext.addModule(module) }
+
+            val tree = parseLucidFile(file, notationManager.getCollector(file))
+            LucidTestBenchContext(projectContext, file).walk(tree)
+
+            (modules[file]
+                ?: LucidModuleTypeContext(projectContext, file).extract(tree))?.let { module ->
+                projectContext.top = ModuleInstance(
+                    "testingTop",
+                    projectContext,
+                    null,
+                    module,
+                    mapOf(),
+                    mapOf(),
+                    testing = true
+                ).apply { initialWalk() }
+            }
+
+            return projectContext
+        }
     }
 
     suspend fun buildContext(
@@ -368,6 +404,8 @@ data class Project(
                 LucidGlobalContext(projectContext, it.first).walk(it.second)
             }
 
+            mutableGlobalMapFlow.tryEmit(projectContext.getGlobals())
+
             if (notationManager.hasErrors)
                 return null
 
@@ -377,6 +415,8 @@ data class Project(
 
                 it.first to (module ?: return@mapNotNull null)
             }
+
+            mutableModuleMapFlow.tryEmit(modules.toMap())
 
             if (notationManager.hasErrors)
                 return null

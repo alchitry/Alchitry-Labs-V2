@@ -8,8 +8,10 @@ import com.alchitry.labs2.parsers.lucidv2.types.Function
 import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstance
 import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstanceArray
 import com.alchitry.labs2.parsers.lucidv2.types.TestOrModuleInstance
+import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.files.ProjectFile
+import com.alchitry.labs2.project.files.SourceFile
 import com.alchitry.labs2.ui.code_editor.CodeEditorState
 import kotlinx.coroutines.*
 import org.antlr.v4.kotlinruntime.CharStreams
@@ -100,6 +102,13 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
                             if (it.direction.canRead) it.name else null
                         }
                     )
+                    list.addAll(
+                        thisModule.context.types.moduleInstances.flatMap { inst ->
+                            inst.value.external.values.mapNotNull {
+                                if (it.direction.canRead) "${inst.value.name}.${it.name}" else null
+                            }
+                        }
+                    )
                 }
                 list
             }
@@ -114,17 +123,22 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
                             if (it.direction.canWrite) it.name else null
                         }
                     )
+                    list.addAll(
+                        thisModule.context.types.moduleInstances.flatMap { inst ->
+                            inst.value.external.values.mapNotNull {
+                                if (it.direction.canWrite) "${inst.value.name}.${it.name}" else null
+                            }
+                        }
+                    )
                 }
                 list
             }
 
             ContextType.MODULE_INST -> {
-                projectContext.top?.getAllModules()
-                    ?.mapNotNull {
+                projectContext.getModules().mapNotNull {
                         if (thisModule !is ModuleInstance || it.name != thisModule.module.name)
                             it.name else null
                     }
-                    ?: emptyList()
             }
 
             ContextType.FUNCTION -> Function.builtIn.map { "$" + it.label }
@@ -147,12 +161,17 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
         ensureActive()
         this@LucidAutocomplete.context = context
 
-        val projectContext = Project.current?.cachedProjectContextFlow?.value
+        val file = state.file
+
+        if (file !is SourceFile || file.language != Languages.Lucid) {
+            reset()
+            return@coroutineScope
+        }
+        val projectContext = Project.current?.getTypesForLucidFile(file)
         if (projectContext == null) {
             reset()
             return@coroutineScope
         }
-
 
         val line = state.lines.getOrNull(caret.line)?.text?.text ?: return@coroutineScope
         val relevantText = line.substring(0, caret.offset).getRelevantText()
@@ -164,7 +183,6 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
 
         val start = caret.copy(offset = caret.offset - relevantText.length)
         val end = caret
-
         val possible = getPossible(context, projectContext)
 
         active = true

@@ -6,6 +6,7 @@ import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.notations.NotationManager
 import com.alchitry.labs2.project.QueueExhaustionException
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.*
 import java.io.Closeable
 import java.util.concurrent.ConcurrentHashMap
@@ -109,8 +110,12 @@ class ProjectContext(val notationManager: NotationManager) : Closeable {
     fun addGlobal(globalNamespace: GlobalNamespace): Boolean =
         globals.putIfAbsent(globalNamespace.name, globalNamespace) == null
 
+    fun getGlobals() = globals.toImmutableMap()
+
     fun addModule(module: Module): Boolean =
         modules.putIfAbsent(module.name, module) == null
+
+    fun getModules() = modules.values.toImmutableList()
 
     fun addTestBench(testBench: TestBench): Boolean =
         testBenches.putIfAbsent(testBench.name, testBench) == null
