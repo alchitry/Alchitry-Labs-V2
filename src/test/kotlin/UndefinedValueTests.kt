@@ -1,9 +1,7 @@
 import com.alchitry.labs2.parsers.BitUtil.widthOfMult
 import com.alchitry.labs2.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs2.parsers.lucidv2.parsers.toSourceFile
-import com.alchitry.labs2.parsers.lucidv2.types.Signal
-import com.alchitry.labs2.parsers.lucidv2.types.SignalDirection
-import com.alchitry.labs2.parsers.lucidv2.types.SignalOrParent
+import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.lucidv2.values.*
 import helpers.LucidTester
 import helpers.SimpleLucidTester
@@ -31,12 +29,15 @@ class UndefinedValueTests {
 
                 .clk(clk), .rst(rst) {
                     dff ctr[SIZE+DIV]
+                    dff testArray[SIZE][8]
                 }
 
                 const MAX_VALUE = TOP << DIV // value when maxed out
 
                 always {
                     value = ctr.q[SIZE+DIV-1-:SIZE] // set the output
+                    
+                    testArray.d[0] = testArray.q[0] + 1
 
                     if (UP) { // when this is an up counter
                         ctr.d = ctr.q + 1 // increase
@@ -68,6 +69,24 @@ class UndefinedValueTests {
             }
         }
         return SimpleLucidTester(expr, resolver)
+    }
+
+    @Test
+    fun undefinedSignals() = runBlocking {
+        val signal =
+            Signal("testSig", SignalDirection.Both, null, UndefinedValue(false, UndefinedArrayWidth(BitListWidth(8))))
+        assertEquals(UndefinedValue(false, UndefinedArrayWidth(BitListWidth(8))), signal.read())
+
+        val subSignal = signal.select(listOf(SignalSelector.Bits(2..2, SelectionContext.Constant)))
+        assertEquals(UndefinedValue(false, DefinedSimpleWidth(8)), subSignal.read())
+
+        subSignal.write(BitListValue(2, 4, constant = true, signed = false))
+        assertEquals(UndefinedValue(false, DefinedSimpleWidth(8)), subSignal.read())
+
+        // check that writing to the entire signal replaces the UndefinedValue with a defined one
+        val fullValue = ArrayValue(listOf(BitListValue(2, 8, constant = false, signed = false)))
+        signal.write(fullValue)
+        assertEquals(fullValue, signal.read())
     }
 
     @Test

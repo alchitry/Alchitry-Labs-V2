@@ -9,10 +9,7 @@ data class SubSignal(
     val selection: SignalSelection
 ) : SignalOrSubSignal {
     override fun read(evalContext: Evaluable?): Value {
-        val value = parent.read(evalContext).select(selection)
-        if (selection.isUndefined())
-            return value.width.filledWith(Bit.Bx, value.constant, false)
-        return value
+        return parent.read(evalContext).select(selection)
     }
 
     override val width: SignalWidth = read().width
@@ -53,8 +50,6 @@ data class SubSignal(
             "Cannot set value $v to selected subsignal!"
         }
         val current = parent.read(evalContext)
-        if (selection.isUndefined())
-            return current.width.filledWith(Bit.Bx, current.constant, false)
         return current.write(selection, v.resizeToMatch(width))
     }
 

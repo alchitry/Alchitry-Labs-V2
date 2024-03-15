@@ -95,7 +95,6 @@ sealed class Value : Measurable {
                 is BitListValue -> selectBits(selection)
                 is StructValue -> throw SignalSelectionException(selection, "Bit selection can't be used on a struct.")
                 is UndefinedValue -> selectBits(selection)
-
                 is BitValue -> throw SignalSelectionException(selection, "Bit selection can't be used on a single bit.")
             }
 
@@ -104,18 +103,20 @@ sealed class Value : Measurable {
                     selection,
                     "Arrays don't have struct members."
                 )
-
                 is StructValue -> selectMember(selection)
-                is UndefinedValue -> throw SignalSelectionException(
-                    selection,
-                    "Struct selection can't be used on an undefined value."
-                )
-
+                is UndefinedValue -> selectMember(selection)
                 is BitValue -> throw SignalSelectionException(selection, "Bits don't have struct members.")
             }
         }
 
-    abstract fun write(selection: List<SignalSelector>, newValue: Value): Value
+    /**
+     * Writes [newValue] to the portion of this [Value] that is selected by [selection].
+     *
+     * @param selection The [SignalSelection] representing the selection to write to.
+     * @param newValue The new [Value] to write.
+     * @return The modified full [Value] after writing.
+     */
+    abstract fun write(selection: SignalSelection, newValue: Value): Value
 
     fun asSignal(name: String, parent: SignalParent? = null) = Signal(
         name,

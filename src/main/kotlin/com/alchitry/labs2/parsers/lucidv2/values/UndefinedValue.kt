@@ -24,12 +24,48 @@ data class UndefinedValue(
 
     override fun toString(format: ValueFormat): String = "UndefinedValue($width)"
 
+    fun selectMember(selection: SignalSelector.Struct): UndefinedValue {
+        return when (width) {
+            is StructWidth -> {
+                UndefinedValue(
+                    constant,
+                    width.type[selection.member]?.width
+                        ?: error("Struct type \"${width.type.name}\" doesn't have a member named \"${selection.member}\"!")
+                )
+            }
+
+            else -> error("Struct selector used on ${width::class.simpleName}!")
+        }
+    }
+
     fun selectBits(selection: SignalSelector.Bits): UndefinedValue {
-        if (width !is DefinedSimpleWidth)
-            return this
-        if (selection.count == 1)
-            return UndefinedValue(constant, BitWidth)
-        return UndefinedValue(constant, BitListWidth(selection.count))
+        return when (width) {
+            is BitWidth -> error("BitWidth can't be selected!")
+            is SimpleWidth -> {
+                if (width is DefinedSimpleWidth)
+                    require(selection.range.first <= width.size && selection.range.last <= width.size) {
+                        "Selection of ${selection.range} is out of range of the value's width of ${width.size}!"
+                    }
+                if (selection.count == 1)
+                    UndefinedValue(constant, BitWidth)
+                else
+                    UndefinedValue(constant, BitListWidth(selection.count))
+            }
+
+            is StructWidth -> error("Bit selector used on StructWidth!")
+
+            is ArrayWidth -> {
+                if (width is DefinedArrayWidth)
+                    require(selection.range.first <= width.size && selection.range.last <= width.size) {
+                        "Selection of ${selection.range} is out of range of the value's width of ${width.size}!"
+                    }
+                if (selection.count == 1)
+                    UndefinedValue(constant, width.next)
+                else
+                    UndefinedValue(constant, DefinedArrayWidth(selection.count, width.next))
+            }
+
+        }
     }
 
     override infix fun and(other: Value): UndefinedValue {
@@ -56,6 +92,11 @@ data class UndefinedValue(
     }
 
     override fun write(selection: List<SignalSelector>, newValue: Value): Value {
-        error("Write isn't supported on undefined values!")
+        return if (selection.isEmpty()) {
+            require(width.isCompatibleWith(newValue.width)) { "Attempted to write an incompatible type to the UndefinedValue!" }
+            newValue
+        } else {
+            this
+        }
     }
 }

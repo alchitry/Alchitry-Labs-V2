@@ -68,7 +68,7 @@ data class ArrayValue(
     override fun reverse() = ArrayValue(reversed())
 
     override fun resizeToMatch(newWidth: SignalWidth): ArrayValue {
-        require(width == newWidth) { "Cannot resize ArrayValue to match other value" }
+        require(width.isCompatibleWith(newWidth)) { "Cannot resize ArrayValue to match other value" }
         return this
     }
 
