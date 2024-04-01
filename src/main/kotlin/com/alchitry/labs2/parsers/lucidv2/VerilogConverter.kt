@@ -119,7 +119,6 @@ class VerilogConverter(
             addAll(instance.parameters.values)
             addAll(context.constant.localConstants.values)
             context.enum.localEnumType.values.forEach {
-                add(it.widthSignal)
                 addAll(it.memberSignals.values)
             }
         }

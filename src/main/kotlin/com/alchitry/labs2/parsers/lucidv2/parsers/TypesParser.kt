@@ -530,7 +530,15 @@ class TypesParser(
                 signalConnections.add(
                     Connection(
                         sigCtx.name() ?: return@let,
-                        DynamicExpr(sigCtx.expr() ?: return@let, context)
+                        try {
+                            DynamicExpr(sigCtx.expr() ?: return@let, context)
+                        } catch (e: IllegalStateException) {
+                            context.reportError(
+                                sigCtx.expr() ?: ctx,
+                                e.message ?: "Failed to create connection for \"${sigCtx.text}\""
+                            )
+                            return@let
+                        }
                     )
                 )
             }
@@ -538,7 +546,15 @@ class TypesParser(
                 paramConnections.add(
                     Connection(
                         paramCtx.name() ?: return@let,
-                        DynamicExpr(paramCtx.expr() ?: return@let, context)
+                        try {
+                            DynamicExpr(paramCtx.expr() ?: return@let, context)
+                        } catch (e: IllegalStateException) {
+                            context.reportError(
+                                paramCtx.expr() ?: ctx,
+                                e.message ?: "Failed to create connection for \"${paramCtx.text}\""
+                            )
+                            return@let
+                        }
                     )
                 )
             }

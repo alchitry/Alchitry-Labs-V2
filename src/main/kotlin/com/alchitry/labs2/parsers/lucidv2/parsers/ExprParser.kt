@@ -6,10 +6,8 @@ import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs2.parsers.lucidv2.context.LucidExprContext
+import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.lucidv2.types.Function
-import com.alchitry.labs2.parsers.lucidv2.types.FunctionArg
-import com.alchitry.labs2.parsers.lucidv2.types.Signal
-import com.alchitry.labs2.parsers.lucidv2.types.SubSignal
 import com.alchitry.labs2.parsers.lucidv2.values.*
 import com.alchitry.labs2.parsers.notations.ErrorStrings
 import com.alchitry.labs2.parsers.notations.Notation
@@ -1087,7 +1085,40 @@ data class ExprParser(
 
         functions[ctx] = function
 
-        val args = ctx.functionExpr().map { expr ->
+        val functionExprCtxs = ctx.functionExpr()
+
+        if (function.argCount >= 0) {
+            if (functionExprCtxs.size != function.argCount) {
+                context.reportError(
+                    functionIdCtx,
+                    ErrorStrings.FUNCTION_ARG_COUNT.format(ctx.FUNCTION_ID().toString(), function.argCount)
+                )
+                return
+            }
+        } else {
+            if (functionExprCtxs.size < function.argCount.absoluteValue) {
+                context.reportError(
+                    functionIdCtx,
+                    String.format(
+                        ErrorStrings.FUNCTION_MIN_ARG_COUNT,
+                        ctx.FUNCTION_ID(),
+                        function.argCount.absoluteValue
+                    )
+                )
+                return
+            }
+        }
+
+        if (function == Function.WIDTH) {
+            val argCtx = functionExprCtxs.first()
+            val sig = context.resolveSignal(argCtx.text)
+            if (sig is EnumType) {
+                values[ctx] = sig.width.toValue()
+                return
+            }
+        }
+
+        val args = functionExprCtxs.map { expr ->
             val exprExpr = expr.expr()
             if (exprExpr != null) {
                 FunctionArg.ValueArg(values[exprExpr] ?: return)
@@ -1105,27 +1136,7 @@ data class ExprParser(
             }
         }
 
-        if (function.argCount >= 0) {
-            if (args.size != function.argCount) {
-                context.reportError(
-                    functionIdCtx,
-                    ErrorStrings.FUNCTION_ARG_COUNT.format(ctx.FUNCTION_ID().toString(), function.argCount)
-                )
-                return
-            }
-        } else {
-            if (args.size < function.argCount.absoluteValue) {
-                context.reportError(
-                    functionIdCtx,
-                    String.format(
-                        ErrorStrings.FUNCTION_MIN_ARG_COUNT,
-                        ctx.FUNCTION_ID(),
-                        function.argCount.absoluteValue
-                    )
-                )
-                return
-            }
-        }
+
 
         if (function.constOnly && !constant) {
             context.reportError(functionIdCtx, ErrorStrings.CONST_FUNCTION.format(functionIdCtx.text))
@@ -1140,7 +1151,7 @@ data class ExprParser(
             return
         }
 
-        fun checkNoReal(): List<Value>? {
+        fun checkOnlyValues(): List<Value>? {
             args.forEachIndexed { index, functionArg ->
                 if (functionArg is FunctionArg.RealArg) {
                     context.reportError(
@@ -1155,7 +1166,7 @@ data class ExprParser(
 
         when (function) {
             Function.WIDTH -> {
-                val valArgs = checkNoReal() ?: return
+                val valArgs = checkOnlyValues() ?: return
                 val arg = valArgs[0]
                 val width = arg.width
                 if (!width.isSimpleArray()) {
@@ -1302,7 +1313,7 @@ data class ExprParser(
             }
 
             Function.CLOG2 -> {
-                val valArgs = checkNoReal() ?: return
+                val valArgs = checkOnlyValues() ?: return
                 val arg = valArgs[0]
                 if (!arg.width.isSimple()) {
                     context.reportError(
@@ -1336,7 +1347,7 @@ data class ExprParser(
             }
 
             Function.POWER -> {
-                val valArgs = checkNoReal() ?: return
+                val valArgs = checkOnlyValues() ?: return
                 val arg1 = valArgs[0]
                 val arg2 = valArgs[1]
                 if (!arg1.width.isSimple()) {
@@ -1390,7 +1401,7 @@ data class ExprParser(
             }
 
             Function.REVERSE -> {
-                val valArgs = checkNoReal() ?: return
+                val valArgs = checkOnlyValues() ?: return
                 val arg = valArgs[0]
                 if (!arg.width.isArrayOrSimple()) {
                     context.reportError(
@@ -1403,7 +1414,7 @@ data class ExprParser(
             }
 
             Function.FLATTEN -> {
-                val valArgs = checkNoReal() ?: return
+                val valArgs = checkOnlyValues() ?: return
                 values[ctx] = if (valArgs[0].width.isDefined()) {
                     if (valArgs[0] is UndefinedValue) {
                         UndefinedValue(
@@ -1421,7 +1432,7 @@ data class ExprParser(
             }
 
             Function.BUILD -> {
-                val valArgs = checkNoReal() ?: return
+                val valArgs = checkOnlyValues() ?: return
                 val value = valArgs[0]
                 val dimArgs = valArgs.subList(1, valArgs.size)
                 if (!value.width.isSimple()) {
@@ -1551,7 +1562,7 @@ data class ExprParser(
             }
 
             Function.SIGNED -> {
-                val valArgs = checkNoReal() ?: return
+                val valArgs = checkOnlyValues() ?: return
                 val arg = valArgs[0]
                 if (!arg.width.isSimple()) {
                     context.reportError(ctx.functionExpr(0) ?: ctx, "Only single dimensional values can use \$signed()")
@@ -1565,7 +1576,7 @@ data class ExprParser(
             }
 
             Function.UNSIGNED -> {
-                val valArgs = checkNoReal() ?: return
+                val valArgs = checkOnlyValues() ?: return
                 val arg = valArgs[0]
                 if (!arg.width.isSimple()) {
                     context.reportError(
@@ -1582,7 +1593,7 @@ data class ExprParser(
             }
 
             Function.CDIV -> {
-                val valArgs = checkNoReal() ?: return
+                val valArgs = checkOnlyValues() ?: return
                 val arg1 = valArgs[0]
                 val arg2 = valArgs[1]
                 if (!arg1.width.isSimple()) {
@@ -1642,7 +1653,7 @@ data class ExprParser(
             }
 
             Function.RESIZE -> {
-                val valArgs = checkNoReal() ?: return
+                val valArgs = checkOnlyValues() ?: return
                 val value = valArgs[0]
                 val size = valArgs[1]
                 if (size.isNumber() && size is BitListValue) {
@@ -1805,7 +1816,7 @@ data class ExprParser(
 
             is Function.Custom -> {
                 if (context !is LucidBlockContext) return
-                val valArgs = checkNoReal() ?: return
+                val valArgs = checkOnlyValues() ?: return
 
                 function.args.forEachIndexed { index, customArg ->
                     if (!customArg.width.canAssign(valArgs[index].width)) {

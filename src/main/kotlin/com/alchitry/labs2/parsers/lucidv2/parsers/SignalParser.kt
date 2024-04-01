@@ -191,7 +191,11 @@ data class SignalParser(
             current = when (v) {
                 is SimpleValue -> {
                     val size = v.toBigInt()?.toInt() ?: return
-                    current?.let { DefinedArrayWidth(size, it) } ?: BitListWidth(size)
+                    if (size <= 0) {
+                        context.reportError(d, "Array widths must be greater than 0.")
+                    }
+                    val adjSize = size.coerceAtLeast(1)
+                    current?.let { DefinedArrayWidth(adjSize, it) } ?: BitListWidth(adjSize)
                 }
 
                 is UndefinedValue -> {

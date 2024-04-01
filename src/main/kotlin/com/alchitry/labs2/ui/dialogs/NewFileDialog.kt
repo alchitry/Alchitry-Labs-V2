@@ -1,6 +1,8 @@
 package com.alchitry.labs2.ui.dialogs
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
@@ -10,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.parsers.lucid.Lucid
@@ -99,6 +102,25 @@ private fun NewFileDialog(
             focusRequester.requestFocus() // focus the text box on launch
         }
 
+        var loading by remember { mutableStateOf(false) }
+        val scope = rememberCoroutineScope()
+
+        fun createFile() {
+            if (!validator(fileName))
+                return
+            loading = true
+            scope.launch(Dispatchers.IO) {
+                try {
+                    onCreate(fileName)
+                    onClose()
+                } catch (e: IllegalStateException) {
+                    Log.showError("Failed to create new file!", e)
+                } finally {
+                    loading = false
+                }
+            }
+        }
+
         Column(Modifier.padding(10.dp), verticalArrangement = spacedBy) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = spacedBy) {
                 OutlinedTextField(
@@ -108,29 +130,18 @@ private fun NewFileDialog(
                     modifier = Modifier.weight(1f).focusRequester(focusRequester),
                     singleLine = true,
                     label = { Text(label) },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { createFile() })
                 )
             }
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = spacedBy) {
                 Spacer(Modifier.weight(1f))
-                var loading by remember { mutableStateOf(false) }
-                val scope = rememberCoroutineScope()
+
                 if (loading) {
                     CircularProgressIndicator()
                 } else {
                     Button(
-                        onClick = {
-                            loading = true
-                            scope.launch(Dispatchers.IO) {
-                                try {
-                                    onCreate(fileName)
-                                    onClose()
-                                } catch (e: IllegalStateException) {
-                                    Log.showError("Failed to create new file!", e)
-                                } finally {
-                                    loading = false
-                                }
-                            }
-                        },
+                        onClick = { createFile() },
                         enabled = validator(fileName)
                     ) {
                         Text("Create")

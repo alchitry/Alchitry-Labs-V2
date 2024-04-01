@@ -29,6 +29,8 @@ data class StructValue(
 
     override fun invert(): StructValue = copy(valueMap = mapValues { it.value.invert() })
 
+    override fun replaceBit(old: Bit, new: Bit) = copy(valueMap = mapValues { it.value.replaceBit(old, new) })
+
     override fun where(bit: Bit) = copy(valueMap = mapValues { it.value.where(bit) })
     override fun replace(mask: Value, bit: Bit): Value {
         require(mask is StructValue && mask.type == type)

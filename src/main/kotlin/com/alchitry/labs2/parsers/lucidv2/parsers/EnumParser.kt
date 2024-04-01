@@ -32,8 +32,11 @@ data class EnumParser(
             return
         }
 
-        if (nameCtx.TYPE_ID() == null) {
-            context.reportError(nameCtx, "Enum names must start with a lowercase letter.")
+        if (nameCtx.SPACE_ID() == null) {
+            context.reportError(
+                nameCtx,
+                "Enum names must start with an uppercase letter followed by at least one lowercase letter."
+            )
             return
         }
 

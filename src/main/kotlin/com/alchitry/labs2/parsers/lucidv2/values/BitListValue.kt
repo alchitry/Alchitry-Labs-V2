@@ -40,14 +40,15 @@ data class BitListValue(
         }
     }
 
-    override val lsb: Bit = bits.first()
-    override val msb: Bit = bits.last()
+    override val lsb: Bit = bits.firstOrNull() ?: Bit.Bx
+    override val msb: Bit = bits.lastOrNull() ?: Bit.Bx
 
     override fun asMutable(): BitListValue = copy(constant = false)
     override fun withSign(signed: Boolean): BitListValue = copy(signed = signed)
 
     override val width: DefinedSimpleWidth = BitListWidth(bits.size)
 
+    override fun replaceBit(old: Bit, new: Bit) = copy(bits = bits.map { if (it == old) new else it })
     override fun invert(): BitListValue = copy(bits = bits.map { !it })
     override fun reverse(): BitListValue = copy(bits = bits.reversed())
 

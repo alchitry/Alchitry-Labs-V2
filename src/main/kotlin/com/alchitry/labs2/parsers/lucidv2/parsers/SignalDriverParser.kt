@@ -152,15 +152,16 @@ data class SignalDriverParser(
             val driven = drivenMap[signal]
             if (driven == null) {
                 context.reportError(
-                    ctx,
+                    ctx.children?.first() as TerminalNode,
                     "The signal \"${signal.fullName()}\" was expected to be driven by this always block but it wasn't."
                 )
                 return@forEach
             }
-            if (driven !is UndefinedValue && driven.andReduce().bit != Bit.B1) {
+            val drivenBit = driven.andReduce().bit
+            if (!(driven is UndefinedValue || drivenBit == Bit.B1 || (signal.parent is Dff && drivenBit != Bit.B0))) {
                 context.reportError(
                     ctx.children?.first() as TerminalNode,
-                    "The signal \"${signal.fullName()}\" was only partially driven. Bits marked as 0 weren't driven: ${
+                    "The signal \"${signal.fullName()}\" was only partially driven. 1 = driven, x = conditionally driven, 0 = not driven: ${
                         driven.toString(
                             ValueFormat.Binary
                         )
@@ -204,8 +205,7 @@ data class SignalDriverParser(
     }
 
     private fun stopBlock(ctx: ParserRuleContext) {
-        val signals = signalStack.removeLast() // pop map from stack
-        drivenSignals[ctx] = signals
+        drivenSignals[ctx] = signalStack.removeLast() // pop map from stack
     }
 
     override fun enterBlock(ctx: BlockContext) {
@@ -286,24 +286,30 @@ data class SignalDriverParser(
         }
     }
 
+    private fun combineConditionalAssignments(first: Value, second: Value): Value {
+        val fullyDriven = (first and second).replaceBit(Bit.Bx, Bit.B0)
+        val conditionallyDriven = (first or second).replaceBit(Bit.B1, Bit.Bx)
+        return fullyDriven or conditionallyDriven
+    }
+
     override fun exitIfStat(ctx: IfStatContext) {
         // if statements can't drive a signal if not complete
-        val elseBlock = drivenSignals[ctx.elseStat()?.block() ?: return] ?: error("Missing else block signals!")
+        val elseBlock = ctx.elseStat()?.block()?.let { drivenSignals[it] ?: error("Missing else block signals!") }
         val ifBlock = drivenSignals[ctx.block() ?: error("Block missing from if statement!")]
             ?: error("Missing if block signals!")
 
-        ifBlock.keys.intersect(elseBlock.keys).forEach { signal ->
-            val ifValue = ifBlock[signal]!!
-            val elseValue = elseBlock[signal]!!
+
+        ifBlock.keys.union(elseBlock?.keys ?: emptySet()).forEach { signal ->
+            val ifValue = ifBlock[signal] ?: signal.width.filledWith(Bit.B0, constant = false, signed = false)
+            val elseValue = elseBlock?.get(signal) ?: signal.width.filledWith(Bit.B0, constant = false, signed = false)
             val currentValue = signals[signal] ?: signal.width.filledWith(Bit.B0, constant = false, signed = false)
-            signals[signal] = currentValue or (ifValue and elseValue)
+            signals[signal] = currentValue or combineConditionalAssignments(ifValue, elseValue)
         }
     }
 
     override fun exitCaseStat(ctx: CaseStatContext) {
         // case statements can't drive a signal without a default case
-        if (ctx.caseElem().none { it.expr() == null })
-            return
+        val forceConditional = ctx.caseElem().none { it.expr() == null }
 
         val caseMaps =
             ctx.caseElem().map {
@@ -311,12 +317,14 @@ data class SignalDriverParser(
                     ?: error("Missing case block signals!")
             }
 
-        // for each signal appearing in all blocks
+        // for each signal appearing in any block
         caseMaps.flatMap { it.keys }.toSet().forEach { sig ->
-            val signalValues = caseMaps.map { it[sig]!! }
+            val signalValues =
+                caseMaps.map { it[sig] ?: sig.width.filledWith(Bit.B0, constant = false, signed = false) }
             val currentValue = signals[sig] ?: sig.width.filledWith(Bit.B0, constant = false, signed = false)
-            val fullyDrivenValue = signalValues.reduce { acc, value -> acc and value }
-            signals[sig] = currentValue or fullyDrivenValue
+            val drivenValue = signalValues.reduce { acc, value -> combineConditionalAssignments(acc, value) }
+            val maskedValue = if (forceConditional) drivenValue.replaceBit(Bit.B1, Bit.Bx) else drivenValue
+            signals[sig] = currentValue or maskedValue
         }
     }
 

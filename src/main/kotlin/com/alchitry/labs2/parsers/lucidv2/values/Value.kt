@@ -23,6 +23,15 @@ sealed class Value : Measurable {
     abstract infix fun or(other: Value): Value
     abstract infix fun xor(other: Value): Value
 
+    /**
+     * Replaces all occurrences of the old bit with the new bit in the Value.
+     *
+     * @param old The bit to be replaced.
+     * @param new The bit to replace with.
+     * @return A new Value object with all occurrences of the old bit replaced with the new bit.
+     */
+    abstract fun replaceBit(old: Bit, new: Bit): Value
+
     abstract fun toString(format: ValueFormat): String
 
     /**

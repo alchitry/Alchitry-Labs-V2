@@ -38,6 +38,8 @@ data class BitValue(
 
     override val width = BitWidth
 
+    override fun replaceBit(old: Bit, new: Bit) = copy(bit = if (bit == old) new else bit)
+
     override fun invert() = copy(bit = !bit)
     override fun reverse() = this
 

@@ -47,6 +47,8 @@ data class ArrayValue(
         return copy(elements = elements.mapIndexed { index, value -> value.replace(mask[index], bit) })
     }
 
+    override fun replaceBit(old: Bit, new: Bit) = copy(elements = map { it.replaceBit(old, new) })
+
     override fun and(other: Value): ArrayValue {
         require(other is ArrayValue) { "ArrayValue can only be and'd with another ArrayValue!" }
         require(other.size == size) { "And operations on ArrayValues must have matching sizes!" }

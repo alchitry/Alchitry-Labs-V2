@@ -146,20 +146,20 @@ class ModuleMultiPassTests {
                     input a,
                     output b[2]
                 ) {
-                    enum myFSM {
+                    enum MyFsm {
                         IDLE,
                         INIT,
                         RUN,
                         STOP
                     }
                     
-                    sig w[2] = myFSM.WIDTH
-                    sig t[2] = ${"$"}width(myFSM.IDLE)
+                    sig w[2] = ${"$"}width(MyFsm)
+                    sig t[2] = ${"$"}width(MyFsm.IDLE)
                 
                     always {
                         if (a) {}
                         if (w == t) {}
-                        b = myFSM.RUN
+                        b = MyFsm.RUN
                     }
                 }
             """.trimIndent().toSourceFile()
@@ -170,10 +170,10 @@ class ModuleMultiPassTests {
 
         context.initialize()
 
-        val enum = EnumType("myFSM", setOf("IDLE", "INIT", "RUN", "STOP"), null)
+        val enum = EnumType("MyFsm", setOf("IDLE", "INIT", "RUN", "STOP"), null)
 
         assertEquals(BitListValue(2, 2, signed = false, constant = false), testSig?.read())
-        assertEquals(enum, context.enum.resolve("myFSM"))
+        assertEquals(enum, context.enum.resolve("MyFsm"))
 
         assertEquals(
             BitListValue(2, 2, constant = false, signed = false),
@@ -194,13 +194,13 @@ class ModuleMultiPassTests {
                     output a[2]
                 ) {
                     always {
-                        a = Enums.myFSM.RUN
+                        a = Enums.MyFsm.RUN
                     }
                 }
             """.trimIndent().toSourceFile(),
             """
                 global Enums {
-                    enum myFSM {
+                    enum MyFsm {
                         IDLE,
                         INIT,
                         RUN,
@@ -215,7 +215,7 @@ class ModuleMultiPassTests {
 
         context.initialize()
 
-        val enum = EnumType("myFSM", setOf("IDLE", "INIT", "RUN", "STOP"), tester.project.resolveGlobal("Enums"))
+        val enum = EnumType("MyFsm", setOf("IDLE", "INIT", "RUN", "STOP"), tester.project.resolveGlobal("Enums"))
 
         assertEquals(BitListValue(2, 2, signed = false, constant = false), testSig.read())
         assertEquals(enum, tester.project.resolveGlobal("Enums")?.enums?.values?.first())

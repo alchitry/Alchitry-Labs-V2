@@ -16,6 +16,7 @@ data class UndefinedValue(
     override fun withSign(signed: Boolean) = this
 
     override fun invert() = this
+    override fun replaceBit(old: Bit, new: Bit) = this
 
     override fun isTrue() = BitValue(Bit.Bx, constant, false)
 
