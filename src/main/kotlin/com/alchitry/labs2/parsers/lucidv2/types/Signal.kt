@@ -27,6 +27,7 @@ open class Signal(
 
     var hasDriver: Boolean = false
     var isRead: Boolean = false
+        private set
 
     override fun addDependant(dependant: Evaluable) {
         dependants.add(dependant)
@@ -42,6 +43,10 @@ open class Signal(
         if (evalContext === setEvalContext)
             return nextValue ?: value
         return value
+    }
+
+    fun markRead() {
+        isRead = true
     }
 
     override val width: SignalWidth = value.width

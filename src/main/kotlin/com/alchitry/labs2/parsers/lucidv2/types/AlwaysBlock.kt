@@ -15,7 +15,6 @@ class AlwaysBlock(
     val context = context.withEvalContext(this, "AlwaysBlock")
 
     init {
-        dependencies.forEach { it.isRead = true }
         drivenSignals.forEach {
             require(!it.hasDriver) { "Signal \"${it.name}\" is already driven!" }
             it.hasDriver = true

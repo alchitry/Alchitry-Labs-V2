@@ -268,6 +268,7 @@ data class ExprParser(
             }
         }
 
+        signal.getSignal().markRead()
         values[ctx] = signal.read(context.evalContext)
 
         // add dependencies for all signals used in bit selection as well as this signal

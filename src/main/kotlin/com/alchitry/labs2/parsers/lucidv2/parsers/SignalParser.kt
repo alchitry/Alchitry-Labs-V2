@@ -97,6 +97,12 @@ data class SignalParser(
 
             while (currentSignalOrParent is SignalParent) {
                 if (children.size < usedChildren + 1) {
+                    if (currentSignalOrParent is EnumType) {
+                        val functionName =
+                            (ctx.parent?.parent?.parent as? FunctionContext)?.FUNCTION_ID()?.text?.substring(1)
+                        if (functionName != null && context.resolveFunction(functionName) == Function.WIDTH)
+                            return
+                    }
                     context.reportError(
                         nameCtx[usedChildren - 1],
                         "${nameCtx[usedChildren - 1].text} is not a signal and can't be accessed directly."

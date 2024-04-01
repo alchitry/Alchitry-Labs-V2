@@ -172,6 +172,8 @@ class ModuleMultiPassTests {
 
         val enum = EnumType("MyFsm", setOf("IDLE", "INIT", "RUN", "STOP"), null)
 
+        assert(tester.notationManager.hasNoErrors) { tester.notationManager.getReport() }
+
         assertEquals(BitListValue(2, 2, signed = false, constant = false), testSig?.read())
         assertEquals(enum, context.enum.resolve("MyFsm"))
 

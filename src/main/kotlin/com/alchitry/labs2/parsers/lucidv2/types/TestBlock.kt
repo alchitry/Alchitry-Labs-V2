@@ -14,7 +14,6 @@ class TestBlock(
     val context = context.withEvalContext(this, "TestBlock")
 
     init {
-        dependencies.forEach { it.isRead = true }
         drivenSignals.forEach { it.hasDriver = true }
     }
 

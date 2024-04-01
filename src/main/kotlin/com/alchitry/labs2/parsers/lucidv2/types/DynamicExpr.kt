@@ -49,7 +49,7 @@ class DynamicExpr(
     init {
         val dependencies =
             context.expr.resolveDependencies(expr) ?: error("Failed to resolve dependencies for ${expr.text}")
-        dependencies.forEach { it.isRead = true }
+        dependencies.forEach { it.markRead() }
         val evaluable = Evaluable { context.project.queue(this@DynamicExpr) }
         dependencies.forEach { it.addDependant(evaluable) }
     }
