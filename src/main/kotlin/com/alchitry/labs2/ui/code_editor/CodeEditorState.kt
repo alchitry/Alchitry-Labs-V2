@@ -680,7 +680,7 @@ class CodeEditorState(
             val lineNum = selectionManager.caret.line
             val line = lines.getOrNull(lineNum)?.text?.text
             replaceText(modifiedText)
-            if (line?.isBlank() == true) {
+            if (line?.isBlank() == true && modifiedText.isNotBlank()) {
                 val current = lines[lineNum].text.text
                 replaceText(
                     codeFormatter.getIndentFor(lineNum) + current.trim(),

@@ -102,24 +102,24 @@ class LucidFormatter(private val codeEditorState: CodeEditorState) : CodeFormatt
     private fun buildIndentList(tokens: List<Token>, tree: ParseTree): List<Int> {
         val indents = MutableList(tokens.size) { 0 }
 
-        fun indent(from: Int, to: Int) {
-            for (i in from..to) {
-                indents[i] += 1
-            }
-        }
-
         ParseTreeWalker.walk(object : LucidBaseListener() {
-            private fun indentBetween(ctx: ParserRuleContext, start: String, end: String) {
-                val children = ctx.children ?: return
-                val startToken = (children.firstOrNull { it.text == start } as? TerminalNode)?.symbol ?: return
-                val stopToken = (children.lastOrNull { it.text == end } as? TerminalNode)?.symbol ?: return
-                indent(startToken.tokenIndex + 1, stopToken.tokenIndex - 1)
+            private fun indent(from: Int, to: Int) {
+                for (i in from..to) {
+                    indents[i] += 1
+                }
             }
 
             private fun indent(ctx: ParserRuleContext) {
                 val start = ctx.start ?: return
                 val stop = ctx.stop ?: return
                 indent(start.tokenIndex, stop.tokenIndex)
+            }
+
+            private fun indentBetween(ctx: ParserRuleContext, start: String, end: String) {
+                val children = ctx.children ?: return
+                val startToken = (children.firstOrNull { it.text == start } as? TerminalNode)?.symbol ?: return
+                val stopToken = (children.lastOrNull { it.text == end } as? TerminalNode)?.symbol ?: ctx.stop ?: return
+                indent(startToken.tokenIndex + 1, stopToken.tokenIndex - 1)
             }
 
             private fun indentExcludeEnds(ctx: ParserRuleContext) {
