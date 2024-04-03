@@ -12,27 +12,63 @@ object ParseTreeMultiWalker {
         listeners: List<AnyParseTreeListener>,
         t: ParseTree,
         filter: WalkerFilter = WalkerFilter.None,
-        ignoreSkip: Boolean = true
+        ignoreSkip: Boolean = true,
+        skipErrorNodes: Boolean = true,
+        skipTerminalNodes: Boolean = true
     ) {
-//        if (t is ErrorNode) {
-//            for (listener in listeners) {
-//                when (listener) {
-//                    is ParseTreeListener -> listener.visitErrorNode(t)
-//                    is SuspendParseTreeListener -> listener.visitErrorNode(t)
-//                }
-//            }
-//            return
-//        }
+        if (!skipErrorNodes && t is ErrorNode) {
+            for (listener in listeners) {
+                when (listener) {
+                    is ParseTreeListener -> listener.visitErrorNode(t)
+                    is SuspendParseTreeListener -> listener.visitErrorNode(t)
+                }
+            }
+            return
+        }
 
-//        if (t is TerminalNode) {
-//            for (listener in listeners) {
-//                when (listener) {
-//                    is ParseTreeListener -> listener.visitTerminal(t)
-//                    is SuspendParseTreeListener -> listener.visitTerminal(t)
-//                }
-//            }
-//            return
-//        }
+        if (!skipTerminalNodes && t is TerminalNode) {
+            for (listener in listeners) {
+                when (listener) {
+                    is ParseTreeListener -> listener.visitTerminal(t)
+                    is SuspendParseTreeListener -> listener.visitTerminal(t)
+                }
+            }
+            return
+        }
+
+        val r = t as? RuleNode ?: return
+        if (ignoreSkip || !r.skip) {
+            enterRule(listeners, r)
+            for (i in 0 until r.childCount) {
+                val child = r.getChild(i) ?: continue
+                if (!filter.shouldSkip(r, child))
+                    walk(listeners, child, filter, ignoreSkip)
+            }
+            exitRule(listeners, r)
+        }
+    }
+
+    fun walk(
+        listeners: List<ParseTreeListener>,
+        t: ParseTree,
+        filter: WalkerFilter = WalkerFilter.None,
+        ignoreSkip: Boolean = true,
+        skipErrorNodes: Boolean = true,
+        skipTerminalNodes: Boolean = true
+    ) {
+        if (!skipErrorNodes && t is ErrorNode) {
+            for (listener in listeners) {
+                listener.visitErrorNode(t)
+            }
+            return
+        }
+
+        if (!skipTerminalNodes && t is TerminalNode) {
+            for (listener in listeners) {
+                listener.visitTerminal(t)
+            }
+            return
+        }
 
         val r = t as? RuleNode ?: return
         if (ignoreSkip || !r.skip) {
@@ -82,6 +118,22 @@ object ParseTreeMultiWalker {
                     listener.exitEveryRule(ctx)
                 }
             }
+        }
+    }
+
+    private fun enterRule(listeners: List<ParseTreeListener>, r: RuleNode) {
+        val ctx = r.ruleContext as ParserRuleContext
+        for (listener in listeners) {
+            listener.enterEveryRule(ctx)
+            ctx.enterRule(listener)
+        }
+    }
+
+    private fun exitRule(listeners: List<ParseTreeListener>, r: RuleNode) {
+        val ctx = r.ruleContext as ParserRuleContext
+        for (listener in listeners) {
+            ctx.exitRule(listener)
+            listener.exitEveryRule(ctx)
         }
     }
 }

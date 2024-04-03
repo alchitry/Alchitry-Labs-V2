@@ -12,7 +12,7 @@ import org.antlr.v4.kotlinruntime.tree.ParseTree
 /**
  * Interface for line indenters.
  */
-interface LineIndenter {
+interface CodeFormatter {
 
     /**
      * Returns the indent prefix string for the specified line number.
@@ -23,11 +23,11 @@ interface LineIndenter {
     fun getIndentFor(line: Int): String
 
     /**
-     * Indents every line using the line indenter.
+     * Formats the entire file.
      *
-     * @return The indented text.
+     * @return The formatted text.
      */
-    fun indentAll(): String
+    fun formatAll(): String
 
     companion object {
         const val INDENT_STRING = "    "
@@ -40,7 +40,7 @@ interface LineIndenter {
          */
         fun indentString(indents: Int): String = INDENT_STRING.repeat(indents.coerceAtLeast(0))
 
-        fun whitespaceStarting(string: String): Int {
+        fun countStartingWhitespace(string: String): Int {
             var counter = 0
             for (c in string.toCharArray()) {
                 if (c.isWhitespace()) {
@@ -56,23 +56,23 @@ interface LineIndenter {
 
 
 /**
- * A basic implementation of the [LineIndenter] interface that simply provides the previous line's indent count.
+ * A basic implementation of the [CodeFormatter] interface that simply provides the previous line's indent count.
  *
  * @property codeEditorState The state of the code editor.
  */
-class BasicIndenter(private val codeEditorState: CodeEditorState) : LineIndenter {
+class BasicIndenter(private val codeEditorState: CodeEditorState) : CodeFormatter {
     override fun getIndentFor(line: Int): String {
         val previousLine = codeEditorState.lines.getOrNull(line - 1)?.text?.text ?: return ""
-        return LineIndenter.indentString(
-            LineIndenter.whitespaceStarting(previousLine) / LineIndenter.INDENT_STRING.length
+        return CodeFormatter.indentString(
+            CodeFormatter.countStartingWhitespace(previousLine) / CodeFormatter.INDENT_STRING.length
         )
     }
 
-    override fun indentAll(): String = codeEditorState.getText()
+    override fun formatAll(): String = codeEditorState.getText()
 }
 
 
-class BracketIndenter(private val codeEditorState: CodeEditorState) : LineIndenter {
+class BracketIndenter(private val codeEditorState: CodeEditorState) : CodeFormatter {
     private fun bracketOffsetProvider(parseTree: ParseTree, tokenStream: TokenStream): IntRange {
         val interval = parseTree.sourceInterval
         val startOffset: Int
@@ -122,12 +122,12 @@ class BracketIndenter(private val codeEditorState: CodeEditorState) : LineIndent
         val lineText = codeEditorState.lines[line].text.text
         val tokenStream = CommonTokenStream(BracketLexer(CharStreams.fromString(text)))
         val source = BracketParser(tokenStream).source()
-        val node = findFinalNode(source, tokenStream, lineOffset + LineIndenter.whitespaceStarting(lineText))
+        val node = findFinalNode(source, tokenStream, lineOffset + CodeFormatter.countStartingWhitespace(lineText))
         val indents = countTypeInHierarchy<BracketParser.BlockContext>(node)
-        return LineIndenter.indentString(indents)
+        return CodeFormatter.indentString(indents)
     }
 
-    override fun indentAll(): String {
+    override fun formatAll(): String {
         val text = codeEditorState.getText()
         val tokenStream = CommonTokenStream(BracketLexer(CharStreams.fromString(text)))
         val source = BracketParser(tokenStream).source()
@@ -135,13 +135,17 @@ class BracketIndenter(private val codeEditorState: CodeEditorState) : LineIndent
         return buildString {
             codeEditorState.lines.forEachIndexed { idx, line ->
                 val node =
-                    findFinalNode(source, tokenStream, lineOffset + LineIndenter.whitespaceStarting(line.text.text))
+                    findFinalNode(
+                        source,
+                        tokenStream,
+                        lineOffset + CodeFormatter.countStartingWhitespace(line.text.text)
+                    )
                 lineOffset += line.text.length + 1
                 val indents = countTypeInHierarchy<BracketParser.BlockContext>(node)
 
                 val lineText = line.text.text.trim()
                 if (lineText.isNotBlank()) {
-                    append(LineIndenter.indentString(indents))
+                    append(CodeFormatter.indentString(indents))
                     append(lineText)
                 }
                 if (idx != codeEditorState.lines.size - 1)

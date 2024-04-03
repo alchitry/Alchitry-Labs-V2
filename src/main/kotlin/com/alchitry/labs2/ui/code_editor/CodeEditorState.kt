@@ -46,8 +46,9 @@ import com.alchitry.labs2.ui.code_editor.autocomplete.Autocomplete
 import com.alchitry.labs2.ui.code_editor.autocomplete.LucidAutocomplete
 import com.alchitry.labs2.ui.code_editor.styles.BasicIndenter
 import com.alchitry.labs2.ui.code_editor.styles.BracketIndenter
+import com.alchitry.labs2.ui.code_editor.styles.CodeFormatter
 import com.alchitry.labs2.ui.code_editor.styles.CodeStyler
-import com.alchitry.labs2.ui.code_editor.styles.LineIndenter
+import com.alchitry.labs2.ui.code_editor.styles.lucid.LucidFormatter
 import com.alchitry.labs2.ui.code_editor.tooltip.NotationTooltipProvider
 import com.alchitry.labs2.ui.gestures.detectEditorActions
 import com.alchitry.labs2.ui.theme.AlchitryColors
@@ -141,7 +142,7 @@ class CodeEditorState(
 
     var clipboardManager: ClipboardManager? = null
 
-    val lineIndenter: LineIndenter
+    val codeFormatter: CodeFormatter
 
     init {
         Project.current?.currentNotationCollectorForFile(file)?.let { collector ->
@@ -157,8 +158,9 @@ class CodeEditorState(
             else -> null
         }
 
-        lineIndenter = when (file.language) {
-            Languages.ACF, Languages.Lucid, Languages.Verilog -> BracketIndenter(this)
+        codeFormatter = when (file.language) {
+            Languages.Lucid -> LucidFormatter(this)
+            Languages.ACF, Languages.Verilog -> BracketIndenter(this)
             else -> BasicIndenter(this)
         }
     }
@@ -644,7 +646,7 @@ class CodeEditorState(
     fun adjustIndents() {
         if (lines.isNotEmpty())
             replaceText( // use replaceText so this ends up on the undo/redo stack
-                lineIndenter.indentAll(),
+                codeFormatter.formatAll(),
                 TextPosition(0, 0)..<TextPosition(lines.size - 1, lines.last().text.length),
                 false
             )
@@ -681,7 +683,7 @@ class CodeEditorState(
             if (line?.isBlank() == true) {
                 val current = lines[lineNum].text.text
                 replaceText(
-                    lineIndenter.getIndentFor(lineNum) + current.trim(),
+                    codeFormatter.getIndentFor(lineNum) + current.trim(),
                     TextPosition(lineNum, 0)..<TextPosition(lineNum, current.length)
                 )
             }
@@ -803,20 +805,20 @@ class CodeEditorState(
                 val prevChar = selectionManager.caret.getPrevious().charAt()
                 if (nextChar == '}' && prevChar == '{') {
                     replaceText("\n\n")
-                    replaceText(lineIndenter.getIndentFor(selectionManager.caret.line))
+                    replaceText(codeFormatter.getIndentFor(selectionManager.caret.line))
                     selectionManager.moveUp()
-                    replaceText(lineIndenter.getIndentFor(selectionManager.caret.line))
+                    replaceText(codeFormatter.getIndentFor(selectionManager.caret.line))
                 } else {
                     replaceText("\n")
-                    replaceText(lineIndenter.getIndentFor(selectionManager.caret.line))
+                    replaceText(codeFormatter.getIndentFor(selectionManager.caret.line))
                 }
             }
 
             KeyCommand.TAB -> {
                 if (lines.getOrNull(selectionManager.caret.line)?.text?.isBlank() == true) {
-                    replaceText(lineIndenter.getIndentFor(selectionManager.caret.line))
+                    replaceText(codeFormatter.getIndentFor(selectionManager.caret.line))
                 } else {
-                    replaceText(LineIndenter.INDENT_STRING)
+                    replaceText(CodeFormatter.INDENT_STRING)
                 }
             }
 

@@ -154,4 +154,4 @@ FUNCTION_ID: '$'[a-z][a-zA-Z0-9_]*;
 
 BLOCK_COMMENT: ('/*' .*? '*/') -> channel(HIDDEN);
 COMMENT: ('//' ~[\r\n]*) -> channel(HIDDEN);
-WS: [ \t]+ -> skip;
+WS: [ \t]+ -> channel(HIDDEN);

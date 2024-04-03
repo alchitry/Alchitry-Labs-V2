@@ -9,12 +9,16 @@ object ComponentLibrary {
 
     init {
         val components = mutableListOf<Component>()
-        JarUtils.traverserResourceRecursively(Locations.components) { relativePath, isDirectory ->
-            if (isDirectory)
-                return@traverserResourceRecursively
-            val nameSections = relativePath.split("/")
-            check(nameSections.size >= 2) { "All library files should be in a category!" }
-            components.add(Component.fromResource(relativePath))
+        try {
+            JarUtils.traverserResourceRecursively(Locations.components) { relativePath, isDirectory ->
+                if (isDirectory)
+                    return@traverserResourceRecursively
+                val nameSections = relativePath.split("/")
+                check(nameSections.size >= 2) { "All library files should be in a category!" }
+                components.add(Component.fromResource(relativePath))
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
         this.components = components
     }
