@@ -1,0 +1,109 @@
+/**
+    "name": "UART Rx"
+    "description": "UART (Serial) receiver with configurable baud rate."
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2019 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   *****************************************************************************/
+
+module uartRx #(
+    CLK_FREQ ~ 100000000 : CLK_FREQ > 0,            // clock frequency
+    BAUD = 1000000 : BAUD > 0 && BAUD <= CLK_FREQ/4 // desired baud rate
+)(
+    input clk,      // clock input
+    input rst,      // reset active high
+    input rx,       // UART rx input
+    output data[8], // received data
+    output new_data // new data flag (1 = new data)
+) {
+
+    const CLK_PER_BIT = (CLK_FREQ + BAUD) / BAUD - 1 // clock cycles per bit
+    const CTR_SIZE = $clog2(CLK_PER_BIT) // bits required to store CLK_PER_BIT - 1
+
+    enum States {IDLE, WAIT_HALF, WAIT_FULL, WAIT_HIGH}
+
+    .clk(clk) {
+        .rst(rst) {
+            dff state[$width(States)] // FSM for receiver
+        }
+        dff ctr[CTR_SIZE] // delay counter
+        dff bitCtr[3]     // bit counter
+        dff savedData[8]  // received data
+        dff newData       // new data flag buffer
+        dff rxd           // input buffer
+    }
+
+    always {
+        rxd.d = rx    // buffer rx
+        newData.d = 0 // default to 0
+
+        // outputs
+        data = savedData.q
+        new_data = newData.q
+
+    /* When a new byte is being received, the input goes low. This is the
+       start bit. When the beginning of this bit is detected we need to wait
+       one and a half bit widths before reading in the first data bit. The
+       half cycle is so that we read in the middle of the bit for the most
+       accurate result. WAIT_HALF waits this half cycle and WAIT_FULL waits
+       a full cycle then reads in a bit. After 8 bits are read, the data is
+       output and the FSM waits for the RX input to go high again to signal
+       the end of the transmission. The FSM then returns to IDLE ready to
+       receive the next byte.                                               */
+        case (state.q) {
+            States.IDLE:
+                bitCtr.d = 0                               // reset counter
+                ctr.d = 0                                  // reset counter
+                if (rxd.q == 0)                            // if rx line is low (start bit)
+                    state.d = States.WAIT_HALF             // switch state
+
+            States.WAIT_HALF:
+                ctr.d = ctr.q + 1                          // increment the counter
+                if (ctr.q == (CLK_PER_BIT >> 1)) {         // if counter is the max value
+                    ctr.d = 0                              // reset counter
+                    state.d = States.WAIT_FULL             // switch state
+                }
+
+            States.WAIT_FULL:
+                ctr.d = ctr.q + 1                            // increment counter
+                if (ctr.q == CLK_PER_BIT - 1) {              // if ctr is the max value
+                    savedData.d = c{rxd.q, savedData.q[7:1]} // shift in new data
+                    bitCtr.d = bitCtr.q + 1                  // increment bit counter
+                    ctr.d = 0                                // reset counter
+                    if (bitCtr.q == 7) {                     // if we have received 8 bits
+                        state.d = States.WAIT_HIGH           // switch state
+                        newData.d = 1                        // signal new byte received
+                    }
+                }
+
+            States.WAIT_HIGH:
+                if (rxd.q == 1)                             // wait for input to go high (idle)
+                    state.d = States.IDLE                   // switch state
+
+            default:
+                state.d = States.IDLE                       // if in an invalid state, reset to idle
+        }
+    }
+}
