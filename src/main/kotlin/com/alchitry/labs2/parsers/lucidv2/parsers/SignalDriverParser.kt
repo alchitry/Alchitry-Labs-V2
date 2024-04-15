@@ -158,7 +158,7 @@ data class SignalDriverParser(
                 return@forEach
             }
             val drivenBit = driven.andReduce().bit
-            if (!(driven is UndefinedValue || drivenBit == Bit.B1 || (signal.parent is Dff && drivenBit != Bit.B0))) {
+            if (!(driven is UndefinedValue || drivenBit == Bit.B1 || signal.parent is Dff)) {
                 context.reportError(
                     ctx.children?.first() as TerminalNode,
                     "The signal \"${signal.fullName()}\" was only partially driven. 1 = driven, x = conditionally driven, 0 = not driven: ${
@@ -180,8 +180,9 @@ data class SignalDriverParser(
             val drivenValue = signalStack.firstNotNullOfOrNull { it[fullSig] }
             if (drivenValue == null) {
                 val functionCtx = ctx.firstParentOrNull { it is FunctionContext }
+                // exclude inout as they can be read and written any time
                 // exclude reads of the WIDTH function as this doesn't read the signal
-                if (functionCtx !is FunctionContext || functionCtx.FUNCTION_ID()?.text != "$" + Function.WIDTH.label) {
+                if (fullSig.direction != SignalDirection.Both && (functionCtx !is FunctionContext || functionCtx.FUNCTION_ID()?.text != "$" + Function.WIDTH.label)) {
                     context.reportError(ctx, "The signal \"${fullSig.fullName()}\" can't be read before it is written!")
                 }
                 return

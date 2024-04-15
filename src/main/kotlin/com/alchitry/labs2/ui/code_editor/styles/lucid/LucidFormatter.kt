@@ -131,9 +131,19 @@ class LucidFormatter(private val codeEditorState: CodeEditorState) : CodeFormatt
             override fun exitBlock(ctx: LucidParser.BlockContext) {
                 val start = ctx.start ?: return
                 val stop = ctx.stop ?: return
+
                 if (start.text == "{") {
                     indent(start.tokenIndex + 1, stop.tokenIndex - 1)
                 } else {
+                    val stats = ctx.alwaysStat()
+                    if (stats.size == 1 && stats.first() is LucidParser.AlwaysIfContext) {
+                        val parent = ctx.parent
+                        if (parent is LucidParser.ElseStatContext) {
+                            if (parent.start?.line == start.line) // don't indent "else if"
+                                return
+                        }
+                    }
+
                     indent(start.tokenIndex, stop.tokenIndex)
                 }
             }
