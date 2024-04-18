@@ -270,7 +270,7 @@ data class BlockParser(
         }
 
         val sigWidth = if (countValue.constant)
-            count.toBigInteger().minBits()
+            (count - 1).toBigInteger().minBits()
         else
             (countValue as? SimpleValue)?.bits?.size ?: 1
 
