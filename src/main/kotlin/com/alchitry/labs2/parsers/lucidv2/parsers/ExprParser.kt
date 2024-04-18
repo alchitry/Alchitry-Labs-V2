@@ -599,7 +599,7 @@ data class ExprParser(
 
         val exprCtx = ctx.expr()
 
-        if (ctx.childCount != 3 || exprCtx.size != 2)
+        if (exprCtx.size != 2)
             return
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
@@ -671,7 +671,7 @@ data class ExprParser(
 
         val exprCtx = ctx.expr()
 
-        if (ctx.childCount != 3 || exprCtx.size != 2) return
+        if (exprCtx.size != 2) return
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             exprCtx.forEach { c -> dependencies[c]?.let { addAll(it) } }
@@ -987,7 +987,7 @@ data class ExprParser(
 
         val exprCtx = ctx.expr()
 
-        if (ctx.childCount != 3 || exprCtx.size != 2) return
+        if (exprCtx.size != 2) return
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             exprCtx.forEach { c -> dependencies[c]?.let { addAll(it) } }
