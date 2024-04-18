@@ -133,6 +133,45 @@ data class Project(
             Workspace.closeAll()
             mutableCurrentFlow.tryEmit(null)
         }
+
+        suspend fun parseLucidFile(
+            file: SourceFile,
+            notationCollector: NotationCollector
+        ): LucidParser.SourceContext {
+            return LucidParser(
+                CommonTokenStream(
+                    LucidLexer(
+                        CharStreams.fromString(
+                            file.readText(),
+                            file.name
+                        )
+                    ).apply {
+                        removeErrorListeners()
+                        addErrorListener(notationCollector)
+                    })
+            ).apply {
+                removeErrorListeners()
+                addErrorListener(notationCollector)
+            }.source()
+        }
+
+        suspend fun parseAll(
+            sourceFiles: Collection<SourceFile>,
+            notationManager: NotationManager
+        ): List<Pair<SourceFile, LucidParser.SourceContext>>? {
+            val trees = coroutineScope {
+                sourceFiles
+                    .map { file ->
+                        val collector = notationManager.getCollector(file)
+                        async {
+                            file to parseLucidFile(file, collector)
+                        }
+                    }.awaitAll()
+            }
+            if (!notationManager.hasNoMessages)
+                return null
+            return trees
+        }
     }
 
     fun queueNotationsUpdate() {
@@ -324,42 +363,6 @@ data class Project(
         return@withContext true
     }
 
-    private suspend fun parseLucidFile(
-        file: SourceFile,
-        notationCollector: NotationCollector
-    ): LucidParser.SourceContext {
-        return LucidParser(
-            CommonTokenStream(
-                LucidLexer(
-                    CharStreams.fromString(
-                        file.readText(),
-                        file.name
-                    )
-                ).apply {
-                    removeErrorListeners()
-                    addErrorListener(notationCollector)
-                })
-        ).apply {
-            removeErrorListeners()
-            addErrorListener(notationCollector)
-        }.source()
-    }
-
-    suspend fun parse(notationManager: NotationManager): List<Pair<SourceFile, LucidParser.SourceContext>>? {
-        val trees = coroutineScope {
-            data.sourceFiles
-                .map { file ->
-                    val collector = notationManager.getCollector(file)
-                    async {
-                        file to parseLucidFile(file, collector)
-                    }
-                }.awaitAll()
-        }
-        if (!notationManager.hasNoMessages)
-            return null
-        return trees
-    }
-
     suspend fun getTypesForLucidFile(file: SourceFile): ProjectContext {
         val modules = moduleMapFlow.value
         val globals = globalMapFlow.value
@@ -394,7 +397,7 @@ data class Project(
     ): ProjectContext? {
         val projectContext = ProjectContext(notationManager)
         var success = false
-        val trees = parsedTrees ?: parse(notationManager)
+        val trees = parsedTrees ?: parseAll(data.sourceFiles, notationManager)
 
         try {
             if (trees == null || notationManager.hasErrors)

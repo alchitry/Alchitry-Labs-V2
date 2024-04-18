@@ -29,6 +29,14 @@ class NotationManager {
         }.toAnnotatedString()
     }
 
+    fun assertNoErrors() {
+        assert(hasNoErrors) { getReport() }
+    }
+
+    fun assertNoIssues() {
+        assert(hasNoIssues) { getReport() }
+    }
+
     val hasNoMessages: Boolean get() = notationCollectors.values.all { it.hasNoMessages }
     val hasNoErrors: Boolean get() = notationCollectors.values.all { it.hasNoErrors }
     val hasNoWarnings: Boolean get() = notationCollectors.values.all { it.hasNoWarnings }

@@ -52,6 +52,28 @@ internal class ExprParserTests {
     }
 
     @Test
+    fun testXExtension() = runBlocking {
+        val test = SimpleLucidTester("12hFX")
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        assertEquals(BitListValue("0FX", 16, 12, constant = true, signed = false), test.context.expr.resolve(tree))
+        assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun testStrings() = runBlocking {
+        val test = SimpleLucidTester("\"Hi\"")
+        val tree = test.parser.expr().also { test.context.walk(it) }
+
+        val test2 = SimpleLucidTester("{8h69, 8h48}")
+        val tree2 = test2.parser.expr().also { test2.context.walk(it) }
+
+        val expected = test2.context.expr.resolve(tree2)
+        val string = test.context.expr.resolve(tree)
+        assertEquals(expected, string)
+        assert(test.hasNoIssues)
+    }
+
+    @Test
     fun testMinBits() {
         assertEquals(1, BitListValue("1", 16, constant = true, signed = false).minimumBits())
         assertEquals(1, BitListValue("0", 16, constant = true, signed = false).minimumBits())
@@ -810,14 +832,14 @@ internal class ExprParserTests {
 
         // TODO: Test flatten for structs
 
-        test = SimpleLucidTester("\$build(b1100, 2)")
+        test = SimpleLucidTester("\$build(b111000, 2)")
         tree = test.parser.expr().also { test.context.walk(it) }
 
         assertEquals(
             ArrayValue(
                 listOf(
-                    BitListValue("00", 2, constant = true, signed = false),
-                    BitListValue("11", 2, constant = true, signed = false)
+                    BitListValue("000", 2, constant = true, signed = false),
+                    BitListValue("111", 2, constant = true, signed = false)
                 )
             ),
             test.context.expr.resolve(tree)

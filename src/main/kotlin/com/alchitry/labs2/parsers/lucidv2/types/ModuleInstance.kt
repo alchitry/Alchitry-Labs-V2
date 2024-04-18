@@ -50,6 +50,15 @@ class ModuleInstance(
         } + listOf(module)).distinct()
     }
 
+    fun getModuleDependents(): List<Module> {
+        return context.types.moduleInstances.values.map { instOrArray ->
+            when (instOrArray) {
+                is ModuleInstance -> instOrArray.module
+                is ModuleInstanceArray -> instOrArray.modules.first().module
+            }
+        }.distinct()
+    }
+
     // Use the provided parameters or the default value from the module is it is missing
     val parameters = module.parameters.mapValues { (name, param) ->
         Signal(

@@ -27,6 +27,7 @@ class WidthOfTests {
 
         assert(tester.hasNoIssues)
 
+        val v = tester.context.resolve(ctx)
         assertEquals(
             ArrayValue(
                 listOf(
@@ -34,7 +35,7 @@ class WidthOfTests {
                     BitListValue(8, 4, constant = true, signed = false),
                 )
             ),
-            tester.context.resolve(ctx)
+            v
         )
     }
 }

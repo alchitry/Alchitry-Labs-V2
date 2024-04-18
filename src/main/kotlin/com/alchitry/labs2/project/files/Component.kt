@@ -1,6 +1,7 @@
 package com.alchitry.labs2.project.files
 
 import com.alchitry.labs2.project.Board
+import com.alchitry.labs2.project.Language
 import com.alchitry.labs2.project.Locations
 import com.alchitry.labs2.project.library.ComponentLibrary
 import kotlinx.serialization.KSerializer
@@ -31,14 +32,18 @@ data class Component(
     val description: String,
     val supportedBoards: Set<Board>? = null,
     val categories: List<String>,
-    val content: String
+    val content: String,
 ) : FileProvider() {
+    var dependencies = listOf<Component>()
+
     override fun isValid(): Boolean = true
     val path: String = categories.toMutableList().apply { add(name) }.joinToString("/")
     override fun readText(): String = content
     override fun writeText(text: String) {
         error("Components are read-only!")
     }
+
+    val language = Language.fromExt(name.split(".").last()) ?: error("Unknown language of component: $name")
 
     companion object : KSerializer<Component> {
         fun fromResource(resourcePath: String): Component {

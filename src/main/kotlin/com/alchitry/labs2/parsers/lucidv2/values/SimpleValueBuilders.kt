@@ -35,10 +35,13 @@ fun BitListValue(
             while (idx < sigWidth) {
                 val charIdx = idx / 4
                 val bitIdx = idx % 4
-                var c = '0'
-                if (strLower.length > charIdx) c =
-                    strLower[strLower.length - 1 - charIdx] else if (strLower[0] == 'x' || strLower[0] == 'z') c =
-                    strLower[0]
+
+                val c = when {
+                    strLower.length > charIdx -> strLower[strLower.length - 1 - charIdx]
+                    strLower[0] == 'x' || strLower[0] == 'z' -> strLower[0]
+                    else -> '0'
+                }
+
                 if (c == 'x') {
                     bits.add(Bit.Bx)
                 } else if (c == 'z') {
@@ -58,10 +61,11 @@ fun BitListValue(
         2 -> {
             var idx = 0
             while (idx < sigWidth) {
-                var c = '0'
-                if (strLower.length > idx) c =
-                    strLower[strLower.length - 1 - idx] else if (strLower[0] == 'x' || strLower[0] == 'z') c =
-                    strLower[0]
+                val c = when {
+                    strLower.length > idx -> strLower[strLower.length - 1 - idx]
+                    strLower[0] == 'x' || strLower[0] == 'z' -> strLower[0]
+                    else -> '0'
+                }
                 when (c) {
                     '0' -> bits.add(Bit.B0)
                     '1' -> bits.add(Bit.B1)
@@ -78,8 +82,10 @@ fun BitListValue(
             while (idx < sigWidth) {
                 val charIdx = idx / 8
                 val bitIdx = idx % 8
-                var c = 0.toChar()
-                if (str.length > charIdx) c = str[str.length - 1 - charIdx]
+                val c = if (str.length > charIdx)
+                    str[str.length - 1 - charIdx]
+                else
+                    0.toChar()
                 if (c.code and (1 shl bitIdx) != 0) {
                     bits.add(Bit.B1)
                 } else {

@@ -45,7 +45,7 @@ fun ApplicationScope.openWindow(
             onClose(windowState)
             exitApplication()
         },
-        transparent = true,
+        transparent = false,
         undecorated = true
     ) {
         val density = LocalDensity.current

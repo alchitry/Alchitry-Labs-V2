@@ -1,8 +1,17 @@
 package com.alchitry.labs2.project.library
 
 import com.alchitry.labs2.JarUtils
+import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.lucidv2.context.LucidGlobalContext
+import com.alchitry.labs2.parsers.lucidv2.context.LucidModuleTypeContext
+import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstance
+import com.alchitry.labs2.parsers.notations.NotationManager
+import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.Locations
+import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.files.Component
+import com.alchitry.labs2.project.files.SourceFile
+import kotlinx.coroutines.runBlocking
 
 object ComponentLibrary {
     val components: List<Component>
@@ -20,6 +29,55 @@ object ComponentLibrary {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+
+        // build dependency tree for lucid components
+        runBlocking {
+            val lucidComponents = components.filter { it.language is Languages.Lucid }
+            val lucidFiles = lucidComponents.map { SourceFile(it) }
+            val notationManager = NotationManager()
+            // run blocking ok as it will never suspend anyway
+            // parseAll only suspends for file reads and all files are components
+            val trees = Project.parseAll(lucidFiles, notationManager) ?: error(notationManager.getReport().toString())
+
+            notationManager.assertNoErrors()
+
+            val projectContext = ProjectContext(notationManager)
+
+            trees.forEach {
+                LucidGlobalContext(projectContext, it.first).walk(it.second) // not simulation so won't suspend
+            }
+
+            notationManager.assertNoErrors()
+
+            val modules = trees.mapNotNull {
+                val moduleTypeContext = LucidModuleTypeContext(projectContext, it.first)
+                val module = moduleTypeContext.extract(it.second)
+
+                module ?: return@mapNotNull null
+            }
+
+            notationManager.assertNoErrors()
+
+            modules.forEach { module ->
+                ModuleInstance(
+                    module.name,
+                    projectContext,
+                    null,
+                    module,
+                    mapOf(),
+                    mapOf(),
+                    testing = true
+                ).apply {
+                    initialWalk()
+                    notationManager.assertNoErrors()
+                    (module.sourceFile.file as Component).dependencies =
+                        getModuleDependents().map { it.sourceFile.file as Component }
+                }
+            }
+
+            notationManager.assertNoErrors()
+        }
+
         this.components = components
     }
 
