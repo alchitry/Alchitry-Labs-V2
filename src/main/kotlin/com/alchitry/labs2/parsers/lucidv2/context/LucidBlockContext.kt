@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.lucidv2.context
 
 import com.alchitry.labs2.Log
+import com.alchitry.labs2.asSingleLine
 import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs2.parsers.ProjectContext
@@ -205,7 +206,7 @@ class LucidBlockContext(
                 if (resolve(it)?.isTrue()?.bit != Bit.B1) {
                     errorListener.reportError(
                         it,
-                        "Parameter constraint failed for ${param.name} (${param.constraint.text})"
+                        "Parameter constraint failed for ${param.name} (${param.constraint.text.asSingleLine()})"
                     )
                     stage = ParseStage.ModuleInternals
                     return false

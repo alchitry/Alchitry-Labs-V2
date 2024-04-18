@@ -108,7 +108,11 @@ data class BitListValue(
         return super.toString()
     }
 
-    override fun write(selection: List<SignalSelector>, newValue: Value): BitListValue {
+    override fun write(selection: List<SignalSelector>, newValue: Value): Value {
+        if (newValue is UndefinedValue) {
+            return UndefinedValue(constant, width)
+        }
+
         if (selection.isEmpty()) {
             require(newValue is BitListValue && newValue.width == width) {
                 "Attempted to assign an incompatible type to the BitListValue!"
@@ -125,7 +129,7 @@ data class BitListValue(
                 val selectedCt = selector.range.last - selector.range.first + 1
                 if (selectedCt == 1) {
                     require(newValue is BitValue) {
-                        "Attempted to assign a value other an single bit to a single bit in a BitListValue!"
+                        "Attempted to assign a value other than a single bit to a single bit in a BitListValue!"
                     }
                     return copy(
                         bits = List(bits.size) {

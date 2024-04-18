@@ -30,12 +30,12 @@ object ComponentLibrary {
             e.printStackTrace()
         }
 
-        // build dependency tree for lucid components
+        // build dependency trees for lucid components
+        // run blocking ok as it will never suspend
         runBlocking {
-            val lucidComponents = components.filter { it.language is Languages.Lucid }
-            val lucidFiles = lucidComponents.map { SourceFile(it) }
+            val lucidFiles = components.filter { it.language is Languages.Lucid }.map { SourceFile(it) }
             val notationManager = NotationManager()
-            // run blocking ok as it will never suspend anyway
+
             // parseAll only suspends for file reads and all files are components
             val trees = Project.parseAll(lucidFiles, notationManager) ?: error(notationManager.getReport().toString())
 
@@ -72,6 +72,7 @@ object ComponentLibrary {
                     notationManager.assertNoErrors()
                     (module.sourceFile.file as Component).dependencies =
                         getModuleDependents().map { it.sourceFile.file as Component }
+                    println("Set ${module.sourceFile.file.componentName} to have dep ${(module.sourceFile.file).dependencies.map { it.componentName }}")
                 }
             }
 

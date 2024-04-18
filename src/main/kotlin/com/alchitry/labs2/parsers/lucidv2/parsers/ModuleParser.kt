@@ -1,5 +1,6 @@
 package com.alchitry.labs2.parsers.lucidv2.parsers
 
+import com.alchitry.labs2.asSingleLine
 import com.alchitry.labs2.parsers.grammar.LucidBaseListener
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.lucidv2.context.LucidExprContext
@@ -66,7 +67,10 @@ data class ModuleParser(
         if (value?.isTrue()?.bit != Bit.B1) {
             val defaultValue = (ctx.parent as? LucidParser.ParamDecContext)?.paramDefault()?.expr()
                 ?.let { context.resolve(it) }
-            context.reportError(ctx, "Parameter constraint \"${ctx.text}\" failed for default value: $defaultValue")
+            context.reportError(
+                ctx,
+                "Parameter constraint \"${ctx.text.asSingleLine()}\" failed for default value: $defaultValue"
+            )
         }
     }
 

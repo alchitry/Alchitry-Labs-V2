@@ -6,6 +6,7 @@ import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.lucidv2.types.Function
 import com.alchitry.labs2.parsers.lucidv2.values.SimpleValue
+import com.alchitry.labs2.parsers.lucidv2.values.SimpleWidth
 import com.alchitry.labs2.parsers.lucidv2.values.UndefinedValue
 import com.alchitry.labs2.parsers.lucidv2.values.minBits
 
@@ -226,13 +227,13 @@ data class BlockParser(
 
         val countValue = context.resolve(exprCtx)
 
-        if (countValue !is SimpleValue || !countValue.isNumber()) {
+        if (countValue?.width !is SimpleWidth) {
             context.notationCollector.reportError(exprCtx, "Repeat count must be a number!")
             return
         }
 
         val count = try {
-            countValue.toBigInt()!!.intValueExact() // isNumber() check above makes !! safe
+            (countValue as? SimpleValue)?.toBigInt()?.intValueExact() ?: 0
         } catch (e: ArithmeticException) {
             context.notationCollector.reportError(exprCtx, "Repeat count doesn't fit in an integer.")
             return
@@ -242,8 +243,8 @@ data class BlockParser(
         val constant = countValue.constant || dependencies?.all { repeatSignals.values.contains(it) } != false
 
         if (!inFunctionBlock && !inTestBlock) {
-            if (count < 1) {
-                context.notationCollector.reportError(exprCtx, "Repeat count must be greater than 0.")
+            if (count < 0) {
+                context.notationCollector.reportError(exprCtx, "Repeat count must be greater than or equal to 0.")
                 return
             }
 
@@ -271,7 +272,7 @@ data class BlockParser(
         val sigWidth = if (countValue.constant)
             count.toBigInteger().minBits()
         else
-            countValue.bits.size
+            (countValue as? SimpleValue)?.bits?.size ?: 1
 
         val repSignal = RepeatSignal(sigName, sigWidth, repCtx)
 
