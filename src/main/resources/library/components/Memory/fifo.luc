@@ -1,0 +1,110 @@
+/**
+    "name": "Synchronous FIFO"
+    "description": "A FIFO (First In First Out) with the same clock for writing and reading."
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2019 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   *****************************************************************************
+
+   This is an synchronous fifo. That means it has one clock for both the read
+   and write interfaces.
+
+   This is a first-word-fall-through fifo meaning that dout is valid whenever
+   empty is 0. If you want to perform a read, simply check if empty is 0 and
+   if it is read the value of dout and set rget high to advance to the next
+   value.
+*/
+
+module fifo #(
+    WIDTH = 4 : WIDTH > 0, // Size of the data
+    ENTRIES = 8 : ENTRIES == $pow(2,$clog2(ENTRIES)) // ENTRIES must be a power of 2
+)(
+    input clk, // clock
+    input rst, // reset
+    input din [WIDTH], // write data
+    input wput, // write flag (1 = write)
+    output full, // full flag (1 = full)
+
+    output dout [WIDTH], // read data
+    input rget, // data read flag (1 = get next entry)
+    output empty // empty flag (1 = empty)
+) {
+
+    const ADDR_SIZE = $clog2(ENTRIES)             // size of RAM address
+
+    // write clock domain
+    .clk(clk), .rst(rst) {
+        dff waddr[ADDR_SIZE]                      // write address
+        dff waddrDelay[ADDR_SIZE]                // write address delayed one cycle
+        dff raddr[ADDR_SIZE]                      // read address
+    }
+
+    // dual port RAM
+    simpleDualPortRam ram (#WIDTH(WIDTH), #ENTRIES(ENTRIES))
+
+    sig next_write[ADDR_SIZE]
+    sig wrdy // write ready flag
+    sig rrdy // read ready flag
+
+    always {
+        // connect the clocks
+        ram.wclk = clk
+        ram.rclk = clk
+
+        ram.writeEnable = 0 // default to not writing
+
+        next_write = waddr.q + 1
+        waddrDelay.d = waddr.q
+
+        // if next write address isn't the read address we can write
+        wrdy = next_write != raddr.q
+
+        // if the current read address isn't the write address we can read
+        rrdy = raddr.q != waddrDelay.q
+
+        // invert ready signals for full and empty
+        full = !wrdy
+        empty = !rrdy
+
+        // connect RAM ports
+        ram.waddr = waddr.q
+        ram.raddr = raddr.q
+        ram.writeData = din
+
+        // if we have space and should write
+        if (wput && wrdy) {
+            waddr.d = waddr.q + 1 // increment write address
+            ram.writeEnable = 1 // set write flag
+        }
+
+        // if we have data and a read request
+        if (rget && rrdy) {
+            raddr.d = raddr.q + 1 // increment read address
+            ram.raddr = raddr.q + 1 // set to next address to keep up with reads
+        }
+
+        dout = ram.readData // output is directly from RAM
+    }
+}

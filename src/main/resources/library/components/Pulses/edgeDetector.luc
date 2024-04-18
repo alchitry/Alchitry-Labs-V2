@@ -1,0 +1,65 @@
+/**
+    "name": "Edge Detector"
+    "description": "An edge detector that can be configured to detect rising, falling, or both types of edges."
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2019 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   *****************************************************************************
+
+   Edge Detector: This module will detect when there is an edge on 'in' and will
+   set 'out' high for that clock cycle. You can specify what type of edge you
+   want to look for by setting 'RISE' to 1 for rising edges and/or 'FALL' to 1
+   for falling edges.
+*/
+module edgeDetector #(
+    RISE = 1 : RISE == 0 || RISE == 1,
+    FALL = 1 : FALL == 0 || FALL == 1
+)(
+    input clk,  // clock
+    input in,   // input signal
+    output out  // edge detected
+) {
+
+    // need to save the previous state of 'in'
+    dff last(.clk(clk))
+
+    always {
+        out = 0 // default to 0
+
+        last.d = in // save the input
+
+        // if looking for rising edges
+        if (RISE)
+        // if there is a rising edge
+            if (in == 1 && last.q == 0)
+                out = 1 // set output flag
+
+        // if looking for falling edges
+        if (FALL)
+        // if there is a falling edge
+            if (in == 0 && last.q == 1)
+                out = 1 // set output flag
+    }
+}

@@ -1,0 +1,96 @@
+/**
+    "name": "Pulse Delay Chain"
+    "description": "Accepts single cycle pulses and feeds them into a delay chain with a configurable number of dynamic taps. It is useful for triggering multiple delayed events off a single input event."
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2019 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   *****************************************************************************
+
+   This module accepts single cycle pulses and delays them. It can be configured
+   to provide multiple "taps" into the delay chain allowing a single event to
+   trigger multiple other events.
+
+   The maximum delay is DEPTH * TAPS + 1
+
+   The input 'in' is assumed to be single clock cycle pulses and have at least
+   TAPS cycles between pulses. If more than one pulse occures in TAPS cycles, they
+   will be treated as one pulse.
+
+   The output is single clock cycle pulses.
+
+   The output delayed 1 + TAPS * delay_cycles cycles.
+*/
+
+module pulseDelayChain #(
+    DEPTH ~ 1024 : DEPTH > 0 && DEPTH == $pow(2,$clog2(DEPTH)), // DEPTH is a power of 2
+    TAPS ~ 8 : TAPS > 0 && TAPS == $pow(2,$clog2(TAPS)) // TAPS is a power of 2
+)(
+    input clk,  // clock
+    input rst,  // reset
+    input in,   // single clock cycle input pulse
+    output out[TAPS], // delayed single cycle pulses
+    input delay_cycles[TAPS][$clog2(DEPTH)]
+) {
+
+    simpleDualPortRam ram(#WIDTH(1), #ENTRIES(DEPTH), .wclk(clk), .rclk(clk))
+
+    .clk(clk) {
+        dff wr_addr[$clog2(DEPTH)]
+
+        .rst(rst) {
+            dff write_flag
+            dff cycle[$clog2(TAPS)]
+            dff values[TAPS]
+        }
+    }
+
+    sig tap_idx[$clog2(TAPS)]
+
+    always {
+        ram.waddr = wr_addr.q
+        ram.writeEnable = 0
+        ram.writeData = write_flag.q
+        ram.raddr = wr_addr.q - delay_cycles[cycle.q] // read at the address to delay delay_cycles cycles
+        out = 0 // default to 0
+
+        cycle.d = cycle.q + 1 // always increment the tap cycle
+
+        tap_idx = cycle.q - 1 // index is the previous cycle since reads take 1 clock
+
+        values.d[tap_idx] = ram.readData // save the read data
+
+        if (cycle.q == 0) // on cycle 0, we have read all the previous TAPS values
+            out = c{ram.readData, values.q[TAPS-2:0]} // output out only on this one cycle. Note that values.q[TAPS-1] isn't valid so we use the ram output directly
+
+        // since the pulse isn't synced to the TAPS cycle window, we need to capture it and save it until we are ready
+        write_flag.d = write_flag.q | in
+
+        if (&cycle.q) { // last cycle
+            ram.writeEnable = 1       // write data
+            write_flag.d = in         // set the flag for the next cycle
+            wr_addr.d = wr_addr.q + 1 // increment the write address
+        }
+    }
+}

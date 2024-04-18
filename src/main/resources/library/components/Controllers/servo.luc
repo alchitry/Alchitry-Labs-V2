@@ -1,0 +1,103 @@
+/**
+    "name": "Servo Controller"
+    "description": "A fully customizable servo controller. It offers glitch-free operation of PWM servos with parameters to easily adjust the neutral, minimum, and maximum pulse widths."
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2019 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   *****************************************************************************
+
+   Servo Controller: This module can be used to control a servo using PWM. It is
+   designed to be fully customizable to work with most servos.
+
+   The neutral position can be set by adjusting CENTER_WIDTH. Most servos have a
+   center position around 1.5ms, or 1500us. MIN_MAX_DIFF sets how much the pulse
+   width can deviate from the center width. The default values allow for pulse
+   widths from 1000us to 2000us (1500us +/- 500us). PERIOD sets how often a
+   pulse is sent. Most servos require 50 pulses per second, or a period of 20ms.
+
+   RESOLUTION can be used to adjust how precise you can control the servo. There
+   is a maximum you can set this to. With the default settings this is 16 bits.
+   If you need higher resolution you will need to increase the clock frequency.
+*/
+
+module servo #(
+    // Clock frequency (Hz)
+    CLOCK_FREQ ~ 100000000 : CLOCK_FREQ > 0,
+    // How much the pulse width can change (us)
+    MIN_MAX_DIFF = 500     : MIN_MAX_DIFF > 0,
+    // Neutral pulse width (us)
+    CENTER_WIDTH = 1500    : CENTER_WIDTH > MIN_MAX_DIFF,
+    // PWM period (us)
+    PERIOD = 20000         : PERIOD > MIN_MAX_DIFF + CENTER_WIDTH,
+    // Number of bits used to set the position
+    RESOLUTION = 8         : RESOLUTION <= $clog2((CLOCK_FREQ/1000000)*(2*MIN_MAX_DIFF))
+                             && RESOLUTION > 0
+)(
+    input clk,                  // clock
+    input rst,                  // reset
+    input position[RESOLUTION], // servo position
+    output servo                // servo output
+) {
+
+    // Max value of counter
+    const TOP = (CLOCK_FREQ/1000000) * PERIOD
+    // Min/max offsets
+    const MIN_MAX = (CLOCK_FREQ/1000000) * MIN_MAX_DIFF
+    // Amount to shift input by to get close to MIN_MAX range
+    const SHIFT = $clog2(MIN_MAX*2) - RESOLUTION
+    // Offset to get a pulse centered around CENTER_WIDTH
+    const OFFSET = (CLOCK_FREQ/1000000) * CENTER_WIDTH - $pow(2,RESOLUTION+SHIFT-1)
+
+    .clk(clk), .rst(rst) {
+        dff pos[RESOLUTION]    // buffer for input
+        dff ctr[$clog2(TOP)]   // counter for PWM
+    }
+
+    always {
+        ctr.d = ctr.q + 1      // increment the counter
+
+        if (ctr.q == TOP - 1) { // if the counter overflowed
+            // We only update the position when the counter overflows to avoid glitches
+
+            // if position is over-saturated
+            if (position > $pow(2,RESOLUTION-1) + MIN_MAX)
+                pos.d = $pow(2,RESOLUTION-1) + MIN_MAX
+
+            // if position is under-saturated
+            else if (position < $pow(2,RESOLUTION-1) - MIN_MAX)
+                pos.d = $pow(2,RESOLUTION-1) - MIN_MAX
+
+            // else it is safe to just assign it
+            else
+                pos.d = position
+
+            // reset the counter
+            ctr.d = 0
+        }
+
+        // PWM output
+        servo = (pos.q << SHIFT) + OFFSET > ctr.q
+    }
+}
