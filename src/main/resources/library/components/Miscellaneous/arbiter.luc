@@ -1,0 +1,52 @@
+/**
+    "name": "Arbiter"
+    "description": "Basic arbiter that takes an input and outputs a 1 where the most-significant 1 is in the input. For example, an input of 0110 would create an output of 0100."
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2019 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   *****************************************************************************
+
+   Arbiter: An arbiter takes an input and sets it's output to be 1 where the
+   MSB of the input was 1. For example, 0110 would become 0100. If there are
+   no 1's in the input, the output is 0. These are helpful for settling disputes
+   over some resource as only one of the output bits will ever be high.
+*/
+
+module arbiter #(
+    WIDTH ~ 8 : WIDTH > 0             // Width of the arbiter
+)(
+    input in[WIDTH],
+    output out[WIDTH]
+) {
+    always {
+        out = 0                      // default to 0
+
+        // start from LSB so that higher bits will have priority
+        repeat(WIDTH, i) {
+            if (in[i])                  // if bit is 1
+                out = 1 << i             // set output to 1 at that bit
+        }
+    }
+}

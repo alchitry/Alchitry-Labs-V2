@@ -1,0 +1,66 @@
+/**
+    "name": "Pipeline"
+    "description": "Pipeline with configurable depth. It will delay a signal for a specified number of clock cycles. It's also useful to synchronizing external inputs."
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2019 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   *****************************************************************************
+
+   Pipeline: This is a generic pipeline. It
+   will delay 'in' by 'DEPTH' clock cycles.
+   This is helpful when trying to sync data
+   with some other pipelined stage. It is
+   also helpful to synchronize external
+   inputs.
+
+   If you need it to be wider than one bit,
+   simply instantiate an array of them.
+
+   pipeline my_pipe[10] (#DEPTH(3), .clk(clk));
+*/
+
+module pipeline #(
+    DEPTH ~ 3 : DEPTH > 0 // number of stages
+)(
+    input clk,  // clock
+    input in,   // input
+    output out  // output
+) {
+
+    dff pipe[DEPTH] (.clk(clk))
+
+    always {
+        // in goes into the start of the pipe
+        pipe.d[0] = in
+
+        // out is the end of the pipe
+        out = pipe.q[$width(pipe.q)-1]
+
+        // for each intermediate state
+        repeat (DEPTH-1, i) {
+            pipe.d[i+1] = pipe.q[i] // copy from previous
+        }
+    }
+}
