@@ -251,6 +251,9 @@ data class BlockParser(
         val exprCtx = allExprCtx.subList(if (sigName != null) 1 else 0, allExprCtx.size)
         val exprList = exprCtx.map { context.resolve(it) }
 
+        val hiddenSignalName = sigName ?: "r_${ctx.hashCode()}" // create signal for verilog conversion
+        val repeatBlock = RepeatBlock(context, hiddenSignalName, exprCtx[0], exprCtx.getOrNull(1), exprCtx.getOrNull(2))
+
         if (exprList.isEmpty()) {
             context.notationCollector.reportError(repCtx, "Repeat count was missing.")
             return
@@ -283,6 +286,11 @@ data class BlockParser(
                 context.notationCollector.reportError(exprCtx[0], "Repeat count must be constant!")
                 return
             }
+
+            if (repeatBlock.step == 0) {
+                context.reportError(exprCtx[2], "Repeat step size can not be 0!")
+                return
+            }
         }
 
         if (sigName != null) {
@@ -299,7 +307,7 @@ data class BlockParser(
             }
         }
 
-        val hiddenSignalName = sigName ?: "r_${ctx.hashCode()}" // create signal for verilog conversion
+
 
         val sigWidth = if (countValue.type == ExprType.Constant)
             (count - 1).toBigInteger().minBits()
@@ -310,8 +318,7 @@ data class BlockParser(
 
         repeatSignals[repCtx] = repSignal.signal
         localRepeatSignals[repCtx] = repSignal.signal
-        repeatBlocks[repCtx] =
-            RepeatBlock(context, hiddenSignalName, exprCtx[0], exprCtx.getOrNull(1), exprCtx.getOrNull(2))
+        repeatBlocks[repCtx] = repeatBlock
     }
 }
 

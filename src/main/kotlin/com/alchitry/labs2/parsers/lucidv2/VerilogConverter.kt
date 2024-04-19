@@ -698,13 +698,14 @@ class VerilogConverter(
         val startExpr = repeatBlock.startExprCtx?.verilog ?: "0"
         val stepExpr = repeatBlock.stepExprCtx?.verilog ?: "1"
         val finalExpr = "($startExpr) + ($countExpr) * ($stepExpr)"
+        val comparison = if (repeatBlock.step > 0) "<" else ">"
         ctx.verilog = buildString {
             val repSigName = repeatSignal.verilogName
             append("for (")
             append(repSigName)
             append(" = $startExpr; ")
             append(repSigName)
-            append(" < ")
+            append(" $comparison ")
             append(finalExpr)
             append("; ")
             append(repSigName)
