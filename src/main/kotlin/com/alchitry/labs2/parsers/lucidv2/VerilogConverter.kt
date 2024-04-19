@@ -691,28 +691,28 @@ class VerilogConverter(
     }
 
     override fun exitRepeatStat(ctx: LucidParser.RepeatStatContext) {
-        TODO()
-//        val repeatSignal =
-//            context.blockParser.repeatSignals[ctx] ?: error(ctx, "Missing repeat signal for repeat block!")
-//        val repExpr = ctx.expr()?.verilog ?: error(
-//            ctx,
-//            "Missing repeat count for repeat block!"
-//        )
-//        ctx.verilog = buildString {
-//            val repSigName = repeatSignal.verilogName
-//            append("for (")
-//            append(repSigName)
-//            append(" = 0; ")
-//            append(repSigName)
-//            append(" < ")
-//            append(repExpr)
-//            append("; ")
-//            append(repSigName)
-//            append(" = ")
-//            append(repSigName)
-//            append(" + 1) ")
-//            append(ctx.repeatBlock().requireNotNull(ctx).verilog)
-//        }
+        val repeatBlock = context.blockParser.resolveRepeatBlock(ctx) ?: error(ctx, "Missing repeat block!")
+        val repeatSignal =
+            context.blockParser.repeatSignals[ctx] ?: error(ctx, "Missing repeat signal for repeat block!")
+        val countExpr = repeatBlock.countExprCtx.verilog
+        val startExpr = repeatBlock.startExprCtx?.verilog ?: "0"
+        val stepExpr = repeatBlock.stepExprCtx?.verilog ?: "1"
+        val finalExpr = "($startExpr) + ($countExpr) * ($stepExpr)"
+        ctx.verilog = buildString {
+            val repSigName = repeatSignal.verilogName
+            append("for (")
+            append(repSigName)
+            append(" = $startExpr; ")
+            append(repSigName)
+            append(" < ")
+            append(finalExpr)
+            append("; ")
+            append(repSigName)
+            append(" = ")
+            append(repSigName)
+            append(" + ($stepExpr)) ")
+            append(ctx.repeatBlock().requireNotNull(ctx).verilog)
+        }
     }
 
     override fun exitRepeatBlock(ctx: LucidParser.RepeatBlockContext) {

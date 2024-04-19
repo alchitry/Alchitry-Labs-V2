@@ -285,33 +285,33 @@ data class BlockParser(
             }
         }
 
-        if (sigName == null) {
-            repeatBlocks[repCtx] = RepeatBlock(context, null, exprCtx[0], exprCtx.getOrNull(1), exprCtx.getOrNull(2))
-            return
+        if (sigName != null) {
+            val nameCtx = (allExprCtx[0] as? ExprSignalContext)?.signal()?.name(0) ?: return
+
+            if (nameCtx.TYPE_ID() == null) {
+                context.reportError(nameCtx, "Repeat variable name must start with a lowercase letter.")
+                return
+            }
+
+            if (context.resolveSignal(sigName) != null) {
+                context.reportError(nameCtx, "The name \"$sigName\" is already in use!")
+                return
+            }
         }
 
-        val nameCtx = (allExprCtx[0] as? ExprSignalContext)?.signal()?.name(0) ?: return
-
-        if (nameCtx.TYPE_ID() == null) {
-            context.reportError(nameCtx, "Repeat variable name must start with a lowercase letter.")
-            return
-        }
-
-        if (context.resolveSignal(sigName) != null) {
-            context.reportError(nameCtx, "The name \"$sigName\" is already in use!")
-            return
-        }
+        val hiddenSignalName = sigName ?: "r_${ctx.hashCode()}" // create signal for verilog conversion
 
         val sigWidth = if (countValue.type == ExprType.Constant)
             (count - 1).toBigInteger().minBits()
         else
             (countValue.value as? SimpleValue)?.bits?.size ?: 1
 
-        val repSignal = RepeatSignal(sigName, sigWidth, repCtx)
+        val repSignal = RepeatSignal(hiddenSignalName, sigWidth, repCtx)
 
         repeatSignals[repCtx] = repSignal.signal
         localRepeatSignals[repCtx] = repSignal.signal
-        repeatBlocks[repCtx] = RepeatBlock(context, sigName, exprCtx[0], exprCtx.getOrNull(1), exprCtx.getOrNull(2))
+        repeatBlocks[repCtx] =
+            RepeatBlock(context, hiddenSignalName, exprCtx[0], exprCtx.getOrNull(1), exprCtx.getOrNull(2))
     }
 }
 
