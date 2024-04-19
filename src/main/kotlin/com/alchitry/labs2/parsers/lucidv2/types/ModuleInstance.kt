@@ -2,6 +2,7 @@ package com.alchitry.labs2.parsers.lucidv2.types
 
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
+import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
 import com.alchitry.labs2.parsers.lucidv2.signals.snapshot.SnapshotOrParent
 import com.alchitry.labs2.parsers.lucidv2.signals.snapshot.SnapshotParent
 import com.alchitry.labs2.parsers.lucidv2.values.UndefinedValue
@@ -67,7 +68,8 @@ class ModuleInstance(
             this,
             parameters[name]
                 ?: (if (param.defaultTestOnly && !testing) null else param.default)
-                ?: if (testing) UndefinedValue(true) else error("Missing value for parameter \"${name}\" in module \"${this.name}\" of type \"${module.name}\".")
+                ?: if (testing) UndefinedValue() else error("Missing value for parameter \"${name}\" in module \"${this.name}\" of type \"${module.name}\"."),
+            ExprType.Constant
         )
     }
 

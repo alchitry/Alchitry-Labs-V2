@@ -21,12 +21,7 @@ data class ArrayValue(
         it.toString(format)
     }
 
-    override val constant: Boolean
-        get() = all { it.constant }
-
     override fun isNumber(): Boolean = elements.all { it.isNumber() }
-
-    override fun asMutable(): ArrayValue = copy(elements = elements.map { it.asMutable() })
 
     override fun withSign(signed: Boolean): ArrayValue = copy(elements = elements.map { it.withSign(signed) })
 

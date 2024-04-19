@@ -41,8 +41,8 @@ class ProjectSimulator(private val projectContext: ProjectContext) : Closeable {
     val evalRateFlow = mutableEvalRateFlow.asStateFlow()
 
     companion object {
-        val low = Bit.B0.toBitValue(constant = false, signed = false)
-        val high = Bit.B1.toBitValue(constant = false, signed = false)
+        val low = Bit.B0.toBitValue(signed = false)
+        val high = Bit.B1.toBitValue(signed = false)
     }
 
     private val clk: SignalOrSubSignal

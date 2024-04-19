@@ -11,13 +11,13 @@ data class LucidPruner(
 ) : LucidBaseListener() {
 
     override fun enterIfStat(ctx: LucidParser.IfStatContext) {
-        val value = context.expr.resolve(ctx.expr() ?: return) ?: return
-        if (value.constant) {
+        val expr = context.expr.resolve(ctx.expr() ?: return) ?: return
+        if (expr.type == ExprType.Constant) {
             val parent = ctx.parent as? ParserRuleContext ?: return
             val children = parent.children ?: return
             val index = children.indexOf(ctx)
             children.removeAt(index)
-            val newStatements = if (value.isTrue().bit == Bit.B1) {
+            val newStatements = if (expr.value.isTrue().bit == Bit.B1) {
                 ctx.block()?.alwaysStat()
             } else {
                 ctx.elseStat()?.block()?.alwaysStat()
@@ -37,7 +37,7 @@ data class LucidPruner(
     override fun enterEveryRule(ctx: ParserRuleContext) {
         if (ctx is LucidParser.ExprContext) {
             val value = context.expr.resolve(ctx)
-            if (value?.constant == true) {
+            if (value?.type == ExprType.Constant) {
                 ctx.skip = true
             }
         }

@@ -22,7 +22,7 @@ class GlobalParserTests {
         val global = tester.project.resolveGlobal("MyGlobal")
 
         assertNotNull(global)
-        assertEquals(BitValue(Bit.B1, constant = true, signed = false), global.constants["ONE"]?.value)
+        assertEquals(BitValue(Bit.B1, signed = false), global.constants["ONE"]?.value)
     }
 
     @Test
@@ -39,7 +39,7 @@ class GlobalParserTests {
         val global = tester.project.resolveGlobal("MyGlobal")
 
         assertNotNull(global)
-        assertEquals(BitListValue("10", 2, constant = true, signed = false), global.constants["TWO"]?.value)
+        assertEquals(BitListValue("10", 2, signed = false), global.constants["TWO"]?.value)
     }
 
     @Test
@@ -101,9 +101,9 @@ class GlobalParserTests {
         val value = StructValue(
             type,
             linkedMapOf(
-                "r" to BitListValue(0, width = 8, constant = true, signed = false),
-                "g" to BitListValue(0, width = 8, constant = true, signed = false),
-                "b" to BitListValue(255, width = 8, constant = true, signed = false),
+                "r" to BitListValue(0, width = 8, signed = false),
+                "g" to BitListValue(0, width = 8, signed = false),
+                "b" to BitListValue(255, width = 8, signed = false),
             )
         )
 

@@ -8,14 +8,13 @@ import kotlin.math.ceil
 import kotlin.math.pow
 
 sealed class SimpleValue(
-    override val constant: Boolean,
     open val signed: Boolean
 ) : Value() {
     abstract val size: Int
     abstract val msb: Bit
     abstract val lsb: Bit
     abstract val bits: List<Bit>
-    fun asBitListValue() = if (this is BitListValue) this else BitListValue(bits, constant, signed)
+    fun asBitListValue() = if (this is BitListValue) this else BitListValue(bits, signed)
 
     /**
      * Converts this value into a [BigInteger] or returns null if this isn't possible.
@@ -39,18 +38,18 @@ sealed class SimpleValue(
     }
 
     operator fun not(): BitValue {
-        return BitValue(isTrue().bit.not(), constant, false)
+        return BitValue(isTrue().bit.not(), false)
     }
 
     override fun isTrue(): BitValue {
         var hasX = false
         bits.forEach {
             if (it == Bit.B1)
-                return BitValue(Bit.B1, constant, false)
+                return BitValue(Bit.B1, false)
             else if (it == Bit.Bx || it == Bit.Bz)
                 hasX = true
         }
-        return BitValue(if (hasX) Bit.Bx else Bit.B0, constant, false)
+        return BitValue(if (hasX) Bit.Bx else Bit.B0, false)
     }
 
     /** returns true if the value is made up of only 1s and 0s */
@@ -61,7 +60,6 @@ sealed class SimpleValue(
     infix fun isLessThan(other: SimpleValue): BitValue {
         val longest = size.coerceAtLeast(other.size)
         val signedOp = signed && other.signed
-        val constantOp = constant && other.constant
         val op1 = asBitListValue().setSign(signedOp).resize(longest)
         val op2 = other.asBitListValue().setSign(signedOp).resize(longest)
 
@@ -69,23 +67,23 @@ sealed class SimpleValue(
         val neg2 = signedOp && other.isNegative()
 
         if (neg1 && !neg2) // negative < positive
-            return Bit.B1.toBitValue(constantOp)
+            return Bit.B1.toBitValue()
 
         if (!neg1 && neg2) // positive !< negative
-            return Bit.B0.toBitValue(constantOp)
+            return Bit.B0.toBitValue()
 
         // negative to negative or positive to positive can be directly compared
         for (i in op1.indices.reversed()) {
             if (!op1[i].isNumber() || !op2[i].isNumber())
-                return Bit.Bx.toBitValue(constantOp)
+                return Bit.Bx.toBitValue()
 
             if (op1[i] == Bit.B1 && op2[i] == Bit.B0)
-                return Bit.B0.toBitValue(constantOp)
+                return Bit.B0.toBitValue()
 
             if (op1[i] == Bit.B0 && op2[i] == Bit.B1)
-                return Bit.B1.toBitValue(constantOp)
+                return Bit.B1.toBitValue()
         }
-        return Bit.B0.toBitValue(constantOp)
+        return Bit.B0.toBitValue()
     }
 
     infix fun isGreaterThan(other: SimpleValue): BitValue {
@@ -102,21 +100,21 @@ sealed class SimpleValue(
 
     override infix fun and(other: Value): Value {
         if (other is UndefinedValue)
-            return UndefinedValue(other.constant && constant)
+            return UndefinedValue()
         require(other is SimpleValue) { "And can only be performed with Undefined or another SimpleValue!" }
         return and(other)
     }
 
     override infix fun or(other: Value): Value {
         if (other is UndefinedValue)
-            return UndefinedValue(other.constant && constant)
+            return UndefinedValue()
         require(other is SimpleValue) { "Or can only be performed with Undefined or another SimpleValue!" }
         return or(other)
     }
 
     override infix fun xor(other: Value): Value {
         if (other is UndefinedValue)
-            return UndefinedValue(other.constant && constant)
+            return UndefinedValue()
         require(other is SimpleValue) { "Xor can only be performed with Undefined or another SimpleValue!" }
         return xor(other)
     }
@@ -124,18 +122,17 @@ sealed class SimpleValue(
     override fun resizeToMatch(newWidth: SignalWidth): Value = when(newWidth) {
         is DefinedArrayWidth, is UndefinedArrayWidth -> error("Cannot resize SimpleValue to fit ArrayValue!")
         is BitListWidth -> asBitListValue().resize(newWidth.size)
-        BitWidth -> BitValue(lsb, constant, signed)
+        BitWidth -> BitValue(lsb, signed)
         is StructWidth -> error("Cannot resize SimpleValue to fit a StructValue!")
-        is UndefinedSimpleWidth -> UndefinedValue(constant)
+        is UndefinedSimpleWidth -> UndefinedValue()
     }
 
     private inline fun doOp(b: SimpleValue, crossinline op: (Bit, Bit) -> Bit): SimpleValue {
         val size = size.coerceAtLeast(b.size)
         val signedOp = signed && b.signed
-        val constant = constant && b.constant
         val op1 = asBitListValue().resize(size, signedOp)
         val op2 = b.asBitListValue().resize(size, signedOp)
-        return BitListValue(size, constant, signedOp) { i ->
+        return BitListValue(size, signedOp) { i ->
             op(op1[i], op2[i])
         }
     }
@@ -168,14 +165,14 @@ sealed class SimpleValue(
         val newBits = mutableListOf<Bit>()
         repeat(n) { newBits.add(Bit.B0) }
         newBits.addAll(bits)
-        return BitListValue(newBits, constant, signed)
+        return BitListValue(newBits, signed)
     }
 
     infix fun ushl(n: Int): BitListValue {
         val newBits = mutableListOf<Bit>()
         repeat(n) { newBits.add(Bit.B0) }
         newBits.addAll(bits)
-        return BitListValue(newBits, constant, false)
+        return BitListValue(newBits, false)
     }
 
     infix fun shr(n: Int): BitListValue {
@@ -183,14 +180,14 @@ sealed class SimpleValue(
         newBits.addAll(bits.subList(n, size))
         val signBit = if (signed) msb else Bit.B0
         repeat(n) { newBits.add(signBit) }
-        return BitListValue(newBits, constant, signed)
+        return BitListValue(newBits, signed)
     }
 
     infix fun ushr(n: Int): BitListValue {
         val newBits = mutableListOf<Bit>()
         newBits.addAll(bits.subList(n, size))
         repeat(n) { newBits.add(Bit.B0) }
-        return BitListValue(newBits, constant, false)
+        return BitListValue(newBits, false)
     }
 
     fun asVerilog(): String? {
@@ -214,8 +211,6 @@ sealed class SimpleValue(
     }
 
     override fun toString() = buildString {
-        if (constant)
-            append("const ")
         if (signed)
             append("signed ")
         append('{')

@@ -8,7 +8,6 @@ import com.alchitry.labs2.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs2.parsers.lucidv2.types.Constant
 import com.alchitry.labs2.parsers.lucidv2.types.Signal
 import com.alchitry.labs2.parsers.lucidv2.types.SignalDirection
-import com.alchitry.labs2.parsers.lucidv2.values.UndefinedSimpleWidth
 import com.alchitry.labs2.parsers.lucidv2.values.UndefinedValue
 
 data class ConstantParser(
@@ -34,15 +33,20 @@ data class ConstantParser(
             context.reportError(nameCtx, "Constant names must be all uppercase letters.")
 
         val exprCtx = ctx.expr() ?: return
-        val value = context.resolve(exprCtx) ?: UndefinedValue(true, UndefinedSimpleWidth())
-        if (!value.constant) {
+        val expr = context.resolve(exprCtx)
+        val value = expr?.value ?: UndefinedValue()
+        if (expr?.type != ExprType.Constant) {
             context.reportError(
                 exprCtx,
                 "The value assigned to a constant must be constant!"
             )
             return
         }
-        if (localConstants.putIfAbsent(constName, Signal(constName, SignalDirection.Read, null, value)) != null) {
+        if (localConstants.putIfAbsent(
+                constName,
+                Signal(constName, SignalDirection.Read, null, value, ExprType.Constant)
+            ) != null
+        ) {
             context.reportError(
                 nameCtx,
                 "The constant name \"$constName\" has already been used."

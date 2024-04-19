@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.lucidv2.types.ports
 
 import com.alchitry.labs2.parsers.Evaluable
+import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
 import com.alchitry.labs2.parsers.lucidv2.types.ProxySignal
 import com.alchitry.labs2.parsers.lucidv2.types.SignalDirection
 import com.alchitry.labs2.parsers.lucidv2.types.SignalParent
@@ -18,7 +19,8 @@ class Inout(
         name,
         SignalDirection.Both,
         parent,
-        width.filledWith(Bit.Bz, false, signed),
+        width.filledWith(Bit.Bz, signed),
+        ExprType.Dynamic,
         signed
     ) {
         generateValue(it)
@@ -28,7 +30,8 @@ class Inout(
         name,
         SignalDirection.Both,
         parent,
-        width.filledWith(Bit.Bz, false, signed),
+        width.filledWith(Bit.Bz, signed),
+        ExprType.Dynamic,
         signed
     ) {
         generateValue(it)
@@ -64,6 +67,6 @@ class Inout(
         val validBits = (floating or doubleDrive).invert()
         val setBits = ((wr and en) or (extWr and extEn)) and validBits
         val clearBits = ((wr.invert() and en) or (extWr.invert() and extEn)) and validBits
-        return (width.filledWith(Bit.Bx, false, signed) or setBits and clearBits.invert()).replace(floating, Bit.Bz)
+        return (width.filledWith(Bit.Bx, signed) or setBits and clearBits.invert()).replace(floating, Bit.Bz)
     }
 }

@@ -15,7 +15,7 @@ fun LucidExprContext.checkSimpleWidth(
     onError: (LucidParser.ExprContext) -> Unit
 ): Boolean {
     return exprCtx.map {
-        val op = resolve(it) ?: throw IllegalArgumentException("exprCtx wasn't defined")
+        val op = resolve(it)?.value ?: throw IllegalArgumentException("exprCtx wasn't defined")
         if (op.width.isSimple()) {
             true
         } else {
@@ -35,7 +35,7 @@ fun LucidExprContext.checkSimpleValue(
     onError: (LucidParser.ExprContext) -> Unit
 ): Boolean {
     return exprCtx.map {
-        val op = resolve(it) ?: throw IllegalArgumentException("exprCtx wasn't defined")
+        val op = resolve(it)?.value ?: throw IllegalArgumentException("exprCtx wasn't defined")
         if (op is SimpleValue) {
             true
         } else {
@@ -55,11 +55,11 @@ fun LucidExprContext.checkSimpleOrCompatible(
     if (exprCtx.isEmpty())
         return true
 
-    val widths = exprCtx.map { resolve(it)?.width ?: throw IllegalArgumentException("exprCtx wasn't defined") }
+    val widths = exprCtx.map { resolve(it)?.value?.width ?: throw IllegalArgumentException("exprCtx wasn't defined") }
     val first = widths.firstMostDefined()
 
     return exprCtx.map {
-        val op = resolve(it)?.width ?: throw IllegalArgumentException("exprCtx wasn't defined")
+        val op = resolve(it)?.value?.width ?: throw IllegalArgumentException("exprCtx wasn't defined")
         if (!(op.isCompatibleWith(first) || (op.isSimple() && first.isSimple()))) {
             onError(it)
             return@map false

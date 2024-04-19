@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.lucidv2.types
 
 import com.alchitry.labs2.parsers.Evaluable
+import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
 import com.alchitry.labs2.parsers.lucidv2.values.SimpleValue
 import com.alchitry.labs2.parsers.lucidv2.values.Value
 
@@ -13,9 +14,10 @@ class ProxySignal(
     direction: SignalDirection,
     parent: SignalParent?,
     initialValue: Value,
+    type: ExprType,
     signed: Boolean = initialValue is SimpleValue && initialValue.signed,
     private val onRead: (evalContext: Evaluable?) -> Value
-) : Signal(name, direction, parent, initialValue, signed) {
+) : Signal(name, direction, parent, initialValue, type, signed) {
 
     override fun read(evalContext: Evaluable?): Value = onRead(evalContext)
     fun baseRead(evalContext: Evaluable?) = super.read(evalContext)

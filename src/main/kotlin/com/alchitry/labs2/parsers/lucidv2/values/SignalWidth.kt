@@ -118,7 +118,7 @@ sealed class SignalWidth {
             is DefinedSimpleWidth -> this
             is ResolvableWidth -> {
                 runBlocking { exprEval.walk(context, ignoreSkip = true) }
-                val value = exprEval.resolve(context) ?: error("Failed to resolve width: $this!")
+                val value = exprEval.resolve(context)?.value ?: error("Failed to resolve width: $this!")
                 val size = (value as? SimpleValue)?.toBigInt()?.intValueExact()
                 if (size != null)
                     when (this) {
@@ -186,15 +186,15 @@ sealed class SignalWidth {
         check(dims.isNotEmpty()) { "Failed to get any dimensions for this width!" }
 
         if (dims.size == 1) {
-            val d = dims.first() ?: return UndefinedValue(true)
-            return BitListValue(d, constant = true, signed = false)
+            val d = dims.first() ?: return UndefinedValue()
+            return BitListValue(d, signed = false)
         }
 
         val width = BitUtil.minWidthNum(dims.maxOf { it ?: -1 }.coerceAtLeast(1))
 
         return ArrayValue(dims.map {
-            if (it == null) UndefinedValue(true) else
-                BitListValue(it, width, constant = true, signed = false)
+            if (it == null) UndefinedValue() else
+                BitListValue(it, width, signed = false)
         })
     }
 
@@ -229,10 +229,9 @@ sealed class SignalWidth {
     /**
      * Returns a value of this width filled with bit.
      * @param bit is the value to fill the Value with
-     * @param constant if the resulting Value should be marked as constant
-     * @param signed if the resulting Value should be signed. This will be overwritten by structs that have explicit signs.
+     * @param signed if the resulting Value should be signed. Structs with explicit signs will override this.
      */
-    abstract fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): Value
+    abstract fun filledWith(bit: Bit, signed: Boolean): Value
 }
 
 
@@ -263,15 +262,15 @@ sealed class DefinedSimpleWidth : SignalWidth(), SimpleWidth {
 
 data object BitWidth : DefinedSimpleWidth() {
     override val size = 1
-    override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): BitValue =
-        BitValue(bit, constant, signed)
+    override fun filledWith(bit: Bit, signed: Boolean): BitValue =
+        BitValue(bit, signed)
 }
 
 data class BitListWidth(
     override val size: Int
 ) : DefinedSimpleWidth() {
-    override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): BitListValue =
-        BitListValue(size, constant, signed) { bit }
+    override fun filledWith(bit: Bit, signed: Boolean): BitListValue =
+        BitListValue(size, signed) { bit }
 }
 
 sealed interface ArrayWidth {
@@ -282,15 +281,15 @@ data class DefinedArrayWidth(
     val size: Int,
     override val next: SignalWidth
 ) : SignalWidth(), ArrayWidth {
-    override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): ArrayValue =
-        ArrayValue(List(size) { next.filledWith(bit, constant, signed) })
+    override fun filledWith(bit: Bit, signed: Boolean): ArrayValue =
+        ArrayValue(List(size) { next.filledWith(bit, signed) })
 }
 
 data class StructWidth(
     val type: StructType
 ) : SignalWidth() {
-    override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): StructValue =
-        StructValue(type, type.mapValues { it.value.width.filledWith(bit, constant, it.value.signed) })
+    override fun filledWith(bit: Bit, signed: Boolean): StructValue =
+        StructValue(type, type.mapValues { it.value.width.filledWith(bit, it.value.signed) })
 }
 
 
@@ -307,8 +306,8 @@ open class UndefinedSimpleWidth : UndefinedWidth(), SimpleWidth {
         return "UndefinedSimpleWidth"
     }
 
-    override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean): UndefinedValue =
-        UndefinedValue(constant, this)
+    override fun filledWith(bit: Bit, signed: Boolean): UndefinedValue =
+        UndefinedValue(this)
 
     override fun hashCode(): Int {
         return javaClass.hashCode()
@@ -316,8 +315,8 @@ open class UndefinedSimpleWidth : UndefinedWidth(), SimpleWidth {
 }
 
 open class UndefinedArrayWidth(override val next: SignalWidth) : UndefinedWidth(), ArrayWidth {
-    override fun filledWith(bit: Bit, constant: Boolean, signed: Boolean) =
-        UndefinedValue(constant, this)
+    override fun filledWith(bit: Bit, signed: Boolean) =
+        UndefinedValue(this)
 
     override fun equals(other: Any?): Boolean {
         return other is UndefinedArrayWidth && next == this.next

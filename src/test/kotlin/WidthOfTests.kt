@@ -1,3 +1,4 @@
+import com.alchitry.labs2.parsers.lucidv2.parsers.asConstExpr
 import com.alchitry.labs2.parsers.lucidv2.values.ArrayValue
 import com.alchitry.labs2.parsers.lucidv2.values.BitListValue
 import helpers.SimpleLucidTester
@@ -15,7 +16,7 @@ class WidthOfTests {
         assert(tester.hasNoIssues)
 
         assertEquals(
-            BitListValue(8, constant = true, signed = false),
+            BitListValue(8, signed = false).asConstExpr(),
             tester.context.resolve(ctx)
         )
     }
@@ -31,10 +32,10 @@ class WidthOfTests {
         assertEquals(
             ArrayValue(
                 listOf(
-                    BitListValue(2, 4, constant = true, signed = false),
-                    BitListValue(8, 4, constant = true, signed = false),
+                    BitListValue(2, 4, signed = false),
+                    BitListValue(8, 4, signed = false),
                 )
-            ),
+            ).asConstExpr(),
             v
         )
     }

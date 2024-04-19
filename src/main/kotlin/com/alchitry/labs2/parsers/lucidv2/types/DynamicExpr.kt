@@ -3,6 +3,7 @@ package com.alchitry.labs2.parsers.lucidv2.types
 import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.grammar.LucidParser.ExprContext
 import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
+import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
 import com.alchitry.labs2.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs2.parsers.lucidv2.values.Value
 import kotlinx.coroutines.CoroutineStart
@@ -33,7 +34,7 @@ class DynamicExpr(
 
     fun withContext(context: LucidBlockContext) = DynamicExpr(expr, context, widthConstraint)
 
-    var value: Value = context.expr.resolve(expr)?.let {
+    var value: Value = context.expr.resolve(expr)?.value?.let {
         if (widthConstraint != null) {
             if (!widthConstraint.canAssign(it.width))
                 error("Specified width is incompatible with the initial value!")
@@ -57,7 +58,7 @@ class DynamicExpr(
     override fun getSignal(name: String): Signal = asSignal(name)
 
     fun asSignal(name: String): Signal {
-        return Signal(name, SignalDirection.Read, this, value).also { signal ->
+        return Signal(name, SignalDirection.Read, this, value, ExprType.Dynamic).also { signal ->
             signal.hasDriver = true
             val evaluable = Evaluable { signal.write(value) }
             addDependant {
@@ -96,7 +97,7 @@ class DynamicExpr(
     override suspend fun evaluate() {
         context.walk(expr)
 
-        val newValue = context.expr.resolve(expr)
+        val newValue = context.expr.resolve(expr)?.value
 
         if (context.notationCollector.hasErrors) {
             context.notationCollector.printReport()

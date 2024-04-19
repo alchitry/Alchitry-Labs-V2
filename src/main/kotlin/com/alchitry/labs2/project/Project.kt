@@ -10,6 +10,7 @@ import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs2.parsers.lucidv2.context.LucidModuleTypeContext
 import com.alchitry.labs2.parsers.lucidv2.context.LucidTestBenchContext
+import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
 import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.lucidv2.values.Bit
 import com.alchitry.labs2.parsers.lucidv2.values.ValueFormat
@@ -532,7 +533,8 @@ data class Project(
                     name = it.name,
                     direction = SignalDirection.Read,
                     parent = null,
-                    initialValue = it.width.filledWith(Bit.B0, constant = false, signed = false),
+                    initialValue = it.width.filledWith(Bit.B0, signed = false),
+                    type = ExprType.Dynamic,
                     signed = false
                 )
             }
@@ -542,9 +544,9 @@ data class Project(
                 val signal = ports[port.getSignal().name] ?: return@forEach // error should already be caught
 
                 when (port) {
-                    is Signal -> signal.write(signal.width.filledWith(Bit.B1, constant = false, signed = false))
+                    is Signal -> signal.write(signal.width.filledWith(Bit.B1, signed = false))
                     is SubSignal -> signal.select(port.selection)
-                        .apply { write(width.filledWith(Bit.B1, constant = false, signed = false)) }
+                        .apply { write(width.filledWith(Bit.B1, signed = false)) }
                 }
             }
 

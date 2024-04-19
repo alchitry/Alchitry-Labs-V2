@@ -57,7 +57,7 @@ data class SignalParser(
         val function = context.resolveFunction(funcCtx.name()?.text ?: return) as? Function.Custom ?: return
         function.args.forEach {
             context.localSignals[it.name] =
-                Signal(it.name, SignalDirection.Read, null, it.width.filledWith(Bit.B0, false, it.signed))
+                Signal(it.name, SignalDirection.Read, null, it.width.filledWith(Bit.B0, it.signed), ExprType.Known)
         }
     }
 
@@ -193,7 +193,7 @@ data class SignalParser(
 
         var current: SignalWidth? = structType?.let { StructWidth(it) }
         dims.forEach { d ->
-            val v = context.resolve(d)
+            val v = context.resolve(d)?.value
             current = when (v) {
                 is SimpleValue -> {
                     val size = v.toBigInt()?.toInt() ?: return

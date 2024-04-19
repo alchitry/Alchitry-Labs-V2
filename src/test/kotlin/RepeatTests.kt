@@ -30,7 +30,7 @@ class RepeatTests {
         )
         val module = tester.fullParse()
         val out = module.ports["out"] ?: error("Failed to resolve out")
-        assertEquals(BitListValue(136, width = 32, constant = false, signed = false), out.external.read())
+        assertEquals(BitListValue(136, width = 32, signed = false), out.external.read())
         println(tester.notationManager.getReport().text)
         assert(tester.notationManager.hasNoErrors)
     }

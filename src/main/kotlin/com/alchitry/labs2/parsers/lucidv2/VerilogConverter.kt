@@ -5,6 +5,7 @@ import com.alchitry.labs2.parsers.grammar.LucidBaseListener
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs2.parsers.lucidv2.parsers.ExprParser
+import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
 import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.lucidv2.types.Function
 import com.alchitry.labs2.parsers.lucidv2.values.*
@@ -44,8 +45,8 @@ class VerilogConverter(
      */
     private fun handleConstant(ctx: LucidParser.ExprContext): Boolean {
         val value = context.resolve(ctx) ?: return false
-        if (value.constant) {
-            ctx.verilog = value.flatten().asVerilog() ?: error(ctx, "$value could not be converted to verilog!")
+        if (value.type == ExprType.Constant) {
+            ctx.verilog = value.value.flatten().asVerilog() ?: error(ctx, "$value could not be converted to verilog!")
             return true
         }
         return false

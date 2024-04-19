@@ -418,19 +418,19 @@ class TypesParser(
             return
         }
 
-        if (!expr.constant)
+        if (!expr.type.known)
             context.reportError(ctx, "Array sizes must be a constant value.")
 
-        if (expr is UndefinedValue)
+        if (expr.value is UndefinedValue)
             return
 
-        if (expr !is SimpleValue || !expr.isNumber()) {
+        if (expr.value !is SimpleValue || !expr.value.isNumber()) {
             context.reportError(ctx, "Array sizes must be a number.")
             return
         }
 
         val size = try {
-            expr.toBigInt()!!.intValueExact() // isNumber() check above make !! safe
+            expr.value.toBigInt()!!.intValueExact() // isNumber() check above make !! safe
         } catch (e: ArithmeticException) {
             context.reportError(ctx, "Array size must fit into an integer.")
             return
@@ -489,8 +489,8 @@ class TypesParser(
             dynamicExpr
         }
 
-        val init = dynamicExpr?.value?.resizeToMatch(width) ?: width.filledWith(Bit.Bx, false, signed)
-        val signal = Signal(name, SignalDirection.Both, null, init, signed)
+        val init = dynamicExpr?.value?.resizeToMatch(width) ?: width.filledWith(Bit.Bx, signed)
+        val signal = Signal(name, SignalDirection.Both, null, init, ExprType.Dynamic, signed)
         dynamicExpr?.let {
             it.connectTo(signal)
             signalDynamicExprs[signal] = it
@@ -517,7 +517,7 @@ class TypesParser(
             return
         }
 
-        var init: Value = width.filledWith(Bit.B0, true, signed)
+        var init: Value = width.filledWith(Bit.B0, signed)
 
         val connectedSignals = mutableSetOf<String>()
         val connectedParams = mutableSetOf<String>()

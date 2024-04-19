@@ -64,5 +64,5 @@ enum class Bit {
         }
     }
 
-    fun toBitValue(constant: Boolean, signed: Boolean = false): BitValue = BitValue(this, constant, signed)
+    fun toBitValue(signed: Boolean = false): BitValue = BitValue(this, signed)
 }

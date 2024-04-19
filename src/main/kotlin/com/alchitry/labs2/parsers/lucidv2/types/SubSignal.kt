@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.lucidv2.types
 
 import com.alchitry.labs2.parsers.Evaluable
+import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
 import com.alchitry.labs2.parsers.lucidv2.values.*
 import kotlinx.coroutines.sync.withLock
 
@@ -13,6 +14,7 @@ data class SubSignal(
     }
 
     override val width: SignalWidth = read().width
+    override val type: ExprType = parent.type
 
     override val direction: SignalDirection
         get() = parent.direction

@@ -159,7 +159,7 @@ data class BlockParser(
         val exprCtx = ctx.expr() ?: return
         val newValue = context.resolve(exprCtx) ?: return
 
-        if (!assignee.width.canAssign(newValue.width)) {
+        if (!assignee.width.canAssign(newValue.value.width)) {
             context.reportError(
                 exprCtx,
                 "The expression \"${exprCtx.text}\" doesn't match the dimensions of signal \"${signalCtx.text}\"."
@@ -176,7 +176,7 @@ data class BlockParser(
             exprCtx is ExprArrayContext ||
             exprCtx is ExprNumContext
         ) {
-            if (assignee.width.willTruncate(newValue.width)) {
+            if (assignee.width.willTruncate(newValue.value.width)) {
                 context.reportWarning(
                     exprCtx,
                     "The expression \"${exprCtx.text}\" is wider than \"${signalCtx.text}\" and will be truncated."
@@ -184,14 +184,14 @@ data class BlockParser(
             }
         }
 
-        assignee.write(newValue)
+        assignee.write(newValue.value)
     }
 
     override suspend fun exitCaseStat(ctx: CaseStatContext) {
         val exprCtx = ctx.expr() ?: return
         val value = context.expr.resolve(exprCtx) ?: return
 
-        if (value !is SimpleValue) {
+        if (value.value !is SimpleValue) {
             context.notationCollector.reportError(exprCtx, "Case statement's value must be a simple value.")
             return
         }
@@ -199,11 +199,11 @@ data class BlockParser(
         ctx.caseElem().forEach { caseElemContext ->
             val caseExprCtx = caseElemContext.expr() ?: return@forEach
             val condition = context.expr.resolve(caseExprCtx)
-            if (condition !is SimpleValue) {
+            if (condition?.value !is SimpleValue) {
                 context.notationCollector.reportError(caseExprCtx, "Case statement conditions must be simple values.")
                 return
             }
-            if (!condition.constant) {
+            if (condition.type != ExprType.Constant) {
                 context.notationCollector.reportError(caseExprCtx, "Case statement conditions must be constant.")
                 return
             }
@@ -214,7 +214,7 @@ data class BlockParser(
         val exprCtx = ctx.expr() ?: return
         val condition = context.expr.resolve(exprCtx) ?: return
 
-        if (condition !is SimpleValue && condition !is UndefinedValue) {
+        if (condition.value !is SimpleValue && condition.value !is UndefinedValue) {
             context.notationCollector.reportError(exprCtx, "If condition must be a simple value.")
             return
         }
@@ -227,20 +227,20 @@ data class BlockParser(
 
         val countValue = context.resolve(exprCtx)
 
-        if (countValue?.width !is SimpleWidth) {
+        if (countValue?.value?.width !is SimpleWidth) {
             context.notationCollector.reportError(exprCtx, "Repeat count must be a number!")
             return
         }
 
         val count = try {
-            (countValue as? SimpleValue)?.toBigInt()?.intValueExact() ?: 0
+            (countValue.value as? SimpleValue)?.toBigInt()?.intValueExact() ?: 0
         } catch (e: ArithmeticException) {
             context.notationCollector.reportError(exprCtx, "Repeat count doesn't fit in an integer.")
             return
         }
 
         val dependencies = context.expr.resolveDependencies(exprCtx)
-        val constant = countValue.constant || dependencies?.all { repeatSignals.values.contains(it) } != false
+        val known = countValue.type.known || dependencies?.all { it.type.known } != false
 
         if (!inFunctionBlock && !inTestBlock) {
             if (count < 0) {
@@ -248,7 +248,7 @@ data class BlockParser(
                 return
             }
 
-            if (!constant) {
+            if (!known) {
                 context.notationCollector.reportError(exprCtx, "Repeat count must be constant!")
                 return
             }
@@ -269,10 +269,10 @@ data class BlockParser(
             return
         }
 
-        val sigWidth = if (countValue.constant)
+        val sigWidth = if (countValue.type == ExprType.Constant)
             (count - 1).toBigInteger().minBits()
         else
-            (countValue as? SimpleValue)?.bits?.size ?: 1
+            (countValue.value as? SimpleValue)?.bits?.size ?: 1
 
         val repSignal = RepeatSignal(sigName, sigWidth, repCtx)
 

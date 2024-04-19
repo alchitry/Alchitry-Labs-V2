@@ -55,7 +55,7 @@ data class Component(
             requireNotNull(fileContents) { "Failed to read resource stream: $path" }
 
             if (!fileContents.startsWith("/**"))
-                error("Component library file doesn't start with \"/**\"!")
+                error("Component library file $fileName doesn't start with \"/**\"!")
             val header = fileContents.substringAfter("/**", "").substringBefore("**/", "")
             if (header.isEmpty())
                 error("Component library file's header was empty or missing a closing \"**/\"!")

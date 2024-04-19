@@ -38,7 +38,7 @@ class ModuleMultiPassTests {
 
         val dff = context.resolveSignal("myDff") as Dff
 
-        assertEquals(BitValue(Bit.B1, true, false), dff.clk.value)
+        assertEquals(BitValue(Bit.B1, false), dff.clk.value)
     }
 
     @Test
@@ -66,7 +66,7 @@ class ModuleMultiPassTests {
 
         context.initialize()
 
-        assertEquals(BitListValue(1 + 2 + 3 + 4, 16, signed = false, constant = false), testSig.read(null))
+        assertEquals(BitListValue(1 + 2 + 3 + 4, 16, signed = false), testSig.read(null))
     }
 
     @Test
@@ -97,7 +97,7 @@ class ModuleMultiPassTests {
 
         context.initialize()
 
-        assertEquals(BitValue(Bit.B1, signed = false, constant = false), testSig.read(null))
+        assertEquals(BitValue(Bit.B1, signed = false), testSig.read(null))
     }
 
     @Test
@@ -127,9 +127,9 @@ class ModuleMultiPassTests {
 
         val context = top.context
 
-        (top.getSignal("a") as Signal).write(BitValue(Bit.B0, false, false))
+        (top.getSignal("a") as Signal).write(BitValue(Bit.B0, false))
         context.initialize()
-        (top.getSignal("a") as Signal).write(BitValue(Bit.B1, false, false))
+        (top.getSignal("a") as Signal).write(BitValue(Bit.B1, false))
         try {
             tester.project.processQueue()
             error("ProcessQueue should've thrown an error!")
@@ -174,16 +174,16 @@ class ModuleMultiPassTests {
 
         assert(tester.notationManager.hasNoErrors) { tester.notationManager.getReport() }
 
-        assertEquals(BitListValue(2, 2, signed = false, constant = false), testSig?.read())
+        assertEquals(BitListValue(2, 2, signed = false), testSig?.read())
         assertEquals(enum, context.enum.resolve("MyFsm"))
 
         assertEquals(
-            BitListValue(2, 2, constant = false, signed = false),
+            BitListValue(2, 2, signed = false),
             (context.resolveSignal("w") as? Signal)?.read()
         )
 
         assertEquals(
-            BitListValue(2, 2, constant = false, signed = false),
+            BitListValue(2, 2, signed = false),
             (context.resolveSignal("t") as? Signal)?.read()
         )
     }
@@ -219,7 +219,7 @@ class ModuleMultiPassTests {
 
         val enum = EnumType("MyFsm", setOf("IDLE", "INIT", "RUN", "STOP"), tester.project.resolveGlobal("Enums"))
 
-        assertEquals(BitListValue(2, 2, signed = false, constant = false), testSig.read())
+        assertEquals(BitListValue(2, 2, signed = false), testSig.read())
         assertEquals(enum, tester.project.resolveGlobal("Enums")?.enums?.values?.first())
     }
 }

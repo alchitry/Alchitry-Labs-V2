@@ -6,12 +6,10 @@ import com.alchitry.labs2.parsers.lucidv2.types.SignalSelector
 
 data class BitListValue(
     override val bits: List<Bit>,
-    override val constant: Boolean,
     override val signed: Boolean
-) : SimpleValue(constant, signed), List<Bit> by bits {
-    constructor(size: Int, constant: Boolean, signed: Boolean, init: (Int) -> Bit) : this(
+) : SimpleValue(signed), List<Bit> by bits {
+    constructor(size: Int, signed: Boolean, init: (Int) -> Bit) : this(
         List(size, init),
-        constant,
         signed
     )
 
@@ -27,7 +25,7 @@ data class BitListValue(
 
         ValueFormat.Hex -> buildString {
             bits.chunked(4).asReversed().forEach {
-                val value = BitListValue(it, constant, false)
+                val value = BitListValue(it, false)
                 append(
                     when {
                         value.isNumber() -> value.toBigInt()?.toString(16) ?: "?"
@@ -43,7 +41,6 @@ data class BitListValue(
     override val lsb: Bit = bits.firstOrNull() ?: Bit.Bx
     override val msb: Bit = bits.lastOrNull() ?: Bit.Bx
 
-    override fun asMutable(): BitListValue = copy(constant = false)
     override fun withSign(signed: Boolean): BitListValue = copy(signed = signed)
 
     override val width: DefinedSimpleWidth = BitListWidth(bits.size)
@@ -63,23 +60,23 @@ data class BitListValue(
         if (width == size)
             return copy(signed = signExtend)
         if (width < size)
-            return BitListValue(subList(0, width), constant, signExtend)
+            return BitListValue(subList(0, width), signExtend)
         val extendBit = if (!signExtend && msb == Bit.B1) Bit.B0 else msb
         val newBits = bits.toMutableList()
         repeat(width - size) { newBits.add(extendBit) }
-        return BitListValue(newBits, constant, signExtend)
+        return BitListValue(newBits, signExtend)
     }
 
     /** Changes sign without changing bits */
     fun setSign(signed: Boolean): BitListValue = copy(signed = signed)
 
-    fun getBit(idx: Int): BitValue = BitValue(bits[idx], constant, false)
+    fun getBit(idx: Int): BitValue = BitValue(bits[idx], false)
 
     fun selectBits(selection: SignalSelector.Bits): Value {
         try {
             val newBits = bits.subList(selection.range.first, selection.range.last + 1)
             if (newBits.size == 1)
-                return BitValue(newBits.first(), constant, false)
+                return BitValue(newBits.first(), false)
             return copy(bits = newBits)
         } catch (e: IndexOutOfBoundsException) {
             throw SignalSelectionException(
@@ -101,7 +98,7 @@ data class BitListValue(
     }
 
     override fun subList(fromIndex: Int, toIndex: Int): BitListValue {
-        return BitListValue(bits.subList(fromIndex, toIndex), constant, false)
+        return BitListValue(bits.subList(fromIndex, toIndex), false)
     }
 
     override fun toString(): String {
@@ -110,7 +107,7 @@ data class BitListValue(
 
     override fun write(selection: List<SignalSelector>, newValue: Value): Value {
         if (newValue is UndefinedValue) {
-            return UndefinedValue(constant, width)
+            return UndefinedValue(width)
         }
 
         if (selection.isEmpty()) {

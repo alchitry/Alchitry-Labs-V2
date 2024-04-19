@@ -98,21 +98,21 @@ class ModuleInstanceTests {
         val clk = top.getSignal("clk") as Signal
         val count = top.getSignal("count") as Signal
 
-        val b0 = BitValue(Bit.B0, false, false)
-        val b1 = BitValue(Bit.B1, false, false)
+        val b0 = BitValue(Bit.B0, false)
+        val b1 = BitValue(Bit.B1, false)
 
         runBlocking {
             top.context.initialize()
 
             (0..255).forEach {
-                assertEquals(BitListValue(it, 8, false, false), count.read())
+                assertEquals(BitListValue(it, 8, false), count.read())
 
                 clk.write(b0)
                 tester.project.processQueue()
                 clk.write(b1)
                 tester.project.processQueue()
             }
-            assertEquals(BitListValue(0, 8, false, false), count.read())
+            assertEquals(BitListValue(0, 8, false), count.read())
         }
     }
 
@@ -152,8 +152,8 @@ class ModuleInstanceTests {
         val clk = top.getSignal("clk") as Signal
         val count = top.getSignal("count") as Signal
 
-        val b0 = BitValue(Bit.B0, false, false)
-        val b1 = BitValue(Bit.B1, false, false)
+        val b0 = BitValue(Bit.B0, false)
+        val b1 = BitValue(Bit.B1, false)
 
 
         top.context.initialize()
@@ -163,7 +163,7 @@ class ModuleInstanceTests {
         clk.write(b1)
         tester.project.processQueue()
 
-        assertEquals(BitListValue(8, 8, false, false), count.read())
+        assertEquals(BitListValue(8, 8, false), count.read())
     }
 
     @Test
@@ -206,20 +206,20 @@ class ModuleInstanceTests {
         val clk = top.getSignal("clk") as Signal
         val count = top.getSignal("count") as Signal
 
-        val b0 = BitValue(Bit.B0, false, false)
-        val b1 = BitValue(Bit.B1, false, false)
+        val b0 = BitValue(Bit.B0, false)
+        val b1 = BitValue(Bit.B1, false)
 
 
         top.context.initialize()
 
         (0..127).forEach {
-            assertEquals(BitListValue(it * 2, 8, false, false), count.read())
+            assertEquals(BitListValue(it * 2, 8, false), count.read())
 
             clk.write(b0)
             tester.project.processQueue()
             clk.write(b1)
             tester.project.processQueue()
         }
-        assertEquals(BitListValue(0, 8, false, false), count.read())
+        assertEquals(BitListValue(0, 8, false), count.read())
     }
 }

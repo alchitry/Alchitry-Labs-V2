@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.lucidv2.types
 
 import com.alchitry.labs2.parsers.grammar.LucidParser
+import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
 import com.alchitry.labs2.parsers.lucidv2.values.DefinedSimpleWidth
 import com.alchitry.labs2.parsers.lucidv2.values.UndefinedValue
 
@@ -13,7 +14,8 @@ class RepeatSignal(
         name,
         SignalDirection.Read,
         this,
-        UndefinedValue(false, DefinedSimpleWidth(width))
+        UndefinedValue(DefinedSimpleWidth(width)),
+        ExprType.Known
     )
 
     override fun getSignal(name: String): Signal? {

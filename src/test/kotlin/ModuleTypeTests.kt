@@ -42,19 +42,19 @@ class ModuleTypeTests {
                 mapOf(
                     "CLK_FREQ" to Parameter(
                         "CLK_FREQ",
-                        BitListValue(100000000.toBigInteger(), true),
+                        BitListValue(100000000.toBigInteger()),
                         true,
                         tree.first().second.module(0)?.paramList()?.paramDec(0)?.paramConstraint()?.expr()
                     ),
                     "MAX_CT" to Parameter(
                         "MAX_CT",
-                        BitListValue(100.toBigInteger(), true),
+                        BitListValue(100.toBigInteger()),
                         false,
                         null
                     ),
                     "NEG_TEST" to Parameter(
                         "NEG_TEST",
-                        BitListValue((-100).toBigInteger(), true),
+                        BitListValue((-100).toBigInteger()),
                         false,
                         tree.first().second.module(0)?.paramList()?.paramDec(2)?.paramConstraint()?.expr()
                     )

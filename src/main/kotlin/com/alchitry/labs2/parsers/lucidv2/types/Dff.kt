@@ -2,6 +2,7 @@ package com.alchitry.labs2.parsers.lucidv2.types
 
 import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
 import com.alchitry.labs2.parsers.lucidv2.signals.snapshot.SnapshotParent
 import com.alchitry.labs2.parsers.lucidv2.signals.snapshot.Snapshotable
 import com.alchitry.labs2.parsers.lucidv2.values.Bit
@@ -17,8 +18,8 @@ data class Dff(
     val signed: Boolean
 ) : SignalParent, Snapshotable {
     override val parent: SignalParent? = null
-    val d = Signal("d", SignalDirection.Write, this, init.asMutable(), signed)
-    val q = Signal("q", SignalDirection.Read, this, init.asMutable(), signed).also { it.hasDriver = true }
+    val d = Signal("d", SignalDirection.Write, this, init, ExprType.Dynamic, signed)
+    val q = Signal("q", SignalDirection.Read, this, init, ExprType.Dynamic, signed).also { it.hasDriver = true }
     private var lastClk: Bit? = null
 
     init {
@@ -59,7 +60,7 @@ data class Dff(
                 q.write(d.read())
             }
         } else if (lastClk?.isNumber() == false || !clkValue.isNumber()) {
-            q.write(q.width.filledWith(Bit.Bx, false, q.signed))
+            q.write(q.width.filledWith(Bit.Bx, q.signed))
         }
         lastClk = clkValue.lsb
     }

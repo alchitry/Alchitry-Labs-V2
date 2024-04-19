@@ -194,7 +194,7 @@ class SignalDriverTests {
             top.context.initialize()
         }
 
-        assertEquals(BitListValue(12, 8, false, false), (top.getSignal("b") as Signal).read())
+        assertEquals(BitListValue(12, 8, false), (top.getSignal("b") as Signal).read())
     }
 
     @Test

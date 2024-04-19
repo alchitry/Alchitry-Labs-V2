@@ -7,20 +7,18 @@ import com.alchitry.labs2.parsers.lucidv2.types.SignalSelector
  * This should only happen from parameters without a default or test value and any values derived from them.
  */
 data class UndefinedValue(
-    override val constant: Boolean,
     override val width: SignalWidth = UndefinedSimpleWidth()
 ) : Value() {
     override fun isNumber() = false
 
-    override fun asMutable() = copy(constant = false)
     override fun withSign(signed: Boolean) = this
 
     override fun invert() = this
     override fun replaceBit(old: Bit, new: Bit) = this
 
-    override fun isTrue() = BitValue(Bit.Bx, constant, false)
+    override fun isTrue() = BitValue(Bit.Bx, false)
 
-    override fun where(bit: Bit) = this.width.filledWith(Bit.B0, constant, false)
+    override fun where(bit: Bit) = this.width.filledWith(Bit.B0, false)
     override fun replace(mask: Value, bit: Bit) = this
 
     override fun toString(format: ValueFormat): String = "UndefinedValue($width)"
@@ -29,7 +27,6 @@ data class UndefinedValue(
         return when (width) {
             is StructWidth -> {
                 UndefinedValue(
-                    constant,
                     width.type[selection.member]?.width
                         ?: error("Struct type \"${width.type.name}\" doesn't have a member named \"${selection.member}\"!")
                 )
@@ -48,9 +45,9 @@ data class UndefinedValue(
                         "Selection of ${selection.range} is out of range of the value's width of ${width.size}!"
                     }
                 if (selection.count == 1)
-                    UndefinedValue(constant, BitWidth)
+                    UndefinedValue(BitWidth)
                 else
-                    UndefinedValue(constant, BitListWidth(selection.count))
+                    UndefinedValue(BitListWidth(selection.count))
             }
 
             is StructWidth -> error("Bit selector used on StructWidth!")
@@ -61,9 +58,9 @@ data class UndefinedValue(
                         "Selection of ${selection.range} is out of range of the value's width of ${width.size}!"
                     }
                 if (selection.count == 1)
-                    UndefinedValue(constant, width.next)
+                    UndefinedValue(width.next)
                 else
-                    UndefinedValue(constant, DefinedArrayWidth(selection.count, width.next))
+                    UndefinedValue(DefinedArrayWidth(selection.count, width.next))
             }
 
         }
@@ -71,17 +68,17 @@ data class UndefinedValue(
 
     override infix fun and(other: Value): UndefinedValue {
         require(other is SimpleValue || other is UndefinedValue) { "And can only be performed with Undefined or Simple values." }
-        return UndefinedValue(other.constant && constant)
+        return UndefinedValue()
     }
 
     override fun or(other: Value): UndefinedValue {
         require(other is SimpleValue || other is UndefinedValue) { "Or can only be performed with Undefined or Simple values." }
-        return UndefinedValue(other.constant && constant)
+        return UndefinedValue()
     }
 
     override fun xor(other: Value): UndefinedValue {
         require(other is SimpleValue || other is UndefinedValue) { "Xor can only be performed with Undefined or Simple values." }
-        return UndefinedValue(other.constant && constant)
+        return UndefinedValue()
     }
 
     override fun reverse(): UndefinedValue =

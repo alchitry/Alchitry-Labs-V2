@@ -1,5 +1,6 @@
 package benchmarks
 
+import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
 import com.alchitry.labs2.parsers.lucidv2.parsers.toSourceFile
 import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstance
 import com.alchitry.labs2.parsers.lucidv2.types.Signal
@@ -59,7 +60,8 @@ class EvaluationBenchmarks {
             "rst",
             SignalDirection.Write,
             null,
-            BitListValue(0, 1, false, false),
+            BitListValue(0, 1, false),
+            ExprType.Dynamic,
             false
         )
 
@@ -67,14 +69,16 @@ class EvaluationBenchmarks {
             "clk",
             SignalDirection.Write,
             null,
-            BitListValue(0, 1, false, false),
+            BitListValue(0, 1, false),
+            ExprType.Dynamic,
             false
         )
         val leds = Signal(
             "led",
             SignalDirection.Read,
             null,
-            BitListValue(0, 8, constant = false, signed = false),
+            BitListValue(0, 8, signed = false),
+            ExprType.Dynamic,
             false
         )
 
@@ -98,8 +102,8 @@ class EvaluationBenchmarks {
         top.initialWalk()
         top.context.initialize()
 
-        val low = Bit.B0.toBitValue(constant = false, signed = false)
-        val high = Bit.B1.toBitValue(constant = false, signed = false)
+        val low = Bit.B0.toBitValue(signed = false)
+        val high = Bit.B1.toBitValue(signed = false)
 
         val startTime = TimeSource.Monotonic.markNow()
         var loopCount = 0

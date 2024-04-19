@@ -29,15 +29,15 @@ data class ModuleParser(
     override fun exitParamDefault(ctx: LucidParser.ParamDefaultContext) {
         val parent = ctx.parent as? LucidParser.ParamDecContext ?: return
         val name = parent.name()?.text ?: return
-        val defaultValue = ctx.expr()?.let { context.resolve(it) } ?: UndefinedValue(true)
-        localParams[name] = Signal(name, SignalDirection.Read, null, defaultValue)
+        val defaultValue = ctx.expr()?.let { context.resolve(it)?.value } ?: UndefinedValue()
+        localParams[name] = Signal(name, SignalDirection.Read, null, defaultValue, ExprType.Constant)
     }
 
     override fun enterParamDec(ctx: LucidParser.ParamDecContext) {
         val name = ctx.name()?.text ?: return
         if (localParams.contains(name))
             return
-        Signal(name, SignalDirection.Read, null, UndefinedValue(true)).also {
+        Signal(name, SignalDirection.Read, null, UndefinedValue(), ExprType.Constant).also {
             localParams[name] = it
             publicParams[name] = it
         }
@@ -61,7 +61,7 @@ data class ModuleParser(
 
     override fun exitParamConstraint(ctx: LucidParser.ParamConstraintContext) {
         inConstraint = false
-        val value = context.resolve(ctx.expr() ?: return)
+        val value = context.resolve(ctx.expr() ?: return)?.value
         if (value is UndefinedValue)
             return
         if (value?.isTrue()?.bit != Bit.B1) {
@@ -101,7 +101,7 @@ data class ModuleParser(
             }
 
             val defaultTestOnly = paramCtx.paramDefault()?.getChild(0)?.text == "~"
-            val defaultValue = paramCtx.paramDefault()?.expr()?.let { context.resolve(it) }
+            val defaultValue = paramCtx.paramDefault()?.expr()?.let { context.resolve(it)?.value }
             val constraintContext = paramCtx.paramConstraint()?.expr()
 
             if (params.putIfAbsent(

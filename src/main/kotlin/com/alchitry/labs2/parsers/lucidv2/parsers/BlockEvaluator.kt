@@ -48,20 +48,20 @@ data class BlockEvaluator(
         val assignee = ctx.signal()?.let { context.resolve(it) } ?: return
         val newValue = ctx.expr()?.let { context.resolve(it) } ?: return
 
-        assignee.quietWrite(newValue, context.evalContext)
+        assignee.quietWrite(newValue.value, context.evalContext)
 
         writtenSignals.add(assignee.getSignal())
     }
 
     override suspend fun exitCaseStat(ctx: CaseStatContext) {
-        val value = ctx.expr()?.let { context.expr.resolve(it) } as? SimpleValue ?: return
+        val value = ctx.expr()?.let { context.expr.resolve(it)?.value } as? SimpleValue ?: return
         ctx.caseElem().forEach { elemCtx ->
             val exprCtx: ExprContext? = elemCtx.expr()
             if (exprCtx == null) { // default case
                 context.walk(elemCtx.caseBlock() ?: error("Missing case block!"))
                 return
             }
-            val condition = context.expr.resolve(exprCtx) as? SimpleValue ?: return
+            val condition = context.expr.resolve(exprCtx)?.value as? SimpleValue ?: return
             if ((condition isEqualTo value).bit == Bit.B1) {
                 context.walk(elemCtx.caseBlock() ?: error("Missing case block!"))
                 return
@@ -71,7 +71,7 @@ data class BlockEvaluator(
 
     override suspend fun exitIfStat(ctx: IfStatContext) {
         val expr = ctx.expr() ?: return
-        val condition = context.expr.resolve(expr) as? SimpleValue ?: return
+        val condition = context.expr.resolve(expr)?.value as? SimpleValue ?: return
         val truthBit = condition.isTrue().bit
 
         if (!truthBit.isNumber()) {
@@ -86,7 +86,7 @@ data class BlockEvaluator(
     }
 
     override suspend fun exitRepeatStat(ctx: RepeatStatContext) {
-        val countValue = ctx.expr()?.let { context.expr.resolve(it) } as? SimpleValue ?: return
+        val countValue = ctx.expr()?.let { context.expr.resolve(it)?.value } as? SimpleValue ?: return
         val count = countValue.toBigInt()?.toInt() ?: return
 
         val signalName = ctx.name()?.text
@@ -98,7 +98,8 @@ data class BlockEvaluator(
                     signalName,
                     SignalDirection.Read,
                     null,
-                    BitListValue(0, width, false, false)
+                    BitListValue(0, width, false),
+                    ExprType.Known
                 )
             }
 
@@ -109,7 +110,6 @@ data class BlockEvaluator(
                 BitListValue(
                     value = it,
                     width = signal.width.bitCount ?: error("Repeat signal has an undefined width!"),
-                    constant = false,
                     signed = false
                 ),
                 context.evalContext

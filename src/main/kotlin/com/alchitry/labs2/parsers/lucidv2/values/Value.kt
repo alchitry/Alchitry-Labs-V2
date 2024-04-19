@@ -1,5 +1,6 @@
 package com.alchitry.labs2.parsers.lucidv2.values
 
+import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
 import com.alchitry.labs2.parsers.lucidv2.types.*
 
 sealed class ValueFormat {
@@ -11,11 +12,9 @@ sealed class ValueFormat {
 
 
 sealed class Value : Measurable {
-    abstract val constant: Boolean
     abstract fun isNumber(): Boolean
 
     /** Makes a copy of this Value that has the constant flag set as false. */
-    abstract fun asMutable(): Value
     abstract fun withSign(signed: Boolean): Value
     abstract fun invert(): Value
     abstract fun isTrue(): BitValue
@@ -73,18 +72,18 @@ sealed class Value : Measurable {
     }
 
     fun andReduce(): BitValue {
-        return getBits().reduce { a, b -> a and b }.toBitValue(constant)
+        return getBits().reduce { a, b -> a and b }.toBitValue()
     }
 
     fun orReduce(): BitValue {
-        return getBits().reduce { a, b -> a or b }.toBitValue(constant)
+        return getBits().reduce { a, b -> a or b }.toBitValue()
     }
 
     fun xorReduce(): BitValue {
-        return getBits().reduce { a, b -> a xor b }.toBitValue(constant)
+        return getBits().reduce { a, b -> a xor b }.toBitValue()
     }
 
-    fun flatten(): BitListValue = BitListValue(getBits(), constant, false)
+    fun flatten(): BitListValue = BitListValue(getBits(), false)
 
     /** Returns true if the other value can be scaled to match this value. */
     fun canAssign(other: Value): Boolean = width.canAssign(other.width)
@@ -127,11 +126,12 @@ sealed class Value : Measurable {
      */
     abstract fun write(selection: SignalSelection, newValue: Value): Value
 
-    fun asSignal(name: String, parent: SignalParent? = null) = Signal(
+    fun asSignal(name: String, type: ExprType, parent: SignalParent? = null) = Signal(
         name,
         SignalDirection.Read,
         parent,
-        this
+        this,
+        type
     ).also { it.hasDriver = true }
 }
 

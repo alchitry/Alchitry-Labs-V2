@@ -8,14 +8,13 @@ import com.alchitry.labs2.parsers.lucidv2.parsers.*
 import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.lucidv2.types.Function
 import com.alchitry.labs2.parsers.lucidv2.values.SignalWidth
-import com.alchitry.labs2.parsers.lucidv2.values.Value
 import com.alchitry.labs2.parsers.notations.ErrorListener
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.project.files.SourceFile
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 
 interface LucidExprContext : ErrorListener {
-    fun resolve(exprCtx: ExprContext): Value?
+    fun resolve(exprCtx: ExprContext): Expr?
     fun resolve(bitSelectionContext: BitSelectionContext): List<BitSelection>
     fun resolve(signalCtx: SignalContext): SignalOrSubSignal?
     fun resolve(signalWidthContext: SignalWidthContext): SignalWidth?

@@ -2,6 +2,7 @@ package com.alchitry.labs2.parsers.lucidv2.types
 
 import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
 import com.alchitry.labs2.parsers.lucidv2.values.Value
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
@@ -35,6 +36,8 @@ sealed interface SignalOrSubSignal : Measurable {
      */
     suspend fun publish()
     val direction: SignalDirection
+
+    val type: ExprType
 
     fun getSignal(): Signal =
         when (this) {

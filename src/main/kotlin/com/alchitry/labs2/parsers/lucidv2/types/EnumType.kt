@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.lucidv2.types
 
 import com.alchitry.labs2.parsers.BitUtil
+import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
 import com.alchitry.labs2.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs2.parsers.lucidv2.values.BitListWidth
 
@@ -15,8 +16,9 @@ data class EnumType(
 
     override val width = BitListWidth(BitUtil.minWidthNum(members.size - 1))
     val memberSignals = members.mapIndexed { idx, name ->
-        BitListValue(idx, width.size, constant = true, signed = false).asSignal(
+        BitListValue(idx, width.size, signed = false).asSignal(
             name,
+            ExprType.Constant,
             this
         )
     }.associateBy { it.name }

@@ -12,15 +12,15 @@ internal class LucidToVerilogTests {
     fun simpleValue() {
         assertEquals(
             "4'ha",
-            BitListValue(BigInteger.valueOf(10), constant = true, signed = false).asVerilog()
+            BitListValue(BigInteger.valueOf(10), signed = false).asVerilog()
         )
         assertEquals(
             "5'sha",
-            BitListValue(BigInteger.valueOf(10), constant = true, signed = true).asVerilog()
+            BitListValue(BigInteger.valueOf(10), signed = true).asVerilog()
         )
         assertEquals(
             "4'b1x01",
-            BitListValue(listOf(Bit.B1, Bit.B0, Bit.Bx, Bit.B1), constant = true, signed = false).asVerilog()
+            BitListValue(listOf(Bit.B1, Bit.B0, Bit.Bx, Bit.B1), signed = false).asVerilog()
         )
     }
 

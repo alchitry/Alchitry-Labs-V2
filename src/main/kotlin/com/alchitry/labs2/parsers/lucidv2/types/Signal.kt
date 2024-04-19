@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.lucidv2.types
 
 import com.alchitry.labs2.parsers.Evaluable
+import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
 import com.alchitry.labs2.parsers.lucidv2.signals.snapshot.Snapshot
 import com.alchitry.labs2.parsers.lucidv2.signals.snapshot.Snapshotable
 import com.alchitry.labs2.parsers.lucidv2.values.SignalWidth
@@ -13,7 +14,8 @@ open class Signal(
     override val direction: SignalDirection,
     override val parent: SignalParent?,
     val initialValue: Value,
-    val signed: Boolean = initialValue is SimpleValue && initialValue.signed
+    override val type: ExprType,
+    val signed: Boolean = initialValue is SimpleValue && initialValue.signed,
 ) : SignalOrSubSignal, SignalOrParent, Snapshotable {
     fun select(selection: SignalSelection) = SubSignal(this, selection)
 
@@ -60,7 +62,7 @@ open class Signal(
     private fun quietWrite(v: Value) {
         require(value.canAssign(v)) { "Signal assigned value does not match its size!" }
         val resizedValue = v.resizeToMatch(value.width)
-        nextValue = resizedValue.withSign(signed).asMutable()
+        nextValue = resizedValue.withSign(signed)
     }
 
     var lastValue: Value? = null

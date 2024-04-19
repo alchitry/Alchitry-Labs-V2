@@ -15,12 +15,7 @@ data class StructValue(
 
     override fun toString(format: ValueFormat): String = valueMap.mapValues { it.value.toString(format) }.toString()
 
-    override val constant: Boolean
-        get() = valueMap.values.all { it.constant }
-
     override fun isNumber(): Boolean = values.all { it.isNumber() }
-
-    override fun asMutable(): StructValue = copy(valueMap = mapValues { it.value.asMutable() })
 
     /** withSign() does nothing to struct values since the members have explicit signs */
     override fun withSign(signed: Boolean) = this

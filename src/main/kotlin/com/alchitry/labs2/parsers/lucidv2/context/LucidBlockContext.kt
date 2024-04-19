@@ -203,7 +203,7 @@ class LucidBlockContext(
         instance.module.parameters.values.forEach { param ->
             param.constraint?.let {
                 walk(it, true)
-                if (resolve(it)?.isTrue()?.bit != Bit.B1) {
+                if (resolve(it)?.value?.isTrue()?.bit != Bit.B1) {
                     errorListener.reportError(
                         it,
                         "Parameter constraint failed for ${param.name} (${param.constraint.text.asSingleLine()})"
@@ -266,7 +266,7 @@ class LucidBlockContext(
         localSignalStack.add(mutableMapOf())
 
         function.args.forEachIndexed { idx, (name, width, signed) ->
-            localSignals[name] = args[idx].resizeToMatch(width).withSign(signed).asMutable().asSignal(name, null)
+            localSignals[name] = args[idx].resizeToMatch(width).withSign(signed).asSignal(name, ExprType.Known, null)
         }
 
         walk(function.functionBlock.functionBody()?.block() ?: error("Missing function body block!"))

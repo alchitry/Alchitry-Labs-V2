@@ -225,25 +225,25 @@ data class SignalDriverParser(
     override fun exitAssignStat(ctx: AssignStatContext) {
         val assignee = context.resolve(ctx.signal() ?: return) ?: return
         val currentValue = signals[assignee.getSignal()]
-            ?: assignee.getSignal().width.filledWith(Bit.B0, constant = false, signed = false)
+            ?: assignee.getSignal().width.filledWith(Bit.B0, signed = false)
 
         signals[assignee.getSignal()] = when (assignee) {
-            is Signal -> assignee.width.filledWith(Bit.B1, constant = false, signed = false)
+            is Signal -> assignee.width.filledWith(Bit.B1, signed = false)
             is SubSignal -> currentValue.write(
                 assignee.selection,
-                assignee.width.filledWith(Bit.B1, constant = false, signed = false)
+                assignee.width.filledWith(Bit.B1, signed = false)
             )
         }
 
         val exprCtx = ctx.expr() ?: return
-        val newValue = context.resolve(exprCtx) ?: return
+        val newValue = context.resolve(exprCtx)?.value ?: return
         // runBlocking should be fine since this isn't run during evaluation (multi-thread)
         runBlocking { assignee.write(newValue) }
     }
 
     override fun exitRepeatStat(ctx: RepeatStatContext) {
         val block = ctx.repeatBlock()?.block() ?: return
-        val countValue = ctx.expr()?.let { context.expr.resolve(it) } as? SimpleValue ?: return
+        val countValue = ctx.expr()?.let { context.expr.resolve(it)?.value } as? SimpleValue ?: return
         val count = countValue.toBigInt()?.toInt() ?: return
 
         val signalName = ctx.name()?.text
@@ -255,7 +255,8 @@ data class SignalDriverParser(
                     signalName,
                     SignalDirection.Read,
                     null,
-                    BitListValue(0, width, false, false)
+                    BitListValue(0, width, false),
+                    ExprType.Known
                 )
             }
 
@@ -268,7 +269,6 @@ data class SignalDriverParser(
                     BitListValue(
                         value = it,
                         width = signal.width.bitCount ?: error("Repeat signal has an undefined width!"),
-                        constant = false,
                         signed = false
                     ),
                     context.evalContext
@@ -281,7 +281,7 @@ data class SignalDriverParser(
         drivenSignals[ctx.repeatBlock()?.block() ?: return]?.let { drivers ->
             drivers.forEach { driver ->
                 val currentValue = signals[driver.key]
-                    ?: driver.value.width.filledWith(Bit.B0, constant = false, signed = false)
+                    ?: driver.value.width.filledWith(Bit.B0, signed = false)
                 signals[driver.key] = currentValue.or(driver.value)
             }
         }
@@ -301,9 +301,9 @@ data class SignalDriverParser(
 
 
         ifBlock.keys.union(elseBlock?.keys ?: emptySet()).forEach { signal ->
-            val ifValue = ifBlock[signal] ?: signal.width.filledWith(Bit.B0, constant = false, signed = false)
-            val elseValue = elseBlock?.get(signal) ?: signal.width.filledWith(Bit.B0, constant = false, signed = false)
-            val currentValue = signals[signal] ?: signal.width.filledWith(Bit.B0, constant = false, signed = false)
+            val ifValue = ifBlock[signal] ?: signal.width.filledWith(Bit.B0, signed = false)
+            val elseValue = elseBlock?.get(signal) ?: signal.width.filledWith(Bit.B0, signed = false)
+            val currentValue = signals[signal] ?: signal.width.filledWith(Bit.B0, signed = false)
             signals[signal] = currentValue or combineConditionalAssignments(ifValue, elseValue)
         }
     }
@@ -321,8 +321,8 @@ data class SignalDriverParser(
         // for each signal appearing in any block
         caseMaps.flatMap { it.keys }.toSet().forEach { sig ->
             val signalValues =
-                caseMaps.map { it[sig] ?: sig.width.filledWith(Bit.B0, constant = false, signed = false) }
-            val currentValue = signals[sig] ?: sig.width.filledWith(Bit.B0, constant = false, signed = false)
+                caseMaps.map { it[sig] ?: sig.width.filledWith(Bit.B0, signed = false) }
+            val currentValue = signals[sig] ?: sig.width.filledWith(Bit.B0, signed = false)
             val drivenValue = signalValues.reduce { acc, value -> combineConditionalAssignments(acc, value) }
             val maskedValue = if (forceConditional) drivenValue.replaceBit(Bit.B1, Bit.Bx) else drivenValue
             signals[sig] = currentValue or maskedValue

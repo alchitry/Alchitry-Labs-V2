@@ -8,22 +8,20 @@ import kotlin.math.roundToInt
 
 fun BitListValue(
     bitValues: List<BitValue>,
-    constant: Boolean = bitValues.all { it.constant },
     signed: Boolean = bitValues.all { it.signed }
-) = BitListValue(bitValues.map { it.bit }, constant, signed)
+) = BitListValue(bitValues.map { it.bit }, signed)
 
 fun BitListValue(
     str: String,
     radix: Int = 10,
     width: Int? = null,
-    constant: Boolean,
     signed: Boolean
 ): BitListValue {
     if (radix == 10)
         return if (width != null)
-            BitListValue(BigInteger(str), constant, signed, width)
+            BitListValue(BigInteger(str), signed, width)
         else
-            BitListValue(BigInteger(str), constant, signed)
+            BitListValue(BigInteger(str), signed)
 
     val sigWidth = width ?: (str.length * log2(radix.toFloat()).roundToInt())
 
@@ -97,7 +95,7 @@ fun BitListValue(
 
         else -> throw IllegalArgumentException("Radix must be 256, 16, 10, or 2")
     }
-    return BitListValue(bits, constant, signed)
+    return BitListValue(bits, signed)
 }
 
 fun BigInteger.minBits(signed: Boolean = signum() == -1): Int {
@@ -107,14 +105,12 @@ fun BigInteger.minBits(signed: Boolean = signum() == -1): Int {
 }
 
 fun BigInteger.toBitListValue(
-    constant: Boolean,
     signed: Boolean = signum() == -1,
     width: Int = minBits(signed)
-) = BitListValue(this, constant, signed, width)
+) = BitListValue(this, signed, width)
 
 fun BitListValue(
     bigInt: BigInteger,
-    constant: Boolean,
     signed: Boolean = bigInt.signum() == -1,
     width: Int = bigInt.minBits(signed)
 ): BitListValue {
@@ -137,25 +133,23 @@ fun BitListValue(
         }
     }
 
-    return BitListValue(bits, constant, signed)
+    return BitListValue(bits, signed)
 }
 
 fun BitListValue(
     value: Long,
     width: Int = BitUtil.minWidthNum(value),
-    constant: Boolean,
     signed: Boolean
 ): BitListValue =
-    BitListValue(width, constant, signed) {
+    BitListValue(width, signed) {
         if ((value and (1L shl it)) != 0L) Bit.B1 else Bit.B0
     }
 
 fun BitListValue(
     value: Int,
     width: Int = BitUtil.minWidthNum(value),
-    constant: Boolean,
     signed: Boolean
 ): BitListValue =
-    BitListValue(width, constant, signed) {
+    BitListValue(width, signed) {
         if ((value and (1 shl it)) != 0) Bit.B1 else Bit.B0
     }

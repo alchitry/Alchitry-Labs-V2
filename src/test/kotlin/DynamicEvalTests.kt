@@ -1,4 +1,5 @@
 import com.alchitry.labs2.parsers.Evaluable
+import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
 import com.alchitry.labs2.parsers.lucidv2.types.Dff
 import com.alchitry.labs2.parsers.lucidv2.types.DynamicExpr
 import com.alchitry.labs2.parsers.lucidv2.types.Signal
@@ -17,7 +18,7 @@ class DynamicEvalTests {
     fun basicDynamicExpr() = runBlocking {
         repeat(30) { // repeat to attempt to check for race conditions
             val signal =
-                Signal("mySig", SignalDirection.Both, null, BitListValue("110", 2, constant = false, signed = false))
+                Signal("mySig", SignalDirection.Both, null, BitListValue("110", 2, signed = false), ExprType.Dynamic)
 
             val test =
                 SimpleLucidTester(
@@ -30,26 +31,26 @@ class DynamicEvalTests {
 
             val dynamicExpr = DynamicExpr(exprCtx, test.context)
 
-            assertEquals(BitListValue("001", 2, constant = false, signed = false), dynamicExpr.value)
+            assertEquals(BitListValue("001", 2, signed = false), dynamicExpr.value)
 
-            signal.write(BitListValue("011", 2, constant = false, signed = false))
+            signal.write(BitListValue("011", 2, signed = false))
             test.context.project.processQueue()
 
-            assertEquals(BitListValue("100", 2, constant = false, signed = false), dynamicExpr.value)
+            assertEquals(BitListValue("100", 2, signed = false), dynamicExpr.value)
 
-            signal.write(BitListValue("111", 2, constant = false, signed = false))
+            signal.write(BitListValue("111", 2, signed = false))
             test.context.project.processQueue()
 
-            assertEquals(BitListValue("000", 2, constant = false, signed = false), dynamicExpr.value)
+            assertEquals(BitListValue("000", 2, signed = false), dynamicExpr.value)
         }
     }
 
     @Test
     fun dffTest() = runBlocking {
-        val b0 = BitValue(Bit.B0, false, false)
-        val b1 = BitValue(Bit.B1, false, false)
+        val b0 = BitValue(Bit.B0, false)
+        val b1 = BitValue(Bit.B1, false)
 
-        val clk = Signal("clk", SignalDirection.Read, null, b0, false)
+        val clk = Signal("clk", SignalDirection.Read, null, b0, ExprType.Dynamic, false)
 
         val test =
             SimpleLucidTester(
@@ -86,27 +87,27 @@ class DynamicEvalTests {
     fun signalContextTest() = runBlocking {
         val evaluable = Evaluable { }
         val evaluable2 = Evaluable { }
-        val sig = Signal("test", SignalDirection.Both, null, BitValue(Bit.B1, false, false), false)
-        sig.quietWrite(BitValue(Bit.B0, false, false), evaluable)
+        val sig = Signal("test", SignalDirection.Both, null, BitValue(Bit.B1, false), ExprType.Dynamic, false)
+        sig.quietWrite(BitValue(Bit.B0, false), evaluable)
 
-        assertEquals(BitValue(Bit.B1, false, false), sig.read(null))
-        assertEquals(BitValue(Bit.B1, false, false), sig.read(evaluable2))
-        assertEquals(BitValue(Bit.B0, false, false), sig.read(evaluable))
+        assertEquals(BitValue(Bit.B1, false), sig.read(null))
+        assertEquals(BitValue(Bit.B1, false), sig.read(evaluable2))
+        assertEquals(BitValue(Bit.B0, false), sig.read(evaluable))
 
         runBlocking {
             sig.publish()
         }
 
-        assertEquals(BitValue(Bit.B0, false, false), sig.read(null))
-        assertEquals(BitValue(Bit.B0, false, false), sig.read(evaluable2))
-        assertEquals(BitValue(Bit.B0, false, false), sig.read(evaluable))
+        assertEquals(BitValue(Bit.B0, false), sig.read(null))
+        assertEquals(BitValue(Bit.B0, false), sig.read(evaluable2))
+        assertEquals(BitValue(Bit.B0, false), sig.read(evaluable))
     }
 
     @Test
     fun basicAlwaysEvalTest() = runBlocking {
         val sig1 =
-            Signal("sig1", SignalDirection.Write, null, BitValue(Bit.B0, constant = false, signed = false), false)
-        val sig2 = Signal("sig2", SignalDirection.Read, null, BitValue(Bit.B1, constant = false, signed = false), false)
+            Signal("sig1", SignalDirection.Write, null, BitValue(Bit.B0, signed = false), ExprType.Dynamic, false)
+        val sig2 = Signal("sig2", SignalDirection.Read, null, BitValue(Bit.B1, signed = false), ExprType.Dynamic, false)
 
         val tester = SimpleLucidTester(
             """
@@ -126,29 +127,29 @@ class DynamicEvalTests {
             tester.context.initialize()
         }
 
-        assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.read(null))
-        assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig2.read(null))
+        assertEquals(BitValue(Bit.B1, signed = false), sig1.read(null))
+        assertEquals(BitValue(Bit.B1, signed = false), sig2.read(null))
 
         runBlocking {
-            sig2.write(BitValue(Bit.B0, constant = false, signed = false))
-            assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.read(null))
+            sig2.write(BitValue(Bit.B0, signed = false))
+            assertEquals(BitValue(Bit.B1, signed = false), sig1.read(null))
 
             tester.project.processQueue()
-            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
+            assertEquals(BitValue(Bit.B0, signed = false), sig1.read(null))
 
-            sig2.write(BitValue(Bit.Bx, constant = false, signed = false))
-            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
+            sig2.write(BitValue(Bit.Bx, signed = false))
+            assertEquals(BitValue(Bit.B0, signed = false), sig1.read(null))
 
             tester.project.processQueue()
-            assertEquals(BitValue(Bit.Bx, constant = false, signed = false), sig1.read(null))
+            assertEquals(BitValue(Bit.Bx, signed = false), sig1.read(null))
         }
     }
 
     @Test
     fun testIfStatement() = runBlocking {
         val sig1 =
-            Signal("sig1", SignalDirection.Write, null, BitValue(Bit.B0, constant = false, signed = false), false)
-        val sig2 = Signal("sig2", SignalDirection.Read, null, BitValue(Bit.B1, constant = false, signed = false), false)
+            Signal("sig1", SignalDirection.Write, null, BitValue(Bit.B0, signed = false), ExprType.Dynamic, false)
+        val sig2 = Signal("sig2", SignalDirection.Read, null, BitValue(Bit.B1, signed = false), ExprType.Dynamic, false)
         val tester = SimpleLucidTester(
             """
                 module myMod () {
@@ -172,23 +173,23 @@ class DynamicEvalTests {
 
         val alwaysBlock = tester.context.blockParser.alwaysBlocks.values.first()
 
-        assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.read(null))
-        assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig2.read(null))
+        assertEquals(BitValue(Bit.B1, signed = false), sig1.read(null))
+        assertEquals(BitValue(Bit.B1, signed = false), sig2.read(null))
 
         runBlocking {
-            sig2.write(BitValue(Bit.B0, constant = false, signed = false))
-            assertEquals(BitValue(Bit.B1, constant = false, signed = false), sig1.read(null))
+            sig2.write(BitValue(Bit.B0, signed = false))
+            assertEquals(BitValue(Bit.B1, signed = false), sig1.read(null))
 
             tester.project.processQueue()
-            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
+            assertEquals(BitValue(Bit.B0, signed = false), sig1.read(null))
 
             assert(alwaysBlock.context.notationCollector.hasNoMessages)
 
-            sig2.write(BitValue(Bit.Bx, constant = false, signed = false))
-            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
+            sig2.write(BitValue(Bit.Bx, signed = false))
+            assertEquals(BitValue(Bit.B0, signed = false), sig1.read(null))
 
             tester.project.processQueue()
-            assertEquals(BitValue(Bit.B0, constant = false, signed = false), sig1.read(null))
+            assertEquals(BitValue(Bit.B0, signed = false), sig1.read(null))
 
             assert(alwaysBlock.context.notationCollector.hasWarnings) // warn about Bx value in if statement
         }

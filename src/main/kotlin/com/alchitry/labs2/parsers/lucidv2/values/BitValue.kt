@@ -5,9 +5,8 @@ import com.alchitry.labs2.parsers.lucidv2.types.SignalSelector
 
 data class BitValue(
     val bit: Bit,
-    override val constant: Boolean,
     override val signed: Boolean
-) : SimpleValue(constant, signed) {
+) : SimpleValue(signed) {
     override val size: Int = 1
     override val msb: Bit = bit
     override val lsb: Bit = bit
@@ -15,7 +14,6 @@ data class BitValue(
 
     private fun doOp(other: BitValue, value: Bit) = BitValue(
         value,
-        constant && other.constant,
         signed && other.signed
     )
 
@@ -33,7 +31,6 @@ data class BitValue(
 
     override fun isNumber(): Boolean = bit.isNumber()
 
-    override fun asMutable() = copy(constant = false)
     override fun withSign(signed: Boolean) = copy(signed = signed)
 
     override val width = BitWidth
@@ -49,7 +46,6 @@ data class BitValue(
             Bit.B1 -> Bit.B1
             Bit.Bx, Bit.Bz -> Bit.Bx
         },
-        constant,
         false
     )
 

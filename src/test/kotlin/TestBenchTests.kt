@@ -94,7 +94,7 @@ class TestBenchTests {
 
         val countValues = ((result?.get("dut") as SimParent)["count"] as SimValue)
         assertEquals(101, countValues.size)
-        assertEquals(BitListValue(67, 8, false, false), countValues[67])
+        assertEquals(BitListValue(67, 8, false), countValues[67])
     }
 
     @Test
