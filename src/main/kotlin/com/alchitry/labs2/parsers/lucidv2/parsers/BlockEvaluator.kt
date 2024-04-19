@@ -4,11 +4,9 @@ import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs2.parsers.lucidv2.types.Signal
-import com.alchitry.labs2.parsers.lucidv2.types.SignalDirection
 import com.alchitry.labs2.parsers.lucidv2.values.Bit
 import com.alchitry.labs2.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs2.parsers.lucidv2.values.SimpleValue
-import com.alchitry.labs2.parsers.lucidv2.values.minBits
 
 data class BlockEvaluator(
     private val context: LucidBlockContext
@@ -86,26 +84,12 @@ data class BlockEvaluator(
     }
 
     override suspend fun exitRepeatStat(ctx: RepeatStatContext) {
-        val countValue = ctx.expr()?.let { context.expr.resolve(it)?.value } as? SimpleValue ?: return
-        val count = countValue.toBigInt()?.toInt() ?: return
-
-        val signalName = ctx.name()?.text
-        val width = (count - 1).toBigInteger().minBits()
-
-        val signal =
-            signalName?.let {
-                Signal(
-                    signalName,
-                    SignalDirection.Read,
-                    null,
-                    BitListValue(0, width, false),
-                    ExprType.Known
-                )
-            }
+        val repeatBlock = context.blockParser.resolveRepeatBlock(ctx) ?: return
+        val signal = repeatBlock.createSignal()
 
         signal?.let { context.localSignals[it.name] = it }
 
-        repeat(count) {
+        repeatBlock.forEach {
             signal?.quietWrite(
                 BitListValue(
                     value = it,

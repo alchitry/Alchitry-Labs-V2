@@ -39,7 +39,7 @@
 */
 
 module decoder #(
-    WIDTH : WIDTH > 0 // width of the input
+    WIDTH ~ 8 : WIDTH > 0 // width of the input
 )(
     input in[WIDTH],
     output out[c{1,WIDTHx{1b0}}] // width is 2^WIDTH

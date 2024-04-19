@@ -59,7 +59,7 @@ module pipeline #(
         out = pipe.q[$width(pipe.q)-1]
 
         // for each intermediate state
-        repeat (DEPTH-1, i) {
+        repeat (i, DEPTH-1) {
             pipe.d[i+1] = pipe.q[i] // copy from previous
         }
     }

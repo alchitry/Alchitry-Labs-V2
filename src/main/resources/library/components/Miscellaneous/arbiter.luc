@@ -44,7 +44,7 @@ module arbiter #(
         out = 0                      // default to 0
 
         // start from LSB so that higher bits will have priority
-        repeat(WIDTH, i) {
+        repeat(i, WIDTH) {
             if (in[i])                  // if bit is 1
                 out = 1 << i             // set output to 1 at that bit
         }

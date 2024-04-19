@@ -54,7 +54,7 @@ class ModuleMultiPassTests {
                     always {
                         if (a) {}
                         endValue = 0
-                        repeat(REP_CT, i) {
+                        repeat(i, REP_CT) {
                             endValue = endValue + i
                         }
                     }

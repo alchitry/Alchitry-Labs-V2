@@ -44,7 +44,8 @@ data class SignalParser(
             return
 
         val repCtx = ctx.parent as? RepeatStatContext ?: error("RepeatBlockContext parent wasn't a RepeatStatContext!")
-        context.localSignals.remove(repCtx.name()?.text)
+        val repeatBlock = context.blockParser.resolveRepeatBlock(repCtx) ?: return
+        context.localSignals.remove(repeatBlock.signal)
     }
 
     override fun enterFunctionBody(ctx: FunctionBodyContext) {
@@ -88,6 +89,18 @@ data class SignalParser(
             val signalOrParent = context.resolveSignal(firstName.text)
 
             if (signalOrParent == null) {
+
+                // check if the signal is the first argument in a repeat block
+                if (ctx.name().size == 1 && ctx.bitSelection().isEmpty()) {
+                    val parent = ctx.parent
+                    if (parent is ExprSignalContext) {
+                        val pp = parent.parent
+                        if (pp is RepeatStatContext && pp.expr(0) == parent) {
+                            return
+                        }
+                    }
+                }
+
                 context.reportError(nameCtx.first(), "Failed to resolve signal \"${firstName.text}\"")
                 return
             }

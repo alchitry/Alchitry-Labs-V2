@@ -242,29 +242,15 @@ data class SignalDriverParser(
     }
 
     override fun exitRepeatStat(ctx: RepeatStatContext) {
+        val repeatBlock = context.blockParser.resolveRepeatBlock(ctx) ?: return
         val block = ctx.repeatBlock()?.block() ?: return
-        val countValue = ctx.expr()?.let { context.expr.resolve(it)?.value } as? SimpleValue ?: return
-        val count = countValue.toBigInt()?.toInt() ?: return
-
-        val signalName = ctx.name()?.text
-        val width = (count - 1).toBigInteger().minBits()
-
-        val signal =
-            signalName?.let {
-                Signal(
-                    signalName,
-                    SignalDirection.Read,
-                    null,
-                    BitListValue(0, width, false),
-                    ExprType.Known
-                )
-            }
+        val signal = repeatBlock.createSignal()
 
         startBlock()
 
         signal?.let { context.localSignals[it.name] = it }
         runBlocking {
-            repeat(count) {
+            repeatBlock.forEach {
                 signal?.quietWrite(
                     BitListValue(
                         value = it,

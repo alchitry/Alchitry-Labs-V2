@@ -40,7 +40,7 @@ class SignalDriverTests {
                     always {
                         currentIdx = 0
                         //out = 0
-                        repeat(16, i) {
+                        repeat(i, 16) {
                             out[currentIdx] = 0
                             out[currentIdx+1] = 1
                             currentIdx = currentIdx + 2

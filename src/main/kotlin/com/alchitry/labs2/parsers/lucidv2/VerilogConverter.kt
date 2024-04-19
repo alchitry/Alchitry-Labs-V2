@@ -691,27 +691,28 @@ class VerilogConverter(
     }
 
     override fun exitRepeatStat(ctx: LucidParser.RepeatStatContext) {
-        val repeatSignal =
-            context.blockParser.repeatSignals[ctx] ?: error(ctx, "Missing repeat signal for repeat block!")
-        val repExpr = ctx.expr()?.verilog ?: error(
-            ctx,
-            "Missing repeat count for repeat block!"
-        )
-        ctx.verilog = buildString {
-            val repSigName = repeatSignal.verilogName
-            append("for (")
-            append(repSigName)
-            append(" = 0; ")
-            append(repSigName)
-            append(" < ")
-            append(repExpr)
-            append("; ")
-            append(repSigName)
-            append(" = ")
-            append(repSigName)
-            append(" + 1) ")
-            append(ctx.repeatBlock().requireNotNull(ctx).verilog)
-        }
+        TODO()
+//        val repeatSignal =
+//            context.blockParser.repeatSignals[ctx] ?: error(ctx, "Missing repeat signal for repeat block!")
+//        val repExpr = ctx.expr()?.verilog ?: error(
+//            ctx,
+//            "Missing repeat count for repeat block!"
+//        )
+//        ctx.verilog = buildString {
+//            val repSigName = repeatSignal.verilogName
+//            append("for (")
+//            append(repSigName)
+//            append(" = 0; ")
+//            append(repSigName)
+//            append(" < ")
+//            append(repExpr)
+//            append("; ")
+//            append(repSigName)
+//            append(" = ")
+//            append(repSigName)
+//            append(" + 1) ")
+//            append(ctx.repeatBlock().requireNotNull(ctx).verilog)
+//        }
     }
 
     override fun exitRepeatBlock(ctx: LucidParser.RepeatBlockContext) {

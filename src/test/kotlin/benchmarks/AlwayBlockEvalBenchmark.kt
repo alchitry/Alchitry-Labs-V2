@@ -37,7 +37,7 @@ private val waveSource = """
             out = 0;
 
             // for each output
-            repeat (8, i) {
+            repeat (i, 8) {
                 // take the top bits of the counter and
                 // offset differently them for each output
                 result = ctr.q[CTR_LEN-1-:RES+1] + i * ${'$'}pow(2,RES) / 4;

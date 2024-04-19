@@ -18,7 +18,7 @@ class TestBenchTests {
                     counter dut (.clk(clk))
                     
                     test simpleTest {
-                        repeat(100, i) {
+                        repeat(i, 100) {
                             clk = 0
                             ${"$"}tick()
                             ${"$"}assert(dut.count == i)
@@ -67,7 +67,7 @@ class TestBenchTests {
                         clk = 0
                         ${"$"}tick()
                         
-                        repeat(100, i) {
+                        repeat(i, 100) {
                             ${"$"}assert(dut.count == i)
                             ${"$"}tickClock()
                         }

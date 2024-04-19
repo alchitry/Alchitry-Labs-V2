@@ -5,10 +5,7 @@ import com.alchitry.labs2.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.lucidv2.types.Function
-import com.alchitry.labs2.parsers.lucidv2.values.SimpleValue
-import com.alchitry.labs2.parsers.lucidv2.values.SimpleWidth
-import com.alchitry.labs2.parsers.lucidv2.values.UndefinedValue
-import com.alchitry.labs2.parsers.lucidv2.values.minBits
+import com.alchitry.labs2.parsers.lucidv2.values.*
 
 /**
  * The job of the BlockParser is to parse out always blocks and check them for errors. The AlwaysEvaluator is
@@ -24,11 +21,13 @@ data class BlockParser(
     private val dependencies = mutableSetOf<Signal>()
     private val drivenSignals = mutableSetOf<Signal>()
     private val localRepeatSignals = mutableMapOf<RepeatStatContext, Signal>()
+    private val repeatBlocks = mutableMapOf<RepeatStatContext, RepeatBlock>()
 
     private var inTestBlock = false
     private var inFunctionBlock = false
 
     fun resolveFunction(name: String) = functions[name]
+    fun resolveRepeatBlock(block: RepeatStatContext) = repeatBlocks[block]
 
     suspend fun queueEval() {
         alwaysBlocks.values.forEach {
@@ -222,42 +221,76 @@ data class BlockParser(
 
     override suspend fun enterRepeatBlock(ctx: RepeatBlockContext) {
         val repCtx = ctx.parent as RepeatStatContext
-        val sigName = repCtx.name()?.text
-        val exprCtx = repCtx.expr() ?: return
 
-        val countValue = context.resolve(exprCtx)
+        val allExprCtx = repCtx.expr()
+
+        if (!(1..4).contains(allExprCtx.size)) {
+            context.notationCollector.reportError(
+                repCtx,
+                "Repeat requires 1-4 arguments, ${allExprCtx.size} were given."
+            )
+            return
+        }
+
+        val first = allExprCtx.first()
+
+        val firstUnresolved = context.resolve(first) == null
+
+        val sigName =
+            if (firstUnresolved && first is ExprSignalContext && first.signal()?.name()?.size == 1 && first.signal()
+                    ?.bitSelection()?.size == 0
+            ) {
+                first.text
+            } else null
+
+        if (firstUnresolved && sigName == null) {
+            context.reportError(first, "Failed to determine if this is a number or loop variable name.")
+            return
+        }
+
+        val exprCtx = allExprCtx.subList(if (sigName != null) 1 else 0, allExprCtx.size)
+        val exprList = exprCtx.map { context.resolve(it) }
+
+        if (exprList.isEmpty()) {
+            context.notationCollector.reportError(repCtx, "Repeat count was missing.")
+            return
+        }
+
+        val countValue = exprList[0]
 
         if (countValue?.value?.width !is SimpleWidth) {
-            context.notationCollector.reportError(exprCtx, "Repeat count must be a number!")
+            context.notationCollector.reportError(exprCtx[0], "Repeat count must be a number!")
             return
         }
 
         val count = try {
             (countValue.value as? SimpleValue)?.toBigInt()?.intValueExact() ?: 0
         } catch (e: ArithmeticException) {
-            context.notationCollector.reportError(exprCtx, "Repeat count doesn't fit in an integer.")
+            context.notationCollector.reportError(exprCtx[0], "Repeat count doesn't fit in an integer.")
             return
         }
 
-        val dependencies = context.expr.resolveDependencies(exprCtx)
+        val dependencies = context.expr.resolveDependencies(exprCtx[0])
         val known = countValue.type.known || dependencies?.all { it.type.known } != false
 
         if (!inFunctionBlock && !inTestBlock) {
             if (count < 0) {
-                context.notationCollector.reportError(exprCtx, "Repeat count must be greater than or equal to 0.")
+                context.notationCollector.reportError(exprCtx[0], "Repeat count must be greater than or equal to 0.")
                 return
             }
 
             if (!known) {
-                context.notationCollector.reportError(exprCtx, "Repeat count must be constant!")
+                context.notationCollector.reportError(exprCtx[0], "Repeat count must be constant!")
                 return
             }
         }
 
-        if (sigName == null)
+        if (sigName == null) {
+            repeatBlocks[repCtx] = RepeatBlock(context, null, exprCtx[0], exprCtx.getOrNull(1), exprCtx.getOrNull(2))
             return
+        }
 
-        val nameCtx = repCtx.name() ?: return
+        val nameCtx = (allExprCtx[0] as? ExprSignalContext)?.signal()?.name(0) ?: return
 
         if (nameCtx.TYPE_ID() == null) {
             context.reportError(nameCtx, "Repeat variable name must start with a lowercase letter.")
@@ -278,5 +311,45 @@ data class BlockParser(
 
         repeatSignals[repCtx] = repSignal.signal
         localRepeatSignals[repCtx] = repSignal.signal
+        repeatBlocks[repCtx] = RepeatBlock(context, sigName, exprCtx[0], exprCtx.getOrNull(1), exprCtx.getOrNull(2))
     }
+}
+
+data class RepeatBlock(
+    val context: LucidBlockContext,
+    val signal: String?,
+    val countExprCtx: ExprContext,
+    val startExprCtx: ExprContext?,
+    val stepExprCtx: ExprContext?
+) {
+    private val countExpr: Expr? get() = context.resolve(countExprCtx)
+    private val startExpr: Expr? get() = startExprCtx?.let { context.resolve(it) }
+    private val stepExpr: Expr? get() = stepExprCtx?.let { context.resolve(it) }
+
+    val count: Int get() = (countExpr?.value as? SimpleValue)?.toBigInt()?.intValueExact() ?: 0
+    val start: Int get() = (startExpr?.value as? SimpleValue)?.toBigInt()?.intValueExact() ?: 0
+    val step: Int get() = (stepExpr?.value as? SimpleValue)?.toBigInt()?.intValueExact() ?: 1
+
+    inline fun forEach(block: (Int) -> Unit) {
+        var idx = start
+        repeat(count) {
+            block(idx)
+            idx += step
+        }
+    }
+
+    fun createSignal(): Signal? {
+        return signal?.let {
+            Signal(
+                it,
+                SignalDirection.Read,
+                null,
+                BitListValue(start, minBits, false),
+                ExprType.Known
+            )
+        }
+    }
+
+    val minBits: Int
+        get() = start.toBigInteger().minBits().coerceAtLeast((start + step * (count - 1)).toBigInteger().minBits())
 }

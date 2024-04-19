@@ -46,7 +46,7 @@ module encoder #(
         out = bx // default to junk
 
         // for each bit
-        repeat(WIDTH, i) {
+        repeat(i, WIDTH) {
             if (in[i])  // if the bit is set
                 out = i // the output is the index of that bit
         }
