@@ -6,13 +6,15 @@ import com.alchitry.labs2.parsers.grammar.LucidParser.EnumDecContext
 import com.alchitry.labs2.parsers.lucidv2.context.LucidExprContext
 import com.alchitry.labs2.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs2.parsers.lucidv2.types.EnumType
+import com.alchitry.labs2.parsers.lucidv2.types.SignalOrParent
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 data class EnumParser(
     private val context: LucidExprContext,
     private val enumTypes: MutableMap<EnumDecContext, EnumType> = mutableMapOf(),
     val localEnumType: MutableMap<String, EnumType> = mutableMapOf()
 ) : LucidBaseListener(), SignalResolver {
-    override fun resolve(name: String) = localEnumType[name]
+    override fun resolve(ctx: ParserRuleContext, name: String): SignalOrParent? = localEnumType[name]
     fun resolve(enumDecContext: EnumDecContext) = enumTypes[enumDecContext]
 
     override fun enterGlobal(ctx: LucidParser.GlobalContext) {

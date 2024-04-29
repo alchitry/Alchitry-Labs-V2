@@ -79,6 +79,7 @@ alwaysStat
   | ifStat         #AlwaysIf
   | repeatStat     #AlwaysRepeat
   | function semi  #AlwaysFunction
+  | sigDec         #AlwaysSignal
   ;
 
 block

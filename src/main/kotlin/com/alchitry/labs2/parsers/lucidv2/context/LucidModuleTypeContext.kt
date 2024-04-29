@@ -12,6 +12,7 @@ import com.alchitry.labs2.parsers.lucidv2.types.Module
 import com.alchitry.labs2.parsers.lucidv2.types.SignalOrParent
 import com.alchitry.labs2.parsers.notations.ErrorListener
 import com.alchitry.labs2.project.files.SourceFile
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 class LucidModuleTypeContext(
     override val project: ProjectContext,
@@ -57,8 +58,8 @@ class LucidModuleTypeContext(
     /**
      * Searches all SignalParsers to resolve a signal name.
      */
-    override fun resolveSignal(name: String): SignalOrParent? {
-        module.resolve(name)?.let { return it }
+    override fun resolveSignal(ctx: ParserRuleContext, name: String): SignalOrParent? {
+        module.resolve(ctx, name)?.let { return it }
 
         return project.resolveSignal(name)
     }

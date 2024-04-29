@@ -1065,7 +1065,7 @@ data class ExprParser(
 
         if (function == Function.WIDTH) {
             val argCtx = functionExprCtxs.first()
-            val sig = context.resolveSignal(argCtx.text)
+            val sig = context.resolveSignal(ctx, argCtx.text)
             if (sig is EnumType) {
                 exprs[ctx] = sig.width.toValue().asConstExpr()
                 return

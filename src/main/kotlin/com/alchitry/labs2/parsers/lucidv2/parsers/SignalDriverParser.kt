@@ -28,7 +28,7 @@ data class SignalDriverParser(
     override fun exitPortDec(ctx: PortDecContext) {
         val nameCtx = ctx.name() ?: error("Name missing from port dec!")
         val port =
-            context.resolveSignal(nameCtx.text) as? Signal ?: error("Unresolved port of name \"${nameCtx.text}\"")
+            context.resolveSignal(ctx, nameCtx.text) as? Signal ?: error("Unresolved port of name \"${nameCtx.text}\"")
         when (port.direction) {
             SignalDirection.Read ->
                 if (!port.isRead)
@@ -55,7 +55,7 @@ data class SignalDriverParser(
     override fun exitConstDec(ctx: ConstDecContext) {
         val nameCtx = ctx.name() ?: error("Name missing from const dec!")
         val sig =
-            context.resolveSignal(nameCtx.text) as? Signal ?: error("Unresolved sig of name ${nameCtx.text}")
+            context.resolveSignal(ctx, nameCtx.text) as? Signal ?: error("Unresolved sig of name ${nameCtx.text}")
         if (!sig.isRead) {
             context.reportWarning(nameCtx, "The constant \"${sig.name}\" is never used.")
             return
@@ -65,7 +65,15 @@ data class SignalDriverParser(
     override fun exitSigDec(ctx: SigDecContext) {
         val nameCtx = ctx.name() ?: error("Name missing from sig dec!")
         val sig =
-            context.resolveSignal(nameCtx.text) as? Signal ?: error("Unresolved sig of name ${nameCtx.text}")
+            context.resolveSignal(ctx, nameCtx.text) as? Signal ?: error("Unresolved sig of name ${nameCtx.text}")
+
+        if (ctx.parent is AlwaysSignalContext) {
+            if (ctx.expr() != null) {
+                signals[sig] = sig.width.filledWith(Bit.B1, signed = false)
+            }
+            return
+        }
+
         if (!sig.hasDriver && sig.isRead) {
             context.reportError(nameCtx, "The signal \"${sig.name}\" is read but doesn't have a driver!")
             return
@@ -78,7 +86,7 @@ data class SignalDriverParser(
 
     override fun exitDffDec(ctx: DffDecContext) {
         val nameCtx = ctx.name() ?: error("Name missing from dff dec!")
-        val dff = context.resolveSignal(nameCtx.text) as? Dff ?: error("Unresolved dff of name ${nameCtx.text}")
+        val dff = context.resolveSignal(ctx, nameCtx.text) as? Dff ?: error("Unresolved dff of name ${nameCtx.text}")
         if (!dff.d.hasDriver) {
             context.reportError(nameCtx, "The d input of dff \"${dff.name}\" is never driven!")
             return
@@ -91,7 +99,7 @@ data class SignalDriverParser(
 
     override fun exitModuleInst(ctx: ModuleInstContext) {
         val nameNode = ctx.name(1) ?: return
-        val inst = context.resolveSignal(nameNode.text) as? ModuleInstanceOrArray
+        val inst = context.resolveSignal(ctx, nameNode.text) as? ModuleInstanceOrArray
             ?: error("Unresolved instance of name ${nameNode.text}")
 
         inst.external.values.forEach { signal ->
@@ -176,13 +184,14 @@ data class SignalDriverParser(
         val sig = context.resolve(ctx.signal() ?: return) ?: return
         val fullSig = sig.getSignal()
         val expected = expectedDrivers ?: return
-        if (expected.contains(fullSig)) { // should be driving this signal
+        if (expected.contains(fullSig) || fullSig.parent is LocalSignal) { // should be driving this signal
             val drivenValue = signalStack.firstNotNullOfOrNull { it[fullSig] }
             if (drivenValue == null) {
                 val functionCtx = ctx.firstParentOrNull { it is FunctionContext }
                 // exclude inout as they can be read and written any time
                 // exclude reads of the WIDTH function as this doesn't read the signal
-                if (fullSig.direction != SignalDirection.Both && (functionCtx !is FunctionContext || functionCtx.FUNCTION_ID()?.text != "$" + Function.WIDTH.label)) {
+                val isInout = fullSig.parent is ModuleInstance && fullSig.direction == SignalDirection.Both
+                if (!isInout && (functionCtx !is FunctionContext || functionCtx.FUNCTION_ID()?.text != "$" + Function.WIDTH.label)) {
                     context.reportError(ctx, "The signal \"${fullSig.fullName()}\" can't be read before it is written!")
                 }
                 return
@@ -202,7 +211,7 @@ data class SignalDriverParser(
     }
 
     private fun startBlock() {
-        signalStack.add(mutableMapOf()) // push new map onto the stack
+        signalStack.add(mutableMapOf()) // push a new map onto the stack
     }
 
     private fun stopBlock(ctx: ParserRuleContext) {

@@ -26,6 +26,27 @@ class SignalDriverTests {
             """.trimIndent().toSourceFile()
         )
         tester.fullParse()
+        assert(tester.notationManager.hasNoErrors)
+    }
+
+    @Test
+    fun signalNotWrittenTest(): Unit = runBlocking {
+        val tester = LucidTester(
+            """
+                module myModule (
+                    input a
+                ) {
+                    sig mySig[8]
+                   
+                    always {
+                        if (mySig) {} // to remove unused signal warning
+                        if (a) {}
+                    }
+                }
+            """.trimIndent().toSourceFile()
+        )
+        tester.fullParse()
+        assert(tester.notationManager.hasErrors) { tester.notationManager.getReport() }
     }
 
     @Test
@@ -239,5 +260,90 @@ class SignalDriverTests {
         tester.fullParse()
         assert(tester.notationManager.hasNoErrors)
         assert(tester.notationManager.hasWarnings)
+    }
+
+    @Test
+    fun localSignalTruncationTest() = runBlocking {
+        val tester = LucidTester(
+            """
+                module myModule (
+                    input a,
+                    output b[8]
+                ) {
+                    always {
+                        sig mySig[8] = 9b0 // 9b0 is wider than 8 bits
+                        if (a) {}
+                        b = mySig
+                    }
+                }
+            """.trimIndent().toSourceFile()
+        )
+        tester.fullParse()
+        assert(tester.notationManager.hasNoErrors)
+        assert(tester.notationManager.hasWarnings)
+    }
+
+    @Test
+    fun localSignalNestedNameTest() = runBlocking {
+        val tester = LucidTester(
+            """
+                module myModule (
+                    input a,
+                    output b[8]
+                ) {
+                    always {
+                        sig mySig[8] = 8haa
+                        if (a) {
+                            sig mySig2[8] = 8hbb
+                            b = mySig2
+                        }
+                        b = mySig
+                    }
+                }
+            """.trimIndent().toSourceFile()
+        )
+        tester.fullParse()
+        assert(tester.notationManager.hasNoIssues) { tester.notationManager.getReport() }
+    }
+
+    @Test
+    fun localSignalReadBeforeWrittenTest() = runBlocking {
+        val tester = LucidTester(
+            """
+                module myModule (
+                    input a,
+                    output b[8]
+                ) {
+                    always {
+                        if (a) {}
+                        sig mySig[8]
+                        b = mySig
+                    }
+                }
+            """.trimIndent().toSourceFile()
+        )
+        tester.fullParse()
+        assert(tester.notationManager.hasErrors) { tester.notationManager.getReport() }
+    }
+
+    @Test
+    fun localSignalLocalWriteTest() = runBlocking {
+        val tester = LucidTester(
+            """
+                module myModule (
+                    input a,
+                    output b[8]
+                ) {
+                    always {
+                        if (a) {}
+                        sig mySig[8]
+                        mySig = 8haa
+                        b = mySig
+                    }
+                }
+            """.trimIndent().toSourceFile()
+        )
+        tester.fullParse()
+        assert(tester.notationManager.hasNoIssues) { tester.notationManager.getReport() }
     }
 }

@@ -7,8 +7,10 @@ import com.alchitry.labs2.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.lucidv2.values.*
 import com.alchitry.labs2.parsers.notations.NotationCollector
+import com.alchitry.labs2.parsers.parents
 import com.alchitry.labs2.project.files.FileProvider
 import com.alchitry.labs2.project.files.SourceFile
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 fun String.toSourceFile(name: String = "alchitryTop.luc") = SourceFile(FileProvider.StringFile(name, contents = this))
 
@@ -23,11 +25,23 @@ class TypesParser(
     private val arraySizes = mutableMapOf<ArraySizeContext, Int>()
     private val assignmentBlocks = mutableListOf<AssignmentBlock>()
 
+    private val scopeStack = mutableListOf<ParserRuleContext>()
+    private val currentScope get() = scopeStack.last()
+
+    val localSignals = mutableMapOf<ParserRuleContext, MutableMap<String, LocalSignal>>()
+
+    fun resolveLocalSignal(ctx: ParserRuleContext, name: String): Signal? {
+        val parentList = ctx.parents
+        val scopes = localSignals.filterKeys { parentList.contains(it) }.values
+        return scopes.firstOrNull { it.contains(name) }?.get(name)?.signal
+    }
+
     /** Assumes the name is a simple name (no .'s) */
-    override fun resolve(name: String): SignalOrParent? {
+    override fun resolve(ctx: ParserRuleContext, name: String): SignalOrParent? {
         dffs[name]?.let { return it }
         sigs[name]?.let { return it }
         moduleInstances[name]?.let { return it }
+        resolveLocalSignal(ctx, name)?.let { return it }
 
         return null
     }
@@ -39,6 +53,22 @@ class TypesParser(
                 is ModuleInstanceArray -> instOrArray.getAllInstances()
             }
         }
+    }
+
+    override suspend fun enterBlock(ctx: BlockContext) {
+        scopeStack.add(ctx)
+    }
+
+    override suspend fun exitBlock(ctx: BlockContext) {
+        scopeStack.removeLast()
+    }
+
+    override suspend fun enterCaseBlock(ctx: CaseBlockContext) {
+        scopeStack.add(ctx)
+    }
+
+    override suspend fun exitCaseBlock(ctx: CaseBlockContext) {
+        scopeStack.removeLast()
     }
 
     override suspend fun exitModuleInst(ctx: ModuleInstContext) {
@@ -70,7 +100,7 @@ class TypesParser(
             return
         }
 
-        if (context.resolveSignal(moduleInstanceName) != null) {
+        if (context.resolveSignal(ctx, moduleInstanceName) != null) {
             context.reportError(nameCtx[1], "The name $moduleInstanceName is already in use.")
             return
         }
@@ -418,7 +448,7 @@ class TypesParser(
             return
         }
 
-        if (!expr.type.known)
+        if (expr.type != ExprType.Constant)
             context.reportError(ctx, "Array sizes must be a constant value.")
 
         if (expr.value is UndefinedValue)
@@ -450,6 +480,8 @@ class TypesParser(
         val nameCtx = ctx.name() ?: return
         val name = nameCtx.text
 
+        val isLocal = ctx.parent is AlwaysSignalContext
+
         if (nameCtx.TYPE_ID() == null)
             context.reportError(nameCtx, "Sig names must start with a lowercase letter.")
 
@@ -460,43 +492,69 @@ class TypesParser(
             return
         }
 
-        val dynamicExpr = ctx.expr()?.let { expr ->
-            val value = context.resolve(expr)
-            if (value == null) {
-                context.reportError(expr, "Failed to resolve signal assignment!")
-                return
+        if (isLocal) {
+            val exprValue = ctx.expr()?.let { context.resolve(it) }?.value
+
+            if (exprValue != null) {
+
+                if (!width.canAssign(exprValue.width)) {
+                    context.reportError(
+                        ctx.expr()!!,
+                        "Width of this expression isn't compatible with signal \"$name\"."
+                    )
+                    return
+                }
+
+                if (width.willTruncate(exprValue.width)) {
+                    context.reportWarning(
+                        ctx.expr()!!,
+                        "The width of this expression is wider than the signal \"$name\" and will be truncated."
+                    )
+                }
             }
 
-            val dynamicExpr = DynamicExpr(expr, context)
+            val initValue = exprValue?.resizeToMatch(width) ?: width.filledWith(Bit.Bx, signed)
 
-            if (!width.canAssign(dynamicExpr.width)) {
-                context.reportError(
-                    expr,
-                    "Width of this expression isn't compatible with signal \"$name\"."
-                )
-                return
+            val localSig = LocalSignal(name, initValue, signed, currentScope)
+            localSignals.getOrPut(currentScope) { mutableMapOf() }[name] = localSig
+        } else if (!sigs.contains(name)) {
+            val dynamicExpr = ctx.expr()?.let { expr ->
+                val value = context.resolve(expr)
+                if (value == null) {
+                    context.reportError(expr, "Failed to resolve signal assignment!")
+                    return
+                }
+
+                val dynamicExpr = DynamicExpr(expr, context)
+
+                if (!width.canAssign(dynamicExpr.width)) {
+                    context.reportError(
+                        expr,
+                        "Width of this expression isn't compatible with signal \"$name\"."
+                    )
+                    return
+                }
+
+                if (width.willTruncate(dynamicExpr.width)) {
+                    context.reportWarning(
+                        expr,
+                        "The width of this expression is wider than the signal \"$name\" and will be truncated."
+                    )
+                }
+
+                dynamicExprs[expr] = dynamicExpr
+
+                dynamicExpr
             }
 
-            if (width.willTruncate(dynamicExpr.width)) {
-                context.reportWarning(
-                    expr,
-                    "The width of this expression is wider than the signal \"$name\" and will be truncated."
-                )
+            val init = dynamicExpr?.value?.resizeToMatch(width) ?: width.filledWith(Bit.Bx, signed)
+            val signal = Signal(name, SignalDirection.Both, null, init, ExprType.Dynamic, signed)
+            dynamicExpr?.let {
+                it.connectTo(signal)
+                signalDynamicExprs[signal] = it
             }
-
-            dynamicExprs[expr] = dynamicExpr
-
-            dynamicExpr
+            sigs[name] = signal
         }
-
-        val init = dynamicExpr?.value?.resizeToMatch(width) ?: width.filledWith(Bit.Bx, signed)
-        val signal = Signal(name, SignalDirection.Both, null, init, ExprType.Dynamic, signed)
-        dynamicExpr?.let {
-            it.connectTo(signal)
-            signalDynamicExprs[signal] = it
-        }
-
-        sigs[name] = signal
     }
 
     override suspend fun exitDffDec(ctx: DffDecContext) {

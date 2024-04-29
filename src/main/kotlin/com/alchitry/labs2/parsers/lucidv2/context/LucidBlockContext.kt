@@ -15,6 +15,7 @@ import com.alchitry.labs2.parsers.lucidv2.values.Value
 import com.alchitry.labs2.parsers.notations.ErrorListener
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.project.files.SourceFile
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 
 class LucidBlockContext(
@@ -238,12 +239,12 @@ class LucidBlockContext(
     /**
      * Searches all SignalParsers to resolve a signal name.
      */
-    override fun resolveSignal(name: String): SignalOrParent? {
-        localSignalResolver?.resolve(name)?.let { return it }
+    override fun resolveSignal(ctx: ParserRuleContext, name: String): SignalOrParent? {
+        localSignalResolver?.resolve(ctx, name)?.let { return it }
         localSignals[name]?.let { return it }
-        types.resolve(name)?.let { return it }
-        constant.resolve(name)?.let { return it }
-        enum.resolve(name)?.let { return it }
+        types.resolve(ctx, name)?.let { return it }
+        constant.resolve(ctx, name)?.let { return it }
+        enum.resolve(ctx, name)?.let { return it }
 
         (instance as? ModuleInstance)?.getInternalSignal(name)?.let { return it }
 

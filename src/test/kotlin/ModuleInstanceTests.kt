@@ -38,7 +38,7 @@ class ModuleInstanceTests {
         )
 
         val top = tester.fullParse()
-        val myModInst = top.context.types.resolve("myMod") as ModuleInstance
+        val myModInst = top.context.types.resolve(top.moduleContext, "myMod") as ModuleInstance
         assertEquals(SignalDirection.Read, myModInst.getSignal("a")?.direction)
     }
 
@@ -71,7 +71,7 @@ class ModuleInstanceTests {
         )
 
         val top = tester.fullParse()
-        val myModInst = top.context.types.resolve("myMod") as ModuleInstanceArray
+        val myModInst = top.context.types.resolve(top.moduleContext, "myMod") as ModuleInstanceArray
         assertEquals(DefinedArrayWidth(8, BitListWidth(5)), myModInst.getSignal("a")?.width)
         assertEquals(SignalDirection.Read, myModInst.getSignal("a")?.direction)
     }

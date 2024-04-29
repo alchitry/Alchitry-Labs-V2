@@ -34,9 +34,10 @@ class ModuleMultiPassTests {
                 }
             """.trimIndent().toSourceFile("myGlobal.luc")
         )
-        val context = tester.fullParse().context
+        val top = tester.fullParse()
 
-        val dff = context.resolveSignal("myDff") as Dff
+
+        val dff = top.context.resolveSignal(top.moduleContext, "myDff") as Dff
 
         assertEquals(BitValue(Bit.B1, false), dff.clk.value)
     }
@@ -61,10 +62,10 @@ class ModuleMultiPassTests {
                 }
             """.trimIndent().toSourceFile("myModule.luc")
         )
-        val context = tester.fullParse().context
-        val testSig = context.resolveSignal("endValue") as Signal
+        val top = tester.fullParse()
+        val testSig = top.context.resolveSignal(top.moduleContext, "endValue") as Signal
 
-        context.initialize()
+        top.context.initialize()
 
         assertEquals(BitListValue(1 + 2 + 3 + 4, 16, signed = false), testSig.read(null))
     }
@@ -92,8 +93,9 @@ class ModuleMultiPassTests {
                 }
             """.trimIndent().toSourceFile()
         )
-        val context = tester.fullParse().context
-        val testSig = context.resolveSignal("testB") as Signal
+        val top = tester.fullParse()
+        val context = top.context
+        val testSig = context.resolveSignal(top.moduleContext, "testB") as Signal
 
         context.initialize()
 
@@ -175,16 +177,16 @@ class ModuleMultiPassTests {
         assert(tester.notationManager.hasNoErrors) { tester.notationManager.getReport() }
 
         assertEquals(BitListValue(2, 2, signed = false), testSig?.read())
-        assertEquals(enum, context.enum.resolve("MyFsm"))
+        assertEquals(enum, context.enum.resolve(top.moduleContext, "MyFsm"))
 
         assertEquals(
             BitListValue(2, 2, signed = false),
-            (context.resolveSignal("w") as? Signal)?.read()
+            (context.resolveSignal(top.moduleContext, "w") as? Signal)?.read()
         )
 
         assertEquals(
             BitListValue(2, 2, signed = false),
-            (context.resolveSignal("t") as? Signal)?.read()
+            (context.resolveSignal(top.moduleContext, "t") as? Signal)?.read()
         )
     }
 

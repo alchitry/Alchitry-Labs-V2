@@ -5,13 +5,11 @@ import com.alchitry.labs2.parsers.grammar.LucidBaseListener
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.lucidv2.context.LucidExprContext
 import com.alchitry.labs2.parsers.lucidv2.context.SignalResolver
-import com.alchitry.labs2.parsers.lucidv2.types.Module
-import com.alchitry.labs2.parsers.lucidv2.types.Parameter
-import com.alchitry.labs2.parsers.lucidv2.types.Signal
-import com.alchitry.labs2.parsers.lucidv2.types.SignalDirection
+import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.lucidv2.types.ports.Port
 import com.alchitry.labs2.parsers.lucidv2.values.Bit
 import com.alchitry.labs2.parsers.lucidv2.values.UndefinedValue
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 data class ModuleParser(
     private val context: LucidExprContext
@@ -21,7 +19,8 @@ data class ModuleParser(
     private val publicParams: MutableMap<String, Signal> = mutableMapOf()
     private var inConstraint: Boolean = false
 
-    override fun resolve(name: String) = if (inConstraint) localParams[name] else publicParams[name]
+    override fun resolve(ctx: ParserRuleContext, name: String): SignalOrParent? =
+        if (inConstraint) localParams[name] else publicParams[name]
 
     /**
      * Build a local reference to the default value

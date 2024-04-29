@@ -8,14 +8,16 @@ import com.alchitry.labs2.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs2.parsers.lucidv2.types.Constant
 import com.alchitry.labs2.parsers.lucidv2.types.Signal
 import com.alchitry.labs2.parsers.lucidv2.types.SignalDirection
+import com.alchitry.labs2.parsers.lucidv2.types.SignalOrParent
 import com.alchitry.labs2.parsers.lucidv2.values.UndefinedValue
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 data class ConstantParser(
     private val context: LucidExprContext,
     private val constants: MutableMap<ConstDecContext, Constant> = mutableMapOf(),
     val localConstants: MutableMap<String, Signal> = mutableMapOf()
 ) : LucidBaseListener(), SignalResolver {
-    override fun resolve(name: String) = localConstants[name]
+    override fun resolve(ctx: ParserRuleContext, name: String): SignalOrParent? = localConstants[name]
     fun resolve(constDecContext: ConstDecContext) = constants[constDecContext]
 
     override fun enterGlobal(ctx: LucidParser.GlobalContext) {

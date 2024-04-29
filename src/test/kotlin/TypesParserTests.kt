@@ -9,8 +9,9 @@ internal class TypesParserTests {
     @Test
     fun testDffSimpleDeclaration() = runBlocking {
         val tester = SimpleLucidTester("dff testing(.clk(1));")
-        tester.context.walk(tester.parser.dffDec()) // parse
-        val dff = tester.context.types.resolve("testing")
+        val tree = tester.parser.dffDec()
+        tester.context.walk(tree) // parse
+        val dff = tester.context.types.resolve(tree, "testing")
 
         dff as Dff
 
@@ -28,8 +29,9 @@ internal class TypesParserTests {
     @Test
     fun testDffArrayClk() = runBlocking {
         val tester = SimpleLucidTester("dff testing(.clk({1}));")
-        tester.context.walk(tester.parser.dffDec()) // parse
-        tester.context.types.resolve("testing")
+        val tree = tester.parser.dffDec()
+        tester.context.walk(tree) // parse
+        val dff = tester.context.types.resolve(tree, "testing")
 
         assert(tester.hasNoWarnings)
         assert(tester.hasErrors)
@@ -38,8 +40,9 @@ internal class TypesParserTests {
     @Test
     fun testDffArrayRst() = runBlocking {
         val tester = SimpleLucidTester("dff testing(.clk(1), .rst({1}));")
-        tester.context.walk(tester.parser.dffDec()) // parse
-        tester.context.types.resolve("testing")
+        val tree = tester.parser.dffDec()
+        tester.context.walk(tree) // parse
+        val dff = tester.context.types.resolve(tree, "testing")
 
         assert(tester.hasNoWarnings)
         assert(tester.hasErrors)
@@ -48,8 +51,9 @@ internal class TypesParserTests {
     @Test
     fun testDffWideClk() = runBlocking {
         val tester = SimpleLucidTester("dff testing(.clk(2b11));")
-        tester.context.walk(tester.parser.dffDec()) // parse
-        tester.context.types.resolve("testing")
+        val tree = tester.parser.dffDec()
+        tester.context.walk(tree) // parse
+        val dff = tester.context.types.resolve(tree, "testing")
 
         assert(tester.hasNoErrors)
         assert(tester.hasWarnings)
@@ -58,8 +62,9 @@ internal class TypesParserTests {
     @Test
     fun testDffWideRst() = runBlocking {
         val tester = SimpleLucidTester("dff testing(.clk(1), .rst(2b11));")
-        tester.context.walk(tester.parser.dffDec()) // parse
-        tester.context.types.resolve("testing")
+        val tree = tester.parser.dffDec()
+        tester.context.walk(tree) // parse
+        val dff = tester.context.types.resolve(tree, "testing")
 
         assert(tester.hasNoErrors)
         assert(tester.hasWarnings)
@@ -68,8 +73,9 @@ internal class TypesParserTests {
     @Test
     fun testDffInit() = runBlocking {
         val tester = SimpleLucidTester("dff testing(.clk(1), #INIT(1));")
-        tester.context.walk(tester.parser.dffDec()) // parse
-        val dff = tester.context.types.resolve("testing")
+        val tree = tester.parser.dffDec()
+        tester.context.walk(tree) // parse
+        val dff = tester.context.types.resolve(tree, "testing")
 
         dff as Dff
 
@@ -86,8 +92,9 @@ internal class TypesParserTests {
     @Test
     fun testDffInitTruncate() = runBlocking {
         val tester = SimpleLucidTester("dff testing[3](.clk(1), #INIT(15));")
-        tester.context.walk(tester.parser.dffDec()) // parse
-        val dff = tester.context.types.resolve("testing")
+        val tree = tester.parser.dffDec()
+        tester.context.walk(tree) // parse
+        val dff = tester.context.types.resolve(tree, "testing")
 
         dff as Dff
 
@@ -105,8 +112,9 @@ internal class TypesParserTests {
     @Test
     fun testDffInitDimMismatch() = runBlocking {
         val tester = SimpleLucidTester("dff testing[3](.clk(1), #INIT({15}));")
-        tester.context.walk(tester.parser.dffDec()) // parse
-        val dff = tester.context.types.resolve("testing")
+        val tree = tester.parser.dffDec()
+        tester.context.walk(tree) // parse
+        val dff = tester.context.types.resolve(tree, "testing")
 
         dff as Dff
 
@@ -124,9 +132,10 @@ internal class TypesParserTests {
     @Test
     fun testDffArray() = runBlocking {
         val tester = SimpleLucidTester("dff testing[8][4][2](.clk(1));")
-        tester.context.walk(tester.parser.dffDec()) // parse
+        val tree = tester.parser.dffDec()
+        tester.context.walk(tree) // parse
+        val dff = tester.context.types.resolve(tree, "testing")
         assert(tester.hasNoIssues)
-        val dff = tester.context.types.resolve("testing")
 
         dff as Dff
 
@@ -152,11 +161,10 @@ internal class TypesParserTests {
     @Test
     fun testSignedDffArray() = runBlocking {
         val tester = SimpleLucidTester("signed dff testing[8][4][2](.clk(1));")
-        tester.context.walk(tester.parser.dffDec()) // parse
-
+        val tree = tester.parser.dffDec()
+        tester.context.walk(tree) // parse
+        val dff = tester.context.types.resolve(tree, "testing")
         assert(tester.hasNoIssues)
-
-        val dff = tester.context.types.resolve("testing")
 
         dff as Dff
 
@@ -184,10 +192,11 @@ internal class TypesParserTests {
     @Test
     fun testAssignBlockSimple() = runBlocking {
         val tester = SimpleLucidTester(".clk(1), .rst(0) { dff myDff; }")
-        tester.context.walk(tester.parser.assignBlock())
+        val tree = tester.parser.assignBlock()
+        tester.context.walk(tree)
         assert(tester.hasNoIssues)
 
-        val dff = tester.context.types.resolve("myDff")
+        val dff = tester.context.types.resolve(tree, "myDff")
 
         dff as Dff
 
@@ -223,7 +232,8 @@ internal class TypesParserTests {
             }
             """.trimIndent()
         )
-        tester.context.walk(tester.parser.source())
+        val tree = tester.parser.source()
+        tester.context.walk(tree)
         assert(tester.hasNoIssues)
 
         val struct = StructType(
@@ -234,7 +244,7 @@ internal class TypesParserTests {
             )
         )
 
-        val dff = tester.context.types.resolve("testing")
+        val dff = tester.context.types.resolve(tree, "testing")
         dff as Dff
 
         assertEquals(StructWidth(struct), dff.q.read(tester.context.evalContext).width)
@@ -252,7 +262,8 @@ internal class TypesParserTests {
             }
             """.trimIndent()
         )
-        tester.context.walk(tester.parser.source())
+        val tree = tester.parser.source()
+        tester.context.walk(tree)
         assert(tester.hasNoIssues)
 
         val struct = StructType(
@@ -264,7 +275,7 @@ internal class TypesParserTests {
         )
         val width = DefinedArrayWidth(6, StructWidth(struct))
 
-        val dff = tester.context.types.resolve("testing")
+        val dff = tester.context.types.resolve(tree, "testing")
         dff as Dff
 
         assertEquals(width, dff.q.read(tester.context.evalContext).width)
@@ -299,10 +310,11 @@ internal class TypesParserTests {
             }
             """.trimIndent()
         )
-        tester.context.walk(tester.parser.source())
+        val tree = tester.parser.source()
+        tester.context.walk(tree)
         assert(tester.hasNoErrors)
         // TODO: warn about unused signal
-        val sig = tester.context.resolveSignal("testSig")
+        val sig = tester.context.resolveSignal(tree, "testSig")
         sig as Signal
         assertEquals(SignalDirection.Both, sig.direction)
         assertEquals(BitValue(Bit.Bx, false), sig.read(tester.context.evalContext))
@@ -322,10 +334,11 @@ internal class TypesParserTests {
             }
             """.trimIndent()
         )
-        tester.context.walk(tester.parser.source())
+        val tree = tester.parser.source()
+        tester.context.walk(tree)
         assert(tester.hasNoErrors)
         // TODO: warn about unused signal
-        val sig = tester.context.resolveSignal("testSig")
+        val sig = tester.context.resolveSignal(tree, "testSig")
         sig as Signal
 
         val width = BitListWidth(8)

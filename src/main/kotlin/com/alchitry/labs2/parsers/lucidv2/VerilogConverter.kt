@@ -156,7 +156,9 @@ class VerilogConverter(
     }
 
     private fun StringBuilder.addSigs() {
-        (context.types.sigs.values + context.blockParser.repeatSignals.values).forEach { sig ->
+        (context.types.sigs.values +
+                context.blockParser.repeatSignals.values +
+                context.types.localSignals.flatMap { scope -> scope.value.map { it.value.signal } }).forEach { sig ->
             val dynamicExpr = context.types.signalDynamicExprs[sig]
             if (dynamicExpr != null) {
                 append("wire ")
@@ -473,6 +475,7 @@ class VerilogConverter(
                 }
 
                 is RepeatSignal -> "R_${parent.name}_${baseSignal.name}"
+                is LocalSignal -> "L_${parent.name}_${baseSignal.name}"
                 is DynamicExpr -> parent.expr.verilog
             }
         }

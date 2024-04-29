@@ -153,7 +153,9 @@ data class BlockParser(
             return
         }
 
-        drivenSignals.add(assignee.getSignal())
+        if (assignee.getSignal().parent !is LocalSignal) {
+            drivenSignals.add(assignee.getSignal())
+        }
 
         val exprCtx = ctx.expr() ?: return
         val newValue = context.resolve(exprCtx) ?: return
@@ -301,7 +303,7 @@ data class BlockParser(
                 return
             }
 
-            if (context.resolveSignal(sigName) != null) {
+            if (context.resolveSignal(ctx, sigName) != null) {
                 context.reportError(nameCtx, "The name \"$sigName\" is already in use!")
                 return
             }

@@ -86,7 +86,7 @@ data class SignalParser(
         if (cachedUsedChildren == null || cachedSignalOrSubSignal == null) {
             val nameCtx = ctx.name()
             val firstName = nameCtx.firstOrNull() ?: return
-            val signalOrParent = context.resolveSignal(firstName.text)
+            val signalOrParent = context.resolveSignal(ctx, firstName.text)
 
             if (signalOrParent == null) {
 

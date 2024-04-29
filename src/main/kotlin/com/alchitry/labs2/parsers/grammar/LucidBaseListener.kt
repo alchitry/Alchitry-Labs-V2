@@ -628,6 +628,20 @@ open class LucidBaseListener : LucidListener {
 	 *f
 	 * <p>The default implementation does nothing.</p>
 	 */
+	override fun enterAlwaysSignal(ctx: LucidParser.AlwaysSignalContext) {}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override fun exitAlwaysSignal(ctx: LucidParser.AlwaysSignalContext) {}
+
+	/**
+	 * {@inheritDoc}
+	 *f
+	 * <p>The default implementation does nothing.</p>
+	 */
     override fun enterBlock(ctx: LucidParser.BlockContext) {}
 	/**
 	 * {@inheritDoc}
@@ -1712,6 +1726,20 @@ open class SuspendLucidBaseListener : SuspendLucidListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
     override suspend fun exitAlwaysFunction(ctx: LucidParser.AlwaysFunctionContext) {}
+	/**
+	 * {@inheritDoc}
+	 *f
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override suspend fun enterAlwaysSignal(ctx: LucidParser.AlwaysSignalContext) {}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override suspend fun exitAlwaysSignal(ctx: LucidParser.AlwaysSignalContext) {}
+
 	/**
 	 * {@inheritDoc}
 	 *f

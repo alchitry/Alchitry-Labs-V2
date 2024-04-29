@@ -7,6 +7,7 @@ import com.alchitry.labs2.parsers.lucidv2.values.*
 import helpers.LucidTester
 import helpers.SimpleLucidTester
 import kotlinx.coroutines.runBlocking
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -66,7 +67,7 @@ class UndefinedValueTests {
 
     private fun testExprWithLocalValues(expr: String, vararg localValues: Signal): SimpleLucidTester {
         val resolver = object : SignalResolver {
-            override fun resolve(name: String): SignalOrParent? {
+            override fun resolve(ctx: ParserRuleContext, name: String): SignalOrParent? {
                 return localValues.firstOrNull { it.name == name }
             }
         }

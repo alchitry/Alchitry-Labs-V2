@@ -11,6 +11,7 @@ import com.alchitry.labs2.parsers.lucidv2.values.SignalWidth
 import com.alchitry.labs2.parsers.notations.ErrorListener
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.project.files.SourceFile
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 
 interface LucidExprContext : ErrorListener {
@@ -22,7 +23,7 @@ interface LucidExprContext : ErrorListener {
     fun resolve(structDecContext: StructDecContext): StructType?
     fun resolve(enumDecContext: EnumDecContext): EnumType?
     fun resolve(constDecContext: ConstDecContext): Constant?
-    fun resolveSignal(name: String): SignalOrParent?
+    fun resolveSignal(ctx: ParserRuleContext, name: String): SignalOrParent?
     fun resolveStruct(name: String): StructType?
     fun resolveGlobal(name: String): GlobalNamespace?
     fun resolveFunction(name: String): Function? = Function.builtIn.firstOrNull { it.label == name }
@@ -77,9 +78,9 @@ class LucidExprEval(
     /**
      * Searches all SignalParsers to resolve a signal name.
      */
-    override fun resolveSignal(name: String): SignalOrParent? {
+    override fun resolveSignal(ctx: ParserRuleContext, name: String): SignalOrParent? {
         signalProvider(name)?.let { return it }
-        module.resolve(name)?.let { return it }
+        module.resolve(ctx, name)?.let { return it }
 
         return project.resolveSignal(name)
     }

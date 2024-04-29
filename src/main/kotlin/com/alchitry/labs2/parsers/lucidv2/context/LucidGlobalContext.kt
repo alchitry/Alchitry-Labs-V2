@@ -10,6 +10,7 @@ import com.alchitry.labs2.parsers.lucidv2.types.GlobalNamespace
 import com.alchitry.labs2.parsers.lucidv2.types.SignalOrParent
 import com.alchitry.labs2.parsers.notations.ErrorListener
 import com.alchitry.labs2.project.files.SourceFile
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 class LucidGlobalContext(
     override val project: ProjectContext,
@@ -52,9 +53,9 @@ class LucidGlobalContext(
     /**
      * Searches all SignalParsers to resolve a signal name.
      */
-    override fun resolveSignal(name: String): SignalOrParent? {
-        constant.resolve(name)?.let { return it }
-        enum.resolve(name)?.let { return it }
+    override fun resolveSignal(ctx: ParserRuleContext, name: String): SignalOrParent? {
+        constant.resolve(ctx, name)?.let { return it }
+        enum.resolve(ctx, name)?.let { return it }
 
         return project.resolveSignal(name)
     }
