@@ -72,7 +72,6 @@ object ComponentLibrary {
                     notationManager.assertNoErrors()
                     (module.sourceFile.file as Component).dependencies =
                         getModuleDependents().map { it.sourceFile.file as Component }
-                    println("Set ${module.sourceFile.file.componentName} to have dep ${(module.sourceFile.file).dependencies.map { it.componentName }}")
                 }
             }
 

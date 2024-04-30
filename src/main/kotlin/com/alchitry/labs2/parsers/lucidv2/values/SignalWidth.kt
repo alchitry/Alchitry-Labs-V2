@@ -122,12 +122,12 @@ sealed class SignalWidth {
                 val size = (value as? SimpleValue)?.toBigInt()?.intValueExact()
                 if (size != null)
                     when (this) {
-                        is ResolvableArrayWidth -> DefinedArrayWidth(size, next)
+                        is ResolvableArrayWidth -> DefinedArrayWidth(size, next.resolve(exprEval))
                         is ResolvableSimpleWidth -> BitListWidth(size)
                     }
                 else
                     when (this) {
-                        is ResolvableArrayWidth -> UndefinedArrayWidth(next)
+                        is ResolvableArrayWidth -> UndefinedArrayWidth(next.resolve(exprEval))
                         is ResolvableSimpleWidth -> UndefinedSimpleWidth()
                     }
             }
