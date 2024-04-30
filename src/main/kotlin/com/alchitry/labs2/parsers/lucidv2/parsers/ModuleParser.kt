@@ -110,7 +110,7 @@ data class ModuleParser(
             ) {
                 context.reportError(
                     paramNameCtx,
-                    "The parameter name $paramName has already been used."
+                    "The parameter name \"$paramName\" has already been used."
                 )
             }
         }
@@ -143,7 +143,12 @@ data class ModuleParser(
                 return@forEach
             }
 
-            ports[portName] = Port(portName, direction, width, signed, portCtx)
+            if (ports.putIfAbsent(portName, Port(portName, direction, width, signed, portCtx)) != null) {
+                context.reportError(
+                    portNameCtx,
+                    "The port name \"$portName\" has already been used."
+                )
+            }
         }
 
         module = Module(name, params, ports, ctx, context.sourceFile).also {

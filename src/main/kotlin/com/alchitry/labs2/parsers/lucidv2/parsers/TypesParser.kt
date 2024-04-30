@@ -101,7 +101,7 @@ class TypesParser(
         }
 
         if (context.resolveSignal(ctx, moduleInstanceName) != null) {
-            context.reportError(nameCtx[1], "The name $moduleInstanceName is already in use.")
+            context.reportError(nameCtx[1], "The name \"$moduleInstanceName\" is already in use.")
             return
         }
 
@@ -485,6 +485,11 @@ class TypesParser(
         if (nameCtx.TYPE_ID() == null)
             context.reportError(nameCtx, "Sig names must start with a lowercase letter.")
 
+        if (context.resolveSignal(ctx, name) != null) {
+            context.reportError(nameCtx, "The name \"$name\" is already in use.")
+            return
+        }
+
         val width = ctx.signalWidth()?.let { context.resolve(it) }
 
         if (width == null) {
@@ -565,6 +570,11 @@ class TypesParser(
 
         if (nameCtx.TYPE_ID() == null)
             context.reportError(nameCtx, "Dff names must start with a lowercase letter.")
+
+        if (context.resolveSignal(ctx, name) != null) {
+            context.reportError(nameCtx, "The name \"$name\" is already in use.")
+            return
+        }
 
         var clk: DynamicExpr? = null
         var rst: DynamicExpr? = null
