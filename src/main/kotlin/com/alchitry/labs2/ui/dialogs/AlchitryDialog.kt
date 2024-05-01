@@ -25,6 +25,7 @@ fun AlchitryDialog(
     visible: Boolean,
     title: String,
     onClose: () -> Unit,
+    resizable: Boolean = false,
     content: @Composable DialogWindowScope.() -> Unit
 ) {
     val window = LocalComposeWindow.current
@@ -36,7 +37,7 @@ fun AlchitryDialog(
         }, create = {
             ComposeDialog(window, modalityType = Dialog.ModalityType.APPLICATION_MODAL).apply {
                 maximumSize = window.size
-                isResizable = false
+                isResizable = resizable
                 isUndecorated = true
                 this.title = title
                 this.background = Color(background.toArgb())

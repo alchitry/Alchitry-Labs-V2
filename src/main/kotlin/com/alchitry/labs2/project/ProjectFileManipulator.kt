@@ -1,9 +1,6 @@
 package com.alchitry.labs2.project
 
-import com.alchitry.labs2.project.files.ConstraintFile
-import com.alchitry.labs2.project.files.FileProvider
-import com.alchitry.labs2.project.files.ProjectFile
-import com.alchitry.labs2.project.files.SourceFile
+import com.alchitry.labs2.project.files.*
 import com.alchitry.labs2.ui.tabs.Workspace
 
 fun Project.removeFile(file: ProjectFile, delete: Boolean) {
@@ -83,4 +80,22 @@ private fun Project.addConstraintFile(name: String, contents: String = ""): Cons
     newProj.save()
     Project.open(newProj)
     return newConstraintFile
+}
+
+fun Project.addComponents(components: List<Component>) {
+    val newSourceFiles = data.sourceFiles.toMutableSet()
+    val newConstraintFiles = data.constraintFiles.toMutableSet()
+
+    components.filter { component -> !this.components.contains(component) }.forEach { component ->
+        when (component.language) {
+            Languages.ACF, Languages.PCF, Languages.SDC, Languages.XDC ->
+                newConstraintFiles.add(ConstraintFile(component))
+
+            Languages.Lucid, Languages.Verilog -> newSourceFiles.add(SourceFile(component))
+        }
+    }
+
+    val newProj = copy(data = data.copy(constraintFiles = newConstraintFiles, sourceFiles = newSourceFiles))
+    newProj.save()
+    Project.open(newProj)
 }

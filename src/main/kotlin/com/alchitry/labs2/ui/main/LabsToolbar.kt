@@ -93,6 +93,14 @@ fun LabsToolbar() {
                 showACFFileDialog = true
             }
         }
+
+        var showComponentLibrary by remember { mutableStateOf(false) }
+        ComponentLibraryDialog(showComponentLibrary) { showComponentLibrary = false }
+        ToolbarButton(
+            icon = painterResource("icons/add_component.svg"),
+            description = "Component Library",
+            enabled = !running && project != null
+        ) { showComponentLibrary = true }
         ToolbarButton(
             icon = painterResource("icons/check.svg"),
             description = "Check for Errors",

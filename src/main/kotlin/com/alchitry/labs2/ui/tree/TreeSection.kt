@@ -21,16 +21,16 @@ import com.alchitry.labs2.ui.selection.SelectionContext
 import com.alchitry.labs2.ui.theme.AlchitryColors
 
 @Composable
-fun SelectionContext.TreeSection(
+fun <T> SelectionContext<T>.TreeSection(
     title: String,
     indentLevel: Int,
+    selectable: Selectable<T>,
     initiallyExpanded: Boolean = true,
     content: @Composable ColumnScope.() -> Unit
 ) {
     var expanded by remember { mutableStateOf(initiallyExpanded) }
     val expandTransition = updateTransition(expanded, label = "expand")
 
-    val selectable = remember { Selectable() }
     val focusRequester = remember { FocusRequester() }
     var focused by remember { mutableStateOf(false) }
     val isSelected by remember { isSelectedState(selectable) }
@@ -57,7 +57,7 @@ fun SelectionContext.TreeSection(
                 .padding(vertical = 5.dp)
         ) {
             ExpandArrow(expandTransition, Modifier.hiddenClickable { expanded = !expanded })
-            Text(title)
+            Text(title, modifier = Modifier.padding(bottom = 4.dp))
         }
 
         AnimatedVisibility(expanded) {

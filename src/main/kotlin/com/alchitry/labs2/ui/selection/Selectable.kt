@@ -1,4 +1,3 @@
 package com.alchitry.labs2.ui.selection
 
-class Selectable {
-}
+class Selectable<T>(val item: T)

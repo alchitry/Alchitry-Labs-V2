@@ -18,6 +18,7 @@ import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.parsers.notations.NotationManager
 import com.alchitry.labs2.parsers.notations.NotationType
+import com.alchitry.labs2.project.files.Component
 import com.alchitry.labs2.project.files.FileProvider
 import com.alchitry.labs2.project.files.ProjectFile
 import com.alchitry.labs2.project.files.SourceFile
@@ -57,6 +58,8 @@ data class Project(
     private val notationManagerFlow = MutableStateFlow<NotationManager?>(null)
     val scope = CoroutineScope(Dispatchers.Default)
 
+    val components: List<Component> =
+        (data.sourceFiles + data.constraintFiles).mapNotNull { if (it.file is Component) it.file else null }
 
     private val mutableGlobalMapFlow = MutableStateFlow<Map<String, GlobalNamespace>>(emptyMap())
     val globalMapFlow = mutableGlobalMapFlow.asStateFlow()
@@ -103,9 +106,9 @@ data class Project(
         fun open(project: Project): Project {
             if (current != null)
                 close()
-            project.queueNotationsUpdate()
             mutableCurrentFlow.tryEmit(project)
             Settings.openProject = project.projectFile.absolutePath
+            project.queueNotationsUpdate()
             return project
         }
 

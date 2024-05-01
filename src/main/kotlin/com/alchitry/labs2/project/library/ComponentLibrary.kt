@@ -12,9 +12,11 @@ import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.files.Component
 import com.alchitry.labs2.project.files.SourceFile
 import kotlinx.coroutines.runBlocking
+import java.util.*
 
 object ComponentLibrary {
     val components: List<Component>
+    val library: LibrarySection
 
     init {
         val components = mutableListOf<Component>()
@@ -79,6 +81,7 @@ object ComponentLibrary {
         }
 
         this.components = components
+        this.library = LibrarySection.fromComponents(components)
     }
 
     /**
@@ -100,7 +103,7 @@ object ComponentLibrary {
 private data class MutableLibrarySection(
     override val name: String,
     override val components: MutableList<Component> = mutableListOf(),
-    override val subSections: MutableMap<String, MutableLibrarySection> = mutableMapOf()
+    override val subSections: SortedMap<String, MutableLibrarySection> = sortedMapOf()
 ) : LibrarySection {
     fun selectSubSection(list: List<String>): MutableLibrarySection {
         if (list.isEmpty())
@@ -109,10 +112,25 @@ private data class MutableLibrarySection(
         val newList = list.subList(1, list.size)
         return subSections.getOrPut(key) { MutableLibrarySection(key) }.selectSubSection(newList)
     }
+    fun sort() {
+        components.sortBy { it.componentName }
+        subSections.forEach { it.value.sort() }
+    }
 }
 
 interface LibrarySection {
     val name: String
     val components: List<Component>
     val subSections: Map<String, LibrarySection>
+
+    companion object {
+        fun fromComponents(components: List<Component>): LibrarySection {
+            val rootSection = MutableLibrarySection("Components")
+            components.forEach { component ->
+                rootSection.selectSubSection(component.categories).components.add(component)
+            }
+            rootSection.sort()
+            return rootSection
+        }
+    }
 }

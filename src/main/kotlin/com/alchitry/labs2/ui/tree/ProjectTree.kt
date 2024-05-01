@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.files.FileProvider
 import com.alchitry.labs2.project.files.ProjectFile
@@ -14,13 +15,14 @@ import com.alchitry.labs2.ui.dialogs.AcfFileDialog
 import com.alchitry.labs2.ui.dialogs.DeleteFileDialog
 import com.alchitry.labs2.ui.dialogs.LucidFileDialog
 import com.alchitry.labs2.ui.fillMaxIntrinsic
+import com.alchitry.labs2.ui.selection.Selectable
 import com.alchitry.labs2.ui.selection.SingleSelectionContext
 import com.alchitry.labs2.ui.tabs.Workspace
 
 @Composable
 fun ProjectTree() {
     val project = Project.currentFlow.collectAsState().value ?: return
-    val selectionContext = remember { SingleSelectionContext() }
+    val selectionContext = remember { SingleSelectionContext<String>() }
 
     with(selectionContext) {
         Row(
@@ -36,7 +38,7 @@ fun ProjectTree() {
                 LucidFileDialog(showNewLucidModule) { showNewLucidModule = false }
                 var showNewAlchitryConstraint by remember { mutableStateOf(false) }
                 AcfFileDialog(showNewAlchitryConstraint) { showNewAlchitryConstraint = false }
-                TreeSection(project.data.projectName, 0) {
+                TreeSection(project.data.projectName, 0, remember { Selectable("Root") }) {
                     ContextMenuDataProvider(
                         items = {
                             listOf(
@@ -46,7 +48,7 @@ fun ProjectTree() {
                             )
                         }
                     ) {
-                        TreeSection("Source Files", 1) {
+                        TreeSection("Source Files", 1, remember { Selectable("Source Files") }) {
                             project.data.sourceFiles.sortedBy { it.name }.forEach { file ->
                                 key(file) {
                                     val color = project
@@ -76,7 +78,13 @@ fun ProjectTree() {
                                             }
                                         }
                                     ) {
-                                        TreeItem(file.name, 2, color) {
+                                        TreeItem(
+                                            file.name,
+                                            2,
+                                            remember { Selectable(file.name) },
+                                            color,
+                                            if (file.isLibFile) painterResource("icons/component.svg") else null
+                                        ) {
                                             Workspace.openFile(file)
                                         }
                                     }
@@ -93,7 +101,7 @@ fun ProjectTree() {
                             )
                         }
                     ) {
-                        TreeSection("Constraint Files", 1) {
+                        TreeSection("Constraint Files", 1, remember { Selectable("Constraint Files") }) {
                             project.data.constraintFiles.sortedBy { it.name }.forEach { file ->
                                 key(file) {
                                     val color = project
@@ -121,7 +129,13 @@ fun ProjectTree() {
                                             }
                                         }
                                     ) {
-                                        TreeItem(file.name, 2, color) {
+                                        TreeItem(
+                                            file.name,
+                                            2,
+                                            remember { Selectable(file.name) },
+                                            color,
+                                            if (file.isLibFile) painterResource("icons/component.svg") else null
+                                        ) {
                                             Workspace.openFile(file)
                                         }
                                     }
