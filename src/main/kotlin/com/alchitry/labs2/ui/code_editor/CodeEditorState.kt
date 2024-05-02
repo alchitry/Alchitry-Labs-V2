@@ -28,6 +28,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextPainter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
@@ -76,7 +77,10 @@ private fun rememberCodeEditorStyle(): CodeEditorStyle {
     val selectionColor = AlchitryColors.current.SelectionColor
     return remember(density, textColor, fontFamilyResolver, selectionColor) {
         CodeEditorStyle(
-            AlchitryTypography.editor.copy(color = textColor),
+            AlchitryTypography.editor.copy(
+                color = textColor,
+                lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.None)
+            ),
             density,
             fontFamilyResolver,
             textColor.copy(alpha = 0.7f),

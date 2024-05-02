@@ -23,9 +23,9 @@ enum class ResizePriority {
 @Composable
 fun rememberSashData(
     resizePriority: ResizePriority = ResizePriority.EQUAL, first: Float = 1f, second: Float = 1f,
-    minimumSize: Dp = 10.dp
+    minimumSize: Pair<Dp, Dp> = 10.dp to 10.dp
 ): SashData {
-    val minSizePx = LocalDensity.current.run { minimumSize.toPx() }
+    val minSizePx = LocalDensity.current.run { minimumSize.first.toPx() to minimumSize.second.toPx() }
     return remember(minSizePx) {
         SashData(resizePriority, SashSize(first, second), minSizePx)
     }
@@ -46,16 +46,16 @@ data class SashSize(
 class SashData(
     val resizePriority: ResizePriority = ResizePriority.EQUAL,
     size: SashSize = SashSize(),
-    val minimumSize: Float
+    val minimumSize: Pair<Float, Float>
 ) {
     var size by mutableStateOf(size)
     var dragSize = size
 
     fun clampToBounds() {
-        if (size.first < minimumSize) {
-            size = SashSize(minimumSize, size.total - minimumSize)
-        } else if (size.second < minimumSize) {
-            size = SashSize(size.total - minimumSize, minimumSize)
+        if (size.first < minimumSize.first) {
+            size = SashSize(minimumSize.first, size.total - minimumSize.first)
+        } else if (size.second < minimumSize.second) {
+            size = SashSize(size.total - minimumSize.second, minimumSize.second)
         }
     }
 

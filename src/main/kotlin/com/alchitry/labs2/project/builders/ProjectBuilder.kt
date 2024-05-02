@@ -73,8 +73,15 @@ sealed class ProjectBuilder {
         return this
     }
 
-    protected suspend fun runProcess(cmd: List<String>, scope: CoroutineScope, errorsRed: Boolean = true): Int? {
+    protected suspend fun runProcess(
+        cmd: List<String>,
+        scope: CoroutineScope,
+        env: Map<String, String>? = null,
+        errorsRed: Boolean = true
+    ): Int? {
         val builder = ProcessBuilder(cmd)
+        if (env != null)
+            builder.environment().putAll(env)
         val process = try {
             withContext(Dispatchers.IO) {
                 builder.start()

@@ -69,7 +69,9 @@ fun ComponentLibraryDialog(visible: Boolean, onClose: () -> Unit) {
                                     ) {
                                         Button(
                                             {
-                                                Project.current?.addComponents(selectedComponents)
+                                                val components =
+                                                    (selectedComponents.flatMap { it.allDependencies() } + selectedComponents).distinct()
+                                                Project.current?.addComponents(components)
                                                 onClose()
                                             },
                                             enabled = selectedComponents.isNotEmpty()
@@ -83,7 +85,7 @@ fun ComponentLibraryDialog(visible: Boolean, onClose: () -> Unit) {
                         Orientation.Horizontal,
                         sashData = rememberSashData(
                             resizePriority = ResizePriority.SECOND,
-                            minimumSize = 250.dp
+                            minimumSize = 250.dp to 250.dp
                         )
                     )
                 }

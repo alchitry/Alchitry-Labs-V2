@@ -79,11 +79,13 @@ fun CachedImage(
     LaunchedEffect(size) {
         renderJob?.cancelAndJoin()
         size?.let {
-            if (it.width == 0 || it.height == 0) {
+            if (it.width <= 0 || it.height <= 0) {
                 image = null
                 return@LaunchedEffect
             }
-            renderJob = launch(Dispatchers.Default) {
+            if (it.width == image?.width && it.height == image?.height)
+                return@LaunchedEffect
+            renderJob = launch(Dispatchers.Main) { // using Default causes occasional crashes :(
                 val bitmap = ImageBitmap(it.width, it.height)
                 Canvas(bitmap).apply {
                     val fSize = it.toSize()

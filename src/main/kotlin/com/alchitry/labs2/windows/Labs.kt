@@ -96,7 +96,8 @@ fun ApplicationScope.labsWindow() {
                                         orientation = Orientation.Horizontal,
                                         sashData = rememberSashData(
                                             resizePriority = ResizePriority.SECOND,
-                                            first = Settings.fileListWidth.toFloat()
+                                            first = Settings.fileListWidth.toFloat(),
+                                            minimumSize = 100.dp to 100.dp
                                         ),
                                         onResize = { Settings.fileListWidth = it.size.first.toInt() }
                                     )
@@ -109,7 +110,8 @@ fun ApplicationScope.labsWindow() {
                                 orientation = Orientation.Vertical,
                                 sashData = rememberSashData(
                                     resizePriority = ResizePriority.FIRST,
-                                    second = Settings.consoleHeight.toFloat()
+                                    second = Settings.consoleHeight.toFloat(),
+                                    minimumSize = 200.dp to 10.dp
                                 ),
                                 onResize = { Settings.consoleHeight = it.size.second.toInt() }
                             )

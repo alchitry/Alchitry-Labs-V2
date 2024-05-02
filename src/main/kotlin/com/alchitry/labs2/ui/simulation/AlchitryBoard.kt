@@ -60,5 +60,4 @@ fun AlchitryBoard(
         }
         Led(doneX, doneY, scale, false) { done }
     }
-
 }

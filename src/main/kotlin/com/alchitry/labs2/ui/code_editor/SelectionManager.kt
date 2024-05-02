@@ -280,7 +280,7 @@ class SelectionManager(
 
         val margin = editorState.lineTopOffset
 
-        translate(top = -editorState.scrollState.value.toFloat()) {
+        translate(top = -editorState.scrollState.value.toFloat() + 2) { // +2 to get caret centered in the line
             drawRect(
                 editorState.style?.cursorColor ?: Color.Transparent,
                 topLeft = cursorRect.topLeft

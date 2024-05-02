@@ -1,5 +1,6 @@
 package com.alchitry.labs2.project.builders
 
+import com.alchitry.labs2.Env
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.Locations
@@ -37,6 +38,13 @@ data object IceStormBuilder : ProjectBuilder() {
     ) = coroutineScope {
         val yosys = Locations.getToolNamed("yosys").absolutePath
         val nextpnr = Locations.getToolNamed("nextpnr-ice40").absolutePath
+        val nextpnrEnv = if (Env.isLinux) {
+            mapOf(
+                "LD_LIBRARY_PATH" to Locations.binDir.absolutePath,
+                "PYTHONPATH" to Locations.binDir.resolve("lib").absolutePath
+            )
+        } else null
+
         val icepack = Locations.getToolNamed("icepack").absolutePath
 
         val jsonFile = project.buildDirectory.resolve("alchitry.json")
@@ -95,7 +103,7 @@ data object IceStormBuilder : ProjectBuilder() {
         )
 
         Log.println("Starting nextpnr...", AlchitryColors.current.Info)
-        val nextpnrStatus = runProcess(nextpnrCmd, this, false)
+        val nextpnrStatus = runProcess(nextpnrCmd, this, nextpnrEnv, errorsRed = false)
 
         if (nextpnrStatus != 0) {
             Log.printlnError("Nextpnr exited with status: $nextpnrStatus")

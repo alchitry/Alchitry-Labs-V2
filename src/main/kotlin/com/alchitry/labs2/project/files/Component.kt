@@ -34,6 +34,9 @@ data class Component(
     val categories: List<String>,
     val content: String,
 ) : FileProvider() {
+    /**
+     * Direct dependencies of this component. Doesn't include their sub-dependencies.
+     */
     var dependencies = listOf<Component>()
 
     override fun isValid(): Boolean = true
@@ -42,6 +45,12 @@ data class Component(
     override fun writeText(text: String) {
         error("Components are read-only!")
     }
+
+    /**
+     * Returns all of this component's dependencies and all of their sub-dependencies
+     */
+    fun allDependencies(): List<Component> =
+        (dependencies.flatMap { it.allDependencies() } + dependencies).distinct()
 
     val language = Language.fromExt(name.split(".").last()) ?: error("Unknown language of component: $name")
 

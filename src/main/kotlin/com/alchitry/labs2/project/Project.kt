@@ -104,7 +104,7 @@ data class Project(
         fun open(file: File): Project = open(load(file))
 
         fun open(project: Project): Project {
-            if (current != null)
+            if (project.projectFile != current?.projectFile)
                 close()
             mutableCurrentFlow.tryEmit(project)
             Settings.openProject = project.projectFile.absolutePath
