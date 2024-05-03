@@ -222,4 +222,70 @@ class ModuleInstanceTests {
         }
         assertEquals(BitListValue(0, 8, false), count.read())
     }
+
+    @Test
+    fun inoutPassthroughModules() = runBlocking {
+        val tester = LucidTester(
+            """
+                module alchitryTop (
+                    input clk,
+                    inout btn[5]
+                ) {
+              
+                    testModule myMod (.clk(clk), .btn(btn))
+                   
+                }
+            """.trimIndent().toSourceFile(),
+            """
+                module testModule (
+                    input clk,
+                    inout btn
+                ) {
+                    always  {
+                        btn = bz
+                    }
+                }
+            """.trimIndent().toSourceFile("testModule.luc")
+        )
+
+        val top = tester.fullParse()
+        top.context.notationCollector.assertNoErrors()
+        val myModInst = top.context.types.resolve(top.moduleContext, "myMod") as ModuleInstance
+        top.ports["btn"]!!.external.write(Bit.B1.toBitValue())
+        tester.project.processQueue()
+        assertEquals(Bit.B1.toBitValue().asBitListValue(), myModInst.ports["btn"]?.internal?.read())
+    }
+
+    @Test
+    fun badResolvableWidthModules() = runBlocking {
+        val tester = LucidTester(
+            """
+                module alchitryTop (
+                    input clk,
+                    inout btn[5][3]
+                ) {
+              
+                    testModule myMod (#DIM_1(1), #DIM_2(5), .clk(clk), .in(btn))
+                   
+                }
+            """.trimIndent().toSourceFile(),
+            """
+                module testModule #(
+                    DIM_1 = 1 : DIM_1 > 0,
+                    DIM_2 = 1 : DIM_2 > 0
+                )(
+                    input clk,  // clock
+                    inout in[DIM_2][DIM_1],
+                    output out[DIM_2][DIM_1]
+                ) {
+                    always  {
+                        out = in
+                    }
+                }
+            """.trimIndent().toSourceFile("testModule.luc")
+        )
+
+        val top = tester.fullParse()
+        assert(top.context.notationCollector.hasErrors)
+    }
 }

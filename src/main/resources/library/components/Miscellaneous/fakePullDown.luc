@@ -51,7 +51,7 @@ module fakePullDown #(
 
     always {
         flip.d = flip.q + 1
-        in = flip.q ? bz : b0
+        in = flip.q ? SIZEx{bz} : SIZEx{b0}
         if (flip.q > 2)
             saved.d = in
         out = saved.q

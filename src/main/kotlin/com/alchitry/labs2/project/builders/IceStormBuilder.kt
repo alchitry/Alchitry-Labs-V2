@@ -70,14 +70,13 @@ data object IceStormBuilder : ProjectBuilder() {
         val ascFile = project.buildDirectory.resolve("alchitry.asc")
 
         val sdcFile = constraintFiles.firstOrNull { it.extension == Languages.SDC.extension }
-            ?: error("Missing sdc constraint file!")
-        val clockConstraints = getClockConstraints(sdcFile)
+        val clockConstraints = sdcFile?.let { getClockConstraints(it) }
 
         val pythonConstraintFile = project.buildDirectory.resolve("clocks.py").toFile()
 
         pythonConstraintFile.writeText(
             buildString {
-                clockConstraints.forEach {
+                clockConstraints?.forEach {
                     append("ctx.addClock(\"")
                     append(it.port)
                     append("\", ")

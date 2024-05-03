@@ -43,6 +43,8 @@ class LucidBlockContext(
     private val localSignalStack = mutableListOf<MutableMap<String, Signal>>(mutableMapOf())
     val localSignals: MutableMap<String, Signal> get() = localSignalStack.last()
 
+    val boundInouts = mutableMapOf<String, Signal>()
+
     private var takeSnapshot: suspend () -> Unit = {}
     fun setSnapshotCallback(onSnapshot: suspend () -> Unit) {
         takeSnapshot = onSnapshot

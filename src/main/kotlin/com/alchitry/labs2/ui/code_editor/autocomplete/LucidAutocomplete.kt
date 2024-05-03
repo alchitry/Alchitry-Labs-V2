@@ -1,5 +1,6 @@
 package com.alchitry.labs2.ui.code_editor.autocomplete
 
+import com.alchitry.labs2.Log
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.findFinalNode
 import com.alchitry.labs2.parsers.grammar.LucidLexer
@@ -198,7 +199,12 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
     override fun updateSuggestions() {
         updateJob?.cancel()
         updateJob = state.scope.launch {
-            buildTree()
+            try {
+                buildTree()
+            } catch (e: Exception) {
+                if (e is CancellationException) return@launch
+                Log.exception(e)
+            }
         }
     }
 }

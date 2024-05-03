@@ -70,8 +70,8 @@ open class Signal(
         nextValue?.let {
             value = it
             if (lastValue != it) { // only do something on a change
-                dependants.forEach { evaluable -> evaluable.evaluate() }
                 lastValue = it
+                dependants.forEach { evaluable -> evaluable.evaluate() }
             }
         }
         nextValue = null

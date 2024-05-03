@@ -54,7 +54,7 @@ module fakePullDown2D #(
 
     always {
         flip.d = flip.q + 1
-        in = DIM_2x{{DIM_1x{flip.q ? bz : b0}}}
+        in = flip.q ? DIM_2x{{DIM_1x{bz}}} : DIM_2x{{DIM_1x{b0}}}
         if (flip.q > 2)
             saved.d = in
         out = saved.q

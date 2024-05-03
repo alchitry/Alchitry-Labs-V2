@@ -1,6 +1,9 @@
+import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.lucidv2.types.ports.Inout
+import com.alchitry.labs2.parsers.lucidv2.values.Bit
 import com.alchitry.labs2.parsers.lucidv2.values.BitListValue
 import com.alchitry.labs2.parsers.lucidv2.values.BitListWidth
+import com.alchitry.labs2.parsers.notations.NotationManager
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -14,8 +17,8 @@ class InoutTests {
             inout.external.addDependant {
                 when (ct++) {
                     0 -> assertEquals(BitListValue("zzzz1100", 2, 8, false), inout.external.read())
-                    1 -> assertEquals(BitListValue("01011100", 2, 8, false), inout.external.read())
-                    2 -> assertEquals(BitListValue("0101x100", 2, 8, false), inout.external.read())
+                    1 -> assertEquals(BitListValue("zzzz1100", 2, 8, false), inout.external.read())
+                    2 -> assertEquals(BitListValue("zzzz1100", 2, 8, false), inout.external.read())
                 }
             }
 
@@ -31,6 +34,25 @@ class InoutTests {
             assertEquals(BitListValue("0101x100", 2, 8, false), inout.internal.read())
 
             assert(ct == 3)
+        }
+    }
+
+    @Test
+    fun connectedInoutTest() {
+        val inout1 = Inout("test1", null, BitListWidth(1), false)
+        val inout2 = Inout("test2", null, BitListWidth(1), false)
+        val project = ProjectContext(NotationManager())
+        inout1.internal.connectTo(inout2.external, project)
+        inout2.external.connectTo(inout1.internal, project)
+
+        runBlocking {
+            inout1.external.write(Bit.B1.toBitValue())
+            project.processQueue()
+            assertEquals(Bit.B1.toBitValue().asBitListValue(), inout2.internal.read())
+            inout1.external.write(Bit.Bz.toBitValue())
+            inout2.internal.write(Bit.B0.toBitValue())
+            project.processQueue()
+            assertEquals(Bit.B0.toBitValue().asBitListValue(), inout1.external.read())
         }
     }
 }

@@ -10,17 +10,18 @@ data class LucidPruner(
     private val context: LucidBlockContext,
 ) : LucidBaseListener() {
 
-    override fun enterIfStat(ctx: LucidParser.IfStatContext) {
-        val expr = context.expr.resolve(ctx.expr() ?: return) ?: return
+    override fun enterAlwaysIf(ctx: LucidParser.AlwaysIfContext) {
+        val ifCtx = ctx.ifStat() ?: return
+        val expr = context.expr.resolve(ifCtx.expr() ?: return) ?: return
         if (expr.type == ExprType.Constant) {
             val parent = ctx.parent as? ParserRuleContext ?: return
             val children = parent.children ?: return
             val index = children.indexOf(ctx)
             children.removeAt(index)
             val newStatements = if (expr.value.isTrue().bit == Bit.B1) {
-                ctx.block()?.alwaysStat()
+                ifCtx.block()?.alwaysStat()
             } else {
-                ctx.elseStat()?.block()?.alwaysStat()
+                ifCtx.elseStat()?.block()?.alwaysStat()
             }
             newStatements?.let { children.addAll(index, it) }
         }

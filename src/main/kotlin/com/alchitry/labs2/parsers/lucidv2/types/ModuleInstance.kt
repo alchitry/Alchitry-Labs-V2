@@ -86,10 +86,24 @@ class ModuleInstance(
         if (!testing)
             connections.forEach { (name, sig) ->
                 val port = ports[name]?.external ?: error("No matching port for given connection \"$name\"!")
-                if (port.direction.canWrite)
+                if (port.direction.canWrite) {
+                    if (!sig.width.canAssign(port.width)) {
+                        throw ConnectionException(
+                            "The width of \"${sig.getSignal().name}\" does not match the width of the port \"${port.name}\".",
+                            name
+                        )
+                    }
                     sig.connectTo(port, project)
-                if (port.direction.canRead)
+                }
+                if (port.direction.canRead) {
+                    if (!port.width.canAssign(sig.width)) {
+                        throw ConnectionException(
+                            "The width of \"${sig.getSignal().name}\" does not match the width of the port \"${port.name}\".",
+                            name
+                        )
+                    }
                     port.connectTo(sig, project)
+                }
             }
     }
 
@@ -119,3 +133,6 @@ class ModuleInstance(
     fun getInternalSignal(name: String) = internal[name] ?: parameters[name]
     override fun getSignal(name: String) = external[name]
 }
+
+class ConnectionException(override val message: String, val port: String) :
+    IllegalArgumentException(message)

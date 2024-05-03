@@ -34,7 +34,7 @@ class Inout(
         ExprType.Dynamic,
         signed
     ) {
-        generateValue(it)
+        internal.baseRead(it)
     }
 
     var lastValue: Value? = null
@@ -43,9 +43,9 @@ class Inout(
         val evaluable = Evaluable {
             val current = generateValue(null)
             if (current != lastValue) {
+                lastValue = current
                 internal.updateRead()
                 external.updateRead()
-                lastValue = current
             }
         }
         internal.addWriteDependant(evaluable)

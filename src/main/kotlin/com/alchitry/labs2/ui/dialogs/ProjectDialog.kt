@@ -216,6 +216,7 @@ private fun TemplateSelector(
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded)
             },
+            singleLine = true,
             modifier = Modifier.menuAnchor().fillMaxWidth()
         )
         SideEffect {

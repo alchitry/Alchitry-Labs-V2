@@ -89,7 +89,6 @@ data class SignalParser(
             val signalOrParent = context.resolveSignal(ctx, firstName.text)
 
             if (signalOrParent == null) {
-
                 // check if the signal is the first argument in a repeat block
                 if (ctx.name().size == 1 && ctx.bitSelection().isEmpty()) {
                     val parent = ctx.parent

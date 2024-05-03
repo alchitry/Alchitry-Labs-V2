@@ -120,7 +120,7 @@ data object IceCubeBuilder : ProjectBuilder() {
             append("set proj_dir \"").append(getSanitizedPath(project.buildDirectory)).appendLine("\"")
             append("set output_dir \"").append(IMP_DIR).appendLine("\"")
             append("set edif_file \"").append(topModuleName).appendLine("\"")
-            append("set tool_options \":edifpaarser -y \\\"")
+            append("set tool_options \":edifparser -y \\\"")
             constraintFiles.forEach { file ->
                 if (file.extension == "pcf")
                     append(getSanitizedPath(file)).append(" ")

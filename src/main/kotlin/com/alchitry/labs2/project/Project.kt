@@ -56,7 +56,7 @@ data class Project(
     val binFile: File = buildDirectory.resolve("${data.board.binName}.bin").toFile()
     private val mutableProjectContextFlow = MutableStateFlow<ProjectContext?>(null)
     private val notationManagerFlow = MutableStateFlow<NotationManager?>(null)
-    val scope = CoroutineScope(Dispatchers.Default)
+    val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     val components: List<Component> =
         (data.sourceFiles + data.constraintFiles).mapNotNull { if (it.file is Component) it.file else null }
@@ -199,6 +199,10 @@ data class Project(
                         }
                     }
                 }
+            }
+        }.invokeOnCompletion { cause ->
+            if (cause != null && cause !is CancellationException) {
+                Log.exception(cause)
             }
         }
     }

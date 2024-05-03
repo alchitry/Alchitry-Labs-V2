@@ -1,0 +1,36 @@
+{
+    "template": {
+        "name": "Button To LED",
+        "description": "Connects the reset button to the first LED",
+        "boards": ["Au", "Au+", "Cu"],
+        "priority": 1
+    },
+    "project": {
+        "type": "V1.0",
+        "projectName": "Base",
+        "board": "Alchitry Au",
+        "sourceFiles": [
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/alchitryTop.luc"
+                },
+                "top": true
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Conditioning/resetConditioner.luc"
+                }
+            }
+        ],
+        "constraintFiles": [
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Constraints/alchitry.acf"
+                }
+            }
+        ]
+    }
+}

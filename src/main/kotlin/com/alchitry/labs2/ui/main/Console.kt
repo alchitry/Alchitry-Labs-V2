@@ -89,6 +89,7 @@ object Console {
             }
             content.add(newLine)
             activeProgressBar = newLine
+            scrollToIdx = content.size - 1
         }
 
         override fun close() {

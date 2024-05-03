@@ -331,7 +331,6 @@ open class UsbDevice(
                 LibUsb.freeDeviceList(list, true)
             }
 
-            // Device not found
             return devices
         }
 

@@ -2,6 +2,7 @@ package com.alchitry.labs2.parsers.lucidv2.parsers
 
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.grammar.SuspendLucidBaseListener
+import com.alchitry.labs2.parsers.hasParent
 import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs2.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs2.parsers.lucidv2.types.*
@@ -159,8 +160,10 @@ class TypesParser(
 
         val providedSignals = localSignalConnections.union(extSignalConnections).map { it.port }
         val moduleSignals = moduleType.ports
-        val requiredSignals = moduleType.ports.filter { it.value.isInout }
-            .map { it.key } // inouts must be assigned
+        val requiredSignals =
+            if (ctx.hasParent<TestBenchContext>()) emptyList()
+            else
+                moduleType.ports.filter { it.value.isInout }.map { it.key } // inouts must be assigned
 
         val extraSignals = providedSignals.filter { !moduleSignals.contains(it) }
         val missingSignals = requiredSignals.filter { !providedSignals.contains(it) }
@@ -255,33 +258,47 @@ class TypesParser(
             }
 
             val instParams = localParamConnections.union(extParamConnections).associate { it.port to it.value.value }
-            val instPorts = (localSignals + extSignals).mapKeys { it.key.port }
-            ModuleInstance(
-                moduleInstanceName,
-                context.project,
-                context.instance as? ModuleInstance,
-                moduleType,
-                instParams,
-                instPorts,
-                // context.notationCollector.createChild("ModuleInstance($moduleInstanceName)")
-            ).apply {
-                val errorCollector = NotationCollector(context.sourceFile)
-                checkParameters(errorCollector)
-                if (errorCollector.hasErrors) {
-                    this@TypesParser.context.reportError(
-                        ctx.name(1) ?: ctx,
-                        errorCollector.getAllErrors().joinToString(", ") { it.message ?: "" }
-                    )
-                    return
+            val instPorts = (localSignals + extSignals).mapKeys {
+                if (moduleType.ports[it.key.port]?.isInout == true) {
+                    if (context.boundInouts.putIfAbsent(it.value.name, it.value) != null || it.value.hasDriver) {
+                        context.reportError(it.key.portCtx, "Inout \"${it.value.name}\" has already been bound!")
+                        return
+                    }
                 }
-                initialWalk()
-                if (errorCollector.hasErrors) {
-                    this@TypesParser.context.reportError(
-                        ctx.name(1) ?: ctx,
-                        errorCollector.getAllErrors().joinToString(", ") { it.message ?: "" }
-                    )
-                    return
+                it.key.port
+            }
+            try {
+                ModuleInstance(
+                    moduleInstanceName,
+                    context.project,
+                    context.instance as? ModuleInstance,
+                    moduleType,
+                    instParams,
+                    instPorts,
+                    // context.notationCollector.createChild("ModuleInstance($moduleInstanceName)")
+                ).apply {
+                    val errorCollector = NotationCollector(context.sourceFile)
+                    checkParameters(errorCollector)
+                    if (errorCollector.hasErrors) {
+                        this@TypesParser.context.reportError(
+                            ctx.name(1) ?: ctx,
+                            errorCollector.getAllErrors().joinToString(", ") { it.message ?: "" }
+                        )
+                        return
+                    }
+                    initialWalk()
+                    if (errorCollector.hasErrors) {
+                        this@TypesParser.context.reportError(
+                            ctx.name(1) ?: ctx,
+                            errorCollector.getAllErrors().joinToString(", ") { it.message ?: "" }
+                        )
+                        return
+                    }
                 }
+            } catch (e: ConnectionException) {
+                val portContext = (localSignals + extSignals).keys.first { it.port == e.port }.portCtx
+                context.reportError(portContext, e.message)
+                return
             }
         } else {
             val dimensions = ctx.arraySize().map { arraySizes[it] ?: return }

@@ -35,19 +35,24 @@ object UsbUtil {
     }
 
     fun detectAttachedBoards(): Map<Board, Int> {
-        val detected = if (hasD2XX) {
-            findAllD2xxDevices(Board.All).map { it.board }
-        } else {
-            val devices = UsbDevice.usbFindAll(Board.All)
-            val boards = devices.map { it.board }
-            UsbDevice.entryListFree(devices)
-            boards
+        try {
+            val detected = if (hasD2XX) {
+                findAllD2xxDevices(Board.All).map { it.board }
+            } else {
+                val devices = UsbDevice.usbFindAll(Board.All)
+                val boards = devices.map { it.board }
+                UsbDevice.entryListFree(devices)
+                boards
+            }
+            val map = mutableMapOf<Board, Int>()
+            detected.forEach { board ->
+                map[board] = map.getOrDefault(board, 0) + 1
+            }
+            return map
+        } catch (e: Exception) {
+            Log.printlnError(e.message)
+            return emptyMap()
         }
-        val map = mutableMapOf<Board, Int>()
-        detected.forEach { board ->
-            map[board] = map.getOrDefault(board, 0) + 1
-        }
-        return map
     }
 
     private fun findAllD2xxDevices(board: List<Board>): List<D2xxDeviceEntry> {

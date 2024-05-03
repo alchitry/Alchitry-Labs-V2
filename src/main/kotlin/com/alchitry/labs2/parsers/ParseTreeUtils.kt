@@ -40,3 +40,12 @@ val ParserRuleContext.parents: List<RuleContext>
         }
         return parents
     }
+
+inline fun <reified T : RuleContext> ParserRuleContext.hasParent(): Boolean {
+    var current = this.parent
+    while (current != null) {
+        if (current is T) return true
+        current = current.parent
+    }
+    return false
+}

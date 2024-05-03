@@ -1,0 +1,21 @@
+module multi_dec_ctr #(
+    DIGITS = 4 : DIGITS >= 2  // number of digits
+  ) (
+    input clk,                // clock
+    input rst,                // reset
+    input inc,                // increment counter
+    output digits[DIGITS][4]  // digit values
+  ) {
+  
+  .clk(clk), .rst(rst) {
+    decimal_counter dctr [DIGITS]; // digit counters
+  }
+
+  always {
+    dctr.inc[0] = inc;   // increment the first digit
+    digits = dctr.value; // output the values
+    
+    // if the previous digit overflows, increment the next
+    dctr.inc[1+:DIGITS-1] = dctr.ovf[0+:DIGITS-1];
+  }
+}

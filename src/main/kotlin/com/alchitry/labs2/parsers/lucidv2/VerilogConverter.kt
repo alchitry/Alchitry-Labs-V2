@@ -121,6 +121,9 @@ class VerilogConverter(
             if (port.direction != SignalDirection.Both)
                 return@forEach
 
+            if (context.boundInouts.contains(port.name))
+                return@forEach
+
             append("reg ")
             if (port.signed)
                 append("signed ")
