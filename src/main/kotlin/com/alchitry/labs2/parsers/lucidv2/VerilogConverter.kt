@@ -68,7 +68,10 @@ class VerilogConverter(
      * @param context The context to use as the error location if this is null.
      */
     private inline fun <reified T : ParseTree> T?.requireNotNull(context: ParserRuleContext): T {
-        return this ?: error(context, "Context \"${T::class.simpleName}\" was null!")
+        return this ?: error(
+            context,
+            "Context \"${T::class.simpleName}\" in ${this@VerilogConverter.context.sourceFile.name} was null!"
+        )
     }
 
     private fun StringBuilder.addParamHeader() {
@@ -111,6 +114,38 @@ class VerilogConverter(
         tabCount--
         newLine()
         append(");")
+    }
+
+    private fun StringBuilder.addIoSignals(ports: Collection<Signal>) {
+        ports.forEach { port ->
+            if (port.direction != SignalDirection.Both)
+                return@forEach
+
+            append("reg ")
+            if (port.signed)
+                append("signed ")
+            val bitCount = port.width.bitCount ?: error("Port \"${port.name}\" has an undefined width!")
+            if (bitCount > 1) {
+                append("[")
+                append(bitCount - 1)
+                append(":0] ")
+            }
+
+            val name = port.verilogName
+            append("IO_")
+            append(name)
+            append(";")
+            newLine()
+
+            append("assign ")
+            append(name)
+            append(" = IO_")
+            append(name)
+            append(";")
+
+            newLine()
+        }
+
     }
 
     private fun StringBuilder.addConstants() {
@@ -403,6 +438,7 @@ class VerilogConverter(
             addDffs()
             newLine()
             addSigs()
+            addIoSignals(instance.internal.values)
             newLine()
             addModuleInstances()
             newLine()
@@ -590,8 +626,15 @@ class VerilogConverter(
         val selection = (signal as? SubSignal)?.toVerilog()
         val signed = selection?.signed ?: baseSignal.signed
 
-        val sigVerilog = "$verilogName${selection?.selection ?: ""}"
         val write = ctx.parent is LucidParser.AssignStatContext
+
+        val writePrefix =
+            if (write && signal.getSignal().parent is ModuleInstanceOrArray && signal.direction == SignalDirection.Both) {
+                "IO_"
+            } else ""
+
+        val sigVerilog = "$writePrefix$verilogName${selection?.selection ?: ""}"
+
         ctx.verilog = if (signed && !write) "\$signed($sigVerilog)" else sigVerilog
     }
 
