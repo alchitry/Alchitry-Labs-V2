@@ -109,10 +109,10 @@ data class Waveform(
                     paths.add(
                         DrawablePath(
                             Path().apply {
-                                moveTo(x, max.toFloat())
-                                lineTo(x + 1, max.toFloat())
-                                lineTo(x + 1, min.toFloat())
-                                lineTo(x, min.toFloat())
+                                moveTo(x, 1f)
+                                lineTo(x + 1, 1f)
+                                lineTo(x + 1, 0f)
+                                lineTo(x, 0f)
                                 close()
                             },
                             AlchitryColors.current.Error,
