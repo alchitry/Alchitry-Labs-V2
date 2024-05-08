@@ -266,7 +266,22 @@ data class ExprParser(
 
         signal.getSignal().markRead()
 
-        exprs[ctx] = Expr(signal.read(context.evalContext), signal.type)
+        // check the bit selectors to see if they are constant or not
+        val bitSelectionType = getExprType(signalCtx.bitSelection().flatMap { bitSelection ->
+            context.resolve(bitSelection).flatMap {
+                when (it.selectionCtx) {
+                    is SelectionContext.Constant -> emptyList()
+                    is SelectionContext.DownTo -> listOf(it.selectionCtx.stop)
+                    is SelectionContext.Fixed -> listOf(it.selectionCtx.start, it.selectionCtx.stop)
+                    is SelectionContext.Single -> listOf(it.selectionCtx.bit)
+                    is SelectionContext.UpTo -> listOf(it.selectionCtx.start)
+                }
+            }
+        }.mapNotNull { exprs[it]?.type })
+
+        val type = getExprType(listOf(signal.type, bitSelectionType))
+
+        exprs[ctx] = Expr(signal.read(context.evalContext), type)
 
         // add dependencies for all signals used in bit selection as well as this signal
         if (dependencies[ctx] == null) {
