@@ -3,9 +3,11 @@ package com.alchitry.labs2.parsers.lucidv2
 import com.alchitry.labs2.Env
 import com.alchitry.labs2.parsers.grammar.LucidBaseListener
 import com.alchitry.labs2.parsers.grammar.LucidParser
+import com.alchitry.labs2.parsers.grammar.LucidParser.FunctionContext
 import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs2.parsers.lucidv2.parsers.ExprParser
 import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
+import com.alchitry.labs2.parsers.lucidv2.parsers.firstParentOrNull
 import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.lucidv2.types.Function
 import com.alchitry.labs2.parsers.lucidv2.values.*
@@ -614,7 +616,15 @@ class VerilogConverter(
     }
 
     override fun exitSignal(ctx: LucidParser.SignalContext) {
-        val signal = context.resolve(ctx) ?: error(ctx, "Failed to resolve signal for \"${ctx.text}\"")
+
+
+        val signal = context.resolve(ctx)
+        if (signal == null) {
+            val functionCtx = ctx.firstParentOrNull { it is FunctionContext }
+            if (functionCtx is FunctionContext && functionCtx.FUNCTION_ID()?.text == "$" + Function.WIDTH.label)
+                return
+            error(ctx, "Failed to resolve signal for \"${ctx.text}\"")
+        }
 
         val baseSignal = signal.getSignal()
 
@@ -939,7 +949,16 @@ class VerilogConverter(
     override fun exitExprSignal(ctx: LucidParser.ExprSignalContext) {
         if (handleConstant(ctx))
             return
-        ctx.verilog = ctx.signal().requireNotNull(ctx).verilog
+
+        val v = verilog[ctx.signal().requireNotNull(ctx)]
+        if (v == null) {
+            val functionCtx = ctx.firstParentOrNull { it is FunctionContext }
+            if (functionCtx is FunctionContext && functionCtx.FUNCTION_ID()?.text == "$" + Function.WIDTH.label)
+                return
+            error("Missing verilog for ${ctx::class.simpleName}: \"${ctx.text}\"")
+        }
+
+        ctx.verilog = v
     }
 
     companion object {
