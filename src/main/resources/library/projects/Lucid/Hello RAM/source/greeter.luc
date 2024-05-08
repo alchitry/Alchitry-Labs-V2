@@ -1,0 +1,104 @@
+module greeter (
+    input clk,        // clock
+    input rst,        // reset
+    input newRx,      // new RX flag
+    input rxData[8],  // RX data
+    output newTx,     // new TX flag
+    output txData[8], // TX data
+    input txBusy      // TX is busy flag
+) {
+    const HELLO_TEXT = "\r\nHello @!\r\n"
+    const PROMPT_TEXT = "Please type your name: "
+    
+    const HELLO_WIDTH = $width(HELLO_TEXT)
+    const PROMPT_WIDTH = $width(PROMPT_TEXT)
+    
+    enum States {IDLE, PROMPT, LISTEN, HELLO} // our state machine
+    
+    .clk(clk) {
+        .rst(rst) {
+            dff state[$width(States)]
+        }
+        // we need our counters to be large enough to store all the indices of our text
+        dff helloCount[$clog2(HELLO_WIDTH[0])] // HELLO_TEXT is 2D so WIDTH[0] gets the first dimension
+        dff promptCount[$clog2(PROMPT_WIDTH[0])]
+        
+        dff nameCount[5] // 5 allows for 2^5 = 32 letters
+        // we need our RAM to have an entry for every value of name_count
+        simpleRam ram (#WIDTH(8), #ENTRIES($pow(2,$width(nameCount.q))))
+    }
+    
+    always {
+        ram.address = nameCount.q // use name_count as the address
+        ram.writeData = 8hxx      // don't care
+        ram.writeEnable = 0       // read by default
+        
+        newTx = 0                 // default to no new data
+        txData = 8hxx             // don't care
+        
+        case (state.q) { // our FSM
+            // IDLE: Reset everything and wait for a new byte.
+            States.IDLE:
+                helloCount.d = 0
+                promptCount.d = 0
+                nameCount.d = 0
+                if (newRx) // wait for any letter
+                    state.d = States.PROMPT
+            
+            // PROMPT: Print out name prompt.
+            States.PROMPT:
+                if (!txBusy) {
+                    promptCount.d = promptCount.q + 1   // move to the next letter
+                    newTx = 1                           // send data
+                    txData = PROMPT_TEXT[promptCount.q] // send letter from PROMPT_TEXT
+                    if (promptCount.q == PROMPT_WIDTH[0] - 1) // no more letters
+                        state.d = States.LISTEN               // change states
+                }
+            
+            // LISTEN: Listen to the user as they type his/her name.
+            States.LISTEN:
+                if (newRx) { // wait for a new byte
+                    ram.writeData = rxData        // write the received letter to RAM
+                    ram.writeEnable = 1           // signal we want to write
+                    nameCount.d = nameCount.q + 1 // increment the address
+                    
+                    // We aren't checking tx_busy here that means if someone types super
+                    // fast we could drop bytes. In practice this doesn't happen.
+                    newTx = rxData != "\n" && rxData != "\r" // only echo non-new line characters
+                    txData = rxData // echo text back so you can see what you type
+                    
+                    // if we run out of space or they pressed enter
+                    if (&nameCount.q || rxData == "\n" || rxData == "\r") {
+                        state.d = States.HELLO
+                        nameCount.d = 0 // reset name_count
+                    }
+                }
+            
+            // HELLO: Prints the hello text with the given name inserted
+            States.HELLO:
+                if (!txBusy) { // wait for tx to not be busy
+                    if (HELLO_TEXT[helloCount.q] != "@") { // if we are not at the sentry
+                        helloCount.d = helloCount.q + 1    // increment to next letter
+                        newTx = 1                          // new data to send
+                        txData = HELLO_TEXT[helloCount.q]  // send the letter
+                    } else {                               // we are at the sentry
+                        nameCount.d = nameCount.q + 1      // increment the name_count letter
+                        
+                        if (ram.readData != "\n" && ram.readData != "\r") // if we are not at the end
+                            newTx = 1                                     // send data
+                        
+                        txData = ram.readData // send the letter from the RAM
+                        
+                        // if we are at the end of the name or out of letters to send
+                        if (ram.readData == "\n" || ram.readData == "\r" || &nameCount.q) {
+                            helloCount.d = helloCount.q + 1  // increment hello_count to pass the sentry
+                        }
+                    }
+                    
+                    // if we have sent all of HELLO_TEXT
+                    if (helloCount.q == HELLO_WIDTH[0] - 1)
+                        state.d = States.IDLE // return to IDLE
+                }
+        }
+    }
+}

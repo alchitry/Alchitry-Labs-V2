@@ -1,0 +1,44 @@
+module greeter (
+    input clk,        // clock
+    input rst,        // reset
+    input newRx,      // new RX flag
+    input rxData[8],  // RX data
+    output newTx,     // new TX flag
+    output txData[8], // TX data
+    input txBusy      // TX is busy flag
+) {
+    const NUM_LETTERS = 14
+    
+    enum States {IDLE, GREET}
+    
+    .clk(clk) {
+        .rst(rst) {
+            dff state[$width(States)]
+        }
+        dff count[$clog2(NUM_LETTERS)] // min bits to store NUM_LETTERS - 1
+    }
+    
+    helloWorldRom rom
+    
+    always {
+        rom.address = count.q
+        txData = rom.letter
+        
+        newTx = 0 // default to 0
+        
+        case (state.q) {
+            States.IDLE:
+                count.d = 0
+                if (newRx && rxData == "h")
+                    state.d = States.GREET
+            
+            States.GREET:
+                if (!txBusy) {
+                    count.d = count.q + 1
+                    newTx = 1
+                    if (count.q == NUM_LETTERS - 1)
+                        state.d = States.IDLE
+                }
+        }
+    }
+}

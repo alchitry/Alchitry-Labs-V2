@@ -1,0 +1,54 @@
+{
+    "template": {
+        "name": "Hello RAM",
+        "description": "Asks for your name and greats you over UART",
+        "boards": ["Au", "Au+", "Cu"],
+        "priority": 4
+    },
+    "project": {
+        "type": "V1.0",
+        "projectName": "Hello RAM",
+        "board": "Alchitry Cu",
+        "sourceFiles": [
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/alchitryTop.luc"
+                },
+                "top": true
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Conditioning/resetConditioner.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Interfaces/uartRx.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Interfaces/uartTx.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/greeter.luc"
+                }
+            }
+        ],
+        "constraintFiles": [
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Constraints/alchitry.acf"
+                }
+            }
+        ]
+    }
+}

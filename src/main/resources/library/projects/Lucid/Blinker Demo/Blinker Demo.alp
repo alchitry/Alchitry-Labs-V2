@@ -1,0 +1,42 @@
+{
+    "template": {
+        "name": "Blinker Demo",
+        "description": "Blinks all the LEDs",
+        "boards": ["Au", "Au+", "Cu"],
+        "priority": 2
+    },
+    "project": {
+        "type": "V1.0",
+        "projectName": "Blinker Demo",
+        "board": "Alchitry Cu",
+        "sourceFiles": [
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/alchitryTop.luc"
+                },
+                "top": true
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Conditioning/resetConditioner.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/blinker.luc"
+                }
+            }
+        ],
+        "constraintFiles": [
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Constraints/alchitry.acf"
+                }
+            }
+        ]
+    }
+}

@@ -5,21 +5,25 @@ module alchitryTop (
     input usbRx,            // USB->Serial input
     output usbTx            // USB->Serial output
 ) {
-
+    
     sig rst                 // reset signal
-
+    
     .clk(clk) {
         // The reset conditioner is used to synchronize the reset signal to the FPGA
         // clock. This ensures the entire FPGA comes out of reset at the same time.
         resetConditioner resetCond
+        
+        .rst(rst) {
+            blinker myBlinker
+        }
     }
-
+    
     always {
-        resetCond.in = ~rst_n  // input raw inverted reset signal
-        rst = resetCond.out    // conditioned reset
-
-        led = c{7h00, rst}     // connect rst to the first LED
-
-        usbTx = usbRx          // echo the serial data
+        resetCond.in = ~rst_n     // input raw inverted reset signal
+        rst = resetCond.out       // conditioned reset
+        
+        led = 8x{myBlinker.blink} // blink LEDs
+        
+        usbTx = usbRx             // echo the serial data
     }
 }

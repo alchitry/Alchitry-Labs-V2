@@ -1,14 +1,14 @@
 {
     "template": {
-        "name": "Io Demo",
-        "description": "Connects buttons/switches to LEDs and counts on the 7-segment LEDs",
+        "name": "Hello World",
+        "description": "Prints \"Hello World\" when 'h' is received over the UART port",
         "boards": ["Au", "Au+", "Cu"],
-        "priority": 6
+        "priority": 3
     },
     "project": {
         "type": "V1.0",
-        "projectName": "Io Demo",
-        "board": "Alchitry Au",
+        "projectName": "Hello World",
+        "board": "Alchitry Cu",
         "sourceFiles": [
             {
                 "file": {
@@ -25,44 +25,26 @@
             },
             {
                 "file": {
-                    "type": "DiskFile",
-                    "path": "source/decimalCounter.luc"
-                }
-            },
-            {
-                "file": {
-                    "type": "DiskFile",
-                    "path": "source/multiDecimalCounter.luc"
-                }
-            },
-            {
-                "file": {
-                    "type": "DiskFile",
-                    "path": "source/multiSevenSeg.luc"
+                    "type": "Component",
+                    "path": "Interfaces/uartRx.luc"
                 }
             },
             {
                 "file": {
                     "type": "Component",
-                    "path": "Miscellaneous/counter.luc"
-                }
-            },
-            {
-                "file": {
-                    "type": "Component",
-                    "path": "Miscellaneous/decoder.luc"
+                    "path": "Interfaces/uartTx.luc"
                 }
             },
             {
                 "file": {
                     "type": "DiskFile",
-                    "path": "source/sevenSeg.luc"
+                    "path": "source/greeter.luc"
                 }
             },
             {
                 "file": {
-                    "type": "Component",
-                    "path": "Pulses/edgeDetector.luc"
+                    "type": "DiskFile",
+                    "path": "source/helloWorldRom.luc"
                 }
             }
         ],
@@ -71,12 +53,6 @@
                 "file": {
                     "type": "Component",
                     "path": "Constraints/alchitry.acf"
-                }
-            },
-            {
-                "file": {
-                    "type": "Component",
-                    "path": "Constraints/io.acf"
                 }
             }
         ]

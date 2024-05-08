@@ -4,9 +4,9 @@ module multiSevenSeg #(
 )(
     input clk,                // clock
     input rst,                // reset
-    input values [DIGITS][4], // values to show
-    output seg [7],           // LED segments
-    output sel [DIGITS]       // Digit select
+    input values[DIGITS][4],  // values to show
+    output seg[7],            // LED segments
+    output sel[DIGITS]        // Digit select
 ) {
     
     // number of bits required to store DIGITS-1

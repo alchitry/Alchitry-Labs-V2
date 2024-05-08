@@ -1,0 +1,42 @@
+{
+    "template": {
+        "name": "Io Base",
+        "description": "Minimum boilerplate project for the Io element",
+        "boards": ["Au", "Au+", "Cu"],
+        "priority": 5
+    },
+    "project": {
+        "type": "V1.0",
+        "projectName": "Io Base",
+        "board": "Alchitry Cu",
+        "sourceFiles": [
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/alchitryTop.luc"
+                },
+                "top": true
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Conditioning/resetConditioner.luc"
+                }
+            }
+        ],
+        "constraintFiles": [
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Constraints/alchitry.acf"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Constraints/io.acf"
+                }
+            }
+        ]
+    }
+}

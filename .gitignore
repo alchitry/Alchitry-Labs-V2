@@ -9,3 +9,5 @@
 /conveyor-local.conf
 /tools/
 *.log
+*.bak
+*.tcl
