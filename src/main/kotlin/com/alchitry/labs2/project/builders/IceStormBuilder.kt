@@ -52,7 +52,7 @@ data object IceStormBuilder : ProjectBuilder() {
         val yosysCmd = mutableListOf(
             yosys,
             "-p",
-            "synth_ice40 -json ${jsonFile.absolutePathString()} -top $topModuleName",
+            "synth_ice40 -json \"${jsonFile.absolutePathString()}\" -top $topModuleName",
         )
         yosysCmd.addAll(sourceFiles.map { it.absolutePath })
 
