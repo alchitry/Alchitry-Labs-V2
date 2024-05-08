@@ -23,7 +23,6 @@ fun Project.addLucidModule(moduleName: String) = addSourceFile(
             input rst,  // reset
             output out
         ) {
-        
             always {
                 out = 0;
             }
@@ -59,7 +58,7 @@ fun Project.addAlchitryConstraint(name: String) = addConstraintFile("$name.${Lan
 private fun Project.addSourceFile(name: String, contents: String): SourceFile {
     val newFilePath = sourceDirectory.resolve(name)
     newFilePath.toFile().writeText(contents)
-    val newSourceFile = SourceFile(FileProvider.DiskFile(newFilePath))
+    val newSourceFile = SourceFile(FileProvider.DiskFile(path.relativize(newFilePath)))
     val newSourceFiles = data.sourceFiles.toMutableSet().apply {
         add(newSourceFile)
     }
@@ -72,7 +71,7 @@ private fun Project.addSourceFile(name: String, contents: String): SourceFile {
 private fun Project.addConstraintFile(name: String, contents: String = ""): ConstraintFile {
     val newFilePath = constraintDirectory.resolve(name)
     newFilePath.toFile().writeText(contents)
-    val newConstraintFile = ConstraintFile(FileProvider.DiskFile(newFilePath))
+    val newConstraintFile = ConstraintFile(FileProvider.DiskFile(path.relativize(newFilePath)))
     val newConstraintFiles = data.constraintFiles.toMutableSet().apply {
         add(newConstraintFile)
     }
