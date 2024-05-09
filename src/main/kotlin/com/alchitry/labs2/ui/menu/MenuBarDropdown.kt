@@ -12,11 +12,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
@@ -40,7 +38,6 @@ enum class DropDirection {
     RIGHT
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Suppress("ModifierParameter")
 @Composable
 fun MenuBarDropdown(
@@ -146,12 +143,14 @@ internal fun DropdownMenuContent(
         },
         elevation = CardDefaults.cardElevation(MenuElevation)
     ) {
-        Column(
-            modifier = modifier
-                .width(IntrinsicSize.Max)
-                .verticalScroll(rememberScrollState()),
-            content = content
-        )
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
+            Column(
+                modifier = modifier
+                    .width(IntrinsicSize.Max)
+                    .verticalScroll(rememberScrollState()),
+                content = content
+            )
+        }
     }
 }
 

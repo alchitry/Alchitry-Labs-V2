@@ -42,12 +42,45 @@ fun LabsToolbar() {
             MenuItem({ Text("Open Project...") }) {
                 openProjectDialog()
             }
-            MenuItem({ Text("Set Vivado Location") }) {
-                Log.warn("Not implemented yet!") // TODO
+            MenuParent(label = { Text("Settings") }) {
+                MenuItem({ Text("Set Vivado Location") }) {
+                    VivadoLocationDialog()?.let {
+                        Log.info("Set Vivado Location: ${it.absolutePath}")
+                        Settings.vivadoLocation = it.absolutePath
+                    }
+                }
+                MenuItem({ Text("Set iCEcube2 Location") }) {
+                    iCEcubeLocationDialog()?.let {
+                        Log.info("Set iCEcube2 Location: ${it.absolutePath}")
+                        Settings.iceCubeLocation = it.absolutePath
+                    }
+                }
+
+                MenuItem({ Text("Set iCEcube2 License Location") }) {
+                    iCEcubeLicenseDialog()?.let {
+                        if (!it.exists() || !it.isFile) {
+                            Log.error("${it.absolutePath} isn't a file!")
+                            return@let
+                        }
+                        Log.info("Set iCEcube2 License Location: ${it.absolutePath}")
+                        Settings.iceCubeLicense = it.absolutePath
+                    }
+                }
+
+                val toolchains = listOf("Yosys (open source)", "iCEcube2 (proprietary)")
+                var selectedToolchain by remember { mutableStateOf(if (Settings.useIceCube) toolchains[1] else toolchains[0]) }
+                RadioMenuItem(
+                    label = { Text("Cu Toolchain") },
+                    items = toolchains,
+                    labeler = { Text(it) },
+                    selected = selectedToolchain,
+                ) {
+                    selectedToolchain = it
+                    Settings.useIceCube = it == toolchains[1]
+                }
+
             }
-            MenuItem({ Text("Set iCEcube2 Location") }) {
-                Log.warn("Not implemented yet!") // TODO
-            }
+
             MenuItem({ Text("Switch to Alchitry Loader") }) {
                 switchActiveWindow(Settings.WindowType.Loader)
             }

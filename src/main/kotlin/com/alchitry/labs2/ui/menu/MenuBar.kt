@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusTarget
@@ -189,6 +190,64 @@ fun MenuBarContext.TopMenuItem(
     }
 }
 
+@Composable
+fun MenuBarContext.MenuParent(
+    label: @Composable () -> Unit, content: @Composable MenuBarContext.() -> Unit
+) {
+    val item = remember { MenuBarItem() }
+    val active = focused.value === item && isActive.value
+
+    val subFocus = remember { mutableStateOf<MenuBarItem?>(null) }
+    val menuBarContext = remember {
+        object : MenuBarContext {
+            override val isActive = this@MenuParent.isActive
+            override val focused = subFocus
+            override fun dismiss() {
+                this@MenuParent.dismiss()
+            }
+
+            override fun requestFocus(item: MenuBarItem) {
+                subFocus.value = item
+            }
+        }
+    }
+
+    Box {
+        Box(
+            Modifier.menuHoverFocus(item,
+                active = active,
+                enabled = isActive.value,
+                interactionSource = remember { MutableInteractionSource() }).padding(8.dp).fillMaxWidth()
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
+                    label()
+                    Spacer(Modifier.weight(1f))
+                    Image(
+                        painter = painterResource("icons/arrow.svg"),
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.size(20.dp).rotate(-90f)
+                    )
+                }
+            }
+        }
+
+        MenuBarDropdown(expanded = active,
+            focusable = false,
+            dropDirection = DropDirection.RIGHT,
+            onDismissRequest = { dismiss() }) {
+            Box(Modifier.width(IntrinsicSize.Max)) {
+                Column {
+                    with(menuBarContext) {
+                        content()
+                    }
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MenuBarContext.MenuItem(
@@ -227,51 +286,53 @@ fun <T> MenuBarContext.RadioMenuItem(
 ) {
     val item = remember { MenuBarItem() }
     val active = focused.value === item && isActive.value
-    Box {
-        Box(
-            Modifier
-                .menuHoverFocus(item, active = active, interactionSource = remember { MutableInteractionSource() })
-                .padding(8.dp)
-                .fillMaxWidth()
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
+    CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
+        Box {
+            Box(
+                Modifier
+                    .menuHoverFocus(item, active = active, interactionSource = remember { MutableInteractionSource() })
+                    .padding(8.dp)
+                    .fillMaxWidth()
             ) {
-                label()
-                Spacer(Modifier.padding(horizontal = 5.dp))
-                Image(
-                    painter = painterResource("icons/chevron-right.svg"),
-                    contentDescription = "Right arrow",
-                    colorFilter = ColorFilter.tint(LocalContentColor.current),
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
-        MenuBarDropdown(
-            expanded = active,
-            focusable = false,
-            dropDirection = DropDirection.RIGHT,
-            onDismissRequest = { dismiss() }) {
-            items.forEach {
-                Box(
-                    Modifier
-                        .clickable(onClick = { onSelected(it) })
-                        .padding(8.dp)
-                        .fillMaxWidth()
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            Modifier
-                                .padding(end = 8.dp)
-                                .size(8.dp)
-                                .clip(CircleShape)
-                                .alpha(if (selected == it) 1f else 0.1f)
-                                .background(if (selected == it) MaterialTheme.colorScheme.primary else LocalContentColor.current)
-                        )
-                        labeler(it)
+                    label()
+                    Spacer(Modifier.padding(horizontal = 5.dp))
+                    Image(
+                        painter = painterResource("icons/chevron-right.svg"),
+                        contentDescription = "Right arrow",
+                        colorFilter = ColorFilter.tint(LocalContentColor.current),
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+            MenuBarDropdown(
+                expanded = active,
+                focusable = false,
+                dropDirection = DropDirection.RIGHT,
+                onDismissRequest = { dismiss() }) {
+                items.forEach {
+                    Box(
+                        Modifier
+                            .clickable(onClick = { onSelected(it) })
+                            .padding(8.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                Modifier
+                                    .padding(end = 8.dp).padding(horizontal = 4.dp)
+                                    .size(8.dp)
+                                    .clip(CircleShape)
+                                    .alpha(if (selected == it) 1f else 0.1f)
+                                    .background(if (selected == it) MaterialTheme.colorScheme.primary else LocalContentColor.current)
+                            )
+                            labeler(it)
+                        }
                     }
                 }
             }
