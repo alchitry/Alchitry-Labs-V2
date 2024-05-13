@@ -282,8 +282,7 @@ internal class ExprParserTests {
             BitListValue(
                 "800",
                 10,
-                BitUtil.widthOfMult(BitUtil.minWidthNum(20), BitUtil.minWidthNum(40)),
-
+                BitUtil.minWidthNum(20) + BitUtil.minWidthNum(40),
                 signed = false
             ),
             expr.value
@@ -311,8 +310,7 @@ internal class ExprParserTests {
             BitListValue(
                 "800",
                 10,
-                BitUtil.widthOfMult(BitUtil.minWidthNum(20), BitUtil.minWidthNum(40)),
-
+                BitUtil.minWidthNum(20) + BitUtil.minWidthNum(40),
                 signed = false
             ),
             expr.value
@@ -329,8 +327,7 @@ internal class ExprParserTests {
             BitListValue(
                 "800",
                 10,
-                BitUtil.widthOfMult(BitUtil.minWidthNum(20) + 1, BitUtil.minWidthNum(40) + 1),
-
+                BitUtil.minWidthNum(20) + 1 + BitUtil.minWidthNum(40) + 1,
                 signed = true
             ),
             expr.value

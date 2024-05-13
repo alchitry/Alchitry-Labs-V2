@@ -749,8 +749,9 @@ data class ExprParser(
             exprs[ctx] = when {
                 multOp && op1Width is DefinedSimpleWidth && op2Width is DefinedSimpleWidth -> {
                     val finalWidth = getFinalWidth(ctx)
-                    val w = (finalWidth?.mergeWith(op1Width) ?: op1Width).mergeWith(op2Width)
-                    UndefinedValue(w).asExpr(type)
+                    val mulWidth = op1Width.size + op2Width.size
+                    val width = finalWidth?.let { it.bitCount?.coerceAtLeast(mulWidth) } ?: mulWidth
+                    UndefinedValue(BitListWidth(width)).asExpr(type)
                 }
 
                 !multOp && op1Width is DefinedSimpleWidth -> UndefinedValue(BitListWidth(op1Width.size)).asExpr(type)
@@ -763,11 +764,13 @@ data class ExprParser(
             error("One (or both) of the operands isn't a simple array. This shouldn't be possible.")
 
         val signed = op1.signed && op2.signed
+        op1Width as DefinedSimpleWidth
+        op2Width as DefinedSimpleWidth
 
         exprs[ctx] = (if (multOp) {
             val finalWidth = getFinalWidth(ctx)
-            val width = (finalWidth?.mergeWith(op1Width) ?: op1Width).mergeWith(op2Width).bitCount
-                ?: error("Failed to get bitCount!")
+            val mulWidth = op1Width.size + op2Width.size
+            val width = finalWidth?.let { it.bitCount?.coerceAtLeast(mulWidth) } ?: mulWidth
             if (!op1.isNumber() || !op2.isNumber())
                 BitListValue(size = width, signed = signed) { Bit.Bx }
             else

@@ -5,7 +5,6 @@ import java.math.BigInteger
 import java.math.RoundingMode
 import kotlin.math.floor
 import kotlin.math.ln
-import kotlin.math.pow
 
 object BitUtil {
     /**
@@ -45,25 +44,5 @@ object BitUtil {
     fun minWidthNum(str: String, radix: Int): Int {
         val i = str.toLong(radix)
         return minWidthNum(i)
-    }
-
-    /**
-     * Returns the minimum number of bits needed to represent the result of the multiplication of two numbers of width w1 and w2.
-     * @param w1 the width of the first operand
-     * @param w2 the width of the second operand
-     * @return the minimum number of bits needed
-     */
-    fun widthOfMult(w1: Long, w2: Long): Int {
-        return floor(ln((2.0.pow(w1.toDouble()) - 1) * (2.0.pow(w2.toDouble()) - 1)) / ln(2.0)).toInt() + 1 // max
-    }
-
-    /**
-     * Returns the minimum number of bits needed to represent the result of the multiplication of two numbers of width w1 and w2.
-     * @param w1 the width of the first operand
-     * @param w2 the width of the second operand
-     * @return the minimum number of bits needed
-     */
-    fun widthOfMult(w1: Int, w2: Int): Int {
-        return widthOfMult(w1.toLong(), w2.toLong()) // max
     }
 }

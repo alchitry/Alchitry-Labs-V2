@@ -1,4 +1,3 @@
-import com.alchitry.labs2.parsers.BitUtil.widthOfMult
 import com.alchitry.labs2.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
 import com.alchitry.labs2.parsers.lucidv2.parsers.toSourceFile
@@ -274,7 +273,7 @@ class UndefinedValueTests {
         val tree = test.parser.expr().also { test.context.walk(it) }
         val result = test.context.expr.resolve(tree)?.value
         assertIs<UndefinedValue>(result)
-        assertEquals(BitListWidth(widthOfMult(4, 3)), result.width)
+        assertEquals(BitListWidth(4 + 3), result.width)
         assert(test.hasNoIssues)
     }
 
