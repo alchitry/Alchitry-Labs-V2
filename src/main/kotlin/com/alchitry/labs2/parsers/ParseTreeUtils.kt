@@ -30,7 +30,7 @@ fun ParseTree.findFinalNode(
     return this
 }
 
-val ParserRuleContext.parents: List<RuleContext>
+val RuleContext.parents: List<RuleContext>
     get() {
         val parents = mutableListOf<RuleContext>()
         var current = this.parent

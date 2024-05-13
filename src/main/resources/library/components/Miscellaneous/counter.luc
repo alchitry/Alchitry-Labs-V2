@@ -59,7 +59,7 @@ module counter #(
         } else { // down counter
             ctr.d = ctr.q - 1 // decrease
             if (TOP != 0 && ctr.q == 0) { // reached the bottom?
-                ctr.d = MAX_VALUE // reset to top
+                ctr.d = MAX_VALUE[0+:$width(ctr.d)] // reset to top
             }
         }
     }

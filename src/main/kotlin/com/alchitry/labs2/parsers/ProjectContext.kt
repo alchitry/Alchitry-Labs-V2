@@ -1,6 +1,5 @@
 package com.alchitry.labs2.parsers
 
-import com.alchitry.labs2.Log
 import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.notations.NotationManager
@@ -72,12 +71,7 @@ class ProjectContext(val notationManager: NotationManager) : Closeable {
         }
         add(topInstance)
         return instances.mapValues {
-            try {
-                it.value.context.convertToVerilog() ?: error("Missing verilog for ${it.key}")
-            } catch (e: Exception) {
-                Log.printlnError("Error while converting to Verilog! This is a bug!", e)
-                null
-            }
+            it.value.context.convertToVerilog() ?: error("Missing verilog for ${it.key}")
         }
     }
 

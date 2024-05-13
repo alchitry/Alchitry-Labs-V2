@@ -185,6 +185,8 @@ data class BlockParser(
             }
         }
 
+        context.expr.setAssignWidth(ctx, assignee.width)
+
         assignee.write(newValue.value)
     }
 

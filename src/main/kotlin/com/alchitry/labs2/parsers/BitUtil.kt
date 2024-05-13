@@ -55,7 +55,6 @@ object BitUtil {
      */
     fun widthOfMult(w1: Long, w2: Long): Int {
         return floor(ln((2.0.pow(w1.toDouble()) - 1) * (2.0.pow(w2.toDouble()) - 1)) / ln(2.0)).toInt() + 1 // max
-        // value
     }
 
     /**

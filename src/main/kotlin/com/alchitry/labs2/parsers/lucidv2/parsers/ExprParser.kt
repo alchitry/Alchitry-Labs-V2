@@ -2,7 +2,6 @@ package com.alchitry.labs2.parsers.lucidv2.parsers
 
 import com.alchitry.labs2.asSingleLine
 import com.alchitry.labs2.parsers.BigFunctions
-import com.alchitry.labs2.parsers.BitUtil.widthOfMult
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
@@ -14,7 +13,9 @@ import com.alchitry.labs2.parsers.notations.ErrorStrings
 import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationType
 import com.alchitry.labs2.parsers.notations.WarningStrings
+import com.alchitry.labs2.parsers.parents
 import org.antlr.v4.kotlinruntime.ParserRuleContext
+import org.antlr.v4.kotlinruntime.RuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 import org.antlr.v4.kotlinruntime.tree.TerminalNode
 import org.apache.commons.text.StringEscapeUtils
@@ -30,6 +31,8 @@ import kotlin.math.*
 data class ExprParser(
     private val context: LucidExprContext,
     private val exprs: MutableMap<ParseTree, Expr> = mutableMapOf(),
+    private val assignWidths: MutableMap<ParseTree, SignalWidth> = mutableMapOf(),
+    private val widthFence: MutableMap<ParseTree, Boolean> = mutableMapOf(),
     private val dependencies: MutableMap<ParseTree, Set<Signal>> = mutableMapOf()
 ) : SuspendLucidBaseListener() {
     private var inTestBlock = false
@@ -40,6 +43,46 @@ data class ExprParser(
 
     fun resolve(ctx: ExprContext): Expr? = exprs[ctx]
     fun resolveDependencies(ctx: ExprContext): Set<Signal>? = dependencies[ctx]
+
+    fun setAssignWidth(ctx: ParseTree, width: SignalWidth) {
+        assignWidths[ctx] = width
+    }
+
+    private val finalWidthCache: MutableMap<ParseTree, SignalWidth> = mutableMapOf()
+
+    private fun getFinalWidth(ctx: RuleContext): SignalWidth? {
+        finalWidthCache[ctx]?.let { return it }
+
+        if (widthFence[ctx] == true)
+            return exprs[ctx]?.value?.width
+
+        val parents = ctx.parents
+        val fenceIdx = parents.indexOfFirst { widthFence[it] == true }
+        val trimmed = if (fenceIdx >= 0) parents.subList(0, fenceIdx) else parents
+
+        val assignWidth = trimmed.asReversed().firstNotNullOfOrNull { assignWidths[it] }
+        val exprWidth = trimmed.asReversed().firstNotNullOfOrNull { exprs[it] }?.value?.width
+
+        if (exprWidth != null) {
+            if (assignWidth != null) {
+                if (assignWidth is SimpleWidth && exprWidth is SimpleWidth) {
+                    val w = assignWidth.mergeWith(exprWidth)
+                    finalWidthCache[ctx] = w
+                    return w
+                }
+                finalWidthCache[ctx] = assignWidth
+                return assignWidth
+            }
+            finalWidthCache[ctx] = exprWidth
+            return exprWidth
+        }
+
+        exprs[ctx]?.value?.width?.let {
+            finalWidthCache[ctx] = it
+            return it
+        }
+        return null
+    }
 
     /**
      * Returns true if the value at this node doesn't need to be recalculated
@@ -200,6 +243,8 @@ data class ExprParser(
         ctx.skip = true
         if (canSkip(ctx)) return
 
+        widthFence[ctx] = true
+
         val type = ctx.structType()?.let { context.resolve(it) } ?: return
 
         val members = mutableMapOf<String, Value>()
@@ -255,6 +300,8 @@ data class ExprParser(
 
         val signal = context.resolve(signalCtx) ?: return
 
+        val finalWidth = getFinalWidth(ctx)
+
         if (!signal.direction.canRead) {
             val functionCtx = ctx.firstParentOrNull { it is FunctionContext }
             // exclude reads of the WIDTH function as this doesn't read the signal
@@ -281,7 +328,10 @@ data class ExprParser(
 
         val type = getExprType(listOf(signal.type, bitSelectionType))
 
-        exprs[ctx] = Expr(signal.read(context.evalContext), type)
+        val value = signal.read(context.evalContext)
+        val resizedValue = if (finalWidth != null) value.resizeToMatch(finalWidth) else value
+
+        exprs[ctx] = Expr(resizedValue, type)
 
         // add dependencies for all signals used in bit selection as well as this signal
         if (dependencies[ctx] == null) {
@@ -325,6 +375,9 @@ data class ExprParser(
     // always returns an unsigned value
     override suspend fun exitExprConcat(ctx: ExprConcatContext) {
         if (canSkip(ctx)) return
+
+        widthFence[ctx] = true
+
         val exprCtx = ctx.expr()
         if (exprCtx.isEmpty()) return
 
@@ -412,6 +465,8 @@ data class ExprParser(
     override suspend fun exitExprDup(ctx: ExprDupContext) {
         if (canSkip(ctx)) return
 
+        widthFence[ctx] = true
+
         val exprCtx = ctx.expr()
 
         if (exprCtx.size != 2)
@@ -498,6 +553,9 @@ data class ExprParser(
 
     override suspend fun exitExprArray(ctx: ExprArrayContext) {
         if (canSkip(ctx)) return
+
+        widthFence[ctx] = true
+
         val exprCtx = ctx.expr()
         if (exprCtx.isEmpty())
             return
@@ -689,9 +747,11 @@ data class ExprParser(
 
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
             exprs[ctx] = when {
-                multOp && op1Width is DefinedSimpleWidth && op2Width is DefinedSimpleWidth -> UndefinedValue(
-                    BitListWidth(widthOfMult(op1Width.size, op2Width.size))
-                ).asExpr(type)
+                multOp && op1Width is DefinedSimpleWidth && op2Width is DefinedSimpleWidth -> {
+                    val finalWidth = getFinalWidth(ctx)
+                    val w = (finalWidth?.mergeWith(op1Width) ?: op1Width).mergeWith(op2Width)
+                    UndefinedValue(w).asExpr(type)
+                }
 
                 !multOp && op1Width is DefinedSimpleWidth -> UndefinedValue(BitListWidth(op1Width.size)).asExpr(type)
                 else -> UndefinedValue().asExpr(type)
@@ -705,7 +765,9 @@ data class ExprParser(
         val signed = op1.signed && op2.signed
 
         exprs[ctx] = (if (multOp) {
-            val width = widthOfMult(op1.size, op2.size)
+            val finalWidth = getFinalWidth(ctx)
+            val width = (finalWidth?.mergeWith(op1Width) ?: op1Width).mergeWith(op2Width).bitCount
+                ?: error("Failed to get bitCount!")
             if (!op1.isNumber() || !op2.isNumber())
                 BitListValue(size = width, signed = signed) { Bit.Bx }
             else
@@ -900,6 +962,8 @@ data class ExprParser(
     override suspend fun exitExprCompare(ctx: ExprCompareContext) {
         if (canSkip(ctx)) return
 
+        widthFence[ctx] = true
+
         val exprCtx = ctx.expr()
 
         if (exprCtx.size != 2) return
@@ -960,6 +1024,8 @@ data class ExprParser(
     override suspend fun exitExprLogical(ctx: ExprLogicalContext) {
         if (canSkip(ctx)) return
 
+        widthFence[ctx] = true
+
         val exprCtx = ctx.expr()
 
         if (exprCtx.size != 2) return
@@ -996,6 +1062,8 @@ data class ExprParser(
         val exprCtx = ctx.expr()
 
         if (exprCtx.size != 3) return
+
+        widthFence[exprCtx[0]] = true
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             exprCtx.forEach { c -> dependencies[c]?.let { addAll(it) } }
@@ -1036,6 +1104,8 @@ data class ExprParser(
 
     override suspend fun exitFunction(ctx: FunctionContext) {
         if (canSkip(ctx)) return
+
+        widthFence[ctx] = true
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             ctx.functionExpr().forEach { c -> c.expr()?.let { expr -> dependencies[expr]?.let { addAll(it) } } }
