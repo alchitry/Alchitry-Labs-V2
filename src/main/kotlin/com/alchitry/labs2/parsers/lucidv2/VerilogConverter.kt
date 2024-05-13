@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.lucidv2
 
 import com.alchitry.labs2.Env
+import com.alchitry.labs2.asSingleLine
 import com.alchitry.labs2.parsers.grammar.LucidBaseListener
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.LucidParser.FunctionContext
@@ -60,7 +61,7 @@ class VerilogConverter(
      */
     private var ParseTree.verilog: String
         get() = this@VerilogConverter.verilog[this]
-            ?: error("Missing verilog for ${this::class.simpleName}: \"${this.text}\"")
+            ?: error("Missing verilog for ${this::class.simpleName}: \"${this.text.asSingleLine()}\"")
         set(value) {
             this@VerilogConverter.verilog[this] = value
         }
@@ -466,6 +467,18 @@ class VerilogConverter(
             append("always @* ")
             append(ctx.block().requireNotNull(ctx).verilog)
         }
+    }
+
+    override fun exitAlwaysSignal(ctx: LucidParser.AlwaysSignalContext) {
+        val expr = ctx.sigDec()?.expr()
+        if (expr == null) {
+            ctx.verilog = "" // no default value
+            return
+        }
+        val signal =
+            context.resolveSignal(ctx, ctx.sigDec()?.name()?.text ?: error("Missing name for local signal!")) as? Signal
+                ?: error("Failed to resolve local signal: \"${ctx.text.asSingleLine()}\"")
+        ctx.verilog = "${signal.verilogName} = ${expr.verilog};"
     }
 
     override fun exitAlwaysAssign(ctx: LucidParser.AlwaysAssignContext) {
