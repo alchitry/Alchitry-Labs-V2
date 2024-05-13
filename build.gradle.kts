@@ -23,7 +23,7 @@ plugins {
     kotlin("plugin.serialization") version "1.9.23"
 }
 
-val fullVersion = "2.0.7-PREVIEW"
+val fullVersion = "2.0.8-PREVIEW"
 val numOnlyVersion = fullVersion.split('-').first()
 
 group = "com.alchitry"
@@ -45,9 +45,9 @@ javafx {
 dependencies {
     implementation("com.github.alchitry.antlr-kotlin:antlr-kotlin-runtime:$antlrKotlinVersion")
     implementation("org.apache.commons:commons-text:1.12.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.7")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
     implementation(kotlin("reflect"))
@@ -105,6 +105,7 @@ compose.desktop {
     }
 }
 
+val conveyorCommand = "/home/justin/.npm-global/bin/conveyor"
 fun TaskContainer.registerConveyorTask(name: String, arg: String? = null) {
     register(name) {
         group = "conveyor"
@@ -112,9 +113,9 @@ fun TaskContainer.registerConveyorTask(name: String, arg: String? = null) {
         doLast {
             exec {
                 if (arg == null) {
-                    commandLine("conveyor", "--passphrase=${secrets.get("conveyorRootKey")}", "make", name)
+                    commandLine(conveyorCommand, "--passphrase=${secrets.get("conveyorRootKey")}", "make", name)
                 } else {
-                    commandLine("conveyor", "--passphrase=${secrets.get("conveyorRootKey")}", arg, "make", name)
+                    commandLine(conveyorCommand, "--passphrase=${secrets.get("conveyorRootKey")}", arg, "make", name)
                 }
             }
         }
