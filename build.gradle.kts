@@ -23,7 +23,7 @@ plugins {
     kotlin("plugin.serialization") version "1.9.23"
 }
 
-val fullVersion = "2.0.8-PREVIEW"
+val fullVersion = "2.0.9-PREVIEW"
 val numOnlyVersion = fullVersion.split('-').first()
 
 group = "com.alchitry"

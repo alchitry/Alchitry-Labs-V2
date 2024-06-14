@@ -211,7 +211,11 @@ class VerilogConverter(
             val bitCount = sig.width.bitCount ?: error("Sig \"${sig.name}\" has an undefined width!")
             if (bitCount > 1) {
                 append("[")
-                append(bitCount - 1)
+                if (sig.parent is RepeatSignal) {
+                    append(bitCount) // Ensure repeat signals are big enough to hold their max value + 1.
+                } else {
+                    append(bitCount - 1)
+                }
                 append(":0] ")
             }
             append(sig.verilogName)
@@ -629,10 +633,11 @@ class VerilogConverter(
     }
 
     override fun exitSignal(ctx: LucidParser.SignalContext) {
-
-
         val signal = context.resolve(ctx)
         if (signal == null) {
+            if (ctx.parent is LucidParser.ExprSignalContext && ctx.parent?.parent is LucidParser.RepeatStatContext)
+                return
+
             val functionCtx = ctx.firstParentOrNull { it is FunctionContext }
             if (functionCtx is FunctionContext && functionCtx.FUNCTION_ID()?.text == "$" + Function.WIDTH.label)
                 return
@@ -965,6 +970,9 @@ class VerilogConverter(
 
         val v = verilog[ctx.signal().requireNotNull(ctx)]
         if (v == null) {
+            if (ctx.parent is LucidParser.RepeatStatContext)
+                return
+
             val functionCtx = ctx.firstParentOrNull { it is FunctionContext }
             if (functionCtx is FunctionContext && functionCtx.FUNCTION_ID()?.text == "$" + Function.WIDTH.label)
                 return

@@ -2,7 +2,7 @@ import com.alchitry.labs2.parsers.lucidv2.parsers.toSourceFile
 import com.alchitry.labs2.parsers.lucidv2.values.BitListValue
 import helpers.LucidTester
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class RepeatTests {
