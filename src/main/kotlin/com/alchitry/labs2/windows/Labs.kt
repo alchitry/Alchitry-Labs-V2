@@ -42,7 +42,7 @@ fun ApplicationScope.labsWindow() {
             Settings.openProject = Project.current?.projectFile?.absolutePath
             Settings.commit()
         }
-    ) {
+    ) { state ->
         LaunchedEffect(Unit) {
             Env.mode = Env.Mode.Labs
             Settings.openProject?.let {
@@ -69,7 +69,7 @@ fun ApplicationScope.labsWindow() {
 
         AlchitryTheme {
             Column {
-                WindowDecoration {
+                WindowDecoration(state) {
                     LabsToolbar()
                 }
 

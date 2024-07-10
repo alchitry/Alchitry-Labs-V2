@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.onClick
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
@@ -26,6 +27,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindowScope
 import androidx.compose.ui.window.FrameWindowScope
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.WindowState
 import com.alchitry.labs2.Env
 import com.alchitry.labs2.ui.layout.LCR
 import com.alchitry.labs2.ui.theme.AlchitryColors
@@ -33,8 +36,11 @@ import java.awt.Frame
 import java.awt.event.WindowEvent
 
 @Composable
-fun FrameWindowScope.WindowDecoration(toolbar: (@Composable () -> Unit)? = null) {
-    WindowDraggableArea {
+fun FrameWindowScope.WindowDecoration(state: WindowState, toolbar: (@Composable () -> Unit)? = null) {
+    WindowDraggableArea(Modifier.onClick(onDoubleClick = {
+        state.placement = if (state.placement == WindowPlacement.Maximized)
+            WindowPlacement.Floating else WindowPlacement.Maximized
+    }) {}) {
         Surface(tonalElevation = 5.dp, modifier = Modifier.height(48.dp)) {
             Decorations(
                 toolbar = {

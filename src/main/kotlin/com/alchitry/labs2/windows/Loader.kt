@@ -72,13 +72,13 @@ fun ApplicationScope.loaderWindow() {
             Settings.loaderWindowState = it
             Settings.commit()
         }
-    ) {
+    ) { state ->
         LaunchedEffect(Unit) {
             Env.mode = Env.Mode.Loader
         }
         AlchitryTheme {
             Column {
-                WindowDecoration {
+                WindowDecoration(state) {
                     IconMenu(painterResource("icons/alchitry_icon.svg"), "Main Menu") {
                         MenuItem({ Text("Switch to Alchitry Labs") }) {
                             switchActiveWindow(Settings.WindowType.Labs)

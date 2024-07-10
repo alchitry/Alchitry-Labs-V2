@@ -28,7 +28,7 @@ fun ApplicationScope.openWindow(
     minWidth: Dp = 150.dp,
     minHeight: Dp = 150.dp,
     onClose: (WindowState) -> Unit,
-    body: @Composable FrameWindowScope.() -> Unit
+    body: @Composable FrameWindowScope.(state: WindowState) -> Unit
 ) {
     val windowState = rememberWindowState(
         placement = initialWindowState.placement,
@@ -36,7 +36,6 @@ fun ApplicationScope.openWindow(
         position = initialWindowState.position,
         isMinimized = initialWindowState.isMinimized
     )
-
     Window(
         state = windowState,
         title = "$title - ${Env.version}",
@@ -75,7 +74,7 @@ fun ApplicationScope.openWindow(
         SideEffect { mainWindow = this.window }
 
         CompositionLocalProvider(LocalComposeWindow provides this.window) {
-            Layout(content = { body() }) { measurables, constraints ->
+            Layout(content = { body(windowState) }) { measurables, constraints ->
                 if (packContent) {
                     val minX = measurables.maxOf { it.minIntrinsicWidth(Int.MAX_VALUE) }
                     val minY = measurables.maxOf { it.minIntrinsicHeight(minX) }
