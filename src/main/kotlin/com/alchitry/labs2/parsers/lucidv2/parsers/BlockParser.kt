@@ -20,7 +20,6 @@ data class BlockParser(
 ) : SuspendLucidBaseListener() {
     private val dependencies = mutableSetOf<Signal>()
     private val drivenSignals = mutableSetOf<Signal>()
-    private val localRepeatSignals = mutableMapOf<RepeatStatContext, Signal>()
     private val repeatBlocks = mutableMapOf<RepeatStatContext, RepeatBlock>()
 
     private var inTestBlock = false
@@ -29,7 +28,7 @@ data class BlockParser(
     fun resolveFunction(name: String) = functions[name]
     fun resolveRepeatBlock(block: RepeatStatContext) = repeatBlocks[block]
 
-    suspend fun queueEval() {
+    fun queueEval() {
         alwaysBlocks.values.forEach {
             context.project.queue(it)
         }
@@ -38,7 +37,6 @@ data class BlockParser(
     private fun enterBlock() {
         dependencies.clear()
         drivenSignals.clear()
-        localRepeatSignals.clear()
     }
 
     override suspend fun enterAlwaysBlock(ctx: AlwaysBlockContext) {
@@ -51,7 +49,7 @@ data class BlockParser(
 
     override suspend fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
         alwaysBlocks[ctx] =
-            AlwaysBlock(context, dependencies.toSet(), drivenSignals.toSet(), localRepeatSignals.toMap(), ctx)
+            AlwaysBlock(context, dependencies.toSet(), drivenSignals.toSet(), ctx)
     }
 
     override suspend fun enterTestBlock(ctx: TestBlockContext) {
@@ -256,7 +254,14 @@ data class BlockParser(
         val exprList = exprCtx.map { context.resolve(it) }
 
         val hiddenSignalName = sigName ?: "r_${ctx.hashCode()}" // create signal for verilog conversion
-        val repeatBlock = RepeatBlock(context, hiddenSignalName, exprCtx[0], exprCtx.getOrNull(1), exprCtx.getOrNull(2))
+        val repeatBlock = RepeatBlock(
+            context,
+            hiddenSignalName,
+            sigName == null,
+            exprCtx[0],
+            exprCtx.getOrNull(1),
+            exprCtx.getOrNull(2)
+        )
 
         if (exprList.isEmpty()) {
             context.notationCollector.reportError(repCtx, "Repeat count was missing.")
@@ -311,16 +316,15 @@ data class BlockParser(
             }
         }
 
-        val repSignal = repeatBlock.createSignal()
-
-        repeatSignals[repCtx] = repSignal
-        localRepeatSignals[repCtx] = repSignal
+        repeatSignals[repCtx] = repeatBlock.createSignal()
         repeatBlocks[repCtx] = repeatBlock
     }
 }
 
 data class RepeatBlock(
-    val context: LucidBlockContext, val signal: String,
+    val context: LucidBlockContext,
+    val signal: String,
+    val signal_hidden: Boolean,
     val countExprCtx: ExprContext,
     val startExprCtx: ExprContext?,
     val stepExprCtx: ExprContext?
