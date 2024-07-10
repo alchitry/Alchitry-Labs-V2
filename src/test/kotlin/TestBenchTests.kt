@@ -323,4 +323,23 @@ class TestBenchTests {
 
         tester.parallelRunTestBenches()
     }
+
+    @Test
+    fun reductionTestbench() = runBlocking {
+        val tester = LucidTester(
+            """
+                testBench playground {
+                    sig cumulative[10]
+                
+                    test myTest {
+                        cumulative = 0
+                        cumulative = cumulative + 1
+                        ${"$"}assert(&cumulative == 0)
+                    }
+                }
+            """.trimIndent().toSourceFile(),
+        )
+
+        tester.runTestBenches()
+    }
 }

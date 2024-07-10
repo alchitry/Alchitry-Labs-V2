@@ -113,7 +113,6 @@ data class ExprParser(
     }
 
     override suspend fun exitBitSelectorFixWidth(ctx: BitSelectorFixWidthContext) {
-        ctx.expr().forEach { widthFence[it] = true }
         if (dependencies[ctx] != null) return
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
@@ -121,7 +120,6 @@ data class ExprParser(
     }
 
     override suspend fun exitBitSelectorConst(ctx: BitSelectorConstContext) {
-        ctx.expr().forEach { widthFence[it] = true }
         if (dependencies[ctx] != null) return
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
@@ -129,7 +127,6 @@ data class ExprParser(
     }
 
     override suspend fun exitArrayIndex(ctx: ArrayIndexContext) {
-        ctx.expr()?.let { widthFence[it] = true }
         if (dependencies[ctx] != null) return
         dependencies[ctx.expr() ?: return]?.let { dependencies[ctx] = it }
     }
@@ -292,6 +289,7 @@ data class ExprParser(
     }
 
     override suspend fun exitBitSelection(ctx: BitSelectionContext) {
+        widthFence[ctx] = true
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             ctx.children?.forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
@@ -299,9 +297,6 @@ data class ExprParser(
 
     override suspend fun exitRepeatStat(ctx: RepeatStatContext) {
         widthFence[ctx] = true
-        ctx.expr().forEach {
-            widthFence[it] = true
-        }
     }
 
     override suspend fun exitExprSignal(ctx: ExprSignalContext) {
@@ -945,6 +940,8 @@ data class ExprParser(
 
     override suspend fun exitExprReduction(ctx: ExprReductionContext) {
         if (canSkip(ctx)) return
+
+        widthFence[ctx] = true
 
         val exprCtx = ctx.expr() ?: return
 
