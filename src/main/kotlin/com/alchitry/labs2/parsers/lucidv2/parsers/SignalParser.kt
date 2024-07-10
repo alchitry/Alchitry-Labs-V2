@@ -20,7 +20,6 @@ fun ParserRuleContext.firstParentOrNull(condition: (ParserRuleContext) -> Boolea
 data class SignalParser(
     private val context: LucidExprContext,
     private val signals: MutableMap<SignalContext, SignalOrSubSignal> = mutableMapOf(),
-    private val usedChildrenCache: MutableMap<SignalContext, Int> = mutableMapOf(),
     private val signalWidths: MutableMap<SignalWidthContext, SignalWidth> = mutableMapOf()
 ) : LucidBaseListener() {
     fun withContext(context: LucidExprContext) = copy(context = context)
@@ -76,74 +75,63 @@ data class SignalParser(
     }
 
     override fun exitSignal(ctx: SignalContext) {
-        val cachedUsedChildren = usedChildrenCache[ctx]
-        val cachedSignalOrSubSignal = signals[ctx]
-
         val children = ctx.children?.filter { it is NameContext || it is BitSelectionContext } ?: emptyList()
-
-        var usedChildren: Int
         var currentSignalOrParent: SignalOrParent
-        if (cachedUsedChildren == null || cachedSignalOrSubSignal == null) {
-            val nameCtx = ctx.name()
-            val firstName = nameCtx.firstOrNull() ?: return
-            val signalOrParent = context.resolveSignal(ctx, firstName.text)
 
-            if (signalOrParent == null) {
-                // check if the signal is the first argument in a repeat block
-                if (ctx.name().size == 1 && ctx.bitSelection().isEmpty()) {
-                    val parent = ctx.parent
-                    if (parent is ExprSignalContext) {
-                        val pp = parent.parent
-                        if (pp is RepeatStatContext && pp.expr(0) == parent) {
-                            return
-                        }
+        val nameCtx = ctx.name()
+        val firstName = nameCtx.firstOrNull() ?: return
+        val signalOrParent = context.resolveSignal(ctx, firstName.text)
+
+        if (signalOrParent == null) {
+            // check if the signal is the first argument in a repeat block
+            if (ctx.name().size == 1 && ctx.bitSelection().isEmpty()) {
+                val parent = ctx.parent
+                if (parent is ExprSignalContext) {
+                    val pp = parent.parent
+                    if (pp is RepeatStatContext && pp.expr(0) == parent) {
+                        return
                     }
                 }
+            }
 
-                context.reportError(nameCtx.first(), "Failed to resolve signal \"${firstName.text}\"")
+            context.reportError(nameCtx.first(), "Failed to resolve signal \"${firstName.text}\"")
+            return
+        }
+
+        var usedChildren = 1
+        currentSignalOrParent = signalOrParent
+
+        while (currentSignalOrParent is SignalParent) {
+            if (children.size < usedChildren + 1) {
+                if (currentSignalOrParent is EnumType) {
+                    val functionName =
+                        (ctx.parent?.parent?.parent as? FunctionContext)?.FUNCTION_ID()?.text?.substring(1)
+                    if (functionName != null && context.resolveFunction(functionName) == Function.WIDTH)
+                        return
+                }
+                context.reportError(
+                    nameCtx[usedChildren - 1],
+                    "${nameCtx[usedChildren - 1].text} is not a signal and can't be accessed directly."
+                )
                 return
             }
-
-            usedChildren = 1
-            currentSignalOrParent = signalOrParent
-
-            while (currentSignalOrParent is SignalParent) {
-                if (children.size < usedChildren + 1) {
-                    if (currentSignalOrParent is EnumType) {
-                        val functionName =
-                            (ctx.parent?.parent?.parent as? FunctionContext)?.FUNCTION_ID()?.text?.substring(1)
-                        if (functionName != null && context.resolveFunction(functionName) == Function.WIDTH)
-                            return
-                    }
-                    context.reportError(
-                        nameCtx[usedChildren - 1],
-                        "${nameCtx[usedChildren - 1].text} is not a signal and can't be accessed directly."
-                    )
-                    return
-                }
-                if (children[usedChildren] is BitSelectionContext) {
-                    context.reportError(
-                        children[usedChildren] as ParserRuleContext,
-                        "${nameCtx[usedChildren].text} is not an array."
-                    )
-                    return
-                }
-                val sig = currentSignalOrParent.getSignal(children[usedChildren].text)
-                if (sig == null) {
-                    context.reportError(
-                        children[usedChildren] as ParserRuleContext,
-                        "Failed to resolve signal ${firstName.text}.${children[usedChildren].text}"
-                    )
-                    return
-                }
-                usedChildren += 1
-                currentSignalOrParent = sig
+            if (children[usedChildren] is BitSelectionContext) {
+                context.reportError(
+                    children[usedChildren] as ParserRuleContext,
+                    "${nameCtx[usedChildren].text} is not an array."
+                )
+                return
             }
-
-            //usedChildrenCache[ctx] = usedChildren
-        } else {
-            usedChildren = cachedUsedChildren
-            currentSignalOrParent = cachedSignalOrSubSignal.getSignal()
+            val sig = currentSignalOrParent.getSignal(children[usedChildren].text)
+            if (sig == null) {
+                context.reportError(
+                    children[usedChildren] as ParserRuleContext,
+                    "Failed to resolve signal ${firstName.text}.${children[usedChildren].text}"
+                )
+                return
+            }
+            usedChildren += 1
+            currentSignalOrParent = sig
         }
 
         val signal = currentSignalOrParent as Signal
@@ -180,6 +168,10 @@ data class SignalParser(
                 context.reportError(selectionMap[e.selector]!!, e.message!!)
                 return
             }
+        }
+
+        if (context is LucidBlockContext && context.stage == ParseStage.Evaluation) {
+            null
         }
 
         signals[ctx] = selectedSignal

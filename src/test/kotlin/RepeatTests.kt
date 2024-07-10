@@ -139,4 +139,184 @@ class RepeatTests {
         assert(tester.notationManager.hasNoErrors)
         assertEquals(BitListValue(64, width = 32, signed = false), out.external.read())
     }
+
+    @Test
+    fun rippleCarryAdderV1() = runBlocking {
+        val tester = LucidTester(
+            """
+                testBench playground {
+                    rca dut(#SIZE(5))
+
+                    test myTest {
+                        dut.a = 5d12
+                        dut.b = 5d4
+                        dut.cin = 0
+                        ${"$"}assert(dut.s == 5d16)
+                    }
+                }
+            """.trimIndent().toSourceFile(),
+            """
+                module rca #(
+                    SIZE = 2 : SIZE > 1
+                )(
+                    input a[SIZE],
+                    input b[SIZE],
+                    input cin,
+                    output s[SIZE],
+                ) {
+                    fa fa[SIZE]
+                    
+                    always {
+                        fa.a = a
+                        fa.b = b
+                        fa.cin[0] = cin
+                        
+                        // version 1
+                        // sum output is not correct except for when SIZE is 3
+                        repeat(i, SIZE-1){
+                            fa.cin[i+1] = fa.cout[i]
+                        }
+                        
+                        s = fa.s
+                    }
+                }
+            """.trimIndent().toSourceFile("rca.luc"),
+            """
+                module fa (
+                    output s,
+                    output cout,
+                    input a,
+                    input b,
+                    input cin
+                ) {
+                    always {
+                        s = a ^ b ^ cin;
+                        cout = (a & b) + (a & cin) + (b & cin);
+                    }
+                }
+            """.trimIndent().toSourceFile("fa.luc")
+        )
+
+        tester.runTestBenches()
+    }
+
+    @Test
+    fun rippleCarryAdderV2() = runBlocking {
+        val tester = LucidTester(
+            """
+                testBench playground {
+                    rca dut(#SIZE(5))
+                    
+                    test myTest {
+                        dut.a = 5d12
+                        dut.b = 5d4
+                        dut.cin = 0
+                        ${"$"}assert(dut.s == 5d16)
+                    }
+                }
+            """.trimIndent().toSourceFile(),
+            """
+                module rca #(
+                    SIZE = 2 : SIZE > 1
+                )(
+                    input a[SIZE],
+                    input b[SIZE],
+                    input cin,
+                    output s[SIZE],
+                ) {
+                    fa fa[SIZE]
+                    
+                    always {
+                        fa.a = a
+                        fa.b = b
+                        fa.cin[0] = cin
+                        
+                        // version 2, error when SIZE is 3, OK otherwise
+                        // sum output is not correct 
+                        repeat(i, SIZE-1, SIZE-1, -1){
+                            fa.cin[i] = fa.cout[i-1]
+                        }
+                        
+                        s = fa.s
+                    }
+                }
+            """.trimIndent().toSourceFile("rca.luc"),
+            """
+                module fa (
+                    output s,
+                    output cout,
+                    input a,
+                    input b,
+                    input cin
+                ) {
+                    always {
+                        s = a ^ b ^ cin;
+                        cout = (a & b) + (a & cin) + (b & cin);
+                    }
+                }
+            """.trimIndent().toSourceFile("fa.luc")
+        )
+
+        tester.runTestBenches()
+    }
+
+    @Test
+    fun rippleCarryAdderV3() = runBlocking {
+        val tester = LucidTester(
+            """
+                testBench playground {
+                    rca dut(#SIZE(5))
+                    
+                    test myTest {
+                        dut.a = 5d12
+                        dut.b = 5d4
+                        dut.cin = 0
+                        ${"$"}assert(dut.s == 5d16)
+                    }
+                }
+            """.trimIndent().toSourceFile(),
+            """
+                module rca #(
+                    SIZE = 2 : SIZE > 1
+                )(
+                    input a[SIZE],
+                    input b[SIZE],
+                    input cin,
+                    output s[SIZE],
+                ) {
+                    fa fa[SIZE]
+                    
+                    always {
+                        fa.a = a
+                        fa.b = b
+                        fa.cin[0] = cin
+                        
+                        // version 3, error when SIZE is 3, OK otherwise
+                        // sum output is not correct
+                        repeat(i, SIZE-1, 1){
+                            fa.cin[i] = fa.cout[i-1]
+                        }
+                        
+                        s = fa.s
+                    }
+                }
+            """.trimIndent().toSourceFile("rca.luc"),
+            """
+                module fa (
+                    output s,
+                    output cout,
+                    input a,
+                    input b,
+                    input cin
+                ) {
+                    always {
+                        s = a ^ b ^ cin;
+                        cout = (a & b) + (a & cin) + (b & cin);
+                    }
+                }
+            """.trimIndent().toSourceFile("fa.luc")
+        )
+
+        tester.runTestBenches()
+    }
 }

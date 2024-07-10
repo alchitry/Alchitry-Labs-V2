@@ -311,24 +311,16 @@ data class BlockParser(
             }
         }
 
+        val repSignal = repeatBlock.createSignal()
 
-
-        val sigWidth = if (countValue.type == ExprType.Constant)
-            (count - 1).toBigInteger().minBits()
-        else
-            (countValue.value as? SimpleValue)?.bits?.size ?: 1
-
-        val repSignal = RepeatSignal(hiddenSignalName, sigWidth, repCtx)
-
-        repeatSignals[repCtx] = repSignal.signal
-        localRepeatSignals[repCtx] = repSignal.signal
+        repeatSignals[repCtx] = repSignal
+        localRepeatSignals[repCtx] = repSignal
         repeatBlocks[repCtx] = repeatBlock
     }
 }
 
 data class RepeatBlock(
-    val context: LucidBlockContext,
-    val signal: String?,
+    val context: LucidBlockContext, val signal: String,
     val countExprCtx: ExprContext,
     val startExprCtx: ExprContext?,
     val stepExprCtx: ExprContext?
@@ -349,16 +341,14 @@ data class RepeatBlock(
         }
     }
 
-    fun createSignal(): Signal? {
-        return signal?.let {
-            Signal(
-                it,
+    fun createSignal(): Signal {
+        return Signal(
+            signal,
                 SignalDirection.Read,
                 null,
                 BitListValue(start, minBits, false),
                 ExprType.Known
             )
-        }
     }
 
     val minBits: Int

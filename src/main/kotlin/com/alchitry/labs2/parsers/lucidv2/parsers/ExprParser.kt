@@ -113,6 +113,7 @@ data class ExprParser(
     }
 
     override suspend fun exitBitSelectorFixWidth(ctx: BitSelectorFixWidthContext) {
+        ctx.expr().forEach { widthFence[it] = true }
         if (dependencies[ctx] != null) return
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
@@ -120,6 +121,7 @@ data class ExprParser(
     }
 
     override suspend fun exitBitSelectorConst(ctx: BitSelectorConstContext) {
+        ctx.expr().forEach { widthFence[it] = true }
         if (dependencies[ctx] != null) return
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             ctx.expr().forEach { c -> dependencies[c]?.let { addAll(it) } }
@@ -127,6 +129,7 @@ data class ExprParser(
     }
 
     override suspend fun exitArrayIndex(ctx: ArrayIndexContext) {
+        ctx.expr()?.let { widthFence[it] = true }
         if (dependencies[ctx] != null) return
         dependencies[ctx.expr() ?: return]?.let { dependencies[ctx] = it }
     }
@@ -291,6 +294,13 @@ data class ExprParser(
     override suspend fun exitBitSelection(ctx: BitSelectionContext) {
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             ctx.children?.forEach { c -> dependencies[c]?.let { addAll(it) } }
+        }
+    }
+
+    override suspend fun exitRepeatStat(ctx: RepeatStatContext) {
+        widthFence[ctx] = true
+        ctx.expr().forEach {
+            widthFence[it] = true
         }
     }
 
@@ -1758,6 +1768,7 @@ data class ExprParser(
                         "Assert failed: \"${ctx.functionExpr(0)?.text}\"",
                         NotationType.Error
                     )
+                    context.reportError(ctx, "Assert failed: \"${ctx.functionExpr(0)?.text}\"")
                     context.printError(notation.toString())
                     context.abortTest()
                 }

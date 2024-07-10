@@ -1,23 +1,11 @@
 package com.alchitry.labs2.parsers.lucidv2.types
 
 import com.alchitry.labs2.parsers.grammar.LucidParser
-import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
-import com.alchitry.labs2.parsers.lucidv2.values.DefinedSimpleWidth
-import com.alchitry.labs2.parsers.lucidv2.values.UndefinedValue
 
 class RepeatSignal(
-    name: String,
-    width: Int,
+    val signal: Signal,
     context: LucidParser.RepeatStatContext,
 ) : SignalParent {
-    val signal = Signal(
-        name,
-        SignalDirection.Read,
-        this,
-        UndefinedValue(DefinedSimpleWidth(width)),
-        ExprType.Known
-    )
-
     override fun getSignal(name: String): Signal? {
         if (signal.name == name)
             return signal
