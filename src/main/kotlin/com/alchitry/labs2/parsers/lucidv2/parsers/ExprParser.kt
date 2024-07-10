@@ -1186,7 +1186,7 @@ data class ExprParser(
         if (function.testOnly && !(inTestBlock || inFunctionBlock)) {
             context.reportError(
                 functionIdCtx,
-                "The function \"$$${function.label}\" can only be used in test or function blocks."
+                "The function \"$${function.label}()\" can only be used in test or function blocks."
             )
             return
         }
@@ -1196,7 +1196,7 @@ data class ExprParser(
                 if (functionArg is FunctionArg.RealArg) {
                     context.reportError(
                         ctx.functionExpr(index) ?: ctx,
-                        "Arguments for \"\$${function.label}()\" can't be real numbers."
+                        "Arguments for \"$${function.label}()\" can't be real numbers."
                     )
                     return null
                 }
@@ -1212,7 +1212,7 @@ data class ExprParser(
                 if (!width.isSimpleArray()) {
                     context.reportError(
                         ctx.functionExpr(0) ?: ctx,
-                        "The function \$${Function.WIDTH.label}() can't be used on structs."
+                        "The function \"$${Function.WIDTH.label}()\" can't be used on structs."
                     )
                     return
                 }
