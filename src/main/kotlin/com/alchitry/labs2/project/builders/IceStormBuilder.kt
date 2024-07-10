@@ -49,10 +49,13 @@ data object IceStormBuilder : ProjectBuilder() {
 
         val jsonFile = project.buildDirectory.resolve("alchitry.json")
 
+        val cmdFile = project.buildDirectory.resolve("yosys.cmd")
+        cmdFile.toFile().writeText("synth_ice40 -json \"${jsonFile.absolutePathString()}\" -top $topModuleName")
+
         val yosysCmd = mutableListOf(
             yosys,
-            "-p",
-            "synth_ice40 -json \"${jsonFile.absolutePathString()}\" -top $topModuleName",
+            "-s",
+            cmdFile.absolutePathString(),
         )
         yosysCmd.addAll(sourceFiles.map { it.absolutePath })
 
