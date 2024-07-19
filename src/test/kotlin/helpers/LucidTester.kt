@@ -85,8 +85,7 @@ class LucidTester(vararg val files: SourceFile) {
 
     /**
      * Performs a full parse on the file.
-     * @param notationCollector if null, the function will automatically check for errors. If provided, you should check
-     * for errors after calling this function.
+     * It does not check for errors after the parse.
      */
     suspend fun fullParse(testing: Boolean = false): ModuleInstance {
         val trees = parseText()
@@ -191,6 +190,7 @@ class LucidTester(vararg val files: SourceFile) {
 
     suspend fun getVerilog(): Map<String, String> {
         val topInstance = fullParse()
+        assertNoIssues()
         val instances = mutableMapOf<String, ModuleInstance>()
         fun add(instance: ModuleInstance) {
             instances[instance.parameterizedModuleName] = instance
@@ -207,4 +207,7 @@ class LucidTester(vararg val files: SourceFile) {
             it.value.context.convertToVerilog() ?: error("Missing verilog for ${it.key}")
         }.also { assert(project.notationManager.hasNoErrors) { project.notationManager.getReport() } }
     }
+
+    fun assertNoErrors() = notationManager.assertNoErrors()
+    fun assertNoIssues() = notationManager.assertNoIssues()
 }

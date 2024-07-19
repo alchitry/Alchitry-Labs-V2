@@ -181,6 +181,8 @@ data class SignalDriverParser(
     }
 
     override fun exitExprSignal(ctx: ExprSignalContext) {
+        if (context.inDeadBlock(ctx))
+            return
         val sig = context.resolve(ctx.signal() ?: return) ?: return
         val fullSig = sig.getSignal()
         val expected = expectedDrivers ?: return
@@ -253,7 +255,7 @@ data class SignalDriverParser(
     override fun exitRepeatStat(ctx: RepeatStatContext) {
         val repeatBlock = context.blockParser.resolveRepeatBlock(ctx) ?: return
         val block = ctx.repeatBlock()?.block() ?: return
-        val signal = repeatBlock.createSignal()
+        val signal = if (repeatBlock.signal_hidden) null else repeatBlock.createSignal()
 
         startBlock()
 
@@ -289,21 +291,35 @@ data class SignalDriverParser(
     }
 
     override fun exitIfStat(ctx: IfStatContext) {
+        val expr = context.resolve(ctx.expr() ?: error("Missing expr from if!")) ?: error("Failed to resolve if expr!")
+
         // if statements can't drive a signal if not complete
         val elseBlock = ctx.elseStat()?.block()?.let { drivenSignals[it] ?: error("Missing else block signals!") }
         val ifBlock = drivenSignals[ctx.block() ?: error("Block missing from if statement!")]
             ?: error("Missing if block signals!")
 
-
         ifBlock.keys.union(elseBlock?.keys ?: emptySet()).forEach { signal ->
             val ifValue = ifBlock[signal] ?: signal.width.filledWith(Bit.B0, signed = false)
             val elseValue = elseBlock?.get(signal) ?: signal.width.filledWith(Bit.B0, signed = false)
             val currentValue = signals[signal] ?: signal.width.filledWith(Bit.B0, signed = false)
+            if (expr.type.known) {
+                if (expr.value.isTrue().bit == Bit.B1) {
+                    signals[signal] = currentValue or ifValue
+                    return@forEach
+                }
+                if (expr.value.isTrue().invert().bit == Bit.B1) {
+                    signals[signal] = currentValue or elseValue
+                    return@forEach
+                }
+            }
             signals[signal] = currentValue or combineConditionalAssignments(ifValue, elseValue)
         }
     }
 
     override fun exitCaseStat(ctx: CaseStatContext) {
+        val expr =
+            context.resolve(ctx.expr() ?: error("Missing expr from case!")) ?: error("Failed to resolve case expr!")
+
         // case statements can't drive a signal without a default case
         val forceConditional = ctx.caseElem().none { it.expr() == null }
 
@@ -313,13 +329,27 @@ data class SignalDriverParser(
                     ?: error("Missing case block signals!")
             }
 
+        val matchingIndex = ctx.caseElem().indexOfFirst { caseElemContext ->
+            val value = context.resolve(caseElemContext.expr() ?: return@indexOfFirst true)
+                ?: error("Missing expr on case block!")
+            value.value.isEqualTo(expr.value).bit == Bit.B1
+        }
+
         // for each signal appearing in any block
         caseMaps.flatMap { it.keys }.toSet().forEach { sig ->
             val signalValues =
                 caseMaps.map { it[sig] ?: sig.width.filledWith(Bit.B0, signed = false) }
             val currentValue = signals[sig] ?: sig.width.filledWith(Bit.B0, signed = false)
-            val drivenValue = signalValues.reduce { acc, value -> combineConditionalAssignments(acc, value) }
-            val maskedValue = if (forceConditional) drivenValue.replaceBit(Bit.B1, Bit.Bx) else drivenValue
+
+            val drivenValue = if (expr.type.known && matchingIndex >= 0) {
+                signalValues[matchingIndex]
+            } else {
+                signalValues.reduce { acc, value -> combineConditionalAssignments(acc, value) }
+            }
+
+            val maskedValue =
+                if (forceConditional && !expr.type.known) drivenValue.replaceBit(Bit.B1, Bit.Bx) else drivenValue
+
             signals[sig] = currentValue or maskedValue
         }
     }

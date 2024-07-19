@@ -52,7 +52,7 @@ class ComponentTests {
                 }
             """.trimIndent().toSourceFile()
         )
-        val top = tester.fullParse()
-        top.context.notationCollector.assertNoErrors()
+        tester.fullParse()
+        tester.assertNoIssues()
     }
 }

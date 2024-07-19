@@ -1,3 +1,5 @@
+import com.alchitry.labs2.parsers.lucidv2.parsers.toSourceFile
+import helpers.LucidTester
 import helpers.SimpleLucidTester
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -108,5 +110,66 @@ class BoundsParserTests {
         test.context.walk(tree)
         assertEquals(listOf(true), test.context.bitSelection.resolve(tree).map { it.undefined })
         assert(test.hasNoIssues)
+    }
+
+    @Test
+    fun testDeadIfCode() = runBlocking {
+        val tester = LucidTester(
+            """
+                module rca #(
+                    SIZE = 4 : SIZE > 1
+                )(
+                    input cin,
+                    output cout,
+                ) {
+                    sig fa[SIZE]
+                    
+                    always {
+                        repeat(i, SIZE){
+                            if (i == 0) {
+                                fa[0] = cin
+                            } else {
+                                fa[i] = fa[i-1]
+                            }
+                        }
+                        
+                        cout = fa[SIZE-1]
+                    }
+                }
+            """.trimIndent().toSourceFile()
+        )
+
+        tester.fullParse()
+        tester.assertNoIssues()
+    }
+
+    @Test
+    fun testDeadCaseCode() = runBlocking {
+        val tester = LucidTester(
+            """
+                module rca #(
+                    SIZE = 4 : SIZE > 1
+                )(
+                    input cin,
+                    output cout,
+                ) {
+                    sig fa[SIZE]
+                    
+                    always {
+                        repeat(i, SIZE){
+                            case (i) {
+                                0: fa[0] = cin
+                                15: fa[53] = fa[1536] // code here is dead so indices are ignored
+                                default: fa[i] = fa[i-1]
+                            }
+                        }
+                        cout = fa[SIZE-1]
+                    }
+                }
+            """.trimIndent().toSourceFile()
+        )
+
+        tester.fullParse()
+        tester.assertNoIssues()
     }
 }

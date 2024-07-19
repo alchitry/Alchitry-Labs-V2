@@ -165,13 +165,11 @@ data class SignalParser(
             try {
                 signal.select(sigSelection)
             } catch (e: SignalSelectionException) {
-                context.reportError(selectionMap[e.selector]!!, e.message!!)
+                if (!context.inDeadBlock(ctx)) {
+                    context.reportError(selectionMap[e.selector]!!, e.message!!)
+                }
                 return
             }
-        }
-
-        if (context is LucidBlockContext && context.stage == ParseStage.Evaluation) {
-            null
         }
 
         signals[ctx] = selectedSignal

@@ -13,6 +13,7 @@ import com.alchitry.labs2.parsers.lucidv2.types.SignalOrParent
 import com.alchitry.labs2.parsers.notations.ErrorListener
 import com.alchitry.labs2.project.files.SourceFile
 import org.antlr.v4.kotlinruntime.ParserRuleContext
+import org.antlr.v4.kotlinruntime.RuleContext
 
 class LucidModuleTypeContext(
     override val project: ProjectContext,
@@ -67,4 +68,5 @@ class LucidModuleTypeContext(
     override fun resolveStruct(name: String) = struct.resolveStruct(name)
 
     override fun resolveGlobal(name: String) = project.resolveGlobal(name)
+    override fun inDeadBlock(ctx: RuleContext): Boolean = expr.inDeadBlock(ctx)
 }

@@ -16,6 +16,7 @@ import com.alchitry.labs2.parsers.notations.ErrorListener
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.project.files.SourceFile
 import org.antlr.v4.kotlinruntime.ParserRuleContext
+import org.antlr.v4.kotlinruntime.RuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 
 class LucidBlockContext(
@@ -267,6 +268,8 @@ class LucidBlockContext(
         Function.builtIn.firstOrNull { it.label == name }?.let { return it }
         return blockParser.resolveFunction(name)
     }
+
+    override fun inDeadBlock(ctx: RuleContext): Boolean = expr.inDeadBlock(ctx)
 
     suspend fun runFunction(function: Function.Custom, args: List<Value>) {
         if (stage != ParseStage.Evaluation)

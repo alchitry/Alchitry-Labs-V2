@@ -12,6 +12,7 @@ import com.alchitry.labs2.parsers.notations.ErrorListener
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.project.files.SourceFile
 import org.antlr.v4.kotlinruntime.ParserRuleContext
+import org.antlr.v4.kotlinruntime.RuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 
 interface LucidExprContext : ErrorListener {
@@ -27,6 +28,7 @@ interface LucidExprContext : ErrorListener {
     fun resolveStruct(name: String): StructType?
     fun resolveGlobal(name: String): GlobalNamespace?
     fun resolveFunction(name: String): Function? = Function.builtIn.firstOrNull { it.label == name }
+    fun inDeadBlock(ctx: RuleContext): Boolean
     val evalContext: Evaluable?
     val project: ProjectContext
     val sourceFile: SourceFile
@@ -88,4 +90,5 @@ class LucidExprEval(
     override fun resolveStruct(name: String) = struct.resolveStruct(name)
 
     override fun resolveGlobal(name: String) = project.resolveGlobal(name)
+    override fun inDeadBlock(ctx: RuleContext): Boolean = expr.inDeadBlock(ctx)
 }

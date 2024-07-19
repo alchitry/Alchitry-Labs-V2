@@ -33,7 +33,8 @@ data class ExprParser(
     private val exprs: MutableMap<ParseTree, Expr> = mutableMapOf(),
     private val assignWidths: MutableMap<ParseTree, SignalWidth> = mutableMapOf(),
     private val widthFence: MutableMap<ParseTree, Boolean> = mutableMapOf(),
-    private val dependencies: MutableMap<ParseTree, Set<Signal>> = mutableMapOf()
+    private val dependencies: MutableMap<ParseTree, Set<Signal>> = mutableMapOf(),
+    private val deadBlocks: MutableMap<RuleContext, Boolean> = mutableMapOf()
 ) : SuspendLucidBaseListener() {
     private var inTestBlock = false
     private var inFunctionBlock = false
@@ -82,6 +83,51 @@ data class ExprParser(
             return it
         }
         return null
+    }
+
+    fun inDeadBlock(ctx: RuleContext): Boolean {
+        var current: RuleContext? = ctx
+        while (current != null) {
+            if (deadBlocks[current] == true)
+                return true
+            current = current.parent
+        }
+        return false
+    }
+
+    override suspend fun enterBlock(ctx: BlockContext) {
+        when (val parent = ctx.parent) {
+            is IfStatContext -> {
+                val expr = context.resolve(parent.expr() ?: return) ?: return
+                if (!expr.type.known) return
+                deadBlocks[ctx] = expr.value.isTrue().invert().bit == Bit.B1
+            }
+
+            is ElseStatContext -> {
+                val expr = context.resolve((parent.parent as? IfStatContext)?.expr() ?: return) ?: return
+                if (!expr.type.known) return
+                deadBlocks[ctx] = expr.value.isTrue().bit == Bit.B1
+            }
+        }
+    }
+
+    override suspend fun enterCaseBlock(ctx: CaseBlockContext) {
+        val parent = ctx.parent as CaseElemContext
+        val caseExprCtx = parent.expr()
+        val expr = context.resolve((parent.parent as CaseStatContext).expr() ?: return) ?: return
+        if (!expr.type.known) return
+
+        if (caseExprCtx != null) {
+            val caseExpr = context.resolve(caseExprCtx) ?: return
+            deadBlocks[ctx] = expr.value.isEqualTo(caseExpr.value).invert().bit == Bit.B1
+            return
+        }
+
+        // default case
+        val cases = (parent.parent as CaseStatContext).caseElem()
+        val index = cases.indexOf(parent)
+        if (index < 0) error("Case isn't inside its parent!")
+        deadBlocks[ctx] = cases.subList(0, index).any { deadBlocks[it] != true }
     }
 
     /**

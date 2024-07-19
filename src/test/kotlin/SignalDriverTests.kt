@@ -144,6 +144,7 @@ class SignalDriverTests {
             """.trimIndent().toSourceFile()
         )
         tester.fullParse()
+        tester.assertNoIssues()
     }
 
     @Test
@@ -153,10 +154,12 @@ class SignalDriverTests {
                 module myModule (
                     input a
                 ) {
+                    sig dummy
                     sig mySig[8]
                    
                     always {
-                        if (1) {
+                        dummy = 1
+                        if (dummy) {
                             mySig = 0
                         }
                         if (a) {}
@@ -190,6 +193,7 @@ class SignalDriverTests {
             """.trimIndent().toSourceFile()
         )
         tester.fullParse()
+        tester.assertNoIssues()
     }
 
     @Test
@@ -210,6 +214,7 @@ class SignalDriverTests {
             """.trimIndent().toSourceFile()
         )
         val top = tester.fullParse()
+        tester.assertNoIssues()
 
         runBlocking {
             top.context.initialize()

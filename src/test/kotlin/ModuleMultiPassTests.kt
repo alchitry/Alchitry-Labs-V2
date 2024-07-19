@@ -35,7 +35,7 @@ class ModuleMultiPassTests {
             """.trimIndent().toSourceFile("myGlobal.luc")
         )
         val top = tester.fullParse()
-
+        tester.assertNoIssues()
 
         val dff = top.context.resolveSignal(top.moduleContext, "myDff") as Dff
 
@@ -63,6 +63,7 @@ class ModuleMultiPassTests {
             """.trimIndent().toSourceFile("myModule.luc")
         )
         val top = tester.fullParse()
+        tester.assertNoIssues()
         val testSig = top.context.resolveSignal(top.moduleContext, "endValue") as Signal
 
         top.context.initialize()
@@ -94,6 +95,7 @@ class ModuleMultiPassTests {
             """.trimIndent().toSourceFile()
         )
         val top = tester.fullParse()
+        tester.assertNoIssues()
         val context = top.context
         val testSig = context.resolveSignal(top.moduleContext, "testB") as Signal
 
@@ -126,6 +128,7 @@ class ModuleMultiPassTests {
             """.trimIndent().toSourceFile()
         )
         val top = tester.fullParse()
+        tester.assertNoIssues()
 
         val context = top.context
 
@@ -167,6 +170,7 @@ class ModuleMultiPassTests {
             """.trimIndent().toSourceFile()
         )
         val top = tester.fullParse()
+        tester.assertNoIssues()
         val context = top.context
         val testSig = top.ports["b"]?.external
 
@@ -214,6 +218,7 @@ class ModuleMultiPassTests {
             """.trimIndent().toSourceFile("globals.luc")
         )
         val top = tester.fullParse()
+        tester.assertNoIssues()
         val context = top.context
         val testSig = top.ports["a"]?.external as Signal
 

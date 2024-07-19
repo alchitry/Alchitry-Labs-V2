@@ -11,6 +11,7 @@ import com.alchitry.labs2.parsers.lucidv2.types.SignalOrParent
 import com.alchitry.labs2.parsers.notations.ErrorListener
 import com.alchitry.labs2.project.files.SourceFile
 import org.antlr.v4.kotlinruntime.ParserRuleContext
+import org.antlr.v4.kotlinruntime.RuleContext
 
 class LucidGlobalContext(
     override val project: ProjectContext,
@@ -63,4 +64,5 @@ class LucidGlobalContext(
     override fun resolveStruct(name: String) = struct.resolveStruct(name)
 
     override fun resolveGlobal(name: String): GlobalNamespace? = global.resolveGlobal(name)
+    override fun inDeadBlock(ctx: RuleContext): Boolean = expr.inDeadBlock(ctx)
 }

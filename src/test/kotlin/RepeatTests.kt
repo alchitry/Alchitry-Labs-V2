@@ -11,7 +11,6 @@ class RepeatTests {
         val tester = LucidTester(
             """
                 module errorTest (
-                    input in[32],
                     output out[32]
                 ) {
                     sig currentIdx[8]
@@ -29,6 +28,7 @@ class RepeatTests {
             """.trimIndent().toSourceFile()
         )
         val module = tester.fullParse()
+        tester.assertNoIssues()
         val out = module.ports["out"] ?: error("Failed to resolve out")
         println(tester.notationManager.getReport().text)
         assert(tester.notationManager.hasNoErrors)
@@ -40,7 +40,6 @@ class RepeatTests {
         val tester = LucidTester(
             """
                 module errorTest (
-                    input in[32],
                     output out[32]
                 ) {
                     sig currentIdx[8]
@@ -56,10 +55,10 @@ class RepeatTests {
             """.trimIndent().toSourceFile()
         )
         val module = tester.fullParse()
+        tester.assertNoIssues()
         val out = module.ports["out"] ?: error("Failed to resolve out")
         assert(tester.notationManager.hasNoErrors)
         assertEquals(BitListValue(8, width = 32, signed = false), out.external.read())
-
     }
 
     @Test
@@ -67,7 +66,6 @@ class RepeatTests {
         val tester = LucidTester(
             """
                 module errorTest (
-                    input in[32],
                     output out[32]
                 ) {
                     sig currentIdx[8]
@@ -83,6 +81,7 @@ class RepeatTests {
             """.trimIndent().toSourceFile()
         )
         val module = tester.fullParse()
+        tester.assertNoIssues()
         val out = module.ports["out"] ?: error("Failed to resolve out")
         assert(tester.notationManager.hasNoErrors)
         assertEquals(BitListValue(28, width = 32, signed = false), out.external.read())
@@ -93,7 +92,6 @@ class RepeatTests {
         val tester = LucidTester(
             """
                 module errorTest (
-                    input in[32],
                     output out[32]
                 ) {
                     sig currentIdx[8]
@@ -109,6 +107,7 @@ class RepeatTests {
             """.trimIndent().toSourceFile()
         )
         val module = tester.fullParse()
+        tester.assertNoIssues()
         val out = module.ports["out"] ?: error("Failed to resolve out")
         assert(tester.notationManager.hasNoErrors)
         assertEquals(BitListValue(36, width = 32, signed = false), out.external.read())
@@ -119,7 +118,6 @@ class RepeatTests {
         val tester = LucidTester(
             """
                 module errorTest (
-                    input in[32],
                     output out[32]
                 ) {
                     sig currentIdx[8]
@@ -135,6 +133,7 @@ class RepeatTests {
             """.trimIndent().toSourceFile()
         )
         val module = tester.fullParse()
+        tester.assertNoIssues()
         val out = module.ports["out"] ?: error("Failed to resolve out")
         assert(tester.notationManager.hasNoErrors)
         assertEquals(BitListValue(64, width = 32, signed = false), out.external.read())

@@ -38,6 +38,7 @@ class ModuleInstanceTests {
         )
 
         val top = tester.fullParse()
+        tester.assertNoErrors()
         val myModInst = top.context.types.resolve(top.moduleContext, "myMod") as ModuleInstance
         assertEquals(SignalDirection.Read, myModInst.getSignal("a")?.direction)
     }
@@ -71,6 +72,7 @@ class ModuleInstanceTests {
         )
 
         val top = tester.fullParse()
+        tester.assertNoIssues()
         val myModInst = top.context.types.resolve(top.moduleContext, "myMod") as ModuleInstanceArray
         assertEquals(DefinedArrayWidth(8, BitListWidth(5)), myModInst.getSignal("a")?.width)
         assertEquals(SignalDirection.Read, myModInst.getSignal("a")?.direction)
@@ -94,6 +96,7 @@ class ModuleInstanceTests {
         )
 
         val top = tester.fullParse()
+        tester.assertNoIssues()
 
         val clk = top.getSignal("clk") as Signal
         val count = top.getSignal("count") as Signal
@@ -148,6 +151,7 @@ class ModuleInstanceTests {
         )
 
         val top = tester.fullParse()
+        tester.assertNoErrors()
 
         val clk = top.getSignal("clk") as Signal
         val count = top.getSignal("count") as Signal
@@ -202,6 +206,7 @@ class ModuleInstanceTests {
         )
 
         val top = tester.fullParse()
+        tester.assertNoIssues()
 
         val clk = top.getSignal("clk") as Signal
         val count = top.getSignal("count") as Signal
@@ -249,7 +254,7 @@ class ModuleInstanceTests {
         )
 
         val top = tester.fullParse()
-        top.context.notationCollector.assertNoErrors()
+        tester.assertNoErrors()
         val myModInst = top.context.types.resolve(top.moduleContext, "myMod") as ModuleInstance
         top.ports["btn"]!!.external.write(Bit.B1.toBitValue())
         tester.project.processQueue()
@@ -285,7 +290,7 @@ class ModuleInstanceTests {
             """.trimIndent().toSourceFile("testModule.luc")
         )
 
-        val top = tester.fullParse()
-        assert(top.context.notationCollector.hasErrors)
+        tester.fullParse()
+        assert(tester.notationManager.hasErrors)
     }
 }
