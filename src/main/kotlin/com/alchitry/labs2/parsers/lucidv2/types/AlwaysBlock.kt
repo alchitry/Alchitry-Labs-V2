@@ -10,7 +10,10 @@ class AlwaysBlock(
     val drivenSignals: Set<Signal>,
     private val alwaysBlockContext: AlwaysBlockContext
 ): Evaluable {
-    val context = context.withEvalContext(this, "AlwaysBlock")
+    val context = context.withEvalContext(
+        this,
+        "AlwaysBlock in ${context.sourceFile.name} at line ${alwaysBlockContext.start?.line}"
+    )
 
     init {
         drivenSignals.forEach {

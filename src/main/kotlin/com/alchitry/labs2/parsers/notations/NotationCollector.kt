@@ -6,6 +6,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.withStyle
 import com.alchitry.kotlinmultiplatform.BitSet
+import com.alchitry.labs2.Log
 import com.alchitry.labs2.project.files.ProjectFile
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import kotlinx.collections.immutable.toImmutableMap
@@ -139,9 +140,9 @@ class NotationCollector private constructor(
     ) {
         val errorReport = getReport(includeErrors, includeWarnings, includeInfos)
         if (errorReport == null)
-            println("Nothing to print for: $name")
+            Log.println("Nothing to print for: $name")
         else
-            println(errorReport)
+            Log.println(errorReport)
     }
 
     fun clear() {

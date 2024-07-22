@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.alchitry.labs2.Log
 import com.alchitry.labs2.hardware.pinout.AuPin
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstance
@@ -86,38 +87,42 @@ class ProjectSimulator(private val projectContext: ProjectContext) : Closeable {
     private suspend fun run() {
         require(projectContext.scope.isActive) { "The simulator has been closed!" }
         withContext(Dispatchers.Default) {
-            initialized.first { true } // wait for initialization
+            initialized.first { it } // wait for initialization
             var sampleCount = 0
             var lastRate = TimeSource.Monotonic.markNow()
             var duration: Duration = (1.0 / targetRateFlow.value.toDouble()).seconds
             var stepsPerDelay = (targetRateFlow.value.toDouble() / 100.0).roundToInt().coerceAtLeast(1)
             mutableEvalRateFlow.tryEmit(targetRateFlow.value.toDouble())
 
-            while (isActive) {
-                val elapsedTime = measureTime {
-                    repeat(stepsPerDelay) {
-                        clk.write(high)
-                        projectContext.processQueue()
-                        clk.write(low)
-                        projectContext.processQueue()
+            try {
+                while (isActive) {
+                    val elapsedTime = measureTime {
+                        repeat(stepsPerDelay) {
+                            clk.write(high)
+                            projectContext.processQueue()
+                            clk.write(low)
+                            projectContext.processQueue()
 
-                        sampleCount += 1
-                        val elapsed = lastRate.elapsedNow()
-                        if (elapsed > 1.seconds) {
-                            val hz = sampleCount / elapsed.toDouble(DurationUnit.SECONDS)
-                            mutableEvalRateFlow.tryEmit(hz)
+                            sampleCount += 1
+                            val elapsed = lastRate.elapsedNow()
+                            if (elapsed > 1.seconds) {
+                                val hz = sampleCount / elapsed.toDouble(DurationUnit.SECONDS)
+                                mutableEvalRateFlow.tryEmit(hz)
 
-                            lastRate = TimeSource.Monotonic.markNow()
-                            sampleCount = 0
+                                lastRate = TimeSource.Monotonic.markNow()
+                                sampleCount = 0
+                            }
                         }
+                        delay(duration * stepsPerDelay)
                     }
-                    delay(duration * stepsPerDelay)
+                    val currentTarget = targetRateFlow.value.toDouble()
+                    val targetDuration = (stepsPerDelay.toDouble() / currentTarget).seconds
+                    val error = (targetDuration - elapsedTime) / stepsPerDelay
+                    duration = (duration + error).coerceAtLeast(Duration.ZERO)
+                    stepsPerDelay = (currentTarget / 100.0).roundToInt().coerceAtLeast(1)
                 }
-                val currentTarget = targetRateFlow.value.toDouble()
-                val targetDuration = (stepsPerDelay.toDouble() / currentTarget).seconds
-                val error = (targetDuration - elapsedTime) / stepsPerDelay
-                duration = (duration + error).coerceAtLeast(Duration.ZERO)
-                stepsPerDelay = (currentTarget / 100.0).roundToInt().coerceAtLeast(1)
+            } catch (e: Exception) {
+                Log.error("Simulation failed: ${e.message}")
             }
         }
     }
