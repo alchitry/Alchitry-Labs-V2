@@ -13,7 +13,6 @@ buildscript {
 
 val antlrKotlinVersion = extra.get("antlrKotlinVersion") as String
 
-
 plugins {
     kotlin("jvm") version "1.9.23"
     id("org.jetbrains.compose") version "1.6.2"
@@ -23,7 +22,7 @@ plugins {
     kotlin("plugin.serialization") version "1.9.23"
 }
 
-val fullVersion = "2.0.10-PREVIEW"
+val fullVersion = "2.0.11-PREVIEW"
 val numOnlyVersion = fullVersion.split('-').first()
 
 group = "com.alchitry"
