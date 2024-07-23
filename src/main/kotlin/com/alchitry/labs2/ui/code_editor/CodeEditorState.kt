@@ -5,7 +5,9 @@ package com.alchitry.labs2.ui.code_editor
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.lazy.layout.LazyLayoutMeasureScope
-import androidx.compose.foundation.text.*
+import androidx.compose.foundation.text.TextDelegate
+import androidx.compose.foundation.text.isTypedEvent
+import androidx.compose.foundation.text.platformDefaultKeyMapping
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.*
@@ -278,7 +280,6 @@ class CodeEditorState(
         return textPositionToToken(textPosition)
     }
 
-    @OptIn(InternalFoundationTextApi::class)
     @Composable
     internal fun subscribe(scope: RecomposeScope) {
         val style = rememberCodeEditorStyle()
@@ -708,10 +709,11 @@ class CodeEditorState(
             autocomplete?.reset()
         }
 
-        // compose ignores the number-pad enter key so check for it here
-        val command: KeyCommand = platformDefaultKeyMapping.map(event)
-            ?: if (event.key.nativeKeyCode == java.awt.event.KeyEvent.VK_ENTER) KeyCommand.NEW_LINE else return false
+        val commandName = platformDefaultKeyMapping.map(event)?.name
 
+        // compose ignores the number-pad enter key so check for it here
+        val command: KeyCommand = commandName?.let { KeyCommand.valueOf(it) }
+            ?: if (event.key.nativeKeyCode == java.awt.event.KeyEvent.VK_ENTER) KeyCommand.NEW_LINE else return false
         var consumed = true
         var resetAutocomplete = true
         //commandExecutionContext {

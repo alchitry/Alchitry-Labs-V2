@@ -8,10 +8,10 @@ import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.onClick
 import androidx.compose.foundation.window.WindowDraggableArea
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -142,7 +142,7 @@ fun WindowButton(
                 onClick = onClick,
                 role = Role.Button,
                 interactionSource = interactionSource,
-                indication = rememberRipple()
+                indication = remember { ripple() }
             ),
         contentAlignment = Alignment.Center
     ) {

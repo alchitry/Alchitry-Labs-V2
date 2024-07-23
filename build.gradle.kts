@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.FileOutputStream
 import java.util.*
@@ -14,8 +15,9 @@ buildscript {
 val antlrKotlinVersion = extra.get("antlrKotlinVersion") as String
 
 plugins {
-    kotlin("jvm") version "1.9.23"
-    id("org.jetbrains.compose") version "1.6.2"
+    kotlin("jvm") version "2.0.0"
+    id("org.jetbrains.compose") version "1.7.0-alpha01"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
     id("dev.hydraulic.conveyor") version "1.5"
     id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
     id("org.openjfx.javafxplugin") version "0.1.0"
@@ -44,10 +46,10 @@ javafx {
 dependencies {
     implementation("com.github.alchitry.antlr-kotlin:antlr-kotlin-runtime:$antlrKotlinVersion")
     implementation("org.apache.commons:commons-text:1.12.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.7")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.9.0-RC")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
 
     implementation(kotlin("reflect"))
     implementation("org.jdom:jdom2:2.0.6.1")
@@ -57,7 +59,7 @@ dependencies {
     implementation("com.fazecast:jSerialComm:2.11.0")
     implementation("com.github.alchitry.yad2xx:yad2xxJava:d2xx_only_with_lib-SNAPSHOT")
     implementation("me.tongfei:progressbar:0.10.1")
-    implementation("org.jline:jline:3.26.1")
+    implementation("org.jline:jline:3.26.2")
     implementation("org.fusesource.jansi:jansi:2.4.1")
     implementation("li.flor:native-j-file-chooser:1.6.4")
 
@@ -67,7 +69,7 @@ dependencies {
     macAarch64(compose.desktop.macos_arm64)
     windowsAmd64(compose.desktop.windows_x64)
 
-    implementation("org.jetbrains.compose.material3:material3-desktop:1.6.2")
+    implementation("org.jetbrains.compose.material3:material3-desktop:1.7.0-alpha01")
 
     testImplementation(kotlin("test"))
 }
@@ -83,14 +85,14 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "17"
-        freeCompilerArgs += "-opt-in=kotlin.contracts.ExperimentalContracts"
-        freeCompilerArgs += "-opt-in=kotlin.ExperimentalStdlibApi"
-        freeCompilerArgs += "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
-        freeCompilerArgs += "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi"
-        freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
-        freeCompilerArgs += "-Xcontext-receivers"
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+        freeCompilerArgs.add("-opt-in=kotlin.contracts.ExperimentalContracts")
+        freeCompilerArgs.add("-opt-in=kotlin.ExperimentalStdlibApi")
+        freeCompilerArgs.add("-opt-in=kotlinx.serialization.ExperimentalSerializationApi")
+        freeCompilerArgs.add("-opt-in=androidx.compose.foundation.ExperimentalFoundationApi")
+        freeCompilerArgs.add("-opt-in=androidx.compose.material3.ExperimentalMaterial3Api")
+        freeCompilerArgs.add("-Xcontext-receivers")
     }
 }
 

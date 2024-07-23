@@ -1,6 +1,7 @@
+@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+
 package com.alchitry.labs2.ui.code_editor
 
-import androidx.compose.foundation.text.InternalFoundationTextApi
 import androidx.compose.foundation.text.TextDelegate
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.AnnotatedString
@@ -11,7 +12,6 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 
-@OptIn(InternalFoundationTextApi::class)
 class CodeLineState(
     val text: AnnotatedString,
     density: Density?,

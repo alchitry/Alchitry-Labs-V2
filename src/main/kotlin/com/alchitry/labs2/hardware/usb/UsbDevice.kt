@@ -164,7 +164,7 @@ open class UsbDevice(
     }
 
     open fun readData(data: ByteArray): Int {
-        val readBuffer = readBuffer ?: return 0
+        val readBuffer = readBuffer
 
         var offset = 0
         var ret: Int
@@ -250,7 +250,7 @@ open class UsbDevice(
                     val desc = DeviceDescriptor()
                     val result = LibUsb.getDeviceDescriptor(dev, desc)
                     if (result != LibUsb.SUCCESS) throw LibUsbException("Unable to read device descriptor", result)
-                    if ((vendor.toInt() != 0 || product.toInt() != 0) && desc.idVendor() == vendor && desc.idProduct() == product || vendor.toInt() == 0 && product.toInt() == 0 && desc.idVendor() === 0x403.toShort() && (desc.idProduct() === 0x6001.toShort() || desc.idProduct() === 0x6010.toShort() || desc.idProduct() === 0x6011.toShort() || desc.idProduct() === 0x6014.toShort() || desc.idProduct() === 0x6015.toShort())) {
+                    if ((vendor.toInt() != 0 || product.toInt() != 0) && desc.idVendor() == vendor && desc.idProduct() == product || vendor.toInt() == 0 && product.toInt() == 0 && desc.idVendor() == 0x403.toShort() && (desc.idProduct() == 0x6001.toShort() || desc.idProduct() == 0x6010.toShort() || desc.idProduct() == 0x6011.toShort() || desc.idProduct() == 0x6014.toShort() || desc.idProduct() == 0x6015.toShort())) {
                         val device = DeviceHandle()
                         if (LibUsb.open(dev, device) < 0) throw LibUsbException("LibUsb.open() failed", -4)
                         if (description != null) {
