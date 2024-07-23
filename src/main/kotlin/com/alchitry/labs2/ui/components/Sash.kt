@@ -49,9 +49,9 @@ class SashData(
     val minimumSize: Pair<Float, Float>
 ) {
     var size by mutableStateOf(size)
-    var dragSize = size
+    private var dragSize: SashSize? = null
 
-    fun clampToBounds() {
+    private fun clampToBounds() {
         if (size.first < minimumSize.first) {
             size = SashSize(minimumSize.first, size.total - minimumSize.first)
         } else if (size.second < minimumSize.second) {
@@ -85,10 +85,16 @@ class SashData(
         dragSize = size
     }
 
+    fun onDragStop() {
+        dragSize = null
+    }
+
     fun onDrag(delta: Float) {
-        dragSize = SashSize(dragSize.first + delta, dragSize.second - delta)
-        size = dragSize
-        clampToBounds()
+        dragSize?.let { dragSize ->
+            this.dragSize = SashSize(dragSize.first + delta, dragSize.second - delta)
+            size = dragSize
+            clampToBounds()
+        }
     }
 }
 
@@ -143,6 +149,7 @@ fun HSash(
                         orientation = Orientation.Horizontal,
                         onDragStarted = { sashData.onDragStart() },
                         onDragStopped = {
+                            sashData.onDragStop()
                             onResize?.invoke(sashData)
                         }
                     )
@@ -196,6 +203,7 @@ fun VSash(
                         orientation = Orientation.Vertical,
                         onDragStarted = { sashData.onDragStart() },
                         onDragStopped = {
+                            sashData.onDragStop()
                             onResize?.invoke(sashData)
                         }
                     )
