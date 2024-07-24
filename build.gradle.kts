@@ -4,7 +4,7 @@ import java.io.FileOutputStream
 import java.util.*
 
 buildscript {
-    val antlrKotlinVersion = "662e198228" // commit hash for custom antlr runtime
+    val antlrKotlinVersion = "36deef96aa" // commit hash for custom antlr runtime
     extra.set("antlrKotlinVersion", antlrKotlinVersion)
 
     dependencies {
