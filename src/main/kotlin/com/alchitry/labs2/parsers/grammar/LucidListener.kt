@@ -558,14 +558,12 @@ interface LucidListener : ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	fun enterAlwaysSignal(ctx: LucidParser.AlwaysSignalContext)
-
 	/**
 	 * Exit a parse tree produced by the {@code AlwaysSignal}
 	 * labeled alternative in {@link LucidParser#alwaysStat}.
 	 * @param ctx the parse tree
 	 */
 	fun exitAlwaysSignal(ctx: LucidParser.AlwaysSignalContext)
-
 	/**
 	 * Enter a parse tree produced by {@link LucidParser#block}.
 	 * @param ctx the parse tree
@@ -1191,11 +1189,11 @@ interface LucidListener : ParseTreeListener {
         override suspend fun exitAlwaysFunction(ctx: LucidParser.AlwaysFunctionContext) =
             this@LucidListener.exitAlwaysFunction(ctx)
 
-		override suspend fun enterAlwaysSignal(ctx: LucidParser.AlwaysSignalContext) =
-			this@LucidListener.enterAlwaysSignal(ctx)
+        override suspend fun enterAlwaysSignal(ctx: LucidParser.AlwaysSignalContext) =
+            this@LucidListener.enterAlwaysSignal(ctx)
 
-		override suspend fun exitAlwaysSignal(ctx: LucidParser.AlwaysSignalContext) =
-			this@LucidListener.exitAlwaysSignal(ctx)
+        override suspend fun exitAlwaysSignal(ctx: LucidParser.AlwaysSignalContext) =
+            this@LucidListener.exitAlwaysSignal(ctx)
 
         override suspend fun enterBlock(ctx: LucidParser.BlockContext) = this@LucidListener.enterBlock(ctx)
         override suspend fun exitBlock(ctx: LucidParser.BlockContext) = this@LucidListener.exitBlock(ctx)
@@ -1912,14 +1910,12 @@ interface SuspendLucidListener : SuspendParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	suspend fun enterAlwaysSignal(ctx: LucidParser.AlwaysSignalContext)
-
 	/**
 	 * Exit a parse tree produced by the {@code AlwaysSignal}
 	 * labeled alternative in {@link LucidParser#alwaysStat}.
 	 * @param ctx the parse tree
 	 */
 	suspend fun exitAlwaysSignal(ctx: LucidParser.AlwaysSignalContext)
-
 	/**
 	 * Enter a parse tree produced by {@link LucidParser#block}.
 	 * @param ctx the parse tree
