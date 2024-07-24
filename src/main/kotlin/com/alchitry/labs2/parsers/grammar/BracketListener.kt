@@ -17,67 +17,56 @@ interface BracketListener : ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	fun enterSource(ctx: BracketParser.SourceContext)
-
 	/**
 	 * Exit a parse tree produced by {@link BracketParser#source}.
 	 * @param ctx the parse tree
 	 */
 	fun exitSource(ctx: BracketParser.SourceContext)
-
 	/**
 	 * Enter a parse tree produced by {@link BracketParser#block}.
 	 * @param ctx the parse tree
 	 */
 	fun enterBlock(ctx: BracketParser.BlockContext)
-
 	/**
 	 * Exit a parse tree produced by {@link BracketParser#block}.
 	 * @param ctx the parse tree
 	 */
 	fun exitBlock(ctx: BracketParser.BlockContext)
-
 	/**
 	 * Enter a parse tree produced by {@link BracketParser#parenBlock}.
 	 * @param ctx the parse tree
 	 */
 	fun enterParenBlock(ctx: BracketParser.ParenBlockContext)
-
 	/**
 	 * Exit a parse tree produced by {@link BracketParser#parenBlock}.
 	 * @param ctx the parse tree
 	 */
 	fun exitParenBlock(ctx: BracketParser.ParenBlockContext)
-
 	/**
 	 * Enter a parse tree produced by {@link BracketParser#squareBlock}.
 	 * @param ctx the parse tree
 	 */
 	fun enterSquareBlock(ctx: BracketParser.SquareBlockContext)
-
 	/**
 	 * Exit a parse tree produced by {@link BracketParser#squareBlock}.
 	 * @param ctx the parse tree
 	 */
 	fun exitSquareBlock(ctx: BracketParser.SquareBlockContext)
-
 	/**
 	 * Enter a parse tree produced by {@link BracketParser#curlyBlock}.
 	 * @param ctx the parse tree
 	 */
 	fun enterCurlyBlock(ctx: BracketParser.CurlyBlockContext)
-
 	/**
 	 * Exit a parse tree produced by {@link BracketParser#curlyBlock}.
 	 * @param ctx the parse tree
 	 */
 	fun exitCurlyBlock(ctx: BracketParser.CurlyBlockContext)
-
 	/**
 	 * Enter a parse tree produced by {@link BracketParser#commentBlock}.
 	 * @param ctx the parse tree
 	 */
 	fun enterCommentBlock(ctx: BracketParser.CommentBlockContext)
-
 	/**
 	 * Exit a parse tree produced by {@link BracketParser#commentBlock}.
 	 * @param ctx the parse tree
@@ -133,67 +122,56 @@ interface SuspendBracketListener : SuspendParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	suspend fun enterSource(ctx: BracketParser.SourceContext)
-
 	/**
 	 * Exit a parse tree produced by {@link BracketParser#source}.
 	 * @param ctx the parse tree
 	 */
 	suspend fun exitSource(ctx: BracketParser.SourceContext)
-
 	/**
 	 * Enter a parse tree produced by {@link BracketParser#block}.
 	 * @param ctx the parse tree
 	 */
 	suspend fun enterBlock(ctx: BracketParser.BlockContext)
-
 	/**
 	 * Exit a parse tree produced by {@link BracketParser#block}.
 	 * @param ctx the parse tree
 	 */
 	suspend fun exitBlock(ctx: BracketParser.BlockContext)
-
 	/**
 	 * Enter a parse tree produced by {@link BracketParser#parenBlock}.
 	 * @param ctx the parse tree
 	 */
 	suspend fun enterParenBlock(ctx: BracketParser.ParenBlockContext)
-
 	/**
 	 * Exit a parse tree produced by {@link BracketParser#parenBlock}.
 	 * @param ctx the parse tree
 	 */
 	suspend fun exitParenBlock(ctx: BracketParser.ParenBlockContext)
-
 	/**
 	 * Enter a parse tree produced by {@link BracketParser#squareBlock}.
 	 * @param ctx the parse tree
 	 */
 	suspend fun enterSquareBlock(ctx: BracketParser.SquareBlockContext)
-
 	/**
 	 * Exit a parse tree produced by {@link BracketParser#squareBlock}.
 	 * @param ctx the parse tree
 	 */
 	suspend fun exitSquareBlock(ctx: BracketParser.SquareBlockContext)
-
 	/**
 	 * Enter a parse tree produced by {@link BracketParser#curlyBlock}.
 	 * @param ctx the parse tree
 	 */
 	suspend fun enterCurlyBlock(ctx: BracketParser.CurlyBlockContext)
-
 	/**
 	 * Exit a parse tree produced by {@link BracketParser#curlyBlock}.
 	 * @param ctx the parse tree
 	 */
 	suspend fun exitCurlyBlock(ctx: BracketParser.CurlyBlockContext)
-
 	/**
 	 * Enter a parse tree produced by {@link BracketParser#commentBlock}.
 	 * @param ctx the parse tree
 	 */
 	suspend fun enterCommentBlock(ctx: BracketParser.CommentBlockContext)
-
 	/**
 	 * Exit a parse tree produced by {@link BracketParser#commentBlock}.
 	 * @param ctx the parse tree
