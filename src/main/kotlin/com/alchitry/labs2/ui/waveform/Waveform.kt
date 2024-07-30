@@ -42,6 +42,7 @@ import com.alchitry.labs2.ui.hiddenClickable
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import kotlin.math.roundToInt
 
+val LocalWaveformXOffset = compositionLocalOf { 0 }
 val LocalWaveformScale = compositionLocalOf { 100.dp }
 val LocalWaveformDragging = compositionLocalOf { false }
 val LocalCursorPosition = compositionLocalOf<Offset?> { null }
@@ -155,12 +156,13 @@ data class Waveform(
         var canvasSize by remember { mutableStateOf(Size.Unspecified) }
         val widthScale = LocalWaveformScale.current
         val isDragging = LocalWaveformDragging.current
+        val xOffset = LocalWaveformXOffset.current
         with(LocalDensity.current) {
 
             val cursorPosition = LocalCursorPosition.current
 
             val cursorValue = cursorPosition?.x?.let {
-                values.getOrNull((it / widthScale.toPx()).toInt())
+                values.getOrNull(((it + xOffset) / widthScale.toPx()).toInt())
             }
 
             val valuePosition = cursorValue?.let { valueToOffset(canvasSize, it) } ?: Float.NaN
@@ -169,13 +171,13 @@ data class Waveform(
 
             Box(
                 Modifier
-                    .width(widthScale * values.size)
+                    .fillMaxWidth()
                     .height(height.toDp())
             ) {
                 Canvas(Modifier.padding(vertical = graphPadding).matchParentSize()) {
                     canvasSize = this.size
                     val matrix = Matrix().apply {
-                        translate(0f, size.height)
+                        translate(-xOffset.toFloat(), size.height)
                         scale(widthScale.toPx(), -size.height, 1f)
                     }
                     paths.forEach { path ->

@@ -32,10 +32,7 @@ import com.alchitry.labs2.parsers.lucidv2.signals.snapshot.SimParent
 import com.alchitry.labs2.ui.components.HSash
 import com.alchitry.labs2.ui.components.ResizePriority
 import com.alchitry.labs2.ui.components.rememberSashData
-import com.alchitry.labs2.ui.waveform.LocalCursorPosition
-import com.alchitry.labs2.ui.waveform.LocalWaveformDragging
-import com.alchitry.labs2.ui.waveform.LocalWaveformScale
-import com.alchitry.labs2.ui.waveform.toWaveformParent
+import com.alchitry.labs2.ui.waveform.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
@@ -103,19 +100,18 @@ class SimulationResultTab(
                         Modifier
                             .fillMaxSize()
                             .verticalScroll(verticalScroll, enabled = false)
-                            .horizontalScroll(horizontalScroll)
                             .onPointerEvent(PointerEventType.Scroll) {
                                 val scroll = it.changes.fold(Offset.Zero) { acc, c -> acc + c.scrollDelta }.y
                                 if (scroll != 0f) {
                                     scope.launch {
                                         val lastScale = waveScale
                                         val newScale = (waveScale * (1f - scroll / 50)).coerceIn(5.dp, 200.dp)
-                                        val cursorX = cursor?.x ?: return@launch
+                                        val cursorX = (cursor?.x ?: return@launch) + horizontalScroll.value
                                         val oldIdx = cursorX / lastScale.toPx()
                                         val scrollChange = cursorX / lastScale.toPx() * newScale.toPx() - cursorX
                                         horizontalScroll.scrollBy(scrollChange)
                                         waveScale = newScale
-                                        cursor = cursor?.copy(x = oldIdx * newScale.toPx())
+                                        cursor = cursor?.copy(x = oldIdx * newScale.toPx() - horizontalScroll.value)
                                     }
                                 }
                             }
@@ -144,7 +140,6 @@ class SimulationResultTab(
                                                 ),
                                                 initialVelocity = Offset(-velocity.x, -velocity.y)
                                             ).animateDecay(decay) {
-
                                                 launch {
                                                     horizontalScroll.scrollTo(value.x.toInt())
                                                 }
@@ -173,7 +168,8 @@ class SimulationResultTab(
                         CompositionLocalProvider(
                             LocalWaveformScale provides waveScale,
                             LocalWaveformDragging provides dragging,
-                            LocalCursorPosition provides cursor
+                            LocalCursorPosition provides cursor,
+                            LocalWaveformXOffset provides horizontalScroll.value
                         ) {
                             Box {
                                 waveform.waveform()
