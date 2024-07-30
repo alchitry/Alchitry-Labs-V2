@@ -2,9 +2,9 @@ package com.alchitry.labs2.project.library
 
 import com.alchitry.labs2.JarUtils
 import com.alchitry.labs2.parsers.ProjectContext
-import com.alchitry.labs2.parsers.lucidv2.context.LucidGlobalContext
-import com.alchitry.labs2.parsers.lucidv2.context.LucidModuleTypeContext
-import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstance
+import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidGlobalContext
+import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidModuleTypeContext
+import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
 import com.alchitry.labs2.parsers.notations.NotationManager
 import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.Locations

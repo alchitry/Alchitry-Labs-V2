@@ -1,6 +1,6 @@
 package com.alchitry.labs2.parsers
 
-import com.alchitry.labs2.parsers.lucidv2.parsers.WalkerFilter
+import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.WalkerFilter
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.tree.*
 

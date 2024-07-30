@@ -1,7 +1,7 @@
 package com.alchitry.labs2.parsers
 
 import com.alchitry.labs2.parsers.acf.types.Constraint
-import com.alchitry.labs2.parsers.lucidv2.types.*
+import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.notations.NotationManager
 import com.alchitry.labs2.project.QueueExhaustionException
 import kotlinx.collections.immutable.toImmutableList

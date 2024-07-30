@@ -1,6 +1,6 @@
 package com.alchitry.labs2.simulation
 
-import com.alchitry.labs2.parsers.lucidv2.values.Bit
+import com.alchitry.labs2.parsers.hdl.lucidv2.values.Bit
 
 data class SampleAccumulator(
     private var runningSum: Long,

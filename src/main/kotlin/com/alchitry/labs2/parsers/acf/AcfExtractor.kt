@@ -8,7 +8,7 @@ import com.alchitry.labs2.parsers.acf.types.PinPull
 import com.alchitry.labs2.parsers.grammar.AcfBaseListener
 import com.alchitry.labs2.parsers.grammar.AcfLexer
 import com.alchitry.labs2.parsers.grammar.AcfParser
-import com.alchitry.labs2.parsers.lucidv2.types.*
+import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.files.ConstraintFile

@@ -1,5 +1,5 @@
-import com.alchitry.labs2.parsers.lucidv2.types.*
-import com.alchitry.labs2.parsers.lucidv2.values.*
+import com.alchitry.labs2.parsers.hdl.lucidv2.values.*
+import com.alchitry.labs2.parsers.hdl.types.*
 import helpers.SimpleLucidTester
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test

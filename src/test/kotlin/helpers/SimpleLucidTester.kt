@@ -3,11 +3,11 @@ package helpers
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.LucidParser
-import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
-import com.alchitry.labs2.parsers.lucidv2.context.SignalResolver
-import com.alchitry.labs2.parsers.lucidv2.parsers.ParseStage
-import com.alchitry.labs2.parsers.lucidv2.types.Module
-import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstance
+import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidBlockContext
+import com.alchitry.labs2.parsers.hdl.lucidv2.context.SignalResolver
+import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.ParseStage
+import com.alchitry.labs2.parsers.hdl.types.Module
+import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
 import com.alchitry.labs2.parsers.notations.NotationManager
 import com.alchitry.labs2.project.files.FileProvider
 import com.alchitry.labs2.project.files.SourceFile
