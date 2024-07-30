@@ -4,7 +4,7 @@ import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
-import com.alchitry.labs2.parsers.hdl.Expr
+import com.alchitry.labs2.parsers.hdl.ExprEvaluatorContext
 import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.*
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.types.Function
@@ -16,8 +16,7 @@ import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.RuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 
-interface LucidExprContext : ErrorListener {
-    fun resolve(exprCtx: ExprContext): Expr?
+interface LucidExprContext : ErrorListener, ExprEvaluatorContext<ExprContext> {
     fun resolve(bitSelectionContext: BitSelectionContext): List<BitSelection>
     fun resolve(signalCtx: SignalContext): SignalOrSubSignal?
     fun resolve(signalWidthContext: SignalWidthContext): SignalWidth?
