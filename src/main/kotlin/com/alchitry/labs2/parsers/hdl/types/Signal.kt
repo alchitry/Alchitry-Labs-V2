@@ -4,9 +4,9 @@ import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.Snapshot
 import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.Snapshotable
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.SignalWidth
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.SimpleValue
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Value
+import com.alchitry.labs2.parsers.hdl.values.SignalWidth
+import com.alchitry.labs2.parsers.hdl.values.SimpleValue
+import com.alchitry.labs2.parsers.hdl.values.Value
 import kotlinx.coroutines.sync.Mutex
 
 open class Signal(

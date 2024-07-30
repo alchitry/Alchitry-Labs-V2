@@ -1,6 +1,6 @@
 package com.alchitry.labs2.parsers.hdl.types
 
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.SignalWidth
+import com.alchitry.labs2.parsers.hdl.values.SignalWidth
 
 data class StructType(
     val name: String,

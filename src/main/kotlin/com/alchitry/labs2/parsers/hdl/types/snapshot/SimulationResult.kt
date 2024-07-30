@@ -1,6 +1,6 @@
 package com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot
 
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Value
+import com.alchitry.labs2.parsers.hdl.values.Value
 
 fun snapshotsToSimResult(snapshots: List<SnapshotParent>): SimParent? {
     val result = buildEmptyTree(snapshots.firstOrNull() ?: return null) as SimParent

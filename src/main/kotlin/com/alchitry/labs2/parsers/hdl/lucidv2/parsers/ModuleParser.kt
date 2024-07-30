@@ -6,10 +6,10 @@ import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidExprContext
 import com.alchitry.labs2.parsers.hdl.lucidv2.context.SignalResolver
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Bit
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.UndefinedValue
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.types.ports.Port
+import com.alchitry.labs2.parsers.hdl.values.Bit
+import com.alchitry.labs2.parsers.hdl.values.UndefinedValue
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 data class ModuleParser(

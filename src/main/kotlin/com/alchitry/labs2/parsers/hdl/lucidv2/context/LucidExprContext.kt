@@ -6,9 +6,9 @@ import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.hdl.Expr
 import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.*
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.SignalWidth
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.types.Function
+import com.alchitry.labs2.parsers.hdl.values.SignalWidth
 import com.alchitry.labs2.parsers.notations.ErrorListener
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.project.files.SourceFile

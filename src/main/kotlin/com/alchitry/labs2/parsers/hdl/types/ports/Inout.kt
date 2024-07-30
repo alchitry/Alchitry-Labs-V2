@@ -2,12 +2,12 @@ package com.alchitry.labs2.parsers.hdl.types.ports
 
 import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.hdl.ExprType
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Bit
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.SignalWidth
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Value
 import com.alchitry.labs2.parsers.hdl.types.ProxySignal
 import com.alchitry.labs2.parsers.hdl.types.SignalDirection
 import com.alchitry.labs2.parsers.hdl.types.SignalParent
+import com.alchitry.labs2.parsers.hdl.values.Bit
+import com.alchitry.labs2.parsers.hdl.values.SignalWidth
+import com.alchitry.labs2.parsers.hdl.values.Value
 
 class Inout(
     override val name: String,

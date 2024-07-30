@@ -3,10 +3,10 @@ package com.alchitry.labs2.parsers.hdl.lucidv2.parsers
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidBlockContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Bit
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.BitListValue
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.SimpleValue
 import com.alchitry.labs2.parsers.hdl.types.Signal
+import com.alchitry.labs2.parsers.hdl.values.Bit
+import com.alchitry.labs2.parsers.hdl.values.BitListValue
+import com.alchitry.labs2.parsers.hdl.values.SimpleValue
 
 data class BlockEvaluator(
     private val context: LucidBlockContext

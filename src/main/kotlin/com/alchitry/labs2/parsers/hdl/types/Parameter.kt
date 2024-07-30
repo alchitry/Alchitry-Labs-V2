@@ -1,7 +1,7 @@
 package com.alchitry.labs2.parsers.hdl.types
 
 import com.alchitry.labs2.parsers.grammar.LucidParser.ExprContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Value
+import com.alchitry.labs2.parsers.hdl.values.Value
 
 data class Parameter(
     val name: String,

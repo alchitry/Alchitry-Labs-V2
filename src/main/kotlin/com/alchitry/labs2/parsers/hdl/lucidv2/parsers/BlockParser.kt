@@ -5,9 +5,9 @@ import com.alchitry.labs2.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs2.parsers.hdl.Expr
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidBlockContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.*
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.types.Function
+import com.alchitry.labs2.parsers.hdl.values.*
 
 /**
  * The job of the BlockParser is to parse out always blocks and check them for errors. The AlwaysEvaluator is

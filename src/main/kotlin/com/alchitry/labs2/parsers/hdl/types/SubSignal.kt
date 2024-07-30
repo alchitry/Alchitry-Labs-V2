@@ -2,7 +2,7 @@ package com.alchitry.labs2.parsers.hdl.types
 
 import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.hdl.ExprType
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.*
+import com.alchitry.labs2.parsers.hdl.values.*
 import kotlinx.coroutines.sync.withLock
 
 data class SubSignal(

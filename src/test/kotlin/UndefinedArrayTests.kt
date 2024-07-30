@@ -4,6 +4,7 @@ import com.alchitry.labs2.parsers.hdl.lucidv2.values.*
 import com.alchitry.labs2.parsers.hdl.types.Signal
 import com.alchitry.labs2.parsers.hdl.types.SignalDirection
 import com.alchitry.labs2.parsers.hdl.types.SignalOrParent
+import com.alchitry.labs2.parsers.hdl.values.*
 import helpers.SimpleLucidTester
 import kotlinx.coroutines.runBlocking
 import org.antlr.v4.kotlinruntime.ParserRuleContext

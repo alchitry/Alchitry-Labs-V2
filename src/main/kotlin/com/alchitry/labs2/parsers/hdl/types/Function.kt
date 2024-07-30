@@ -3,8 +3,8 @@ package com.alchitry.labs2.parsers.hdl.types
 import com.alchitry.labs2.allSealedObjects
 import com.alchitry.labs2.parsers.grammar.LucidParser.FunctionBlockContext
 import com.alchitry.labs2.parsers.hdl.ExprType
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.SignalWidth
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Value
+import com.alchitry.labs2.parsers.hdl.values.SignalWidth
+import com.alchitry.labs2.parsers.hdl.values.Value
 
 sealed class Function(val label: String, val argCount: Int, val exprType: ExprType, val testOnly: Boolean = false) {
     object CLOG2 : Function("clog2", 1, ExprType.Known)

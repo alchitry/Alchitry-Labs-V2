@@ -10,9 +10,9 @@ import com.alchitry.labs2.parsers.hdl.asConstExpr
 import com.alchitry.labs2.parsers.hdl.asExpr
 import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidExprContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.*
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.types.Function
+import com.alchitry.labs2.parsers.hdl.values.*
 import com.alchitry.labs2.parsers.notations.ErrorStrings
 import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationType

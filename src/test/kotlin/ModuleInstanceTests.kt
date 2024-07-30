@@ -1,9 +1,9 @@
 import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.toSourceFile
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.*
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstanceArray
 import com.alchitry.labs2.parsers.hdl.types.Signal
 import com.alchitry.labs2.parsers.hdl.types.SignalDirection
+import com.alchitry.labs2.parsers.hdl.values.*
 import helpers.LucidTester
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test

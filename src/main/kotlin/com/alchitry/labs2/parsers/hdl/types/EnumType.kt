@@ -2,8 +2,8 @@ package com.alchitry.labs2.parsers.hdl.types
 
 import com.alchitry.labs2.parsers.BitUtil
 import com.alchitry.labs2.parsers.hdl.ExprType
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.BitListValue
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.BitListWidth
+import com.alchitry.labs2.parsers.hdl.values.BitListValue
+import com.alchitry.labs2.parsers.hdl.values.BitListWidth
 
 data class EnumType(
     override val name: String,

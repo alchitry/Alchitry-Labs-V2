@@ -2,9 +2,9 @@ import com.alchitry.labs2.parsers.BitUtil
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.asConstExpr
 import com.alchitry.labs2.parsers.hdl.asDynamicExpr
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.*
 import com.alchitry.labs2.parsers.hdl.types.Signal
 import com.alchitry.labs2.parsers.hdl.types.SignalDirection
+import com.alchitry.labs2.parsers.hdl.values.*
 import helpers.SimpleLucidTester
 import helpers.TestSignalResolver
 import kotlinx.coroutines.runBlocking

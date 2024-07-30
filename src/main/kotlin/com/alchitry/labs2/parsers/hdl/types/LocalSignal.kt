@@ -1,7 +1,7 @@
 package com.alchitry.labs2.parsers.hdl.types
 
 import com.alchitry.labs2.parsers.hdl.ExprType
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Value
+import com.alchitry.labs2.parsers.hdl.values.Value
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 class LocalSignal(

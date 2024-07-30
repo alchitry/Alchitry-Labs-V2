@@ -4,7 +4,7 @@ import com.alchitry.labs2.parsers.grammar.LucidBaseListener
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidBlockContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Bit
+import com.alchitry.labs2.parsers.hdl.values.Bit
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 data class LucidPruner(

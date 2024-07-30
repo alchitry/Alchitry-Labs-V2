@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.SimParent
 import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.SimValue
 import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.SimValueOrParent
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.SimpleValue
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Value
+import com.alchitry.labs2.parsers.hdl.values.SimpleValue
+import com.alchitry.labs2.parsers.hdl.values.Value
 import com.alchitry.labs2.ui.components.ExpandArrow
 import com.alchitry.labs2.ui.components.rememberConditionally
 import com.alchitry.labs2.ui.hiddenClickable

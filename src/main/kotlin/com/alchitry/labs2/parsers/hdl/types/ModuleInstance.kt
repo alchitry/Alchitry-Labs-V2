@@ -5,8 +5,8 @@ import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.SnapshotOrParent
 import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.SnapshotParent
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.UndefinedValue
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Value
+import com.alchitry.labs2.parsers.hdl.values.UndefinedValue
+import com.alchitry.labs2.parsers.hdl.values.Value
 import com.alchitry.labs2.parsers.notations.ErrorListener
 
 class ModuleInstance(

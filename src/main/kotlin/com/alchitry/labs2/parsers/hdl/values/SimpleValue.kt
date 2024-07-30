@@ -1,4 +1,4 @@
-package com.alchitry.labs2.parsers.hdl.lucidv2.values
+package com.alchitry.labs2.parsers.hdl.values
 
 import java.math.BigInteger
 import java.util.*

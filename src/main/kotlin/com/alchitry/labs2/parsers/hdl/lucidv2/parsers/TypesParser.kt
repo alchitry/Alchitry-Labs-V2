@@ -8,6 +8,7 @@ import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.lucidv2.context.SignalResolver
 import com.alchitry.labs2.parsers.hdl.lucidv2.values.*
 import com.alchitry.labs2.parsers.hdl.types.*
+import com.alchitry.labs2.parsers.hdl.values.*
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.parsers.parents
 import com.alchitry.labs2.project.files.FileProvider

@@ -8,10 +8,10 @@ import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.*
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Bit
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Value
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.types.Function
+import com.alchitry.labs2.parsers.hdl.values.Bit
+import com.alchitry.labs2.parsers.hdl.values.Value
 import com.alchitry.labs2.parsers.notations.ErrorListener
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.project.files.SourceFile

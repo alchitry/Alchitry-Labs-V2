@@ -2,8 +2,8 @@ package com.alchitry.labs2.parsers.hdl.types
 
 import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.hdl.ExprType
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.SimpleValue
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Value
+import com.alchitry.labs2.parsers.hdl.values.SimpleValue
+import com.alchitry.labs2.parsers.hdl.values.Value
 
 /**
  * A signal whose reads are delegated to a proxy. This is used by inout ports on modules since the read value

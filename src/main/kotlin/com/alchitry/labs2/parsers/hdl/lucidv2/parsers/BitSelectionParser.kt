@@ -4,10 +4,10 @@ import com.alchitry.labs2.parsers.grammar.LucidBaseListener
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidExprContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Bit
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.SimpleValue
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.UndefinedValue
 import com.alchitry.labs2.parsers.hdl.types.SelectionContext
+import com.alchitry.labs2.parsers.hdl.values.Bit
+import com.alchitry.labs2.parsers.hdl.values.SimpleValue
+import com.alchitry.labs2.parsers.hdl.values.UndefinedValue
 import com.alchitry.labs2.parsers.notations.*
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree

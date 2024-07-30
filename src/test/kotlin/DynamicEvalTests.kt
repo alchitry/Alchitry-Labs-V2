@@ -1,12 +1,12 @@
 import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.hdl.ExprType
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Bit
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.BitListValue
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.BitValue
 import com.alchitry.labs2.parsers.hdl.types.Dff
 import com.alchitry.labs2.parsers.hdl.types.DynamicExpr
 import com.alchitry.labs2.parsers.hdl.types.Signal
 import com.alchitry.labs2.parsers.hdl.types.SignalDirection
+import com.alchitry.labs2.parsers.hdl.values.Bit
+import com.alchitry.labs2.parsers.hdl.values.BitListValue
+import com.alchitry.labs2.parsers.hdl.values.BitValue
 import helpers.SimpleLucidTester
 import helpers.TestSignalResolver
 import kotlinx.coroutines.runBlocking

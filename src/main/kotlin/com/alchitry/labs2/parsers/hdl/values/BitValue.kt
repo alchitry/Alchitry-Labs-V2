@@ -1,4 +1,4 @@
-package com.alchitry.labs2.parsers.hdl.lucidv2.values
+package com.alchitry.labs2.parsers.hdl.values
 
 import com.alchitry.labs2.parsers.hdl.types.SignalSelector
 

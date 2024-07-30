@@ -2,8 +2,8 @@ package com.alchitry.labs2.parsers.hdl.lucidv2.parsers
 
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidExprContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.SimpleValue
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.firstMostDefined
+import com.alchitry.labs2.parsers.hdl.values.SimpleValue
+import com.alchitry.labs2.parsers.hdl.values.firstMostDefined
 
 /**
  * This will return true when all the expressions are flat. Aka they are all 1D arrays.

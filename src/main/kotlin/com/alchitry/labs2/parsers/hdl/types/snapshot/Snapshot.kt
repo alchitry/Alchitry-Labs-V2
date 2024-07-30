@@ -1,6 +1,6 @@
 package com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot
 
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Value
+import com.alchitry.labs2.parsers.hdl.values.Value
 
 sealed interface SnapshotOrParent {
     val name: String

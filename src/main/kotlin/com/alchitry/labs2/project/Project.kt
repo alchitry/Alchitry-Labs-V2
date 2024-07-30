@@ -11,9 +11,9 @@ import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidModuleTypeContext
 import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidTestBenchContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Bit
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.ValueFormat
 import com.alchitry.labs2.parsers.hdl.types.*
+import com.alchitry.labs2.parsers.hdl.values.Bit
+import com.alchitry.labs2.parsers.hdl.values.ValueFormat
 import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.parsers.notations.NotationManager

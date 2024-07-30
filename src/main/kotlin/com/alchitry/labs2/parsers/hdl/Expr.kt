@@ -1,6 +1,6 @@
 package com.alchitry.labs2.parsers.hdl
 
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Value
+import com.alchitry.labs2.parsers.hdl.values.Value
 
 enum class ExprType(val known: Boolean) {
     /** Value changes at runtime. */

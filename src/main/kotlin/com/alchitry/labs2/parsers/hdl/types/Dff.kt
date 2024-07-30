@@ -5,9 +5,9 @@ import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.SnapshotParent
 import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.Snapshotable
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Bit
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.SimpleValue
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.Value
+import com.alchitry.labs2.parsers.hdl.values.Bit
+import com.alchitry.labs2.parsers.hdl.values.SimpleValue
+import com.alchitry.labs2.parsers.hdl.values.Value
 
 data class Dff(
     private val context: ProjectContext,

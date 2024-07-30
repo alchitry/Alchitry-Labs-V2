@@ -9,7 +9,7 @@ import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.ExprParser
 import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.firstParentOrNull
-import com.alchitry.labs2.parsers.hdl.lucidv2.values.*
+import com.alchitry.labs2.parsers.hdl.values.*
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.types.Function
 import com.alchitry.labs2.parsers.notations.Notation
