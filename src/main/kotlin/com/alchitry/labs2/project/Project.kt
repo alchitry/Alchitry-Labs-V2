@@ -67,7 +67,7 @@ data class Project(
     private val mutableGlobalMapFlow = MutableStateFlow<Map<String, GlobalNamespace>>(emptyMap())
     val globalMapFlow = mutableGlobalMapFlow.asStateFlow()
 
-    private val mutableModuleMapFlow = MutableStateFlow<Map<SourceFile, Module>>(emptyMap())
+    private val mutableModuleMapFlow = MutableStateFlow<Map<SourceFile, List<Module>>>(emptyMap())
     val moduleMapFlow = mutableModuleMapFlow.asStateFlow()
 
     fun binFileIsUpToDate(): Boolean = binFile.lastModified() >= lastModified() && binFile.lastModified() > 0L
@@ -399,18 +399,18 @@ data class Project(
     }
 
     suspend fun getTypesForLucidFile(file: SourceFile): ProjectContext {
-        val modules = moduleMapFlow.value
+        val modulesMap = moduleMapFlow.value
         val globals = globalMapFlow.value
         val notationManager = NotationManager()
         ProjectContext(notationManager).use { projectContext ->
             globals.forEach { (_, global) -> projectContext.addGlobal(global) }
-            modules.forEach { (_, module) -> projectContext.addModule(module) }
+            modulesMap.forEach { (_, modules) -> modules.forEach { module -> projectContext.addModule(module) } }
 
             val tree = parseLucidFile(file, notationManager.getCollector(file))
             LucidTestBenchContext(projectContext, file).walk(tree)
 
-            (modules[file]
-                ?: LucidModuleTypeContext(projectContext, file).extract(tree))?.let { module ->
+            (modulesMap[file]
+                ?: LucidModuleTypeContext(projectContext, file).extract(tree)).firstOrNull()?.let { module ->
                 projectContext.top = ModuleInstance(
                     "testingTop",
                     projectContext,
@@ -450,21 +450,27 @@ data class Project(
             if (notationManager.hasErrors)
                 return null
 
-            val modules = trees.mapNotNull {
+            val modulesMap = trees.mapNotNull {
                 when (it.first.language) {
                     Languages.Lucid -> {
                         val moduleTypeContext = LucidModuleTypeContext(projectContext, it.first)
-                        val module = moduleTypeContext.extract(it.second)
-
-                        it.first to (module ?: return@mapNotNull null)
+                        val modules = moduleTypeContext.extract(it.second)
+                        if (modules.isEmpty())
+                            return@mapNotNull null
+                        it.first to modules
                     }
 
                     Languages.Verilog -> null // TODO
                 }
+            }.toMap()
 
+            mutableModuleMapFlow.tryEmit(modulesMap)
+
+            val modules = modulesMap.flatMap { (file, list) ->
+                list.map { module ->
+                    file to module
+                }
             }
-
-            mutableModuleMapFlow.tryEmit(modules.toMap())
 
             if (notationManager.hasErrors)
                 return null

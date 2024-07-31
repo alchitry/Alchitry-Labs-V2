@@ -15,7 +15,7 @@ import org.antlr.v4.kotlinruntime.ParserRuleContext
 data class ModuleParser(
     private val context: LucidExprContext
 ) : LucidBaseListener(), SignalResolver {
-    var module: Module? = null
+    var modules = mutableListOf<Module>()
     private val localParams: MutableMap<String, Signal> = mutableMapOf()
     private val publicParams: MutableMap<String, Signal> = mutableMapOf()
     private var inConstraint: Boolean = false
@@ -74,13 +74,13 @@ data class ModuleParser(
         }
     }
 
+    override fun enterModule(ctx: LucidParser.ModuleContext) {
+        localParams.clear()
+        publicParams.clear()
+        inConstraint = false
+    }
 
     override fun exitModule(ctx: LucidParser.ModuleContext) {
-        if (module != null) {
-            context.reportError(ctx, "Only one module per file is allowed.")
-            return
-        }
-
         val nameCtx = ctx.name() ?: return
         val name = nameCtx.text
 
@@ -152,11 +152,13 @@ data class ModuleParser(
             }
         }
 
-        module = Module(name, params, ports, ctx, context.sourceFile).also {
-            if (!context.project.addModule(it)) {
-                context.reportError(ctx.name() ?: ctx, "A module with name $name already exists!")
+        modules.add(
+            Module(name, params, ports, ctx, context.sourceFile).also {
+                if (!context.project.addModule(it)) {
+                    context.reportError(ctx.name() ?: ctx, "A module with name $name already exists!")
+                }
             }
-        }
+        )
 
     }
 }

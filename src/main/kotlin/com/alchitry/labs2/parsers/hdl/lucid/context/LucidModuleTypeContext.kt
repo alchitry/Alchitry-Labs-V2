@@ -34,13 +34,14 @@ class LucidModuleTypeContext(
         this.module
     )
 
-    suspend fun extract(t: ParserRuleContext): Module? {
+    suspend fun extract(t: ParserRuleContext): List<Module> {
+        module.modules.clear()
         ParseTreeMultiWalker.walk(
             listeners,
             t,
             WalkerFilter.join(WalkerFilter.SkipModuleBodies, WalkerFilter.SkipGlobals)
         )
-        return module.module
+        return module.modules
     }
 
     override fun resolve(exprCtx: LucidParser.ExprContext) = expr.resolve(exprCtx)

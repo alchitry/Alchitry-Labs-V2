@@ -51,11 +51,8 @@ object ComponentLibrary {
 
             notationManager.assertNoErrors()
 
-            val modules = trees.mapNotNull {
-                val moduleTypeContext = LucidModuleTypeContext(projectContext, it.first)
-                val module = moduleTypeContext.extract(it.second)
-
-                module ?: return@mapNotNull null
+            val modules = trees.flatMap {
+                LucidModuleTypeContext(projectContext, it.first).extract(it.second)
             }
 
             notationManager.assertNoErrors()
