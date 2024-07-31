@@ -4,7 +4,6 @@ import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidParser
-import com.alchitry.labs2.parsers.grammar.LucidParser.SourceContext
 import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.*
 import com.alchitry.labs2.parsers.hdl.types.Constant
 import com.alchitry.labs2.parsers.hdl.types.EnumType
@@ -35,7 +34,7 @@ class LucidModuleTypeContext(
         this.module
     )
 
-    suspend fun extract(t: SourceContext): Module? {
+    suspend fun extract(t: ParserRuleContext): Module? {
         ParseTreeMultiWalker.walk(
             listeners,
             t,

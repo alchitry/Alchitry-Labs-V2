@@ -4,7 +4,6 @@ import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidParser
-import com.alchitry.labs2.parsers.grammar.LucidParser.SourceContext
 import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.*
 import com.alchitry.labs2.parsers.hdl.types.GlobalNamespace
 import com.alchitry.labs2.parsers.hdl.types.SignalOrParent
@@ -37,7 +36,7 @@ class LucidGlobalContext(
         this.global
     )
 
-    suspend fun walk(t: SourceContext) = ParseTreeMultiWalker.walk(listeners, t, WalkerFilter.GlobalsOnly)
+    suspend fun walk(t: ParserRuleContext) = ParseTreeMultiWalker.walk(listeners, t, WalkerFilter.GlobalsOnly)
 
     override fun resolve(exprCtx: LucidParser.ExprContext) = expr.resolve(exprCtx)
 

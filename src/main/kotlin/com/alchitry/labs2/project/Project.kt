@@ -7,6 +7,8 @@ import com.alchitry.labs2.parsers.acf.AcfExtractor
 import com.alchitry.labs2.parsers.acf.NativeConstraint
 import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.LucidParser
+import com.alchitry.labs2.parsers.grammar.VerilogLexer
+import com.alchitry.labs2.parsers.grammar.VerilogParser
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidGlobalContext
 import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidModuleTypeContext
@@ -35,6 +37,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -159,16 +162,40 @@ data class Project(
             }.source()
         }
 
+        suspend fun parseVerilogFile(
+            file: SourceFile,
+            notationCollector: NotationCollector
+        ): VerilogParser.Source_textContext {
+            return VerilogParser(
+                CommonTokenStream(
+                    VerilogLexer(
+                        CharStreams.fromString(
+                            file.readText(),
+                            file.name
+                        )
+                    ).apply {
+                        removeErrorListeners()
+                        addErrorListener(notationCollector)
+                    })
+            ).apply {
+                removeErrorListeners()
+                addErrorListener(notationCollector)
+            }.source_text()
+        }
+
         suspend fun parseAll(
             sourceFiles: Collection<SourceFile>,
             notationManager: NotationManager
-        ): List<Pair<SourceFile, LucidParser.SourceContext>>? {
+        ): List<Pair<SourceFile, ParserRuleContext>>? {
             val trees = coroutineScope {
                 sourceFiles
                     .map { file ->
                         val collector = notationManager.getCollector(file)
                         async {
-                            file to parseLucidFile(file, collector)
+                            file to when (file.language) {
+                                Languages.Lucid -> parseLucidFile(file, collector)
+                                Languages.Verilog -> parseVerilogFile(file, collector)
+                            }
                         }
                     }.awaitAll()
             }
@@ -412,7 +439,12 @@ data class Project(
                 return null
 
             trees.forEach {
-                LucidGlobalContext(projectContext, it.first).walk(it.second)
+                when (it.first.language) {
+                    Languages.Lucid -> LucidGlobalContext(projectContext, it.first).walk(it.second)
+                    Languages.Verilog -> {/*TODO*/
+                    }
+                }
+
             }
 
             mutableGlobalMapFlow.tryEmit(projectContext.getGlobals())
@@ -421,10 +453,17 @@ data class Project(
                 return null
 
             val modules = trees.mapNotNull {
-                val moduleTypeContext = LucidModuleTypeContext(projectContext, it.first)
-                val module = moduleTypeContext.extract(it.second)
+                when (it.first.language) {
+                    Languages.Lucid -> {
+                        val moduleTypeContext = LucidModuleTypeContext(projectContext, it.first)
+                        val module = moduleTypeContext.extract(it.second)
 
-                it.first to (module ?: return@mapNotNull null)
+                        it.first to (module ?: return@mapNotNull null)
+                    }
+
+                    Languages.Verilog -> null // TODO
+                }
+
             }
 
             mutableModuleMapFlow.tryEmit(modules.toMap())
@@ -433,7 +472,10 @@ data class Project(
                 return null
 
             trees.forEach {
-                LucidTestBenchContext(projectContext, it.first).walk(it.second)
+                when (it.first.language) {
+                    Languages.Lucid -> LucidTestBenchContext(projectContext, it.first).walk(it.second)
+                    Languages.Verilog -> {}//TODO
+                }
             }
 
             if (notationManager.hasErrors)
