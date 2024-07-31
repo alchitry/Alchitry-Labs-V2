@@ -3,6 +3,7 @@ package com.alchitry.labs2.parsers.hdl.lucid.context
 import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.WalkerFilter
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.*
 import com.alchitry.labs2.parsers.hdl.types.Constant
@@ -26,20 +27,14 @@ class LucidModuleTypeContext(
     private val signal = SignalParser(this)
     private val module = ModuleParser(this)
 
-    private val listeners = listOf(
-        this.expr,
-        this.bitSelection,
-        this.struct,
-        this.signal,
-        this.module
-    )
+    private val listeners = listOf(expr, bitSelection, struct, signal, module)
 
     suspend fun extract(t: ParserRuleContext): List<Module> {
         module.modules.clear()
         ParseTreeMultiWalker.walk(
             listeners,
             t,
-            WalkerFilter.join(WalkerFilter.SkipModuleBodies, WalkerFilter.SkipGlobals)
+            WalkerFilter.join(LucidWalkerFilters.SkipModuleBodies, LucidWalkerFilters.SkipGlobals)
         )
         return module.modules
     }

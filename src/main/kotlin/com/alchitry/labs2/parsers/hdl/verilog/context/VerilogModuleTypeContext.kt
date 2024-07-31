@@ -1,0 +1,42 @@
+package com.alchitry.labs2.parsers.hdl.verilog.context
+
+import com.alchitry.labs2.parsers.Evaluable
+import com.alchitry.labs2.parsers.ParseTreeMultiWalker
+import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.WalkerFilter
+import com.alchitry.labs2.parsers.grammar.VerilogParser.ExpressionContext
+import com.alchitry.labs2.parsers.hdl.types.Module
+import com.alchitry.labs2.parsers.hdl.verilog.parsers.ExprParser
+import com.alchitry.labs2.parsers.hdl.verilog.parsers.ModuleParser
+import com.alchitry.labs2.parsers.hdl.verilog.parsers.VerilogWalkerFilters
+import com.alchitry.labs2.parsers.notations.ErrorListener
+import com.alchitry.labs2.project.files.SourceFile
+import org.antlr.v4.kotlinruntime.ParserRuleContext
+
+class VerilogModuleTypeContext(
+    override val project: ProjectContext,
+    override val sourceFile: SourceFile
+) : VerilogExprContext, ErrorListener by project.notationManager.getCollector(sourceFile) {
+    override val evalContext: Evaluable? = null
+
+    private val expr = ExprParser(this)
+    private val module = ModuleParser(this)
+
+    private val listeners = listOf(
+        expr,
+        module
+    )
+
+    override fun resolve(exprCtx: ExpressionContext) = expr.resolve(exprCtx)
+
+    fun extract(t: ParserRuleContext): List<Module> {
+        module.modules.clear()
+        ParseTreeMultiWalker.walk(
+            listeners,
+            t,
+            WalkerFilter.join(VerilogWalkerFilters.SkipModuleBodies, VerilogWalkerFilters.ModulesOnly)
+        )
+        return module.modules
+    }
+
+}

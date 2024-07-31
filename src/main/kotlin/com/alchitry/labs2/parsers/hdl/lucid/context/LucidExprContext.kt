@@ -3,6 +3,7 @@ package com.alchitry.labs2.parsers.hdl.lucid.context
 import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.WalkerFilter
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.hdl.ExprEvaluatorContext
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.*

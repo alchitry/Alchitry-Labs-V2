@@ -16,6 +16,7 @@ import com.alchitry.labs2.parsers.hdl.lucid.context.LucidTestBenchContext
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.values.Bit
 import com.alchitry.labs2.parsers.hdl.values.ValueFormat
+import com.alchitry.labs2.parsers.hdl.verilog.context.VerilogModuleTypeContext
 import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.parsers.notations.NotationManager
@@ -450,19 +451,12 @@ data class Project(
             if (notationManager.hasErrors)
                 return null
 
-            val modulesMap = trees.mapNotNull {
-                when (it.first.language) {
-                    Languages.Lucid -> {
-                        val moduleTypeContext = LucidModuleTypeContext(projectContext, it.first)
-                        val modules = moduleTypeContext.extract(it.second)
-                        if (modules.isEmpty())
-                            return@mapNotNull null
-                        it.first to modules
-                    }
-
-                    Languages.Verilog -> null // TODO
+            val modulesMap = trees.associate {
+                it.first to when (it.first.language) {
+                    Languages.Lucid -> LucidModuleTypeContext(projectContext, it.first).extract(it.second)
+                    Languages.Verilog -> VerilogModuleTypeContext(projectContext, it.first).extract(it.second)
                 }
-            }.toMap()
+            }
 
             mutableModuleMapFlow.tryEmit(modulesMap)
 
@@ -478,7 +472,7 @@ data class Project(
             trees.forEach {
                 when (it.first.language) {
                     Languages.Lucid -> LucidTestBenchContext(projectContext, it.first).walk(it.second)
-                    Languages.Verilog -> {}//TODO
+                    Languages.Verilog -> {} // No test benches for Verilog
                 }
             }
 

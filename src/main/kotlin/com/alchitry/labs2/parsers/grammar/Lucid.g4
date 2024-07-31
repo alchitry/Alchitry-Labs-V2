@@ -131,7 +131,7 @@ expr
   | ('|'|'&'|'^') NL* expr                          #ExprReduction
   | expr NL* ('<'|'>'|'=='|'!='|'>='|'<=') NL* expr #ExprCompare
   | expr NL* ('||'|'&&') NL* expr                   #ExprLogical
-  | expr NL* '?' NL* expr NL* ':' NL* expr          #ExprTernary
+  | <assoc = right> expr NL* '?' NL* expr NL* ':' NL* expr #ExprTernary
   ;
 
 name: TYPE_ID | CONST_ID | SPACE_ID;

@@ -1,11 +1,18 @@
 package com.alchitry.labs2.parsers.hdl.lucid.parsers
 
+import com.alchitry.labs2.parsers.WalkerFilter
+
 enum class ParseStage(val filter: WalkerFilter) {
-    ModuleInternals(WalkerFilter.SkipGlobals), // module internal (always blocks)
-    ModuleExpr(WalkerFilter.SkipGlobals), // module internal (always blocks)
-    Drivers(WalkerFilter.join(WalkerFilter.SkipGlobals, WalkerFilter.SkipRepeatBlocks)), // check for driven signals
-    Evaluation(WalkerFilter.join(WalkerFilter.SkipControlBlocks, WalkerFilter.SkipGlobals)), // runtime
-    ErrorCheck(WalkerFilter.SkipGlobals), // IDE error check
-    Convert(WalkerFilter.ModulesOnly), // convert to Verilog
+    ModuleInternals(LucidWalkerFilters.SkipGlobals), // module internal (always blocks)
+    ModuleExpr(LucidWalkerFilters.SkipGlobals), // module internal (always blocks)
+    Drivers(
+        WalkerFilter.join(
+            LucidWalkerFilters.SkipGlobals,
+            LucidWalkerFilters.SkipRepeatBlocks
+        )
+    ), // check for driven signals
+    Evaluation(WalkerFilter.join(LucidWalkerFilters.SkipControlBlocks, LucidWalkerFilters.SkipGlobals)), // runtime
+    ErrorCheck(LucidWalkerFilters.SkipGlobals), // IDE error check
+    Convert(LucidWalkerFilters.ModulesOnly), // convert to Verilog
     Prune(WalkerFilter.None) // remove unnecessary branches
 }
