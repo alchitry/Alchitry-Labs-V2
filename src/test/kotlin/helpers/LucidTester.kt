@@ -74,12 +74,12 @@ class LucidTester(vararg val files: SourceFile) {
     ): List<Module> {
         assert(notationManager.hasNoErrors) { notationManager.getReport() }
 
-        return trees.mapNotNull {
+        return trees.flatMap {
             val moduleTypeContext = LucidModuleTypeContext(project, it.first)
-            val module = moduleTypeContext.extract(it.second)
+            val modules = moduleTypeContext.extract(it.second)
 
             assert(notationManager.hasNoErrors) { notationManager.getReport() }
-            module
+            modules
         }
     }
 
