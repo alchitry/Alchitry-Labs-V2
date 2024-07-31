@@ -1,8 +1,8 @@
-package com.alchitry.labs2.parsers.hdl.lucidv2.parsers
+package com.alchitry.labs2.parsers.hdl.lucid.parsers
 
 import com.alchitry.labs2.parsers.grammar.LucidBaseListener
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidExprContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidExprContext
 import com.alchitry.labs2.parsers.hdl.types.StructMember
 import com.alchitry.labs2.parsers.hdl.types.StructType
 

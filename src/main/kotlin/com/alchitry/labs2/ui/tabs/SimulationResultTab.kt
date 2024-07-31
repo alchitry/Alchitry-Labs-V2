@@ -28,7 +28,7 @@ import androidx.compose.ui.input.pointer.util.addPointerInputChange
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
-import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.SimParent
+import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SimParent
 import com.alchitry.labs2.ui.components.HSash
 import com.alchitry.labs2.ui.components.ResizePriority
 import com.alchitry.labs2.ui.components.rememberSashData

@@ -2,9 +2,9 @@ package com.alchitry.labs2.parsers.hdl.types
 
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.hdl.ExprType
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidBlockContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.SnapshotOrParent
-import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.SnapshotParent
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
+import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SnapshotOrParent
+import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SnapshotParent
 import com.alchitry.labs2.parsers.hdl.values.UndefinedValue
 import com.alchitry.labs2.parsers.hdl.values.Value
 import com.alchitry.labs2.parsers.notations.ErrorListener

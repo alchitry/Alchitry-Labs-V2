@@ -1,6 +1,6 @@
 import com.alchitry.labs2.parsers.hdl.ExprType
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.SignalResolver
-import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.toSourceFile
+import com.alchitry.labs2.parsers.hdl.lucid.context.SignalResolver
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.values.*
 import helpers.LucidTester

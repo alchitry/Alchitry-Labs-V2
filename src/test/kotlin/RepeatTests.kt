@@ -1,4 +1,4 @@
-import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.toSourceFile
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
 import com.alchitry.labs2.parsers.hdl.values.BitListValue
 import helpers.LucidTester
 import kotlinx.coroutines.runBlocking

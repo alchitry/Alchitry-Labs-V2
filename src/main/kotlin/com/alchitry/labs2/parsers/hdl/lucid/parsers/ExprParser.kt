@@ -1,11 +1,11 @@
-package com.alchitry.labs2.parsers.hdl.lucidv2.parsers
+package com.alchitry.labs2.parsers.hdl.lucid.parsers
 
 import com.alchitry.labs2.parsers.BigFunctions
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs2.parsers.hdl.*
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidBlockContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidExprContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidExprContext
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.types.Function
 import com.alchitry.labs2.parsers.hdl.values.*

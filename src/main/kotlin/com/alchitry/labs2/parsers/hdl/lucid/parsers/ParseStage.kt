@@ -1,4 +1,4 @@
-package com.alchitry.labs2.parsers.hdl.lucidv2.parsers
+package com.alchitry.labs2.parsers.hdl.lucid.parsers
 
 enum class ParseStage(val filter: WalkerFilter) {
     ModuleInternals(WalkerFilter.SkipGlobals), // module internal (always blocks)

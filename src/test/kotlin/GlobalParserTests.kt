@@ -1,4 +1,4 @@
-import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.toSourceFile
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
 import com.alchitry.labs2.parsers.hdl.types.StructMember
 import com.alchitry.labs2.parsers.hdl.types.StructType
 import com.alchitry.labs2.parsers.hdl.values.*

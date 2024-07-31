@@ -1,4 +1,4 @@
-package com.alchitry.labs2.parsers.hdl.lucidv2
+package com.alchitry.labs2.parsers.hdl.lucid
 
 import com.alchitry.labs2.Env
 import com.alchitry.labs2.asSingleLine
@@ -6,12 +6,12 @@ import com.alchitry.labs2.parsers.grammar.LucidBaseListener
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.LucidParser.FunctionContext
 import com.alchitry.labs2.parsers.hdl.ExprType
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidBlockContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.ExprParser
-import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.firstParentOrNull
-import com.alchitry.labs2.parsers.hdl.values.*
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.ExprParser
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.firstParentOrNull
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.types.Function
+import com.alchitry.labs2.parsers.hdl.values.*
 import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationType
 import org.antlr.v4.kotlinruntime.ParserRuleContext
@@ -435,7 +435,7 @@ class VerilogConverter(
         )
         ctx.verilog = buildString {
             tabCount--
-            append(com.alchitry.labs2.parsers.hdl.lucidv2.VerilogConverter.Companion.HEADER)
+            append(com.alchitry.labs2.parsers.hdl.lucid.VerilogConverter.Companion.HEADER)
             newLine()
             addParamHeader()
             tabCount++
@@ -544,7 +544,7 @@ class VerilogConverter(
         val selection: String
     )
 
-    private fun SubSignal.toVerilog(): com.alchitry.labs2.parsers.hdl.lucidv2.VerilogConverter.SubSignalData {
+    private fun SubSignal.toVerilog(): com.alchitry.labs2.parsers.hdl.lucid.VerilogConverter.SubSignalData {
         var signed = getSignal().signed
         val selection = buildString {
             var currentWidth: SignalWidth? = parent.width
@@ -629,7 +629,7 @@ class VerilogConverter(
                 }
             }
         }
-        return com.alchitry.labs2.parsers.hdl.lucidv2.VerilogConverter.SubSignalData(
+        return com.alchitry.labs2.parsers.hdl.lucid.VerilogConverter.SubSignalData(
             signed,
             parent.verilogName,
             selection
@@ -1078,7 +1078,7 @@ class VerilogConverter(
          * If it doesn't match, it returns the same string as is.
          */
         private fun String.sanitize(): String =
-            if (com.alchitry.labs2.parsers.hdl.lucidv2.VerilogConverter.Companion.reservedWords.contains(this))
+            if (com.alchitry.labs2.parsers.hdl.lucid.VerilogConverter.Companion.reservedWords.contains(this))
                 "L_$this"
             else
                 this

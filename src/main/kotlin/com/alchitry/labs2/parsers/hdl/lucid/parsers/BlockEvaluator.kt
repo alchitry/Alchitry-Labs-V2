@@ -1,8 +1,8 @@
-package com.alchitry.labs2.parsers.hdl.lucidv2.parsers
+package com.alchitry.labs2.parsers.hdl.lucid.parsers
 
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.grammar.SuspendLucidBaseListener
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidBlockContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.types.Signal
 import com.alchitry.labs2.parsers.hdl.values.Bit
 import com.alchitry.labs2.parsers.hdl.values.BitListValue

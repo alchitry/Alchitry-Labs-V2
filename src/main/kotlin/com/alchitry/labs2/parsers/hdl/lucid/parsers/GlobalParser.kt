@@ -1,8 +1,8 @@
-package com.alchitry.labs2.parsers.hdl.lucidv2.parsers
+package com.alchitry.labs2.parsers.hdl.lucid.parsers
 
 import com.alchitry.labs2.parsers.grammar.LucidBaseListener
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidGlobalContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidGlobalContext
 import com.alchitry.labs2.parsers.hdl.types.Constant
 import com.alchitry.labs2.parsers.hdl.types.EnumType
 import com.alchitry.labs2.parsers.hdl.types.GlobalNamespace

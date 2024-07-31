@@ -1,4 +1,4 @@
-package com.alchitry.labs2.parsers.hdl.lucidv2.context
+package com.alchitry.labs2.parsers.hdl.lucid.context
 
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.asSingleLine
@@ -7,7 +7,7 @@ import com.alchitry.labs2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.hdl.ExprType
-import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.*
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.*
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.types.Function
 import com.alchitry.labs2.parsers.hdl.values.Bit
@@ -91,7 +91,7 @@ class LucidBlockContext(
     val constant = constant ?: ConstantParser(this)
     val blockParser = blockParser ?: BlockParser(this)
     val signalDriver = signalDriver ?: SignalDriverParser(this)
-    private val verilogConverter = com.alchitry.labs2.parsers.hdl.lucidv2.VerilogConverter(this)
+    private val verilogConverter = com.alchitry.labs2.parsers.hdl.lucid.VerilogConverter(this)
     private val pruner = LucidPruner(this)
 
     private val listenerMap = ParseStage.entries.associateWith {

@@ -10,9 +10,9 @@ import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.VerilogLexer
 import com.alchitry.labs2.parsers.grammar.VerilogParser
 import com.alchitry.labs2.parsers.hdl.ExprType
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidGlobalContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidModuleTypeContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidTestBenchContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidGlobalContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidModuleTypeContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidTestBenchContext
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.values.Bit
 import com.alchitry.labs2.parsers.hdl.values.ValueFormat
@@ -441,10 +441,8 @@ data class Project(
             trees.forEach {
                 when (it.first.language) {
                     Languages.Lucid -> LucidGlobalContext(projectContext, it.first).walk(it.second)
-                    Languages.Verilog -> {/*TODO*/
-                    }
+                    Languages.Verilog -> {} // No globals in Verilog
                 }
-
             }
 
             mutableGlobalMapFlow.tryEmit(projectContext.getGlobals())

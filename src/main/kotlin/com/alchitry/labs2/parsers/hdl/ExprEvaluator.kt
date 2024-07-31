@@ -1,8 +1,8 @@
 package com.alchitry.labs2.parsers.hdl
 
 import com.alchitry.labs2.asSingleLine
-import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.checkSimpleOrCompatible
-import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.checkSimpleWidth
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.checkSimpleOrCompatible
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.checkSimpleWidth
 import com.alchitry.labs2.parsers.hdl.types.Signal
 import com.alchitry.labs2.parsers.hdl.values.*
 import com.alchitry.labs2.parsers.notations.ErrorListener

@@ -31,9 +31,9 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.SimParent
-import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.SimValue
-import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.SimValueOrParent
+import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SimParent
+import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SimValue
+import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SimValueOrParent
 import com.alchitry.labs2.parsers.hdl.values.SimpleValue
 import com.alchitry.labs2.parsers.hdl.values.Value
 import com.alchitry.labs2.ui.components.ExpandArrow

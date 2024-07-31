@@ -4,10 +4,10 @@ import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.LucidParser.SourceContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidGlobalContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidModuleTypeContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidTestBenchContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.SimParent
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidGlobalContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidModuleTypeContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidTestBenchContext
+import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SimParent
 import com.alchitry.labs2.parsers.hdl.types.Module
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstanceArray

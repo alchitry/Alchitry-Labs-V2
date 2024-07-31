@@ -1,8 +1,8 @@
-package com.alchitry.labs2.parsers.hdl.lucidv2.parsers
+package com.alchitry.labs2.parsers.hdl.lucid.parsers
 
 import com.alchitry.labs2.parsers.grammar.LucidBaseListener
 import com.alchitry.labs2.parsers.grammar.LucidParser.TestBenchContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidTestBenchContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidTestBenchContext
 import com.alchitry.labs2.parsers.hdl.types.TestBench
 
 class TestBenchParser(

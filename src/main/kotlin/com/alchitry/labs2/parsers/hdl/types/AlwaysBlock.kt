@@ -2,7 +2,7 @@ package com.alchitry.labs2.parsers.hdl.types
 
 import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.grammar.LucidParser.AlwaysBlockContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidBlockContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 
 class AlwaysBlock(
     context: LucidBlockContext,

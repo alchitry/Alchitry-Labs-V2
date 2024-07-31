@@ -1,4 +1,4 @@
-import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.toSourceFile
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
 import com.alchitry.labs2.parsers.hdl.types.Dff
 import com.alchitry.labs2.parsers.hdl.types.EnumType
 import com.alchitry.labs2.parsers.hdl.types.Signal

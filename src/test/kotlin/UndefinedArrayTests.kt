@@ -1,5 +1,5 @@
 import com.alchitry.labs2.parsers.hdl.ExprType
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.SignalResolver
+import com.alchitry.labs2.parsers.hdl.lucid.context.SignalResolver
 import com.alchitry.labs2.parsers.hdl.types.Signal
 import com.alchitry.labs2.parsers.hdl.types.SignalDirection
 import com.alchitry.labs2.parsers.hdl.types.SignalOrParent

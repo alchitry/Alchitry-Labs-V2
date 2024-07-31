@@ -3,7 +3,7 @@ package com.alchitry.labs2.parsers.hdl.types
 import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.grammar.LucidParser.ExprContext
 import com.alchitry.labs2.parsers.hdl.ExprType
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidBlockContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.values.SignalWidth
 import com.alchitry.labs2.parsers.hdl.values.Value
 import kotlinx.coroutines.CoroutineStart

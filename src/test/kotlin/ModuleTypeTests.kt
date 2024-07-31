@@ -1,4 +1,4 @@
-import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.toSourceFile
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
 import com.alchitry.labs2.parsers.hdl.types.Module
 import com.alchitry.labs2.parsers.hdl.types.Parameter
 import com.alchitry.labs2.parsers.hdl.types.SignalDirection

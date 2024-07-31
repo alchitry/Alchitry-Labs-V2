@@ -1,11 +1,11 @@
-package com.alchitry.labs2.parsers.hdl.lucidv2.context
+package com.alchitry.labs2.parsers.hdl.lucid.context
 
 import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.hdl.ExprEvaluatorContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.parsers.*
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.*
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.types.Function
 import com.alchitry.labs2.parsers.hdl.values.SignalWidth

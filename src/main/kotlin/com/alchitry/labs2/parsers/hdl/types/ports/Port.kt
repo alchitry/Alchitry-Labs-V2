@@ -2,7 +2,7 @@ package com.alchitry.labs2.parsers.hdl.types.ports
 
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidParser
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidExprEval
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidExprEval
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
 import com.alchitry.labs2.parsers.hdl.types.SignalDirection
 import com.alchitry.labs2.parsers.hdl.values.SignalWidth

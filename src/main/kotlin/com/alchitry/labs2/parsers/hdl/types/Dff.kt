@@ -3,8 +3,8 @@ package com.alchitry.labs2.parsers.hdl.types
 import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.hdl.ExprType
-import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.SnapshotParent
-import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.Snapshotable
+import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SnapshotParent
+import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.Snapshotable
 import com.alchitry.labs2.parsers.hdl.values.Bit
 import com.alchitry.labs2.parsers.hdl.values.SimpleValue
 import com.alchitry.labs2.parsers.hdl.values.Value

@@ -2,7 +2,7 @@ package com.alchitry.labs2.parsers.hdl.values
 
 import com.alchitry.labs2.parsers.BitUtil
 import com.alchitry.labs2.parsers.grammar.LucidParser
-import com.alchitry.labs2.parsers.hdl.lucidv2.context.LucidExprEval
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidExprEval
 import com.alchitry.labs2.parsers.hdl.types.StructType
 import kotlinx.coroutines.runBlocking
 import kotlin.contracts.contract

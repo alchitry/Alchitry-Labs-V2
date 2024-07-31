@@ -1,4 +1,4 @@
-package com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot
+package com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot
 
 import com.alchitry.labs2.parsers.hdl.values.Value
 

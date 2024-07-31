@@ -1,9 +1,9 @@
 package com.alchitry.labs2.parsers.hdl.types
 
 import com.alchitry.labs2.parsers.ProjectContext
-import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.SnapshotOrParent
-import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.SnapshotParent
-import com.alchitry.labs2.parsers.hdl.lucidv2.signals.snapshot.Snapshotable
+import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SnapshotOrParent
+import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SnapshotParent
+import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.Snapshotable
 import com.alchitry.labs2.parsers.hdl.types.ports.Inout
 import com.alchitry.labs2.parsers.hdl.types.ports.Input
 import com.alchitry.labs2.parsers.hdl.types.ports.Output
