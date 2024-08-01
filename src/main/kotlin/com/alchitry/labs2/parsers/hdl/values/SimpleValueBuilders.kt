@@ -28,11 +28,12 @@ fun BitListValue(
     val bits = mutableListOf<Bit>()
     val strLower = str.lowercase()
     when (radix) {
-        16 -> {
+        16, 8 -> {
             var idx = 0
+            val bitsPerChar = if (radix == 16) 4 else 3
             while (idx < sigWidth) {
-                val charIdx = idx / 4
-                val bitIdx = idx % 4
+                val charIdx = idx / bitsPerChar
+                val bitIdx = idx % bitsPerChar
 
                 val c = when {
                     strLower.length > charIdx -> strLower[strLower.length - 1 - charIdx]

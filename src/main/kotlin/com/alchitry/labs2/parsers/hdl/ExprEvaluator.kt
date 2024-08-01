@@ -141,7 +141,7 @@ data class ExprEvaluator<T : ParserRuleContext>(
         copyDependencies(ctx, child)
     }
 
-    fun concatenate(ctx: T, children: List<T>) {
+    fun concatenate(ctx: ParserRuleContext, children: List<T>) {
         if (canSkip(ctx)) return
 
         widthFence[ctx] = true
@@ -226,7 +226,7 @@ data class ExprEvaluator<T : ParserRuleContext>(
         }
     }
 
-    fun duplicate(ctx: T, children: List<T>) {
+    fun duplicate(ctx: ParserRuleContext, children: List<ParserRuleContext>) {
         if (canSkip(ctx)) return
 
         widthFence[ctx] = true
@@ -359,7 +359,7 @@ data class ExprEvaluator<T : ParserRuleContext>(
         }.asReversed()).asExpr(getExprType(filteredValues.map { it.type }))
     }
 
-    fun negate(ctx: T, child: T?) {
+    fun negate(ctx: T, child: ParserRuleContext?) {
         if (canSkip(ctx)) return
 
         copyDependencies(ctx, child)
@@ -387,14 +387,17 @@ data class ExprEvaluator<T : ParserRuleContext>(
         exprs[ctx] = BitListValue(expr.value.toBigInt()!!.negate(), true, expr.value.size + 1).asExpr(expr.type)
     }
 
-    fun invert(ctx: T, child: T?) {
+    /**
+     * Accepts ! or ~ operators.
+     */
+    fun invert(ctx: T, child: ParserRuleContext?, operator: String) {
         if (canSkip(ctx)) return
 
         val expr = exprs[child ?: return] ?: return
 
         copyDependencies(ctx, child)
 
-        exprs[ctx] = if (ctx.getChild(0)?.text == "!") {
+        exprs[ctx] = if (operator == "!") {
             if (expr.value is UndefinedValue)
                 UndefinedValue(BitWidth).asExpr(expr.type)
             else
@@ -654,10 +657,14 @@ data class ExprEvaluator<T : ParserRuleContext>(
             return
         }
 
-        exprs[ctx] = when (operator) {
+        exprs[ctx] = when (operator.replace("~", "")) {
             "&" -> value.andReduce()
             "|" -> value.orReduce()
             "^" -> value.xorReduce()
+            "~&" -> value.andReduce().invert()
+            "~|" -> value.orReduce().invert()
+            "~^" -> value.xorReduce().invert()
+            "^~" -> value.invert().xorReduce()
             else -> {
                 context.reportError(
                     ctx.getChild(ParserRuleContext::class, 0) ?: return,

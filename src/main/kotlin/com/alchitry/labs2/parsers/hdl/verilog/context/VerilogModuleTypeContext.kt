@@ -6,7 +6,7 @@ import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.WalkerFilter
 import com.alchitry.labs2.parsers.grammar.VerilogParser.ExpressionContext
 import com.alchitry.labs2.parsers.hdl.types.Module
-import com.alchitry.labs2.parsers.hdl.verilog.parsers.ExprParser
+import com.alchitry.labs2.parsers.hdl.verilog.parsers.ConstantExprParser
 import com.alchitry.labs2.parsers.hdl.verilog.parsers.ModuleParser
 import com.alchitry.labs2.parsers.hdl.verilog.parsers.VerilogWalkerFilters
 import com.alchitry.labs2.parsers.notations.ErrorListener
@@ -19,7 +19,7 @@ class VerilogModuleTypeContext(
 ) : VerilogExprContext, ErrorListener by project.notationManager.getCollector(sourceFile) {
     override val evalContext: Evaluable? = null
 
-    private val expr = ExprParser(this)
+    private val expr = ConstantExprParser(this)
     private val module = ModuleParser(this)
 
     private val listeners = listOf(

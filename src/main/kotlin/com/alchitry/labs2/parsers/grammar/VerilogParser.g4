@@ -1536,20 +1536,20 @@ constant_base_expression
     ;
 
 constant_expression
-    : constant_primary
-    | unary_operator attribute_instance* constant_primary
-    | constant_expression '**' attribute_instance* constant_expression
-    | constant_expression ('*' | '/' | '%') attribute_instance* constant_expression
-    | constant_expression ( '+' | '-') attribute_instance* constant_expression
-    | constant_expression ('>>' | '<<' | '>>>' | '<<<') attribute_instance* constant_expression
-    | constant_expression ('<' | '<=' | '>' | '>=') attribute_instance* constant_expression
-    | constant_expression ('==' | '!=' | '===' | '!==') attribute_instance* constant_expression
-    | constant_expression '&' attribute_instance* constant_expression
-    | constant_expression ('^' | '^~' | '~^') attribute_instance* constant_expression
-    | constant_expression '|' attribute_instance* constant_expression
-    | constant_expression '&&' attribute_instance* constant_expression
-    | constant_expression '||' attribute_instance* constant_expression
-    | <assoc = right> constant_expression '?' attribute_instance* constant_expression ':' constant_expression
+    : constant_primary #ConstExprPrimary
+    | unary_operator attribute_instance* constant_primary #ConstExprUnary
+    | constant_expression '**' attribute_instance* constant_expression #ConstExprExpo
+    | constant_expression ('*' | '/' | '%') attribute_instance* constant_expression #ConstExprMulDivRem
+    | constant_expression ( '+' | '-') attribute_instance* constant_expression #ConstExprAddSub
+    | constant_expression ('>>' | '<<' | '>>>' | '<<<') attribute_instance* constant_expression #ConstExprShift
+    | constant_expression ('<' | '<=' | '>' | '>=') attribute_instance* constant_expression #ConstExprCompare
+    | constant_expression ('==' | '!=' | '===' | '!==') attribute_instance* constant_expression #ConstExprEquality
+    | constant_expression '&' attribute_instance* constant_expression #ConstExprAnd
+    | constant_expression ('^' | '^~' | '~^') attribute_instance* constant_expression #ConstExprXor
+    | constant_expression '|' attribute_instance* constant_expression #ConstExprOr
+    | constant_expression '&&' attribute_instance* constant_expression #ConstExprLogicalAnd
+    | constant_expression '||' attribute_instance* constant_expression #ConstExprLogicalOr
+    | <assoc = right> constant_expression '?' attribute_instance* constant_expression ':' constant_expression #ConstExprTernary
     ;
 
 constant_mintypmax_expression
@@ -1625,14 +1625,14 @@ width_constant_expression
 
 // A.8.4 Primaries
 constant_primary
-    : number
-    | identifier ( '[' constant_range_expression ']')?
-    | constant_concatenation
-    | constant_multiple_concatenation
-    | constant_function_call
-    | constant_system_function_call
-    | '(' constant_mintypmax_expression ')'
-    | string_
+    : number #ConstPrimaryNumber
+    | identifier ( '[' constant_range_expression ']')? #ConstPrimaryIdentifier
+    | constant_concatenation #ConstPrimaryConcatenation
+    | constant_multiple_concatenation #ConstPrimaryMultipleConcatenation
+    | constant_function_call #ConstPrimaryFunctionCall
+    | constant_system_function_call #ConstPrimarySystemFunctionCall
+    | '(' constant_mintypmax_expression ')' #ConstPrimaryGroup
+    | string_ #ConstPrimaryString
     ;
 
 module_path_primary
