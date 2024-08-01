@@ -4,7 +4,7 @@ import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.WalkerFilter
-import com.alchitry.labs2.parsers.grammar.VerilogParser.ExpressionContext
+import com.alchitry.labs2.parsers.grammar.VerilogParser
 import com.alchitry.labs2.parsers.hdl.types.Module
 import com.alchitry.labs2.parsers.hdl.verilog.parsers.ConstantExprParser
 import com.alchitry.labs2.parsers.hdl.verilog.parsers.ModuleParser
@@ -27,7 +27,7 @@ class VerilogModuleTypeContext(
         module
     )
 
-    override fun resolve(exprCtx: ExpressionContext) = expr.resolve(exprCtx)
+    override fun resolve(exprCtx: VerilogParser.Constant_expressionContext) = expr.resolve(exprCtx)
 
     fun extract(t: ParserRuleContext): List<Module> {
         module.modules.clear()

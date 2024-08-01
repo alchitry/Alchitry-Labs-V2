@@ -331,7 +331,10 @@ class ExprParser(
     override suspend fun exitExprDup(ctx: ExprDupContext) = evaluator.duplicate(ctx, ctx.expr())
     override suspend fun exitExprArray(ctx: ExprArrayContext) = evaluator.buildArray(ctx, ctx.expr())
     override suspend fun exitExprNegate(ctx: ExprNegateContext) = evaluator.negate(ctx, ctx.expr())
-    override suspend fun exitExprInvert(ctx: ExprInvertContext) = evaluator.invert(ctx, ctx.expr())
+
+    override suspend fun exitExprInvert(ctx: ExprInvertContext) {
+        evaluator.invert(ctx, ctx.expr(), getOperator(ctx) ?: return)
+    }
 
     override suspend fun exitExprAddSub(ctx: ExprAddSubContext) {
         evaluator.addOrSubtract(ctx, ctx.expr(), getOperator(ctx) ?: return)
