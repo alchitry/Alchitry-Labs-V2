@@ -483,7 +483,7 @@ class ExprParser(
             }
 
             Function.FIXEDPOINT, Function.CFIXEDPOINT, Function.FFIXEDPOINT -> {
-                if ((evaluator.resolve(ctx.functionExpr(1)?.expr() ?: return)?.type ?: return) != ExprType.Constant) {
+                if (!(evaluator.resolve(ctx.functionExpr(1)?.expr() ?: return)?.type ?: return).fixed) {
                     context.reportError(
                         ctx.functionExpr(1) ?: ctx,
                         "The width (second) argument of \"\$${function.label}()\" must be constant."
