@@ -257,7 +257,17 @@ class TypesParser(
                 }
             }
 
-            val instParams = localParamConnections.union(extParamConnections).associate { it.port to it.value.value }
+            val instParams = localParamConnections.union(extParamConnections).associate {
+                val value = it.value.value
+                val resizedValue = value.resizeToMatch(DefinedSimpleWidth(32)).withSign(true)
+                if ((value as? SimpleValue)?.fitsIn(32, true) != true) {
+                    context.reportError(
+                        ctx,
+                        "Parameter \"${it.port}\" must fit into a 32bit signed value."
+                    )
+                }
+                it.port to resizedValue
+            }
             val instPorts = (localSignals + extSignals).mapKeys {
                 if (moduleType.ports[it.key.port]?.isInout == true) {
                     if (context.boundInouts.putIfAbsent(it.value.name, it.value) != null || it.value.hasDriver) {
@@ -392,7 +402,23 @@ class TypesParser(
                         it.port to it.value.value.select(selection)
                     }
                     val extMap = extParamConnections.associate { it.port to it.value.value }
-                    localMap + extMap
+                    val params = localMap + extMap
+                    params.mapValues { (param, value) ->
+                        val resizedValue = value.resizeToMatch(DefinedSimpleWidth(32)).withSign(true)
+                        if ((value as? SimpleValue)?.fitsIn(32, true) != true) {
+                            context.reportError(
+                                ctx,
+                                "Parameter \"$param${
+                                    idx.joinToString(
+                                        ", ",
+                                        "[",
+                                        "]"
+                                    )
+                                }\" must fit into a 32bit signed value."
+                            )
+                        }
+                        resizedValue
+                    }
                 }
             )
                 .apply {
@@ -465,7 +491,7 @@ class TypesParser(
             return
         }
 
-        if (expr.type != ExprType.Constant)
+        if (!expr.type.fixed)
             context.reportError(ctx, "Array sizes must be a constant value.")
 
         if (expr.value is UndefinedValue)

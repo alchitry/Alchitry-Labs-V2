@@ -8,6 +8,8 @@ import com.alchitry.labs2.parsers.lucidv2.context.SignalResolver
 import com.alchitry.labs2.parsers.lucidv2.types.*
 import com.alchitry.labs2.parsers.lucidv2.types.ports.Port
 import com.alchitry.labs2.parsers.lucidv2.values.Bit
+import com.alchitry.labs2.parsers.lucidv2.values.DefinedSimpleWidth
+import com.alchitry.labs2.parsers.lucidv2.values.SimpleValue
 import com.alchitry.labs2.parsers.lucidv2.values.UndefinedValue
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 
@@ -29,14 +31,40 @@ data class ModuleParser(
         val parent = ctx.parent as? LucidParser.ParamDecContext ?: return
         val name = parent.name()?.text ?: return
         val defaultValue = ctx.expr()?.let { context.resolve(it)?.value } ?: UndefinedValue()
-        localParams[name] = Signal(name, SignalDirection.Read, null, defaultValue, ExprType.Constant)
+
+        if (defaultValue.width !is DefinedSimpleWidth) {
+            context.reportError(ctx.expr() ?: ctx, "Default value must be a simple value.")
+            return
+        }
+
+        val resizedValue = defaultValue.resizeToMatch(DefinedSimpleWidth(32)).withSign(true)
+        if ((defaultValue as? SimpleValue)?.fitsIn(32, true) != true) {
+            context.reportError(ctx.expr() ?: ctx, "Parameter values must fit into a 32bit signed value.")
+            return
+        }
+
+        localParams[name] = Signal(
+            name,
+            SignalDirection.Read,
+            null,
+            resizedValue,
+            ExprType.Fixed,
+            signed = true
+        )
     }
 
     override fun enterParamDec(ctx: LucidParser.ParamDecContext) {
         val name = ctx.name()?.text ?: return
         if (localParams.contains(name))
             return
-        Signal(name, SignalDirection.Read, null, UndefinedValue(), ExprType.Constant).also {
+        Signal(
+            name,
+            SignalDirection.Read,
+            null,
+            UndefinedValue(DefinedSimpleWidth(32)),
+            ExprType.Fixed,
+            signed = true
+        ).also {
             localParams[name] = it
             publicParams[name] = it
         }
@@ -66,13 +94,19 @@ data class ModuleParser(
         if (value?.isTrue()?.bit != Bit.B1) {
             val defaultValue = (ctx.parent as? LucidParser.ParamDecContext)?.paramDefault()?.expr()
                 ?.let { context.resolve(it) }
+                ?.let {
+                    if (DefinedSimpleWidth(32).canAssign(it.value.width)) {
+                        it.copy(value = it.value.resizeToMatch(DefinedSimpleWidth(32)).withSign(true))
+                    } else {
+                        null
+                    }
+                }
             context.reportError(
                 ctx,
                 "Parameter constraint \"${ctx.text.asSingleLine()}\" failed for default value: $defaultValue"
             )
         }
     }
-
 
     override fun exitModule(ctx: LucidParser.ModuleContext) {
         if (module != null) {
@@ -101,11 +135,16 @@ data class ModuleParser(
 
             val defaultTestOnly = paramCtx.paramDefault()?.getChild(0)?.text == "~"
             val defaultValue = paramCtx.paramDefault()?.expr()?.let { context.resolve(it)?.value }
+
+            val resizedValue = if (defaultValue != null && defaultValue.width is DefinedSimpleWidth) {
+                defaultValue.resizeToMatch(DefinedSimpleWidth(32)).withSign(true)
+            } else null
+
             val constraintContext = paramCtx.paramConstraint()?.expr()
 
             if (params.putIfAbsent(
                     paramName,
-                    Parameter(paramName, defaultValue, defaultTestOnly, constraintContext)
+                    Parameter(paramName, resizedValue, defaultTestOnly, constraintContext)
                 ) != null
             ) {
                 context.reportError(

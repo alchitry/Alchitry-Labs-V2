@@ -632,6 +632,30 @@ class VerilogConverter(
         return SubSignalData(signed, parent.verilogName, selection)
     }
 
+    private fun SignalOrSubSignal.toVerilog(write: Boolean): String {
+        val baseSignal = getSignal()
+
+        // Keep track of globals that are read and indexed as we may need the full value for dynamic indexing
+        if (this is SubSignal && parent.parent is GlobalNamespace) {
+            globals.add(parent)
+        }
+
+        val verilogName = verilogName
+
+        // build the bit selection string (if sub-signal)
+        val selection = (this as? SubSignal)?.toVerilog()
+        val signed = selection?.signed ?: baseSignal.signed
+
+        val writePrefix =
+            if (write && getSignal().parent is ModuleInstanceOrArray && direction == SignalDirection.Both) {
+                "IO_"
+            } else ""
+
+        val sigVerilog = "$writePrefix$verilogName${selection?.selection ?: ""}"
+
+        return if (signed && !write) "\$signed($sigVerilog)" else sigVerilog
+    }
+
     override fun exitSignal(ctx: LucidParser.SignalContext) {
         val signal = context.resolve(ctx)
         if (signal == null) {
@@ -644,29 +668,7 @@ class VerilogConverter(
             error(ctx, "Failed to resolve signal for \"${ctx.text}\"")
         }
 
-        val baseSignal = signal.getSignal()
-
-        // Keep track of globals that are read and indexed as we may need the full value for dynamic indexing
-        if (signal is SubSignal && signal.parent.parent is GlobalNamespace) {
-            globals.add(signal.parent)
-        }
-
-        val verilogName = signal.verilogName
-
-        // build the bit selection string (if sub-signal)
-        val selection = (signal as? SubSignal)?.toVerilog()
-        val signed = selection?.signed ?: baseSignal.signed
-
-        val write = ctx.parent is LucidParser.AssignStatContext
-
-        val writePrefix =
-            if (write && signal.getSignal().parent is ModuleInstanceOrArray && signal.direction == SignalDirection.Both) {
-                "IO_"
-            } else ""
-
-        val sigVerilog = "$writePrefix$verilogName${selection?.selection ?: ""}"
-
-        ctx.verilog = if (signed && !write) "\$signed($sigVerilog)" else sigVerilog
+        ctx.verilog = signal.toVerilog(write = ctx.parent is LucidParser.AssignStatContext)
     }
 
     override fun enterBlock(ctx: LucidParser.BlockContext) {
@@ -913,14 +915,97 @@ class VerilogConverter(
                 functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
 
             Function.SIGNED ->
-                "${"$"}signed(${
+                "\$signed(${
                     functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
                 })"
 
             Function.UNSIGNED ->
-                "${"$"}unsigned(${
+                "\$unsigned(${
                     functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
                 })"
+
+            Function.POWER -> {
+                val p1 =
+                    functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
+                val p2 =
+                    functionCtx.functionExpr(1)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
+                "(($p1) ** ($p2))"
+            }
+
+            Function.CDIV -> {
+                val p1 =
+                    functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
+                val p2 =
+                    functionCtx.functionExpr(1)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
+                "((($p1) - 1) / ($p2) + 1)"
+            }
+
+            Function.RESIZE -> {
+                val expr =
+                    functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
+                val size =
+                    functionCtx.functionExpr(1)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
+                "($size)'($expr)"
+            }
+
+            Function.CLOG2 -> {
+                "\$clog2(${
+                    functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
+                })"
+            }
+
+            Function.FIXEDPOINT, Function.CFIXEDPOINT, Function.FFIXEDPOINT -> {
+                val real =
+                    functionCtx.functionExpr(0)?.REAL()?.text ?: functionCtx.functionExpr(0)?.expr()?.verilog ?: error(
+                        ctx,
+                        "Missing value for ${function.label}!"
+                    )
+                val width =
+                    functionCtx.functionExpr(1)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
+                val fractional =
+                    functionCtx.functionExpr(2)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
+                when (function) {
+                    Function.FIXEDPOINT -> "($width)'(int'(($real) * (2 ** ($fractional))))"
+                    Function.CFIXEDPOINT -> "($width)'(int'(\$ceil(($real) * (2 ** ($fractional)))))"
+                    Function.FFIXEDPOINT -> "($width)'(\$rtoi(($real) * (2 ** ($fractional))))"
+                    else -> error("Impossible case!")
+                }
+            }
+
+            Function.REVERSE -> {
+                val signalContext =
+                    (functionCtx.functionExpr(0)?.expr() as? LucidParser.ExprSignalContext)?.signal() ?: error(
+                        ctx,
+                        "Non-constant \$reverse() used on something other than a signal!"
+                    )
+                val signal = context.signal.resolve(signalContext)
+                    ?: error(ctx, "Failed to resolve signal for ${function.label}!")
+                val selection = when (signal) {
+                    is Signal -> {
+                        val msb = when (val width = signal.width) {
+                            is DefinedArrayWidth -> width.size
+                            is BitListWidth -> width.size
+                            BitWidth -> 1
+                            else -> error(ctx, "\$reverse() used on a non-array signal!")
+                        } - 1
+                        listOf(SignalSelector.Bits(0..msb, SelectionContext.Constant))
+                    }
+
+                    is SubSignal -> signal.selection
+                }
+                val lastSelector = selection.last()
+                if (lastSelector !is SignalSelector.Bits)
+                    error(ctx, "\$reverse() used on a non-array signal!")
+
+                lastSelector.range.joinToString(separator = ", ", prefix = "{", postfix = "}") { index ->
+                    val newSelector = selection.toMutableList().apply {
+                        removeLast()
+                        add(SignalSelector.Bits(index, SelectionContext.Constant))
+                    }
+                    val selectedSignal = signal.getSignal().select(newSelector)
+                    selectedSignal.toVerilog(write = false)
+                }
+            }
 
             Function.ASSERT,
             Function.PRINT,
@@ -929,16 +1014,8 @@ class VerilogConverter(
             is Function.Custom ->
                 error(ctx, "Test only function \"${function.label}\" can't be converted to Verilog!")
 
-            Function.CDIV,
-            Function.RESIZE,
-            Function.POWER,
-            Function.REVERSE,
-            Function.CLOG2,
-            Function.CFIXEDPOINT,
-            Function.FFIXEDPOINT,
-            Function.FIXEDPOINT,
             Function.WIDTH ->
-                error(ctx, "Function \"${function.label}\" should always be constant but didn't have a value!")
+                error(ctx, "Function \"${function.label}\" result should always be constant but didn't have a value!")
         }
     }
 

@@ -37,7 +37,7 @@ data class ConstantParser(
         val exprCtx = ctx.expr() ?: return
         val expr = context.resolve(exprCtx)
         val value = expr?.value ?: UndefinedValue()
-        if (expr?.type != ExprType.Constant) {
+        if (expr?.type?.fixed != true) {
             context.reportError(
                 exprCtx,
                 "The value assigned to a constant must be constant!"
@@ -46,7 +46,7 @@ data class ConstantParser(
         }
         if (localConstants.putIfAbsent(
                 constName,
-                Signal(constName, SignalDirection.Read, null, value, ExprType.Constant)
+                Signal(constName, SignalDirection.Read, null, value, expr.type)
             ) != null
         ) {
             context.reportError(

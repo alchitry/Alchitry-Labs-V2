@@ -5,6 +5,7 @@ import com.alchitry.labs2.parsers.lucidv2.context.LucidBlockContext
 import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
 import com.alchitry.labs2.parsers.lucidv2.signals.snapshot.SnapshotOrParent
 import com.alchitry.labs2.parsers.lucidv2.signals.snapshot.SnapshotParent
+import com.alchitry.labs2.parsers.lucidv2.values.DefinedSimpleWidth
 import com.alchitry.labs2.parsers.lucidv2.values.UndefinedValue
 import com.alchitry.labs2.parsers.lucidv2.values.Value
 import com.alchitry.labs2.parsers.notations.ErrorListener
@@ -66,10 +67,11 @@ class ModuleInstance(
             name,
             SignalDirection.Read,
             this,
-            parameters[name]
+            (parameters[name]
                 ?: (if (param.defaultTestOnly && !testing) null else param.default)
-                ?: if (testing) UndefinedValue() else error("Missing value for parameter \"${name}\" in module \"${this.name}\" of type \"${module.name}\"."),
-            ExprType.Constant
+                ?: if (testing) UndefinedValue(DefinedSimpleWidth(32)) else error("Missing value for parameter \"${name}\" in module \"${this.name}\" of type \"${module.name}\".")),
+            ExprType.Fixed,
+            signed = true
         )
     }
 
