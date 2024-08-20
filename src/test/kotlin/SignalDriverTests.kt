@@ -351,4 +351,52 @@ class SignalDriverTests {
         tester.fullParse()
         assert(tester.notationManager.hasNoIssues) { tester.notationManager.getReport() }
     }
+
+    @Test
+    fun localSignalDriverTest() = runBlocking {
+        val tester = LucidTester(
+            """
+                module binToDec #(
+                    DIGITS = 4 : DIGITS > 0 && DIGITS < 20,           // limited by 64 bit constants in the tools
+                    LEADING_ZEROS = 0 : LEADING_ZEROS == 0 || LEADING_ZEROS == 1
+                )(
+                    input value[${'$'}clog2(${'$'}pow(10, DIGITS))],            // minimum number of bits for DIGITS
+                    output digits[DIGITS][4]                          // decimal output
+                ) {
+                    always {
+                        repeat(i, DIGITS)                                   // for all digits
+                            digits[i] = d11                                 // default to invalid number
+
+                        sig remainder[${'$'}width(value)] = value                // initialize remainder
+                        sig blank = !LEADING_ZEROS                          // set blank zero flag
+
+                        if (value < ${'$'}pow(10, DIGITS)) {                     // if can be displayed
+                            repeat(j, DIGITS, DIGITS-1, -1) {               // for each digit
+                                sig scale[${'$'}width(value)] = ${'$'}pow(10, j)      // get the scale for the digit
+
+                                if (remainder < scale) {                    // if this digit is 0
+                                    if (j != 0 && blank)                    // use 10 for blank
+                                        digits[j] = 10
+                                    else                                    // or 0 for zero
+                                        digits[j] = 0
+                                } else {                                    // digit is 1-9
+                                    blank = 0                               // don't blank future zeros
+                                    sig sub_value[${'$'}width(value)] = 0        // default to no subtraction
+                                    repeat(i, 8, 9, -1) {                   // for each possible value (starting from 9)
+                                        if (remainder < (i+1) * scale) {    // if remainder is less than value
+                                            digits[j] = i                   // set digit to this value
+                                            sub_value = i * scale           // set subtraction value
+                                        }
+                                    }
+                                    remainder = remainder - sub_value       // subtract off last digit
+                                }
+                            }
+                        }
+                    }
+                }
+            """.trimIndent().toSourceFile()
+        )
+        tester.fullParse()
+        assert(tester.notationManager.hasNoIssues) { tester.notationManager.getReport() }
+    }
 }

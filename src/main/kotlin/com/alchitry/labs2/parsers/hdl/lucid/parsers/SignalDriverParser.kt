@@ -187,7 +187,7 @@ data class SignalDriverParser(
         val fullSig = sig.getSignal()
         val expected = expectedDrivers ?: return
         if (expected.contains(fullSig) || fullSig.parent is LocalSignal) { // should be driving this signal
-            val drivenValue = signalStack.firstNotNullOfOrNull { it[fullSig] }
+            val drivenValue = signalStack.mapNotNull { it[fullSig] }.reduceOrNull { acc, value -> acc or value }
             if (drivenValue == null) {
                 val functionCtx = ctx.firstParentOrNull { it is FunctionContext }
                 // exclude inout as they can be read and written any time
@@ -203,10 +203,11 @@ data class SignalDriverParser(
                 is SubSignal -> drivenValue.select(sig.selection)
             }
             if (selectedValue.andReduce().bit != Bit.B1) {
-                context.reportError(
-                    ctx,
-                    "This portion of the signal \"${fullSig.fullName()}\" can't be read before it is written!"
-                )
+                val message = when (sig) {
+                    is Signal -> "The signal \"${fullSig.fullName()}\" can't be read before it is fully written!"
+                    is SubSignal -> "This portion of the signal \"${fullSig.fullName()}\" can't be read before it is fully written!"
+                }
+                context.reportError(ctx, message)
                 return
             }
         }

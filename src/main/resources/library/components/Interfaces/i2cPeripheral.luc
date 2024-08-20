@@ -29,7 +29,7 @@
    *****************************************************************************/
 
 module i2cPeripheral #(
-    DEVICE_ID = 7h50 : $width(DEVICE_ID) == 7
+    DEVICE_ID = 7h50 : $resize($unsigned(DEVICE_ID),7) == DEVICE_ID
 )(
     input clk,  // clock
     input rst,  // reset

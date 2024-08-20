@@ -298,7 +298,7 @@ data class Project(
         try {
             sourceDir.createDirectories()
             vSourceFiles = sourceFiles.map { (name, contents) ->
-                val file = sourceDir.resolve("$name.v").toFile()
+                val file = sourceDir.resolve("$name.sv").toFile()
                 file.outputStream().bufferedWriter().use {
                     it.write(contents ?: error("Missing contents for file $name"))
                 }

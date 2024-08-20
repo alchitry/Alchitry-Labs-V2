@@ -1,11 +1,21 @@
 package com.alchitry.labs2.parsers.hdl.types
 
 import com.alchitry.labs2.parsers.grammar.LucidParser
+import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
+import com.alchitry.labs2.parsers.lucidv2.values.Value
 
 class RepeatSignal(
-    val signal: Signal,
+    name: String,
+    initialValue: Value,
     context: LucidParser.RepeatStatContext,
 ) : SignalParent {
+    val signal = Signal(
+        name,
+        SignalDirection.Read,
+        this,
+        initialValue,
+        ExprType.Known
+    )
     override fun getSignal(name: String): Signal? {
         if (signal.name == name)
             return signal

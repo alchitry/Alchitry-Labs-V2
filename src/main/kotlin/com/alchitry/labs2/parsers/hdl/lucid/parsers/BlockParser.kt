@@ -262,7 +262,8 @@ data class BlockParser(
             sigName == null,
             exprCtx[0],
             exprCtx.getOrNull(1),
-            exprCtx.getOrNull(2)
+            exprCtx.getOrNull(2),
+            repCtx
         )
 
         if (exprList.isEmpty()) {
@@ -329,7 +330,8 @@ data class RepeatBlock(
     val signal_hidden: Boolean,
     val countExprCtx: ExprContext,
     val startExprCtx: ExprContext?,
-    val stepExprCtx: ExprContext?
+    val stepExprCtx: ExprContext?,
+    val repeatStatCtx: RepeatStatContext
 ) {
     private val countExpr: Expr? get() = context.resolve(countExprCtx)
     private val startExpr: Expr? get() = startExprCtx?.let { context.resolve(it) }
@@ -348,13 +350,7 @@ data class RepeatBlock(
     }
 
     fun createSignal(): Signal {
-        return Signal(
-            signal,
-                SignalDirection.Read,
-                null,
-                BitListValue(start, minBits, false),
-                ExprType.Known
-            )
+        return RepeatSignal(signal, BitListValue(start, minBits, false), repeatStatCtx).signal
     }
 
     val minBits: Int

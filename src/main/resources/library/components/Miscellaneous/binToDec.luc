@@ -61,7 +61,7 @@ module binToDec #(
                 } else {                                    // digit is 1-9
                     blank = 0                               // don't blank future zeros
                     sig sub_value[$width(value)] = 0        // default to no subtraction
-                    repeat(i, 8, 9, -1) {                   // for each possible value (starting from 9)
+                    repeat(i, 9, 9, -1) {                   // for each possible value (starting from 9)
                         if (remainder < (i+1) * scale) {    // if remainder is less than value
                             digits[j] = i                   // set digit to this value
                             sub_value = i * scale           // set subtraction value

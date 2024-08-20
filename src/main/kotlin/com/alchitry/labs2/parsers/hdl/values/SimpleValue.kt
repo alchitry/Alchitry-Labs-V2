@@ -127,6 +127,15 @@ sealed class SimpleValue(
         is UndefinedSimpleWidth -> UndefinedValue()
     }
 
+    fun fitsIn(bits: Int, signed: Boolean): Boolean {
+        val minBits = minBits()
+        return when {
+            signed == this.signed -> bits >= minBits
+            this.signed -> !isNegative() && bits >= (minBits - 1)
+            else -> bits > minBits // signed target, unsigned value
+        }
+    }
+
     private inline fun doOp(b: SimpleValue, crossinline op: (Bit, Bit) -> Bit): SimpleValue {
         val size = size.coerceAtLeast(b.size)
         val signedOp = signed && b.signed

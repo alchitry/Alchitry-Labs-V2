@@ -483,6 +483,12 @@ class ExprParser(
             }
 
             Function.FIXEDPOINT, Function.CFIXEDPOINT, Function.FFIXEDPOINT -> {
+                if ((evaluator.resolve(ctx.functionExpr(1)?.expr() ?: return)?.type ?: return) != ExprType.Constant) {
+                    context.reportError(
+                        ctx.functionExpr(1) ?: ctx,
+                        "The width (second) argument of \"\$${function.label}()\" must be constant."
+                    )
+                }
                 val width = when (val w = args[1]) {
                     is FunctionArg.RealArg -> {
                         context.reportError(ctx.functionExpr(1) ?: ctx, "The width value can't be real number.")
@@ -599,7 +605,7 @@ class ExprParser(
                 val fError = abs(adjustedValue - fValue)
 
                 val bigInt = when (function) {
-                    Function.FIXEDPOINT -> if (cError < fError) cValue else fValue
+                    Function.FIXEDPOINT -> if (fError < cError) fValue else cValue
                     Function.CFIXEDPOINT -> cValue
                     Function.FFIXEDPOINT -> fValue
                     else -> error("Impossible value for function!")
@@ -612,7 +618,7 @@ class ExprParser(
                     )
                 }
 
-                evaluator.setExpr(ctx, BitListValue(bigInt, width = width).asConstExpr())
+                evaluator.setExpr(ctx, BitListValue(bigInt, width = width).asExpr(type))
             }
 
             Function.CLOG2 -> {
@@ -716,6 +722,17 @@ class ExprParser(
                     )
                     return
                 }
+
+                if (type != ExprType.Constant) {
+                    if (ctx.functionExpr(0)?.expr() !is ExprSignalContext) {
+                        context.reportError(
+                            ctx.functionExpr(0) ?: ctx,
+                            "\$reverse() can only be used on constant expressions or signals."
+                        )
+                        return
+                    }
+                }
+
                 evaluator.setExpr(ctx, arg.reverse().asExpr(type))
             }
 
@@ -966,6 +983,11 @@ class ExprParser(
                 val valArgs = checkOnlyValues() ?: return
                 val value = valArgs[0]
                 val size = valArgs[1]
+                if (evaluator.resolve(ctx.functionExpr(1)?.expr() ?: return)?.type?.fixed == false) {
+                    context.reportError(
+                        ctx.functionExpr(1) ?: ctx, "The size (second) argument of \$resize() must be a constant."
+                    )
+                }
                 if (size.isNumber() && size is BitListValue) {
                     val numBits = try {
                         size.toBigInt()!!.intValueExact()
