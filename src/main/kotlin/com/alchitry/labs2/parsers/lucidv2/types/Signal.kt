@@ -87,7 +87,7 @@ open class Signal(
         val parts = mutableListOf<String>()
         var current: SignalOrParent = this
         parts.add(this.name)
-        while (current.parent != null) {
+        while (current.parent != null && current.parent !is LocalSignal) {
             parts.add(current.parent!!.name)
             current = current.parent!!
         }
