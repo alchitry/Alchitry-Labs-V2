@@ -42,6 +42,19 @@ data class BlockEvaluator(
         writtenSignals.clear()
     }
 
+    override suspend fun exitAlwaysSignal(ctx: AlwaysSignalContext) {
+        val sigCtx = ctx.sigDec() ?: return
+        val name = sigCtx.name()?.text ?: return
+        val signal = context.types.resolveLocalSignal(ctx, name)
+        if (signal == null) {
+            context.reportError(ctx, "Failed to resolve local signal \"$name\"!")
+            return
+        }
+        val newValue = sigCtx.expr()?.let { context.resolve(it) } ?: return
+        signal.quietWrite(newValue.value, context.evalContext)
+        writtenSignals.add(signal)
+    }
+
     override suspend fun exitAssignStat(ctx: AssignStatContext) {
         val assignee = ctx.signal()?.let { context.resolve(it) } ?: return
         val newValue = ctx.expr()?.let { context.resolve(it) } ?: return
