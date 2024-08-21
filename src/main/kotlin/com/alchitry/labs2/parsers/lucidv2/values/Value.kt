@@ -83,7 +83,11 @@ sealed class Value : Measurable {
         return getBits().reduce { a, b -> a xor b }.toBitValue()
     }
 
-    fun flatten(): BitListValue = BitListValue(getBits(), false)
+    fun flatten(): BitListValue = when (this) {
+        is SimpleValue -> asBitListValue()
+        else -> BitListValue(getBits(), false)
+    }
+
 
     /** Returns true if the other value can be scaled to match this value. */
     fun canAssign(other: Value): Boolean = width.canAssign(other.width)

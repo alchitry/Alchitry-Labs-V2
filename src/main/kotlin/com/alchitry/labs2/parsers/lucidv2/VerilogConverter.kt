@@ -219,6 +219,10 @@ class VerilogConverter(
                 append(":0] ")
             }
             append(sig.verilogName)
+            if (sig.parent is RepeatSignal) {
+                append(", R")
+                append(sig.verilogName)
+            }
 
             if (dynamicExpr != null) {
                 append(" = ")
@@ -773,25 +777,33 @@ class VerilogConverter(
         val repeatBlock = context.blockParser.resolveRepeatBlock(ctx) ?: error(ctx, "Missing repeat block!")
         val repeatSignal =
             context.blockParser.repeatSignals[ctx] ?: error(ctx, "Missing repeat signal for repeat block!")
-        val countExpr = repeatBlock.countExprCtx.verilog
         val startExpr = repeatBlock.startExprCtx?.verilog ?: "0"
         val stepExpr = repeatBlock.stepExprCtx?.verilog ?: "1"
-        val finalExpr = "($startExpr) + ($countExpr) * ($stepExpr)"
-        val comparison = if (repeatBlock.step > 0) "<" else ">"
         ctx.verilog = buildString {
             val repSigName = repeatSignal.verilogName
-            append("for (")
+            append("for (R")
             append(repSigName)
-            append(" = $startExpr; ")
+            append(" = 0; R")
             append(repSigName)
-            append(" $comparison ")
-            append(finalExpr)
-            append("; ")
+            append(" < ${repeatBlock.count}; R")
             append(repSigName)
-            append(" = ")
+            append(" = R")
             append(repSigName)
-            append(" + ($stepExpr)) ")
-            append(ctx.repeatBlock().requireNotNull(ctx).verilog)
+            append(" + 1) ")
+            val blockLines = ctx.repeatBlock().requireNotNull(ctx).verilog.split("\n").toMutableList()
+            blockLines.add(1, buildString {
+                for (i in 0..<tabCount + 1)
+                    append("  ")
+                append(repSigName)
+                append(" = (")
+                append(startExpr)
+                append(") + R")
+                append(repSigName)
+                append(" * (")
+                append(stepExpr)
+                append(");")
+            })
+            append(blockLines.joinToString("\n"))
         }
     }
 
