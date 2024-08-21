@@ -209,7 +209,13 @@ sealed class SimpleValue(
             sb.append("s")
         if (isNumber()) {
             sb.append("h")
-            sb.append(toBigInt()!!.toString(16))
+            val bigInt = toBigInt()!!
+            if (bigInt.signum() < 0) {
+                sb.insert(0, "-")
+                sb.append(bigInt.toString(16).replace("-", ""))
+            } else {
+                sb.append(bigInt.toString(16))
+            }
         } else {
             sb.append("b")
             bits.reversed().forEach {
