@@ -1,18 +1,18 @@
 package com.alchitry.labs2.parsers.hdl.types.ports
 
 import com.alchitry.labs2.parsers.ProjectContext
-import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidExprEval
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
 import com.alchitry.labs2.parsers.hdl.types.SignalDirection
 import com.alchitry.labs2.parsers.hdl.values.SignalWidth
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 data class Port(
     val name: String,
     val direction: SignalDirection,
     val width: SignalWidth,
     val signed: Boolean,
-    val context: LucidParser.PortDecContext
+    val context: ParserRuleContext
 ) {
     val isInout: Boolean = direction == SignalDirection.Both
 

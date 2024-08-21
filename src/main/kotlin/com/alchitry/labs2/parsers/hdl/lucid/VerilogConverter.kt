@@ -821,7 +821,7 @@ class VerilogConverter(
             append(repSigName)
             append(" = 0; R")
             append(repSigName)
-            append(" < ${repeatBlock.count}; R")
+            append(" < ${repeatBlock.countExprCtx.verilog}; R")
             append(repSigName)
             append(" = R")
             append(repSigName)

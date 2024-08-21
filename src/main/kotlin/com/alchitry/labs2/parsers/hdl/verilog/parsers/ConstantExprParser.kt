@@ -23,6 +23,15 @@ class ConstantExprParser(
         evaluator.passThrough(ctx, ctx.getChild(0))
     }
 
+    override fun exitUnsigned_number(ctx: VerilogParser.Unsigned_numberContext) {
+        evaluator.setExpr(
+            ctx, BitListValue(
+                ctx.text.sanitizeNumber(),
+                signed = false
+            ).asConstExpr()
+        )
+    }
+
     override fun exitDecimal_number(ctx: VerilogParser.Decimal_numberContext) {
         ctx.unsigned_number()?.let {
             evaluator.passThrough(ctx, it)

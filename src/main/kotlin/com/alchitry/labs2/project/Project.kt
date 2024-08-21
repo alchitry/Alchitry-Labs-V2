@@ -520,7 +520,9 @@ data class Project(
             uncheckedModules.forEach { module ->
                 projectContext.notationManager.getCollector(module.sourceFile)
                     .reportWarning(
-                        module.context.name() ?: module.context,
+                        (module.context as? LucidParser.ModuleContext)?.name()
+                            ?: (module.context as? VerilogParser.Module_declarationContext)?.module_identifier()
+                            ?: module.context,
                         "The module \"${module.name}\" is not used."
                     )
             }

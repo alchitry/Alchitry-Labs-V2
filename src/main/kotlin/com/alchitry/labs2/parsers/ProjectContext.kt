@@ -3,6 +3,7 @@ package com.alchitry.labs2.parsers
 import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.notations.NotationManager
+import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.QueueExhaustionException
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
@@ -71,7 +72,11 @@ class ProjectContext(val notationManager: NotationManager, val simulating: Boole
         }
         add(topInstance)
         return usedModules.mapValues {
-            it.value.context.convertToVerilog() ?: error("Missing verilog for ${it.key}")
+            when (it.value.context.sourceFile.language) {
+                Languages.Lucid -> it.value.context.convertToVerilog() ?: error("Missing verilog for ${it.key}")
+                Languages.Verilog -> it.value.context.sourceFile.readText()
+            }
+
         }
     }
 
