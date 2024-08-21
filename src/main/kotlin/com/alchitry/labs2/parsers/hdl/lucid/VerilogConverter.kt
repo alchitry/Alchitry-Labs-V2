@@ -77,19 +77,31 @@ class VerilogConverter(
         )
     }
 
-    private fun StringBuilder.addParamHeader() {
-        val parameters = (context.instance as ModuleInstance).parameters
-        if (parameters.isEmpty())
+    private fun StringBuilder.addParams(params: Collection<Parameter>) {
+        if (params.isEmpty())
             return
-        append("/*\n  Parameters:\n")
-        parameters.values.forEach { param ->
-            append("      ")
+
+        append(" #(")
+        tabCount++
+
+        params.forEachIndexed { index, param ->
+            newLine()
+            append("parameter ")
             append(param.name)
             append(" = ")
-            append(param.initialValue)
-            append("\n")
+            if (param.default != null) {
+                append(param.default.flatten().asVerilog())
+            } else {
+                append("0")
+            }
+
+            if (index != params.size - 1)
+                append(",")
         }
-        append("*/\n")
+
+        tabCount--
+        newLine()
+        append(")")
     }
 
     private fun StringBuilder.addPorts(ports: Collection<Signal>) {
@@ -155,10 +167,8 @@ class VerilogConverter(
     }
 
     private fun StringBuilder.addConstants() {
-        val instance = context.instance as ModuleInstance
         val constants = mutableListOf<Signal>().apply {
             addAll(globals)
-            addAll(instance.parameters.values)
             addAll(context.constant.localConstants.values)
             context.enum.localEnumType.values.forEach {
                 addAll(it.memberSignals.values)
@@ -346,14 +356,36 @@ class VerilogConverter(
             val dimensions = (instance as? ModuleInstanceArray)?.dimensions
 
             fun addInstModule(module: ModuleInstance, dim: List<Int>?) {
-                append(module.parameterizedModuleName)
-                append(" ")
+                append(module.module.name)
+
+                if (module.module.parameters.isNotEmpty()) {
+                    append(" #(")
+                    tabCount++
+
+                    module.parameters.values.forEachIndexed { index, p ->
+                        val param = module.module.parameters[p.name] ?: error("Failed to find parameter \"${p.name}\"!")
+                        if (index != 0)
+                            append(",")
+                        newLine()
+                        append(".")
+                        append(param.name)
+                        append("(")
+                        append(p.initialValue.flatten().asVerilog())
+                        append(")")
+                    }
+
+                    tabCount--
+                    newLine()
+                    append(") ")
+                } else {
+                    append(" ")
+                }
+
                 append(module.name.sanitize())
                 dim?.forEach {
                     append("_")
                     append(it)
                 }
-                // TODO: Add parameters for Verilog modules
                 append(" (")
                 tabCount++
                 (module.connections + module.external).asIterable()
@@ -362,7 +394,7 @@ class VerilogConverter(
                         if (index != 0)
                             append(",")
                         newLine()
-                        append(".P_")
+                        append(".")
                         append(port.name)
                         append("(")
                         when (signalOrSubSignal) {
@@ -439,12 +471,12 @@ class VerilogConverter(
         )
         ctx.verilog = buildString {
             tabCount--
-            append(com.alchitry.labs2.parsers.hdl.lucid.VerilogConverter.Companion.HEADER)
+            append(HEADER)
             newLine()
-            addParamHeader()
             tabCount++
             append("module ")
-            append(instance.parameterizedModuleName)
+            append(instance.module.name)
+            addParams(instance.module.parameters.values)
             addPorts(instance.internal.values)
             newLine()
             addConstants()
@@ -531,7 +563,7 @@ class VerilogConverter(
                 is ModuleInstanceOrArray -> {
                     val instance = context.instance as? ModuleInstance
                     if (instance == parent)
-                        "P_${baseSignal.name}"
+                        baseSignal.name
                     else
                         "M_${parent.name}_${baseSignal.name}"
                 }
@@ -548,7 +580,7 @@ class VerilogConverter(
         val selection: String
     )
 
-    private fun SubSignal.toVerilog(): com.alchitry.labs2.parsers.hdl.lucid.VerilogConverter.SubSignalData {
+    private fun SubSignal.toVerilog(): SubSignalData {
         var signed = getSignal().signed
         val selection = buildString {
             var currentWidth: SignalWidth? = parent.width
@@ -1167,7 +1199,7 @@ class VerilogConverter(
          * If it doesn't match, it returns the same string as is.
          */
         private fun String.sanitize(): String =
-            if (com.alchitry.labs2.parsers.hdl.lucid.VerilogConverter.Companion.reservedWords.contains(this))
+            if (reservedWords.contains(this))
                 "L_$this"
             else
                 this

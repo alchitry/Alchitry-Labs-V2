@@ -5,8 +5,8 @@ import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SnapshotOrParent
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SnapshotParent
-import com.alchitry.labs2.parsers.hdl.values.UndefinedValue
 import com.alchitry.labs2.parsers.hdl.values.DefinedSimpleWidth
+import com.alchitry.labs2.parsers.hdl.values.UndefinedValue
 import com.alchitry.labs2.parsers.hdl.values.Value
 import com.alchitry.labs2.parsers.notations.ErrorListener
 
@@ -126,11 +126,6 @@ class ModuleInstance(
         }
         return "_${hash.toUInt().toString(16)}"
     }
-
-    /**
-     * A name for this instance that is unique for this set of parameters.
-     */
-    val parameterizedModuleName: String = "MI_${module.name}${generateSuffix()}"
 
     fun getInternalSignal(name: String) = internal[name] ?: parameters[name]
     override fun getSignal(name: String) = external[name]

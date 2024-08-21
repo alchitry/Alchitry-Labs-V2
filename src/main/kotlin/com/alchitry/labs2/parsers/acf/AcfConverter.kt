@@ -20,8 +20,8 @@ data class NativeConstraint(
 sealed interface AcfConverter {
     val SignalOrSubSignal.fullPortName: String
         get() = when (this) {
-            is Signal -> "P_${name}"
-            is SubSignal -> "P_${parent.name}[${flatSelectionData.offset}]"
+            is Signal -> name
+            is SubSignal -> "${parent.name}[${flatSelectionData.offset}]"
         }
 
     suspend fun convert(

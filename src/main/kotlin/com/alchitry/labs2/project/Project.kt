@@ -391,7 +391,7 @@ data class Project(
 
         data.board.projectBuilder.buildProject(
             this@Project,
-            topModule.parameterizedModuleName,
+            topModule.module.name,
             vSourceFiles,
             constraintFiles
         )
