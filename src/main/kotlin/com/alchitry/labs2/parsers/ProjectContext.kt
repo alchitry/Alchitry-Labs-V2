@@ -10,7 +10,7 @@ import kotlinx.coroutines.*
 import java.io.Closeable
 import java.util.concurrent.ConcurrentHashMap
 
-class ProjectContext(val notationManager: NotationManager) : Closeable {
+class ProjectContext(val notationManager: NotationManager, val simulating: Boolean = false) : Closeable {
     var top: ModuleInstance? = null
     private val constraints = mutableListOf<Constraint>()
     private val globals = mutableMapOf<String, GlobalNamespace>()

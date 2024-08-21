@@ -1014,7 +1014,7 @@ class VerilogConverter(
             is Function.Custom ->
                 error(ctx, "Test only function \"${function.label}\" can't be converted to Verilog!")
 
-            Function.WIDTH ->
+            Function.WIDTH, Function.IS_SIMULATION ->
                 error(ctx, "Function \"${function.label}\" result should always be constant but didn't have a value!")
         }
     }

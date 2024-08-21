@@ -1258,6 +1258,11 @@ data class ExprParser(
         }
 
         when (function) {
+            Function.IS_SIMULATION -> {
+                val bit = if (context.project.simulating) Bit.B1 else Bit.B0
+                evaluator.setExpr(ctx, bit.toBitValue().asConstExpr())
+            }
+
             Function.WIDTH -> {
                 val valArgs = checkOnlyValues() ?: return
                 val arg = valArgs[0]
