@@ -354,5 +354,10 @@ data class RepeatBlock(
     }
 
     val minBits: Int
-        get() = start.toBigInteger().minBits().coerceAtLeast((start + step * (count - 1)).toBigInteger().minBits())
+        get() = when (countExpr?.type) {
+            ExprType.Constant -> start.toBigInteger().minBits()
+                .coerceAtLeast((start + step * (count - 1)).toBigInteger().minBits())
+
+            else -> 32 // TODO: attempt to evaluate proper size when count isn't constant
+        }
 }
