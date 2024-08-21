@@ -261,9 +261,9 @@ data class Project(
         }
     }
 
-    suspend fun check(): ProjectContext? {
+    suspend fun check(simulating: Boolean = false): ProjectContext? {
         val notationManager = NotationManager()
-        val context = buildContext(notationManager)
+        val context = buildContext(notationManager, simulating = simulating)
         val topModule = context?.top
         if (context == null || topModule == null) {
             Log.print(notationManager.getReport())
@@ -429,9 +429,10 @@ data class Project(
 
     suspend fun buildContext(
         notationManager: NotationManager,
-        parsedTrees: List<Pair<SourceFile, LucidParser.SourceContext>>? = null
+        parsedTrees: List<Pair<SourceFile, LucidParser.SourceContext>>? = null,
+        simulating: Boolean = false
     ): ProjectContext? {
-        val projectContext = ProjectContext(notationManager)
+        val projectContext = ProjectContext(notationManager, simulating)
         var success = false
         val trees = parsedTrees ?: parseAll(data.sourceFiles, notationManager)
 

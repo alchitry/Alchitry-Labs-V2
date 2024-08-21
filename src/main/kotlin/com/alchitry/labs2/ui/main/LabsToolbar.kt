@@ -152,7 +152,7 @@ fun LabsToolbar() {
             enabled = !running && project != null
         ) {
             runWithProject { project ->
-                val context = project.check() ?: return@runWithProject
+                val context = project.check(simulating = true) ?: return@runWithProject
                 val existingTab = Workspace.getTabs().firstOrNull { it is BoardSimulationTab }
                 val tabPanel = existingTab?.parent ?: Workspace.activeTabPanel()
                 try {

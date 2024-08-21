@@ -24,6 +24,7 @@ sealed class Function(val label: String, val argCount: Int, val exprType: ExprTy
     object SILENTTICK : Function("silentTick", 0, ExprType.Dynamic, true)
     object ASSERT : Function("assert", 1, ExprType.Dynamic, testOnly = true)
     object PRINT : Function("print", -1, ExprType.Dynamic, testOnly = true)
+    object IS_SIMULATION : Function("isSim", 0, ExprType.Dynamic)
 
     class Custom(label: String, val args: List<CustomArg>, val functionBlock: FunctionBlockContext) :
         Function(label, args.size, ExprType.Dynamic, true)

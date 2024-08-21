@@ -55,6 +55,7 @@ class ProjectSimulator(private val projectContext: ProjectContext) : Closeable {
     private var running by mutableStateOf(false)
 
     init {
+        check(projectContext.simulating) { "Project context passed to ProjectSimulator wasn't marked as \"simulating\"." }
         val constraints = projectContext.getConstraints()
         val clkConstraint = constraints.firstOrNull { it.pin.name == AuPin.CLOCK.name }
 
