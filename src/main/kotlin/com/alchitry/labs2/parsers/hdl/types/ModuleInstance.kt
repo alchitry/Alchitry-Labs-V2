@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.hdl.types
 
 import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SnapshotOrParent
@@ -20,7 +21,7 @@ class ModuleInstance(
     val testing: Boolean = false
 ) : ModuleInstanceOrArray, ListOrModuleInstance, TestOrModuleInstance {
     // make a copy of the module context tree, so we can prune it without disrupting others
-    val moduleContext = module.context.deepCopy()
+    val moduleContext = (module.context as LucidParser.ModuleContext).deepCopy()
 
     override val context = LucidBlockContext(
         project,
