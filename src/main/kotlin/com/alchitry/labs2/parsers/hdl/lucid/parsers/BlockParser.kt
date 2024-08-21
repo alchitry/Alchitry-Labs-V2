@@ -10,8 +10,8 @@ import com.alchitry.labs2.parsers.hdl.types.Function
 import com.alchitry.labs2.parsers.hdl.values.*
 
 /**
- * The job of the BlockParser is to parse out always blocks and check them for errors. The AlwaysEvaluator is
- * responsible for the actual evaluation after the AlwaysParser has done the first pass.
+ * The job of the BlockParser is to parse out always blocks and check them for errors.
+ * The BlockEvaluator is responsible for the actual evaluation after the BlockParser has done the first pass.
  */
 data class BlockParser(
     private val context: LucidBlockContext,
