@@ -1,5 +1,5 @@
-import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
-import com.alchitry.labs2.parsers.hdl.values.BitListValue
+import com.alchitry.labs2.parsers.lucidv2.parsers.toSourceFile
+import com.alchitry.labs2.parsers.lucidv2.values.BitListValue
 import helpers.LucidTester
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
