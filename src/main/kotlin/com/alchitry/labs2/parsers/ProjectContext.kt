@@ -59,25 +59,16 @@ class ProjectContext(val notationManager: NotationManager, val simulating: Boole
     }
 
     suspend fun convertToVerilog(): Map<String, String?> {
-        val topInstance = top ?: error("Top level module instance missing!")
-        val usedModules = mutableMapOf<String, ModuleInstance>()
-        fun add(instance: ModuleInstance) {
-            usedModules[instance.module.name] = instance
-            instance.context.types.moduleInstances.values.forEach { moduleInstanceOrArray ->
-                when (moduleInstanceOrArray) {
-                    is ModuleInstance -> add(moduleInstanceOrArray)
-                    is ModuleInstanceArray -> moduleInstanceOrArray.modules.forEach { add(it) }
-                }
-            }
-        }
-        add(topInstance)
-        return usedModules.mapValues {
-            when (it.value.context.sourceFile.language) {
-                Languages.Lucid -> it.value.context.convertToVerilog() ?: error("Missing verilog for ${it.key}")
-                Languages.Verilog -> it.value.context.sourceFile.readText()
-            }
+        val sourceFiles = mutableMapOf<String, String?>()
+        modules.values.forEach { module ->
+            when (module.sourceFile.language) {
+                Languages.Lucid -> sourceFiles[module.name] =
+                    module.convertToVerilog(this) ?: error("Missing verilog for ${module.name}")
 
+                Languages.Verilog -> sourceFiles[module.sourceFile.name] = module.sourceFile.readText()
+            }
         }
+        return sourceFiles
     }
 
     override fun close() {

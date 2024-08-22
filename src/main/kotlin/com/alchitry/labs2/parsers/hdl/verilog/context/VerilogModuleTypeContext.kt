@@ -5,6 +5,7 @@ import com.alchitry.labs2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.WalkerFilter
 import com.alchitry.labs2.parsers.grammar.VerilogParser
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.types.Module
 import com.alchitry.labs2.parsers.hdl.verilog.parsers.ConstantExprParser
 import com.alchitry.labs2.parsers.hdl.verilog.parsers.ModuleParser
@@ -18,6 +19,7 @@ class VerilogModuleTypeContext(
     override val sourceFile: SourceFile
 ) : VerilogExprContext, ErrorListener by project.notationManager.getCollector(sourceFile) {
     override val evalContext: Evaluable? = null
+    override val mode = ExprEvalMode.Default
 
     private val expr = ConstantExprParser(this)
     private val module = ModuleParser(this)

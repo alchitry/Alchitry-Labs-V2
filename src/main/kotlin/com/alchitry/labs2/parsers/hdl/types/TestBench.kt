@@ -2,6 +2,7 @@ package com.alchitry.labs2.parsers.hdl.types
 
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidParser.TestBenchContext
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.*
 import com.alchitry.labs2.project.files.SourceFile
@@ -23,6 +24,7 @@ class TestBench(
         project,
         sourceFile,
         this,
+        ExprEvalMode.Default,
         notationCollector = project.notationManager.getCollector(sourceFile)
     )
 

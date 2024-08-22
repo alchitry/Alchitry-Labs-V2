@@ -78,11 +78,11 @@ sealed class SelectionContext {
 
     data class DownTo(
         val stop: LucidParser.ExprContext,
-        val width: Int
+        val width: LucidParser.ExprContext
     ) : SelectionContext()
 
     data class UpTo(
         val start: LucidParser.ExprContext,
-        val width: Int
+        val width: LucidParser.ExprContext
     ) : SelectionContext()
 }

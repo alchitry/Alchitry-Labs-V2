@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.hdl.types.ports
 
 import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidExprEval
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
 import com.alchitry.labs2.parsers.hdl.types.SignalDirection
@@ -16,18 +17,25 @@ data class Port(
 ) {
     val isInout: Boolean = direction == SignalDirection.Both
 
+    init {
+        check(width.isResolvable()) {
+            "Unresolvable!"
+        }
+    }
+
     fun instantiate(parent: ModuleInstance, context: ProjectContext): PortInstance {
-        val instWidth = if (width.isDefined()) width else {
-            require(width.isResolvable()) { "Width is not resolvable: $width" }
+        require(width.isResolvable()) { "Width is not resolvable: $width" }
+        val instWidth = if (width.isDefined() || parent.context.mode == ExprEvalMode.Building) width else {
             val eval = LucidExprEval(
                 context,
                 parent.context.sourceFile,
+                ExprEvalMode.Default,
                 parent.context.notationCollector.createChild("PortEval")
             ) {
                 return@LucidExprEval parent.parameters[it]
             }
             width.resolve(eval).also {
-                if (!parent.testing)
+                if (parent.context.mode == ExprEvalMode.Default)
                     check(it.isDefined()) { "Failed to fully resolve width: $width" }
             }
         }

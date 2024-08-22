@@ -116,11 +116,10 @@ class VerilogConverter(
             }
             if (port.signed)
                 append("signed ")
-            val bitCount = port.width.bitCount ?: error("Module port \"${port.name}\" has undefined width!")
-            if (bitCount > 1) {
+            if (port.width.bitCount != 1) {
                 append("[")
-                append(bitCount - 1)
-                append(":0] ")
+                append(port.width.verilogBitCount())
+                append("-1:0] ")
             }
             append(port.verilogName)
             if (index != ports.size - 1)
@@ -190,11 +189,10 @@ class VerilogConverter(
             append("reg ")
             if (dff.signed)
                 append("signed ")
-            val bitCount = dff.d.width.bitCount ?: error("Dff \"${dff.name}\" has an undefined width!")
-            if (bitCount > 1) {
+            if (dff.d.width.bitCount != 1) {
                 append("[")
-                append(bitCount - 1)
-                append(":0] ")
+                append(dff.d.width.verilogBitCount())
+                append("-1:0] ")
             }
             append(dff.d.verilogName)
             append(", ")
@@ -218,13 +216,11 @@ class VerilogConverter(
             }
             if (sig.signed)
                 append("signed ")
-            val bitCount = sig.width.bitCount ?: error("Sig \"${sig.name}\" has an undefined width!")
-            if (bitCount > 1) {
+            if (sig.width.bitCount != 1) {
                 append("[")
-                if (sig.parent is RepeatSignal) {
-                    append(bitCount) // Ensure repeat signals are big enough to hold their max value + 1.
-                } else {
-                    append(bitCount - 1)
+                append(sig.width.verilogBitCount())
+                if (sig.parent !is RepeatSignal) { // Ensure repeat signals are big enough to hold their max value + 1.
+                    append("-1")
                 }
                 append(":0] ")
             }
@@ -580,13 +576,51 @@ class VerilogConverter(
         val selection: String
     )
 
+    private fun SignalWidth.verilogBitCount(): String {
+        return "(${
+            buildString {
+                if (bitCount != null) {
+                    append(bitCount)
+                    return@buildString
+                }
+
+                when (this@verilogBitCount) {
+                    is DefinedArrayWidth -> {
+                        append(size)
+                        append(" * ")
+                        append(next.verilogBitCount())
+                    }
+
+                    is DefinedSimpleWidth -> {
+                        append(size)
+                    }
+
+                    is StructWidth -> {
+                        type.values.forEachIndexed { index, member ->
+                            if (index != 0) {
+                                append(" + ")
+                            }
+                            append(member.width.verilogBitCount())
+                        }
+                    }
+
+                    is ResolvableWidth -> {
+                        append(context.verilog)
+                    }
+
+                    is UndefinedWidth -> error("Undefined width during verilog conversion!")
+                }
+            }
+        })"
+    }
+
     private fun SubSignal.toVerilog(): SubSignalData {
         var signed = getSignal().signed
         val selection = buildString {
             var currentWidth: SignalWidth? = parent.width
-            check(currentWidth?.isDefined() == true) { "Signal width was not defined!" }
+            checkNotNull(currentWidth) { "Signal width was not defined!" }
 
-            var selectedBitCount = currentWidth!!.bitCount!! // the defined check above makes this safe
+            var selectedBitCount: String? = null
 
             var first = true
 
@@ -600,7 +634,7 @@ class VerilogConverter(
                     first = false
 
                 when (currentWidth) {
-                    is DefinedArrayWidth, is DefinedSimpleWidth -> {
+                    is DefinedArrayWidth, is DefinedSimpleWidth, is ResolvableWidth -> {
                         val s = selector as? SignalSelector.Bits ?: error("Struct selector used on an array!")
 
                         append("(")
@@ -608,22 +642,35 @@ class VerilogConverter(
                             is SelectionContext.Constant -> append(s.range.first)
                             is SelectionContext.Single -> append(s.context.bit.verilog)
                             is SelectionContext.Fixed -> append(s.context.start.verilog)
-                            is SelectionContext.DownTo -> append("(${s.context.stop.verilog})-${s.context.width - 1}")
+                            is SelectionContext.DownTo -> append("(${s.context.stop.verilog})-(${s.context.width.verilog}-1)")
                             is SelectionContext.UpTo -> append(s.context.start.verilog)
                         }
                         append(")")
 
-                        val elementSize = if (currentWidth is DefinedArrayWidth) currentWidth.next.bitCount!! else 1
+                        val elementSize = (currentWidth as? ArrayWidth)?.next?.verilogBitCount()
 
                         // scale the offset by the size of each element
-                        if (elementSize > 1) {
+                        if (elementSize != null && elementSize != "(1)") {
                             append("*")
                             append(elementSize)
                         }
 
+                        val selectedWidth = when (s.context) {
+                            SelectionContext.Constant -> if (s.count > 1) "(${s.count})" else null
+                            is SelectionContext.DownTo -> s.context.width.verilog
+                            is SelectionContext.Fixed -> "(${s.context.stop.verilog})-(${s.context.start.verilog})"
+                            is SelectionContext.Single -> null
+                            is SelectionContext.UpTo -> s.context.width.verilog
+                        }
+
                         signed = false
-                        selectedBitCount = s.count * elementSize
-                        currentWidth = if (currentWidth is DefinedArrayWidth)
+                        selectedBitCount = when {
+                            elementSize != null && selectedWidth != null -> "(($selectedWidth) * $elementSize)"
+                            elementSize != null -> elementSize
+                            selectedWidth != null -> "($selectedWidth)"
+                            else -> null
+                        }
+                        currentWidth = if (currentWidth is ArrayWidth)
                             when (s.context) {
                                 is SelectionContext.Constant,
                                 is SelectionContext.Single ->
@@ -645,7 +692,7 @@ class VerilogConverter(
 
                         signed = member.signed
                         currentWidth = member.width
-                        selectedBitCount = currentWidth.bitCount!!
+                        selectedBitCount = currentWidth.verilogBitCount()
                     }
 
                     is UndefinedWidth -> error("Undefined width during verilog conversion!")
@@ -654,10 +701,10 @@ class VerilogConverter(
             }
 
             if (selection.isNotEmpty()) {
-                if (selectedBitCount > 1) {
+                if (selectedBitCount != null) {
                     append("+")
-                    append(selectedBitCount - 1)
-                    append("-:")
+                    append(selectedBitCount)
+                    append(" - 1 -:")
                     append(selectedBitCount)
                     append("]")
                 } else {

@@ -127,8 +127,8 @@ data class BitSelectionParser(
 
         if (width.value is UndefinedValue) {
             val selectionContext = when (isUpTo) {
-                true -> SelectionContext.UpTo(expr[0], 1)
-                false -> SelectionContext.DownTo(expr[0], 1)
+                true -> SelectionContext.UpTo(expr[0], expr[1])
+                false -> SelectionContext.DownTo(expr[0], expr[1])
             }
             bounds[ctx] = BitSelection(0..0, ctx, selectionContext, undefined = true)
             return
@@ -154,8 +154,8 @@ data class BitSelectionParser(
         }
 
         val selectionContext = when (isUpTo) {
-            true -> SelectionContext.UpTo(expr[0], widthInt)
-            false -> SelectionContext.DownTo(expr[0], widthInt)
+            true -> SelectionContext.UpTo(expr[0], expr[1])
+            false -> SelectionContext.DownTo(expr[0], expr[1])
         }
 
         val startInt = if (start.value.isNumber()) {

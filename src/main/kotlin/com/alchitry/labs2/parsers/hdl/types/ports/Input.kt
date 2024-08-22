@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.hdl.types.ports
 
 import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
 import com.alchitry.labs2.parsers.hdl.types.Signal
@@ -22,7 +23,8 @@ class Input(
         Signal(name, SignalDirection.Write, parent, width.filledWith(Bit.Bx, signed), ExprType.Dynamic, signed)
 
     init {
-        if (parent !is ModuleInstance || !parent.testing)
-        external.connectTo(internal, context)
+        if (parent !is ModuleInstance || parent.context.mode == ExprEvalMode.Default) {
+            external.connectTo(internal, context)
+        }
     }
 }

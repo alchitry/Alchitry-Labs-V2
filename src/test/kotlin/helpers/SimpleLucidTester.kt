@@ -3,6 +3,7 @@ package helpers
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.LucidParser
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.lucid.context.SignalResolver
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.ParseStage
@@ -36,6 +37,7 @@ class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = nul
             mapOf(),
             //project.notationManager.getCollector(sourceFile)
         ),
+        ExprEvalMode.Default,
         ParseStage.ErrorCheck,
         localSignalResolver = localSignalResolver
     )

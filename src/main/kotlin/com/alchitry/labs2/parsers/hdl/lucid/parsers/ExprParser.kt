@@ -303,7 +303,11 @@ class ExprParser(
 
         val type = evaluator.getExprType(listOf(signal.type, bitSelectionType))
 
-        val value = signal.read(context.evalContext)
+        val value = if (context.mode == ExprEvalMode.Building && signal.type == ExprType.Fixed) {
+            UndefinedValue()
+        } else {
+            signal.read(context.evalContext)
+        }
         val resizedValue = if (finalWidth != null) value.resizeToMatch(finalWidth) else value
 
         evaluator.setExpr(ctx, Expr(resizedValue, type))

@@ -1,3 +1,4 @@
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucid.context.SignalResolver
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
@@ -56,7 +57,7 @@ class UndefinedValueTests {
             }
         """.trimIndent().toSourceFile("counter.luc")
         )
-        val context = tester.fullParse(testing = true).context
+        val context = tester.fullParse(ExprEvalMode.Testing).context
         context.notationCollector.assertNoErrors()
         assertEquals(1, context.notationCollector.getAllWarnings().size)
     }

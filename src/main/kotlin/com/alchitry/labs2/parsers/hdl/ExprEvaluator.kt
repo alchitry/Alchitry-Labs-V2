@@ -16,6 +16,13 @@ import java.math.BigInteger
 
 interface ExprEvaluatorContext<T : ParserRuleContext> : ErrorListener {
     fun resolve(exprCtx: T): Expr?
+    val mode: ExprEvalMode
+}
+
+enum class ExprEvalMode {
+    Default,
+    Testing,
+    Building
 }
 
 data class ExprEvaluator<T : ParserRuleContext>(
@@ -24,7 +31,7 @@ data class ExprEvaluator<T : ParserRuleContext>(
     private val assignWidths: MutableMap<ParseTree, SignalWidth> = mutableMapOf(),
     private val widthFence: MutableMap<ParseTree, Boolean> = mutableMapOf(),
     private val dependencies: MutableMap<ParseTree, Set<Signal>> = mutableMapOf(),
-    private val deadBlocks: MutableMap<RuleContext, Boolean> = mutableMapOf()
+    private val deadBlocks: MutableMap<RuleContext, Boolean> = mutableMapOf(),
 ) {
     fun withContext(context: ExprEvaluatorContext<T>) = copy(context = context)
 

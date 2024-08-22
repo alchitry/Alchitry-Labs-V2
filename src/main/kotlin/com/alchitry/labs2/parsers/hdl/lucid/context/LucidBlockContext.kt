@@ -6,6 +6,7 @@ import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.*
 import com.alchitry.labs2.parsers.hdl.types.*
@@ -23,6 +24,7 @@ class LucidBlockContext(
     override val project: ProjectContext,
     override val sourceFile: SourceFile,
     val instance: TestOrModuleInstance,
+    override val mode: ExprEvalMode,
     stage: ParseStage = ParseStage.ModuleInternals,
     override val evalContext: Evaluable? = null,
     val notationCollector: NotationCollector = project.notationManager.getCollector(sourceFile),
@@ -36,7 +38,7 @@ class LucidBlockContext(
     blockParser: BlockParser? = null,
     blockEvaluator: BlockEvaluator? = null,
     signalDriver: SignalDriverParser? = null,
-    val localSignalResolver: SignalResolver? = null // Used in tests to simulate a full parse.
+    val localSignalResolver: SignalResolver? = null, // Used in tests to simulate a full parse.
 ) : LucidExprContext, ErrorListener by notationCollector {
     var stage: ParseStage = stage
         private set
@@ -151,6 +153,7 @@ class LucidBlockContext(
         project,
         sourceFile,
         instance,
+        mode,
         ParseStage.Evaluation,
         evalContext,
         notationCollector.createChild(name),

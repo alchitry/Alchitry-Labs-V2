@@ -4,6 +4,7 @@ import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.LucidParser.SourceContext
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidGlobalContext
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidModuleTypeContext
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidTestBenchContext
@@ -87,13 +88,13 @@ class LucidTester(vararg val files: SourceFile) {
      * Performs a full parse on the file.
      * It does not check for errors after the parse.
      */
-    suspend fun fullParse(testing: Boolean = false): ModuleInstance {
+    suspend fun fullParse(mode: ExprEvalMode = ExprEvalMode.Default): ModuleInstance {
         val trees = parseText()
 
         globalParse(trees)
         val modules = moduleTypeParse(trees)
 
-        val moduleInstance = ModuleInstance("top", project, null, modules.first(), mapOf(), mapOf(), testing = testing)
+        val moduleInstance = ModuleInstance("top", project, null, modules.first(), mapOf(), mapOf(), mode)
 
         moduleInstance.initialWalk()
 

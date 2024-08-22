@@ -5,6 +5,7 @@ import com.alchitry.labs2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.WalkerFilter
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.ExprEvaluatorContext
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.*
 import com.alchitry.labs2.parsers.hdl.types.*
@@ -38,8 +39,9 @@ interface LucidExprContext : ErrorListener, ExprEvaluatorContext<ExprContext> {
 class LucidExprEval(
     override val project: ProjectContext,
     override val sourceFile: SourceFile,
+    override val mode: ExprEvalMode,
     val notationCollector: NotationCollector = project.notationManager.getCollector(sourceFile),
-    val signalProvider: (name: String) -> SignalOrParent?
+    val signalProvider: (name: String) -> SignalOrParent?,
 ) : LucidExprContext, ErrorListener by notationCollector {
     override val evalContext: Evaluable? = null
 

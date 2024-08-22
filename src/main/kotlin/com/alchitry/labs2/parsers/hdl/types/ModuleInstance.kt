@@ -1,7 +1,7 @@
 package com.alchitry.labs2.parsers.hdl.types
 
 import com.alchitry.labs2.parsers.ProjectContext
-import com.alchitry.labs2.parsers.grammar.LucidParser
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SnapshotOrParent
@@ -10,6 +10,7 @@ import com.alchitry.labs2.parsers.hdl.values.DefinedSimpleWidth
 import com.alchitry.labs2.parsers.hdl.values.UndefinedValue
 import com.alchitry.labs2.parsers.hdl.values.Value
 import com.alchitry.labs2.parsers.notations.ErrorListener
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 class ModuleInstance(
     override val name: String,
@@ -18,16 +19,17 @@ class ModuleInstance(
     val module: Module,
     parameters: Map<String, Value>,
     val connections: Map<String, SignalOrSubSignal>,
-    val testing: Boolean = false
+    mode: ExprEvalMode = ExprEvalMode.Default
 ) : ModuleInstanceOrArray, ListOrModuleInstance, TestOrModuleInstance {
     // make a copy of the module context tree, so we can prune it without disrupting others
-    val moduleContext = (module.context as LucidParser.ModuleContext).deepCopy()
+    val moduleContext = module.context.deepCopy() as ParserRuleContext
 
     override val context = LucidBlockContext(
         project,
         module.sourceFile,
         this,
-        notationCollector = project.notationManager.getCollector(module.sourceFile)
+        notationCollector = project.notationManager.getCollector(module.sourceFile),
+        mode = mode
     )
 
     override fun takeSnapshot(): SnapshotParent {
@@ -69,8 +71,8 @@ class ModuleInstance(
             SignalDirection.Read,
             this,
             (parameters[name]
-                ?: (if (param.defaultTestOnly && !testing) null else param.default)
-                ?: if (testing) UndefinedValue(DefinedSimpleWidth(32)) else error("Missing value for parameter \"${name}\" in module \"${this.name}\" of type \"${module.name}\".")),
+                ?: (if (param.defaultTestOnly && mode == ExprEvalMode.Default) null else param.default)
+                ?: if (mode != ExprEvalMode.Default) UndefinedValue(DefinedSimpleWidth(32)) else error("Missing value for parameter \"${name}\" in module \"${this.name}\" of type \"${module.name}\".")),
             ExprType.Fixed,
             signed = true
         )
@@ -86,7 +88,7 @@ class ModuleInstance(
         .mapValues { it.value.external }
 
     init {
-        if (!testing)
+        if (mode == ExprEvalMode.Default)
             connections.forEach { (name, sig) ->
                 val port = ports[name]?.external ?: error("No matching port for given connection \"$name\"!")
                 if (port.direction.canWrite) {

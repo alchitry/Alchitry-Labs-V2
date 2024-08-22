@@ -5,6 +5,7 @@ import com.alchitry.labs2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.WalkerFilter
 import com.alchitry.labs2.parsers.grammar.LucidParser
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.*
 import com.alchitry.labs2.parsers.hdl.types.Constant
 import com.alchitry.labs2.parsers.hdl.types.EnumType
@@ -20,6 +21,7 @@ class LucidModuleTypeContext(
     override val sourceFile: SourceFile
 ) : LucidExprContext, ErrorListener by project.notationManager.getCollector(sourceFile) {
     override val evalContext: Evaluable? = null
+    override val mode = ExprEvalMode.Default
 
     private val expr = ExprParser(this)
     private val bitSelection = BitSelectionParser(this)

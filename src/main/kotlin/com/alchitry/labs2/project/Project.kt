@@ -9,6 +9,7 @@ import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.VerilogLexer
 import com.alchitry.labs2.parsers.grammar.VerilogParser
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidGlobalContext
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidModuleTypeContext
@@ -419,7 +420,7 @@ data class Project(
                     module,
                     mapOf(),
                     mapOf(),
-                    testing = true
+                    ExprEvalMode.Testing
                 ).apply { initialWalk() }
             }
 
@@ -536,7 +537,7 @@ data class Project(
                     mod,
                     mapOf(),
                     mapOf(),
-                    testing = true
+                    ExprEvalMode.Testing
                     // notationManager.getCollector(mod.sourceFile)
                 ).apply {
                     initialWalk()

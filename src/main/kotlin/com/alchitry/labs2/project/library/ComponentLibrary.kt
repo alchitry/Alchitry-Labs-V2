@@ -2,6 +2,7 @@ package com.alchitry.labs2.project.library
 
 import com.alchitry.labs2.JarUtils
 import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidGlobalContext
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidModuleTypeContext
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
@@ -65,7 +66,7 @@ object ComponentLibrary {
                     module,
                     mapOf(),
                     mapOf(),
-                    testing = true
+                    ExprEvalMode.Testing
                 ).apply {
                     initialWalk()
                     notationManager.assertNoErrors()
