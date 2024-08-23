@@ -35,8 +35,8 @@ data class Port(
                 return@LucidExprEval parent.parameters[it]
             }
             width.resolve(eval).also {
-                if (parent.context.mode == ExprEvalMode.Default)
-                    check(it.isDefined()) { "Failed to fully resolve width: $width" }
+                if (parent.context.mode == ExprEvalMode.Default && parent.parent?.context?.mode != ExprEvalMode.Building)
+                    check(it.isDefined()) { "Failed to fully resolve width: $width. Resolved: $it" }
             }
         }
         return when (direction) {

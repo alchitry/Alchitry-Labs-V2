@@ -1,8 +1,10 @@
 package com.alchitry.labs2.parsers.hdl.lucid.parsers
 
+import com.alchitry.labs2.noNulls
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs2.parsers.hasParent
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.lucid.context.SignalResolver
@@ -16,6 +18,11 @@ import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 fun String.toSourceFile(name: String = "alchitryTop.luc") = SourceFile(FileProvider.StringFile(name, contents = this))
 
+sealed class ArraySize {
+    data class Fixed(val size: Int) : ArraySize()
+    data class Resolvable(val context: ExprContext) : ArraySize()
+}
+
 class TypesParser(
     private val context: LucidBlockContext
 ) : SuspendLucidBaseListener(), SignalResolver {
@@ -24,7 +31,7 @@ class TypesParser(
     val signalDynamicExprs = mutableMapOf<Signal, DynamicExpr>()
     val moduleInstances = mutableMapOf<String, ModuleInstanceOrArray>()
     val dynamicExprs = mutableMapOf<ExprContext, DynamicExpr>()
-    private val arraySizes = mutableMapOf<ArraySizeContext, Int>()
+    private val arraySizes = mutableMapOf<ArraySizeContext, ArraySize>()
     private val assignmentBlocks = mutableListOf<AssignmentBlock>()
 
     private val scopeStack = mutableListOf<ParserRuleContext>()
@@ -204,7 +211,7 @@ class TypesParser(
         }
 
         extParamConnections.forEach { param ->
-            if (param.value.width !is DefinedSimpleWidth) {
+            if (param.value.width !is SimpleWidth) {
                 context.reportError(param.portCtx, "Parameter \"${param.port}\" is not a simple value.")
                 return
             }
@@ -252,7 +259,7 @@ class TypesParser(
 
         val instance = if (ctx.arraySize().isEmpty()) {
             localParamConnections.forEach { param ->
-                if (param.value.width !is DefinedSimpleWidth) {
+                if (param.value.width !is SimpleWidth) {
                     context.reportError(param.portCtx, "Parameter \"${param.port}\" is not a simple value.")
                     return
                 }
@@ -261,7 +268,7 @@ class TypesParser(
             val instParams = localParamConnections.union(extParamConnections).associate {
                 val value = it.value.value
                 val resizedValue = value.resizeToMatch(DefinedSimpleWidth(32)).withSign(true)
-                if ((value as? SimpleValue)?.fitsIn(32, true) != true) {
+                if ((value as? SimpleValue)?.fitsIn(32, true) == false) {
                     context.reportError(
                         ctx,
                         "Parameter \"${it.port}\" must fit into a 32bit signed value."
@@ -286,24 +293,27 @@ class TypesParser(
                     moduleType,
                     instParams,
                     instPorts,
+                    mode = ExprEvalMode.Default
                     // context.notationCollector.createChild("ModuleInstance($moduleInstanceName)")
                 ).apply {
-                    val errorCollector = NotationCollector(context.sourceFile)
-                    checkParameters(errorCollector)
-                    if (errorCollector.hasErrors) {
-                        this@TypesParser.context.reportError(
-                            ctx.name(1) ?: ctx,
-                            errorCollector.getAllErrors().joinToString(", ") { it.message ?: "" }
-                        )
-                        return
-                    }
-                    initialWalk()
-                    if (errorCollector.hasErrors) {
-                        this@TypesParser.context.reportError(
-                            ctx.name(1) ?: ctx,
-                            errorCollector.getAllErrors().joinToString(", ") { it.message ?: "" }
-                        )
-                        return
+                    if (!this@TypesParser.context.mode.building) {
+                        val errorCollector = NotationCollector(context.sourceFile)
+                        checkParameters(errorCollector)
+                        if (errorCollector.hasErrors) {
+                            this@TypesParser.context.reportError(
+                                ctx.name(1) ?: ctx,
+                                errorCollector.getAllErrors().joinToString(", ") { it.message ?: "" }
+                            )
+                            return
+                        }
+                        initialWalk()
+                        if (errorCollector.hasErrors) {
+                            this@TypesParser.context.reportError(
+                                ctx.name(1) ?: ctx,
+                                errorCollector.getAllErrors().joinToString(", ") { it.message ?: "" }
+                            )
+                            return
+                        }
                     }
                 }
             } catch (e: ConnectionException) {
@@ -313,59 +323,63 @@ class TypesParser(
             }
         } else {
             val dimensions = ctx.arraySize().map { arraySizes[it] ?: return }
+            val fixedDimensions = dimensions.map { (it as? ArraySize.Fixed)?.size }.noNulls()
 
-            localSignals.forEach { (connection, signal) ->
-                val port = moduleType.ports[connection.port] ?: error("Missing expected port!")
-                var width = signal.width
-                dimensions.forEachIndexed { index, dim ->
-                    val curWidth = width
-                    // special case for single bit wide ports
-                    // this allows them to be assigned a value instead of an array aka sig[8] instead of sig[8][1]
-                    if (curWidth is DefinedSimpleWidth && port.width is BitWidth && curWidth.size == dim) {
-                        if (index != dimensions.size - 1) {
-                            context.reportError(
-                                connection.portCtx,
-                                "The signal \"${signal.name}\" does not match the dimensions of this module instance."
-                            )
+            if (fixedDimensions != null) {
+                localSignals.forEach { (connection, signal) ->
+                    val port = moduleType.ports[connection.port] ?: error("Missing expected port!")
+                    var width = signal.width
+                    fixedDimensions.forEachIndexed { index, dim ->
+                        val curWidth = width
+                        // special case for single bit wide ports
+                        // this allows them to be assigned a value instead of an array aka sig[8] instead of sig[8][1]
+                        if (curWidth is DefinedSimpleWidth && port.width is BitWidth && curWidth.size == dim) {
+                            if (index != fixedDimensions.size - 1) {
+                                context.reportError(
+                                    connection.portCtx,
+                                    "The signal \"${signal.name}\" does not match the dimensions of this module instance."
+                                )
+                            }
+                            width = BitWidth
+                        } else {
+                            if (curWidth !is DefinedArrayWidth || curWidth.size != dim) {
+                                context.reportError(
+                                    connection.portCtx,
+                                    "The signal \"${signal.name}\" does not match the dimensions of this module instance."
+                                )
+                                return
+                            }
+                            width = curWidth.next
                         }
-                        width = BitWidth
-                    } else {
-                        if (curWidth !is DefinedArrayWidth || curWidth.size != dim) {
+                    }
+
+                    if (!port.width.canAssign(width)) {
+                        context.reportError(
+                            connection.portCtx,
+                            "The width of \"${signal.name}\" does not match the width of port \"${port.name}\"."
+                        )
+                        return
+                    }
+                }
+
+
+                localParamConnections.forEach { param ->
+                    var width = param.value.width
+                    fixedDimensions.forEach {
+                        val curWidth = width
+                        if (curWidth !is DefinedArrayWidth || curWidth.size != it) {
                             context.reportError(
-                                connection.portCtx,
-                                "The signal \"${signal.name}\" does not match the dimensions of this module instance."
+                                param.portCtx,
+                                "The parameter ${param.port} does not match the dimensions of this module instance."
                             )
                             return
                         }
                         width = curWidth.next
                     }
-                }
-
-                if (!port.width.canAssign(width)) {
-                    context.reportError(
-                        connection.portCtx,
-                        "The width of \"${signal.name}\" does not match the width of port \"${port.name}\"."
-                    )
-                    return
-                }
-            }
-
-            localParamConnections.forEach { param ->
-                var width = param.value.width
-                dimensions.forEach {
-                    val curWidth = width
-                    if (curWidth !is DefinedArrayWidth || curWidth.size != it) {
-                        context.reportError(
-                            param.portCtx,
-                            "The parameter ${param.port} does not match the dimensions of this module instance."
-                        )
+                    if (width !is DefinedSimpleWidth) {
+                        context.reportError(param.portCtx, "Parameter ${param.port} does not index to a simple value.")
                         return
                     }
-                    width = curWidth.next
-                }
-                if (width !is DefinedSimpleWidth) {
-                    context.reportError(param.portCtx, "Parameter ${param.port} does not index to a simple value.")
-                    return
                 }
             }
 
@@ -389,6 +403,7 @@ class TypesParser(
                 context.notationCollector.createChild("ModuleInstanceArray($moduleInstanceName)"),
                 moduleType,
                 dimensions,
+                mode = ExprEvalMode.Default,
                 signalProvider = { idx ->
                     val selection = idx.map { SignalSelector.Bits(it, SelectionContext.Constant) }
                     val localMap = localSignals.map { (connection, signal) ->
@@ -423,15 +438,20 @@ class TypesParser(
                 }
             )
                 .apply {
-                    checkAllParameters()
-                    if (notationCollector.hasErrors)
-                        return
-                    initialWalkAll()
-                    if (notationCollector.hasErrors)
-                        return
-                    if (!checkPortDimensions()) {
-                        context.reportError(ctx, "All module instances in an array must have identical port widths!")
-                        return
+                    if (!this@TypesParser.context.mode.building) {
+                        checkAllParameters()
+                        if (notationCollector.hasErrors)
+                            return
+                        initialWalkAll()
+                        if (notationCollector.hasErrors)
+                            return
+                        if (!checkPortDimensions()) {
+                            context.reportError(
+                                ctx,
+                                "All module instances in an array must have identical port widths!"
+                            )
+                            return
+                        }
                     }
                 }
         }
@@ -495,8 +515,14 @@ class TypesParser(
         if (!expr.type.fixed)
             context.reportError(ctx, "Array sizes must be a constant value.")
 
-        if (expr.value is UndefinedValue)
+        if (context.mode.building && expr.type == ExprType.Fixed && expr.value is UndefinedValue) { // uses parameters
+            arraySizes[ctx] = ArraySize.Resolvable(ctx.expr() ?: return)
             return
+        }
+
+        if (expr.value is UndefinedValue) {
+            return
+        }
 
         if (expr.value !is SimpleValue || !expr.value.isNumber()) {
             context.reportError(ctx, "Array sizes must be a number.")
@@ -515,7 +541,7 @@ class TypesParser(
             return
         }
 
-        arraySizes[ctx] = size
+        arraySizes[ctx] = ArraySize.Fixed(size)
     }
 
 
@@ -716,7 +742,7 @@ class TypesParser(
             val sigName = sig.port
             if (connectedSignals.add(sigName)) {
                 when (sigName) {
-                    "clk" -> clk = sig.value // TODO: Check width fits to single bit
+                    "clk" -> clk = sig.value
                     "rst" -> rst = sig.value
                     else -> context.reportError(
                         sig.portCtx,

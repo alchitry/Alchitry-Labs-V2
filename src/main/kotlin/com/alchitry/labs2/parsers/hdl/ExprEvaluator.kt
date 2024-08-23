@@ -22,7 +22,13 @@ interface ExprEvaluatorContext<T : ParserRuleContext> : ErrorListener {
 enum class ExprEvalMode {
     Default,
     Testing,
-    Building
+    Building;
+
+    /** True if mode is Building */
+    val building get() = this == Building
+
+    /** True if mode is Testing */
+    val testing get() = this == Testing
 }
 
 data class ExprEvaluator<T : ParserRuleContext>(

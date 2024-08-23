@@ -71,7 +71,7 @@ class ModuleInstance(
             SignalDirection.Read,
             this,
             (parameters[name]
-                ?: (if (param.defaultTestOnly && mode == ExprEvalMode.Default) null else param.default)
+                ?: (if (param.defaultTestOnly && !mode.testing) null else param.default)
                 ?: if (mode != ExprEvalMode.Default) UndefinedValue(DefinedSimpleWidth(32)) else error("Missing value for parameter \"${name}\" in module \"${this.name}\" of type \"${module.name}\".")),
             ExprType.Fixed,
             signed = true

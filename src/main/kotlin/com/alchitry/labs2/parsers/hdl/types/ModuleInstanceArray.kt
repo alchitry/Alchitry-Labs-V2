@@ -1,6 +1,8 @@
 package com.alchitry.labs2.parsers.hdl.types
 
 import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.ArraySize
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SnapshotOrParent
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SnapshotParent
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.Snapshotable
@@ -19,10 +21,11 @@ sealed interface ModuleInstanceOrArray : SignalParent, Snapshotable {
 class ModuleInstanceArray(
     override val name: String,
     project: ProjectContext,
-    private val testOrModuleParent: TestOrModuleInstance,
+    testOrModuleParent: TestOrModuleInstance,
     val notationCollector: NotationCollector,
     module: Module,
-    val dimensions: List<Int>,
+    val dimensions: List<ArraySize>,
+    mode: ExprEvalMode,
     paramProvider: (List<Int>) -> Map<String, Value>,
     signalProvider: (List<Int>) -> Map<String, SignalOrSubSignal>
 ) : ModuleInstanceOrArray {
@@ -95,6 +98,7 @@ class ModuleInstanceArray(
                         module = module,
                         parameters = paramProvider(curIdx),
                         connections = signalProvider(curIdx),
+                        mode = mode
 //                        notationCollector = testOrModuleParent.context.notationCollector.createChild(
 //                            "[${
 //                                curIdx.joinToString(
@@ -113,17 +117,37 @@ class ModuleInstanceArray(
             })
         }
 
-        modules = generateModules(dimensions, emptyList()) as ModuleList
+        val fixedDims = dimensions.map { (it as? ArraySize.Fixed)?.size ?: 1 }
+
+        modules = generateModules(fixedDims, emptyList()) as ModuleList
 
         val exampleModule = modules.first()
+
+        modules.forEach { mod ->
+            exampleModule.ports.forEach { (name, port) ->
+                check(mod.ports[name]!!.width == port.width) { "All modules in an array must have identically sized ports! Port \"$name\" didn't match among all instances!" }
+            }
+        }
 
         ports = exampleModule.ports.mapValues { (_, port) ->
             var width: SignalWidth = port.width
             dimensions.asReversed().forEach {
-                width = if (width is BitWidth)
-                    BitListWidth(it)
-                else
-                    DefinedArrayWidth(it, width)
+                width = when (it) {
+                    is ArraySize.Fixed -> {
+                        if (width is BitWidth)
+                            BitListWidth(it.size)
+                        else
+                            DefinedArrayWidth(it.size, width)
+                    }
+
+                    is ArraySize.Resolvable -> {
+                        if (width is BitWidth)
+                            ResolvableSimpleWidth(it.context)
+                        else
+                            ResolvableArrayWidth(it.context, width)
+                    }
+                }
+
             }
             when (port) {
                 is Input -> Input(port.name, project, this, width, port.signed)

@@ -283,6 +283,7 @@ data class Project(
             context.convertToVerilog()
         } catch (e: Exception) {
             Log.printlnError("Failed to convert source files to Verilog. This should be considered a bug!", e)
+            Log.print(context.notationManager.getReport())
             return@withContext false
         }
 

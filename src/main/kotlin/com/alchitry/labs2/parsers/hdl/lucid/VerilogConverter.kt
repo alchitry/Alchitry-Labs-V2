@@ -7,6 +7,7 @@ import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.LucidParser.FunctionContext
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.ArraySize
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.ExprParser
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.firstParentOrNull
 import com.alchitry.labs2.parsers.hdl.types.*
@@ -311,11 +312,10 @@ class VerilogConverter(
                 if (port.signed)
                     append("signed ")
 
-                val bitCount = port.width.bitCount ?: 1
-                if (port.width is DefinedArrayWidth || bitCount > 1) {
+                if (port.width.bitCount != 1) {
                     append("[")
-                    append(bitCount - 1)
-                    append(":0] ")
+                    append(port.width.verilogBitCount())
+                    append("-1:0] ")
                 }
 
                 append(port.verilogName)
@@ -351,7 +351,7 @@ class VerilogConverter(
 
             val dimensions = (instance as? ModuleInstanceArray)?.dimensions
 
-            fun addInstModule(module: ModuleInstance, dim: List<Int>?) {
+            fun addInstModule(module: ModuleInstance, dim: List<String>?) {
                 append(module.module.name)
 
                 if (module.module.parameters.isNotEmpty()) {
@@ -413,20 +413,34 @@ class VerilogConverter(
                         }
                         //append(signalOrSubSignal.verilogName)
                         if (module.external.contains(portName) && dim != null && dimensions != null) {
-                            var offset = 0
-                            val bitCount = signalOrSubSignal.width.bitCount ?: 1
-                            dim.indices.forEach { idx ->
-                                val d = dim[idx]
-                                val w = dimensions.subList(idx + 1, dimensions.size).fold(1) { r, dim ->
-                                    r * dim
-                                }
-                                offset += d * w * bitCount
-                            }
-                            offset += bitCount - 1
                             append("[")
-                            append(offset)
-                            if (bitCount > 1) {
-                                append("-:")
+
+                            val bitCount = signalOrSubSignal.width.verilogBitCount()
+                            val singleBit = signalOrSubSignal.width.bitCount == 1
+                            dim.indices.forEach { idx ->
+                                if (idx != 0)
+                                    append(" + ")
+                                append("(")
+                                append(dim[idx])
+                                dimensions.subList(idx + 1, dimensions.size).forEachIndexed { index, dimension ->
+                                    append(" * (")
+                                    when (dimension) {
+                                        is ArraySize.Fixed -> append(dimension.size)
+                                        is ArraySize.Resolvable -> append(dimension.context.verilog)
+                                    }
+                                    append(")")
+                                }
+                                if (!singleBit) {
+                                    append(" * ")
+                                    append(bitCount)
+                                    append("")
+                                }
+                                append(")")
+                            }
+                            if (!singleBit) {
+                                append(" + ")
+                                append(bitCount)
+                                append("-1-:")
                                 append(bitCount)
                             }
                             append("]")
@@ -448,7 +462,7 @@ class VerilogConverter(
                 is ModuleInstanceArray -> instance.modules.forEachIndexed { ints, moduleInstance ->
                     addInstModule(
                         moduleInstance,
-                        ints
+                        ints.map { it.toString() }
                     )
                 }
             }
