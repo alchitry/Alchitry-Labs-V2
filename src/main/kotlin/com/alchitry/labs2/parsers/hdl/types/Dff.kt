@@ -2,6 +2,7 @@ package com.alchitry.labs2.parsers.hdl.types
 
 import com.alchitry.labs2.parsers.Evaluable
 import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SnapshotParent
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.Snapshotable
@@ -15,7 +16,8 @@ data class Dff(
     val init: Value,
     val clk: DynamicExpr,
     val rst: DynamicExpr?,
-    val signed: Boolean
+    val signed: Boolean,
+    val initContext: LucidParser.ExprContext?
 ) : SignalParent, Snapshotable {
     override val parent: SignalParent? = null
     val d = Signal("d", SignalDirection.Write, this, init, ExprType.Dynamic, signed)

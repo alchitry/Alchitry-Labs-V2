@@ -66,6 +66,7 @@ object ComponentLibrary {
                     module,
                     mapOf(),
                     mapOf(),
+                    mapOf(),
                     ExprEvalMode.Testing
                 ).apply {
                     initialWalk()

@@ -139,6 +139,7 @@ class LucidBlockContext(
             )
 
             ParseStage.Convert -> listOf(
+                this.expr,
                 this.signal,
                 this.verilogConverter
             )

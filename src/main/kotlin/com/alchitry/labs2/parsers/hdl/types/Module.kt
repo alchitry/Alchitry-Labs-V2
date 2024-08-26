@@ -19,7 +19,7 @@ data class Module(
         return when (context) {
             is LucidParser.ModuleContext -> {
                 val moduleInstance =
-                    ModuleInstance(name, projectContext, null, this, mapOf(), mapOf(), ExprEvalMode.Building)
+                    ModuleInstance(name, projectContext, null, this, mapOf(), mapOf(), mapOf(), ExprEvalMode.Building)
                 moduleInstance.initialWalk()
                 assert(moduleInstance.context.notationCollector.hasNoErrors) { "Errors can't exist in Lucid code intended to be converted to Verilog!" }
                 moduleInstance.context.convertToVerilog()

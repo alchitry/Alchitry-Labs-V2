@@ -3,7 +3,6 @@ package com.alchitry.labs2.parsers.hdl.lucid.parsers
 import com.alchitry.labs2.parsers.grammar.LucidBaseListener
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.LucidParser.ConstDecContext
-import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidExprContext
 import com.alchitry.labs2.parsers.hdl.lucid.context.SignalResolver
 import com.alchitry.labs2.parsers.hdl.types.Constant
@@ -20,6 +19,7 @@ data class ConstantParser(
 ) : LucidBaseListener(), SignalResolver {
     override fun resolve(ctx: ParserRuleContext, name: String): SignalOrParent? = localConstants[name]
     fun resolve(constDecContext: ConstDecContext) = constants[constDecContext]
+    fun getContext(name: String) = constants.firstNotNullOfOrNull { if (it.value.name == name) it.key else null }
 
     override fun enterGlobal(ctx: LucidParser.GlobalContext) {
         localConstants.clear()

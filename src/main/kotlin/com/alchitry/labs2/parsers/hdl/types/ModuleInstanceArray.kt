@@ -14,8 +14,10 @@ import com.alchitry.labs2.parsers.hdl.values.*
 import com.alchitry.labs2.parsers.notations.NotationCollector
 
 sealed interface ModuleInstanceOrArray : SignalParent, Snapshotable {
+    val module: Module
     val internal: Map<String, Signal>
     val external: Map<String, Signal>
+    val paramAssignments: Map<String, DynamicExpr>
 }
 
 class ModuleInstanceArray(
@@ -23,9 +25,10 @@ class ModuleInstanceArray(
     project: ProjectContext,
     testOrModuleParent: TestOrModuleInstance,
     val notationCollector: NotationCollector,
-    module: Module,
+    override val module: Module,
     val dimensions: List<ArraySize>,
     mode: ExprEvalMode,
+    override val paramAssignments: Map<String, DynamicExpr>,
     paramProvider: (List<Int>) -> Map<String, Value>,
     signalProvider: (List<Int>) -> Map<String, SignalOrSubSignal>
 ) : ModuleInstanceOrArray {
@@ -96,6 +99,7 @@ class ModuleInstanceArray(
                         project = project,
                         parent = parent,
                         module = module,
+                        paramAssignments = paramAssignments,
                         parameters = paramProvider(curIdx),
                         connections = signalProvider(curIdx),
                         mode = mode

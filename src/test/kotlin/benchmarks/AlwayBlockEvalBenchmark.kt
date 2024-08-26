@@ -92,6 +92,7 @@ class EvaluationBenchmarks {
             null,
             modules.first(),
             mapOf(),
+            mapOf(),
             mapOf(
                 "out" to leds,
                 "rst" to reset,

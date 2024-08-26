@@ -421,6 +421,7 @@ data class Project(
                     module,
                     mapOf(),
                     mapOf(),
+                    mapOf(),
                     ExprEvalMode.Testing
                 ).apply { initialWalk() }
             }
@@ -505,6 +506,7 @@ data class Project(
                     topModule,
                     mapOf(),
                     mapOf(),
+                    mapOf(),
                     //notationManager.getCollector(top)
                 )
 
@@ -536,6 +538,7 @@ data class Project(
                     projectContext,
                     null,
                     mod,
+                    mapOf(),
                     mapOf(),
                     mapOf(),
                     ExprEvalMode.Testing

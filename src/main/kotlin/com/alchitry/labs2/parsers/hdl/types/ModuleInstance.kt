@@ -16,7 +16,8 @@ class ModuleInstance(
     override val name: String,
     project: ProjectContext,
     override val parent: ModuleInstance?,
-    val module: Module,
+    override val module: Module,
+    override val paramAssignments: Map<String, DynamicExpr>,
     parameters: Map<String, Value>,
     val connections: Map<String, SignalOrSubSignal>,
     mode: ExprEvalMode = ExprEvalMode.Default

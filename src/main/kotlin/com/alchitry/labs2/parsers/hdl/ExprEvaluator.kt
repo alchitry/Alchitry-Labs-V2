@@ -251,11 +251,12 @@ data class ExprEvaluator<T : ParserRuleContext>(
             children.forEach { c -> dependencies[c]?.let { addAll(it) } }
         }
 
-
         val dupCountExpr = exprs[children[0]] ?: return
         val dupValueExpr = exprs[children[1]] ?: return
 
-        if (!dupCountExpr.type.known) {
+        val type = getExprType(children) ?: return
+
+        if (!dupCountExpr.type.fixed) {
             context.reportError(children[0], "The expression \"${children[0].text.asSingleLine()}\" must be constant.")
             return
         }
@@ -274,7 +275,7 @@ data class ExprEvaluator<T : ParserRuleContext>(
 
         // if the duplication value is undefined, we have no idea what the width will be
         if (dupCountExpr.value is UndefinedValue) {
-            exprs[ctx] = UndefinedValue().asExpr(dupValueExpr.type)
+            exprs[ctx] = UndefinedValue().asExpr(type)
             return
         }
 
@@ -302,7 +303,7 @@ data class ExprEvaluator<T : ParserRuleContext>(
                     is UndefinedArrayWidth -> valWidth
                     is StructWidth -> error("[BUG] Width was StructWidth. Should be impossible.")
                 }
-            ).asExpr(dupValueExpr.type)
+            ).asExpr(type)
             return
         }
 
@@ -316,13 +317,13 @@ data class ExprEvaluator<T : ParserRuleContext>(
             repeat(dupTimes) {
                 elements.addAll(dupValueExpr.value.elements)
             }
-            exprs[ctx] = ArrayValue(elements).asExpr(dupValueExpr.type)
+            exprs[ctx] = ArrayValue(elements).asExpr(type)
         } else if (dupValueExpr.value is SimpleValue) {
             val bits = mutableListOf<Bit>()
             repeat(dupTimes) {
                 bits.addAll(dupValueExpr.value.bits)
             }
-            exprs[ctx] = BitListValue(bits, dupValueExpr.value.signed).asExpr(dupValueExpr.type)
+            exprs[ctx] = BitListValue(bits, dupValueExpr.value.signed).asExpr(type)
         }
     }
 

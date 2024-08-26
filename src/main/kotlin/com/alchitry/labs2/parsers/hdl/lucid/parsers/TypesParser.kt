@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.hdl.lucid.parsers
 
 import com.alchitry.labs2.noNulls
+import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs2.parsers.hasParent
@@ -257,6 +258,10 @@ class TypesParser(
             }
         }
 
+        val paramCtx = localParamConnections.union(extParamConnections).associate {
+            it.port to it.value
+        }
+
         val instance = if (ctx.arraySize().isEmpty()) {
             localParamConnections.forEach { param ->
                 if (param.value.width !is SimpleWidth) {
@@ -264,7 +269,6 @@ class TypesParser(
                     return
                 }
             }
-
             val instParams = localParamConnections.union(extParamConnections).associate {
                 val value = it.value.value
                 val resizedValue = value.resizeToMatch(DefinedSimpleWidth(32)).withSign(true)
@@ -291,6 +295,7 @@ class TypesParser(
                     context.project,
                     context.instance as? ModuleInstance,
                     moduleType,
+                    paramCtx,
                     instParams,
                     instPorts,
                     mode = ExprEvalMode.Default
@@ -404,6 +409,7 @@ class TypesParser(
                 moduleType,
                 dimensions,
                 mode = ExprEvalMode.Default,
+                paramAssignments = paramCtx,
                 signalProvider = { idx ->
                     val selection = idx.map { SignalSelector.Bits(it, SelectionContext.Constant) }
                     val localMap = localSignals.map { (connection, signal) ->
@@ -703,11 +709,13 @@ class TypesParser(
             paramConnections.addAll(block.params)
         }
 
+        var initContext: LucidParser.ExprContext? = null
         paramConnections.forEach { param ->
             val paramName = param.port
             if (connectedParams.add(paramName)) {
                 when (paramName) {
                     "INIT" -> param.value.value.let {
+                        initContext = param.value.expr
                         if (init.canAssign(it)) {
                             if (init is SimpleValue && it is SimpleValue && (init as SimpleValue).size < it.size) {
                                 context.reportWarning(
@@ -791,7 +799,15 @@ class TypesParser(
             }
         }
 
-        val dff = Dff(context.project, name, init, resolvedClk.constrain(BitWidth), rst?.constrain(BitWidth), signed)
+        val dff = Dff(
+            context.project,
+            name,
+            init,
+            resolvedClk.constrain(BitWidth),
+            rst?.constrain(BitWidth),
+            signed,
+            initContext
+        )
         dffs[name] = dff
     }
 }

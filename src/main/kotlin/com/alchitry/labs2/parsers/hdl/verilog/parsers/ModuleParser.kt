@@ -73,6 +73,7 @@ data class ModuleParser(
             } ?: emptyList()
         }?.associate { it.name to it }
 
+        // TODO: Make ports take parameters into account!
         val ports = ctx.list_of_port_declarations()?.port_declaration()?.flatMap { portDecCtx ->
             portDecCtx.inout_declaration()?.let { inoutCtx ->
                 val signed = inoutCtx.children?.any { it.text == "signed" } ?: false

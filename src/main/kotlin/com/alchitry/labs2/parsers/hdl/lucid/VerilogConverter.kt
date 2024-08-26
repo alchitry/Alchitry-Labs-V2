@@ -5,6 +5,7 @@ import com.alchitry.labs2.asSingleLine
 import com.alchitry.labs2.parsers.grammar.LucidBaseListener
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.LucidParser.FunctionContext
+import com.alchitry.labs2.parsers.grammar.VerilogParser
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.ArraySize
@@ -15,6 +16,7 @@ import com.alchitry.labs2.parsers.hdl.types.Function
 import com.alchitry.labs2.parsers.hdl.values.*
 import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationType
+import kotlinx.coroutines.runBlocking
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 
@@ -169,13 +171,26 @@ class VerilogConverter(
     private fun StringBuilder.addConstants() {
         val constants = mutableListOf<Signal>().apply {
             addAll(globals)
-            addAll(context.constant.localConstants.values)
+            addAll(context.constant.localConstants.values.filter { it.type == ExprType.Constant })
             context.enum.localEnumType.values.forEach {
                 addAll(it.memberSignals.values)
             }
         }
 
+        context.constant.localConstants.filter { it.value.type == ExprType.Fixed }.forEach { (name, signal) ->
+            append("localparam ")
+            append(signal.verilogName)
+            append(" = ")
+            append(
+                context.constant.getContext(name)?.expr()?.verilog
+                    ?: error("Failed to resolve verilog for constant expression!")
+            )
+            append(";")
+            newLine()
+        }
+
         constants.forEach {
+            check(it.type == ExprType.Constant) { "Constant value wasn't marked as constant!" }
             append("localparam ")
             append(it.verilogName)
             append(" = ")
@@ -199,7 +214,7 @@ class VerilogConverter(
             append(", ")
             append(dff.q.verilogName)
             append(" = ")
-            append(dff.init.flatten().asVerilog())
+            append(dff.initContext?.verilog ?: "0")
             append(";")
             newLine()
         }
@@ -303,6 +318,85 @@ class VerilogConverter(
 
     private fun StringBuilder.addModuleInstances() {
         context.types.moduleInstances.values.forEach { instance ->
+            val parameterNameMap = mutableMapOf<String, String>()
+
+            fun addLocalParam(name: String, getValue: () -> String) {
+                val newName = "_MP_${name}_${instance.hashCode()}"
+                parameterNameMap[name] = newName
+                append("localparam ")
+                append(newName)
+                append(" = \$signed(32'(")
+                val paramValue = instance.paramAssignments[name]
+                if (paramValue != null) {
+                    append(paramValue.expr.verilog)
+                } else {
+                    append(getValue())
+                }
+                append("));")
+                newLine()
+            }
+
+            when (val moduleContext = instance.module.context) {
+                is LucidParser.ModuleContext -> {
+                    val localParameters = mutableMapOf<String, Signal>()
+                    moduleContext.paramList()?.paramDec()?.forEach inner@{ paramDecContext ->
+                        val name = paramDecContext.name()?.text ?: return@inner
+                        Signal(
+                            name,
+                            SignalDirection.Read,
+                            instance,
+                            UndefinedValue(BitListWidth(32)),
+                            ExprType.Fixed
+                        ).also {
+                            localParameters[name] = it
+                            context.localSignals[name] = it
+                        }
+                        addLocalParam(name) {
+                            val valueCtx = paramDecContext.paramDefault()?.expr()
+                                ?: error("Parameter value wasn't specified and it has no default!")
+                            runBlocking { context.walk(valueCtx) }
+                            valueCtx.verilog
+                        }
+                    }
+
+                    instance.external.values.forEach { signal ->
+                        val width = signal.width
+                        if (width is ResolvableWidth) {
+                            runBlocking { context.walk(width.context) }
+                            println(width.context.verilog)
+                        }
+                    }
+                }
+
+                is VerilogParser.Module_declarationContext -> {
+                    moduleContext.module_parameter_port_list()?.parameter_declaration()
+                        ?.flatMap { it.list_of_param_assignments()?.param_assignment() ?: emptyList() }
+                        ?.forEach inner@{ paramAssignmentContext ->
+                            val name = paramAssignmentContext.parameter_identifier()?.text ?: return@inner
+                            addLocalParam(name) {
+                                var value =
+                                    paramAssignmentContext.constant_mintypmax_expression()?.constant_expression(0)?.text
+                                        ?: error("Failed to get text for parameter expression!")
+                                parameterNameMap.forEach { (name, newName) -> value = value.replace(name, newName) }
+                                value
+                            }
+                        }
+
+                    instance.external.values.forEach { signal ->
+                        val width = signal.width
+                        if (width is ResolvableWidth) {
+                            var value = width.context.text
+                            parameterNameMap.forEach { (name, newName) -> value = value.replace(name, newName) }
+                            verilog[width.context] = "($value)"
+                        }
+                    }
+                }
+
+                else -> error("Module context wasn't a Lucid or Verilog module! Found: ${moduleContext.javaClass.canonicalName}")
+            }
+
+            parameterNameMap.keys.forEach { context.localSignals.remove(it) }
+
             instance.external.values.forEach { port ->
                 when (port.direction) {
                     SignalDirection.Read -> append("wire ") // output
@@ -329,15 +423,15 @@ class VerilogConverter(
             // expression to a wire then use this later to get the sub-signal
             if (instance is ModuleInstanceArray) {
                 // we can look at any of the instances, so just look at the first
-                instance.getAllInstances().first().connections.forEach { (port, connection) ->
+                instance.modules.first().connections.forEach { (port, connection) ->
                     if (connection is SubSignal) { // only happens when this is selected per instance
                         val sig = connection.getSignal()
                         append("wire ")
                         if (sig.signed)
                             append("signed ")
                         append("[")
-                        append((sig.width.bitCount ?: 1) - 1)
-                        append(":0] M_")
+                        append(sig.width.verilogBitCount())
+                        append("-1:0] M_")
                         append(instance.name)
                         append("_")
                         append(port)
@@ -366,7 +460,7 @@ class VerilogConverter(
                         append(".")
                         append(param.name)
                         append("(")
-                        append(p.initialValue.flatten().asVerilog())
+                        append(parameterNameMap[param.name]!!)
                         append(")")
                     }
 
@@ -454,18 +548,52 @@ class VerilogConverter(
                 tabCount--
                 newLine()
                 append(");")
-                newLine()
             }
 
             when (instance) {
                 is ModuleInstance -> addInstModule(instance, null)
-                is ModuleInstanceArray -> instance.modules.forEachIndexed { ints, moduleInstance ->
+                is ModuleInstanceArray -> {
+                    val dimIndexNames = instance.dimensions.indices.map { index ->
+                        "idx_${index}_${instance.hashCode()}"
+                    }
+                    append("genvar ")
+                    instance.dimensions.forEachIndexed { index, arraySize ->
+                        if (index != 0)
+                            append(", ")
+                        append(dimIndexNames[index])
+                    }
+                    append(";")
+                    newLine()
+                    newLine()
+                    append("generate")
+                    tabCount++
+                    newLine()
+                    instance.dimensions.forEachIndexed { index, arraySize ->
+                        val idxName = dimIndexNames[index]
+                        append("for ($idxName = 0; $idxName < ")
+                        when (arraySize) {
+                            is ArraySize.Fixed -> append(arraySize.size)
+                            is ArraySize.Resolvable -> append(arraySize.context.verilog)
+                        }
+                        append("; $idxName = $idxName + 1) begin: forLoop_$idxName")
+                        tabCount++
+                        newLine()
+                    }
                     addInstModule(
-                        moduleInstance,
-                        ints.map { it.toString() }
+                        instance.modules.first(),
+                        dimIndexNames
                     )
+                    instance.dimensions.forEach { _ ->
+                        tabCount--
+                        newLine()
+                        append("end")
+                    }
+                    tabCount--
+                    newLine()
+                    append("endgenerate")
                 }
             }
+            newLine()
         }
     }
 
@@ -572,10 +700,11 @@ class VerilogConverter(
                 is GlobalNamespace -> "G_${parent.name}_${baseSignal.name}"
                 is ModuleInstanceOrArray -> {
                     val instance = context.instance as? ModuleInstance
-                    if (instance == parent)
-                        baseSignal.name
-                    else
-                        "M_${parent.name}_${baseSignal.name}"
+                    when {
+                        instance == parent -> baseSignal.name // this is a local signal
+                        baseSignal.type == ExprType.Fixed -> "_MP_${baseSignal.name}_${parent.hashCode()}" // instance parameter
+                        else -> "M_${parent.name}_${baseSignal.name}"
+                    }
                 }
 
                 is RepeatSignal -> "R_${parent.name}_${baseSignal.name}"
@@ -618,8 +747,14 @@ class VerilogConverter(
                         }
                     }
 
-                    is ResolvableWidth -> {
+                    is ResolvableSimpleWidth -> {
                         append(context.verilog)
+                    }
+
+                    is ResolvableArrayWidth -> {
+                        append(context.verilog)
+                        append(" * ")
+                        append(next.verilogBitCount())
                     }
 
                     is UndefinedWidth -> error("Undefined width during verilog conversion!")

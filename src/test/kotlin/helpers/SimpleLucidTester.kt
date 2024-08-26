@@ -35,6 +35,7 @@ class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = nul
             Module("testModule", mapOf(), mapOf(), LucidParser.ModuleContext(null, 0), sourceFile),
             mapOf(),
             mapOf(),
+            mapOf(),
             //project.notationManager.getCollector(sourceFile)
         ),
         ExprEvalMode.Default,
