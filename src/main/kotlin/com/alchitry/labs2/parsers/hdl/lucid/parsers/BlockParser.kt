@@ -15,7 +15,7 @@ import com.alchitry.labs2.parsers.hdl.values.*
  */
 data class BlockParser(
     private val context: LucidBlockContext,
-    val alwaysBlocks: MutableMap<AlwaysBlockContext, com.alchitry.labs2.parsers.hdl.types.AlwaysBlock> = mutableMapOf(),
+    val alwaysBlocks: MutableMap<AlwaysBlockContext, AlwaysBlock> = mutableMapOf(),
     val testBlocks: MutableMap<TestBlockContext, TestBlock> = mutableMapOf(),
     val repeatSignals: MutableMap<RepeatStatContext, Signal> = mutableMapOf(),
     val functions: MutableMap<String, Function> = mutableMapOf()

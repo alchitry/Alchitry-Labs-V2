@@ -14,7 +14,7 @@ data class LucidPruner(
     override fun enterAlwaysIf(ctx: LucidParser.AlwaysIfContext) {
         val ifCtx = ctx.ifStat() ?: return
         val expr = context.expr.resolve(ifCtx.expr() ?: return) ?: return
-        if (expr.type == ExprType.Constant) {
+        if (expr.type == ExprType.Constant || (!context.mode.building && expr.type.fixed)) {
             val parent = ctx.parent as? ParserRuleContext ?: return
             val children = parent.children ?: return
             val index = children.indexOf(ctx)
@@ -39,7 +39,7 @@ data class LucidPruner(
     override fun enterEveryRule(ctx: ParserRuleContext) {
         if (ctx is LucidParser.ExprContext) {
             val value = context.expr.resolve(ctx)
-            if (value?.type == ExprType.Constant) {
+            if (value?.type == ExprType.Constant || (!context.mode.building && value?.type?.fixed == true)) {
                 ctx.skip = true
             }
         }

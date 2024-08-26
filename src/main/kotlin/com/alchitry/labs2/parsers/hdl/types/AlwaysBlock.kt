@@ -6,8 +6,8 @@ import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 
 class AlwaysBlock(
     context: LucidBlockContext,
-    dependencies: Set<com.alchitry.labs2.parsers.hdl.types.Signal>,
-    val drivenSignals: Set<com.alchitry.labs2.parsers.hdl.types.Signal>,
+    dependencies: Set<Signal>,
+    val drivenSignals: Set<Signal>,
     private val alwaysBlockContext: AlwaysBlockContext
 ): Evaluable {
     val context = context.withEvalContext(

@@ -3,6 +3,7 @@ package com.alchitry.labs2.parsers.hdl.lucid.parsers
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
+import com.alchitry.labs2.parsers.hdl.types.Dff
 import com.alchitry.labs2.parsers.hdl.types.Signal
 import com.alchitry.labs2.parsers.hdl.values.Bit
 import com.alchitry.labs2.parsers.hdl.values.BitListValue
@@ -21,6 +22,15 @@ data class BlockEvaluator(
         check(context.stage == ParseStage.Evaluation) { "The BlockEvaluator should only be used in evaluations!" }
         writtenSignals.clear()
         alwaysBlock = ctx
+
+        // set DFF d value to q initially
+        context.blockParser.alwaysBlocks[ctx]?.drivenSignals?.forEach { signal ->
+            val parent = signal.parent
+            if (parent is Dff) {
+                parent.d.quietWrite(parent.q.read(context.evalContext), context.evalContext)
+                writtenSignals.add(parent.d)
+            }
+        }
     }
 
     override suspend fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
