@@ -292,7 +292,7 @@ class VerilogConverter(
                     newLine()
                     append(it.q.verilogName)
                     append(" <= ")
-                    append(it.init.flatten().asVerilog() ?: error("Failed to get verilog for dff init value!"))
+                    append(it.initContext?.verilog ?: "0")
                     append(";")
                 }
                 tabCount--
