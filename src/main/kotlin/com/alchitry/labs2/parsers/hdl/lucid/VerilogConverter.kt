@@ -359,12 +359,22 @@ class VerilogConverter(
                         }
                     }
 
-                    instance.external.values.forEach { signal ->
-                        val width = signal.width
-                        if (width is ResolvableWidth) {
-                            runBlocking { context.walk(width.context) }
-                            println(width.context.verilog)
+                    fun resolveAll(width: SignalWidth) {
+                        when (width) {
+                            is ResolvableArrayWidth<*> -> {
+                                runBlocking { context.walk(width.context) }
+                                resolveAll(width.next)
+                            }
+
+                            is ResolvableSimpleWidth<*> -> runBlocking { context.walk(width.context) }
+                            is SimpleWidth -> return
+                            is StructWidth -> width.type.values.forEach { resolveAll(it.width) }
+                            is ArrayWidth -> resolveAll(width.next)
                         }
+                    }
+
+                    instance.external.values.forEach { signal ->
+                        resolveAll(signal.width)
                     }
                 }
 
@@ -384,10 +394,14 @@ class VerilogConverter(
 
                     instance.external.values.forEach { signal ->
                         val width = signal.width
-                        if (width is ResolvableWidth) {
-                            var value = width.context.text
-                            parameterNameMap.forEach { (name, newName) -> value = value.replace(name, newName) }
-                            verilog[width.context] = "($value)"
+                        if (width is ResolvableWidth<*>) {
+                            var msb = (width.context as VerilogParser.Range_Context).msb_constant_expression()!!.text
+                            var lsb = (width.context as VerilogParser.Range_Context).lsb_constant_expression()!!.text
+                            parameterNameMap.forEach { (name, newName) ->
+                                msb = msb.replace(name, newName)
+                                lsb = lsb.replace(name, newName)
+                            }
+                            verilog[width.context] = "(($msb) - ($lsb) + 1)"
                         }
                     }
                 }
@@ -550,6 +564,8 @@ class VerilogConverter(
                 append(");")
             }
 
+            newLine()
+
             when (instance) {
                 is ModuleInstance -> addInstModule(instance, null)
                 is ModuleInstanceArray -> {
@@ -593,6 +609,7 @@ class VerilogConverter(
                     append("endgenerate")
                 }
             }
+            newLine()
             newLine()
         }
     }
@@ -747,11 +764,11 @@ class VerilogConverter(
                         }
                     }
 
-                    is ResolvableSimpleWidth -> {
+                    is ResolvableSimpleWidth<*> -> {
                         append(context.verilog)
                     }
 
-                    is ResolvableArrayWidth -> {
+                    is ResolvableArrayWidth<*> -> {
                         append(context.verilog)
                         append(" * ")
                         append(next.verilogBitCount())
@@ -783,7 +800,7 @@ class VerilogConverter(
                     first = false
 
                 when (currentWidth) {
-                    is DefinedArrayWidth, is DefinedSimpleWidth, is ResolvableWidth -> {
+                    is DefinedArrayWidth, is DefinedSimpleWidth, is ResolvableWidth<*> -> {
                         val s = selector as? SignalSelector.Bits ?: error("Struct selector used on an array!")
 
                         append("(")

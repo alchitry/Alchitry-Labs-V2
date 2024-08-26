@@ -5,6 +5,8 @@ import com.alchitry.labs2.parsers.grammar.VerilogParser.Constant_expressionConte
 import com.alchitry.labs2.parsers.grammar.VerilogParserBaseListener
 import com.alchitry.labs2.parsers.hdl.ExprEvaluator
 import com.alchitry.labs2.parsers.hdl.asConstExpr
+import com.alchitry.labs2.parsers.hdl.asExpr
+import com.alchitry.labs2.parsers.hdl.types.Signal
 import com.alchitry.labs2.parsers.hdl.values.BitListValue
 import com.alchitry.labs2.parsers.hdl.verilog.context.VerilogExprContext
 
@@ -112,7 +114,17 @@ class ConstantExprParser(
     }
 
     override fun exitConstPrimaryIdentifier(ctx: VerilogParser.ConstPrimaryIdentifierContext) {
-        context.reportError(ctx, "Identifiers aren't supported.")
+        if (ctx.constant_range_expression() != null) {
+            context.reportError(ctx, "Signal selection isn't supported yet.")
+            return
+        }
+
+        val signal = context.resolveSignal(ctx, ctx.identifier()?.text ?: return)
+        if (signal !is Signal) {
+            context.reportError(ctx, "Signal \"${ctx.identifier()?.text}\" is not a fully qualified signal.")
+            return
+        }
+        evaluator.setExpr(ctx, signal.read().asExpr(signal.type))
     }
 
     override fun exitConstPrimaryConcatenation(ctx: VerilogParser.ConstPrimaryConcatenationContext) {

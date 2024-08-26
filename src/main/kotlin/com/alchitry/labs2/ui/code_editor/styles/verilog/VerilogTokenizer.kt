@@ -41,7 +41,7 @@ object VerilogTokenizer : EditorTokenizer {
 
                 Tokens.INPUT.id, Tokens.OUTPUT.id, Tokens.INOUT.id,
                 Tokens.WIRE.id, Tokens.UWIRE.id, Tokens.REG.id,
-                Tokens.TRIREG.id -> LucidStyle.variable
+                Tokens.TRIREG.id, Tokens.PARAMETER.id, Tokens.LOCALPARAM.id -> LucidStyle.variable
 
                 else ->
                     if (token.text?.let { operatorRegex.matches(it) } == true) LucidStyle.operator else null

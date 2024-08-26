@@ -2,9 +2,13 @@ package com.alchitry.labs2.parsers.hdl.values
 
 import com.alchitry.labs2.parsers.BitUtil
 import com.alchitry.labs2.parsers.grammar.LucidParser
+import com.alchitry.labs2.parsers.grammar.VerilogParser
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidExprEval
 import com.alchitry.labs2.parsers.hdl.types.StructType
+import com.alchitry.labs2.parsers.hdl.verilog.context.VerilogExprEval
 import kotlinx.coroutines.runBlocking
+import org.antlr.v4.kotlinruntime.ParserRuleContext
+import java.math.BigInteger
 import kotlin.contracts.contract
 
 sealed class SignalWidth {
@@ -104,8 +108,8 @@ sealed class SignalWidth {
      */
     fun isResolvable(): Boolean {
         return when (this) {
-            is ResolvableSimpleWidth -> true
-            is ResolvableArrayWidth -> next.isResolvable()
+            is ResolvableSimpleWidth<*> -> true
+            is ResolvableArrayWidth<*> -> next.isResolvable()
             is UndefinedWidth -> false
             is DefinedSimpleWidth -> true
             is StructWidth -> isDefined() // structs should be defined or never resolved
@@ -113,32 +117,61 @@ sealed class SignalWidth {
         }
     }
 
-    fun resolve(exprEval: LucidExprEval): SignalWidth {
+    fun resolve(lucidEval: LucidExprEval?, verilogEval: VerilogExprEval?): SignalWidth {
         return when (this) {
             is DefinedSimpleWidth -> this
-            is ResolvableWidth -> {
-                runBlocking { exprEval.walk(context, ignoreSkip = true) }
-                val value = exprEval.resolve(context)?.value ?: error("Failed to resolve width: $this!")
+            is ResolvableWidth<*> -> {
+                val value = when (val context = context) {
+                    is LucidParser.ExprContext -> {
+                        requireNotNull(lucidEval) { "Lucid expression found but Lucid evaluator not provided!" }
+                        runBlocking { lucidEval.walk(context, ignoreSkip = true) }
+                        lucidEval.resolve(context)?.value
+                            ?: error("Failed to resolve width: $this!")
+                    }
+
+                    is VerilogParser.Constant_expressionContext -> {
+                        requireNotNull(verilogEval) { "Verilog expression found but Verilog evaluator not provided!" }
+                        verilogEval.walk(context, ignoreSkip = true)
+                        verilogEval.resolve(context)?.value
+                            ?: error("Failed to resolve width: $this!")
+                    }
+
+                    is VerilogParser.Range_Context -> {
+                        requireNotNull(verilogEval) { "Verilog expression found but Verilog evaluator not provided!" }
+                        verilogEval.walk(context, ignoreSkip = true)
+                        val msb = context.msb_constant_expression()?.constant_expression()
+                            ?: error("Missing MSB expression context!")
+                        val lsb = context.lsb_constant_expression()?.constant_expression()
+                            ?: error("Missing LSB expression context!")
+                        val msbValue =
+                            verilogEval.resolve(msb)?.value ?: error("Failed to resolve MSB of width: $this!")
+                        val lsbValue =
+                            verilogEval.resolve(lsb)?.value ?: error("Failed to resolve LSB of width: $this!")
+                        if (msbValue !is SimpleValue || lsbValue !is SimpleValue || !msbValue.isNumber() || !lsbValue.isNumber())
+                            return UndefinedSimpleWidth()
+                        BitListValue(
+                            bigInt = msbValue.toBigInt()!!.subtract(lsbValue.toBigInt()!!).plus(BigInteger.ONE)
+                        )
+                    }
+
+                    else -> error("Unsupported context: ${context.javaClass.canonicalName}")
+                }
                 val size = (value as? SimpleValue)?.toBigInt()?.intValueExact()
                 if (size != null)
                     when (this) {
-                        is ResolvableArrayWidth -> DefinedArrayWidth(size, next.resolve(exprEval))
-                        is ResolvableSimpleWidth -> BitListWidth(size)
+                        is ResolvableArrayWidth<*> -> DefinedArrayWidth(size, next.resolve(lucidEval, verilogEval))
+                        is ResolvableSimpleWidth<*> -> BitListWidth(size)
                     }
                 else
                     when (this) {
-                        is ResolvableArrayWidth -> UndefinedArrayWidth(next.resolve(exprEval))
-                        is ResolvableSimpleWidth -> UndefinedSimpleWidth()
+                        is ResolvableArrayWidth<*> -> UndefinedArrayWidth(next.resolve(lucidEval, verilogEval))
+                        is ResolvableSimpleWidth<*> -> UndefinedSimpleWidth()
                     }
             }
 
-            is DefinedArrayWidth -> DefinedArrayWidth(size, next.resolve(exprEval))
+            is DefinedArrayWidth -> DefinedArrayWidth(size, next.resolve(lucidEval, verilogEval))
             is StructWidth -> StructWidth(type.copy(members = type.mapValuesTo(LinkedHashMap()) {
-                it.value.copy(
-                    width = it.value.width.resolve(
-                        exprEval
-                    )
-                )
+                it.value.copy(width = it.value.width.resolve(lucidEval, verilogEval))
             }))
 
             is UndefinedWidth -> error("UndefinedWidth can't be resolved!")
@@ -331,18 +364,19 @@ open class UndefinedArrayWidth(override val next: SignalWidth) : UndefinedWidth(
     }
 }
 
-sealed interface ResolvableWidth {
-    val context: LucidParser.ExprContext
+sealed interface ResolvableWidth<T : ParserRuleContext> {
+    val context: T
 }
 
-class ResolvableSimpleWidth(override val context: LucidParser.ExprContext) : UndefinedSimpleWidth(), ResolvableWidth {
+class ResolvableSimpleWidth<T : ParserRuleContext>(override val context: T) : UndefinedSimpleWidth(),
+    ResolvableWidth<T> {
     override fun toString(): String {
         return "ResolvableSimpleWidth(context=${context.text})"
     }
 }
 
-class ResolvableArrayWidth(override val context: LucidParser.ExprContext, next: SignalWidth) :
-    UndefinedArrayWidth(next), ResolvableWidth {
+class ResolvableArrayWidth<T : ParserRuleContext>(override val context: T, next: SignalWidth) :
+    UndefinedArrayWidth(next), ResolvableWidth<T> {
     override fun toString(): String {
         return "ResolvableArrayWidth(context=${context.text}, next=${next})"
     }

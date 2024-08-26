@@ -7,7 +7,9 @@ import com.alchitry.labs2.parsers.hdl.types.Parameter
 import com.alchitry.labs2.parsers.hdl.types.SignalDirection
 import com.alchitry.labs2.parsers.hdl.types.ports.Port
 import com.alchitry.labs2.parsers.hdl.values.DefinedSimpleWidth
+import com.alchitry.labs2.parsers.hdl.values.ResolvableSimpleWidth
 import com.alchitry.labs2.parsers.hdl.values.SimpleValue
+import com.alchitry.labs2.parsers.hdl.values.SimpleWidth
 import com.alchitry.labs2.parsers.hdl.verilog.context.VerilogExprContext
 
 data class ModuleParser(
@@ -18,20 +20,23 @@ data class ModuleParser(
     private fun VerilogParser.Range_Context.bitCount(): Int? {
         val msb = msb_constant_expression()?.constant_expression()?.let { context.resolve(it) }?.value ?: return null
         val lsb = lsb_constant_expression()?.constant_expression()?.let { context.resolve(it) }?.value ?: return null
-        if (msb !is SimpleValue || !msb.isNumber()) {
+        if (msb.width !is SimpleWidth) {
             context.reportError(
                 msb_constant_expression() ?: this,
                 "MSB \"${msb_constant_expression()?.text}\" must be a number!"
             )
             return null
         }
-        if (lsb !is SimpleValue || !lsb.isNumber()) {
+        if (lsb.width !is SimpleWidth) {
             context.reportError(
                 lsb_constant_expression() ?: this,
                 "LSB \"${lsb_constant_expression()?.text}\" must be a number!"
             )
             return null
         }
+        if (!msb.isNumber() || !lsb.isNumber() || msb !is SimpleValue || lsb !is SimpleValue)
+            return null
+
         return msb.toBigInt()?.minus(lsb.toBigInt() ?: return null)?.toInt()?.let { it + 1 }
     }
 
@@ -77,30 +82,37 @@ data class ModuleParser(
         val ports = ctx.list_of_port_declarations()?.port_declaration()?.flatMap { portDecCtx ->
             portDecCtx.inout_declaration()?.let { inoutCtx ->
                 val signed = inoutCtx.children?.any { it.text == "signed" } ?: false
-                val width = inoutCtx.range_()?.bitCount() ?: 1
+                val width = inoutCtx.range_()
+                    ?.let { range -> range.bitCount()?.let { DefinedSimpleWidth(it) } ?: ResolvableSimpleWidth(range) }
+                    ?: DefinedSimpleWidth(1)
+
                 return@flatMap inoutCtx.list_of_port_identifiers()?.port_identifier()?.map { portIdCtx ->
-                    Port(portIdCtx.text, SignalDirection.Both, DefinedSimpleWidth(width), signed, inoutCtx)
+                    Port(portIdCtx.text, SignalDirection.Both, width, signed, inoutCtx)
                 } ?: emptyList()
             }
 
             portDecCtx.input_declaration()?.let { inputCtx ->
                 val signed = inputCtx.children?.any { it.text == "signed" } ?: false
-                val width = inputCtx.range_()?.bitCount() ?: 1
+                val width = inputCtx.range_()
+                    ?.let { range -> range.bitCount()?.let { DefinedSimpleWidth(it) } ?: ResolvableSimpleWidth(range) }
+                    ?: DefinedSimpleWidth(1)
                 return@flatMap inputCtx.list_of_port_identifiers()?.port_identifier()?.map { portIdCtx ->
-                    Port(portIdCtx.text, SignalDirection.Read, DefinedSimpleWidth(width), signed, inputCtx)
+                    Port(portIdCtx.text, SignalDirection.Read, width, signed, inputCtx)
                 } ?: emptyList()
             }
 
             portDecCtx.output_declaration()?.let { outputCtx ->
                 val signed = outputCtx.children?.any { it.text == "signed" } ?: false
-                val width = outputCtx.range_()?.bitCount() ?: 1
+                val width = outputCtx.range_()
+                    ?.let { range -> range.bitCount()?.let { DefinedSimpleWidth(it) } ?: ResolvableSimpleWidth(range) }
+                    ?: DefinedSimpleWidth(1)
                 return@flatMap outputCtx.list_of_port_identifiers()?.port_identifier()?.map { portIdCtx ->
-                    Port(portIdCtx.text, SignalDirection.Write, DefinedSimpleWidth(width), signed, outputCtx)
+                    Port(portIdCtx.text, SignalDirection.Write, width, signed, outputCtx)
                 } ?: outputCtx.list_of_variable_port_identifiers()?.var_port_id()?.mapNotNull { varPortIdCtx ->
                     Port(
                         varPortIdCtx.port_identifier()?.text ?: return@mapNotNull null,
                         SignalDirection.Write,
-                        DefinedSimpleWidth(width),
+                        width,
                         signed,
                         outputCtx
                     )

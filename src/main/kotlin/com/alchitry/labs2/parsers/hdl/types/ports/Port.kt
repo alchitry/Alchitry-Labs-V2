@@ -6,6 +6,8 @@ import com.alchitry.labs2.parsers.hdl.lucid.context.LucidExprEval
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
 import com.alchitry.labs2.parsers.hdl.types.SignalDirection
 import com.alchitry.labs2.parsers.hdl.values.SignalWidth
+import com.alchitry.labs2.parsers.hdl.verilog.context.VerilogExprEval
+import com.alchitry.labs2.project.Languages
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 data class Port(
@@ -26,15 +28,31 @@ data class Port(
     fun instantiate(parent: ModuleInstance, context: ProjectContext): PortInstance {
         require(width.isResolvable()) { "Width is not resolvable: $width" }
         val instWidth = if (width.isDefined() || parent.context.mode == ExprEvalMode.Building) width else {
-            val eval = LucidExprEval(
-                context,
-                parent.context.sourceFile,
-                ExprEvalMode.Default,
-                parent.context.notationCollector.createChild("PortEval")
-            ) {
-                return@LucidExprEval parent.parameters[it]
+            val resolvedWidth = when (parent.context.sourceFile.language) {
+                Languages.Lucid -> {
+                    val eval = LucidExprEval(
+                        context,
+                        parent.context.sourceFile,
+                        ExprEvalMode.Default,
+                        parent.context.notationCollector.createChild("PortEval")
+                    ) {
+                        parent.parameters[it]
+                    }
+                    width.resolve(lucidEval = eval, verilogEval = null)
+                }
+
+                Languages.Verilog -> {
+                    val eval = VerilogExprEval(
+                        context,
+                        parent.context.sourceFile,
+                        ExprEvalMode.Default,
+                        parent.context.notationCollector.createChild("PortEval")
+                    ) {
+                        parent.parameters[it]
+                    }
+                    width.resolve(lucidEval = null, verilogEval = eval)
+                }
             }
-            val resolvedWidth = width.resolve(eval)
 
             if (resolvedWidth.isDefined()) {
                 resolvedWidth
