@@ -341,11 +341,12 @@ class VerilogConverter(
                     val localParameters = mutableMapOf<String, Signal>()
                     moduleContext.paramList()?.paramDec()?.forEach inner@{ paramDecContext ->
                         val name = paramDecContext.name()?.text ?: return@inner
+                        val defaultWidth = instance.module.parameters[name]?.default?.width
                         Signal(
                             name,
                             SignalDirection.Read,
                             instance,
-                            UndefinedValue(BitListWidth(32)),
+                            UndefinedValue(defaultWidth ?: UndefinedSimpleWidth()),
                             ExprType.Fixed
                         ).also {
                             localParameters[name] = it

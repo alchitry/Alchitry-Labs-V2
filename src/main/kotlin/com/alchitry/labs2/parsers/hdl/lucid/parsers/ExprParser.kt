@@ -152,7 +152,7 @@ class ExprParser(
             } else { // String
                 val stringCtx = ctx.STRING() ?: return
                 val str = StringEscapeUtils.unescapeJava(stringCtx.text)
-                valueString = str.substring(1, str.length - 1)
+                valueString = str.substring(1, str.length - 1).reversed()
 
                 val value: Value
                 when {

@@ -2,20 +2,25 @@ package com.alchitry.labs2.parsers.hdl.verilog.parsers
 
 import com.alchitry.labs2.parsers.grammar.VerilogParser
 import com.alchitry.labs2.parsers.grammar.VerilogParserBaseListener
-import com.alchitry.labs2.parsers.hdl.types.Module
-import com.alchitry.labs2.parsers.hdl.types.Parameter
-import com.alchitry.labs2.parsers.hdl.types.SignalDirection
+import com.alchitry.labs2.parsers.hdl.ExprType
+import com.alchitry.labs2.parsers.hdl.lucid.context.SignalResolver
+import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.types.ports.Port
 import com.alchitry.labs2.parsers.hdl.values.DefinedSimpleWidth
 import com.alchitry.labs2.parsers.hdl.values.ResolvableSimpleWidth
 import com.alchitry.labs2.parsers.hdl.values.SimpleValue
 import com.alchitry.labs2.parsers.hdl.values.SimpleWidth
 import com.alchitry.labs2.parsers.hdl.verilog.context.VerilogExprContext
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 data class ModuleParser(
     private val context: VerilogExprContext
-) : VerilogParserBaseListener() {
+) : VerilogParserBaseListener(), SignalResolver {
     var modules = mutableListOf<Module>()
+    private val parameters: MutableMap<String, Signal> = mutableMapOf()
+
+    override fun resolve(ctx: ParserRuleContext, name: String): SignalOrParent? =
+        parameters[name]
 
     private fun VerilogParser.Range_Context.bitCount(): Int? {
         val msb = msb_constant_expression()?.constant_expression()?.let { context.resolve(it) }?.value ?: return null
@@ -38,6 +43,35 @@ data class ModuleParser(
             return null
 
         return msb.toBigInt()?.minus(lsb.toBigInt() ?: return null)?.toInt()?.let { it + 1 }
+    }
+
+    override fun exitParam_assignment(ctx: VerilogParser.Param_assignmentContext) {
+        val name = ctx.parameter_identifier()?.text ?: return
+        val valueCtx = ctx.constant_mintypmax_expression()?.constant_expression(0) ?: return
+
+        if (ctx.constant_mintypmax_expression()!!.constant_expression().size != 1) {
+            context.reportError(
+                ctx.constant_mintypmax_expression()!!,
+                "Only simple constant expressions are supported!"
+            )
+            return
+        }
+
+        val value = context.resolve(valueCtx)
+
+        if (value == null) {
+            context.reportError(
+                ctx.constant_mintypmax_expression()!!,
+                "Failed to resolve expression \"${ctx.constant_mintypmax_expression()?.text}\"."
+            )
+            return
+        }
+
+        parameters[name] = Signal(name, SignalDirection.Read, null, value.value, ExprType.Fixed)
+    }
+
+    override fun enterModule_declaration(ctx: VerilogParser.Module_declarationContext) {
+        parameters.clear()
     }
 
     override fun exitModule_declaration(ctx: VerilogParser.Module_declarationContext) {

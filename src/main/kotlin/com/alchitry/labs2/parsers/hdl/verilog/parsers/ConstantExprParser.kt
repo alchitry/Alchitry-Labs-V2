@@ -7,8 +7,11 @@ import com.alchitry.labs2.parsers.hdl.ExprEvaluator
 import com.alchitry.labs2.parsers.hdl.asConstExpr
 import com.alchitry.labs2.parsers.hdl.asExpr
 import com.alchitry.labs2.parsers.hdl.types.Signal
+import com.alchitry.labs2.parsers.hdl.values.ArrayValue
 import com.alchitry.labs2.parsers.hdl.values.BitListValue
+import com.alchitry.labs2.parsers.hdl.values.Value
 import com.alchitry.labs2.parsers.hdl.verilog.context.VerilogExprContext
+import org.apache.commons.text.StringEscapeUtils
 
 class ConstantExprParser(
     private val context: VerilogExprContext,
@@ -154,7 +157,18 @@ class ConstantExprParser(
     }
 
     override fun exitConstPrimaryString(ctx: VerilogParser.ConstPrimaryStringContext) {
-        context.reportError(ctx, "Strings aren't supported.") // TODO
+        val str = StringEscapeUtils.unescapeJava(ctx.text).let { it.substring(1, it.length - 1) }.reversed()
+        val elements = mutableListOf<Value>()
+        repeat(str.length) {
+            elements.add(
+                BitListValue(
+                    str[it].code,
+                    8,
+                    signed = false
+                )
+            )
+        }
+        evaluator.setExpr(ctx, ArrayValue(elements).asConstExpr())
     }
 
     override fun exitConstExprPrimary(ctx: VerilogParser.ConstExprPrimaryContext) {

@@ -275,6 +275,16 @@ sealed class SignalWidth {
      * @param signed if the resulting Value should be signed. Structs with explicit signs will override this.
      */
     abstract fun filledWith(bit: Bit, signed: Boolean): Value
+
+    fun prettyPrint(): String {
+        return when (this) {
+            is DefinedArrayWidth -> "[$size]${next.prettyPrint()}"
+            is DefinedSimpleWidth -> "[$size]"
+            is StructWidth -> "<${type.name}>"
+            is UndefinedArrayWidth -> "[x]${next.prettyPrint()}"
+            is UndefinedSimpleWidth -> "[x]"
+        }
+    }
 }
 
 

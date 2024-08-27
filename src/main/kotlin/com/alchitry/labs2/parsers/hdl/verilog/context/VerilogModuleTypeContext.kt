@@ -6,11 +6,8 @@ import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.WalkerFilter
 import com.alchitry.labs2.parsers.grammar.VerilogParser
 import com.alchitry.labs2.parsers.hdl.ExprEvalMode
-import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.types.Module
 import com.alchitry.labs2.parsers.hdl.types.SignalOrParent
-import com.alchitry.labs2.parsers.hdl.values.DefinedSimpleWidth
-import com.alchitry.labs2.parsers.hdl.values.UndefinedValue
 import com.alchitry.labs2.parsers.hdl.verilog.parsers.ConstantExprParser
 import com.alchitry.labs2.parsers.hdl.verilog.parsers.ModuleParser
 import com.alchitry.labs2.parsers.hdl.verilog.parsers.VerilogWalkerFilters
@@ -38,7 +35,7 @@ class VerilogModuleTypeContext(
     override fun resolve(exprCtx: VerilogParser.Constant_expressionContext) = expr.resolve(exprCtx)
 
     override fun resolveSignal(ctx: ParserRuleContext, name: String): SignalOrParent? {
-        return UndefinedValue(DefinedSimpleWidth(32)).asSignal(name, ExprType.Fixed)
+        return module.resolve(ctx, name)
     }
 
     fun extract(t: ParserRuleContext): List<Module> {

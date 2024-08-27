@@ -83,7 +83,7 @@ internal class ExprParserTests {
         val test = SimpleLucidTester("\"Hi\"")
         val tree = test.parser.expr().also { test.context.walk(it) }
 
-        val test2 = SimpleLucidTester("{8h69, 8h48}")
+        val test2 = SimpleLucidTester("{8h48, 8h69}") // H = 8h48, i = 8h69
         val tree2 = test2.parser.expr().also { test2.context.walk(it) }
 
         val expected = test2.context.expr.resolve(tree2)

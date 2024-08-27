@@ -81,6 +81,32 @@ class TypesParser(
         scopeStack.removeLast()
     }
 
+    private fun checkParameterWidth(
+        ctx: ParserRuleContext,
+        parameterName: String,
+        defaultWidth: SignalWidth?,
+        assignedWidth: SignalWidth
+    ): Boolean {
+        when {
+            defaultWidth == null && assignedWidth !is SimpleWidth -> {
+                context.reportError(
+                    ctx,
+                    "Parameter \"$parameterName\" without a default value must have a simple (1D) width."
+                )
+                return false
+            }
+
+            defaultWidth != null && !Parameter.widthsCompatible(defaultWidth, assignedWidth) -> {
+                context.reportError(
+                    ctx,
+                    "Parameter \"$parameterName\" must have a width compatible with the default value's width of ${defaultWidth.prettyPrint()}."
+                )
+                return false
+            }
+        }
+        return true
+    }
+
     override suspend fun exitModuleInst(ctx: ModuleInstContext) {
         val nameCtx = ctx.name()
         val moduleTypeName = nameCtx.getOrNull(0)?.text ?: return
@@ -211,13 +237,6 @@ class TypesParser(
             return
         }
 
-        extParamConnections.forEach { param ->
-            if (param.value.width !is SimpleWidth) {
-                context.reportError(param.portCtx, "Parameter \"${param.port}\" is not a simple value.")
-                return
-            }
-        }
-
         fun getSignals(list: List<Connection>): Map<Connection, Signal>? {
             return list.associate { connection ->
                 val port = moduleType.ports[connection.port] ?: error("Missing expected port!")
@@ -262,33 +281,26 @@ class TypesParser(
             it.port to it.value
         }
 
+        extParamConnections.forEach {
+            checkParameterWidth(
+                ctx.name(0) ?: ctx,
+                it.port,
+                moduleType.parameters[it.port]?.default?.width,
+                it.value.value.width
+            )
+        }
+
         val instance = if (ctx.arraySize().isEmpty()) {
-            localParamConnections.forEach { param ->
-                if (param.value.width !is SimpleWidth) {
-                    context.reportError(param.portCtx, "Parameter \"${param.port}\" is not a simple value.")
-                    return
-                }
+            localParamConnections.forEach {
+                checkParameterWidth(
+                    it.portCtx,
+                    it.port,
+                    moduleType.parameters[it.port]?.default?.width,
+                    it.value.value.width
+                )
             }
             val instParams = localParamConnections.union(extParamConnections).associate {
-                val value = it.value.value
-                val width = value.width
-                // set ArrayWidth to be undefined so any ArrayWidth will match, allowing the outer dimension to vary
-                val relaxedDefault = when (val defaultWidth = moduleType.parameters[it.port]?.default?.width) {
-                    is ArrayWidth -> UndefinedArrayWidth(defaultWidth.next)
-                    else -> defaultWidth
-                }
-                when {
-                    relaxedDefault == null && width !is SimpleWidth -> context.reportError(
-                        ctx,
-                        "Parameter \"${it.port}\" without a default value must have a simple (1D) width."
-                    )
-
-                    relaxedDefault != null && !relaxedDefault.canAssign(width) -> context.reportError(
-                        ctx,
-                        "Parameter \"${it.port}\" must have a width compatible with the default value."
-                    )
-                }
-                it.port to value
+                it.port to it.value.value
             }
             val instPorts = (localSignals + extSignals).mapKeys {
                 if (moduleType.ports[it.key.port]?.isInout == true) {
@@ -391,10 +403,12 @@ class TypesParser(
                         }
                         width = curWidth.next
                     }
-                    if (width !is DefinedSimpleWidth) {
-                        context.reportError(param.portCtx, "Parameter ${param.port} does not index to a simple value.")
-                        return
-                    }
+                    checkParameterWidth(
+                        param.portCtx,
+                        param.port,
+                        moduleType.parameters[param.port]?.default?.width,
+                        width
+                    )
                 }
             }
 
