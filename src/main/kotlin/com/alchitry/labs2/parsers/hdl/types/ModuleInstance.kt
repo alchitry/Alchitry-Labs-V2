@@ -6,7 +6,7 @@ import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SnapshotOrParent
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SnapshotParent
-import com.alchitry.labs2.parsers.hdl.values.DefinedSimpleWidth
+import com.alchitry.labs2.parsers.hdl.values.UndefinedSimpleWidth
 import com.alchitry.labs2.parsers.hdl.values.UndefinedValue
 import com.alchitry.labs2.parsers.hdl.values.Value
 import com.alchitry.labs2.parsers.notations.ErrorListener
@@ -73,9 +73,10 @@ class ModuleInstance(
             this,
             (parameters[name]
                 ?: (if (param.defaultTestOnly && !mode.testing) null else param.default)
-                ?: if (mode != ExprEvalMode.Default) UndefinedValue(DefinedSimpleWidth(32)) else error("Missing value for parameter \"${name}\" in module \"${this.name}\" of type \"${module.name}\".")),
-            ExprType.Fixed,
-            signed = true
+                ?: if (mode != ExprEvalMode.Default) UndefinedValue(
+                    param.default?.width ?: UndefinedSimpleWidth()
+                ) else error("Missing value for parameter \"${name}\" in module \"${this.name}\" of type \"${module.name}\".")),
+            ExprType.Fixed
         )
     }
 

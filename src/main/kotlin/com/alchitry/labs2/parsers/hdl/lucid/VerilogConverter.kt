@@ -325,14 +325,14 @@ class VerilogConverter(
                 parameterNameMap[name] = newName
                 append("localparam ")
                 append(newName)
-                append(" = \$signed(32'(")
+                append(" = ")
                 val paramValue = instance.paramAssignments[name]
                 if (paramValue != null) {
                     append(paramValue.expr.verilog)
                 } else {
                     append(getValue())
                 }
-                append("));")
+                append(";")
                 newLine()
             }
 

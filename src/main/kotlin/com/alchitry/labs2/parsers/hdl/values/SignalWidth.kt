@@ -117,6 +117,16 @@ sealed class SignalWidth {
         }
     }
 
+    /**
+     * Returns true if the SignalWidth is compatible with a string.
+     */
+    fun isStringLike(): Boolean {
+        return when (this) {
+            is ArrayWidth -> (this.next as? DefinedSimpleWidth)?.size == 8
+            else -> false
+        }
+    }
+
     fun resolve(lucidEval: LucidExprEval?, verilogEval: VerilogExprEval?): SignalWidth {
         return when (this) {
             is DefinedSimpleWidth -> this

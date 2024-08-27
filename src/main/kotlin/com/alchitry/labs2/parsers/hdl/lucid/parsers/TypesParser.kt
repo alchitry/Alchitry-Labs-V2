@@ -271,14 +271,24 @@ class TypesParser(
             }
             val instParams = localParamConnections.union(extParamConnections).associate {
                 val value = it.value.value
-                val resizedValue = value.resizeToMatch(DefinedSimpleWidth(32)).withSign(true)
-                if ((value as? SimpleValue)?.fitsIn(32, true) == false) {
-                    context.reportError(
+                val width = value.width
+                // set ArrayWidth to be undefined so any ArrayWidth will match, allowing the outer dimension to vary
+                val relaxedDefault = when (val defaultWidth = moduleType.parameters[it.port]?.default?.width) {
+                    is ArrayWidth -> UndefinedArrayWidth(defaultWidth.next)
+                    else -> defaultWidth
+                }
+                when {
+                    relaxedDefault == null && width !is SimpleWidth -> context.reportError(
                         ctx,
-                        "Parameter \"${it.port}\" must fit into a 32bit signed value."
+                        "Parameter \"${it.port}\" without a default value must have a simple (1D) width."
+                    )
+
+                    relaxedDefault != null && !relaxedDefault.canAssign(width) -> context.reportError(
+                        ctx,
+                        "Parameter \"${it.port}\" must have a width compatible with the default value."
                     )
                 }
-                it.port to resizedValue
+                it.port to value
             }
             val instPorts = (localSignals + extSignals).mapKeys {
                 if (moduleType.ports[it.key.port]?.isInout == true) {
@@ -424,23 +434,7 @@ class TypesParser(
                         it.port to it.value.value.select(selection)
                     }
                     val extMap = extParamConnections.associate { it.port to it.value.value }
-                    val params = localMap + extMap
-                    params.mapValues { (param, value) ->
-                        val resizedValue = value.resizeToMatch(DefinedSimpleWidth(32)).withSign(true)
-                        if ((value as? SimpleValue)?.fitsIn(32, true) != true) {
-                            context.reportError(
-                                ctx,
-                                "Parameter \"$param${
-                                    idx.joinToString(
-                                        ", ",
-                                        "[",
-                                        "]"
-                                    )
-                                }\" must fit into a 32bit signed value."
-                            )
-                        }
-                        resizedValue
-                    }
+                    localMap + extMap
                 }
             )
                 .apply {
