@@ -474,7 +474,7 @@ class ExprParser(
         when (function) {
             Function.IS_SIMULATION -> {
                 val bit = if (context.project.simulating) Bit.B1 else Bit.B0
-                exprs[ctx] = bit.toBitValue().asConstExpr()
+                evaluator.setExpr(ctx, bit.toBitValue().asConstExpr())
             }
 
             Function.WIDTH -> {
