@@ -1,3 +1,4 @@
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstanceArray
@@ -292,5 +293,62 @@ class ModuleInstanceTests {
 
         tester.fullParse()
         assert(tester.notationManager.hasErrors)
+    }
+
+    @Test
+    fun missingParamValueInModuleArray() = runBlocking {
+        val tester = LucidTester(
+            """
+                module multiDecimalCounter #(
+                    DIGITS : DIGITS >= 2  // number of digits
+                ) (
+                    input clk,                // clock
+                    input rst,                // reset
+                    input inc,                // increment counter
+                    output digits[DIGITS][4]  // digit values
+                ) {
+                    .clk(clk), .rst(rst) {
+                        decimalCounter dctr [DIGITS] // digit counters
+                    }
+                    
+                    always {
+                        dctr.inc[0] = inc   // increment the first digit
+                        digits = dctr.value // output the values
+                        
+                        // if the previous digit overflows, increment the next
+                        dctr.inc[1+:DIGITS-1] = dctr.ovf[0+:DIGITS-1]
+                    }
+                }
+            """.trimIndent().toSourceFile(),
+            """
+                module decimalCounter (
+                    input clk,      // clock
+                    input rst,      // reset
+                    input inc,      // increment the counter
+                    output ovf,     // counter overflowed
+                    output value[4] // current value
+                ) {
+                    .clk(clk), .rst(rst) {
+                        dff val[4]     // value storage
+                    }
+                    
+                    always {
+                        value = val.q             // output the value
+                        
+                        ovf = val.q == 9 && inc   // if max value and incrementing, overflow!
+                        
+                        if (inc) {                // should add 1
+                            if (val.q == 9)       // if max value
+                                val.d = 0         // reset to 0
+                            else                  // otherwise
+                                val.d = val.q + 1 // add one
+                        }
+                    }
+                }
+            """.trimIndent().toSourceFile("decimalCounter.luc")
+        )
+
+        tester.fullParse(ExprEvalMode.Testing)
+        tester.assertNoErrors()
     }
 }

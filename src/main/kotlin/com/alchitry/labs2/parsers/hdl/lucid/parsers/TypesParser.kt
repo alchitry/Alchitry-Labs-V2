@@ -529,7 +529,7 @@ class TypesParser(
         if (!expr.type.fixed)
             context.reportError(ctx, "Array sizes must be a constant value.")
 
-        if (context.mode.building && expr.type == ExprType.Fixed && expr.value is UndefinedValue) { // uses parameters
+        if ((context.mode.testing || context.mode.building) && expr.type == ExprType.Fixed && expr.value is UndefinedValue) { // uses parameters
             arraySizes[ctx] = ArraySize.Resolvable(ctx.expr() ?: return)
             return
         }

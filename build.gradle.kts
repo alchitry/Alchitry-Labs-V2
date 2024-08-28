@@ -24,7 +24,7 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
-val fullVersion = "2.0.12-PREVIEW"
+val fullVersion = "2.0.13-PREVIEW"
 val numOnlyVersion = fullVersion.split('-').first()
 
 group = "com.alchitry"
@@ -130,7 +130,7 @@ tasks.registerConveyorTask("windows-app") // builds a windows app
 tasks.registerConveyorTask("copied-site") // pushes the site files to GitHub
 tasks.registerConveyorTask("mac-app", "-Kapp.machines=mac.aarch64")
 
-val generatedVersionDir = "$buildDir/resources/main"
+val generatedVersionDir = "${layout.buildDirectory.get()}/resources/main"
 
 tasks.register("generateVersionProperties") {
     doLast {
