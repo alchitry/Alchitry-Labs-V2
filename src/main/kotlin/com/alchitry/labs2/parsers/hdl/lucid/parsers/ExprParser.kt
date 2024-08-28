@@ -488,7 +488,8 @@ class ExprParser(
                     )
                     return
                 }
-                evaluator.setExpr(ctx, width.toValue().asConstExpr())
+                val widthType = if (width.isDefined()) ExprType.Constant else ExprType.Fixed
+                evaluator.setExpr(ctx, width.toValue().asExpr(widthType))
             }
 
             Function.FIXEDPOINT, Function.CFIXEDPOINT, Function.FFIXEDPOINT -> {
