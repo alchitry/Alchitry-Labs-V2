@@ -1269,6 +1269,12 @@ class VerilogConverter(
                 }
             }
 
+            Function.WIDTH -> {
+                "\$bits(${
+                    functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
+                })"
+            }
+
             Function.ASSERT,
             Function.PRINT,
             Function.TICK,
@@ -1276,7 +1282,7 @@ class VerilogConverter(
             is Function.Custom ->
                 error(ctx, "Test only function \"${function.label}\" can't be converted to Verilog!")
 
-            Function.WIDTH, Function.IS_SIMULATION ->
+            Function.IS_SIMULATION ->
                 error(ctx, "Function \"${function.label}\" result should always be constant but didn't have a value!")
         }
     }

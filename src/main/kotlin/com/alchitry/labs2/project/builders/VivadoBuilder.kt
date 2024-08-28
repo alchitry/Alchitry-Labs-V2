@@ -18,9 +18,27 @@ data object VivadoBuilder : ProjectBuilder() {
         if (Env.isMac)
             error("Can't build with Vivado on a Mac!")
 
+        val propsFile = project.buildDirectory.resolve("constraint").resolve("au_props.xdc").toFile()
+        propsFile.writeText(
+            """
+            set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design]
+            set_property BITSTREAM.CONFIG.CONFIGRATE 33 [current_design]
+            set_property CONFIG_VOLTAGE 3.3 [current_design]
+            set_property CFGBVS VCCO [current_design]
+            set_property BITSTREAM.CONFIG.SPI_32BIT_ADDR NO [current_design]
+            set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 1 [current_design]
+            set_property BITSTREAM.CONFIG.SPI_FALL_EDGE YES [current_design]
+        """.trimIndent()
+        )
+
         val tclScript = project.buildDirectory.resolve("project.tcl").toFile()
         tclScript.bufferedWriter().use {
-            it.write(generateProjectFile(project, sourceFiles, constraintFiles))
+            it.write(
+                generateProjectFile(
+                    project,
+                    sourceFiles,
+                    constraintFiles.toMutableList().apply { add(propsFile) })
+            )
         }
 
         val vivado = Locations.vivado

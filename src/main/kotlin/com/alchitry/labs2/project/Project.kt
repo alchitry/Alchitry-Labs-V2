@@ -499,16 +499,25 @@ data class Project(
             }
 
             val topModuleInstance =
-                ModuleInstance(
-                    "alchitryTop",
-                    projectContext,
-                    null,
-                    topModule,
-                    mapOf(),
-                    mapOf(),
-                    mapOf(),
-                    //notationManager.getCollector(top)
-                )
+                try {
+                    ModuleInstance(
+                        "alchitryTop",
+                        projectContext,
+                        null,
+                        topModule,
+                        mapOf(),
+                        mapOf(),
+                        mapOf(),
+                        //notationManager.getCollector(top)
+                    )
+                } catch (e: Exception) {
+                    notationManager.getCollector(top)
+                        .reportError(
+                            trees.first { it.first == top }.second,
+                            "Failed to instantiate top module: ${e.message}"
+                        )
+                    return null
+                }
 
             topModuleInstance.initialWalk()
 
