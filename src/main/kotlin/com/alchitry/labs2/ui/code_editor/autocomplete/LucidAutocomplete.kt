@@ -5,10 +5,10 @@ import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.findFinalNode
 import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.LucidParser
-import com.alchitry.labs2.parsers.lucidv2.types.Function
-import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstance
-import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstanceArray
-import com.alchitry.labs2.parsers.lucidv2.types.TestOrModuleInstance
+import com.alchitry.labs2.parsers.hdl.types.Function
+import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
+import com.alchitry.labs2.parsers.hdl.types.ModuleInstanceArray
+import com.alchitry.labs2.parsers.hdl.types.TestOrModuleInstance
 import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.files.ProjectFile

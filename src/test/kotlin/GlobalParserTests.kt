@@ -1,7 +1,7 @@
-import com.alchitry.labs2.parsers.lucidv2.parsers.toSourceFile
-import com.alchitry.labs2.parsers.lucidv2.types.StructMember
-import com.alchitry.labs2.parsers.lucidv2.types.StructType
-import com.alchitry.labs2.parsers.lucidv2.values.*
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
+import com.alchitry.labs2.parsers.hdl.types.StructMember
+import com.alchitry.labs2.parsers.hdl.types.StructType
+import com.alchitry.labs2.parsers.hdl.values.*
 import helpers.LucidTester
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test

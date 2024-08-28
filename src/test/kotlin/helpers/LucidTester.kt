@@ -4,13 +4,14 @@ import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.LucidParser.SourceContext
-import com.alchitry.labs2.parsers.lucidv2.context.LucidGlobalContext
-import com.alchitry.labs2.parsers.lucidv2.context.LucidModuleTypeContext
-import com.alchitry.labs2.parsers.lucidv2.context.LucidTestBenchContext
-import com.alchitry.labs2.parsers.lucidv2.signals.snapshot.SimParent
-import com.alchitry.labs2.parsers.lucidv2.types.Module
-import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstance
-import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstanceArray
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidGlobalContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidModuleTypeContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidTestBenchContext
+import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SimParent
+import com.alchitry.labs2.parsers.hdl.types.Module
+import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
+import com.alchitry.labs2.parsers.hdl.types.ModuleInstanceArray
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.parsers.notations.NotationManager
 import com.alchitry.labs2.project.files.SourceFile
@@ -74,12 +75,12 @@ class LucidTester(vararg val files: SourceFile) {
     ): List<Module> {
         assert(notationManager.hasNoErrors) { notationManager.getReport() }
 
-        return trees.mapNotNull {
+        return trees.flatMap {
             val moduleTypeContext = LucidModuleTypeContext(project, it.first)
-            val module = moduleTypeContext.extract(it.second)
+            val modules = moduleTypeContext.extract(it.second)
 
             assert(notationManager.hasNoErrors) { notationManager.getReport() }
-            module
+            modules
         }
     }
 
@@ -87,13 +88,13 @@ class LucidTester(vararg val files: SourceFile) {
      * Performs a full parse on the file.
      * It does not check for errors after the parse.
      */
-    suspend fun fullParse(testing: Boolean = false): ModuleInstance {
+    suspend fun fullParse(mode: ExprEvalMode = ExprEvalMode.Default): ModuleInstance {
         val trees = parseText()
 
         globalParse(trees)
         val modules = moduleTypeParse(trees)
 
-        val moduleInstance = ModuleInstance("top", project, null, modules.first(), mapOf(), mapOf(), testing = testing)
+        val moduleInstance = ModuleInstance("top", project, null, modules.first(), mapOf(), mapOf(), mapOf(), mode)
 
         moduleInstance.initialWalk()
 
@@ -191,9 +192,9 @@ class LucidTester(vararg val files: SourceFile) {
     suspend fun getVerilog(): Map<String, String> {
         val topInstance = fullParse()
         assertNoIssues()
-        val instances = mutableMapOf<String, ModuleInstance>()
+        val usedModules = mutableMapOf<String, ModuleInstance>()
         fun add(instance: ModuleInstance) {
-            instances[instance.parameterizedModuleName] = instance
+            usedModules[instance.module.name] = instance
             instance.context.types.moduleInstances.values.forEach { moduleInstanceOrArray ->
                 when (moduleInstanceOrArray) {
                     is ModuleInstance -> add(moduleInstanceOrArray)
@@ -202,7 +203,7 @@ class LucidTester(vararg val files: SourceFile) {
             }
         }
         add(topInstance)
-        return instances.mapValues {
+        return usedModules.mapValues {
             assert(project.notationManager.hasNoErrors) { project.notationManager.getReport() }
             it.value.context.convertToVerilog() ?: error("Missing verilog for ${it.key}")
         }.also { assert(project.notationManager.hasNoErrors) { project.notationManager.getReport() } }

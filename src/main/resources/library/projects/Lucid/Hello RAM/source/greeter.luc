@@ -7,8 +7,8 @@ module greeter (
     output txData[8], // TX data
     input txBusy      // TX is busy flag
 ) {
-    const HELLO_TEXT = "\r\nHello @!\r\n"
-    const PROMPT_TEXT = "Please type your name: "
+    const HELLO_TEXT = $reverse("\r\nHello @!\r\n")
+    const PROMPT_TEXT = $reverse("Please type your name: ")
     
     const HELLO_WIDTH = $width(HELLO_TEXT)
     const PROMPT_WIDTH = $width(PROMPT_TEXT)

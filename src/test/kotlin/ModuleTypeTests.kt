@@ -1,11 +1,11 @@
-import com.alchitry.labs2.parsers.lucidv2.parsers.toSourceFile
-import com.alchitry.labs2.parsers.lucidv2.types.Module
-import com.alchitry.labs2.parsers.lucidv2.types.Parameter
-import com.alchitry.labs2.parsers.lucidv2.types.SignalDirection
-import com.alchitry.labs2.parsers.lucidv2.types.ports.Port
-import com.alchitry.labs2.parsers.lucidv2.values.BitListValue
-import com.alchitry.labs2.parsers.lucidv2.values.BitListWidth
-import com.alchitry.labs2.parsers.lucidv2.values.BitWidth
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
+import com.alchitry.labs2.parsers.hdl.types.Module
+import com.alchitry.labs2.parsers.hdl.types.Parameter
+import com.alchitry.labs2.parsers.hdl.types.SignalDirection
+import com.alchitry.labs2.parsers.hdl.types.ports.Port
+import com.alchitry.labs2.parsers.hdl.values.BitListValue
+import com.alchitry.labs2.parsers.hdl.values.BitListWidth
+import com.alchitry.labs2.parsers.hdl.values.BitWidth
 import helpers.LucidTester
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
@@ -42,19 +42,19 @@ class ModuleTypeTests {
                 mapOf(
                     "CLK_FREQ" to Parameter(
                         "CLK_FREQ",
-                        BitListValue(100000000.toBigInteger()).resize(32).withSign(true),
+                        BitListValue(100000000.toBigInteger()),
                         true,
                         tree.first().second.module(0)?.paramList()?.paramDec(0)?.paramConstraint()?.expr()
                     ),
                     "MAX_CT" to Parameter(
                         "MAX_CT",
-                        BitListValue(100.toBigInteger()).resize(32).withSign(true),
+                        BitListValue(100.toBigInteger()),
                         false,
                         null
                     ),
                     "NEG_TEST" to Parameter(
                         "NEG_TEST",
-                        BitListValue((-100).toBigInteger()).resize(32).withSign(true),
+                        BitListValue((-100).toBigInteger()),
                         false,
                         tree.first().second.module(0)?.paramList()?.paramDec(2)?.paramConstraint()?.expr()
                     )

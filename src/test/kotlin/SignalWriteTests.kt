@@ -1,9 +1,9 @@
-import com.alchitry.labs2.parsers.lucidv2.types.SelectionContext
-import com.alchitry.labs2.parsers.lucidv2.types.SignalSelector
-import com.alchitry.labs2.parsers.lucidv2.values.ArrayValue
-import com.alchitry.labs2.parsers.lucidv2.values.Bit
-import com.alchitry.labs2.parsers.lucidv2.values.BitListValue
-import com.alchitry.labs2.parsers.lucidv2.values.BitValue
+import com.alchitry.labs2.parsers.hdl.types.SelectionContext
+import com.alchitry.labs2.parsers.hdl.types.SignalSelector
+import com.alchitry.labs2.parsers.hdl.values.ArrayValue
+import com.alchitry.labs2.parsers.hdl.values.Bit
+import com.alchitry.labs2.parsers.hdl.values.BitListValue
+import com.alchitry.labs2.parsers.hdl.values.BitValue
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 

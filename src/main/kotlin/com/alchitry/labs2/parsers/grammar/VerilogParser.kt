@@ -27718,42 +27718,6 @@ class VerilogParser(input: TokenStream) : Parser(input) {
                 throw RuntimeException()
             }
 
-        fun constant_primary(): Constant_primaryContext? = getRuleContext(Constant_primaryContext::class, 0)
-        fun unary_operator(): Unary_operatorContext? = getRuleContext(Unary_operatorContext::class, 0)
-        fun attribute_instance(): List<Attribute_instanceContext> = getRuleContexts(Attribute_instanceContext::class)
-        fun attribute_instance(i: Int): Attribute_instanceContext? = getRuleContext(Attribute_instanceContext::class, i)
-        fun constant_expression(): List<Constant_expressionContext> = getRuleContexts(Constant_expressionContext::class)
-        fun constant_expression(i: Int): Constant_expressionContext? =
-            getRuleContext(Constant_expressionContext::class, i)
-
-        fun ASAS(): TerminalNode? = getToken(Tokens.ASAS.id, 0)
-        fun AS(): TerminalNode? = getToken(Tokens.AS.id, 0)
-        fun SL(): TerminalNode? = getToken(Tokens.SL.id, 0)
-        fun MO(): TerminalNode? = getToken(Tokens.MO.id, 0)
-        fun PL(): TerminalNode? = getToken(Tokens.PL.id, 0)
-        fun MI(): TerminalNode? = getToken(Tokens.MI.id, 0)
-        fun GTGT(): TerminalNode? = getToken(Tokens.GTGT.id, 0)
-        fun LTLT(): TerminalNode? = getToken(Tokens.LTLT.id, 0)
-        fun GTGTGT(): TerminalNode? = getToken(Tokens.GTGTGT.id, 0)
-        fun LTLTLT(): TerminalNode? = getToken(Tokens.LTLTLT.id, 0)
-        fun LT(): TerminalNode? = getToken(Tokens.LT.id, 0)
-        fun LTEQ(): TerminalNode? = getToken(Tokens.LTEQ.id, 0)
-        fun GT(): TerminalNode? = getToken(Tokens.GT.id, 0)
-        fun GTEQ(): TerminalNode? = getToken(Tokens.GTEQ.id, 0)
-        fun EQEQ(): TerminalNode? = getToken(Tokens.EQEQ.id, 0)
-        fun EMEQ(): TerminalNode? = getToken(Tokens.EMEQ.id, 0)
-        fun EQEQEQ(): TerminalNode? = getToken(Tokens.EQEQEQ.id, 0)
-        fun EMEQEQ(): TerminalNode? = getToken(Tokens.EMEQEQ.id, 0)
-        fun AM(): TerminalNode? = getToken(Tokens.AM.id, 0)
-        fun CA(): TerminalNode? = getToken(Tokens.CA.id, 0)
-        fun CATI(): TerminalNode? = getToken(Tokens.CATI.id, 0)
-        fun TICA(): TerminalNode? = getToken(Tokens.TICA.id, 0)
-        fun VL(): TerminalNode? = getToken(Tokens.VL.id, 0)
-        fun AMAM(): TerminalNode? = getToken(Tokens.AMAM.id, 0)
-        fun VLVL(): TerminalNode? = getToken(Tokens.VLVL.id, 0)
-        fun QM(): TerminalNode? = getToken(Tokens.QM.id, 0)
-        fun CL(): TerminalNode? = getToken(Tokens.CL.id, 0)
-
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
@@ -27765,20 +27729,547 @@ class VerilogParser(input: TokenStream) : Parser(input) {
             }
         }
 
+
+        fun copyFrom(ctx: Constant_expressionContext) {
+            super.copyFrom(ctx)
+        }
+    }
+
+    open class ConstExprUnaryContext : Constant_expressionContext {
+        fun unary_operator(): Unary_operatorContext? = getRuleContext(Unary_operatorContext::class, 0)
+        fun constant_primary(): Constant_primaryContext? = getRuleContext(Constant_primaryContext::class, 0)
+        fun attribute_instance(): List<Attribute_instanceContext> = getRuleContexts(Attribute_instanceContext::class)
+        fun attribute_instance(i: Int): Attribute_instanceContext? = getRuleContext(Attribute_instanceContext::class, i)
+
+        constructor(ctx: Constant_expressionContext) {
+            copyFrom(ctx)
+        }
+
         override fun enterRule(listener: ParseTreeListener) {
-            if (listener is VerilogParserListener) listener.enterConstant_expression(this)
+            if (listener is VerilogParserListener) listener.enterConstExprUnary(this)
         }
 
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
-            if (listener is SuspendVerilogParserListener) listener.enterConstant_expression(this)
+            if (listener is SuspendVerilogParserListener) listener.enterConstExprUnary(this)
         }
 
         override fun exitRule(listener: ParseTreeListener) {
-            if (listener is VerilogParserListener) listener.exitConstant_expression(this)
+            if (listener is VerilogParserListener) listener.exitConstExprUnary(this)
         }
 
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
-            if (listener is SuspendVerilogParserListener) listener.exitConstant_expression(this)
+            if (listener is SuspendVerilogParserListener) listener.exitConstExprUnary(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstExprUnaryContext {
+            return ConstExprUnaryContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstExprAddSubContext : Constant_expressionContext {
+        fun constant_expression(): List<Constant_expressionContext> = getRuleContexts(Constant_expressionContext::class)
+        fun constant_expression(i: Int): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, i)
+
+        fun PL(): TerminalNode? = getToken(Tokens.PL.id, 0)
+        fun MI(): TerminalNode? = getToken(Tokens.MI.id, 0)
+        fun attribute_instance(): List<Attribute_instanceContext> = getRuleContexts(Attribute_instanceContext::class)
+        fun attribute_instance(i: Int): Attribute_instanceContext? = getRuleContext(Attribute_instanceContext::class, i)
+
+        constructor(ctx: Constant_expressionContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstExprAddSub(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstExprAddSub(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstExprAddSub(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstExprAddSub(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstExprAddSubContext {
+            return ConstExprAddSubContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstExprLogicalAndContext : Constant_expressionContext {
+        fun constant_expression(): List<Constant_expressionContext> = getRuleContexts(Constant_expressionContext::class)
+        fun constant_expression(i: Int): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, i)
+
+        fun AMAM(): TerminalNode? = getToken(Tokens.AMAM.id, 0)
+        fun attribute_instance(): List<Attribute_instanceContext> = getRuleContexts(Attribute_instanceContext::class)
+        fun attribute_instance(i: Int): Attribute_instanceContext? = getRuleContext(Attribute_instanceContext::class, i)
+
+        constructor(ctx: Constant_expressionContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstExprLogicalAnd(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstExprLogicalAnd(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstExprLogicalAnd(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstExprLogicalAnd(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstExprLogicalAndContext {
+            return ConstExprLogicalAndContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstExprMulDivRemContext : Constant_expressionContext {
+        fun constant_expression(): List<Constant_expressionContext> = getRuleContexts(Constant_expressionContext::class)
+        fun constant_expression(i: Int): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, i)
+
+        fun AS(): TerminalNode? = getToken(Tokens.AS.id, 0)
+        fun SL(): TerminalNode? = getToken(Tokens.SL.id, 0)
+        fun MO(): TerminalNode? = getToken(Tokens.MO.id, 0)
+        fun attribute_instance(): List<Attribute_instanceContext> = getRuleContexts(Attribute_instanceContext::class)
+        fun attribute_instance(i: Int): Attribute_instanceContext? = getRuleContext(Attribute_instanceContext::class, i)
+
+        constructor(ctx: Constant_expressionContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstExprMulDivRem(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstExprMulDivRem(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstExprMulDivRem(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstExprMulDivRem(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstExprMulDivRemContext {
+            return ConstExprMulDivRemContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstExprXorContext : Constant_expressionContext {
+        fun constant_expression(): List<Constant_expressionContext> = getRuleContexts(Constant_expressionContext::class)
+        fun constant_expression(i: Int): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, i)
+
+        fun CA(): TerminalNode? = getToken(Tokens.CA.id, 0)
+        fun CATI(): TerminalNode? = getToken(Tokens.CATI.id, 0)
+        fun TICA(): TerminalNode? = getToken(Tokens.TICA.id, 0)
+        fun attribute_instance(): List<Attribute_instanceContext> = getRuleContexts(Attribute_instanceContext::class)
+        fun attribute_instance(i: Int): Attribute_instanceContext? = getRuleContext(Attribute_instanceContext::class, i)
+
+        constructor(ctx: Constant_expressionContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstExprXor(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstExprXor(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstExprXor(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstExprXor(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstExprXorContext {
+            return ConstExprXorContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstExprAndContext : Constant_expressionContext {
+        fun constant_expression(): List<Constant_expressionContext> = getRuleContexts(Constant_expressionContext::class)
+        fun constant_expression(i: Int): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, i)
+
+        fun AM(): TerminalNode? = getToken(Tokens.AM.id, 0)
+        fun attribute_instance(): List<Attribute_instanceContext> = getRuleContexts(Attribute_instanceContext::class)
+        fun attribute_instance(i: Int): Attribute_instanceContext? = getRuleContext(Attribute_instanceContext::class, i)
+
+        constructor(ctx: Constant_expressionContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstExprAnd(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstExprAnd(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstExprAnd(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstExprAnd(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstExprAndContext {
+            return ConstExprAndContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstExprShiftContext : Constant_expressionContext {
+        fun constant_expression(): List<Constant_expressionContext> = getRuleContexts(Constant_expressionContext::class)
+        fun constant_expression(i: Int): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, i)
+
+        fun GTGT(): TerminalNode? = getToken(Tokens.GTGT.id, 0)
+        fun LTLT(): TerminalNode? = getToken(Tokens.LTLT.id, 0)
+        fun GTGTGT(): TerminalNode? = getToken(Tokens.GTGTGT.id, 0)
+        fun LTLTLT(): TerminalNode? = getToken(Tokens.LTLTLT.id, 0)
+        fun attribute_instance(): List<Attribute_instanceContext> = getRuleContexts(Attribute_instanceContext::class)
+        fun attribute_instance(i: Int): Attribute_instanceContext? = getRuleContext(Attribute_instanceContext::class, i)
+
+        constructor(ctx: Constant_expressionContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstExprShift(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstExprShift(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstExprShift(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstExprShift(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstExprShiftContext {
+            return ConstExprShiftContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstExprCompareContext : Constant_expressionContext {
+        fun constant_expression(): List<Constant_expressionContext> = getRuleContexts(Constant_expressionContext::class)
+        fun constant_expression(i: Int): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, i)
+
+        fun LT(): TerminalNode? = getToken(Tokens.LT.id, 0)
+        fun LTEQ(): TerminalNode? = getToken(Tokens.LTEQ.id, 0)
+        fun GT(): TerminalNode? = getToken(Tokens.GT.id, 0)
+        fun GTEQ(): TerminalNode? = getToken(Tokens.GTEQ.id, 0)
+        fun attribute_instance(): List<Attribute_instanceContext> = getRuleContexts(Attribute_instanceContext::class)
+        fun attribute_instance(i: Int): Attribute_instanceContext? = getRuleContext(Attribute_instanceContext::class, i)
+
+        constructor(ctx: Constant_expressionContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstExprCompare(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstExprCompare(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstExprCompare(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstExprCompare(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstExprCompareContext {
+            return ConstExprCompareContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstExprExpoContext : Constant_expressionContext {
+        fun constant_expression(): List<Constant_expressionContext> = getRuleContexts(Constant_expressionContext::class)
+        fun constant_expression(i: Int): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, i)
+
+        fun ASAS(): TerminalNode? = getToken(Tokens.ASAS.id, 0)
+        fun attribute_instance(): List<Attribute_instanceContext> = getRuleContexts(Attribute_instanceContext::class)
+        fun attribute_instance(i: Int): Attribute_instanceContext? = getRuleContext(Attribute_instanceContext::class, i)
+
+        constructor(ctx: Constant_expressionContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstExprExpo(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstExprExpo(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstExprExpo(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstExprExpo(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstExprExpoContext {
+            return ConstExprExpoContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstExprOrContext : Constant_expressionContext {
+        fun constant_expression(): List<Constant_expressionContext> = getRuleContexts(Constant_expressionContext::class)
+        fun constant_expression(i: Int): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, i)
+
+        fun VL(): TerminalNode? = getToken(Tokens.VL.id, 0)
+        fun attribute_instance(): List<Attribute_instanceContext> = getRuleContexts(Attribute_instanceContext::class)
+        fun attribute_instance(i: Int): Attribute_instanceContext? = getRuleContext(Attribute_instanceContext::class, i)
+
+        constructor(ctx: Constant_expressionContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstExprOr(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstExprOr(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstExprOr(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstExprOr(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstExprOrContext {
+            return ConstExprOrContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstExprLogicalOrContext : Constant_expressionContext {
+        fun constant_expression(): List<Constant_expressionContext> = getRuleContexts(Constant_expressionContext::class)
+        fun constant_expression(i: Int): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, i)
+
+        fun VLVL(): TerminalNode? = getToken(Tokens.VLVL.id, 0)
+        fun attribute_instance(): List<Attribute_instanceContext> = getRuleContexts(Attribute_instanceContext::class)
+        fun attribute_instance(i: Int): Attribute_instanceContext? = getRuleContext(Attribute_instanceContext::class, i)
+
+        constructor(ctx: Constant_expressionContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstExprLogicalOr(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstExprLogicalOr(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstExprLogicalOr(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstExprLogicalOr(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstExprLogicalOrContext {
+            return ConstExprLogicalOrContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstExprEqualityContext : Constant_expressionContext {
+        fun constant_expression(): List<Constant_expressionContext> = getRuleContexts(Constant_expressionContext::class)
+        fun constant_expression(i: Int): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, i)
+
+        fun EQEQ(): TerminalNode? = getToken(Tokens.EQEQ.id, 0)
+        fun EMEQ(): TerminalNode? = getToken(Tokens.EMEQ.id, 0)
+        fun EQEQEQ(): TerminalNode? = getToken(Tokens.EQEQEQ.id, 0)
+        fun EMEQEQ(): TerminalNode? = getToken(Tokens.EMEQEQ.id, 0)
+        fun attribute_instance(): List<Attribute_instanceContext> = getRuleContexts(Attribute_instanceContext::class)
+        fun attribute_instance(i: Int): Attribute_instanceContext? = getRuleContext(Attribute_instanceContext::class, i)
+
+        constructor(ctx: Constant_expressionContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstExprEquality(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstExprEquality(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstExprEquality(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstExprEquality(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstExprEqualityContext {
+            return ConstExprEqualityContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstExprTernaryContext : Constant_expressionContext {
+        fun constant_expression(): List<Constant_expressionContext> = getRuleContexts(Constant_expressionContext::class)
+        fun constant_expression(i: Int): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, i)
+
+        fun QM(): TerminalNode? = getToken(Tokens.QM.id, 0)
+        fun CL(): TerminalNode? = getToken(Tokens.CL.id, 0)
+        fun attribute_instance(): List<Attribute_instanceContext> = getRuleContexts(Attribute_instanceContext::class)
+        fun attribute_instance(i: Int): Attribute_instanceContext? = getRuleContext(Attribute_instanceContext::class, i)
+
+        constructor(ctx: Constant_expressionContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstExprTernary(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstExprTernary(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstExprTernary(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstExprTernary(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstExprTernaryContext {
+            return ConstExprTernaryContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstExprPrimaryContext : Constant_expressionContext {
+        fun constant_primary(): Constant_primaryContext? = getRuleContext(Constant_primaryContext::class, 0)
+
+        constructor(ctx: Constant_expressionContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstExprPrimary(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstExprPrimary(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstExprPrimary(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstExprPrimary(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstExprPrimaryContext {
+            return ConstExprPrimaryContext().also {
+                deepCopyInto(it)
+            }
         }
     }
 
@@ -27803,6 +28294,10 @@ class VerilogParser(input: TokenStream) : Parser(input) {
                 when (_input!!.LA(1)) {
                     LC, LP, BINARY_BASE, DECIMAL_BASE, ESCAPED_IDENTIFIER, EXPONENTIAL_NUMBER, FIXED_POINT_NUMBER, HEX_BASE, OCTAL_BASE, SIMPLE_IDENTIFIER, STRING, SYSTEM_TF_IDENTIFIER, UNSIGNED_NUMBER ->  /*LL1AltBlock*/ {
                         scoped {
+                            _localctx = ConstExprPrimaryContext(_localctx)
+                            context = _localctx
+                            _prevctx = _localctx
+
                             this.state = 3865
                             constant_primary()
                         }
@@ -27810,6 +28305,9 @@ class VerilogParser(input: TokenStream) : Parser(input) {
 
                     AM, CA, CATI, EM, MI, PL, TI, TIAM, TICA, TIVL, VL ->  /*LL1AltBlock*/ {
                         scoped {
+                            _localctx = ConstExprUnaryContext(_localctx)
+                            context = _localctx
+                            _prevctx = _localctx
                             this.state = 3866
                             unary_operator()
                             this.state = 3870
@@ -27849,7 +28347,8 @@ class VerilogParser(input: TokenStream) : Parser(input) {
                             when (interpreter!!.adaptivePredict(_input!!, 409, context)) {
                                 1 -> {
                                     scoped {
-                                        _localctx = Constant_expressionContext(_parentctx, _parentState)
+                                        _localctx =
+                                            ConstExprExpoContext(Constant_expressionContext(_parentctx, _parentState))
                                         pushNewRecursionContext(
                                             _localctx,
                                             _startState,
@@ -27885,7 +28384,12 @@ class VerilogParser(input: TokenStream) : Parser(input) {
 
                                 2 -> {
                                     scoped {
-                                        _localctx = Constant_expressionContext(_parentctx, _parentState)
+                                        _localctx = ConstExprMulDivRemContext(
+                                            Constant_expressionContext(
+                                                _parentctx,
+                                                _parentState
+                                            )
+                                        )
                                         pushNewRecursionContext(
                                             _localctx,
                                             _startState,
@@ -27928,7 +28432,8 @@ class VerilogParser(input: TokenStream) : Parser(input) {
 
                                 3 -> {
                                     scoped {
-                                        _localctx = Constant_expressionContext(_parentctx, _parentState)
+                                        _localctx =
+                                            ConstExprAddSubContext(Constant_expressionContext(_parentctx, _parentState))
                                         pushNewRecursionContext(
                                             _localctx,
                                             _startState,
@@ -27971,7 +28476,8 @@ class VerilogParser(input: TokenStream) : Parser(input) {
 
                                 4 -> {
                                     scoped {
-                                        _localctx = Constant_expressionContext(_parentctx, _parentState)
+                                        _localctx =
+                                            ConstExprShiftContext(Constant_expressionContext(_parentctx, _parentState))
                                         pushNewRecursionContext(
                                             _localctx,
                                             _startState,
@@ -28014,7 +28520,12 @@ class VerilogParser(input: TokenStream) : Parser(input) {
 
                                 5 -> {
                                     scoped {
-                                        _localctx = Constant_expressionContext(_parentctx, _parentState)
+                                        _localctx = ConstExprCompareContext(
+                                            Constant_expressionContext(
+                                                _parentctx,
+                                                _parentState
+                                            )
+                                        )
                                         pushNewRecursionContext(
                                             _localctx,
                                             _startState,
@@ -28057,7 +28568,12 @@ class VerilogParser(input: TokenStream) : Parser(input) {
 
                                 6 -> {
                                     scoped {
-                                        _localctx = Constant_expressionContext(_parentctx, _parentState)
+                                        _localctx = ConstExprEqualityContext(
+                                            Constant_expressionContext(
+                                                _parentctx,
+                                                _parentState
+                                            )
+                                        )
                                         pushNewRecursionContext(
                                             _localctx,
                                             _startState,
@@ -28100,7 +28616,8 @@ class VerilogParser(input: TokenStream) : Parser(input) {
 
                                 7 -> {
                                     scoped {
-                                        _localctx = Constant_expressionContext(_parentctx, _parentState)
+                                        _localctx =
+                                            ConstExprAndContext(Constant_expressionContext(_parentctx, _parentState))
                                         pushNewRecursionContext(
                                             _localctx,
                                             _startState,
@@ -28136,7 +28653,8 @@ class VerilogParser(input: TokenStream) : Parser(input) {
 
                                 8 -> {
                                     scoped {
-                                        _localctx = Constant_expressionContext(_parentctx, _parentState)
+                                        _localctx =
+                                            ConstExprXorContext(Constant_expressionContext(_parentctx, _parentState))
                                         pushNewRecursionContext(
                                             _localctx,
                                             _startState,
@@ -28179,7 +28697,8 @@ class VerilogParser(input: TokenStream) : Parser(input) {
 
                                 9 -> {
                                     scoped {
-                                        _localctx = Constant_expressionContext(_parentctx, _parentState)
+                                        _localctx =
+                                            ConstExprOrContext(Constant_expressionContext(_parentctx, _parentState))
                                         pushNewRecursionContext(
                                             _localctx,
                                             _startState,
@@ -28215,7 +28734,12 @@ class VerilogParser(input: TokenStream) : Parser(input) {
 
                                 10 -> {
                                     scoped {
-                                        _localctx = Constant_expressionContext(_parentctx, _parentState)
+                                        _localctx = ConstExprLogicalAndContext(
+                                            Constant_expressionContext(
+                                                _parentctx,
+                                                _parentState
+                                            )
+                                        )
                                         pushNewRecursionContext(
                                             _localctx,
                                             _startState,
@@ -28251,7 +28775,12 @@ class VerilogParser(input: TokenStream) : Parser(input) {
 
                                 11 -> {
                                     scoped {
-                                        _localctx = Constant_expressionContext(_parentctx, _parentState)
+                                        _localctx = ConstExprLogicalOrContext(
+                                            Constant_expressionContext(
+                                                _parentctx,
+                                                _parentState
+                                            )
+                                        )
                                         pushNewRecursionContext(
                                             _localctx,
                                             _startState,
@@ -28287,7 +28816,12 @@ class VerilogParser(input: TokenStream) : Parser(input) {
 
                                 12 -> {
                                     scoped {
-                                        _localctx = Constant_expressionContext(_parentctx, _parentState)
+                                        _localctx = ConstExprTernaryContext(
+                                            Constant_expressionContext(
+                                                _parentctx,
+                                                _parentState
+                                            )
+                                        )
                                         pushNewRecursionContext(
                                             _localctx,
                                             _startState,
@@ -30023,32 +30557,6 @@ class VerilogParser(input: TokenStream) : Parser(input) {
                 throw RuntimeException()
             }
 
-        fun number(): NumberContext? = getRuleContext(NumberContext::class, 0)
-        fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
-        fun LB(): TerminalNode? = getToken(Tokens.LB.id, 0)
-        fun constant_range_expression(): Constant_range_expressionContext? =
-            getRuleContext(Constant_range_expressionContext::class, 0)
-
-        fun RB(): TerminalNode? = getToken(Tokens.RB.id, 0)
-        fun constant_concatenation(): Constant_concatenationContext? =
-            getRuleContext(Constant_concatenationContext::class, 0)
-
-        fun constant_multiple_concatenation(): Constant_multiple_concatenationContext? =
-            getRuleContext(Constant_multiple_concatenationContext::class, 0)
-
-        fun constant_function_call(): Constant_function_callContext? =
-            getRuleContext(Constant_function_callContext::class, 0)
-
-        fun constant_system_function_call(): Constant_system_function_callContext? =
-            getRuleContext(Constant_system_function_callContext::class, 0)
-
-        fun LP(): TerminalNode? = getToken(Tokens.LP.id, 0)
-        fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext? =
-            getRuleContext(Constant_mintypmax_expressionContext::class, 0)
-
-        fun RP(): TerminalNode? = getToken(Tokens.RP.id, 0)
-        fun string_(): String_Context? = getRuleContext(String_Context::class, 0)
-
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
@@ -30060,20 +30568,278 @@ class VerilogParser(input: TokenStream) : Parser(input) {
             }
         }
 
+
+        fun copyFrom(ctx: Constant_primaryContext) {
+            super.copyFrom(ctx)
+        }
+    }
+
+    open class ConstPrimaryConcatenationContext : Constant_primaryContext {
+        fun constant_concatenation(): Constant_concatenationContext? =
+            getRuleContext(Constant_concatenationContext::class, 0)
+
+        constructor(ctx: Constant_primaryContext) {
+            copyFrom(ctx)
+        }
+
         override fun enterRule(listener: ParseTreeListener) {
-            if (listener is VerilogParserListener) listener.enterConstant_primary(this)
+            if (listener is VerilogParserListener) listener.enterConstPrimaryConcatenation(this)
         }
 
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
-            if (listener is SuspendVerilogParserListener) listener.enterConstant_primary(this)
+            if (listener is SuspendVerilogParserListener) listener.enterConstPrimaryConcatenation(this)
         }
 
         override fun exitRule(listener: ParseTreeListener) {
-            if (listener is VerilogParserListener) listener.exitConstant_primary(this)
+            if (listener is VerilogParserListener) listener.exitConstPrimaryConcatenation(this)
         }
 
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
-            if (listener is SuspendVerilogParserListener) listener.exitConstant_primary(this)
+            if (listener is SuspendVerilogParserListener) listener.exitConstPrimaryConcatenation(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstPrimaryConcatenationContext {
+            return ConstPrimaryConcatenationContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstPrimaryStringContext : Constant_primaryContext {
+        fun string_(): String_Context? = getRuleContext(String_Context::class, 0)
+
+        constructor(ctx: Constant_primaryContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstPrimaryString(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstPrimaryString(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstPrimaryString(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstPrimaryString(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstPrimaryStringContext {
+            return ConstPrimaryStringContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstPrimaryIdentifierContext : Constant_primaryContext {
+        fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
+        fun LB(): TerminalNode? = getToken(Tokens.LB.id, 0)
+        fun constant_range_expression(): Constant_range_expressionContext? =
+            getRuleContext(Constant_range_expressionContext::class, 0)
+
+        fun RB(): TerminalNode? = getToken(Tokens.RB.id, 0)
+
+        constructor(ctx: Constant_primaryContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstPrimaryIdentifier(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstPrimaryIdentifier(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstPrimaryIdentifier(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstPrimaryIdentifier(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstPrimaryIdentifierContext {
+            return ConstPrimaryIdentifierContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstPrimaryMultipleConcatenationContext : Constant_primaryContext {
+        fun constant_multiple_concatenation(): Constant_multiple_concatenationContext? =
+            getRuleContext(Constant_multiple_concatenationContext::class, 0)
+
+        constructor(ctx: Constant_primaryContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstPrimaryMultipleConcatenation(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstPrimaryMultipleConcatenation(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstPrimaryMultipleConcatenation(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstPrimaryMultipleConcatenation(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstPrimaryMultipleConcatenationContext {
+            return ConstPrimaryMultipleConcatenationContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstPrimaryGroupContext : Constant_primaryContext {
+        fun LP(): TerminalNode? = getToken(Tokens.LP.id, 0)
+        fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext? =
+            getRuleContext(Constant_mintypmax_expressionContext::class, 0)
+
+        fun RP(): TerminalNode? = getToken(Tokens.RP.id, 0)
+
+        constructor(ctx: Constant_primaryContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstPrimaryGroup(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstPrimaryGroup(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstPrimaryGroup(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstPrimaryGroup(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstPrimaryGroupContext {
+            return ConstPrimaryGroupContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstPrimaryNumberContext : Constant_primaryContext {
+        fun number(): NumberContext? = getRuleContext(NumberContext::class, 0)
+
+        constructor(ctx: Constant_primaryContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstPrimaryNumber(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstPrimaryNumber(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstPrimaryNumber(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstPrimaryNumber(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstPrimaryNumberContext {
+            return ConstPrimaryNumberContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstPrimaryFunctionCallContext : Constant_primaryContext {
+        fun constant_function_call(): Constant_function_callContext? =
+            getRuleContext(Constant_function_callContext::class, 0)
+
+        constructor(ctx: Constant_primaryContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstPrimaryFunctionCall(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstPrimaryFunctionCall(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstPrimaryFunctionCall(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstPrimaryFunctionCall(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstPrimaryFunctionCallContext {
+            return ConstPrimaryFunctionCallContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ConstPrimarySystemFunctionCallContext : Constant_primaryContext {
+        fun constant_system_function_call(): Constant_system_function_callContext? =
+            getRuleContext(Constant_system_function_callContext::class, 0)
+
+        constructor(ctx: Constant_primaryContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterConstPrimarySystemFunctionCall(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterConstPrimarySystemFunctionCall(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitConstPrimarySystemFunctionCall(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitConstPrimarySystemFunctionCall(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ConstPrimarySystemFunctionCallContext {
+            return ConstPrimarySystemFunctionCallContext().also {
+                deepCopyInto(it)
+            }
         }
     }
 
@@ -30085,6 +30851,7 @@ class VerilogParser(input: TokenStream) : Parser(input) {
             errorHandler.sync(this)
             when (interpreter!!.adaptivePredict(_input!!, 444, context)) {
                 1 -> {
+                    _localctx = ConstPrimaryNumberContext(_localctx)
                     enterOuterAlt(_localctx, 1)
                     scoped {
                         this.state = 4268
@@ -30093,6 +30860,7 @@ class VerilogParser(input: TokenStream) : Parser(input) {
                 }
 
                 2 -> {
+                    _localctx = ConstPrimaryIdentifierContext(_localctx)
                     enterOuterAlt(_localctx, 2)
                     scoped {
                         this.state = 4269
@@ -30113,6 +30881,7 @@ class VerilogParser(input: TokenStream) : Parser(input) {
                 }
 
                 3 -> {
+                    _localctx = ConstPrimaryConcatenationContext(_localctx)
                     enterOuterAlt(_localctx, 3)
                     scoped {
                         this.state = 4276
@@ -30121,6 +30890,7 @@ class VerilogParser(input: TokenStream) : Parser(input) {
                 }
 
                 4 -> {
+                    _localctx = ConstPrimaryMultipleConcatenationContext(_localctx)
                     enterOuterAlt(_localctx, 4)
                     scoped {
                         this.state = 4277
@@ -30129,6 +30899,7 @@ class VerilogParser(input: TokenStream) : Parser(input) {
                 }
 
                 5 -> {
+                    _localctx = ConstPrimaryFunctionCallContext(_localctx)
                     enterOuterAlt(_localctx, 5)
                     scoped {
                         this.state = 4278
@@ -30137,6 +30908,7 @@ class VerilogParser(input: TokenStream) : Parser(input) {
                 }
 
                 6 -> {
+                    _localctx = ConstPrimarySystemFunctionCallContext(_localctx)
                     enterOuterAlt(_localctx, 6)
                     scoped {
                         this.state = 4279
@@ -30145,6 +30917,7 @@ class VerilogParser(input: TokenStream) : Parser(input) {
                 }
 
                 7 -> {
+                    _localctx = ConstPrimaryGroupContext(_localctx)
                     enterOuterAlt(_localctx, 7)
                     scoped {
                         this.state = 4280
@@ -30157,6 +30930,7 @@ class VerilogParser(input: TokenStream) : Parser(input) {
                 }
 
                 8 -> {
+                    _localctx = ConstPrimaryStringContext(_localctx)
                     enterOuterAlt(_localctx, 8)
                     scoped {
                         this.state = 4284

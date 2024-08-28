@@ -115,6 +115,9 @@ fun LabsToolbar() {
         var showACFFileDialog by remember { mutableStateOf(false) }
         AcfFileDialog(showACFFileDialog) { showACFFileDialog = false }
 
+        var showVerilogFileDialog by remember { mutableStateOf(false) }
+        VerilogFileDialog(showVerilogFileDialog) { showVerilogFileDialog = false }
+
         IconMenu(painterResource("icons/open.svg"), "New File", enabled = project != null) {
             MenuItem({ Text("New Lucid Module") }) {
                 showLucidFileDialog = true
@@ -124,6 +127,9 @@ fun LabsToolbar() {
             }
             MenuItem({ Text("New Alchitry Constraints") }) {
                 showACFFileDialog = true
+            }
+            MenuItem({ Text("New Verilog Module") }) {
+                showVerilogFileDialog = true
             }
         }
 

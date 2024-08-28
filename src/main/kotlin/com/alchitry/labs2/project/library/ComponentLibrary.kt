@@ -2,9 +2,10 @@ package com.alchitry.labs2.project.library
 
 import com.alchitry.labs2.JarUtils
 import com.alchitry.labs2.parsers.ProjectContext
-import com.alchitry.labs2.parsers.lucidv2.context.LucidGlobalContext
-import com.alchitry.labs2.parsers.lucidv2.context.LucidModuleTypeContext
-import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstance
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidGlobalContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidModuleTypeContext
+import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
 import com.alchitry.labs2.parsers.notations.NotationManager
 import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.Locations
@@ -51,11 +52,8 @@ object ComponentLibrary {
 
             notationManager.assertNoErrors()
 
-            val modules = trees.mapNotNull {
-                val moduleTypeContext = LucidModuleTypeContext(projectContext, it.first)
-                val module = moduleTypeContext.extract(it.second)
-
-                module ?: return@mapNotNull null
+            val modules = trees.flatMap {
+                LucidModuleTypeContext(projectContext, it.first).extract(it.second)
             }
 
             notationManager.assertNoErrors()
@@ -68,7 +66,8 @@ object ComponentLibrary {
                     module,
                     mapOf(),
                     mapOf(),
-                    testing = true
+                    mapOf(),
+                    ExprEvalMode.Testing
                 ).apply {
                     initialWalk()
                     notationManager.assertNoErrors()

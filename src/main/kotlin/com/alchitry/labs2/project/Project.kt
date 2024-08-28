@@ -7,13 +7,17 @@ import com.alchitry.labs2.parsers.acf.AcfExtractor
 import com.alchitry.labs2.parsers.acf.NativeConstraint
 import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.LucidParser
-import com.alchitry.labs2.parsers.lucidv2.context.LucidGlobalContext
-import com.alchitry.labs2.parsers.lucidv2.context.LucidModuleTypeContext
-import com.alchitry.labs2.parsers.lucidv2.context.LucidTestBenchContext
-import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
-import com.alchitry.labs2.parsers.lucidv2.types.*
-import com.alchitry.labs2.parsers.lucidv2.values.Bit
-import com.alchitry.labs2.parsers.lucidv2.values.ValueFormat
+import com.alchitry.labs2.parsers.grammar.VerilogLexer
+import com.alchitry.labs2.parsers.grammar.VerilogParser
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
+import com.alchitry.labs2.parsers.hdl.ExprType
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidGlobalContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidModuleTypeContext
+import com.alchitry.labs2.parsers.hdl.lucid.context.LucidTestBenchContext
+import com.alchitry.labs2.parsers.hdl.types.*
+import com.alchitry.labs2.parsers.hdl.values.Bit
+import com.alchitry.labs2.parsers.hdl.values.ValueFormat
+import com.alchitry.labs2.parsers.hdl.verilog.context.VerilogModuleTypeContext
 import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.parsers.notations.NotationManager
@@ -35,6 +39,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -64,7 +69,7 @@ data class Project(
     private val mutableGlobalMapFlow = MutableStateFlow<Map<String, GlobalNamespace>>(emptyMap())
     val globalMapFlow = mutableGlobalMapFlow.asStateFlow()
 
-    private val mutableModuleMapFlow = MutableStateFlow<Map<SourceFile, Module>>(emptyMap())
+    private val mutableModuleMapFlow = MutableStateFlow<Map<SourceFile, List<Module>>>(emptyMap())
     val moduleMapFlow = mutableModuleMapFlow.asStateFlow()
 
     fun binFileIsUpToDate(): Boolean = binFile.lastModified() >= lastModified() && binFile.lastModified() > 0L
@@ -159,16 +164,40 @@ data class Project(
             }.source()
         }
 
+        suspend fun parseVerilogFile(
+            file: SourceFile,
+            notationCollector: NotationCollector
+        ): VerilogParser.Source_textContext {
+            return VerilogParser(
+                CommonTokenStream(
+                    VerilogLexer(
+                        CharStreams.fromString(
+                            file.readText(),
+                            file.name
+                        )
+                    ).apply {
+                        removeErrorListeners()
+                        addErrorListener(notationCollector)
+                    })
+            ).apply {
+                removeErrorListeners()
+                addErrorListener(notationCollector)
+            }.source_text()
+        }
+
         suspend fun parseAll(
             sourceFiles: Collection<SourceFile>,
             notationManager: NotationManager
-        ): List<Pair<SourceFile, LucidParser.SourceContext>>? {
+        ): List<Pair<SourceFile, ParserRuleContext>>? {
             val trees = coroutineScope {
                 sourceFiles
                     .map { file ->
                         val collector = notationManager.getCollector(file)
                         async {
-                            file to parseLucidFile(file, collector)
+                            file to when (file.language) {
+                                Languages.Lucid -> parseLucidFile(file, collector)
+                                Languages.Verilog -> parseVerilogFile(file, collector)
+                            }
                         }
                     }.awaitAll()
             }
@@ -254,6 +283,7 @@ data class Project(
             context.convertToVerilog()
         } catch (e: Exception) {
             Log.printlnError("Failed to convert source files to Verilog. This should be considered a bug!", e)
+            Log.print(context.notationManager.getReport())
             return@withContext false
         }
 
@@ -363,7 +393,7 @@ data class Project(
 
         data.board.projectBuilder.buildProject(
             this@Project,
-            topModule.parameterizedModuleName,
+            topModule.module.name,
             vSourceFiles,
             constraintFiles
         )
@@ -372,18 +402,18 @@ data class Project(
     }
 
     suspend fun getTypesForLucidFile(file: SourceFile): ProjectContext {
-        val modules = moduleMapFlow.value
+        val modulesMap = moduleMapFlow.value
         val globals = globalMapFlow.value
         val notationManager = NotationManager()
         ProjectContext(notationManager).use { projectContext ->
             globals.forEach { (_, global) -> projectContext.addGlobal(global) }
-            modules.forEach { (_, module) -> projectContext.addModule(module) }
+            modulesMap.forEach { (_, modules) -> modules.forEach { module -> projectContext.addModule(module) } }
 
             val tree = parseLucidFile(file, notationManager.getCollector(file))
             LucidTestBenchContext(projectContext, file).walk(tree)
 
-            (modules[file]
-                ?: LucidModuleTypeContext(projectContext, file).extract(tree))?.let { module ->
+            (modulesMap[file]
+                ?: LucidModuleTypeContext(projectContext, file).extract(tree)).firstOrNull()?.let { module ->
                 projectContext.top = ModuleInstance(
                     "testingTop",
                     projectContext,
@@ -391,7 +421,8 @@ data class Project(
                     module,
                     mapOf(),
                     mapOf(),
-                    testing = true
+                    mapOf(),
+                    ExprEvalMode.Testing
                 ).apply { initialWalk() }
             }
 
@@ -413,7 +444,10 @@ data class Project(
                 return null
 
             trees.forEach {
-                LucidGlobalContext(projectContext, it.first).walk(it.second)
+                when (it.first.language) {
+                    Languages.Lucid -> LucidGlobalContext(projectContext, it.first).walk(it.second)
+                    Languages.Verilog -> {} // No globals in Verilog
+                }
             }
 
             mutableGlobalMapFlow.tryEmit(projectContext.getGlobals())
@@ -421,20 +455,29 @@ data class Project(
             if (notationManager.hasErrors)
                 return null
 
-            val modules = trees.mapNotNull {
-                val moduleTypeContext = LucidModuleTypeContext(projectContext, it.first)
-                val module = moduleTypeContext.extract(it.second)
-
-                it.first to (module ?: return@mapNotNull null)
+            val modulesMap = trees.associate {
+                it.first to when (it.first.language) {
+                    Languages.Lucid -> LucidModuleTypeContext(projectContext, it.first).extract(it.second)
+                    Languages.Verilog -> VerilogModuleTypeContext(projectContext, it.first).extract(it.second)
+                }
             }
 
-            mutableModuleMapFlow.tryEmit(modules.toMap())
+            mutableModuleMapFlow.tryEmit(modulesMap)
+
+            val modules = modulesMap.flatMap { (file, list) ->
+                list.map { module ->
+                    file to module
+                }
+            }
 
             if (notationManager.hasErrors)
                 return null
 
             trees.forEach {
-                LucidTestBenchContext(projectContext, it.first).walk(it.second)
+                when (it.first.language) {
+                    Languages.Lucid -> LucidTestBenchContext(projectContext, it.first).walk(it.second)
+                    Languages.Verilog -> {} // No test benches for Verilog
+                }
             }
 
             if (notationManager.hasErrors)
@@ -456,15 +499,25 @@ data class Project(
             }
 
             val topModuleInstance =
-                ModuleInstance(
-                    "alchitryTop",
-                    projectContext,
-                    null,
-                    topModule,
-                    mapOf(),
-                    mapOf(),
-                    //notationManager.getCollector(top)
-                )
+                try {
+                    ModuleInstance(
+                        "alchitryTop",
+                        projectContext,
+                        null,
+                        topModule,
+                        mapOf(),
+                        mapOf(),
+                        mapOf(),
+                        //notationManager.getCollector(top)
+                    )
+                } catch (e: Exception) {
+                    notationManager.getCollector(top)
+                        .reportError(
+                            trees.first { it.first == top }.second,
+                            "Failed to instantiate top module: ${e.message}"
+                        )
+                    return null
+                }
 
             topModuleInstance.initialWalk()
 
@@ -480,7 +533,9 @@ data class Project(
             uncheckedModules.forEach { module ->
                 projectContext.notationManager.getCollector(module.sourceFile)
                     .reportWarning(
-                        module.context.name() ?: module.context,
+                        (module.context as? LucidParser.ModuleContext)?.name()
+                            ?: (module.context as? VerilogParser.Module_declarationContext)?.module_identifier()
+                            ?: module.context,
                         "The module \"${module.name}\" is not used."
                     )
             }
@@ -494,7 +549,8 @@ data class Project(
                     mod,
                     mapOf(),
                     mapOf(),
-                    testing = true
+                    mapOf(),
+                    ExprEvalMode.Testing
                     // notationManager.getCollector(mod.sourceFile)
                 ).apply {
                     initialWalk()

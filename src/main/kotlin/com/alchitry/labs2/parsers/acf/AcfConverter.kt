@@ -2,10 +2,10 @@ package com.alchitry.labs2.parsers.acf
 
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.acf.types.Constraint
-import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstance
-import com.alchitry.labs2.parsers.lucidv2.types.Signal
-import com.alchitry.labs2.parsers.lucidv2.types.SignalOrSubSignal
-import com.alchitry.labs2.parsers.lucidv2.types.SubSignal
+import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
+import com.alchitry.labs2.parsers.hdl.types.Signal
+import com.alchitry.labs2.parsers.hdl.types.SignalOrSubSignal
+import com.alchitry.labs2.parsers.hdl.types.SubSignal
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.ConstraintLang
@@ -20,8 +20,8 @@ data class NativeConstraint(
 sealed interface AcfConverter {
     val SignalOrSubSignal.fullPortName: String
         get() = when (this) {
-            is Signal -> "P_${name}"
-            is SubSignal -> "P_${parent.name}[${flatSelectionData.offset}]"
+            is Signal -> name
+            is SubSignal -> "${parent.name}[${flatSelectionData.offset}]"
         }
 
     suspend fun convert(

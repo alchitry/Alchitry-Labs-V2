@@ -1,12 +1,12 @@
 import com.alchitry.labs2.parsers.Evaluable
-import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
-import com.alchitry.labs2.parsers.lucidv2.types.Dff
-import com.alchitry.labs2.parsers.lucidv2.types.DynamicExpr
-import com.alchitry.labs2.parsers.lucidv2.types.Signal
-import com.alchitry.labs2.parsers.lucidv2.types.SignalDirection
-import com.alchitry.labs2.parsers.lucidv2.values.Bit
-import com.alchitry.labs2.parsers.lucidv2.values.BitListValue
-import com.alchitry.labs2.parsers.lucidv2.values.BitValue
+import com.alchitry.labs2.parsers.hdl.ExprType
+import com.alchitry.labs2.parsers.hdl.types.Dff
+import com.alchitry.labs2.parsers.hdl.types.DynamicExpr
+import com.alchitry.labs2.parsers.hdl.types.Signal
+import com.alchitry.labs2.parsers.hdl.types.SignalDirection
+import com.alchitry.labs2.parsers.hdl.values.Bit
+import com.alchitry.labs2.parsers.hdl.values.BitListValue
+import com.alchitry.labs2.parsers.hdl.values.BitValue
 import helpers.SimpleLucidTester
 import helpers.TestSignalResolver
 import kotlinx.coroutines.runBlocking
@@ -62,7 +62,7 @@ class DynamicEvalTests {
         test.context.walk(exprCtx)
         val clkExpr = DynamicExpr(exprCtx, test.context)
 
-        val dff = Dff(test.project, "myDff", b0, clkExpr, null, false)
+        val dff = Dff(test.project, "myDff", b0, clkExpr, null, false, null)
 
 
         clk.write(b0)

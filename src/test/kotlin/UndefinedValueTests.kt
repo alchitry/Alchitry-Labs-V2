@@ -1,8 +1,9 @@
-import com.alchitry.labs2.parsers.lucidv2.context.SignalResolver
-import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
-import com.alchitry.labs2.parsers.lucidv2.parsers.toSourceFile
-import com.alchitry.labs2.parsers.lucidv2.types.*
-import com.alchitry.labs2.parsers.lucidv2.values.*
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
+import com.alchitry.labs2.parsers.hdl.ExprType
+import com.alchitry.labs2.parsers.hdl.lucid.context.SignalResolver
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
+import com.alchitry.labs2.parsers.hdl.types.*
+import com.alchitry.labs2.parsers.hdl.values.*
 import helpers.LucidTester
 import helpers.SimpleLucidTester
 import kotlinx.coroutines.runBlocking
@@ -56,7 +57,7 @@ class UndefinedValueTests {
             }
         """.trimIndent().toSourceFile("counter.luc")
         )
-        val context = tester.fullParse(testing = true).context
+        val context = tester.fullParse(ExprEvalMode.Testing).context
         context.notationCollector.assertNoErrors()
         assertEquals(1, context.notationCollector.getAllWarnings().size)
     }

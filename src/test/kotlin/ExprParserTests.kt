@@ -1,10 +1,10 @@
 import com.alchitry.labs2.parsers.BitUtil
-import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
-import com.alchitry.labs2.parsers.lucidv2.parsers.asConstExpr
-import com.alchitry.labs2.parsers.lucidv2.parsers.asDynamicExpr
-import com.alchitry.labs2.parsers.lucidv2.types.Signal
-import com.alchitry.labs2.parsers.lucidv2.types.SignalDirection
-import com.alchitry.labs2.parsers.lucidv2.values.*
+import com.alchitry.labs2.parsers.hdl.ExprType
+import com.alchitry.labs2.parsers.hdl.asConstExpr
+import com.alchitry.labs2.parsers.hdl.asDynamicExpr
+import com.alchitry.labs2.parsers.hdl.types.Signal
+import com.alchitry.labs2.parsers.hdl.types.SignalDirection
+import com.alchitry.labs2.parsers.hdl.values.*
 import helpers.SimpleLucidTester
 import helpers.TestSignalResolver
 import kotlinx.coroutines.runBlocking
@@ -83,7 +83,7 @@ internal class ExprParserTests {
         val test = SimpleLucidTester("\"Hi\"")
         val tree = test.parser.expr().also { test.context.walk(it) }
 
-        val test2 = SimpleLucidTester("{8h69, 8h48}")
+        val test2 = SimpleLucidTester("{8h48, 8h69}") // H = 8h48, i = 8h69
         val tree2 = test2.parser.expr().also { test2.context.walk(it) }
 
         val expected = test2.context.expr.resolve(tree2)

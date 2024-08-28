@@ -1,12 +1,12 @@
 package benchmarks
 
-import com.alchitry.labs2.parsers.lucidv2.parsers.ExprType
-import com.alchitry.labs2.parsers.lucidv2.parsers.toSourceFile
-import com.alchitry.labs2.parsers.lucidv2.types.ModuleInstance
-import com.alchitry.labs2.parsers.lucidv2.types.Signal
-import com.alchitry.labs2.parsers.lucidv2.types.SignalDirection
-import com.alchitry.labs2.parsers.lucidv2.values.Bit
-import com.alchitry.labs2.parsers.lucidv2.values.BitListValue
+import com.alchitry.labs2.parsers.hdl.ExprType
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
+import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
+import com.alchitry.labs2.parsers.hdl.types.Signal
+import com.alchitry.labs2.parsers.hdl.types.SignalDirection
+import com.alchitry.labs2.parsers.hdl.values.Bit
+import com.alchitry.labs2.parsers.hdl.values.BitListValue
 import helpers.LucidTester
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
@@ -91,6 +91,7 @@ class EvaluationBenchmarks {
             tester.project,
             null,
             modules.first(),
+            mapOf(),
             mapOf(),
             mapOf(
                 "out" to leds,

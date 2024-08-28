@@ -24,7 +24,7 @@ fun Project.addLucidModule(moduleName: String) = addSourceFile(
             output out
         ) {
             always {
-                out = 0;
+                out = 0
             }
         }
     """.trimIndent()
@@ -50,6 +50,21 @@ fun Project.addLucidTestBench(name: String) = addSourceFile(
                 // test goes here
             }
         }
+    """.trimIndent()
+)
+
+fun Project.addVerilogModule(moduleName: String) = addSourceFile(
+    name = "$moduleName.${Languages.Verilog.extension}",
+    contents = """
+        module $moduleName (
+            input clk,  // clock
+            input rst,  // reset
+            output reg out
+        );
+            always @* begin
+                out = 0;
+            end
+        endmodule
     """.trimIndent()
 )
 

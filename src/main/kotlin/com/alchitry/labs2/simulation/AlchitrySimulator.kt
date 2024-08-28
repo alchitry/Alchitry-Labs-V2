@@ -4,9 +4,9 @@ import androidx.compose.runtime.*
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.hardware.pinout.AuPin
 import com.alchitry.labs2.parsers.ProjectContext
-import com.alchitry.labs2.parsers.lucidv2.types.SignalOrSubSignal
-import com.alchitry.labs2.parsers.lucidv2.values.Bit
-import com.alchitry.labs2.parsers.lucidv2.values.BitValue
+import com.alchitry.labs2.parsers.hdl.types.SignalOrSubSignal
+import com.alchitry.labs2.parsers.hdl.values.Bit
+import com.alchitry.labs2.parsers.hdl.values.BitValue
 import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.ui.simulation.AlchitryBoard
 import kotlinx.coroutines.delay

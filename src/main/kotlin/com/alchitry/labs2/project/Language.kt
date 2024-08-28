@@ -4,6 +4,7 @@ import com.alchitry.labs2.allSealedObjects
 import com.alchitry.labs2.ui.code_editor.styles.EditorTokenizer
 import com.alchitry.labs2.ui.code_editor.styles.acf.AcfTokenizer
 import com.alchitry.labs2.ui.code_editor.styles.lucid.LucidTokenizer
+import com.alchitry.labs2.ui.code_editor.styles.verilog.VerilogTokenizer
 
 sealed class Language {
     abstract val name: String
@@ -34,40 +35,39 @@ sealed class ConstraintLang : Language() {
 }
 
 object Languages {
-    object Verilog : HDL() {
+    data object Verilog : HDL() {
         override val name: String = "verilog"
         override val extension: String = "v"
-        override val tokenizer: EditorTokenizer
-            get() = TODO("Not yet implemented")
+        override val tokenizer = VerilogTokenizer
     }
 
-    object Lucid : HDL() {
+    data object Lucid : HDL() {
         override val name: String = "lucid"
         override val extension: String = "luc"
         override val tokenizer = LucidTokenizer
     }
 
-    object ACF : ConstraintLang() {
+    data object ACF : ConstraintLang() {
         override val name: String = "acf"
         override val extension: String = "acf"
         override val tokenizer = AcfTokenizer
     }
 
-    object XDC : ConstraintLang() {
+    data object XDC : ConstraintLang() {
         override val name: String = "xdc"
         override val extension: String = "xdc"
         override val tokenizer: EditorTokenizer
             get() = TODO("Not yet implemented")
     }
 
-    object SDC : ConstraintLang() {
+    data object SDC : ConstraintLang() {
         override val name: String = "sdc"
         override val extension: String = "sdc"
         override val tokenizer: EditorTokenizer
             get() = TODO("Not yet implemented")
     }
 
-    object PCF : ConstraintLang() {
+    data object PCF : ConstraintLang() {
         override val name: String = "pcf"
         override val extension: String = "pcf"
         override val tokenizer: EditorTokenizer

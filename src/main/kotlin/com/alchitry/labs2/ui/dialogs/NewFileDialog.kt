@@ -84,6 +84,27 @@ fun AcfFileDialog(visible: Boolean, onClose: () -> Unit) {
 }
 
 @Composable
+fun VerilogFileDialog(visible: Boolean, onClose: () -> Unit) {
+    val project by Project.currentFlow.collectAsState()
+    NewFileDialog(
+        visible,
+        onClose,
+        "New Verilog Module",
+        "Module Name",
+        {
+            it.matches(Regex("[a-z][a-zA-Z0-9_]*")) &&
+                    !Lucid.RESERVED_WORDS.contains(it) &&
+                    project?.data?.sourceFiles?.none { f -> f.name == "$it.${Languages.Verilog.extension}" } == true
+        },
+        { name ->
+            project?.addVerilogModule(name)?.also {
+                Workspace.openFile(it)
+            }
+        }
+    )
+}
+
+@Composable
 private fun NewFileDialog(
     visible: Boolean,
     onClose: () -> Unit,

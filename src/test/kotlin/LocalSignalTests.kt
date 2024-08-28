@@ -108,8 +108,6 @@ class LocalSignalTests {
                         testModule.value = 1234
                         controlModule.value = 1234
                         ${"$"}silentTick()
-                        ${"$"}print(testModule.digits)
-                        ${"$"}print(controlModule.digits)
                         ${"$"}assert(testModule.digits == controlModule.digits)
                     }
                 }

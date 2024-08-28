@@ -1,8 +1,8 @@
 import com.alchitry.labs2.parsers.ProjectContext
-import com.alchitry.labs2.parsers.lucidv2.types.ports.Inout
-import com.alchitry.labs2.parsers.lucidv2.values.Bit
-import com.alchitry.labs2.parsers.lucidv2.values.BitListValue
-import com.alchitry.labs2.parsers.lucidv2.values.BitListWidth
+import com.alchitry.labs2.parsers.hdl.types.ports.Inout
+import com.alchitry.labs2.parsers.hdl.values.Bit
+import com.alchitry.labs2.parsers.hdl.values.BitListValue
+import com.alchitry.labs2.parsers.hdl.values.BitListWidth
 import com.alchitry.labs2.parsers.notations.NotationManager
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test

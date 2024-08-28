@@ -1,8 +1,7 @@
 package com.alchitry.labs2.simulation
 
 import com.alchitry.labs2.parsers.ProjectContext
-import com.alchitry.labs2.parsers.lucidv2.types.Module
-import com.alchitry.labs2.parsers.lucidv2.types.Signal
+import com.alchitry.labs2.parsers.hdl.types.Signal
 
 interface SimulatorInitializer {
     /**

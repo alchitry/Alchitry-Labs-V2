@@ -2,7 +2,7 @@ package com.alchitry.labs2.parsers.acf.types
 
 import com.alchitry.labs2.hardware.pinout.Pin
 import com.alchitry.labs2.parsers.grammar.AcfParser
-import com.alchitry.labs2.parsers.lucidv2.types.SignalOrSubSignal
+import com.alchitry.labs2.parsers.hdl.types.SignalOrSubSignal
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 sealed interface Constraint {

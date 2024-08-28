@@ -3673,16 +3673,200 @@ interface VerilogParserListener : ParseTreeListener {
     fun exitConstant_base_expression(ctx: VerilogParser.Constant_base_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_expression}.
+     * Enter a parse tree produced by the {@code ConstExprUnary}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
      * @param ctx the parse tree
      */
-    fun enterConstant_expression(ctx: VerilogParser.Constant_expressionContext)
+    fun enterConstExprUnary(ctx: VerilogParser.ConstExprUnaryContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_expression}.
+     * Exit a parse tree produced by the {@code ConstExprUnary}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
      * @param ctx the parse tree
      */
-    fun exitConstant_expression(ctx: VerilogParser.Constant_expressionContext)
+    fun exitConstExprUnary(ctx: VerilogParser.ConstExprUnaryContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprAddSub}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun enterConstExprAddSub(ctx: VerilogParser.ConstExprAddSubContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprAddSub}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun exitConstExprAddSub(ctx: VerilogParser.ConstExprAddSubContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprLogicalAnd}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun enterConstExprLogicalAnd(ctx: VerilogParser.ConstExprLogicalAndContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprLogicalAnd}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun exitConstExprLogicalAnd(ctx: VerilogParser.ConstExprLogicalAndContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprMulDivRem}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun enterConstExprMulDivRem(ctx: VerilogParser.ConstExprMulDivRemContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprMulDivRem}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun exitConstExprMulDivRem(ctx: VerilogParser.ConstExprMulDivRemContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprXor}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun enterConstExprXor(ctx: VerilogParser.ConstExprXorContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprXor}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun exitConstExprXor(ctx: VerilogParser.ConstExprXorContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprAnd}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun enterConstExprAnd(ctx: VerilogParser.ConstExprAndContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprAnd}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun exitConstExprAnd(ctx: VerilogParser.ConstExprAndContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprShift}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun enterConstExprShift(ctx: VerilogParser.ConstExprShiftContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprShift}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun exitConstExprShift(ctx: VerilogParser.ConstExprShiftContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprCompare}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun enterConstExprCompare(ctx: VerilogParser.ConstExprCompareContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprCompare}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun exitConstExprCompare(ctx: VerilogParser.ConstExprCompareContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprExpo}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun enterConstExprExpo(ctx: VerilogParser.ConstExprExpoContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprExpo}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun exitConstExprExpo(ctx: VerilogParser.ConstExprExpoContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprOr}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun enterConstExprOr(ctx: VerilogParser.ConstExprOrContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprOr}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun exitConstExprOr(ctx: VerilogParser.ConstExprOrContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprLogicalOr}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun enterConstExprLogicalOr(ctx: VerilogParser.ConstExprLogicalOrContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprLogicalOr}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun exitConstExprLogicalOr(ctx: VerilogParser.ConstExprLogicalOrContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprEquality}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun enterConstExprEquality(ctx: VerilogParser.ConstExprEqualityContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprEquality}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun exitConstExprEquality(ctx: VerilogParser.ConstExprEqualityContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprTernary}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun enterConstExprTernary(ctx: VerilogParser.ConstExprTernaryContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprTernary}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun exitConstExprTernary(ctx: VerilogParser.ConstExprTernaryContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprPrimary}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun enterConstExprPrimary(ctx: VerilogParser.ConstExprPrimaryContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprPrimary}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    fun exitConstExprPrimary(ctx: VerilogParser.ConstExprPrimaryContext)
 
     /**
      * Enter a parse tree produced by {@link VerilogParser#constant_mintypmax_expression}.
@@ -3817,16 +4001,116 @@ interface VerilogParserListener : ParseTreeListener {
     fun exitWidth_constant_expression(ctx: VerilogParser.Width_constant_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_primary}.
+     * Enter a parse tree produced by the {@code ConstPrimaryNumber}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
      * @param ctx the parse tree
      */
-    fun enterConstant_primary(ctx: VerilogParser.Constant_primaryContext)
+    fun enterConstPrimaryNumber(ctx: VerilogParser.ConstPrimaryNumberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_primary}.
+     * Exit a parse tree produced by the {@code ConstPrimaryNumber}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
      * @param ctx the parse tree
      */
-    fun exitConstant_primary(ctx: VerilogParser.Constant_primaryContext)
+    fun exitConstPrimaryNumber(ctx: VerilogParser.ConstPrimaryNumberContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstPrimaryIdentifier}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    fun enterConstPrimaryIdentifier(ctx: VerilogParser.ConstPrimaryIdentifierContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstPrimaryIdentifier}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    fun exitConstPrimaryIdentifier(ctx: VerilogParser.ConstPrimaryIdentifierContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstPrimaryConcatenation}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    fun enterConstPrimaryConcatenation(ctx: VerilogParser.ConstPrimaryConcatenationContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstPrimaryConcatenation}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    fun exitConstPrimaryConcatenation(ctx: VerilogParser.ConstPrimaryConcatenationContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstPrimaryMultipleConcatenation}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    fun enterConstPrimaryMultipleConcatenation(ctx: VerilogParser.ConstPrimaryMultipleConcatenationContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstPrimaryMultipleConcatenation}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    fun exitConstPrimaryMultipleConcatenation(ctx: VerilogParser.ConstPrimaryMultipleConcatenationContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstPrimaryFunctionCall}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    fun enterConstPrimaryFunctionCall(ctx: VerilogParser.ConstPrimaryFunctionCallContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstPrimaryFunctionCall}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    fun exitConstPrimaryFunctionCall(ctx: VerilogParser.ConstPrimaryFunctionCallContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstPrimarySystemFunctionCall}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    fun enterConstPrimarySystemFunctionCall(ctx: VerilogParser.ConstPrimarySystemFunctionCallContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstPrimarySystemFunctionCall}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    fun exitConstPrimarySystemFunctionCall(ctx: VerilogParser.ConstPrimarySystemFunctionCallContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstPrimaryGroup}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    fun enterConstPrimaryGroup(ctx: VerilogParser.ConstPrimaryGroupContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstPrimaryGroup}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    fun exitConstPrimaryGroup(ctx: VerilogParser.ConstPrimaryGroupContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstPrimaryString}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    fun enterConstPrimaryString(ctx: VerilogParser.ConstPrimaryStringContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstPrimaryString}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    fun exitConstPrimaryString(ctx: VerilogParser.ConstPrimaryStringContext)
 
     /**
      * Enter a parse tree produced by {@link VerilogParser#module_path_primary}.
@@ -6412,11 +6696,89 @@ interface VerilogParserListener : ParseTreeListener {
         override suspend fun exitConstant_base_expression(ctx: VerilogParser.Constant_base_expressionContext) =
             this@VerilogParserListener.exitConstant_base_expression(ctx)
 
-        override suspend fun enterConstant_expression(ctx: VerilogParser.Constant_expressionContext) =
-            this@VerilogParserListener.enterConstant_expression(ctx)
+        override suspend fun enterConstExprUnary(ctx: VerilogParser.ConstExprUnaryContext) =
+            this@VerilogParserListener.enterConstExprUnary(ctx)
 
-        override suspend fun exitConstant_expression(ctx: VerilogParser.Constant_expressionContext) =
-            this@VerilogParserListener.exitConstant_expression(ctx)
+        override suspend fun exitConstExprUnary(ctx: VerilogParser.ConstExprUnaryContext) =
+            this@VerilogParserListener.exitConstExprUnary(ctx)
+
+        override suspend fun enterConstExprAddSub(ctx: VerilogParser.ConstExprAddSubContext) =
+            this@VerilogParserListener.enterConstExprAddSub(ctx)
+
+        override suspend fun exitConstExprAddSub(ctx: VerilogParser.ConstExprAddSubContext) =
+            this@VerilogParserListener.exitConstExprAddSub(ctx)
+
+        override suspend fun enterConstExprLogicalAnd(ctx: VerilogParser.ConstExprLogicalAndContext) =
+            this@VerilogParserListener.enterConstExprLogicalAnd(ctx)
+
+        override suspend fun exitConstExprLogicalAnd(ctx: VerilogParser.ConstExprLogicalAndContext) =
+            this@VerilogParserListener.exitConstExprLogicalAnd(ctx)
+
+        override suspend fun enterConstExprMulDivRem(ctx: VerilogParser.ConstExprMulDivRemContext) =
+            this@VerilogParserListener.enterConstExprMulDivRem(ctx)
+
+        override suspend fun exitConstExprMulDivRem(ctx: VerilogParser.ConstExprMulDivRemContext) =
+            this@VerilogParserListener.exitConstExprMulDivRem(ctx)
+
+        override suspend fun enterConstExprXor(ctx: VerilogParser.ConstExprXorContext) =
+            this@VerilogParserListener.enterConstExprXor(ctx)
+
+        override suspend fun exitConstExprXor(ctx: VerilogParser.ConstExprXorContext) =
+            this@VerilogParserListener.exitConstExprXor(ctx)
+
+        override suspend fun enterConstExprAnd(ctx: VerilogParser.ConstExprAndContext) =
+            this@VerilogParserListener.enterConstExprAnd(ctx)
+
+        override suspend fun exitConstExprAnd(ctx: VerilogParser.ConstExprAndContext) =
+            this@VerilogParserListener.exitConstExprAnd(ctx)
+
+        override suspend fun enterConstExprShift(ctx: VerilogParser.ConstExprShiftContext) =
+            this@VerilogParserListener.enterConstExprShift(ctx)
+
+        override suspend fun exitConstExprShift(ctx: VerilogParser.ConstExprShiftContext) =
+            this@VerilogParserListener.exitConstExprShift(ctx)
+
+        override suspend fun enterConstExprCompare(ctx: VerilogParser.ConstExprCompareContext) =
+            this@VerilogParserListener.enterConstExprCompare(ctx)
+
+        override suspend fun exitConstExprCompare(ctx: VerilogParser.ConstExprCompareContext) =
+            this@VerilogParserListener.exitConstExprCompare(ctx)
+
+        override suspend fun enterConstExprExpo(ctx: VerilogParser.ConstExprExpoContext) =
+            this@VerilogParserListener.enterConstExprExpo(ctx)
+
+        override suspend fun exitConstExprExpo(ctx: VerilogParser.ConstExprExpoContext) =
+            this@VerilogParserListener.exitConstExprExpo(ctx)
+
+        override suspend fun enterConstExprOr(ctx: VerilogParser.ConstExprOrContext) =
+            this@VerilogParserListener.enterConstExprOr(ctx)
+
+        override suspend fun exitConstExprOr(ctx: VerilogParser.ConstExprOrContext) =
+            this@VerilogParserListener.exitConstExprOr(ctx)
+
+        override suspend fun enterConstExprLogicalOr(ctx: VerilogParser.ConstExprLogicalOrContext) =
+            this@VerilogParserListener.enterConstExprLogicalOr(ctx)
+
+        override suspend fun exitConstExprLogicalOr(ctx: VerilogParser.ConstExprLogicalOrContext) =
+            this@VerilogParserListener.exitConstExprLogicalOr(ctx)
+
+        override suspend fun enterConstExprEquality(ctx: VerilogParser.ConstExprEqualityContext) =
+            this@VerilogParserListener.enterConstExprEquality(ctx)
+
+        override suspend fun exitConstExprEquality(ctx: VerilogParser.ConstExprEqualityContext) =
+            this@VerilogParserListener.exitConstExprEquality(ctx)
+
+        override suspend fun enterConstExprTernary(ctx: VerilogParser.ConstExprTernaryContext) =
+            this@VerilogParserListener.enterConstExprTernary(ctx)
+
+        override suspend fun exitConstExprTernary(ctx: VerilogParser.ConstExprTernaryContext) =
+            this@VerilogParserListener.exitConstExprTernary(ctx)
+
+        override suspend fun enterConstExprPrimary(ctx: VerilogParser.ConstExprPrimaryContext) =
+            this@VerilogParserListener.enterConstExprPrimary(ctx)
+
+        override suspend fun exitConstExprPrimary(ctx: VerilogParser.ConstExprPrimaryContext) =
+            this@VerilogParserListener.exitConstExprPrimary(ctx)
 
         override suspend fun enterConstant_mintypmax_expression(ctx: VerilogParser.Constant_mintypmax_expressionContext) =
             this@VerilogParserListener.enterConstant_mintypmax_expression(ctx)
@@ -6484,11 +6846,53 @@ interface VerilogParserListener : ParseTreeListener {
         override suspend fun exitWidth_constant_expression(ctx: VerilogParser.Width_constant_expressionContext) =
             this@VerilogParserListener.exitWidth_constant_expression(ctx)
 
-        override suspend fun enterConstant_primary(ctx: VerilogParser.Constant_primaryContext) =
-            this@VerilogParserListener.enterConstant_primary(ctx)
+        override suspend fun enterConstPrimaryNumber(ctx: VerilogParser.ConstPrimaryNumberContext) =
+            this@VerilogParserListener.enterConstPrimaryNumber(ctx)
 
-        override suspend fun exitConstant_primary(ctx: VerilogParser.Constant_primaryContext) =
-            this@VerilogParserListener.exitConstant_primary(ctx)
+        override suspend fun exitConstPrimaryNumber(ctx: VerilogParser.ConstPrimaryNumberContext) =
+            this@VerilogParserListener.exitConstPrimaryNumber(ctx)
+
+        override suspend fun enterConstPrimaryIdentifier(ctx: VerilogParser.ConstPrimaryIdentifierContext) =
+            this@VerilogParserListener.enterConstPrimaryIdentifier(ctx)
+
+        override suspend fun exitConstPrimaryIdentifier(ctx: VerilogParser.ConstPrimaryIdentifierContext) =
+            this@VerilogParserListener.exitConstPrimaryIdentifier(ctx)
+
+        override suspend fun enterConstPrimaryConcatenation(ctx: VerilogParser.ConstPrimaryConcatenationContext) =
+            this@VerilogParserListener.enterConstPrimaryConcatenation(ctx)
+
+        override suspend fun exitConstPrimaryConcatenation(ctx: VerilogParser.ConstPrimaryConcatenationContext) =
+            this@VerilogParserListener.exitConstPrimaryConcatenation(ctx)
+
+        override suspend fun enterConstPrimaryMultipleConcatenation(ctx: VerilogParser.ConstPrimaryMultipleConcatenationContext) =
+            this@VerilogParserListener.enterConstPrimaryMultipleConcatenation(ctx)
+
+        override suspend fun exitConstPrimaryMultipleConcatenation(ctx: VerilogParser.ConstPrimaryMultipleConcatenationContext) =
+            this@VerilogParserListener.exitConstPrimaryMultipleConcatenation(ctx)
+
+        override suspend fun enterConstPrimaryFunctionCall(ctx: VerilogParser.ConstPrimaryFunctionCallContext) =
+            this@VerilogParserListener.enterConstPrimaryFunctionCall(ctx)
+
+        override suspend fun exitConstPrimaryFunctionCall(ctx: VerilogParser.ConstPrimaryFunctionCallContext) =
+            this@VerilogParserListener.exitConstPrimaryFunctionCall(ctx)
+
+        override suspend fun enterConstPrimarySystemFunctionCall(ctx: VerilogParser.ConstPrimarySystemFunctionCallContext) =
+            this@VerilogParserListener.enterConstPrimarySystemFunctionCall(ctx)
+
+        override suspend fun exitConstPrimarySystemFunctionCall(ctx: VerilogParser.ConstPrimarySystemFunctionCallContext) =
+            this@VerilogParserListener.exitConstPrimarySystemFunctionCall(ctx)
+
+        override suspend fun enterConstPrimaryGroup(ctx: VerilogParser.ConstPrimaryGroupContext) =
+            this@VerilogParserListener.enterConstPrimaryGroup(ctx)
+
+        override suspend fun exitConstPrimaryGroup(ctx: VerilogParser.ConstPrimaryGroupContext) =
+            this@VerilogParserListener.exitConstPrimaryGroup(ctx)
+
+        override suspend fun enterConstPrimaryString(ctx: VerilogParser.ConstPrimaryStringContext) =
+            this@VerilogParserListener.enterConstPrimaryString(ctx)
+
+        override suspend fun exitConstPrimaryString(ctx: VerilogParser.ConstPrimaryStringContext) =
+            this@VerilogParserListener.exitConstPrimaryString(ctx)
 
         override suspend fun enterModule_path_primary(ctx: VerilogParser.Module_path_primaryContext) =
             this@VerilogParserListener.enterModule_path_primary(ctx)
@@ -10542,16 +10946,200 @@ interface SuspendVerilogParserListener : SuspendParseTreeListener {
     suspend fun exitConstant_base_expression(ctx: VerilogParser.Constant_base_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_expression}.
+     * Enter a parse tree produced by the {@code ConstExprUnary}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
      * @param ctx the parse tree
      */
-    suspend fun enterConstant_expression(ctx: VerilogParser.Constant_expressionContext)
+    suspend fun enterConstExprUnary(ctx: VerilogParser.ConstExprUnaryContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_expression}.
+     * Exit a parse tree produced by the {@code ConstExprUnary}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
      * @param ctx the parse tree
      */
-    suspend fun exitConstant_expression(ctx: VerilogParser.Constant_expressionContext)
+    suspend fun exitConstExprUnary(ctx: VerilogParser.ConstExprUnaryContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprAddSub}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstExprAddSub(ctx: VerilogParser.ConstExprAddSubContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprAddSub}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstExprAddSub(ctx: VerilogParser.ConstExprAddSubContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprLogicalAnd}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstExprLogicalAnd(ctx: VerilogParser.ConstExprLogicalAndContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprLogicalAnd}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstExprLogicalAnd(ctx: VerilogParser.ConstExprLogicalAndContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprMulDivRem}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstExprMulDivRem(ctx: VerilogParser.ConstExprMulDivRemContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprMulDivRem}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstExprMulDivRem(ctx: VerilogParser.ConstExprMulDivRemContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprXor}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstExprXor(ctx: VerilogParser.ConstExprXorContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprXor}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstExprXor(ctx: VerilogParser.ConstExprXorContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprAnd}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstExprAnd(ctx: VerilogParser.ConstExprAndContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprAnd}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstExprAnd(ctx: VerilogParser.ConstExprAndContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprShift}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstExprShift(ctx: VerilogParser.ConstExprShiftContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprShift}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstExprShift(ctx: VerilogParser.ConstExprShiftContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprCompare}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstExprCompare(ctx: VerilogParser.ConstExprCompareContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprCompare}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstExprCompare(ctx: VerilogParser.ConstExprCompareContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprExpo}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstExprExpo(ctx: VerilogParser.ConstExprExpoContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprExpo}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstExprExpo(ctx: VerilogParser.ConstExprExpoContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprOr}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstExprOr(ctx: VerilogParser.ConstExprOrContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprOr}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstExprOr(ctx: VerilogParser.ConstExprOrContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprLogicalOr}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstExprLogicalOr(ctx: VerilogParser.ConstExprLogicalOrContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprLogicalOr}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstExprLogicalOr(ctx: VerilogParser.ConstExprLogicalOrContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprEquality}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstExprEquality(ctx: VerilogParser.ConstExprEqualityContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprEquality}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstExprEquality(ctx: VerilogParser.ConstExprEqualityContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprTernary}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstExprTernary(ctx: VerilogParser.ConstExprTernaryContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprTernary}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstExprTernary(ctx: VerilogParser.ConstExprTernaryContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstExprPrimary}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstExprPrimary(ctx: VerilogParser.ConstExprPrimaryContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstExprPrimary}
+     * labeled alternative in {@link VerilogParser#constant_expression}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstExprPrimary(ctx: VerilogParser.ConstExprPrimaryContext)
 
     /**
      * Enter a parse tree produced by {@link VerilogParser#constant_mintypmax_expression}.
@@ -10686,16 +11274,116 @@ interface SuspendVerilogParserListener : SuspendParseTreeListener {
     suspend fun exitWidth_constant_expression(ctx: VerilogParser.Width_constant_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_primary}.
+     * Enter a parse tree produced by the {@code ConstPrimaryNumber}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
      * @param ctx the parse tree
      */
-    suspend fun enterConstant_primary(ctx: VerilogParser.Constant_primaryContext)
+    suspend fun enterConstPrimaryNumber(ctx: VerilogParser.ConstPrimaryNumberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_primary}.
+     * Exit a parse tree produced by the {@code ConstPrimaryNumber}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
      * @param ctx the parse tree
      */
-    suspend fun exitConstant_primary(ctx: VerilogParser.Constant_primaryContext)
+    suspend fun exitConstPrimaryNumber(ctx: VerilogParser.ConstPrimaryNumberContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstPrimaryIdentifier}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstPrimaryIdentifier(ctx: VerilogParser.ConstPrimaryIdentifierContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstPrimaryIdentifier}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstPrimaryIdentifier(ctx: VerilogParser.ConstPrimaryIdentifierContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstPrimaryConcatenation}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstPrimaryConcatenation(ctx: VerilogParser.ConstPrimaryConcatenationContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstPrimaryConcatenation}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstPrimaryConcatenation(ctx: VerilogParser.ConstPrimaryConcatenationContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstPrimaryMultipleConcatenation}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstPrimaryMultipleConcatenation(ctx: VerilogParser.ConstPrimaryMultipleConcatenationContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstPrimaryMultipleConcatenation}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstPrimaryMultipleConcatenation(ctx: VerilogParser.ConstPrimaryMultipleConcatenationContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstPrimaryFunctionCall}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstPrimaryFunctionCall(ctx: VerilogParser.ConstPrimaryFunctionCallContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstPrimaryFunctionCall}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstPrimaryFunctionCall(ctx: VerilogParser.ConstPrimaryFunctionCallContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstPrimarySystemFunctionCall}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstPrimarySystemFunctionCall(ctx: VerilogParser.ConstPrimarySystemFunctionCallContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstPrimarySystemFunctionCall}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstPrimarySystemFunctionCall(ctx: VerilogParser.ConstPrimarySystemFunctionCallContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstPrimaryGroup}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstPrimaryGroup(ctx: VerilogParser.ConstPrimaryGroupContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstPrimaryGroup}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstPrimaryGroup(ctx: VerilogParser.ConstPrimaryGroupContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ConstPrimaryString}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterConstPrimaryString(ctx: VerilogParser.ConstPrimaryStringContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ConstPrimaryString}
+     * labeled alternative in {@link VerilogParser#constant_primary}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitConstPrimaryString(ctx: VerilogParser.ConstPrimaryStringContext)
 
     /**
      * Enter a parse tree produced by {@link VerilogParser#module_path_primary}.

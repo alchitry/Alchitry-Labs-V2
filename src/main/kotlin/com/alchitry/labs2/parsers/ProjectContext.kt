@@ -1,8 +1,9 @@
 package com.alchitry.labs2.parsers
 
 import com.alchitry.labs2.parsers.acf.types.Constraint
-import com.alchitry.labs2.parsers.lucidv2.types.*
+import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.notations.NotationManager
+import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.QueueExhaustionException
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
@@ -58,21 +59,16 @@ class ProjectContext(val notationManager: NotationManager, val simulating: Boole
     }
 
     suspend fun convertToVerilog(): Map<String, String?> {
-        val topInstance = top ?: error("Top level module instance missing!")
-        val instances = mutableMapOf<String, ModuleInstance>()
-        fun add(instance: ModuleInstance) {
-            instances[instance.parameterizedModuleName] = instance
-            instance.context.types.moduleInstances.values.forEach { moduleInstanceOrArray ->
-                when (moduleInstanceOrArray) {
-                    is ModuleInstance -> add(moduleInstanceOrArray)
-                    is ModuleInstanceArray -> moduleInstanceOrArray.modules.forEach { add(it) }
-                }
+        val sourceFiles = mutableMapOf<String, String?>()
+        modules.values.forEach { module ->
+            when (module.sourceFile.language) {
+                Languages.Lucid -> sourceFiles[module.name] =
+                    module.convertToVerilog(this) ?: error("Missing verilog for ${module.name}")
+
+                Languages.Verilog -> sourceFiles[module.sourceFile.name] = module.sourceFile.readText()
             }
         }
-        add(topInstance)
-        return instances.mapValues {
-            it.value.context.convertToVerilog() ?: error("Missing verilog for ${it.key}")
-        }
+        return sourceFiles
     }
 
     override fun close() {
