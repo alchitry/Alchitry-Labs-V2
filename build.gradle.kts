@@ -19,7 +19,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.10"
     kotlin("plugin.serialization") version "2.0.10"
     id("org.jetbrains.compose") version "1.7.0-alpha03"
-    id("dev.hydraulic.conveyor") version "1.5"
+    id("dev.hydraulic.conveyor") version "1.10"
     id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
     id("org.openjfx.javafxplugin") version "0.1.0"
 }
