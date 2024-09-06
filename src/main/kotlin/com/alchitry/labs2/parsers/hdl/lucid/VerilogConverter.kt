@@ -825,7 +825,7 @@ class VerilogConverter(
                         val selectedWidth = when (s.context) {
                             SelectionContext.Constant -> if (s.count > 1) "(${s.count})" else null
                             is SelectionContext.DownTo -> s.context.width.verilog
-                            is SelectionContext.Fixed -> "(${s.context.stop.verilog})-(${s.context.start.verilog})"
+                            is SelectionContext.Fixed -> "(${s.context.stop.verilog})-(${s.context.start.verilog})+1"
                             is SelectionContext.Single -> null
                             is SelectionContext.UpTo -> s.context.width.verilog
                         }
