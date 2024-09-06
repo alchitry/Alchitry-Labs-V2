@@ -217,7 +217,7 @@ private fun TemplateSelector(
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded)
             },
             singleLine = true,
-            modifier = Modifier.menuAnchor().fillMaxWidth()
+            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable).fillMaxWidth()
         )
         SideEffect {
             if (validTemplates.isEmpty())

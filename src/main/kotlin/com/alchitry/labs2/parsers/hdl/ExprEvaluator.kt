@@ -275,7 +275,12 @@ data class ExprEvaluator<T : ParserRuleContext>(
 
         // if the duplication value is undefined, we have no idea what the width will be
         if (dupCountExpr.value is UndefinedValue) {
-            exprs[ctx] = UndefinedValue().asExpr(type)
+            val width = when (valWidth) {
+                is SimpleWidth -> UndefinedSimpleWidth()
+                is ArrayWidth -> UndefinedArrayWidth(next = valWidth.next)
+                else -> error("Unsupported width! Should have been checked before this point.")
+            }
+            exprs[ctx] = UndefinedValue(width).asExpr(type)
             return
         }
 

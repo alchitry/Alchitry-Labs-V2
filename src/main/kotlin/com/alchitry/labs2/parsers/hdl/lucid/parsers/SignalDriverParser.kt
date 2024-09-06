@@ -156,25 +156,27 @@ data class SignalDriverParser(
     override fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
         val drivenMap = drivenSignals[ctx.block() ?: error("Block missing from Always block!")]
             ?: error("Missing always block signals!")
-        expectedDrivers?.forEach { signal ->
-            val driven = drivenMap[signal]
-            if (driven == null) {
-                context.reportError(
-                    ctx.children?.first() as TerminalNode,
-                    "The signal \"${signal.fullName()}\" was expected to be driven by this always block but it wasn't."
-                )
-                return@forEach
-            }
-            val drivenBit = driven.andReduce().bit
-            if (!(driven is UndefinedValue || drivenBit == Bit.B1 || signal.parent is Dff)) {
-                context.reportError(
-                    ctx.children?.first() as TerminalNode,
-                    "The signal \"${signal.fullName()}\" was only partially driven. 1 = driven, x = conditionally driven, 0 = not driven: ${
-                        driven.toString(
-                            ValueFormat.Binary
-                        )
-                    }"
-                )
+        if (!context.mode.building) {
+            expectedDrivers?.forEach { signal ->
+                val driven = drivenMap[signal]
+                if (driven == null) {
+                    context.reportError(
+                        ctx.children?.first() as TerminalNode,
+                        "The signal \"${signal.fullName()}\" was expected to be driven by this always block but it wasn't."
+                    )
+                    return@forEach
+                }
+                val drivenBit = driven.andReduce().bit
+                if (!(driven is UndefinedValue || drivenBit == Bit.B1 || signal.parent is Dff)) {
+                    context.reportError(
+                        ctx.children?.first() as TerminalNode,
+                        "The signal \"${signal.fullName()}\" was only partially driven. 1 = driven, x = conditionally driven, 0 = not driven: ${
+                            driven.toString(
+                                ValueFormat.Binary
+                            )
+                        }"
+                    )
+                }
             }
         }
         expectedDrivers = null

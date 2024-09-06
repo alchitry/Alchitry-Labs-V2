@@ -21,7 +21,10 @@ data class Module(
                 val moduleInstance =
                     ModuleInstance(name, projectContext, null, this, mapOf(), mapOf(), mapOf(), ExprEvalMode.Building)
                 moduleInstance.initialWalk()
-                assert(moduleInstance.context.notationCollector.hasNoErrors) { "Errors can't exist in Lucid code intended to be converted to Verilog!" }
+                assert(moduleInstance.context.notationCollector.hasNoErrors) {
+                    moduleInstance.context.notationCollector.printReport(includeWarnings = false, includeInfos = false)
+                    "Errors can't exist in Lucid code intended to be converted to Verilog!"
+                }
                 moduleInstance.context.convertToVerilog()
             }
 

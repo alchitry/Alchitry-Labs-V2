@@ -507,8 +507,7 @@ data class Project(
                         topModule,
                         mapOf(),
                         mapOf(),
-                        mapOf(),
-                        //notationManager.getCollector(top)
+                        mapOf()
                     )
                 } catch (e: Exception) {
                     notationManager.getCollector(top)
@@ -540,6 +539,26 @@ data class Project(
                     )
             }
 
+            // TODO: Maybe remove this section as it is mostly redundant
+            modules.forEach {
+                val mod = it.second
+                ModuleInstance(
+                    mod.name,
+                    projectContext,
+                    null,
+                    mod,
+                    mapOf(),
+                    mapOf(),
+                    mapOf(),
+                    ExprEvalMode.Building
+                ).apply {
+                    initialWalk()
+                }
+            }
+
+            if (notationManager.hasErrors)
+                return null
+
             while (uncheckedModules.isNotEmpty()) {
                 val mod = uncheckedModules.first() // get the next one to check
                 ModuleInstance(
@@ -551,7 +570,6 @@ data class Project(
                     mapOf(),
                     mapOf(),
                     ExprEvalMode.Testing
-                    // notationManager.getCollector(mod.sourceFile)
                 ).apply {
                     initialWalk()
                     uncheckedModules.removeAll(getAllModules()) // remove this one plus any checked as its dependants

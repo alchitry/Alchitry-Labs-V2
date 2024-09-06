@@ -122,6 +122,7 @@ class ProjectSimulator(private val projectContext: ProjectContext) : Closeable {
                     duration = (duration + error).coerceAtLeast(Duration.ZERO)
                     stepsPerDelay = (currentTarget / 100.0).roundToInt().coerceAtLeast(1)
                 }
+            } catch (_: CancellationException) {
             } catch (e: Exception) {
                 Log.error("Simulation failed: ${e.message}")
             }

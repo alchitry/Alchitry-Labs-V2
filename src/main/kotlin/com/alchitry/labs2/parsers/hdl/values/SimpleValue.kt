@@ -124,7 +124,7 @@ sealed class SimpleValue(
         is BitListWidth -> asBitListValue().resize(newWidth.size)
         BitWidth -> BitValue(lsb, signed)
         is StructWidth -> error("Cannot resize SimpleValue to fit a StructValue!")
-        is UndefinedSimpleWidth -> UndefinedValue()
+        is UndefinedSimpleWidth -> UndefinedValue(newWidth)
     }
 
     fun fitsIn(bits: Int, signed: Boolean): Boolean {

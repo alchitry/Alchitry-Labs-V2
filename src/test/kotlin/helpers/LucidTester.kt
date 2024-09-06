@@ -189,9 +189,13 @@ class LucidTester(vararg val files: SourceFile) {
         }
     }
 
-    suspend fun getVerilog(): Map<String, String> {
+    suspend fun getVerilog(allowWarnings: Boolean = false): Map<String, String> {
         val topInstance = fullParse()
-        assertNoIssues()
+        if (allowWarnings) {
+            assertNoErrors()
+        } else {
+            assertNoIssues()
+        }
         val usedModules = mutableMapOf<String, ModuleInstance>()
         fun add(instance: ModuleInstance) {
             usedModules[instance.module.name] = instance
@@ -205,7 +209,7 @@ class LucidTester(vararg val files: SourceFile) {
         add(topInstance)
         return usedModules.mapValues {
             assert(project.notationManager.hasNoErrors) { project.notationManager.getReport() }
-            it.value.context.convertToVerilog() ?: error("Missing verilog for ${it.key}")
+            it.value.module.convertToVerilog(project) ?: error("Missing verilog for ${it.key}")
         }.also { assert(project.notationManager.hasNoErrors) { project.notationManager.getReport() } }
     }
 
