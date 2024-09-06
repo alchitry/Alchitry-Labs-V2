@@ -8,6 +8,7 @@ import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.ExprType
+import com.alchitry.labs2.parsers.hdl.lucid.VerilogConverter
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.*
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.types.Function
@@ -93,7 +94,7 @@ class LucidBlockContext(
     val constant = constant ?: ConstantParser(this)
     val blockParser = blockParser ?: BlockParser(this)
     val signalDriver = signalDriver ?: SignalDriverParser(this)
-    private val verilogConverter = com.alchitry.labs2.parsers.hdl.lucid.VerilogConverter(this)
+    private val verilogConverter = VerilogConverter(this)
     private val pruner = LucidPruner(this)
 
     private val listenerMap = ParseStage.entries.associateWith {

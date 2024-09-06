@@ -32,8 +32,15 @@ fun LabsToolbar() {
     val scope = rememberCoroutineScope()
     var running by remember { mutableStateOf(false) }
     val project by Project.currentFlow.collectAsState()
+
     var showProjectDialog by remember { mutableStateOf(false) }
     NewProjectDialog(showProjectDialog) { showProjectDialog = false }
+
+    var showSaveProjectAsDialog by remember { mutableStateOf(false) }
+    project?.let {
+        SaveAsProjectDialog(it, showSaveProjectAsDialog) { showSaveProjectAsDialog = false }
+    }
+
     Row {
         IconMenu(painterResource("icons/alchitry_icon.svg"), "Menu") {
             MenuItem({ Text("New Project...") }) {
@@ -41,6 +48,9 @@ fun LabsToolbar() {
             }
             MenuItem({ Text("Open Project...") }) {
                 openProjectDialog()
+            }
+            MenuItem({ Text("Save Project As...") }) {
+                showSaveProjectAsDialog = true
             }
             MenuParent(label = { Text("Settings") }) {
                 MenuItem({ Text("Set Vivado Location") }) {

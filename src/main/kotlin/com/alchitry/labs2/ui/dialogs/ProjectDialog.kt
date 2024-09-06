@@ -14,10 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
-import com.alchitry.labs2.project.Board
-import com.alchitry.labs2.project.Locations
-import com.alchitry.labs2.project.Project
-import com.alchitry.labs2.project.ProjectTemplate
+import com.alchitry.labs2.project.*
 import com.alchitry.labs2.switchActiveWindow
 import com.alchitry.labs2.windows.mainWindow
 import kotlinx.coroutines.Dispatchers
@@ -149,6 +146,7 @@ fun NewProjectDialog(visible: Boolean, onClose: () -> Unit) {
 @Composable
 private fun BoardSelector(
     board: Board,
+    enabled: Boolean = true,
     onBoardChanged: (Board) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -158,6 +156,7 @@ private fun BoardSelector(
             value = board.name,
             onValueChange = {},
             label = { Text("Board") },
+            enabled = enabled,
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded)
             },
@@ -239,5 +238,86 @@ private fun TemplateSelector(
                 }
             }
 
+    }
+}
+
+@Composable
+fun SaveAsProjectDialog(project: Project, visible: Boolean, onClose: () -> Unit) {
+    AlchitryDialog(visible, "Save Project As", onClose = onClose) {
+        val spacedBy = Arrangement.spacedBy(10.dp)
+
+        var projectName by remember { mutableStateOf("") }
+        var workspace by remember { mutableStateOf(File(Locations.workspace)) }
+
+        Column(Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = spacedBy) {
+                OutlinedTextField(
+                    projectName,
+                    onValueChange = { projectName = it },
+                    isError = projectName.isBlank(),
+                    modifier = Modifier.weight(1f),
+                    singleLine = true,
+                    label = { Text("New Project Name") }
+                )
+            }
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = spacedBy) {
+                OutlinedTextField(
+                    workspace.path,
+                    onValueChange = { workspace = File(it) },
+                    modifier = Modifier.weight(1f).defaultMinSize(minWidth = 500.dp),
+                    singleLine = true,
+                    isError = !workspace.isDirectory,
+                    label = { Text("Workspace") }
+                )
+                Button(onClick = {
+                    openDirectoryDialog(
+                        window = mainWindow,
+                        "Select a Workspace",
+                        workspace
+                    )?.let { newWorkspace ->
+                        workspace = newWorkspace
+                    }
+                }) {
+                    Text("Browse...")
+                }
+            }
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = spacedBy) {
+                BoardSelector(project.data.board, enabled = false) { }
+            }
+            var loading by remember { mutableStateOf(false) }
+            val scope = rememberCoroutineScope()
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = spacedBy) {
+                Spacer(Modifier.weight(1f))
+                if (loading) {
+                    CircularProgressIndicator()
+                } else {
+                    Button(
+                        onClick = {
+                            loading = true
+                            scope.launch(Dispatchers.IO) {
+                                try {
+                                    val newProject = ProjectCreator.clone(
+                                        project.path.toUri().toURL(),
+                                        project.projectFile.name,
+                                        projectName,
+                                        workspace,
+                                        project.data.board
+                                    )
+                                    Project.open(newProject)
+                                    onClose()
+                                } catch (e: IllegalStateException) {
+                                    Log.showError("Failed to create project!", e)
+                                } finally {
+                                    loading = false
+                                }
+                            }
+                        },
+                        enabled = projectName.isNotBlank() && workspace.isDirectory
+                    ) {
+                        Text("Create Project")
+                    }
+                }
+            }
+        }
     }
 }
