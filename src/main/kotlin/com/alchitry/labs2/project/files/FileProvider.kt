@@ -43,7 +43,7 @@ sealed class FileProvider {
     @Serializable(with = DiskFile.Companion::class)
     @SerialName("DiskFile")
     data class DiskFile(
-        val path: Path
+        val path: Path,
     ) : FileProvider() {
         constructor(path: String) : this(Paths.get(path))
 

@@ -113,3 +113,9 @@ fun Project.addComponents(components: List<Component>) {
     newProj.save()
     Project.open(newProj)
 }
+
+fun Project.replaceIpCores(cores: Set<IPCore>) {
+    val newProj = copy(data = data.copy(ipCores = cores.toSet()))
+    newProj.save()
+    Project.open(newProj)
+}

@@ -16,7 +16,9 @@ import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
 import com.alchitry.labs2.hardware.usb.BoardLoader
 import com.alchitry.labs2.hardware.usb.UsbUtil
+import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.Project
+import com.alchitry.labs2.project.library.VivadoIP
 import com.alchitry.labs2.switchActiveWindow
 import com.alchitry.labs2.ui.components.ToolbarButton
 import com.alchitry.labs2.ui.dialogs.*
@@ -25,12 +27,13 @@ import com.alchitry.labs2.ui.tabs.BoardSimulationTab
 import com.alchitry.labs2.ui.tabs.Workspace
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.ui.theme.AlchitryTheme
+import com.alchitry.labs2.windows.LocalRunningJob
 import kotlinx.coroutines.*
 
 @Composable
 fun LabsToolbar() {
     val scope = rememberCoroutineScope()
-    var running by remember { mutableStateOf(false) }
+    var running by LocalRunningJob.current
     val project by Project.currentFlow.collectAsState()
 
     var showProjectDialog by remember { mutableStateOf(false) }
@@ -145,11 +148,32 @@ fun LabsToolbar() {
 
         var showComponentLibrary by remember { mutableStateOf(false) }
         ComponentLibraryDialog(showComponentLibrary) { showComponentLibrary = false }
-        ToolbarButton(
-            icon = painterResource("icons/add_component.svg"),
-            description = "Component Library",
-            enabled = !running && project != null
-        ) { showComponentLibrary = true }
+
+        if (project?.data?.board is Board.XilinxBoard) {
+            IconMenu(painterResource("icons/add_component.svg"), "Add Component", enabled = !running) {
+                MenuItem({ Text("Component Library") }) {
+                    showComponentLibrary = true
+                }
+                MenuItem({ Text("Vivado IP Catalog") }) {
+                    runWithProject {
+                        VivadoIP.generateCores(it)
+                    }
+                }
+                if (project?.data?.ipCores?.any { it.name == "mig_7series_0" } == false) {
+                    MenuItem({ Text("Generate MIG Core (DDR)") }) {
+                        runWithProject {
+                            VivadoIP.generateMigCore(it)
+                        }
+                    }
+                }
+            }
+        } else {
+            ToolbarButton(
+                icon = painterResource("icons/add_component.svg"),
+                description = "Component Library",
+                enabled = !running && project != null
+            ) { showComponentLibrary = true }
+        }
         ToolbarButton(
             icon = painterResource("icons/check.svg"),
             description = "Check for Errors",

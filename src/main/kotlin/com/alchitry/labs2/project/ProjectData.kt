@@ -1,6 +1,7 @@
 package com.alchitry.labs2.project
 
 import com.alchitry.labs2.project.files.ConstraintFile
+import com.alchitry.labs2.project.files.IPCore
 import com.alchitry.labs2.project.files.SourceFile
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -9,16 +10,17 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("Project")
 sealed interface ProjectData {
-    fun upgradeToLatest(): ProjectData1V0
+    fun upgradeToLatest(): ProjectData1V1
 
     val version: ProjectVersion
         get() =
             when (this) {
                 is ProjectData1V0 -> ProjectData1V0.version
+                is ProjectData1V1 -> ProjectData1V1.version
             }
 
     companion object {
-        val latestVersion = ProjectData1V0.version
+        val latestVersion = ProjectData1V1.version
     }
 }
 
@@ -30,9 +32,26 @@ data class ProjectData1V0(
     val sourceFiles: Set<SourceFile>,
     val constraintFiles: Set<ConstraintFile>
 ) : ProjectData {
-    override fun upgradeToLatest(): ProjectData1V0 = this
+    override fun upgradeToLatest(): ProjectData1V1 =
+        ProjectData1V1(projectName, board, sourceFiles, constraintFiles, emptySet())
 
     companion object {
         val version = ProjectVersion(1, 0)
+    }
+}
+
+@Serializable
+@SerialName("V1.1")
+data class ProjectData1V1(
+    val projectName: String,
+    val board: Board,
+    val sourceFiles: Set<SourceFile>,
+    val constraintFiles: Set<ConstraintFile>,
+    val ipCores: Set<IPCore>
+) : ProjectData {
+    override fun upgradeToLatest(): ProjectData1V1 = this
+
+    companion object {
+        val version = ProjectVersion(1, 1)
     }
 }

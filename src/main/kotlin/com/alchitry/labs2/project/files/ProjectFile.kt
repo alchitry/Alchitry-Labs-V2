@@ -37,3 +37,4 @@ sealed class ProjectFile(val file: FileProvider) {
 
     suspend fun toCharStream(): CharStream = CharStreams.fromString(readText(), name)
 }
+

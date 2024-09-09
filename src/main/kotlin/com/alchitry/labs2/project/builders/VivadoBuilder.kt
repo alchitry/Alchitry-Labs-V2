@@ -41,16 +41,16 @@ data object VivadoBuilder : ProjectBuilder() {
             )
         }
 
-        val vivado = Locations.vivado
+        val vivado = Locations.vivadoBin
 
         if (vivado == null) {
             Log.printlnError("Couldn't find Vivado!")
-            Log.printlnError("Vivado's location must be set in the settings before you can build!")
+            Log.showError("Vivado's location must be set in the settings before you can build!")
             return@coroutineScope
         }
 
         val cmd = listOf(
-            vivado.resolve("bin").resolve(if (Env.isWindows) "vivado.bat" else "vivado").absolutePath,
+            vivado.absolutePath,
             "-nojournal",
             "-nolog",
             "-mode",

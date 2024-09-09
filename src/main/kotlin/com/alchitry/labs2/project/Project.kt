@@ -51,13 +51,14 @@ class QueueExhaustionException(message: String) : IllegalStateException(message)
 
 data class Project(
     val path: Path,
-    val data: ProjectData1V0
+    val data: ProjectData1V1
 ) {
     val top: SourceFile get() = data.sourceFiles.firstOrNull { it.top } ?: throw Exception("Missing top module!")
     val projectFile: File = path.resolve("${data.projectName}.alp").toFile()
     val buildDirectory: Path = path.resolve("build")
     val sourceDirectory: Path = path.resolve("source")
     val constraintDirectory: Path = path.resolve("constraint")
+    val ipCoreDirectory: Path = path.resolve("cores")
     val binFile: File = buildDirectory.resolve("${data.board.binName}.bin").toFile()
     private val mutableProjectContextFlow = MutableStateFlow<ProjectContext?>(null)
     private val notationManagerFlow = MutableStateFlow<NotationManager?>(null)
@@ -65,6 +66,8 @@ data class Project(
 
     val components: List<Component> =
         (data.sourceFiles + data.constraintFiles).mapNotNull { if (it.file is Component) it.file else null }
+
+    val ipCoreStubs: List<SourceFile> = data.ipCores.mapNotNull { it.stub }
 
     private val mutableGlobalMapFlow = MutableStateFlow<Map<String, GlobalNamespace>>(emptyMap())
     val globalMapFlow = mutableGlobalMapFlow.asStateFlow()
@@ -132,7 +135,7 @@ data class Project(
             validateProjectFile(file)
             if (isXmlProject(file)) {
                 val projectData = openXml(file)
-                return Project(file.parentFile.toPath(), projectData)
+                return Project(file.parentFile.toPath(), projectData.upgradeToLatest())
             }
             val alpData = json.decodeFromString(AlchitryLabsProjectData.serializer(), file.readText())
             return Project(file.parentFile.toPath(), alpData.project.upgradeToLatest())
@@ -437,7 +440,7 @@ data class Project(
     ): ProjectContext? {
         val projectContext = ProjectContext(notationManager, simulating)
         var success = false
-        val trees = parsedTrees ?: parseAll(data.sourceFiles, notationManager)
+        val trees = parsedTrees ?: parseAll(data.sourceFiles + ipCoreStubs, notationManager)
 
         try {
             if (trees == null || notationManager.hasErrors)

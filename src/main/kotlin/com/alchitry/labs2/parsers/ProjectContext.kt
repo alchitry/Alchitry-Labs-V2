@@ -5,6 +5,7 @@ import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.notations.NotationManager
 import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.QueueExhaustionException
+import com.alchitry.labs2.project.files.FileProvider
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.*
@@ -61,6 +62,10 @@ class ProjectContext(val notationManager: NotationManager, val simulating: Boole
     suspend fun convertToVerilog(): Map<String, String?> {
         val sourceFiles = mutableMapOf<String, String?>()
         modules.values.forEach { module ->
+            // skip IP core files
+            if ((module.sourceFile.file as? FileProvider.DiskFile)?.path?.startsWith("cores") == true)
+                return@forEach
+
             when (module.sourceFile.language) {
                 Languages.Lucid -> sourceFiles[module.name] =
                     module.convertToVerilog(this) ?: error("Missing verilog for ${module.name}")

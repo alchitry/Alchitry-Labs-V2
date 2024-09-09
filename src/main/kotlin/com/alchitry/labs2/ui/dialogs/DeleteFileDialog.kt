@@ -10,9 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.project.Project
+import com.alchitry.labs2.project.files.IPCore
 import com.alchitry.labs2.project.files.ProjectFile
+import com.alchitry.labs2.project.library.VivadoIP
 import com.alchitry.labs2.project.removeFile
 import com.alchitry.labs2.ui.theme.AlchitryColors
+import com.alchitry.labs2.windows.LocalRunningJob
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -31,11 +35,11 @@ fun DeleteFileDialog(
             Text("Delete ${file?.name ?: "File"}?")
             Text("This cannot be undone!")
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = spacedBy) {
+                var loading by remember { mutableStateOf(false) }
                 Spacer(Modifier.weight(1f))
-                Button(onClick = onClose, colors = AlchitryColors.current.cancelButton) {
+                Button(onClick = onClose, colors = AlchitryColors.current.cancelButton, enabled = !loading) {
                     Text("Cancel")
                 }
-                var loading by remember { mutableStateOf(false) }
                 val scope = rememberCoroutineScope()
                 if (loading) {
                     CircularProgressIndicator()
@@ -52,6 +56,58 @@ fun DeleteFileDialog(
                                     Log.showError("Failed to delete file!", e)
                                 } finally {
                                     loading = false
+                                }
+                            }
+                        },
+                        colors = AlchitryColors.current.dangerButton
+                    ) {
+                        Text("Delete")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DeleteCoreDialog(
+    core: IPCore?,
+    scope: CoroutineScope,
+    onClose: () -> Unit
+) {
+    var running by LocalRunningJob.current
+    AlchitryDialog(core != null, "Delete IP Core", onClose = onClose) {
+        val spacedBy = Arrangement.spacedBy(10.dp)
+        Column(
+            Modifier.padding(10.dp),
+            verticalArrangement = spacedBy,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Delete IP Core ${core?.name}?")
+            Text("This cannot be undone!")
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = spacedBy) {
+                Spacer(Modifier.weight(1f))
+                Button(onClick = onClose, colors = AlchitryColors.current.cancelButton, enabled = !running) {
+                    Text("Cancel")
+                }
+                if (running) {
+                    CircularProgressIndicator()
+                } else {
+                    Button(
+                        onClick = {
+                            running = true
+                            scope.launch(Dispatchers.IO) {
+                                try {
+                                    onClose()
+                                    Project.current?.let { project ->
+                                        core?.let { core ->
+                                            VivadoIP.deleteCore(project, core)
+                                        }
+                                    }
+                                } catch (e: IllegalStateException) {
+                                    Log.showError("Failed to delete file!", e)
+                                } finally {
+                                    running = false
                                 }
                             }
                         },

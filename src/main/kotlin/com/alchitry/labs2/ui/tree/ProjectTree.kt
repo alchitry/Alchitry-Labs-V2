@@ -7,22 +7,31 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import com.alchitry.labs2.Log
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.files.FileProvider
+import com.alchitry.labs2.project.files.IPCore
 import com.alchitry.labs2.project.files.ProjectFile
+import com.alchitry.labs2.project.library.VivadoIP
 import com.alchitry.labs2.project.removeFile
 import com.alchitry.labs2.ui.dialogs.AcfFileDialog
+import com.alchitry.labs2.ui.dialogs.DeleteCoreDialog
 import com.alchitry.labs2.ui.dialogs.DeleteFileDialog
 import com.alchitry.labs2.ui.dialogs.LucidFileDialog
 import com.alchitry.labs2.ui.fillMaxIntrinsic
 import com.alchitry.labs2.ui.selection.Selectable
 import com.alchitry.labs2.ui.selection.SingleSelectionContext
 import com.alchitry.labs2.ui.tabs.Workspace
+import com.alchitry.labs2.ui.theme.AlchitryColors
+import com.alchitry.labs2.windows.LocalRunningJob
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProjectTree() {
     val project = Project.currentFlow.collectAsState().value ?: return
     val selectionContext = remember { SingleSelectionContext<String>() }
+    val scope = rememberCoroutineScope()
+    var running by LocalRunningJob.current
 
     with(selectionContext) {
         Row(
@@ -33,6 +42,10 @@ fun ProjectTree() {
         ) {
             var fileToDelete by remember { mutableStateOf<ProjectFile?>(null) }
             DeleteFileDialog(fileToDelete) { fileToDelete = null }
+
+            var coreToDelete by remember { mutableStateOf<IPCore?>(null) }
+            DeleteCoreDialog(coreToDelete, scope) { coreToDelete = null }
+
             Column(Modifier.fillMaxIntrinsic()) {
                 var showNewLucidModule by remember { mutableStateOf(false) }
                 LucidFileDialog(showNewLucidModule) { showNewLucidModule = false }
@@ -86,6 +99,61 @@ fun ProjectTree() {
                                             if (file.isLibFile) painterResource("icons/component.svg") else null
                                         ) {
                                             Workspace.openFile(file)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (project.data.ipCores.isNotEmpty()) {
+                        ContextMenuDataProvider(
+                            items = {
+                                listOf(
+                                    ContextMenuItem("Vivado IP Catalog") {
+                                        if (running) {
+                                            Log.warn("Something is already running. Can't open Vivado IP Catalog.")
+                                            return@ContextMenuItem
+                                        }
+                                        scope.launch {
+                                            try {
+                                                running = true
+                                                VivadoIP.generateCores(project)
+                                            } finally {
+                                                running = false
+                                            }
+                                        }
+                                    }
+                                )
+                            }
+                        ) {
+                            TreeSection("IP Cores", 1, remember { Selectable("IP Cores") }) {
+                                project.data.ipCores.sortedBy { it.name }.forEach { core ->
+                                    key(core) {
+                                        val color = if (core.stub == null) AlchitryColors.current.Error else null
+                                        ContextMenuArea(
+                                            items = {
+                                                listOf(
+                                                    ContextMenuItem("Delete ${core.name}") {
+                                                        if (running) {
+                                                            Log.warn("Something is already running. Can't delete IP core.")
+                                                            return@ContextMenuItem
+                                                        }
+                                                        coreToDelete = core
+                                                    }
+                                                )
+                                            }
+                                        ) {
+                                            TreeItem(
+                                                core.name,
+                                                2,
+                                                remember { Selectable(core.name) },
+                                                color,
+                                                painterResource("icons/component.svg")
+                                            ) {
+                                                core.stub?.let {
+                                                    Workspace.openFile(it)
+                                                }
+                                            }
                                         }
                                     }
                                 }

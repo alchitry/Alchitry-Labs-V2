@@ -8,8 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -29,6 +28,8 @@ import com.alchitry.labs2.ui.tabs.Workspace
 import com.alchitry.labs2.ui.theme.AlchitryTheme
 import com.alchitry.labs2.ui.tree.ProjectTree
 import java.io.File
+
+val LocalRunningJob = compositionLocalOf<MutableState<Boolean>> { error("No running job context!") }
 
 @Composable
 fun ApplicationScope.labsWindow() {
@@ -67,54 +68,56 @@ fun ApplicationScope.labsWindow() {
             }
         }
 
-        AlchitryTheme {
-            Column {
-                WindowDecoration(state) {
-                    LabsToolbar()
-                }
+        CompositionLocalProvider(LocalRunningJob provides remember { mutableStateOf(false) }) {
+            AlchitryTheme {
+                Column {
+                    WindowDecoration(state) {
+                        LabsToolbar()
+                    }
 
-                ProjectDialog {
-                    val focusManger = LocalFocusManager.current
-                    Box(
-                        Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
-                            .pointerInput(Unit) { detectTapGestures { focusManger.clearFocus() } }
-                    ) {
-                        Column {
-                            Sash(
-                                first = {
-                                    Sash(
-                                        first = {
-                                            Surface(Modifier.matchParentSize()) {
-                                                ProjectTree()
-                                            }
-                                        },
-                                        second = {
-                                            Workspace.content()
-                                        },
-                                        orientation = Orientation.Horizontal,
-                                        sashData = rememberSashData(
-                                            resizePriority = ResizePriority.SECOND,
-                                            first = Settings.fileListWidth.toFloat(),
-                                            minimumSize = 100.dp to 100.dp
-                                        ),
-                                        onResize = { Settings.fileListWidth = it.size.first.toInt() }
-                                    )
-                                },
-                                second = {
-                                    Surface(Modifier.matchParentSize()) {
-                                        Console.show()
-                                    }
-                                },
-                                orientation = Orientation.Vertical,
-                                sashData = rememberSashData(
-                                    resizePriority = ResizePriority.FIRST,
-                                    second = Settings.consoleHeight.toFloat(),
-                                    minimumSize = 200.dp to 10.dp
-                                ),
-                                onResize = { Settings.consoleHeight = it.size.second.toInt() }
-                            )
+                    ProjectDialog {
+                        val focusManger = LocalFocusManager.current
+                        Box(
+                            Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.background)
+                                .pointerInput(Unit) { detectTapGestures { focusManger.clearFocus() } }
+                        ) {
+                            Column {
+                                Sash(
+                                    first = {
+                                        Sash(
+                                            first = {
+                                                Surface(Modifier.matchParentSize()) {
+                                                    ProjectTree()
+                                                }
+                                            },
+                                            second = {
+                                                Workspace.content()
+                                            },
+                                            orientation = Orientation.Horizontal,
+                                            sashData = rememberSashData(
+                                                resizePriority = ResizePriority.SECOND,
+                                                first = Settings.fileListWidth.toFloat(),
+                                                minimumSize = 100.dp to 100.dp
+                                            ),
+                                            onResize = { Settings.fileListWidth = it.size.first.toInt() }
+                                        )
+                                    },
+                                    second = {
+                                        Surface(Modifier.matchParentSize()) {
+                                            Console.show()
+                                        }
+                                    },
+                                    orientation = Orientation.Vertical,
+                                    sashData = rememberSashData(
+                                        resizePriority = ResizePriority.FIRST,
+                                        second = Settings.consoleHeight.toFloat(),
+                                        minimumSize = 200.dp to 10.dp
+                                    ),
+                                    onResize = { Settings.consoleHeight = it.size.second.toInt() }
+                                )
+                            }
                         }
                     }
                 }

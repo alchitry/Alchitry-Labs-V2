@@ -62,8 +62,8 @@ fun Project.Companion.openXml(xmlFile: File): ProjectData1V0 {
         error("Invalid version ID!")
     }
 
-    val sourceFolder = PathUtil.assembleFile(folder, Locations.Project.sourceFolder)
-    val constraintFolder = PathUtil.assembleFile(folder, Locations.Project.constraintFolder)
+    val sourceFolder = PathUtil.assembleFile(folder, "source")
+    val constraintFolder = PathUtil.assembleFile(folder, "constraint")
 
     val list = projectXml.children
     for (i in list.indices) {
@@ -106,7 +106,7 @@ fun Project.Companion.openXml(xmlFile: File): ProjectData1V0 {
 //                            val cFiles = file.children
 //                            val coreName = file.getAttributeValue(Tags.Attributes.name)
 //                                ?: error("Missing core name")
-//                            val coreDir = PathUtil.assemblePath(folder, Locations.Project.ipCoresFolder, coreName)
+//                            val coreDir = PathUtil.assemblePath(folder, "cores", coreName)
 //                            val sFiles = cFiles.mapNotNull { cFile ->
 //                                if (cFile.name == Tags.source) {
 //                                    File(PathUtil.assemblePath(coreDir, cFile.text))
