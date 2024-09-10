@@ -1,6 +1,6 @@
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
 import com.alchitry.labs2.parsers.hdl.values.BitListValue
-import helpers.LucidTester
+import helpers.ProjectTester
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 class LocalSignalTests {
     @Test
     fun localSignalTest() = runBlocking {
-        val test = LucidTester(
+        val test = ProjectTester(
             """
                 module controlModule #(
                     DIGITS ~ 1 : DIGITS > 0 && DIGITS < 20,           // limited by 64 bit constants in the tools
@@ -118,7 +118,7 @@ class LocalSignalTests {
 
     @Test
     fun simpleLocalTest() = runBlocking {
-        val test = LucidTester(
+        val test = ProjectTester(
             """
                 module localTest (
                     input value[4],  // clock

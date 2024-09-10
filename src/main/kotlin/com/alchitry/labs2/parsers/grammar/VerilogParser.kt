@@ -2961,21 +2961,6 @@ class VerilogParser(input: TokenStream) : Parser(input) {
                 throw RuntimeException()
             }
 
-        fun port_declaration(): Port_declarationContext? = getRuleContext(Port_declarationContext::class, 0)
-        fun SC(): TerminalNode? = getToken(Tokens.SC.id, 0)
-        fun module_or_generate_item(): Module_or_generate_itemContext? =
-            getRuleContext(Module_or_generate_itemContext::class, 0)
-
-        fun generate_region(): Generate_regionContext? = getRuleContext(Generate_regionContext::class, 0)
-        fun specify_block(): Specify_blockContext? = getRuleContext(Specify_blockContext::class, 0)
-        fun parameter_declaration(): Parameter_declarationContext? =
-            getRuleContext(Parameter_declarationContext::class, 0)
-
-        fun attribute_instance(): List<Attribute_instanceContext> = getRuleContexts(Attribute_instanceContext::class)
-        fun attribute_instance(i: Int): Attribute_instanceContext? = getRuleContext(Attribute_instanceContext::class, i)
-        fun specparam_declaration(): Specparam_declarationContext? =
-            getRuleContext(Specparam_declarationContext::class, 0)
-
         constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
 
@@ -2987,20 +2972,212 @@ class VerilogParser(input: TokenStream) : Parser(input) {
             }
         }
 
+
+        fun copyFrom(ctx: Module_itemContext) {
+            super.copyFrom(ctx)
+        }
+    }
+
+    open class ModuleSpecifyBlockContext : Module_itemContext {
+        fun specify_block(): Specify_blockContext? = getRuleContext(Specify_blockContext::class, 0)
+
+        constructor(ctx: Module_itemContext) {
+            copyFrom(ctx)
+        }
+
         override fun enterRule(listener: ParseTreeListener) {
-            if (listener is VerilogParserListener) listener.enterModule_item(this)
+            if (listener is VerilogParserListener) listener.enterModuleSpecifyBlock(this)
         }
 
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
-            if (listener is SuspendVerilogParserListener) listener.enterModule_item(this)
+            if (listener is SuspendVerilogParserListener) listener.enterModuleSpecifyBlock(this)
         }
 
         override fun exitRule(listener: ParseTreeListener) {
-            if (listener is VerilogParserListener) listener.exitModule_item(this)
+            if (listener is VerilogParserListener) listener.exitModuleSpecifyBlock(this)
         }
 
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
-            if (listener is SuspendVerilogParserListener) listener.exitModule_item(this)
+            if (listener is SuspendVerilogParserListener) listener.exitModuleSpecifyBlock(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ModuleSpecifyBlockContext {
+            return ModuleSpecifyBlockContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ModuleParameterContext : Module_itemContext {
+        fun parameter_declaration(): Parameter_declarationContext? =
+            getRuleContext(Parameter_declarationContext::class, 0)
+
+        fun SC(): TerminalNode? = getToken(Tokens.SC.id, 0)
+        fun attribute_instance(): List<Attribute_instanceContext> = getRuleContexts(Attribute_instanceContext::class)
+        fun attribute_instance(i: Int): Attribute_instanceContext? = getRuleContext(Attribute_instanceContext::class, i)
+
+        constructor(ctx: Module_itemContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterModuleParameter(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterModuleParameter(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitModuleParameter(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitModuleParameter(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ModuleParameterContext {
+            return ModuleParameterContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ModuleSpecparamContext : Module_itemContext {
+        fun specparam_declaration(): Specparam_declarationContext? =
+            getRuleContext(Specparam_declarationContext::class, 0)
+
+        fun attribute_instance(): List<Attribute_instanceContext> = getRuleContexts(Attribute_instanceContext::class)
+        fun attribute_instance(i: Int): Attribute_instanceContext? = getRuleContext(Attribute_instanceContext::class, i)
+
+        constructor(ctx: Module_itemContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterModuleSpecparam(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterModuleSpecparam(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitModuleSpecparam(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitModuleSpecparam(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ModuleSpecparamContext {
+            return ModuleSpecparamContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ModuleInstanceOrGenerateContext : Module_itemContext {
+        fun module_or_generate_item(): Module_or_generate_itemContext? =
+            getRuleContext(Module_or_generate_itemContext::class, 0)
+
+        constructor(ctx: Module_itemContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterModuleInstanceOrGenerate(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterModuleInstanceOrGenerate(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitModuleInstanceOrGenerate(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitModuleInstanceOrGenerate(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ModuleInstanceOrGenerateContext {
+            return ModuleInstanceOrGenerateContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ModuleGenerateRegionContext : Module_itemContext {
+        fun generate_region(): Generate_regionContext? = getRuleContext(Generate_regionContext::class, 0)
+
+        constructor(ctx: Module_itemContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterModuleGenerateRegion(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterModuleGenerateRegion(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitModuleGenerateRegion(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitModuleGenerateRegion(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ModuleGenerateRegionContext {
+            return ModuleGenerateRegionContext().also {
+                deepCopyInto(it)
+            }
+        }
+    }
+
+    open class ModulePortContext : Module_itemContext {
+        fun port_declaration(): Port_declarationContext? = getRuleContext(Port_declarationContext::class, 0)
+        fun SC(): TerminalNode? = getToken(Tokens.SC.id, 0)
+
+        constructor(ctx: Module_itemContext) {
+            copyFrom(ctx)
+        }
+
+        override fun enterRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.enterModulePort(this)
+        }
+
+        override suspend fun enterRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.enterModulePort(this)
+        }
+
+        override fun exitRule(listener: ParseTreeListener) {
+            if (listener is VerilogParserListener) listener.exitModulePort(this)
+        }
+
+        override suspend fun exitRule(listener: SuspendParseTreeListener) {
+            if (listener is SuspendVerilogParserListener) listener.exitModulePort(this)
+        }
+
+        constructor() : super() {}
+
+        override fun deepCopy(): ModulePortContext {
+            return ModulePortContext().also {
+                deepCopyInto(it)
+            }
         }
     }
 
@@ -3013,6 +3190,7 @@ class VerilogParser(input: TokenStream) : Parser(input) {
             errorHandler.sync(this)
             when (interpreter!!.adaptivePredict(_input!!, 27, context)) {
                 1 -> {
+                    _localctx = ModulePortContext(_localctx)
                     enterOuterAlt(_localctx, 1)
                     scoped {
                         this.state = 950
@@ -3023,6 +3201,7 @@ class VerilogParser(input: TokenStream) : Parser(input) {
                 }
 
                 2 -> {
+                    _localctx = ModuleInstanceOrGenerateContext(_localctx)
                     enterOuterAlt(_localctx, 2)
                     scoped {
                         this.state = 953
@@ -3031,6 +3210,7 @@ class VerilogParser(input: TokenStream) : Parser(input) {
                 }
 
                 3 -> {
+                    _localctx = ModuleGenerateRegionContext(_localctx)
                     enterOuterAlt(_localctx, 3)
                     scoped {
                         this.state = 954
@@ -3039,6 +3219,7 @@ class VerilogParser(input: TokenStream) : Parser(input) {
                 }
 
                 4 -> {
+                    _localctx = ModuleSpecifyBlockContext(_localctx)
                     enterOuterAlt(_localctx, 4)
                     scoped {
                         this.state = 955
@@ -3047,6 +3228,7 @@ class VerilogParser(input: TokenStream) : Parser(input) {
                 }
 
                 5 -> {
+                    _localctx = ModuleParameterContext(_localctx)
                     enterOuterAlt(_localctx, 5)
                     scoped {
                         this.state = 959
@@ -3071,6 +3253,7 @@ class VerilogParser(input: TokenStream) : Parser(input) {
                 }
 
                 6 -> {
+                    _localctx = ModuleSpecparamContext(_localctx)
                     enterOuterAlt(_localctx, 6)
                     scoped {
                         this.state = 968

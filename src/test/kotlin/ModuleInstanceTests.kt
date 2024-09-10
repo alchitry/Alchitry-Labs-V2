@@ -5,7 +5,7 @@ import com.alchitry.labs2.parsers.hdl.types.ModuleInstanceArray
 import com.alchitry.labs2.parsers.hdl.types.Signal
 import com.alchitry.labs2.parsers.hdl.types.SignalDirection
 import com.alchitry.labs2.parsers.hdl.values.*
-import helpers.LucidTester
+import helpers.ProjectTester
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 class ModuleInstanceTests {
     @Test
     fun basicTwoModules() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module alchitryTop (
                     input clk
@@ -46,7 +46,7 @@ class ModuleInstanceTests {
 
     @Test
     fun basicModuleArray() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module alchitryTop (
                     input clk
@@ -81,7 +81,7 @@ class ModuleInstanceTests {
 
     @Test
     fun counterTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module alchitryTop (
                     input clk,
@@ -122,7 +122,7 @@ class ModuleInstanceTests {
 
     @Test
     fun complexParamTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module alchitryTop (
                     input clk,
@@ -173,7 +173,7 @@ class ModuleInstanceTests {
 
     @Test
     fun counterParamTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module alchitryTop (
                     input clk,
@@ -231,7 +231,7 @@ class ModuleInstanceTests {
 
     @Test
     fun inoutPassthroughModules() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module alchitryTop (
                     input clk,
@@ -264,7 +264,7 @@ class ModuleInstanceTests {
 
     @Test
     fun badResolvableWidthModules() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module alchitryTop (
                     input clk,
@@ -297,7 +297,7 @@ class ModuleInstanceTests {
 
     @Test
     fun missingParamValueInModuleArray() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module multiDecimalCounter #(
                     DIGITS : DIGITS >= 2  // number of digits

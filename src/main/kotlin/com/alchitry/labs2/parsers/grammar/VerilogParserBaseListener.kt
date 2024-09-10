@@ -232,13 +232,83 @@ open class VerilogParserBaseListener : VerilogParserListener {
 	 *f
 	 * <p>The default implementation does nothing.</p>
 	 */
-    override fun enterModule_item(ctx: VerilogParser.Module_itemContext) {}
+    override fun enterModulePort(ctx: VerilogParser.ModulePortContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override fun exitModulePort(ctx: VerilogParser.ModulePortContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
+    override fun enterModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override fun exitModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
+    override fun enterModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override fun exitModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
+    override fun enterModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override fun exitModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
+    override fun enterModuleParameter(ctx: VerilogParser.ModuleParameterContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override fun exitModuleParameter(ctx: VerilogParser.ModuleParameterContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
+    override fun enterModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext) {}
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-    override fun exitModule_item(ctx: VerilogParser.Module_itemContext) {}
+    override fun exitModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext) {}
 	/**
 	 * {@inheritDoc}
 	 *f
@@ -5089,13 +5159,83 @@ open class SuspendVerilogParserBaseListener : SuspendVerilogParserListener {
 	 *f
 	 * <p>The default implementation does nothing.</p>
 	 */
-    override suspend fun enterModule_item(ctx: VerilogParser.Module_itemContext) {}
+    override suspend fun enterModulePort(ctx: VerilogParser.ModulePortContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override suspend fun exitModulePort(ctx: VerilogParser.ModulePortContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
+    override suspend fun enterModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override suspend fun exitModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
+    override suspend fun enterModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override suspend fun exitModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
+    override suspend fun enterModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override suspend fun exitModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
+    override suspend fun enterModuleParameter(ctx: VerilogParser.ModuleParameterContext) {}
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-    override suspend fun exitModule_item(ctx: VerilogParser.Module_itemContext) {}
+    override suspend fun exitModuleParameter(ctx: VerilogParser.ModuleParameterContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
+    override suspend fun enterModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override suspend fun exitModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext) {}
 	/**
 	 * {@inheritDoc}
 	 *f

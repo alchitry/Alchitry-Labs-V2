@@ -1,5 +1,5 @@
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
-import helpers.LucidTester
+import helpers.ProjectTester
 import helpers.SimpleLucidTester
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -114,7 +114,7 @@ class BoundsParserTests {
 
     @Test
     fun testDeadIfCode() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module rca #(
                     SIZE = 4 : SIZE > 1
@@ -145,7 +145,7 @@ class BoundsParserTests {
 
     @Test
     fun testDeadCaseCode() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module rca #(
                     SIZE = 4 : SIZE > 1

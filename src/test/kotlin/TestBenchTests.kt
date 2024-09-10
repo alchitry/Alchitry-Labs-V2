@@ -2,7 +2,7 @@ import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SimParent
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SimValue
 import com.alchitry.labs2.parsers.hdl.values.BitListValue
-import helpers.LucidTester
+import helpers.ProjectTester
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
 class TestBenchTests {
     @Test
     fun basicTestBenchTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 testBench myTestBench {
                     sig clk
@@ -49,7 +49,7 @@ class TestBenchTests {
 
     @Test
     fun basicFunctionTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 testBench myTestBench {
                     sig clk
@@ -99,7 +99,7 @@ class TestBenchTests {
 
     @Test
     fun basicFunctionArgTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 testBench myTestBench {
                     sig clk
@@ -144,7 +144,7 @@ class TestBenchTests {
 
     @Test
     fun doubleFunctionArgTests() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 testBench myTestBench {
                     sig clk
@@ -199,7 +199,7 @@ class TestBenchTests {
 
     @Test
     fun manyFunctionArgTests() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 testBench myTestBench {
                     sig clk
@@ -326,7 +326,7 @@ class TestBenchTests {
 
     @Test
     fun reductionTestbench() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 testBench playground {
                     sig cumulative[10]

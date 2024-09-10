@@ -8,7 +8,10 @@ import org.antlr.v4.kotlinruntime.tree.RuleNode
 object VerilogWalkerFilters {
     val SkipModuleBodies = object : WalkerFilter {
         override fun shouldSkip(parent: RuleNode, child: ParseTree): Boolean {
-            return child is VerilogParser.Module_itemContext
+            return child is VerilogParser.ModuleInstanceOrGenerateContext ||
+                    child is VerilogParser.ModuleGenerateRegionContext ||
+                    child is VerilogParser.ModuleSpecifyBlockContext ||
+                    child is VerilogParser.ModuleSpecparamContext
         }
     }
 

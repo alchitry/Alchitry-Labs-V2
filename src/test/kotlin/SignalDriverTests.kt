@@ -1,7 +1,7 @@
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
 import com.alchitry.labs2.parsers.hdl.types.Signal
 import com.alchitry.labs2.parsers.hdl.values.BitListValue
-import helpers.LucidTester
+import helpers.ProjectTester
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 class SignalDriverTests {
     @Test
     fun basicDriverTest(): Unit = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a
@@ -31,7 +31,7 @@ class SignalDriverTests {
 
     @Test
     fun signalNotWrittenTest(): Unit = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a
@@ -51,7 +51,7 @@ class SignalDriverTests {
 
     @Test
     fun checkSigInRepeat() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module errorTest (
                     input in[32],
@@ -76,7 +76,7 @@ class SignalDriverTests {
 
     @Test
     fun doubleDriverTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a
@@ -103,7 +103,7 @@ class SignalDriverTests {
 
     @Test
     fun basicPartialDrivenTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a
@@ -126,7 +126,7 @@ class SignalDriverTests {
 
     @Test
     fun multiPartialDrivenTest(): Unit = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a
@@ -149,7 +149,7 @@ class SignalDriverTests {
 
     @Test
     fun basicIfPartialDrivenTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a
@@ -173,7 +173,7 @@ class SignalDriverTests {
 
     @Test
     fun basicIfCompleteDrivenTest(): Unit = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a
@@ -198,7 +198,7 @@ class SignalDriverTests {
 
     @Test
     fun sigDirectAssignTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a,
@@ -225,7 +225,7 @@ class SignalDriverTests {
 
     @Test
     fun sigDirectAssignOverdriveTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a,
@@ -247,7 +247,7 @@ class SignalDriverTests {
 
     @Test
     fun sigDirectAssignTruncationTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a,
@@ -269,7 +269,7 @@ class SignalDriverTests {
 
     @Test
     fun localSignalTruncationTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a,
@@ -290,7 +290,7 @@ class SignalDriverTests {
 
     @Test
     fun localSignalNestedNameTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a,
@@ -313,7 +313,7 @@ class SignalDriverTests {
 
     @Test
     fun localSignalReadBeforeWrittenTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a,
@@ -333,7 +333,7 @@ class SignalDriverTests {
 
     @Test
     fun localSignalLocalWriteTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a,
@@ -354,7 +354,7 @@ class SignalDriverTests {
 
     @Test
     fun localSignalDriverTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module binToDec #(
                     DIGITS = 4 : DIGITS > 0 && DIGITS < 20,           // limited by 64 bit constants in the tools

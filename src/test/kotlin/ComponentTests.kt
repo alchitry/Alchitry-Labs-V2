@@ -1,7 +1,7 @@
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
 import com.alchitry.labs2.project.files.Component
 import com.alchitry.labs2.project.library.ComponentLibrary
-import helpers.LucidTester
+import helpers.ProjectTester
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
@@ -26,7 +26,7 @@ class ComponentTests {
 
     @Test
     fun fakePullDown2DTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module fakePullDown2D #(
                     DIM_1 = 1 : DIM_1 > 0,

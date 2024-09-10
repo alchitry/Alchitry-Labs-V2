@@ -1,9 +1,6 @@
 package helpers
 
 import com.alchitry.labs2.parsers.ProjectContext
-import com.alchitry.labs2.parsers.grammar.LucidLexer
-import com.alchitry.labs2.parsers.grammar.LucidParser
-import com.alchitry.labs2.parsers.grammar.LucidParser.SourceContext
 import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidGlobalContext
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidModuleTypeContext
@@ -12,44 +9,28 @@ import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SimParent
 import com.alchitry.labs2.parsers.hdl.types.Module
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstanceArray
-import com.alchitry.labs2.parsers.notations.NotationCollector
+import com.alchitry.labs2.parsers.hdl.verilog.context.VerilogModuleTypeContext
 import com.alchitry.labs2.parsers.notations.NotationManager
+import com.alchitry.labs2.project.Languages
+import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.files.SourceFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import org.antlr.v4.kotlinruntime.CharStreams
-import org.antlr.v4.kotlinruntime.CommonTokenStream
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 
-class LucidTester(vararg val files: SourceFile) {
+class ProjectTester(vararg val files: SourceFile) {
     val notationManager = NotationManager()
     val project = ProjectContext(notationManager)
 
-    fun parseText(): List<Pair<SourceFile, SourceContext>> {
-        return files.map { file ->
-            val notationCollector = notationManager.getCollector(file)
-            val parser = LucidParser(
-                CommonTokenStream(
-                    LucidLexer(
-                        CharStreams.fromString(runBlocking { file.readText() })
-                    ).also { it.removeErrorListeners() })
-            ).apply {
-                (tokenStream?.tokenSource as LucidLexer).addErrorListener(notationCollector)
-                removeErrorListeners()
-                addErrorListener(notationCollector)
-            }
-
-            file to parser.source()
-        }
-    }
+    suspend fun parseText() = Project.parseAll(files.toList(), notationManager) ?: error("Failed to parse all files!")
 
     suspend fun globalParse(
-        trees: List<Pair<SourceFile, SourceContext>> = parseText()
+        trees: List<Pair<SourceFile, ParserRuleContext>>? = null
     ) {
         assert(notationManager.hasNoErrors) { notationManager.getReport() }
 
-        trees.forEach {
+        (trees ?: parseText()).forEach {
             val globalContext = LucidGlobalContext(project, it.first)
             globalContext.walk(it.second)
 
@@ -57,8 +38,8 @@ class LucidTester(vararg val files: SourceFile) {
         }
     }
 
-    private suspend fun testBenchParse(
-        trees: List<Pair<SourceFile, SourceContext>> = parseText()
+    private fun testBenchParse(
+        trees: List<Pair<SourceFile, ParserRuleContext>>
     ) {
         assert(notationManager.hasNoErrors) { notationManager.getReport() }
 
@@ -71,13 +52,15 @@ class LucidTester(vararg val files: SourceFile) {
     }
 
     suspend fun moduleTypeParse(
-        trees: List<Pair<SourceFile, SourceContext>> = parseText()
+        trees: List<Pair<SourceFile, ParserRuleContext>>? = null
     ): List<Module> {
         assert(notationManager.hasNoErrors) { notationManager.getReport() }
 
-        return trees.flatMap {
-            val moduleTypeContext = LucidModuleTypeContext(project, it.first)
-            val modules = moduleTypeContext.extract(it.second)
+        return (trees ?: parseText()).flatMap {
+            val modules = when (it.first.language) {
+                Languages.Lucid -> LucidModuleTypeContext(project, it.first).extract(it.second)
+                Languages.Verilog -> VerilogModuleTypeContext(project, it.first).extract(it.second)
+            }
 
             assert(notationManager.hasNoErrors) { notationManager.getReport() }
             modules
@@ -161,7 +144,7 @@ class LucidTester(vararg val files: SourceFile) {
         bench.context.notationCollector.assertNoIssues()
     }
 
-    suspend fun parallelRunTestBenches(notationCollector: NotationCollector? = null) {
+    suspend fun parallelRunTestBenches() {
         val tree = parseText()
 
         globalParse(tree)
@@ -180,7 +163,7 @@ class LucidTester(vararg val files: SourceFile) {
             testBenches.forEach { testBench ->
                 val tests = testBench.getTestBlocks()
                 tests.forEach {
-                    val tester = LucidTester(*files)
+                    val tester = ProjectTester(*files)
                     launch(Dispatchers.Default) {
                         tester.runTest(testBench.name, it.name)
                     }

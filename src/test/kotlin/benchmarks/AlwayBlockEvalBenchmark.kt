@@ -7,7 +7,7 @@ import com.alchitry.labs2.parsers.hdl.types.Signal
 import com.alchitry.labs2.parsers.hdl.types.SignalDirection
 import com.alchitry.labs2.parsers.hdl.values.Bit
 import com.alchitry.labs2.parsers.hdl.values.BitListValue
-import helpers.LucidTester
+import helpers.ProjectTester
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.math.roundToInt
@@ -55,7 +55,7 @@ private val waveSource = """
 class EvaluationBenchmarks {
     @Test
     fun benchmarkWaveSimulation() = runBlocking {
-        val tester = LucidTester(waveSource)
+        val tester = ProjectTester(waveSource)
         val reset = Signal(
             "rst",
             SignalDirection.Write,

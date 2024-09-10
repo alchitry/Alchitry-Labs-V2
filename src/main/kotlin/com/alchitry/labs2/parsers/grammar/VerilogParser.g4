@@ -121,12 +121,12 @@ port_declaration
 
 // A.1.4 Module items
 module_item
-    : port_declaration ';'
-    | module_or_generate_item
-    | generate_region
-    | specify_block
-    | attribute_instance* parameter_declaration ';'
-    | attribute_instance* specparam_declaration
+    : port_declaration ';' #ModulePort
+    | module_or_generate_item #ModuleInstanceOrGenerate
+    | generate_region #ModuleGenerateRegion
+    | specify_block #ModuleSpecifyBlock
+    | attribute_instance* parameter_declaration ';' #ModuleParameter
+    | attribute_instance* specparam_declaration #ModuleSpecparam
     ;
 
 module_or_generate_item

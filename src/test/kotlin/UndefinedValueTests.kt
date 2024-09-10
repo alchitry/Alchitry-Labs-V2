@@ -4,7 +4,7 @@ import com.alchitry.labs2.parsers.hdl.lucid.context.SignalResolver
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.values.*
-import helpers.LucidTester
+import helpers.ProjectTester
 import helpers.SimpleLucidTester
 import kotlinx.coroutines.runBlocking
 import org.antlr.v4.kotlinruntime.ParserRuleContext
@@ -15,7 +15,7 @@ import kotlin.test.assertIs
 class UndefinedValueTests {
     @Test
     fun counterModuleNoSize() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
             module counter #(
                 SIZE : SIZE > 0, // Width of the output

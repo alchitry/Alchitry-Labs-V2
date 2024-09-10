@@ -229,16 +229,88 @@ interface VerilogParserListener : ParseTreeListener {
     fun exitPort_declaration(ctx: VerilogParser.Port_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_item}.
+     * Enter a parse tree produced by the {@code ModulePort}
+     * labeled alternative in {@link VerilogParser#module_item}.
      * @param ctx the parse tree
      */
-    fun enterModule_item(ctx: VerilogParser.Module_itemContext)
+    fun enterModulePort(ctx: VerilogParser.ModulePortContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_item}.
+     * Exit a parse tree produced by the {@code ModulePort}
+     * labeled alternative in {@link VerilogParser#module_item}.
      * @param ctx the parse tree
      */
-    fun exitModule_item(ctx: VerilogParser.Module_itemContext)
+    fun exitModulePort(ctx: VerilogParser.ModulePortContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ModuleInstanceOrGenerate}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    fun enterModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ModuleInstanceOrGenerate}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    fun exitModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ModuleGenerateRegion}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    fun enterModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ModuleGenerateRegion}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    fun exitModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ModuleSpecifyBlock}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    fun enterModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ModuleSpecifyBlock}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    fun exitModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ModuleParameter}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    fun enterModuleParameter(ctx: VerilogParser.ModuleParameterContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ModuleParameter}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    fun exitModuleParameter(ctx: VerilogParser.ModuleParameterContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ModuleSpecparam}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    fun enterModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ModuleSpecparam}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    fun exitModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext)
 
     /**
      * Enter a parse tree produced by {@link VerilogParser#module_or_generate_item}.
@@ -4986,11 +5058,41 @@ interface VerilogParserListener : ParseTreeListener {
         override suspend fun exitPort_declaration(ctx: VerilogParser.Port_declarationContext) =
             this@VerilogParserListener.exitPort_declaration(ctx)
 
-        override suspend fun enterModule_item(ctx: VerilogParser.Module_itemContext) =
-            this@VerilogParserListener.enterModule_item(ctx)
+        override suspend fun enterModulePort(ctx: VerilogParser.ModulePortContext) =
+            this@VerilogParserListener.enterModulePort(ctx)
 
-        override suspend fun exitModule_item(ctx: VerilogParser.Module_itemContext) =
-            this@VerilogParserListener.exitModule_item(ctx)
+        override suspend fun exitModulePort(ctx: VerilogParser.ModulePortContext) =
+            this@VerilogParserListener.exitModulePort(ctx)
+
+        override suspend fun enterModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext) =
+            this@VerilogParserListener.enterModuleInstanceOrGenerate(ctx)
+
+        override suspend fun exitModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext) =
+            this@VerilogParserListener.exitModuleInstanceOrGenerate(ctx)
+
+        override suspend fun enterModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext) =
+            this@VerilogParserListener.enterModuleGenerateRegion(ctx)
+
+        override suspend fun exitModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext) =
+            this@VerilogParserListener.exitModuleGenerateRegion(ctx)
+
+        override suspend fun enterModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext) =
+            this@VerilogParserListener.enterModuleSpecifyBlock(ctx)
+
+        override suspend fun exitModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext) =
+            this@VerilogParserListener.exitModuleSpecifyBlock(ctx)
+
+        override suspend fun enterModuleParameter(ctx: VerilogParser.ModuleParameterContext) =
+            this@VerilogParserListener.enterModuleParameter(ctx)
+
+        override suspend fun exitModuleParameter(ctx: VerilogParser.ModuleParameterContext) =
+            this@VerilogParserListener.exitModuleParameter(ctx)
+
+        override suspend fun enterModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext) =
+            this@VerilogParserListener.enterModuleSpecparam(ctx)
+
+        override suspend fun exitModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext) =
+            this@VerilogParserListener.exitModuleSpecparam(ctx)
 
         override suspend fun enterModule_or_generate_item(ctx: VerilogParser.Module_or_generate_itemContext) =
             this@VerilogParserListener.enterModule_or_generate_item(ctx)
@@ -7502,16 +7604,88 @@ interface SuspendVerilogParserListener : SuspendParseTreeListener {
     suspend fun exitPort_declaration(ctx: VerilogParser.Port_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_item}.
+     * Enter a parse tree produced by the {@code ModulePort}
+     * labeled alternative in {@link VerilogParser#module_item}.
      * @param ctx the parse tree
      */
-    suspend fun enterModule_item(ctx: VerilogParser.Module_itemContext)
+    suspend fun enterModulePort(ctx: VerilogParser.ModulePortContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_item}.
+     * Exit a parse tree produced by the {@code ModulePort}
+     * labeled alternative in {@link VerilogParser#module_item}.
      * @param ctx the parse tree
      */
-    suspend fun exitModule_item(ctx: VerilogParser.Module_itemContext)
+    suspend fun exitModulePort(ctx: VerilogParser.ModulePortContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ModuleInstanceOrGenerate}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ModuleInstanceOrGenerate}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ModuleGenerateRegion}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ModuleGenerateRegion}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ModuleSpecifyBlock}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ModuleSpecifyBlock}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ModuleParameter}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterModuleParameter(ctx: VerilogParser.ModuleParameterContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ModuleParameter}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitModuleParameter(ctx: VerilogParser.ModuleParameterContext)
+
+    /**
+     * Enter a parse tree produced by the {@code ModuleSpecparam}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext)
+
+    /**
+     * Exit a parse tree produced by the {@code ModuleSpecparam}
+     * labeled alternative in {@link VerilogParser#module_item}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext)
 
     /**
      * Enter a parse tree produced by {@link VerilogParser#module_or_generate_item}.

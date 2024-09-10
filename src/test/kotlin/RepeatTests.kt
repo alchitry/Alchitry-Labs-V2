@@ -1,6 +1,6 @@
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
 import com.alchitry.labs2.parsers.hdl.values.BitListValue
-import helpers.LucidTester
+import helpers.ProjectTester
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 class RepeatTests {
     @Test
     fun nestedRepeats() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module errorTest (
                     output out[32]
@@ -37,7 +37,7 @@ class RepeatTests {
 
     @Test
     fun basicRepeat() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module errorTest (
                     output out[32]
@@ -63,7 +63,7 @@ class RepeatTests {
 
     @Test
     fun indexedRepeat() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module errorTest (
                     output out[32]
@@ -89,7 +89,7 @@ class RepeatTests {
 
     @Test
     fun indexedOffsetRepeat() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module errorTest (
                     output out[32]
@@ -115,7 +115,7 @@ class RepeatTests {
 
     @Test
     fun indexedOffsetStepRepeat() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module errorTest (
                     output out[32]
@@ -141,7 +141,7 @@ class RepeatTests {
 
     @Test
     fun rippleCarryAdderV1() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 testBench playground {
                     rca dut(#SIZE(5))
@@ -201,7 +201,7 @@ class RepeatTests {
 
     @Test
     fun rippleCarryAdderV2() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 testBench playground {
                     rca dut(#SIZE(5))
@@ -261,7 +261,7 @@ class RepeatTests {
 
     @Test
     fun rippleCarryAdderV3() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 testBench playground {
                     rca dut(#SIZE(5))

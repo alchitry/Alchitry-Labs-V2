@@ -6,7 +6,7 @@ import com.alchitry.labs2.parsers.hdl.values.Bit
 import com.alchitry.labs2.parsers.hdl.values.BitListValue
 import com.alchitry.labs2.parsers.hdl.values.BitValue
 import com.alchitry.labs2.project.QueueExhaustionException
-import helpers.LucidTester
+import helpers.ProjectTester
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 class ModuleMultiPassTests {
     @Test
     fun testGlobalUse() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 global MyGlobal {
                     const ONE = 1
@@ -44,7 +44,7 @@ class ModuleMultiPassTests {
 
     @Test
     fun basicRepeatTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a
@@ -73,7 +73,7 @@ class ModuleMultiPassTests {
 
     @Test
     fun doubleDriverTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a
@@ -106,7 +106,7 @@ class ModuleMultiPassTests {
 
     @Test
     fun endlessLoopTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a
@@ -145,7 +145,7 @@ class ModuleMultiPassTests {
 
     @Test
     fun enumTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     input a,
@@ -196,7 +196,7 @@ class ModuleMultiPassTests {
 
     @Test
     fun globalEnumTest() = runBlocking {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module myModule (
                     output a[2]

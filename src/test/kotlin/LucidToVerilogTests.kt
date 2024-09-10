@@ -2,7 +2,7 @@ import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
 import com.alchitry.labs2.parsers.hdl.values.Bit
 import com.alchitry.labs2.parsers.hdl.values.BitListValue
 import com.alchitry.labs2.project.library.ComponentLibrary
-import helpers.LucidTester
+import helpers.ProjectTester
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import java.math.BigInteger
@@ -27,7 +27,7 @@ internal class LucidToVerilogTests {
 
     @Test
     fun simpleConversion() {
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 global Globals {
                     const SIZE = 4
@@ -100,7 +100,7 @@ internal class LucidToVerilogTests {
     @Test
     fun binToDecConversion() = runBlocking {
         System.setProperty("app.dir", "../")
-        val tester = LucidTester(
+        val tester = ProjectTester(
             """
                 module alchitryTop (
                     input clk,              // 100MHz clock
