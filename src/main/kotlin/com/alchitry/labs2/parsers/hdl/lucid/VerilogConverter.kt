@@ -1191,7 +1191,7 @@ class VerilogConverter(
                     functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
                 val p2 =
                     functionCtx.functionExpr(1)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
-                "(($p1) ** ($p2))"
+                "(64'($p1) ** ($p2))"
             }
 
             Function.CDIV -> {
