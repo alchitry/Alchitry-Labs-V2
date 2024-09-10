@@ -144,6 +144,9 @@ fun LabsToolbar() {
             MenuItem({ Text("New Verilog Module") }) {
                 showVerilogFileDialog = true
             }
+            MenuItem({ Text("Import Existing File") }) {
+                project?.let { importFilesDialog(it) }
+            }
         }
 
         var showComponentLibrary by remember { mutableStateOf(false) }
