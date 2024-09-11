@@ -658,15 +658,49 @@ class CodeEditorState(
     }
 
     private fun processKey(event: KeyEvent): Boolean {
-        if (event.type == KeyEventType.KeyDown &&
-            event.isCtrlPressed &&
-            event.isAltPressed &&
-            !event.isShiftPressed &&
-            !event.isMetaPressed
-        ) {
-            when (event.key) {
-                Key.L -> {
+        // Special key combinations
+        if (event.type == KeyEventType.KeyDown) {
+            val key = event.key
+            val ctrl = event.isCtrlPressed
+            val alt = event.isAltPressed
+            val shift = event.isShiftPressed
+            val meta = event.isMetaPressed
+
+            when {
+                ctrl && alt && !shift && !meta && key == Key.L -> { // Ctrl + Alt + L
                     adjustIndents()
+                    return true
+                }
+
+                !ctrl && !alt && shift && !meta && key == Key.Tab -> { // Shift + Tab
+                    (selectionManager.firstPosition.line..selectionManager.secondPosition.line).forEach { lineIndex ->
+                        val lineText = lines.getOrNull(lineIndex)?.text?.text ?: return@forEach
+                        val startOfLine = TextPosition(lineIndex, 0)
+                        val whitespace = if (lineText.startsWith(CodeFormatter.INDENT_STRING)) {
+                            CodeFormatter.INDENT_STRING.length
+                        } else {
+                            lineText.length - lineText.trimStart().length
+                        }
+
+                        replaceText(
+                            "",
+                            startOfLine..<TextPosition(lineIndex, whitespace),
+                            false
+                        )
+
+                        if (selectionManager.start.line == lineIndex) {
+                            selectionManager.start =
+                                selectionManager.start.copy(offset = selectionManager.start.offset - whitespace)
+                        }
+                        if (selectionManager.end.line == lineIndex) {
+                            selectionManager.end =
+                                selectionManager.end.copy(offset = selectionManager.end.offset - whitespace)
+                        }
+                        if (selectionManager.caret.line == lineIndex) {
+                            selectionManager.caret =
+                                selectionManager.caret.copy(offset = selectionManager.caret.offset - whitespace)
+                        }
+                    }
                     return true
                 }
             }
@@ -692,7 +726,6 @@ class CodeEditorState(
                 "[" -> "[]"
                 else -> text
             }
-
 
             replaceText(modifiedText)
             if (line?.isBlank() == true && modifiedText.isNotBlank()) {
@@ -829,12 +862,28 @@ class CodeEditorState(
                     replaceText(codeFormatter.getIndentFor(selectionManager.caret.line))
                 }
             }
-
             KeyCommand.TAB -> {
-                if (lines.getOrNull(selectionManager.caret.line)?.text?.isBlank() == true) {
-                    replaceText(codeFormatter.getIndentFor(selectionManager.caret.line))
-                } else {
-                    replaceText(CodeFormatter.INDENT_STRING)
+                when {
+                    selectionManager.start.line != selectionManager.end.line -> {
+                        (selectionManager.firstPosition.line..selectionManager.secondPosition.line).forEach { lineIndex ->
+                            val startOfLine = TextPosition(lineIndex, 0)
+                            replaceText(CodeFormatter.INDENT_STRING, startOfLine..<startOfLine, false)
+                        }
+                        val offset = CodeFormatter.INDENT_STRING.length
+                        selectionManager.start =
+                            selectionManager.start.copy(offset = selectionManager.start.offset + offset)
+                        selectionManager.end = selectionManager.end.copy(offset = selectionManager.end.offset + offset)
+                        selectionManager.caret =
+                            selectionManager.caret.copy(offset = selectionManager.caret.offset + offset)
+                    }
+
+                    lines.getOrNull(selectionManager.caret.line)?.text?.isBlank() == true -> {
+                        replaceText(codeFormatter.getIndentFor(selectionManager.caret.line))
+                    }
+
+                    else -> {
+                        replaceText(CodeFormatter.INDENT_STRING)
+                    }
                 }
             }
 
