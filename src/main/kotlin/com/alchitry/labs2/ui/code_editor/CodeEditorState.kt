@@ -675,6 +675,17 @@ class CodeEditorState(
         if (event.isTypedEvent) {
             val text = StringBuilder().appendCodePoint(event.utf16CodePoint).toString()
 
+            val lineNum = selectionManager.caret.line
+            val line = lines.getOrNull(lineNum)?.text?.text
+
+            if (!selectionManager.hasSelection && (text == ")" || text == "}" || text == "]")) {
+                val nextChar = selectionManager.caret.charAt()
+                if (text[0] == nextChar) {
+                    selectionManager.caret = selectionManager.caret.getNext()
+                    return true
+                }
+            }
+
             val modifiedText = when (text) {
                 "{" -> "{}"
                 "(" -> "()"
@@ -682,8 +693,7 @@ class CodeEditorState(
                 else -> text
             }
 
-            val lineNum = selectionManager.caret.line
-            val line = lines.getOrNull(lineNum)?.text?.text
+
             replaceText(modifiedText)
             if (line?.isBlank() == true && modifiedText.isNotBlank()) {
                 val current = lines[lineNum].text.text
@@ -845,7 +855,7 @@ class CodeEditorState(
 //            KeyCommand.SELECT_PAGE_DOWN -> moveCursorDownByPage().selectMovement()
 //            KeyCommand.SELECT_HOME -> moveCursorToHome().selectMovement()
 //            KeyCommand.SELECT_END -> moveCursorToEnd().selectMovement()
-//            KeyCommand.DESELECT -> deselect()
+            KeyCommand.DESELECT -> selectionManager.clearSelection()
             KeyCommand.UNDO -> undoManager.undo()
             KeyCommand.REDO -> undoManager.redo()
 //
