@@ -32,11 +32,11 @@ data object VivadoBuilder : ProjectBuilder() {
         )
 
         val tclScript = project.buildDirectory.resolve("project.tcl").toFile()
-        tclScript.bufferedWriter().use {
-            it.write(
+        tclScript.bufferedWriter().use { bufferedWriter ->
+            bufferedWriter.write(
                 generateProjectFile(
                     project,
-                    sourceFiles,
+                    sourceFiles + project.data.ipCores.flatMap { core -> core.files.map { it.file } },
                     constraintFiles.toMutableList().apply { add(propsFile) })
             )
         }
