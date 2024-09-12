@@ -127,12 +127,12 @@ class SerialTerminal(
                             painterResource("icons/link.svg"),
                             "Connect",
                             size = 52.dp,
-                            enabled = selectedBoard != null && rateCorrect,
+                            enabled = selectedBoard != null && rateCorrect && !attachedToBoard,
                         ) {
                             connectionJob = scope.launch {
                                 val selection = selectedBoard ?: return@launch
                                 try {
-                                    labsState.attachedToBoard.value = true
+                                    attachedToBoard = true
                                     connected = true
 
                                     UsbUtil.openSerial(selection.first, selection.second)?.use { device ->
@@ -158,7 +158,7 @@ class SerialTerminal(
                                         }
                                     }
                                 } finally {
-                                    labsState.attachedToBoard.value = false
+                                    attachedToBoard = false
                                     connected = false
                                 }
                             }
