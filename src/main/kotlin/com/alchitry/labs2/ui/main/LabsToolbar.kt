@@ -279,7 +279,7 @@ fun LabsToolbar() {
             },
             icon = painterResource("icons/erase.svg"),
             description = "Erase",
-            enabled = !running && boardDetected
+            enabled = !running && boardDetected && !attachedToBoard
         )
         ToolbarButton(
             onClick = onClick@{
