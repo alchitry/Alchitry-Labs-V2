@@ -216,7 +216,7 @@ fun LabsToolbar() {
         var attachedToBoard by LocalLabsState.current.attachedToBoard
 
         val board = project?.data?.board
-        val boardDetected by remember { derivedStateOf { boards.keys.contains(board) } }
+        val boardDetected = boards.keys.contains(board)
 
         val canLoad = boardDetected && project != null && !attachedToBoard
 
