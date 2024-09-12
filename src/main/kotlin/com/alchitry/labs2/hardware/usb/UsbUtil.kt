@@ -133,9 +133,7 @@ object UsbUtil {
             val dev = getDevice(board, deviceIndex)
                 ?: return null
 
-            val device: SerialDevice
-
-            device = FtdiLibUSB(dev.device, board.usbDescriptor.d2xxInterface)
+            val device: SerialDevice = FtdiLibUSB(dev.device, board.serialUsbDescriptor.d2xxInterface)
             LibUsb.unrefDevice(dev.device)
             return device
         } catch (e: LibUsbException) {

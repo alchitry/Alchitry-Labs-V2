@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.Layout
@@ -34,7 +36,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.ui.theme.AlchitryTypography
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import me.tongfei.progressbar.ProgressBarConsumer
 import kotlin.math.roundToInt
 
@@ -43,12 +45,18 @@ private data class StyledText(
     val style: SpanStyle?
 )
 
-object Console {
+class Console {
+    companion object {
+        val main = Console()
+        private const val SCALE = 0.08f
+    }
+
     private val content = mutableStateListOf<AnnotatedString>()
     private var appendToLastLine = true
     private var scrollToIdx by mutableStateOf(-1)
-    private const val scale = 0.08f
+
     private var activeProgressBar: AnnotatedString? = null
+    private val caretBlinker = CaretBlinker()
 
     val progressBarConsumer = object : ProgressBarConsumer {
         override fun clear() {
@@ -157,6 +165,7 @@ object Console {
             }
             .toMutableList().apply { if (last().isEmpty()) removeLast() }
             .forEach { appendSingleLine(it) }
+        caretBlinker.launchBlinkCursor()
     }
 
     fun append(text: String, style: SpanStyle? = null) {
@@ -174,8 +183,16 @@ object Console {
     }
 
     @Composable
-    fun show() {
+    fun show(blinkCursor: Boolean = false) {
         val lazyListState = rememberLazyListState()
+        caretBlinker.uiScope = rememberCoroutineScope()
+
+        LaunchedEffect(blinkCursor) {
+            if (blinkCursor)
+                caretBlinker.launchBlinkCursor()
+            else
+                caretBlinker.cancelBlinkCursor()
+        }
         LaunchedEffect(scrollToIdx) {
             if (scrollToIdx >= 0) {
                 lazyListState.animateScrollToItem(scrollToIdx)
@@ -193,23 +210,67 @@ object Console {
                         LazyColumn(
                             state = lazyListState,
                             contentPadding = PaddingValues(10.dp),
-                            modifier = Modifier.fillMaxWidth(1f - scale)
+                            modifier = Modifier.fillMaxWidth(1f - SCALE)
                         ) {
-                            items(content) {
-                                Text(buildAnnotatedString {
-                                    append(it)
-                                    appendLine()
-                                }, maxLines = 1)
+                            items(if (content.isEmpty()) listOf(AnnotatedString("")) else content) {
+                                if (blinkCursor && (content.isEmpty() || content.last() === it)) {
+                                    Layout(content = {
+                                        Text(buildAnnotatedString {
+                                            append(it)
+                                            appendLine()
+                                        }, maxLines = 1)
+                                        Box(
+                                            Modifier.fillMaxHeight().width(2.dp)
+                                                .graphicsLayer { alpha = if (caretBlinker.showCaret) 1f else 0f }
+                                                .background(LocalContentColor.current)
+                                        )
+                                    }) { measurables, constraints ->
+                                        val text = measurables[0].measure(constraints)
+                                        val cursor = measurables[1].measure(Constraints.fixedHeight(text.height))
+
+                                        layout(constraints.maxWidth, text.height) {
+                                            text.place(0, 0)
+                                            cursor.place(text.width, 0)
+                                        }
+                                    }
+                                } else {
+                                    Text(buildAnnotatedString {
+                                        append(it)
+                                        appendLine()
+                                    }, maxLines = 1)
+                                }
                             }
                         }
                     }
 
-                    LazyListMiniScrollBar(lazyListState, Modifier.fillMaxWidth(scale).align(Alignment.TopEnd)) {
-                        MiniText(content, scale)
+                    LazyListMiniScrollBar(lazyListState, Modifier.fillMaxWidth(SCALE).align(Alignment.TopEnd)) {
+                        MiniText(content, SCALE)
                     }
                 }
             }
         }
+    }
+}
+
+class CaretBlinker() {
+    var uiScope: CoroutineScope? = null
+    var showCaret by mutableStateOf(false)
+    private var blinkJob: Job? = null
+    fun launchBlinkCursor() {
+        blinkJob?.cancel()
+        blinkJob = uiScope?.launch {
+            showCaret = true
+            delay(1000)
+            while (isActive) {
+                showCaret = !showCaret
+                delay(500)
+            }
+        }
+    }
+
+    fun cancelBlinkCursor() {
+        blinkJob?.cancel()
+        showCaret = false
     }
 }
 

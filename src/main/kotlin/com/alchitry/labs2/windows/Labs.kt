@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
 import com.alchitry.labs2.Env
 import com.alchitry.labs2.Settings
+import com.alchitry.labs2.hardware.usb.UsbUtil
+import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.ui.components.ResizePriority
 import com.alchitry.labs2.ui.components.Sash
@@ -27,9 +29,17 @@ import com.alchitry.labs2.ui.main.LabsToolbar
 import com.alchitry.labs2.ui.tabs.Workspace
 import com.alchitry.labs2.ui.theme.AlchitryTheme
 import com.alchitry.labs2.ui.tree.ProjectTree
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import java.io.File
 
-val LocalRunningJob = compositionLocalOf<MutableState<Boolean>> { error("No running job context!") }
+val LocalLabsState = compositionLocalOf<LabsState> { error("No LabsState provided!") }
+
+data class LabsState(
+    val runningJob: MutableState<Boolean> = mutableStateOf(false),
+    val detectedBoards: MutableState<Map<Board, Int>> = mutableStateOf(emptyMap()),
+    val attachedToBoard: MutableState<Boolean> = mutableStateOf(false),
+)
 
 @Composable
 fun ApplicationScope.labsWindow() {
@@ -44,6 +54,17 @@ fun ApplicationScope.labsWindow() {
             Settings.commit()
         }
     ) { state ->
+        val labsState = remember { LabsState() }
+        LaunchedEffect(labsState.attachedToBoard.value) {
+            if (labsState.attachedToBoard.value) {
+                return@LaunchedEffect
+            }
+            while (isActive) {
+                labsState.detectedBoards.value = UsbUtil.detectAttachedBoards()
+                delay(1000)
+            }
+        }
+
         LaunchedEffect(Unit) {
             Env.mode = Env.Mode.Labs
             Settings.openProject?.let {
@@ -68,7 +89,7 @@ fun ApplicationScope.labsWindow() {
             }
         }
 
-        CompositionLocalProvider(LocalRunningJob provides remember { mutableStateOf(false) }) {
+        CompositionLocalProvider(LocalLabsState provides labsState) {
             AlchitryTheme {
                 Column {
                     WindowDecoration(state) {
@@ -106,7 +127,7 @@ fun ApplicationScope.labsWindow() {
                                     },
                                     second = {
                                         Surface(Modifier.matchParentSize()) {
-                                            Console.show()
+                                            Console.main.show()
                                         }
                                     },
                                     orientation = Orientation.Vertical,

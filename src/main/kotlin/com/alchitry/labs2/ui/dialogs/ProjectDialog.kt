@@ -160,7 +160,7 @@ private fun BoardSelector(
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded)
             },
-            modifier = Modifier.menuAnchor().fillMaxWidth()
+            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable).fillMaxWidth()
         )
         ExposedDropdownMenu(
             expanded,

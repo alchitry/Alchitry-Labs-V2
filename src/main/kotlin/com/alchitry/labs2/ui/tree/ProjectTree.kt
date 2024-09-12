@@ -23,7 +23,7 @@ import com.alchitry.labs2.ui.selection.Selectable
 import com.alchitry.labs2.ui.selection.SingleSelectionContext
 import com.alchitry.labs2.ui.tabs.Workspace
 import com.alchitry.labs2.ui.theme.AlchitryColors
-import com.alchitry.labs2.windows.LocalRunningJob
+import com.alchitry.labs2.windows.LocalLabsState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -31,7 +31,7 @@ fun ProjectTree() {
     val project = Project.currentFlow.collectAsState().value ?: return
     val selectionContext = remember { SingleSelectionContext<String>() }
     val scope = rememberCoroutineScope()
-    var running by LocalRunningJob.current
+    var running by LocalLabsState.current.runningJob
 
     with(selectionContext) {
         Row(

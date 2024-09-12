@@ -15,8 +15,7 @@ data object Workspace : TabParent {
             return
         }
 
-        val panel = activeTabPanel()
-        panel.addTab(FileTab(file, panel))
+        addTab { FileTab(file, it) }
     }
 
     fun closeFile(
@@ -56,6 +55,11 @@ data object Workspace : TabParent {
 
     override fun setActiveSection(tab: TabSection) {
         check(tab === tabSection) { "setActiveSection called with mismatch tab!" }
+    }
+
+    fun addTab(tabCreator: (TabPanel) -> Tab) {
+        val panel = activeTabPanel()
+        panel.addTab(tabCreator(panel))
     }
 
     @Composable

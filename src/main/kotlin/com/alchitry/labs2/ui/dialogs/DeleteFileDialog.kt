@@ -15,7 +15,7 @@ import com.alchitry.labs2.project.files.ProjectFile
 import com.alchitry.labs2.project.library.VivadoIP
 import com.alchitry.labs2.project.removeFile
 import com.alchitry.labs2.ui.theme.AlchitryColors
-import com.alchitry.labs2.windows.LocalRunningJob
+import com.alchitry.labs2.windows.LocalLabsState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -75,7 +75,7 @@ fun DeleteCoreDialog(
     scope: CoroutineScope,
     onClose: () -> Unit
 ) {
-    var running by LocalRunningJob.current
+    var running by LocalLabsState.current.runningJob
     AlchitryDialog(core != null, "Delete IP Core", onClose = onClose) {
         val spacedBy = Arrangement.spacedBy(10.dp)
         Column(

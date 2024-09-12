@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
 import com.alchitry.labs2.hardware.usb.BoardLoader
-import com.alchitry.labs2.hardware.usb.UsbUtil
 import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.library.VivadoIP
@@ -24,16 +23,19 @@ import com.alchitry.labs2.ui.components.ToolbarButton
 import com.alchitry.labs2.ui.dialogs.*
 import com.alchitry.labs2.ui.menu.*
 import com.alchitry.labs2.ui.tabs.BoardSimulationTab
+import com.alchitry.labs2.ui.tabs.SerialTerminal
 import com.alchitry.labs2.ui.tabs.Workspace
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.ui.theme.AlchitryTheme
-import com.alchitry.labs2.windows.LocalRunningJob
-import kotlinx.coroutines.*
+import com.alchitry.labs2.windows.LocalLabsState
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun LabsToolbar() {
     val scope = rememberCoroutineScope()
-    var running by LocalRunningJob.current
+    var running by LocalLabsState.current.runningJob
     val project by Project.currentFlow.collectAsState()
 
     var showProjectDialog by remember { mutableStateOf(false) }
@@ -210,20 +212,13 @@ fun LabsToolbar() {
             runWithProject { it.build() }
         }
 
+        val boards by LocalLabsState.current.detectedBoards
+        var attachedToBoard by LocalLabsState.current.attachedToBoard
+
         val board = project?.data?.board
-        var boardDetected by remember { mutableStateOf(false) }
-        LaunchedEffect(board, running) {
-            if (board == null || running)
-                return@LaunchedEffect
+        val boardDetected by remember { derivedStateOf { boards.keys.contains(board) } }
 
-            while (isActive) {
-                val boards = UsbUtil.detectAttachedBoards()
-                boardDetected = boards.keys.contains(board)
-                delay(1000)
-            }
-        }
-
-        val canLoad = boardDetected && project != null
+        val canLoad = boardDetected && project != null && !attachedToBoard
 
         ToolbarButton(
             icon = painterResource("icons/load.svg"),
@@ -238,7 +233,12 @@ fun LabsToolbar() {
                         return@runWithProject
                     }
                 }
-                BoardLoader.load(it.data.board, 0, it.binFile, true)
+                try {
+                    attachedToBoard = true
+                    BoardLoader.load(it.data.board, 0, it.binFile, true)
+                } finally {
+                    attachedToBoard = false
+                }
             }
         }
 
@@ -253,7 +253,12 @@ fun LabsToolbar() {
                                 return@runWithProject
                             }
                         }
-                        BoardLoader.load(it.data.board, 0, it.binFile, false)
+                        try {
+                            attachedToBoard = true
+                            BoardLoader.load(it.data.board, 0, it.binFile, false)
+                        } finally {
+                            attachedToBoard = false
+                        }
                     }
                 },
                 icon = painterResource("icons/load_temp.svg"),
@@ -263,11 +268,31 @@ fun LabsToolbar() {
         }
         ToolbarButton(
             onClick = {
-                runWithProject { BoardLoader.erase(it.data.board, 0) }
+                runWithProject {
+                    try {
+                        attachedToBoard = true
+                        BoardLoader.erase(it.data.board, 0)
+                    } finally {
+                        attachedToBoard = false
+                    }
+                }
             },
             icon = painterResource("icons/erase.svg"),
             description = "Erase",
             enabled = !running && boardDetected
+        )
+        ToolbarButton(
+            onClick = onClick@{
+                // Focus the tab it if is already open
+                Workspace.getTabs().firstOrNull { it is SerialTerminal }?.let {
+                    it.parent.focusTab(it)
+                    return@onClick
+                }
+                Workspace.addTab { SerialTerminal(it) }
+            },
+            icon = painterResource("icons/terminal.svg"),
+            description = "Serial Terminal",
+            enabled = !running
         )
     }
 }

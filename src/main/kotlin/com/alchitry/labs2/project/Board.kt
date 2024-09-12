@@ -52,6 +52,7 @@ sealed class Board {
     abstract val alias: String
     abstract val fpgaName: String
     abstract val usbDescriptor: UsbUtil.UsbDescriptor
+    abstract val serialUsbDescriptor: UsbUtil.UsbDescriptor
     abstract val pinConverter: PinConverter
     abstract val acfConverter: AcfConverter
     abstract val projectBuilder: ProjectBuilder
@@ -74,6 +75,7 @@ sealed class Board {
                 "Alchitry Au",
                 PortInterfaceType.INTERFACE_A
             )
+        override val serialUsbDescriptor = usbDescriptor.copy(d2xxInterface = PortInterfaceType.INTERFACE_B)
         override val bridgeFile = "/bridges/au.bin"
         override val idCode = "0362D093"
         override val pinConverter = AuPin
@@ -94,6 +96,7 @@ sealed class Board {
                 "Alchitry Au+",
                 PortInterfaceType.INTERFACE_A
             )
+        override val serialUsbDescriptor = usbDescriptor.copy(d2xxInterface = PortInterfaceType.INTERFACE_B)
         override val bridgeFile = "/bridges/au_plus.bin"
         override val idCode = "13631093"
         override val pinConverter = AuPin
@@ -114,6 +117,7 @@ sealed class Board {
                 "Alchitry Cu",
                 PortInterfaceType.INTERFACE_A
             )
+        override val serialUsbDescriptor = usbDescriptor.copy(d2xxInterface = PortInterfaceType.INTERFACE_B)
         override val pinConverter = CuPin
         override val acfConverter = LatticeConverter
         override val projectBuilder get() = if (Settings.useIceCube) IceCubeBuilder else IceStormBuilder

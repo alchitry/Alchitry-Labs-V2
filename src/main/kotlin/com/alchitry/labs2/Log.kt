@@ -43,7 +43,7 @@ object Log {
      */
     private fun mainPrint(message: AnnotatedString) {
         if (Env.isLabs)
-            Console.append(message)
+            Console.main.append(message)
         if (Env.isLoader)
             loaderStatus = if (message.endsWith("\n"))
                 message.subSequence(0, message.length - 1)
@@ -178,7 +178,7 @@ object Log {
                     setTaskName(name)
                     setInitialMax(max)
                     setUpdateIntervalMillis(100)
-                    setConsumer(Console.progressBarConsumer)
+                    setConsumer(Console.main.progressBarConsumer)
                 }.build()
             }
 
