@@ -16,7 +16,7 @@ object Locations {
     val lucidProjects = "$project/Lucid"
     val toolsDirectory: File =
         System.getProperty("app.dir")?.let { Paths.get(it).toFile() } ?: error("System property \"app.dir\" isn't set!")
-    val binDir = toolsDirectory.resolve("bin")
+    val binDir = System.getProperty("alchitry.bin.dir")?.let { Paths.get(it).toFile() } ?: toolsDirectory.resolve("bin")
 
     val workspace: String = Settings.workspace ?: PathUtil.assemblePath(
         FileSystemView.getFileSystemView().defaultDirectory.path,
