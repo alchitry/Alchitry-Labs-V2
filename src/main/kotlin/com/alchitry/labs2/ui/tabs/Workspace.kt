@@ -57,6 +57,19 @@ data object Workspace : TabParent {
         check(tab === tabSection) { "setActiveSection called with mismatch tab!" }
     }
 
+    /**
+     * Checks if a tab of the class T exists and focuses it.
+     * If not, it creates a new one using the provided tabCreator.
+     */
+    inline fun <reified T : Tab> focusOrAddTab(tabCreator: (TabPanel) -> T) {
+        getTabs().firstOrNull { it is T }?.let {
+            it.parent.focusTab(it)
+            return
+        }
+        val panel = activeTabPanel()
+        panel.addTab(tabCreator(panel))
+    }
+
     fun addTab(tabCreator: (TabPanel) -> Tab) {
         val panel = activeTabPanel()
         panel.addTab(tabCreator(panel))

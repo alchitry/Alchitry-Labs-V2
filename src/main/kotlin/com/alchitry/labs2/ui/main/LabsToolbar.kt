@@ -23,6 +23,7 @@ import com.alchitry.labs2.ui.components.ToolbarButton
 import com.alchitry.labs2.ui.dialogs.*
 import com.alchitry.labs2.ui.menu.*
 import com.alchitry.labs2.ui.tabs.BoardSimulationTab
+import com.alchitry.labs2.ui.tabs.RegisterInterface
 import com.alchitry.labs2.ui.tabs.SerialTerminal
 import com.alchitry.labs2.ui.tabs.Workspace
 import com.alchitry.labs2.ui.theme.AlchitryColors
@@ -281,19 +282,14 @@ fun LabsToolbar() {
             description = "Erase",
             enabled = !running && boardDetected && !attachedToBoard
         )
-        ToolbarButton(
-            onClick = onClick@{
-                // Focus the tab it if is already open
-                Workspace.getTabs().firstOrNull { it is SerialTerminal }?.let {
-                    it.parent.focusTab(it)
-                    return@onClick
-                }
-                Workspace.addTab { SerialTerminal(it) }
-            },
-            icon = painterResource("icons/terminal.svg"),
-            description = "Serial Terminal",
-            enabled = !running
-        )
+        IconMenu(painterResource("icons/terminal.svg"), "Tools", enabled = !running) {
+            MenuItem({ Text("Serial Terminal") }) {
+                Workspace.focusOrAddTab { SerialTerminal(it) }
+            }
+            MenuItem({ Text("Register Interface") }) {
+                Workspace.focusOrAddTab { RegisterInterface(it) }
+            }
+        }
     }
 }
 
