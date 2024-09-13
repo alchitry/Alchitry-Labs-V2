@@ -40,6 +40,12 @@
                     "type": "DiskFile",
                     "path": "source/greeter.luc"
                 }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Memory/simpleRam.luc"
+                }
             }
         ],
         "constraintFiles": [

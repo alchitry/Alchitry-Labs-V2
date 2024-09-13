@@ -34,7 +34,7 @@ fun SerialTerminalToolbar(
     withDevice: suspend (SerialDevice) -> Unit
 ) {
     var selectedBoard by remember { mutableStateOf<Pair<Board, Int>?>(null) }
-    var baudRate by remember { mutableStateOf(500000) }
+    var baudRate by remember { mutableStateOf(1000000) }
     var connectionJob by remember { mutableStateOf<Job?>(null) }
     var connected by remember { mutableStateOf(false) }
 
