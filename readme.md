@@ -1,6 +1,7 @@
 # Alchitry Labs V2
 
-Welcome to the Alchitry Labs V2 repo! This is currently a work in progress and not ready for use.
+Welcome to the Alchitry Labs V2 repo! It is now in beta, so give it a try and report any issues to
+the [issues pages](https://github.com/alchitry/Alchitry-Labs-V2/issues).
 
 This is a full rewrite of the [original Alchitry Labs](https://github.com/alchitry/Alchitry-Labs).
 
