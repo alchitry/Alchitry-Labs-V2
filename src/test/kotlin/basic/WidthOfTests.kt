@@ -1,3 +1,5 @@
+package basic
+
 import com.alchitry.labs2.parsers.hdl.asConstExpr
 import com.alchitry.labs2.parsers.hdl.values.ArrayValue
 import com.alchitry.labs2.parsers.hdl.values.BitListValue

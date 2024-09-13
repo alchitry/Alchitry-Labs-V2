@@ -1,3 +1,5 @@
+package basic
+
 import com.alchitry.labs2.parsers.hdl.types.SelectionContext
 import com.alchitry.labs2.parsers.hdl.types.SignalSelector
 import com.alchitry.labs2.parsers.hdl.values.ArrayValue

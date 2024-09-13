@@ -1,3 +1,5 @@
+package basic
+
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SimParent
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SimValue

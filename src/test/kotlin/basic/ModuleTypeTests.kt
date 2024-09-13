@@ -1,3 +1,5 @@
+package basic
+
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.VerilogParser
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile

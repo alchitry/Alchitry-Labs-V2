@@ -1,3 +1,5 @@
+package basic
+
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
 import com.alchitry.labs2.parsers.hdl.types.Signal
 import com.alchitry.labs2.parsers.hdl.values.BitListValue

@@ -1,3 +1,5 @@
+package basic
+
 import com.alchitry.labs2.parsers.BitUtil
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.asConstExpr

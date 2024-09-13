@@ -1,3 +1,5 @@
+package basic
+
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
 import com.alchitry.labs2.project.files.Component
 import com.alchitry.labs2.project.library.ComponentLibrary
