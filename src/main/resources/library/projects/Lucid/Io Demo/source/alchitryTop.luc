@@ -21,9 +21,10 @@ module alchitryTop (
         edgeDetector edgeDetector(#RISE(1), #FALL(0))
         
         .rst(rst) {
-            multiSevenSeg seg
-            multiDecimalCounter decCtr
-            counter ctr (#SIZE(1), #DIV(24))
+            // Reduce DIV values for simulation so it doesn't take forever
+            multiSevenSeg seg (#DIV($isSim() ? 1 : 16), #DIGITS(4))
+            multiDecimalCounter decCtr (#DIGITS(4))
+            counter ctr (#SIZE(1), #DIV($isSim() ? 8 : 24))
         }
     }
     
