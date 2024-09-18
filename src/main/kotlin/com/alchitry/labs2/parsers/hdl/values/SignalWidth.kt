@@ -229,14 +229,14 @@ sealed class SignalWidth {
         check(dims.isNotEmpty()) { "Failed to get any dimensions for this width!" }
 
         if (dims.size == 1) {
-            val d = dims.first() ?: return UndefinedValue()
+            val d = dims.first() ?: return UndefinedValue(UndefinedSimpleWidth())
             return BitListValue(d, signed = false)
         }
 
         val width = BitUtil.minWidthNum(dims.maxOf { it ?: -1 }.coerceAtLeast(1))
 
         return ArrayValue(dims.map {
-            if (it == null) UndefinedValue() else
+            if (it == null) UndefinedValue(UndefinedSimpleWidth()) else
                 BitListValue(it, width, signed = false)
         })
     }

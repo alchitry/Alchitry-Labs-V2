@@ -183,7 +183,7 @@ data class SignalDriverParser(
     }
 
     override fun exitExprSignal(ctx: ExprSignalContext) {
-        if (context.inDeadBlock(ctx))
+        if (context.inDeadBlock(ctx) || context.mode.building)
             return
         val sig = context.resolve(ctx.signal() ?: return) ?: return
         val fullSig = sig.getSignal()

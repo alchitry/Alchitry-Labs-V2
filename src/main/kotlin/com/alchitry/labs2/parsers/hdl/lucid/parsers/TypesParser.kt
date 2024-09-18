@@ -1,7 +1,6 @@
 package com.alchitry.labs2.parsers.hdl.lucid.parsers
 
 import com.alchitry.labs2.noNulls
-import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs2.parsers.hasParent
@@ -717,7 +716,7 @@ class TypesParser(
             paramConnections.addAll(block.params)
         }
 
-        var initContext: LucidParser.ExprContext? = null
+        var initContext: ExprContext? = null
         paramConnections.forEach { param ->
             val paramName = param.port
             if (connectedParams.add(paramName)) {

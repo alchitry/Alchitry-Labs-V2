@@ -304,7 +304,7 @@ class ExprParser(
         val type = evaluator.getExprType(listOf(signal.type, bitSelectionType))
 
         val value = if (context.mode == ExprEvalMode.Building && signal.type == ExprType.Fixed) {
-            UndefinedValue()
+            UndefinedValue(signal.width)
         } else {
             signal.read(context.evalContext)
         }
@@ -511,7 +511,7 @@ class ExprParser(
                             return
                         }
                         if (w.value is UndefinedValue) {
-                            evaluator.setExpr(ctx, UndefinedValue().asConstExpr())
+                            evaluator.setExpr(ctx, UndefinedValue(UndefinedSimpleWidth()).asConstExpr())
                             return
                         }
                         w.value as SimpleValue // implied by width.isSimple and !is UndefinedValue
@@ -642,7 +642,7 @@ class ExprParser(
                     return
                 }
                 if (arg is UndefinedValue) {
-                    evaluator.setExpr(ctx, UndefinedValue().asExpr(type))
+                    evaluator.setExpr(ctx, UndefinedValue(UndefinedSimpleWidth()).asExpr(type))
                     return
                 }
                 if (!arg.isNumber()) {
@@ -688,7 +688,7 @@ class ExprParser(
                 }
 
                 if (arg1 is UndefinedValue || arg2 is UndefinedValue) {
-                    evaluator.setExpr(ctx, UndefinedValue().asExpr(type))
+                    evaluator.setExpr(ctx, UndefinedValue(UndefinedSimpleWidth()).asExpr(type))
                     return
                 }
 
@@ -760,7 +760,7 @@ class ExprParser(
                         valArgs[0].flatten()
                     }
                 } else {
-                    UndefinedValue()
+                        UndefinedValue(UndefinedSimpleWidth())
                     }.asExpr(type)
                 )
             }
@@ -946,7 +946,7 @@ class ExprParser(
                 }
 
                 if (arg1 is UndefinedValue || arg2 is UndefinedValue) {
-                    evaluator.setExpr(ctx, UndefinedValue().asExpr(type))
+                    evaluator.setExpr(ctx, UndefinedValue(UndefinedSimpleWidth()).asExpr(type))
                     return
                 }
 

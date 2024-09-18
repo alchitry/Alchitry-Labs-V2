@@ -9,6 +9,7 @@ import com.alchitry.labs2.parsers.hdl.lucid.context.SignalResolver
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.types.ports.Port
 import com.alchitry.labs2.parsers.hdl.values.Bit
+import com.alchitry.labs2.parsers.hdl.values.UndefinedSimpleWidth
 import com.alchitry.labs2.parsers.hdl.values.UndefinedValue
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 
@@ -29,7 +30,7 @@ data class ModuleParser(
     override fun exitParamDefault(ctx: LucidParser.ParamDefaultContext) {
         val parent = ctx.parent as? LucidParser.ParamDecContext ?: return
         val name = parent.name()?.text ?: return
-        val defaultValue = ctx.expr()?.let { context.resolve(it)?.value } ?: UndefinedValue()
+        val defaultValue = ctx.expr()?.let { context.resolve(it)?.value } ?: UndefinedValue(UndefinedSimpleWidth())
 
         localParams[name] = Signal(
             name,
@@ -48,7 +49,7 @@ data class ModuleParser(
             name,
             SignalDirection.Read,
             null,
-            UndefinedValue(),
+            UndefinedValue(UndefinedSimpleWidth()),
             ExprType.Fixed
         ).also {
             localParams[name] = it

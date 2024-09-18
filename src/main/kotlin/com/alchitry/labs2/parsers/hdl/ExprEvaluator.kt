@@ -456,7 +456,7 @@ data class ExprEvaluator<T : ParserRuleContext>(
                         BitListWidth(op1Width.size.coerceAtLeast(op2Width.size) + 1)
                     ).asExpr(type)
             else
-                exprs[ctx] = UndefinedValue().asExpr(type)
+                exprs[ctx] = UndefinedValue(UndefinedSimpleWidth()).asExpr(type)
             return
         }
 
@@ -522,7 +522,7 @@ data class ExprEvaluator<T : ParserRuleContext>(
                 }
 
                 !multOp && op1Width is DefinedSimpleWidth -> UndefinedValue(BitListWidth(op1Width.size)).asExpr(type)
-                else -> UndefinedValue().asExpr(type)
+                else -> UndefinedValue(UndefinedSimpleWidth()).asExpr(type)
             }
             return
         }
@@ -582,7 +582,7 @@ data class ExprEvaluator<T : ParserRuleContext>(
             }) return
 
         if (shift is UndefinedValue) {
-            exprs[ctx] = UndefinedValue().asExpr(type)
+            exprs[ctx] = UndefinedValue(UndefinedSimpleWidth()).asExpr(type)
             return
         }
 
@@ -595,7 +595,7 @@ data class ExprEvaluator<T : ParserRuleContext>(
                     .toInt() else vWidth.size
                 UndefinedValue(BitListWidth(w)).asExpr(type)
             } else {
-                UndefinedValue().asExpr(type)
+                UndefinedValue(UndefinedSimpleWidth()).asExpr(type)
             }
             return
         }

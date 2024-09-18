@@ -9,6 +9,7 @@ import com.alchitry.labs2.parsers.hdl.types.Constant
 import com.alchitry.labs2.parsers.hdl.types.Signal
 import com.alchitry.labs2.parsers.hdl.types.SignalDirection
 import com.alchitry.labs2.parsers.hdl.types.SignalOrParent
+import com.alchitry.labs2.parsers.hdl.values.UndefinedSimpleWidth
 import com.alchitry.labs2.parsers.hdl.values.UndefinedValue
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 
@@ -37,7 +38,7 @@ data class ConstantParser(
 
         val exprCtx = ctx.expr() ?: return
         val expr = context.resolve(exprCtx)
-        val value = expr?.value ?: UndefinedValue()
+        val value = expr?.value ?: UndefinedValue(UndefinedSimpleWidth())
         if (expr?.type?.fixed != true) {
             context.reportError(
                 exprCtx,

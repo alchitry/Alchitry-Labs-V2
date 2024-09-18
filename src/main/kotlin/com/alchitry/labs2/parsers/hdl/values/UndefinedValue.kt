@@ -7,7 +7,7 @@ import com.alchitry.labs2.parsers.hdl.types.SignalSelector
  * This should only happen from parameters without a default or test value and any values derived from them.
  */
 data class UndefinedValue(
-    override val width: SignalWidth = UndefinedSimpleWidth()
+    override val width: SignalWidth
 ) : Value() {
     override fun isNumber() = false
 
@@ -68,17 +68,17 @@ data class UndefinedValue(
 
     override infix fun and(other: Value): UndefinedValue {
         require(other is SimpleValue || other is UndefinedValue) { "And can only be performed with Undefined or Simple values." }
-        return UndefinedValue()
+        return UndefinedValue(width)
     }
 
     override fun or(other: Value): UndefinedValue {
         require(other is SimpleValue || other is UndefinedValue) { "Or can only be performed with Undefined or Simple values." }
-        return UndefinedValue()
+        return UndefinedValue(width)
     }
 
     override fun xor(other: Value): UndefinedValue {
         require(other is SimpleValue || other is UndefinedValue) { "Xor can only be performed with Undefined or Simple values." }
-        return UndefinedValue()
+        return UndefinedValue(width)
     }
 
     override fun reverse(): UndefinedValue =

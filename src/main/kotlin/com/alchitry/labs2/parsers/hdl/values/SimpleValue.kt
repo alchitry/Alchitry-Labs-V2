@@ -100,21 +100,21 @@ sealed class SimpleValue(
 
     override infix fun and(other: Value): Value {
         if (other is UndefinedValue)
-            return UndefinedValue()
+            return UndefinedValue(width)
         require(other is SimpleValue) { "And can only be performed with Undefined or another SimpleValue!" }
         return and(other)
     }
 
     override infix fun or(other: Value): Value {
         if (other is UndefinedValue)
-            return UndefinedValue()
+            return UndefinedValue(width)
         require(other is SimpleValue) { "Or can only be performed with Undefined or another SimpleValue!" }
         return or(other)
     }
 
     override infix fun xor(other: Value): Value {
         if (other is UndefinedValue)
-            return UndefinedValue()
+            return UndefinedValue(width)
         require(other is SimpleValue) { "Xor can only be performed with Undefined or another SimpleValue!" }
         return xor(other)
     }
