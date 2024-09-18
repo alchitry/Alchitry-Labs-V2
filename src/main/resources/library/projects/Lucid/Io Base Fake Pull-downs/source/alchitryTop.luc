@@ -1,0 +1,37 @@
+module alchitryTop (
+    input clk,              // 100MHz clock
+    input rst_n,            // reset button (active low)
+    output led[8],          // 8 user controllable LEDs
+    input usbRx,            // USB->Serial input
+    output usbTx,           // USB->Serial output
+    output ioLed[3][8],     // LEDs on IO Shield
+    output ioSeg[8],        // 7-segment LEDs on IO Shield
+    output ioSel[4],        // Digit select on IO Shield
+    inout ioButton[5],      // 5 buttons on IO Shield
+    inout ioDip[3][8]       // DIP switches on IO Shield
+) {
+
+    sig rst                 // reset signal
+
+    .clk(clk) {
+        // The reset conditioner is used to synchronize the reset signal to the FPGA
+        // clock. This ensures the entire FPGA comes out of reset at the same time.
+        resetConditioner resetCond
+
+        fakePullDown buttonPd (#SIZE(5), .in(ioButton));
+        fakePullDown2D dipPd (#DIM_1(8), #DIM_2(3), .in(ioDip));
+    }
+    
+    always {
+        resetCond.in = ~rst_n  // input raw inverted reset signal
+        rst = resetCond.out    // conditioned reset
+        
+        led = 8h00             // turn LEDs off
+        
+        usbTx = usbRx          // loop serial port
+        
+        ioLed = 3x{{8h00}}
+        ioSeg = 8hFF
+        ioSel = 4hF
+    }
+}
