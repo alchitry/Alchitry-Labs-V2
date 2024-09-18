@@ -1,6 +1,6 @@
 module multiSevenSeg #(
     DIGITS = 4 : DIGITS > 0,
-    DIV = 16 : DIV >= 0
+    DIV = $isSim() ? 0 : 16 : DIV >= 0
 )(
     input clk,                // clock
     input rst,                // reset
@@ -17,13 +17,13 @@ module multiSevenSeg #(
     }
     
     sevenSeg segDec                        // segment decoder
-    decoder digit_dec (#WIDTH(DIGIT_BITS)) // digit decoder
-    
+    decoder digitDec(#WIDTH(DIGIT_BITS))   // digit decoder
+
     always {
         segDec.char = values[ctr.value]    // select the value for the active digit
         seg = segDec.segs                  // output the decoded value
-        
-        digit_dec.in = ctr.value           // decode active digit to one-hot
-        sel = digit_dec.out                // output the active digit
+
+        digitDec.in = ctr.value            // decode active digit to one-hot
+        sel = digitDec.out                 // output the active digit
     }
 }

@@ -7,7 +7,7 @@ module multiDecimalCounter #(
     output digits[DIGITS][4]  // digit values
 ) {
     .clk(clk), .rst(rst) {
-        decimalCounter dctr [DIGITS] // digit counters
+        decimalCounter dctr[DIGITS] // digit counters
     }
     
     always {
