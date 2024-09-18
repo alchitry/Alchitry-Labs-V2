@@ -547,21 +547,22 @@ data class ExprEvaluator<T : ParserRuleContext>(
                     width = width
                 )
         } else {
-            val op2BigInt = op2.toBigInt(signed)!!
+            val op2BigInt = op2.toBigInt(signed)
 
             if (!type.known && (!op2Expr.type.known || !op2.isPowerOf2())) {
                 context.reportWarning(children[1], WarningStrings.DIVIDE_NOT_POW_2)
             }
 
             val width = op1.size
-            if (!op1.isNumber() || !op2.isNumber() || op2BigInt == BigInteger.ZERO)
+            if (!op1.isNumber() || !op2.isNumber() || op2BigInt == BigInteger.ZERO) {
                 BitListValue(size = width, signed = signed) { Bit.Bx }
-            else
+            } else {
                 BitListValue(
                     bigInt = op1.toBigInt(signed)!!.divide(op2BigInt),
                     signed = signed,
                     width = width
                 )
+            }
         }).asExpr(type)
     }
 
