@@ -9,6 +9,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
+import com.alchitry.labs2.ui.theme.AlchitryColors
 import kotlin.math.pow
 
 private val ledColor = Color(0xFF5FFF00)
@@ -23,19 +24,41 @@ fun Led(x: Dp, y: Dp, scale: Dp, rotate: Boolean = false, brightness: () -> Floa
         Modifier.size(scale * 1.820f + blur * 2, scale * 1.268f + blur * 2)
     }
 
-    Box(
-        Modifier
-            .offset(x - blur, y - blur)
-            .then(sizeModifier)
-            .graphicsLayer { alpha = brightness().pow(0.45f) }
-
-    ) {
+    Box {
         Box(
             Modifier
-                .fillMaxSize()
-                .blur(blur)
-                .padding(blur)
-                .background(ledColor, RoundedCornerShape(scale * 0.3f))
-        )
+                .offset(x - blur, y - blur)
+                .then(sizeModifier)
+                .graphicsLayer {
+                    val value = brightness()
+                    alpha = if (value.isNaN()) 0f else value.pow(0.45f)
+                }
+
+        ) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .blur(blur)
+                    .padding(blur)
+                    .background(ledColor, RoundedCornerShape(scale * 0.3f))
+            )
+        }
+        Box(
+            Modifier
+                .offset(x - blur, y - blur)
+                .then(sizeModifier)
+                .graphicsLayer {
+                    alpha = if (brightness().isNaN()) 1f else 0f
+                }
+
+        ) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .blur(blur)
+                    .padding(blur)
+                    .background(AlchitryColors.current.Error, RoundedCornerShape(scale * 0.3f))
+            )
+        }
     }
 }
