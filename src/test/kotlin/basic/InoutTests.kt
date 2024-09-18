@@ -41,20 +41,38 @@ class InoutTests {
 
     @Test
     fun connectedInoutTest() {
-        val inout1 = Inout("test1", null, BitListWidth(1), false)
-        val inout2 = Inout("test2", null, BitListWidth(1), false)
+        val inout1 = Inout("test1", null, BitListWidth(4), false)
+        val inout2 = Inout("test2", null, BitListWidth(4), false)
         val project = ProjectContext(NotationManager())
+        inout1.passthrough = true
         inout1.internal.connectTo(inout2.external, project)
         inout2.external.connectTo(inout1.internal, project)
 
+        val b0 = BitListWidth(4).filledWith(Bit.B0, false)
+        val b1 = BitListWidth(4).filledWith(Bit.B1, false)
+        val bx = BitListWidth(4).filledWith(Bit.Bx, false)
+        val bz = BitListWidth(4).filledWith(Bit.Bz, false)
+
         runBlocking {
-            inout1.external.write(Bit.B1.toBitValue())
+            inout1.external.write(b1)
+            inout2.internal.write(bz)
             project.processQueue()
-            assertEquals(Bit.B1.toBitValue().asBitListValue(), inout2.internal.read())
-            inout1.external.write(Bit.Bz.toBitValue())
-            inout2.internal.write(Bit.B0.toBitValue())
+            assertEquals(bz, inout1.external.read())
+            assertEquals(b1, inout2.internal.read())
+            inout1.external.write(bz)
+            inout2.internal.write(b0)
             project.processQueue()
-            assertEquals(Bit.B0.toBitValue().asBitListValue(), inout1.external.read())
+            assertEquals(b0, inout1.external.read())
+            assertEquals(b0, inout2.internal.read())
+            inout1.external.write(b1)
+            inout2.internal.write(b0)
+            assertEquals(b0, inout1.external.read())
+            assertEquals(bx, inout2.internal.read())
+            inout1.external.write(b1)
+            inout2.internal.write(bz)
+            project.processQueue()
+            assertEquals(bz, inout1.external.read())
+            assertEquals(b1, inout2.internal.read())
         }
     }
 }

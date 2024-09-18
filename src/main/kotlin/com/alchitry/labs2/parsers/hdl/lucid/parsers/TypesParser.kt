@@ -9,6 +9,7 @@ import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.lucid.context.SignalResolver
 import com.alchitry.labs2.parsers.hdl.types.*
+import com.alchitry.labs2.parsers.hdl.types.ports.Inout
 import com.alchitry.labs2.parsers.hdl.values.*
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.parsers.parents
@@ -252,6 +253,7 @@ class TypesParser(
                         context.reportError(exprCtx, "Inout ports must be directly connected to another inout.")
                         return null
                     }
+                    ((otherSig.parent as ModuleInstance).ports[otherSig.name] as Inout).passthrough = true
                     connection to otherSig
                 } else {
                     connection to connection.value.asSignal(connection.value.expr.text)

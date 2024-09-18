@@ -51,7 +51,12 @@ data class SubSignal(
         require(width.canAssign(v.width)) {
             "Cannot set value $v to selected subsignal!"
         }
-        val current = parent.read(evalContext)
+
+        val current = if (parent is ProxySignal) {
+            parent.baseRead(evalContext)
+        } else {
+            parent.read(evalContext)
+        }
         return current.write(selection, v.resizeToMatch(width))
     }
 

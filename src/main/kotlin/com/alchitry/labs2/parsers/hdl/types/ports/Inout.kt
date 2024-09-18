@@ -15,7 +15,9 @@ class Inout(
     override val width: SignalWidth,
     override val signed: Boolean
 ) : PortInstance {
-    override val internal = ProxySignal(
+    var passthrough: Boolean = false
+
+    override val internal: ProxySignal = ProxySignal(
         name,
         SignalDirection.Both,
         parent,
@@ -23,10 +25,13 @@ class Inout(
         ExprType.Dynamic,
         signed
     ) {
-        generateValue(it)
+        if (passthrough)
+            external.baseRead(it)
+        else
+            generateValue(it)
     }
 
-    override val external = ProxySignal(
+    override val external: ProxySignal = ProxySignal(
         name,
         SignalDirection.Both,
         parent,

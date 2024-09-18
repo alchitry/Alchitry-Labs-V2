@@ -144,11 +144,10 @@ class VerilogConverter(
             append("reg ")
             if (port.signed)
                 append("signed ")
-            val bitCount = port.width.bitCount ?: error("Port \"${port.name}\" has an undefined width!")
-            if (bitCount > 1) {
+            if (port.width.bitCount != 1) {
                 append("[")
-                append(bitCount - 1)
-                append(":0] ")
+                append(port.width.verilogBitCount())
+                append("-1:0] ")
             }
 
             val name = port.verilogName
