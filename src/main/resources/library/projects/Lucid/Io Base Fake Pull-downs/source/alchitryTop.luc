@@ -18,8 +18,8 @@ module alchitryTop (
         // clock. This ensures the entire FPGA comes out of reset at the same time.
         resetConditioner resetCond
 
-        fakePullDown buttonPd (#SIZE(5), .in(ioButton));
-        fakePullDown2D dipPd (#DIM_1(8), #DIM_2(3), .in(ioDip));
+        fakePullDown buttonPd(#SIZE(5), .in(ioButton));
+        fakePullDown2D dipPd(#DIM_1(8), #DIM_2(3), .in(ioDip));
     }
     
     always {

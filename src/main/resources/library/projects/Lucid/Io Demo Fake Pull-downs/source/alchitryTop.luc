@@ -18,16 +18,16 @@ module alchitryTop (
         // clock. This ensures the entire FPGA comes out of reset at the same time.
         resetConditioner resetCond
 
-        fakePullDown buttonPd (#SIZE(5), .in(ioButton));
-        fakePullDown2D dipPd (#DIM_1(8), #DIM_2(3), .in(ioDip));
+        fakePullDown buttonPd(#SIZE(5), .in(ioButton));
+        fakePullDown2D dipPd(#DIM_1(8), #DIM_2(3), .in(ioDip));
 
         edgeDetector edgeDetector(#RISE(1), #FALL(0))
 
         .rst(rst) {
             // Reduce DIV values for simulation so it doesn't take forever
-            multiSevenSeg seg (#DIV($isSim() ? 1 : 16), #DIGITS(4))
-            multiDecimalCounter decCtr (#DIGITS(4))
-            counter ctr (#SIZE(1), #DIV($isSim() ? 8 : 24))
+            multiSevenSeg seg(#DIV($isSim() ? 1 : 16), #DIGITS(4))
+            multiDecimalCounter decCtr(#DIGITS(4))
+            counter ctr(#SIZE(1), #DIV($isSim() ? 8 : 24))
         }
     }
 
