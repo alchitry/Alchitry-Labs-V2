@@ -23,8 +23,9 @@ object VivadoIP {
         val tclScript = project.ipCoreDirectory.resolve("project.tcl")
         tclScript.writeText(buildString {
             val coresPath = project.ipCoreDirectory.absolutePathString().replace("\\", "/")
-            append("cd ")
+            append("cd \"")
             append(coresPath)
+            append("\"")
             append(System.lineSeparator())
             append("create_project managed_ip_project \"")
             append(coresPath)
