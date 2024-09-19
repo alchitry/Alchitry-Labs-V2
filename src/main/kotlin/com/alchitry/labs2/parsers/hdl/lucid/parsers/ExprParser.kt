@@ -186,9 +186,11 @@ class ExprParser(
             valueString = split[1]
         }
 
-        val unbound = BitListValue(valueString, radix, signed = false)
+        val cleanValueString = valueString.replace("_", "")
+
+        val unbound = BitListValue(cleanValueString, radix, signed = false)
         val value = if (width != null) {
-            BitListValue(valueString, radix, width = width, signed = false)
+            BitListValue(cleanValueString, radix, width = width, signed = false)
         } else {
             unbound
         }

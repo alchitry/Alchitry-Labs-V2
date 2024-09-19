@@ -138,11 +138,11 @@ name: TYPE_ID | CONST_ID | SPACE_ID;
 
 semi: NL | (NL* SEMICOLON);
 
-HEX: ([1-9][0-9]*)? 'h' ([0-9a-fA-FzZX]|('x' {_input.LA(1) != '{'.code}?))+;
-BIN: ([1-9][0-9]*)? 'b' ([0-1zZX]|('x' {_input.LA(1) != '{'.code}?))+;
-DEC: ([1-9][0-9]*)? 'd' [0-9]+;
+HEX: ([1-9][0-9]*)? 'h' ([0-9a-fA-FzZX_]|('x' {_input.LA(1) != '{'.code}?))+;
+BIN: ([1-9][0-9]*)? 'b' ([0-1zZX_]|('x' {_input.LA(1) != '{'.code}?))+;
+DEC: ([1-9][0-9]*)? 'd' [0-9_]+;
 REAL: '-'? [0-9]* '.' [0-9]+ | '-'? [0-9]+ '.' [0-9]*;
-INT: [0-9]+;
+INT: [0-9_]+;
 STRING: '"' ( '\\' ~[\r\n] | ~[\\"\r\n] )* '"';
 SEMICOLON : ';';
 NL : '\r' '\n' | '\n' | '\r';
