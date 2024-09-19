@@ -40,7 +40,7 @@
 
    The output is single clock cycle pulses.
 
-   The output delayed 1 + TAPS * delay_cycles cycles.
+   The output delayed 1 + TAPS * delayCycles cycles.
 */
 
 module pulseDelayChain #(
@@ -51,13 +51,13 @@ module pulseDelayChain #(
     input rst,  // reset
     input in,   // single clock cycle input pulse
     output out[TAPS], // delayed single cycle pulses
-    input delay_cycles[TAPS][$clog2(DEPTH)]
+    input delayCycles[TAPS][$clog2(DEPTH)]
 ) {
 
     simpleDualPortRam ram(#WIDTH(1), #ENTRIES(DEPTH), .wclk(clk), .rclk(clk))
 
     .clk(clk) {
-        dff wr_addr[$clog2(DEPTH)]
+        dff wrAddr[$clog2(DEPTH)]
 
         .rst(rst) {
             dff write_flag
@@ -66,20 +66,20 @@ module pulseDelayChain #(
         }
     }
 
-    sig tap_idx[$clog2(TAPS)]
+    sig tapIdx[$clog2(TAPS)]
 
     always {
-        ram.waddr = wr_addr.q
+        ram.waddr = wrAddr.q
         ram.writeEnable = 0
         ram.writeData = write_flag.q
-        ram.raddr = wr_addr.q - delay_cycles[cycle.q] // read at the address to delay delay_cycles cycles
+        ram.raddr = wrAddr.q - delayCycles[cycle.q] // read at the address to delay delayCycles cycles
         out = 0 // default to 0
 
         cycle.d = cycle.q + 1 // always increment the tap cycle
 
-        tap_idx = cycle.q - 1 // index is the previous cycle since reads take 1 clock
+        tapIdx = cycle.q - 1 // index is the previous cycle since reads take 1 clock
 
-        values.d[tap_idx] = ram.readData // save the read data
+        values.d[tapIdx] = ram.readData // save the read data
 
         if (cycle.q == 0) // on cycle 0, we have read all the previous TAPS values
             out = c{ram.readData, values.q[TAPS-2:0]} // output out only on this one cycle. Note that values.q[TAPS-1] isn't valid so we use the ram output directly
@@ -90,7 +90,7 @@ module pulseDelayChain #(
         if (&cycle.q) { // last cycle
             ram.writeEnable = 1       // write data
             write_flag.d = in         // set the flag for the next cycle
-            wr_addr.d = wr_addr.q + 1 // increment the write address
+            wrAddr.d = wrAddr.q + 1 // increment the write address
         }
     }
 }

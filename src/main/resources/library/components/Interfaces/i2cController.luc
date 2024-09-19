@@ -51,10 +51,10 @@
    depending on the operation.
 
    When performing a read, you must specify if the read
-   should be acknowledged by setting ack_read to 1 to
+   should be acknowledged by setting ackRead to 1 to
    acknowledge or 0 to not.
 
-   When performing a write, ack_write will tell if your
+   When performing a write, ackWrite will tell if your
    write was acknowledged by the peripheral device.
 */
 
@@ -73,15 +73,15 @@ module i2cController #(
     input stop,         // send stop signal
 
     // Write interface
-    input data_in[8],   // data to write
+    input dataIn[8],    // data to write
     input write,        // start write signal (1 = start write)
-    output ack_write,   // was the last write acknowledged (1 = ack, 0 = no_ack)
+    output ackWrite,    // was the last write acknowledged (1 = ack, 0 = no_ack)
 
     // Read interface
-    output data_out[8], // data read
-    output out_valid,   // output valid (1 = valid)
+    output dataOut[8],  // data read
+    output outValid,    // output valid (1 = valid)
     input read,         // start read signal (1 = start read)
-    input ack_read,     // should read be acknowledged (1 = ack, 0 = no ack)
+    input ackRead,      // should read be acknowledged (1 = ack, 0 = no ack)
 
     // Status
     output busy         // I2C is busy (1 = busy, 0 = idle)
@@ -92,36 +92,36 @@ module i2cController #(
         .rst(rst) {
             dff state[$width(States)]
         }
-        dff data[8]          // data to send or data received
-        dff out_valid_reg    // out_valid buffer
-        dff scl_reg[CLK_DIV] // clock divider
-        dff bit_ctr[4]       // bit counter
-        dff ack_write_reg    // ack_write buffer
-        dff ack_read_reg     // ack_read buffer
+        dff data[8]         // data to send or data received
+        dff outValidReg     // outValid buffer
+        dff sclReg[CLK_DIV] // clock divider
+        dff bitCtr[4]       // bit counter
+        dff ackWriteReg     // ackWrite buffer
+        dff ackReadReg      // ackRead buffer
     }
 
-    sig sda_value
+    sig sdaValue
 
     always {
-        // the clock is the MSB of scl_reg inverted
-        scl = ~scl_reg.q[CLK_DIV - 1]
+        // the clock is the MSB of sclReg inverted
+        scl = ~sclReg.q[CLK_DIV - 1]
 
         // we are busy if we aren't idle or waiting for a command
         busy = state.q != States.IDLE && state.q != States.WAIT_CMD
 
         // write the outputs
-        data_out = data.q
-        out_valid = out_valid_reg.q
-        ack_write = ack_write_reg.q
+        dataOut = data.q
+        outValid = outValidReg.q
+        ackWrite = ackWriteReg.q
 
         // defaults
-        out_valid_reg.d = 0 // not valid
-        sda_value = 1 // default to floating pin
+        outValidReg.d = 0 // not valid
+        sdaValue = 1 // default to floating pin
 
         case (state.q) {
             // Start here
             States.IDLE:
-                scl_reg.d = 0  // reset clock counter (clock goes high)
+                sclReg.d = 0  // reset clock counter (clock goes high)
 
                 // if we have a start command
                 if (start) {
@@ -130,119 +130,119 @@ module i2cController #(
 
             // Send start command
             States.START:
-                scl_reg.d = scl_reg.q + 1 // increment the counter
+                sclReg.d = sclReg.q + 1 // increment the counter
 
                 // if the clock counter is less than 1/4 full or more than 3/4 full
-                if (scl_reg.q < c{2b01, ($width(scl_reg.q)-2)x{1b0}} || scl_reg.q > c{2b11, ($width(scl_reg.q)-2)x{1b0}})
-                    sda_value = 1             // float output
+                if (sclReg.q < c{2b01, ($width(sclReg.q)-2)x{1b0}} || sclReg.q > c{2b11, ($width(sclReg.q)-2)x{1b0}})
+                    sdaValue = 1             // float output
                 else
-                    sda_value = 0             // pull low
+                    sdaValue = 0             // pull low
 
                 // if the clock counter is 3/4 full
-                if (scl_reg.q == c{2b11, ($width(scl_reg.q)-2)x{1b0}})
+                if (sclReg.q == c{2b11, ($width(sclReg.q)-2)x{1b0}})
                     state.d = States.WAIT_CMD // enter wait command state
 
             // Wait for read or write command
             States.WAIT_CMD:
-                bit_ctr.d = 0 // reset bit counter
+                bitCtr.d = 0 // reset bit counter
 
                 // set clock counter to just over half full
-                scl_reg.d = c{1b1, ($width(scl_reg.q)-1)x{1b0}} + 1
+                sclReg.d = c{1b1, ($width(sclReg.q)-1)x{1b0}} + 1
 
                 if (write) { // new write command
-                    data.d = data_in // save the data to send
+                    data.d = dataIn // save the data to send
 
                     // set clock counter to just over 3/4 full
-                    scl_reg.d = c{2b11, ($width(scl_reg.q)-2)x{1b0}} + 1
+                    sclReg.d = c{2b11, ($width(sclReg.q)-2)x{1b0}} + 1
                     state.d = States.WRITE // enter write state
 
                 } else if (read) {           // new read command
-                    ack_read_reg.d = ack_read // save if read should be acknowledged
-                    state.d = States.READ      // enter read state
+                    ackReadReg.d = ackRead   // save if read should be acknowledged
+                    state.d = States.READ    // enter read state
                 } else if (stop) {           // stop command
-                    state.d = States.STOP      // enter stop state
+                    state.d = States.STOP    // enter stop state
                 } else if (start) {          // start command
-                    state.d = States.START     // enter start state
+                    state.d = States.START   // enter start state
 
                     // set clock to just over 3/4 full so it starts low
-                    scl_reg.d = c{2b11, ($width(scl_reg.q)-2)x{1b0}} + 1
+                    sclReg.d = c{2b11, ($width(sclReg.q)-2)x{1b0}} + 1
                 }
 
             // Read in a byte
             States.READ:
                 // if we at the end of the 8th bit or later
-                if (bit_ctr.q == 9 || (bit_ctr.q > 7 && scl_reg.q >= c{2b11, ($width(scl_reg.q)-2)x{1b0}})) {
-                    sda_value = ~ack_read_reg.q // write the acknowledge bit
+                if (bitCtr.q == 9 || (bitCtr.q > 7 && sclReg.q >= c{2b11, ($width(sclReg.q)-2)x{1b0}})) {
+                    sdaValue = ~ackReadReg.q // write the acknowledge bit
                 }
 
                 // increment the clock counter
-                scl_reg.d = scl_reg.q + 1
+                sclReg.d = sclReg.q + 1
 
                 // if the clock is 0
-                if (scl_reg.q == 0) {
+                if (sclReg.q == 0) {
                     // if it's a data bit
-                    if (bit_ctr.q < 8)
+                    if (bitCtr.q < 8)
                         data.d = c{data.q[6:0], sda} // shift it in
 
                     // increment the bit counter
-                    bit_ctr.d = bit_ctr.q + 1
+                    bitCtr.d = bitCtr.q + 1
 
                     // otherwise, if the clock counter if half full and we're on the 9th bit
-                } else if (scl_reg.q == c{1b1, ($width(scl_reg.q)-1)x{1b0}} && bit_ctr.q == 9) {
-                    out_valid_reg.d = 1      // output data is valid
+                } else if (sclReg.q == c{1b1, ($width(sclReg.q)-1)x{1b0}} && bitCtr.q == 9) {
+                    outValidReg.d = 1      // output data is valid
                     state.d = States.WAIT_CMD // wait for next command
                 }
 
             // Write a byte
             States.WRITE:
                 // if we aren't on the acknowledge bit
-                if (bit_ctr.q != 8)
-                    sda_value = data.q[7]     // write the MSB of data
+                if (bitCtr.q != 8)
+                    sdaValue = data.q[7]     // write the MSB of data
 
                 // otherwise, if the clock counter is 0
-                else if (scl_reg.q == 0)
-                    ack_write_reg.d = sda // read the acknowledge bit
+                else if (sclReg.q == 0)
+                    ackWriteReg.d = sda // read the acknowledge bit
 
                 // increment the clock counter
-                scl_reg.d = scl_reg.q + 1
+                sclReg.d = sclReg.q + 1
 
                 // if the clock counter is 3/4 full
-                if (scl_reg.q ==  c{2b11, ($width(scl_reg.q)-2)x{1b0}}) {
+                if (sclReg.q ==  c{2b11, ($width(sclReg.q)-2)x{1b0}}) {
                     // shift data
                     data.d = c{data.q[6:0], 1bx}
 
                     // increment the bit counter
-                    bit_ctr.d = bit_ctr.q + 1
+                    bitCtr.d = bitCtr.q + 1
 
                     // if we're on the last bit
-                    if (bit_ctr.q == 8)
+                    if (bitCtr.q == 8)
                         state.d = States.WAIT_CMD // wait for the next command
                 }
 
             // Send stop command
             States.STOP:
-                sda_value = 0
-                scl_reg.d = scl_reg.q + 1 // increment the clock counter
+                sdaValue = 0
+                sclReg.d = sclReg.q + 1 // increment the clock counter
 
                 // if the clock counter is just under half full
                 // We don't want it to reach 1/2 full because
                 // the clock output would then go low
-                if (scl_reg.q == ($width(scl_reg.q)-1)x{1b1}) {
-                    sda_value = 1        // set the output high
+                if (sclReg.q == ($width(sclReg.q)-1)x{1b1}) {
+                    sdaValue = 1          // set the output high
                     state.d = States.WAIT // enter wait state
-                    scl_reg.d = 0        // reset clock counter
+                    sclReg.d = 0          // reset clock counter
                 }
 
             // Wait 1/2 a clock period
             States.WAIT:
-                scl_reg.d = scl_reg.q + 1 // increment the clock counter
+                sclReg.d = sclReg.q + 1 // increment the clock counter
 
                 // if the clock counter is just under half full
                 // We don't want it to reach 1/2 full because
                 // the clock output would then go low
-                if (scl_reg.q == ($width(scl_reg.q)-1)x{1b1}){
+                if (sclReg.q == ($width(sclReg.q)-1)x{1b1}){
                     state.d = States.IDLE // enter idle state
-                    scl_reg.d = 0        // reset clock counter
+                    sclReg.d = 0          // reset clock counter
                 }
 
             // Should never enter here
@@ -251,6 +251,6 @@ module i2cController #(
         }
 
         // default values
-        sda = sda_value == 0 ? b0 : bz // only pull down
+        sda = sdaValue == 0 ? b0 : bz // only pull down
     }
 }

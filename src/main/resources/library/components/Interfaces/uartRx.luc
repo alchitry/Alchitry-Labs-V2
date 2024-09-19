@@ -36,7 +36,7 @@ module uartRx #(
     input rst,      // reset active high
     input rx,       // UART rx input
     output data[8], // received data
-    output new_data // new data flag (1 = new data)
+    output newData  // new data flag (1 = new data)
 ) {
 
     const CLK_PER_BIT = (CLK_FREQ + BAUD) / BAUD - 1 // clock cycles per bit
@@ -51,17 +51,17 @@ module uartRx #(
         dff ctr[CTR_SIZE] // delay counter
         dff bitCtr[3]     // bit counter
         dff savedData[8]  // received data
-        dff newData       // new data flag buffer
+        dff newDataBuffer // new data flag buffer
         dff rxd           // input buffer
     }
 
     always {
         rxd.d = rx    // buffer rx
-        newData.d = 0 // default to 0
+        newDataBuffer.d = 0 // default to 0
 
         // outputs
         data = savedData.q
-        new_data = newData.q
+        newData = newDataBuffer.q
 
     /* When a new byte is being received, the input goes low. This is the
        start bit. When the beginning of this bit is detected we need to wait
@@ -94,7 +94,7 @@ module uartRx #(
                     ctr.d = 0                                // reset counter
                     if (bitCtr.q == 7) {                     // if we have received 8 bits
                         state.d = States.WAIT_HIGH           // switch state
-                        newData.d = 1                        // signal new byte received
+                        newDataBuffer.d = 1                        // signal new byte received
                     }
                 }
 

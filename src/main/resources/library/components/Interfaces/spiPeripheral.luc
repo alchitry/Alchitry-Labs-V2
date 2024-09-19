@@ -42,62 +42,62 @@ module spiPeripheral #(
     output sdo,         // SPI data out
     input sck,          // SPI SCK
     output done,        // transfer done
-    input data_in[8],   // data to send
-    output data_out[8]  // data received
+    input dataIn[8],    // data to send
+    output dataOut[8]   // data received
 ) {
 
     .clk(clk) {
         .rst(rst) {
-            dff bit_ct[3]     // bit counter
+            dff bitCt[3]      // bit counter
             dff data[8]       // received data
         }
-        dff sdi_reg         // input buffer
-        dff sdo_reg         // output buffer
-        dff sck_reg[2]      // sck buffer
-        dff cs_reg          // cs buffer
-        dff data_out_reg[8] // data_out buffer
-        dff done_reg        // done buffer
+        dff sdiReg          // input buffer
+        dff sdoReg          // output buffer
+        dff sckReg[2]       // sck buffer
+        dff csReg           // cs buffer
+        dff dataOutReg[8]   // dataOut buffer
+        dff doneReg         // done buffer
     }
 
     always {
         // connect to buffer output
-        sdo = sdo_reg.q
-        done = done_reg.q
-        data_out = data_out_reg.q
+        sdo = sdoReg.q
+        done = doneReg.q
+        dataOut = dataOutReg.q
 
         // read in buffered inputs
-        cs_reg.d = cs
-        sdi_reg.d = sdi
-        sck_reg.d = c{sck_reg.q[0], sck} // save old sck
+        csReg.d = cs
+        sdiReg.d = sdi
+        sckReg.d = c{sckReg.q[0], sck} // save old sck
 
-        done_reg.d = 0 // default to not done
+        doneReg.d = 0 // default to not done
 
-        if (cs_reg.q) { // not selected
-            bit_ct.d = 3b111        // reset counter
-            data.d = data_in        // copy in data for next byte
-            sdo_reg.d = data_in[7] // write first bit out
+        if (csReg.q) { // not selected
+            bitCt.d = 3b111        // reset counter
+            data.d = dataIn        // copy in data for next byte
+            sdoReg.d = dataIn[7]   // write first bit out
         } else {
             // When CPOL and CPHA are different, we read on the falling edge.
             // When they are the same we read on the rising edge.
             // Therefore we can use XOR to check that and invert the
             // edge detector. If you XOR with 1, the bit is flipped.
 
-            if (sck_reg.q == (b01 ^ 2x{CPOL^CPHA})) { // reading edge
+            if (sckReg.q == (b01 ^ 2x{CPOL^CPHA})) { // reading edge
 
                 // read in the bit
-                data_out_reg.d[bit_ct.q] = sdi_reg.q
+                dataOutReg.d[bitCt.q] = sdiReg.q
 
                 // increment the bit counter
-                bit_ct.d = bit_ct.q - 1
+                bitCt.d = bitCt.q - 1
 
                 // if we read the last bit
-                if (bit_ct.q == b0) {
-                    done_reg.d = 1   // signal we are done
-                    data.d = data_in // copy new data in
+                if (bitCt.q == b0) {
+                    doneReg.d = 1   // signal we are done
+                    data.d = dataIn // copy new data in
                 }
-            } else if (sck_reg.q == (b10 ^ 2x{CPOL^CPHA})) { // writing edge
+            } else if (sckReg.q == (b10 ^ 2x{CPOL^CPHA})) { // writing edge
                     // write a bit out
-                    sdo_reg.d = data.q[bit_ct.q]
+                    sdoReg.d = data.q[bitCt.q]
                 }
         }
     }

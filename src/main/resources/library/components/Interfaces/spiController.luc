@@ -43,9 +43,9 @@ module spiController #(
     output sdo,          // SPI data out
     output sck,          // SPI SCK
     input start,         // start transfer flag
-    input data_in[8],    // data to send
-    output data_out[8],  // data received
-    output new_data,     // data_out is valid
+    input dataIn[8],     // data to send
+    output dataOut[8],   // data received
+    output newData,      // dataOut is valid
     output busy          // bus is busy
 ) {
 
@@ -57,53 +57,53 @@ module spiController #(
         }
 
         dff data[8]          // data storage for rx and tx
-        dff sck_reg[CLK_DIV] // counter for SPI clock
-        dff sdo_reg          // output buffer
+        dff sckReg[CLK_DIV]  // counter for SPI clock
+        dff sdoReg           // output buffer
         dff ctr[3]           // bit counter
     }
 
     always {
-        new_data = 0                  // default to no new data
+        newData = 0                  // default to no new data
         busy = state.q != States.IDLE  // busy when not idle
 
         // data out can be set to data.q since we only
-        // guarentee it's valid when new_data is 1
-        data_out = data.q
+        // guarentee it's valid when newData is 1
+        dataOut = data.q
 
         // the output clock is only active when we are sending data
-        sck = ((CPHA ^ sck_reg.q[$width(sck_reg.q)-1]) & (state.q == States.TRANSFER)) ^ CPOL
+        sck = ((CPHA ^ sckReg.q[$width(sckReg.q)-1]) & (state.q == States.TRANSFER)) ^ CPOL
 
-        sdo = sdo_reg.q // sdo_reg is just a buffer for sdo
+        sdo = sdoReg.q // sdoReg is just a buffer for sdo
 
         case (state.q) {
             States.IDLE:
                 // reset the counters
-                sck_reg.d = 0
+                sckReg.d = 0
                 ctr.d = 0
 
                 if (start) { // if we should start a new transfer
-                    data.d = data_in         // save the data to send
+                    data.d = dataIn         // save the data to send
                     state.d = States.TRANSFER // switch states
                 }
 
             States.TRANSFER:
-                sck_reg.d = sck_reg.q + 1
+                sckReg.d = sckReg.q + 1
 
                 // at the start of each clock cycle
                 // output a new bit of data
-                if (sck_reg.q == 0) {
-                    sdo_reg.d = data.q[7]
+                if (sckReg.q == 0) {
+                    sdoReg.d = data.q[7]
                 } else { // at the half way point read in miso
-                    if (sck_reg.q == ($width(sck_reg.q)-1)x{1}) {
+                    if (sckReg.q == ($width(sckReg.q)-1)x{1}) {
                         data.d = c{data.q[6:0], sdi}
                     } else { // at the end of the clock cycle
-                        if (sck_reg.q == ($width(sck_reg.q))x{1}) {
+                        if (sckReg.q == ($width(sckReg.q))x{1}) {
                             ctr.d = ctr.q + 1 // increment bit counter
 
                             // if we sent/received 8 bits
                             if (ctr.q == 3b111) {
                                 state.d = States.IDLE // we're done
-                                new_data = 1         // there's new data
+                                newData = 1           // there's new data
                             }
                         }
                     }
