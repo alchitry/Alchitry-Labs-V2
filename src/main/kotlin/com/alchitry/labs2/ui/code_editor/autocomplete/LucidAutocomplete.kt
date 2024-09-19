@@ -186,12 +186,13 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
         val end = caret
         val possible = getPossible(context, projectContext)
 
-        active = true
 
         this@LucidAutocomplete.suggestions = possible.mapNotNull {
             val diff = calculateEditDistance(it, pieces.last()) ?: return@mapNotNull null
             Suggestion(it, diff, start..<end)
-        }.sortedBy { it.quality }
+        }.sortedBy { it.quality }.also {
+            active = it.isNotEmpty()
+        }
 
         overlayPosition = state.textPositionToScreenOffset(caret.copy(offset = caret.offset - relevantText.length))
     }
