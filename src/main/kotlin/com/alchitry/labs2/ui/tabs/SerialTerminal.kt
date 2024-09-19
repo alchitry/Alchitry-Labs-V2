@@ -156,7 +156,10 @@ class SerialTerminal(
                         .onFocusChanged { hasFocus = it.hasFocus }
                         .hiddenClickable { }
                         .onKeyEvent { keyEvent ->
-                            if (keyEvent.isTypedEvent || (keyEvent.type == KeyEventType.KeyDown && keyEvent.key == Key.Enter)) {
+                            if (keyEvent.isTypedEvent ||
+                                (keyEvent.type == KeyEventType.KeyDown &&
+                                        (keyEvent.key == Key.Enter || keyEvent.key == Key.NumPadEnter))
+                            ) {
                                 val text = String(intArrayOf(keyEvent.utf16CodePoint), 0, 1)
                                 textFlow.tryEmit(text)
                                 true
