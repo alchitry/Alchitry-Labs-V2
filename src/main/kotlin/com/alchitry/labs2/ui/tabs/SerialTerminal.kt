@@ -134,7 +134,7 @@ class SerialTerminal(
                             while (isActive) {
                                 val bytes = device.readData(buffer)
                                 if (bytes > 0) {
-                                    console.append(buffer.decodeToString(0, bytes))
+                                    console.append(buffer.decodeToString(0, bytes).replace("\r", ""))
                                 } else {
                                     delay(100)
                                 }
