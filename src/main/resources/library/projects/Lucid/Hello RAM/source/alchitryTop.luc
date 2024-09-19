@@ -15,8 +15,8 @@ module alchitryTop (
         
         .rst(rst) {
             greeter greeter // instance of our greeter
-            uartRx uart_rx(#BAUD(1000000), #CLK_FREQ(100000000))
-            uartTx uart_tx(#BAUD(1000000), #CLK_FREQ(100000000))
+            uartRx uartRx(#BAUD(1000000), #CLK_FREQ(100000000))
+            uartTx uartTx(#BAUD(1000000), #CLK_FREQ(100000000))
         }
     }
     
@@ -26,17 +26,17 @@ module alchitryTop (
         
         led = 8h00             // turn LEDs off
         
-        usbTx = uart_tx.tx    // connect the output
-        uart_rx.rx = usbRx    // connect the input
+        usbTx = uartTx.tx    // connect the output
+        uartRx.rx = usbRx    // connect the input
         
         // TX Connections
-        uart_tx.block = 0      // don't block
-        greeter.txBusy = uart_tx.busy
-        uart_tx.newData = greeter.newTx
-        uart_tx.data = greeter.txData
+        uartTx.block = 0      // don't block
+        greeter.txBusy = uartTx.busy
+        uartTx.newData = greeter.newTx
+        uartTx.data = greeter.txData
         
         // RX Connections
-        greeter.newRx = uart_rx.new_data
-        greeter.rxData = uart_rx.data
+        greeter.newRx = uartRx.newData
+        greeter.rxData = uartRx.data
     }
 }
