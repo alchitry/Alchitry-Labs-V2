@@ -138,6 +138,10 @@ class Console {
             annotatedString.subSequence(0, annotatedString.length - 1)
         } else {
             annotatedString
+        }.let {
+            // empty strings can have styles that cause a crash
+            // so we replace them with a fresh empty string
+            it.ifEmpty { AnnotatedString("") }
         }
 
         if (appendToLastLine) {
@@ -163,7 +167,7 @@ class Console {
                     }
                 }
             }
-            .toMutableList().apply { if (last().isEmpty()) removeLast() }
+            .toMutableList()
             .forEach { appendSingleLine(it) }
         caretBlinker.launchBlinkCursor()
     }
@@ -215,10 +219,7 @@ class Console {
                             items(if (content.isEmpty()) listOf(AnnotatedString("")) else content) {
                                 if (blinkCursor && (content.isEmpty() || content.last() === it)) {
                                     Layout(content = {
-                                        Text(buildAnnotatedString {
-                                            append(it)
-                                            appendLine()
-                                        }, maxLines = 1)
+                                        Text(it, maxLines = 1)
                                         Box(
                                             Modifier.fillMaxHeight().width(2.dp)
                                                 .graphicsLayer { alpha = if (caretBlinker.showCaret) 1f else 0f }
@@ -234,10 +235,7 @@ class Console {
                                         }
                                     }
                                 } else {
-                                    Text(buildAnnotatedString {
-                                        append(it)
-                                        appendLine()
-                                    }, maxLines = 1)
+                                    Text(it, maxLines = 1)
                                 }
                             }
                         }
