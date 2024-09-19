@@ -1,6 +1,6 @@
 /**
-    "name": "Simple Dual Port RAM"
-    "description": "Simple dual port RAM with configurable size and depth. These are useful when you need to be able to read and write independently."
+    "name": "Simple RAM"
+    "description": "Simple single port RAM with configurable width and entry count."
 **/
 /******************************************************************************
 
@@ -28,8 +28,8 @@
 
    *****************************************************************************
 
-   This module is a simple dual port RAM. This RAM is implemented in such a
-   way that Xilinx's tools will recognize it as a RAM and implement large
+   This module is a simple single port RAM. This RAM is implemented in such a
+   way that the tools will recognize it as a RAM and implement large
    instances in block RAM instead of flip-flops.
 
    The parameter WIDTH is used to specify the word size. That is the size of
@@ -37,40 +37,38 @@
 
    The parameter ENTRIES is used to specify how many entries are in the RAM.
 
-   readData outputs the value of the entry pointed to by raddr in the previous
+   readData outputs the value of the entry pointed to by address in the previous
    clock cycle. That means to read address 10, you would set address to be 10
    and wait one cycle for its value to show up. The RAM is always reading whatever
    address is. If you don't need to read, just ignore this value.
 
-   To write, set writeEnable to 1, writeData to the value to write, and waddr to
-   the address you want to write.
+   To write, set writeEnable to 1, writeData to the value to write,
+   and address to the address you want to write.
 
-   You should avoid reading and writing to the same address simultaneously. The
-   value read in this case is undefined.
+   If you read and write the same address, the first clock cycle the address will
+   be written, the second clock cycle the old value will be output on read_data,
+   and on the third clock cycle the newly updated value will be output on
+   read_data.
 */
-module simpleDualPortRam  #(
-    WIDTH ~ 1   : WIDTH > 0,   // size of each entry
-    ENTRIES ~ 2 : ENTRIES > 1  // number of entries
-)(
-    // write interface
-    input wclk, // write clock
-    input waddr[$clog2(ENTRIES)],
-    input writeData[WIDTH], // data to write
-    input writeEnable, // write enable (1 = write)
 
-    // read interface
-    input rclk, // read clock
-    input raddr[$clog2(ENTRIES)], // address to read or write
-    output readData[WIDTH], // data read
-) {
-    dff ram[ENTRIES][WIDTH](.clk(wclk))
-    dff rData[WIDTH](.clk(rclk))
+module simpleRam #(
+    parameter WIDTH = 1,                 // size of each entry
+    parameter ENTRIES = 1                // number of entries
+  )(
+    input clk,                           // clock
+    input [$clog2(ENTRIES)-1:0] address, // address to read or write
+    output reg [WIDTH-1:0] readData,     // data read
+    input [WIDTH-1:0] writeData,         // data to write
+    input writeEnable                    // write enable (1 = write)
+  );
 
-    always {
-        rData.d = ram.q[raddr]
-        readData = rData.q
+  reg [WIDTH-1:0] ram [ENTRIES-1:0];     // memory array
 
-        if (writeEnable)
-            ram.d[waddr] = writeData
-    }
-}
+  always @(posedge clk) begin
+    readData <= ram[address];            // read the entry
+
+    if (writeEnable)                     // if we need to write
+      ram[address] <= writeData;         // update that value
+  end
+
+endmodule

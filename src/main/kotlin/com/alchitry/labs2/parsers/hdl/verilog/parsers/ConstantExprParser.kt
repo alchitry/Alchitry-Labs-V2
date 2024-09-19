@@ -1,5 +1,6 @@
 package com.alchitry.labs2.parsers.hdl.verilog.parsers
 
+import com.alchitry.labs2.parsers.BigFunctions
 import com.alchitry.labs2.parsers.grammar.VerilogParser
 import com.alchitry.labs2.parsers.grammar.VerilogParser.Constant_expressionContext
 import com.alchitry.labs2.parsers.grammar.VerilogParserBaseListener
@@ -7,11 +8,12 @@ import com.alchitry.labs2.parsers.hdl.ExprEvaluator
 import com.alchitry.labs2.parsers.hdl.asConstExpr
 import com.alchitry.labs2.parsers.hdl.asExpr
 import com.alchitry.labs2.parsers.hdl.types.Signal
-import com.alchitry.labs2.parsers.hdl.values.ArrayValue
-import com.alchitry.labs2.parsers.hdl.values.BitListValue
-import com.alchitry.labs2.parsers.hdl.values.Value
+import com.alchitry.labs2.parsers.hdl.values.*
 import com.alchitry.labs2.parsers.hdl.verilog.context.VerilogExprContext
 import org.apache.commons.text.StringEscapeUtils
+import java.math.BigDecimal
+import java.math.BigInteger
+import java.math.RoundingMode
 
 class ConstantExprParser(
     private val context: VerilogExprContext,
@@ -145,7 +147,41 @@ class ConstantExprParser(
     }
 
     override fun exitConstPrimarySystemFunctionCall(ctx: VerilogParser.ConstPrimarySystemFunctionCallContext) {
-        context.reportError(ctx, "System function calls aren't supported.")
+        val callCtx = ctx.constant_system_function_call() ?: return
+        val function = callCtx.system_function_identifier()?.text ?: return
+
+        when (function) {
+            "\$clog2" -> {
+                val argument = context.resolve(callCtx.constant_expression().firstOrNull() ?: return) ?: return
+                when {
+                    argument.value is UndefinedValue -> evaluator.setExpr(
+                        ctx,
+                        UndefinedValue(UndefinedSimpleWidth()).asExpr(argument.type)
+                    )
+
+                    argument.value.isNumber() -> {
+                        val bigInt = (argument.value as SimpleValue).toBigInt()
+                        if (bigInt == BigInteger.ZERO) {
+                            evaluator.setExpr(ctx, BitValue(Bit.B0, false).asExpr(argument.type))
+                            return
+                        }
+                        evaluator.setExpr(
+                            ctx, BigFunctions.ln(BigDecimal(bigInt), 32)
+                                .divide(BigFunctions.LOG2, RoundingMode.HALF_UP)
+                                .setScale(0, RoundingMode.CEILING)
+                                .toBigInteger()
+                                .toBitListValue()
+                                .asExpr(argument.type)
+                        )
+                    }
+                }
+
+            }
+
+            else -> context.reportError(ctx, "System function \"$function\" isn't supported.")
+        }
+
+
     }
 
     override fun exitConstPrimaryGroup(ctx: VerilogParser.ConstPrimaryGroupContext) {
