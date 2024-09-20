@@ -101,7 +101,9 @@ data object IceStormBuilder : ProjectBuilder() {
             "--pcf",
             pcf.absolutePath,
             "--asc",
-            ascFile.absolutePathString()
+            ascFile.absolutePathString(),
+            "--opt-timing",
+            "--tmg-ripup"
         )
 
         Log.println("Starting nextpnr...", AlchitryColors.current.Info)

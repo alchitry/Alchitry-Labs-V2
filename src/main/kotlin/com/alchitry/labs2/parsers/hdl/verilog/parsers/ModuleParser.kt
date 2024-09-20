@@ -26,26 +26,28 @@ data class ModuleParser(
         parameterSignals[name]
 
     private fun VerilogParser.Range_Context.bitCount(): Int? {
-        val msb = msb_constant_expression()?.constant_expression()?.let { context.resolve(it) }?.value ?: return null
-        val lsb = lsb_constant_expression()?.constant_expression()?.let { context.resolve(it) }?.value ?: return null
-        if (msb.width !is SimpleWidth) {
+        val msb = msb_constant_expression()?.constant_expression()?.let { context.resolve(it) } ?: return null
+        val lsb = lsb_constant_expression()?.constant_expression()?.let { context.resolve(it) } ?: return null
+        if (msb.type != ExprType.Constant || lsb.type != ExprType.Constant) return null
+
+        if (msb.value.width !is SimpleWidth) {
             context.reportError(
                 msb_constant_expression() ?: this,
                 "MSB \"${msb_constant_expression()?.text}\" must be a number!"
             )
             return null
         }
-        if (lsb.width !is SimpleWidth) {
+        if (lsb.value.width !is SimpleWidth) {
             context.reportError(
                 lsb_constant_expression() ?: this,
                 "LSB \"${lsb_constant_expression()?.text}\" must be a number!"
             )
             return null
         }
-        if (!msb.isNumber() || !lsb.isNumber() || msb !is SimpleValue || lsb !is SimpleValue)
+        if (!msb.value.isNumber() || !lsb.value.isNumber() || msb.value !is SimpleValue || lsb.value !is SimpleValue)
             return null
 
-        return msb.toBigInt()?.minus(lsb.toBigInt() ?: return null)?.toInt()?.let { it + 1 }
+        return msb.value.toBigInt()?.minus(lsb.value.toBigInt() ?: return null)?.toInt()?.let { it + 1 }
     }
 
     override fun exitParam_assignment(ctx: VerilogParser.Param_assignmentContext) {
@@ -70,7 +72,7 @@ data class ModuleParser(
             return
         }
 
-        parameterSignals[name] = Signal(name, SignalDirection.Read, null, value.value, ExprType.Fixed)
+        parameterSignals[name] = Signal(name, SignalDirection.Read, null, value.value, ExprType.Known)
     }
 
     override fun exitParameter_declaration(ctx: VerilogParser.Parameter_declarationContext) {

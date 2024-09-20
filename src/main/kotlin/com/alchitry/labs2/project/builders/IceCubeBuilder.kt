@@ -100,7 +100,8 @@ data object IceCubeBuilder : ProjectBuilder() {
         append(export).append(" SYNPLIFY_PATH=").appendLine(iceCube.resolve("synpbase").absolutePath)
         append(export).append(" SBT_DIR=").appendLine(iceCube.resolve("sbt_backend").absolutePath)
 
-        append(synpwrapDir.resolve("synpwrap$extension")).append(" -prj \"")
+        append("\"")
+        append(synpwrapDir.resolve("synpwrap$extension").absolutePath).append("\" -prj \"")
             .append(project.buildDirectory.resolve(SYN_PROJECT_FILE).absolutePathString())
             .appendLine("\"")
 
@@ -140,7 +141,7 @@ data object IceCubeBuilder : ProjectBuilder() {
     ): String =
         buildString {
             appendLine("#project files")
-            sourceFiles.forEach { file ->
+            sourceFiles.asReversed().forEach { file -> // reversed as the tools look for the top module last...
                 append("add_file -verilog -lib work \"")
                 append(getSanitizedPath(file))
                 appendLine("\"")
@@ -179,6 +180,7 @@ data object IceCubeBuilder : ProjectBuilder() {
             appendLine("set_option -compiler_compatible 0")
             appendLine("set_option -resource_sharing 1")
             appendLine("set_option -write_apr_constraint 1")
+            appendLine("set_option -top-module $topModuleName")
 
             appendLine("project -result_format \"edif\"")
             append("project -result_file ./").append(IMP_DIR).append("/").append(topModuleName).appendLine(".edf")

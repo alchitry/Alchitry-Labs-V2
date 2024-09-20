@@ -1,19 +1,14 @@
 package com.alchitry.labs2.parsers.hdl.verilog.parsers
 
-import com.alchitry.labs2.parsers.BigFunctions
 import com.alchitry.labs2.parsers.grammar.VerilogParser
 import com.alchitry.labs2.parsers.grammar.VerilogParser.Constant_expressionContext
 import com.alchitry.labs2.parsers.grammar.VerilogParserBaseListener
-import com.alchitry.labs2.parsers.hdl.ExprEvaluator
-import com.alchitry.labs2.parsers.hdl.asConstExpr
-import com.alchitry.labs2.parsers.hdl.asExpr
+import com.alchitry.labs2.parsers.hdl.*
+import com.alchitry.labs2.parsers.hdl.types.Function
 import com.alchitry.labs2.parsers.hdl.types.Signal
 import com.alchitry.labs2.parsers.hdl.values.*
 import com.alchitry.labs2.parsers.hdl.verilog.context.VerilogExprContext
 import org.apache.commons.text.StringEscapeUtils
-import java.math.BigDecimal
-import java.math.BigInteger
-import java.math.RoundingMode
 
 class ConstantExprParser(
     private val context: VerilogExprContext,
@@ -129,7 +124,12 @@ class ConstantExprParser(
             context.reportError(ctx, "Signal \"${ctx.identifier()?.text}\" is not a fully qualified signal.")
             return
         }
-        evaluator.setExpr(ctx, signal.read().asExpr(signal.type))
+        val value = if (context.mode == ExprEvalMode.Building && signal.type == ExprType.Fixed) {
+            UndefinedValue(signal.width)
+        } else {
+            signal.read()
+        }
+        evaluator.setExpr(ctx, value.asExpr(signal.type))
     }
 
     override fun exitConstPrimaryConcatenation(ctx: VerilogParser.ConstPrimaryConcatenationContext) {
@@ -160,19 +160,12 @@ class ConstantExprParser(
                     )
 
                     argument.value.isNumber() -> {
-                        val bigInt = (argument.value as SimpleValue).toBigInt()
-                        if (bigInt == BigInteger.ZERO) {
-                            evaluator.setExpr(ctx, BitValue(Bit.B0, false).asExpr(argument.type))
+                        val clog2 = Function.CLOG2.compute(argument.value)
+                        if (clog2 == null) {
+                            context.reportError(ctx, "Failed to compute clog2 for value: ${argument.value}")
                             return
                         }
-                        evaluator.setExpr(
-                            ctx, BigFunctions.ln(BigDecimal(bigInt), 32)
-                                .divide(BigFunctions.LOG2, RoundingMode.HALF_UP)
-                                .setScale(0, RoundingMode.CEILING)
-                                .toBigInteger()
-                                .toBitListValue()
-                                .asExpr(argument.type)
-                        )
+                        evaluator.setExpr(ctx, clog2.asExpr(argument.type))
                     }
                 }
 

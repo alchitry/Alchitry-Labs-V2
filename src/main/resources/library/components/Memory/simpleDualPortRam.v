@@ -55,7 +55,7 @@ module simpleDualPortRam #(
     // write interface
     input wclk,                        // write clock
     input [$clog2(ENTRIES)-1:0] waddr, // write address
-    input [WIDTH-1:0] writeDate,       // write data
+    input [WIDTH-1:0] writeData,       // write data
     input writeEnable,                 // write enable (1 = write)
     
     // read interface
@@ -69,7 +69,7 @@ module simpleDualPortRam #(
   // write clock domain
   always @(posedge wclk) begin
     if (writeEnable)                   // if write enable
-      mem[waddr] <= writeDate;         // write memory
+      mem[waddr] <= writeData;         // write memory
   end
   
   // read clock domain

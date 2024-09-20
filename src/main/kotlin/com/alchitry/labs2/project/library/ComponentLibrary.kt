@@ -6,7 +6,9 @@ import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidGlobalContext
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidModuleTypeContext
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
+import com.alchitry.labs2.parsers.hdl.verilog.context.VerilogModuleTypeContext
 import com.alchitry.labs2.parsers.notations.NotationManager
+import com.alchitry.labs2.project.HDL
 import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.Locations
 import com.alchitry.labs2.project.Project
@@ -36,24 +38,33 @@ object ComponentLibrary {
         // build dependency trees for lucid components
         // run blocking ok as it will never suspend
         runBlocking {
-            val lucidFiles = components.filter { it.language is Languages.Lucid }.map { SourceFile(it) }
+            val sourceFiles = components.filter { it.language is HDL }.map { SourceFile(it) }
             val notationManager = NotationManager()
 
             // parseAll only suspends for file reads and all files are components
-            val trees = Project.parseAll(lucidFiles, notationManager) ?: error(notationManager.getReport().toString())
+            val trees = Project.parseAll(sourceFiles, notationManager) ?: error(notationManager.getReport().toString())
 
             notationManager.assertNoErrors()
 
             val projectContext = ProjectContext(notationManager)
 
             trees.forEach {
-                LucidGlobalContext(projectContext, it.first).walk(it.second) // not simulation so won't suspend
+                when (it.first.language) {
+                    Languages.Lucid -> LucidGlobalContext(
+                        projectContext,
+                        it.first
+                    ).walk(it.second) // not simulation so won't suspend
+                    Languages.Verilog -> {} // no globals in Verilog
+                }
             }
 
             notationManager.assertNoErrors()
 
             val modules = trees.flatMap {
-                LucidModuleTypeContext(projectContext, it.first).extract(it.second)
+                when (it.first.language) {
+                    Languages.Lucid -> LucidModuleTypeContext(projectContext, it.first).extract(it.second)
+                    Languages.Verilog -> VerilogModuleTypeContext(projectContext, it.first).extract(it.second)
+                }
             }
 
             notationManager.assertNoErrors()

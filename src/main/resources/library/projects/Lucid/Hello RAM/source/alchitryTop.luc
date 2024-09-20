@@ -14,29 +14,30 @@ module alchitryTop (
         resetConditioner resetCond
         
         .rst(rst) {
-            greeter greeter // instance of our greeter
-            uartRx uartRx(#BAUD(1000000), #CLK_FREQ(100000000))
-            uartTx uartTx(#BAUD(1000000), #CLK_FREQ(100000000))
+            #BAUD(1_000_000), #CLK_FREQ(100_000_000) {
+                uartRx rx
+                uartTx tx
+            }
+
+            greeter greeter
         }
     }
-    
+
     always {
-        resetCond.in = ~rst_n     // input raw inverted reset signal
-        rst = resetCond.out       // conditioned reset
-        
+        resetCond.in = ~rst_n  // input raw inverted reset signal
+        rst = resetCond.out    // conditioned reset
+
         led = 8h00             // turn LEDs off
-        
-        usbTx = uartTx.tx    // connect the output
-        uartRx.rx = usbRx    // connect the input
-        
-        // TX Connections
-        uartTx.block = 0      // don't block
-        greeter.txBusy = uartTx.busy
-        uartTx.newData = greeter.newTx
-        uartTx.data = greeter.txData
-        
-        // RX Connections
-        greeter.newRx = uartRx.newData
-        greeter.rxData = uartRx.data
+
+        rx.rx = usbRx          // connect rx input
+        usbTx = tx.tx          // connect tx output
+
+        greeter.newRx = rx.newData
+        greeter.rxData = rx.data
+
+        tx.newData = greeter.newTx
+        tx.data = greeter.txData
+        greeter.txBusy = tx.busy
+        tx.block = 0           // no flow control, do not block
     }
 }

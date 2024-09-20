@@ -44,7 +44,7 @@
             {
                 "file": {
                     "type": "Component",
-                    "path": "Memory/simpleRam.luc"
+                    "path": "Memory/simpleRam.v"
                 }
             }
         ],

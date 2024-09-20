@@ -1,6 +1,5 @@
 package com.alchitry.labs2.parsers.hdl.lucid.parsers
 
-import com.alchitry.labs2.parsers.BigFunctions
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs2.parsers.hdl.*
@@ -482,6 +481,18 @@ class ExprParser(
             Function.WIDTH -> {
                 val valArgs = checkOnlyValues() ?: return
                 val arg = valArgs[0]
+                if (valArgs.size > 2) {
+                    context.reportError(ctx.functionExpr(2) ?: ctx, "\$width accepts at most two arguments!")
+                    return
+                }
+                val dimArg = valArgs.getOrNull(1)
+                if (dimArg != null && !type.fixed) {
+                    context.reportError(
+                        ctx.functionExpr(1) ?: ctx,
+                        "The dimension argument can only be used on fixed constants!"
+                    )
+                    return
+                }
                 val width = arg.width
                 if (!width.isSimpleArray()) {
                     context.reportError(
@@ -491,7 +502,30 @@ class ExprParser(
                     return
                 }
                 val widthType = if (width.isDefined()) ExprType.Constant else ExprType.Fixed
-                evaluator.setExpr(ctx, width.toValue().asExpr(widthType))
+                val widthValue = width.toValue()
+                val value = if (dimArg != null) {
+                    if (widthValue !is ArrayValue) {
+                        context.reportError(
+                            ctx.functionExpr(1) ?: ctx,
+                            "The dimension argument can only be used with multidimensional arrays."
+                        )
+                        return
+                    }
+                    if (!dimArg.isNumber()) {
+                        context.reportError(ctx.functionExpr(1) ?: ctx, "The dimension argument must be a number.")
+                        return
+                    }
+                    val dimInt = (dimArg as SimpleValue).toBigInt()!!.toInt()
+                    widthValue.elements.getOrElse(dimInt) {
+                        context.reportError(
+                            ctx.functionExpr(1) ?: ctx,
+                            "The dimension index \"dimInt\" is outside the range for the given signal."
+                        )
+                        return
+                    }
+                } else widthValue
+
+                evaluator.setExpr(ctx, value.asExpr(widthType))
             }
 
             Function.FIXEDPOINT, Function.CFIXEDPOINT, Function.FFIXEDPOINT -> {
@@ -654,20 +688,12 @@ class ExprParser(
                     )
                     return
                 }
-                arg as SimpleValue
-                val bigInt = arg.toBigInt()
-                if (bigInt == BigInteger.ZERO) {
-                    evaluator.setExpr(ctx, BitValue(Bit.B0, false).asExpr(type))
+                val clog2 = Function.CLOG2.compute(arg)
+                if (clog2 == null) {
+                    context.reportError(ctx, "Failed to compute clog2 for value: $arg")
                     return
                 }
-                evaluator.setExpr(
-                    ctx, BigFunctions.ln(BigDecimal(bigInt), 32)
-                    .divide(BigFunctions.LOG2, RoundingMode.HALF_UP)
-                    .setScale(0, RoundingMode.CEILING)
-                    .toBigInteger()
-                    .toBitListValue()
-                        .asExpr(type)
-                )
+                evaluator.setExpr(ctx, clog2.asExpr(type))
             }
 
             Function.POWER -> {
