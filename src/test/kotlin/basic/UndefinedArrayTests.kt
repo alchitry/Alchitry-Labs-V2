@@ -234,20 +234,18 @@ class UndefinedArrayTests {
 
     @Test
     fun undefinedWidth() = runBlocking {
-        val test = testExprWithLocalValues("\$width(SIZE)", undefinedSignal("SIZE"))
+        val test = testExprWithLocalValues("\$width(SIZE)", undefinedSignal("SIZE", UndefinedSimpleWidth()))
         val tree = test.parser.expr().also { test.context.walk(it) }
         val result = test.context.expr.resolve(tree)?.value
         test.assertNoIssues()
-        assert(result is ArrayValue)
-        assert((result as ArrayValue).elements[0] is UndefinedValue)
-        assert(result.elements[1] is UndefinedValue)
-        assertEquals(DefinedArrayWidth(2, UndefinedSimpleWidth()), result.width)
+        assert(result is UndefinedValue)
+        assert(result?.width is UndefinedSimpleWidth)
     }
 
     @Test
     fun undefinedWidth2() = runBlocking {
         val test = testExprWithLocalValues(
-            "\$width(SIZE)", undefinedSignal(
+            "\$width(SIZE,1)", undefinedSignal(
                 "SIZE", UndefinedArrayWidth(
                     DefinedSimpleWidth(10)
                 )
@@ -256,9 +254,6 @@ class UndefinedArrayTests {
         val tree = test.parser.expr().also { test.context.walk(it) }
         val result = test.context.expr.resolve(tree)?.value
         test.assertNoIssues()
-        assert(result is ArrayValue)
-        assert((result as ArrayValue).elements[0] is UndefinedValue)
-        assertEquals(BitListValue(10, signed = false), result.elements[1])
-        assertEquals(DefinedArrayWidth(2, BitListWidth(4)), result.width)
+        assertEquals(BitListValue(10, signed = false), result)
     }
 }
