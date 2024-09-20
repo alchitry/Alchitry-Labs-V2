@@ -2,6 +2,7 @@ package com.alchitry.labs2.project
 
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
+import com.alchitry.labs2.hardware.pinout.AuPin
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.acf.AcfExtractor
 import com.alchitry.labs2.parsers.acf.NativeConstraint
@@ -16,6 +17,7 @@ import com.alchitry.labs2.parsers.hdl.lucid.context.LucidModuleTypeContext
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidTestBenchContext
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.values.Bit
+import com.alchitry.labs2.parsers.hdl.values.BitListValue
 import com.alchitry.labs2.parsers.hdl.values.ValueFormat
 import com.alchitry.labs2.parsers.hdl.verilog.context.VerilogModuleTypeContext
 import com.alchitry.labs2.parsers.notations.Notation
@@ -624,6 +626,10 @@ data class Project(
                 )
             }
 
+            if (data.board.pinConverter === AuPin && data.ipCores.any { it.name == "mig_7series_0" }) {
+                addMigConstraints(ports)
+            }
+
             projectContext.getConstraints().forEach {
                 val port = it.port
                 val signal = ports[port.getSignal().name] ?: return@forEach // error should already be caught
@@ -641,7 +647,7 @@ data class Project(
                     val portCtx = topModule.ports[it.name]?.context ?: error("Missing context for port \"${it.name}\"!")
 
                     if (constrained.orReduce().bit == Bit.B1) {
-                        notationManager.getCollector(topModule.sourceFile).reportError(
+                        notationManager.getCollector(topModule.sourceFile).reportWarning(
                             portCtx,
                             "Top level port \"${it.name}\" isn't fully constrained. Bits marked as 0 aren't constrained: ${
                                 constrained.toString(ValueFormat.Binary)
@@ -666,6 +672,28 @@ data class Project(
 
         return projectContext
     }
-
 }
 
+private suspend fun addMigConstraints(ports: Map<String, Signal>) {
+    ports["ddr3_dq"]?.select(listOf(SignalSelector.Bits(0..15, SelectionContext.Constant)))
+        ?.write(BitListValue(List(16) { Bit.B1.toBitValue() }))
+    ports["ddr3_addr"]?.select(listOf(SignalSelector.Bits(0..13, SelectionContext.Constant)))
+        ?.write(BitListValue(List(14) { Bit.B1.toBitValue() }))
+    ports["ddr3_ba"]?.select(listOf(SignalSelector.Bits(0..2, SelectionContext.Constant)))
+        ?.write(BitListValue(List(3) { Bit.B1.toBitValue() }))
+    ports["ddr3_dqs_n"]?.select(listOf(SignalSelector.Bits(0..1, SelectionContext.Constant)))
+        ?.write(BitListValue(List(2) { Bit.B1.toBitValue() }))
+    ports["ddr3_dqs_p"]?.select(listOf(SignalSelector.Bits(0..1, SelectionContext.Constant)))
+        ?.write(BitListValue(List(2) { Bit.B1.toBitValue() }))
+    ports["ddr3_dm"]?.select(listOf(SignalSelector.Bits(0..1, SelectionContext.Constant)))
+        ?.write(BitListValue(List(2) { Bit.B1.toBitValue() }))
+    ports["ddr3_ras_n"]?.write(Bit.B1.toBitValue())
+    ports["ddr3_cas_n"]?.write(Bit.B1.toBitValue())
+    ports["ddr3_we_n"]?.write(Bit.B1.toBitValue())
+    ports["ddr3_reset_n"]?.write(Bit.B1.toBitValue())
+    ports["ddr3_ck_p"]?.write(Bit.B1.toBitValue())
+    ports["ddr3_ck_n"]?.write(Bit.B1.toBitValue())
+    ports["ddr3_cke"]?.write(Bit.B1.toBitValue())
+    ports["ddr3_cs_n"]?.write(Bit.B1.toBitValue())
+    ports["ddr3_odt"]?.write(Bit.B1.toBitValue())
+}
