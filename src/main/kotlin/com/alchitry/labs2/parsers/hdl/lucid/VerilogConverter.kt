@@ -1269,9 +1269,57 @@ class VerilogConverter(
             }
 
             Function.WIDTH -> {
-                "\$bits(${
+                val dimArgCtx = functionCtx.functionExpr(1)?.expr()
+                val dimension = if (dimArgCtx == null) 0 else {
+                    (context.resolve(dimArgCtx)!!.value as SimpleValue).toBigInt()!!.toInt()
+                }
+                val width = functionCtx.functionExpr(0)?.expr()?.let { context.resolve(it) }?.value?.width
+                    ?: error("Failed to get width of value passed to \$width().")
+                val exprVerilog =
                     functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
-                })"
+                when (width) {
+                    is ArrayWidth -> {
+                        buildString {
+                            append("(")
+                            var currentWidth = width
+                            var currentDim = 0
+                            while (true) {
+                                if (currentDim == dimension) {
+                                    when (currentWidth) {
+                                        is DefinedSimpleWidth -> {
+                                            append(currentWidth.size)
+                                        }
+
+                                        is DefinedArrayWidth -> {
+                                            append(currentWidth.size)
+                                        }
+
+                                        is ResolvableWidth<*> -> {
+                                            append(currentWidth.context.verilog)
+                                        }
+
+                                        else -> error("Unsupported type $currentWidth in evaluation of \$width()!")
+                                    }
+                                    break
+                                }
+                                when (currentWidth) {
+                                    is SimpleWidth -> break
+                                    is ArrayWidth -> currentWidth = currentWidth.next
+                                    else -> error("Unsupported type $currentWidth in evaluation of \$width()!")
+                                }
+                                currentDim++
+                            }
+                            append(")")
+                        }
+                    }
+
+                    is SimpleWidth -> {
+                        "\$bits($exprVerilog)"
+                    }
+
+                    is StructWidth -> error("\$width() used on a struct!")
+                }
+
             }
 
             Function.ASSERT,

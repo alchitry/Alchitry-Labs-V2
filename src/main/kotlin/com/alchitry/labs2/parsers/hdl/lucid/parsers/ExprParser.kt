@@ -305,7 +305,13 @@ class ExprParser(
         val type = evaluator.getExprType(listOf(signal.type, bitSelectionType))
 
         val value = if (context.mode == ExprEvalMode.Building && signal.type == ExprType.Fixed) {
-            UndefinedValue(signal.width)
+            // outermost dimension is undefined for parameters
+            val newWidth = when (val width = signal.width) {
+                is SimpleWidth -> UndefinedSimpleWidth()
+                is ArrayWidth -> UndefinedArrayWidth(width.next)
+                else -> width
+            }
+            UndefinedValue(newWidth)
         } else {
             signal.read(context.evalContext)
         }
@@ -482,16 +488,20 @@ class ExprParser(
                 val valArgs = checkOnlyValues() ?: return
                 val arg = valArgs[0]
                 if (valArgs.size > 2) {
-                    context.reportError(ctx.functionExpr(2) ?: ctx, "\$width accepts at most two arguments!")
+                    context.reportError(ctx.functionExpr(2) ?: ctx, "\$width accepts at most two arguments.")
                     return
                 }
                 val dimArg = valArgs.getOrNull(1)
-                if (dimArg != null && !type.fixed) {
-                    context.reportError(
-                        ctx.functionExpr(1) ?: ctx,
-                        "The dimension argument can only be used on fixed constants!"
-                    )
-                    return
+                if (dimArg != null) {
+                    val dimType = evaluator.resolve(functionExprCtxs[1])?.type
+                        ?: error("Failed to get dimension argument type even though it should exist!")
+                    if (dimType != ExprType.Constant) {
+                        context.reportError(
+                            ctx.functionExpr(1) ?: ctx,
+                            "The dimension argument must be a fixed constant."
+                        )
+                        return
+                    }
                 }
                 val width = arg.width
                 if (!width.isSimpleArray()) {
@@ -503,25 +513,37 @@ class ExprParser(
                 }
                 val widthType = if (width.isDefined()) ExprType.Constant else ExprType.Fixed
                 val widthValue = width.toValue()
+                if (dimArg == null && widthValue is ArrayValue) {
+                    context.reportError(
+                        ctx.functionExpr(0) ?: ctx,
+                        "The value \"${ctx.functionExpr(0)?.text}\" has a multidimensional width but a dimension was not specified."
+                    )
+                    return
+                }
                 val value = if (dimArg != null) {
-                    if (widthValue !is ArrayValue) {
-                        context.reportError(
-                            ctx.functionExpr(1) ?: ctx,
-                            "The dimension argument can only be used with multidimensional arrays."
-                        )
-                        return
-                    }
                     if (!dimArg.isNumber()) {
                         context.reportError(ctx.functionExpr(1) ?: ctx, "The dimension argument must be a number.")
                         return
                     }
                     val dimInt = (dimArg as SimpleValue).toBigInt()!!.toInt()
-                    widthValue.elements.getOrElse(dimInt) {
-                        context.reportError(
-                            ctx.functionExpr(1) ?: ctx,
-                            "The dimension index \"dimInt\" is outside the range for the given signal."
-                        )
-                        return
+
+                    if (widthValue !is ArrayValue) {
+                        if (dimInt != 0) {
+                            context.reportError(
+                                ctx.functionExpr(1) ?: ctx,
+                                "The dimension index \"$dimInt\" is outside the range for \"${ctx.functionExpr(0)?.text}\"."
+                            )
+                            return
+                        }
+                        widthValue
+                    } else {
+                        widthValue.elements.getOrElse(dimInt) {
+                            context.reportError(
+                                ctx.functionExpr(1) ?: ctx,
+                                "The dimension index \"$dimInt\" is outside the range for \"${ctx.functionExpr(0)?.text}\"."
+                            )
+                            return
+                        }
                     }
                 } else widthValue
 
