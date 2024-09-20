@@ -1,6 +1,6 @@
 module alchitryTop (
     input clk,              // 100MHz clock
-    input rst_n,            // reset button (active low)
+    input rstN,            // reset button (active low)
     output led[8],          // 8 user controllable LEDs
     input usbRx,            // USB->Serial input
     output usbTx,           // USB->Serial output
@@ -29,7 +29,7 @@ module alchitryTop (
     }
     
     always {
-        resetCond.in = ~rst_n  // input raw inverted reset signal
+        resetCond.in = ~rstN  // input raw inverted reset signal
         rst = resetCond.out    // conditioned reset
         
         led = c{3b0, ioButton} // connect buttons to LEDs

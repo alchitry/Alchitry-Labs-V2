@@ -23,6 +23,7 @@ private data class ComponentDescriptor(
     val name: String,
     val description: String,
     val supportedBoards: Set<Board>? = null,
+    val skipDependencyCheck: Boolean = false,
 )
 
 @Serializable(with = Component.Companion::class)
@@ -31,6 +32,7 @@ data class Component(
     val componentName: String,
     val description: String,
     val supportedBoards: Set<Board>? = null,
+    val skipDependencyCheck: Boolean = false,
     val categories: List<String>,
     val content: String,
 ) : FileProvider() {
@@ -75,6 +77,7 @@ data class Component(
                 componentName = descriptor.name,
                 description = descriptor.description.trimIndent(),
                 supportedBoards = descriptor.supportedBoards,
+                skipDependencyCheck = descriptor.skipDependencyCheck,
                 categories = categories,
                 content = content
             )

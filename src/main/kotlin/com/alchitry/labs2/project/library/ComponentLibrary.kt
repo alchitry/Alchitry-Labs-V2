@@ -38,11 +38,12 @@ object ComponentLibrary {
         // build dependency trees for lucid components
         // run blocking ok as it will never suspend
         runBlocking {
-            val sourceFiles = components.filter { it.language is HDL }.map { SourceFile(it) }
+            val sourceFileMap = components.filter { it.language is HDL }.associate { SourceFile(it) to it }
             val notationManager = NotationManager()
 
             // parseAll only suspends for file reads and all files are components
-            val trees = Project.parseAll(sourceFiles, notationManager) ?: error(notationManager.getReport().toString())
+            val trees =
+                Project.parseAll(sourceFileMap.keys, notationManager) ?: error(notationManager.getReport().toString())
 
             notationManager.assertNoErrors()
 
@@ -64,26 +65,28 @@ object ComponentLibrary {
                 when (it.first.language) {
                     Languages.Lucid -> LucidModuleTypeContext(projectContext, it.first).extract(it.second)
                     Languages.Verilog -> VerilogModuleTypeContext(projectContext, it.first).extract(it.second)
-                }
-            }
+                }.map { module -> module to sourceFileMap[it.first]!!.skipDependencyCheck }
+            }.toMap()
 
             notationManager.assertNoErrors()
 
-            modules.forEach { module ->
-                ModuleInstance(
-                    module.name,
-                    projectContext,
-                    null,
-                    module,
-                    mapOf(),
-                    mapOf(),
-                    mapOf(),
-                    ExprEvalMode.Testing
-                ).apply {
-                    initialWalk()
-                    notationManager.assertNoErrors()
-                    (module.sourceFile.file as Component).dependencies =
-                        getModuleDependents().map { it.sourceFile.file as Component }
+            modules.forEach { (module, skip) ->
+                if (!skip) {
+                    ModuleInstance(
+                        module.name,
+                        projectContext,
+                        null,
+                        module,
+                        mapOf(),
+                        mapOf(),
+                        mapOf(),
+                        ExprEvalMode.Testing
+                    ).apply {
+                        initialWalk()
+                        notationManager.assertNoErrors()
+                        (module.sourceFile.file as Component).dependencies =
+                            getModuleDependents().map { it.sourceFile.file as Component }
+                    }
                 }
             }
 

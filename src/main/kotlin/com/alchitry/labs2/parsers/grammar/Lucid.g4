@@ -3,7 +3,7 @@ grammar Lucid;
 // starting rule
 source: (global | module | testBench | NL)* EOF;
 
-global: 'global' NL* name NL* '{' NL* globalStat* NL* '}';
+global: 'global' NL* name NL* '{' (globalStat | NL)* '}';
 
 globalStat
   : structDec
