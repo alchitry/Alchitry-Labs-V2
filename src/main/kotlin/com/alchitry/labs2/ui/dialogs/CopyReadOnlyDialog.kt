@@ -31,7 +31,7 @@ fun CopyReadOnlyDialog(
     AlchitryDialog(show, "Create Editable Copy", onClose = onClose) {
         val spacedBy = Arrangement.spacedBy(10.dp)
         Column(
-            Modifier.padding(10.dp).requiredWidthIn(min = 300.dp),
+            Modifier.padding(10.dp).requiredWidthIn(min = 400.dp),
             verticalArrangement = spacedBy,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

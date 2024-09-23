@@ -28,7 +28,7 @@ fun DeleteFileDialog(
     AlchitryDialog(file != null, "Delete File", onClose = onClose) {
         val spacedBy = Arrangement.spacedBy(10.dp)
         Column(
-            Modifier.padding(10.dp),
+            Modifier.padding(10.dp).requiredWidthIn(min = 300.dp),
             verticalArrangement = spacedBy,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
