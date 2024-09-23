@@ -523,7 +523,9 @@ class TypesParser(
     override suspend fun exitArraySize(ctx: ArraySizeContext) {
         val expr = context.expr.resolve(ctx.expr() ?: return)
         if (expr == null) {
-            context.reportError(ctx, "Array size expression couldn't be resolved.")
+            if (!context.mode.building) {
+                context.reportError(ctx, "Array size expression couldn't be resolved.")
+            }
             return
         }
 
@@ -578,7 +580,9 @@ class TypesParser(
         val width = ctx.signalWidth()?.let { context.resolve(it) }
 
         if (width == null) {
-            context.reportError(ctx.signalWidth() ?: ctx, "Failed to resolve signal width!")
+            if (!context.mode.building) {
+                context.reportError(ctx.signalWidth() ?: ctx, "Failed to resolve signal width!")
+            }
             return
         }
 
@@ -666,7 +670,9 @@ class TypesParser(
         val width = ctx.signalWidth()?.let { context.resolve(it) }
 
         if (width == null) {
-            context.reportError(ctx.signalWidth() ?: ctx, "Failed to resolve signal width!")
+            if (!context.mode.building) {
+                context.reportError(ctx.signalWidth() ?: ctx, "Failed to resolve signal width!")
+            }
             return
         }
 

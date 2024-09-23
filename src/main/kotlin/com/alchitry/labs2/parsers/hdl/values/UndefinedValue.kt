@@ -1,5 +1,6 @@
 package com.alchitry.labs2.parsers.hdl.values
 
+import com.alchitry.labs2.parsers.hdl.types.SignalSelectionException
 import com.alchitry.labs2.parsers.hdl.types.SignalSelector
 
 /**
@@ -28,21 +29,27 @@ data class UndefinedValue(
             is StructWidth -> {
                 UndefinedValue(
                     width.type[selection.member]?.width
-                        ?: error("Struct type \"${width.type.name}\" doesn't have a member named \"${selection.member}\"!")
+                        ?: throw SignalSelectionException(
+                            selection,
+                            "Struct type \"${width.type.name}\" doesn't have a member named \"${selection.member}\"!"
+                        )
                 )
             }
 
-            else -> error("Struct selector used on ${width::class.simpleName}!")
+            else -> throw SignalSelectionException(selection, "Struct selector used on ${width::class.simpleName}!")
         }
     }
 
     fun selectBits(selection: SignalSelector.Bits): UndefinedValue {
         return when (width) {
-            is BitWidth -> error("BitWidth can't be selected!")
+            is BitWidth -> throw SignalSelectionException(selection, "BitWidth can't be selected!")
             is SimpleWidth -> {
                 if (width is DefinedSimpleWidth)
-                    require(selection.range.first <= width.size && selection.range.last <= width.size) {
-                        "Selection of ${selection.range} is out of range of the value's width of ${width.size}!"
+                    if (!(selection.range.first <= width.size && selection.range.last <= width.size)) {
+                        throw throw SignalSelectionException(
+                            selection,
+                            "Selection of ${selection.range} is out of range of the value's width of ${width.size}!"
+                        )
                     }
                 if (selection.count == 1)
                     UndefinedValue(BitWidth)
@@ -50,12 +57,15 @@ data class UndefinedValue(
                     UndefinedValue(BitListWidth(selection.count))
             }
 
-            is StructWidth -> error("Bit selector used on StructWidth!")
+            is StructWidth -> throw SignalSelectionException(selection, "Bit selector used on StructWidth!")
 
             is ArrayWidth -> {
                 if (width is DefinedArrayWidth)
-                    require(selection.range.first <= width.size && selection.range.last <= width.size) {
-                        "Selection of ${selection.range} is out of range of the value's width of ${width.size}!"
+                    if (!(selection.range.first <= width.size && selection.range.last <= width.size)) {
+                        throw throw SignalSelectionException(
+                            selection,
+                            "Selection of ${selection.range} is out of range of the value's width of ${width.size}!"
+                        )
                     }
                 if (selection.count == 1)
                     UndefinedValue(width.next)

@@ -60,7 +60,7 @@ data class StructValue(
     fun selectMember(selection: SignalSelector.Struct): Value {
         return valueMap[selection.member] ?: throw SignalSelectionException(
             selection,
-            "Member $selection is not part of the struct $type"
+            "Member \"$selection\" is not part of the struct \"${type.name}\""
         )
     }
 
@@ -74,7 +74,7 @@ data class StructValue(
         when (val selector = selection.first()) {
             is SignalSelector.Bits -> error("Attempted to select bits on a StructValue!")
             is SignalSelector.Struct -> {
-                require(type.containsKey(selector.member)) { "Member $selector is not part of the struct $type" }
+                require(type.containsKey(selector.member)) { "Member \"$selector\" is not part of the struct \"${type.name}\"" }
                 return copy(valueMap = valueMap.mapValues { (k, v) ->
                     if (k == selector.member)
                         v.write(selection.subList(1, selection.size), newValue)
