@@ -7,7 +7,7 @@ module greeter (
     output tx_data[8], // TX data
     input tx_busy      // TX is busy flag
 ) {
-    const HELLO_TEXT = $reverse("\r\n_hello @!\r\n")
+    const HELLO_TEXT = $reverse("\r\nHello @!\r\n")
     const PROMPT_TEXT = $reverse("Please type your name: ")
     
     enum States {IDLE, PROMPT, LISTEN, HELLO} // our state machine
