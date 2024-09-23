@@ -43,9 +43,9 @@ module spi_controller #(
     output sdo,          // SPI data out
     output sck,          // SPI SCK
     input start,         // start transfer flag
-    input data_in[8],     // data to send
-    output data_out[8],   // data received
-    output new_data,      // data_out is valid
+    input data_in[8],    // data to send
+    output data_out[8],  // data received
+    output new_data,     // data_out is valid
     output busy          // bus is busy
 ) {
 
@@ -57,13 +57,13 @@ module spi_controller #(
         }
 
         dff data[8]          // data storage for rx and tx
-        dff sck_reg[CLK_DIV]  // counter for SPI clock
-        dff sdo_reg           // output buffer
+        dff sck_reg[CLK_DIV] // counter for SPI clock
+        dff sdo_reg          // output buffer
         dff ctr[3]           // bit counter
     }
 
     always {
-        new_data = 0                  // default to no new data
+        new_data = 0                   // default to no new data
         busy = state.q != States.IDLE  // busy when not idle
 
         // data out can be set to data.q since we only
@@ -82,7 +82,7 @@ module spi_controller #(
                 ctr.d = 0
 
                 if (start) { // if we should start a new transfer
-                    data.d = data_in         // save the data to send
+                    data.d = data_in          // save the data to send
                     state.d = States.TRANSFER // switch states
                 }
 
@@ -102,7 +102,7 @@ module spi_controller #(
 
                             // if we sent/received 8 bits
                             if (ctr.q == 3b111) {
-                                state.d = States.IDLE // we're done
+                                state.d = States.IDLE  // we're done
                                 new_data = 1           // there's new data
                             }
                         }

@@ -38,7 +38,7 @@ module uart_tx #(
     input block,        // block transmissions
     output busy,        // module is busy when 1
     input data[8],      // data to send
-    input new_data       // flag for new data
+    input new_data      // flag for new data
 ) {
 
     const CLK_PER_BIT = (CLK_FREQ + BAUD) / BAUD - 1 // clock cycles per bit
@@ -50,7 +50,7 @@ module uart_tx #(
         .rst(rst) {
             dff state[$width(States)](#INIT(States.IDLE)) // FSM for transmitter
         }
-        dff ctr[CTR_SIZE] // delay counter
+        dff ctr[CTR_SIZE]  // delay counter
         dff bit_ctr[3]     // bit counter
         dff saved_data[8]  // transmission data
         dff tx_reg         // output buffer
@@ -78,43 +78,43 @@ module uart_tx #(
 
         case (state.q) {                           // FSM
             States.IDLE:
-                tx_reg.d = 1                        // idle high (UART standard)
+                tx_reg.d = 1                       // idle high (UART standard)
                 if (!block_flag.q) {
                     busy = 0                       // not busy
-                    bit_ctr.d = 0                   // reset counter
+                    bit_ctr.d = 0                  // reset counter
                     ctr.d = 0                      // reset counter
                     if (new_data) {                // request to send data?
-                        saved_data.d = data         // save the data
+                        saved_data.d = data        // save the data
                         state.d = States.START_BIT // switch states
                     }
                 }
 
             States.START_BIT:
                 ctr.d = ctr.q + 1               // increment counter
-                tx_reg.d = 0                     // start bit is low
+                tx_reg.d = 0                    // start bit is low
                 if (ctr.q == CLK_PER_BIT - 1){  // if ctr is the max value
                     ctr.d = 0                   // reset counter
                     state.d = States.DATA       // switch states
                 }
 
             States.DATA:
-                tx_reg.d = saved_data.q[bit_ctr.q]   // output the data bit
-                ctr.d = ctr.q + 1                 // increment counter
-                if (ctr.q == CLK_PER_BIT - 1) {   // if ctr is the max value
-                    ctr.d = 0                     // reset counter
-                    bit_ctr.d = bit_ctr.q + 1       // increase bit counter
+                tx_reg.d = saved_data.q[bit_ctr.q] // output the data bit
+                ctr.d = ctr.q + 1                  // increment counter
+                if (ctr.q == CLK_PER_BIT - 1) {    // if ctr is the max value
+                    ctr.d = 0                      // reset counter
+                    bit_ctr.d = bit_ctr.q + 1      // increase bit counter
                     if (bit_ctr.q == 7)            // if we have sent all the bits
-                        state.d = States.STOP_BIT // switch states
+                        state.d = States.STOP_BIT  // switch states
                 }
 
             States.STOP_BIT:
                 tx_reg.d = 1                     // stop bit is high
-                ctr.d = ctr.q + 1               // increase counter
-                if (ctr.q == CLK_PER_BIT - 1) { // if ctr is the max value
-                    state.d = States.IDLE       // switch states
+                ctr.d = ctr.q + 1                // increase counter
+                if (ctr.q == CLK_PER_BIT - 1) {  // if ctr is the max value
+                    state.d = States.IDLE        // switch states
                 }
 
-            default: state.d = States.IDLE      // if state is invalid reset to idle
+            default: state.d = States.IDLE       // if state is invalid reset to idle
         }
     }
 }

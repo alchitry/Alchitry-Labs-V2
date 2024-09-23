@@ -32,10 +32,10 @@ module uart_rx #(
     CLK_FREQ ~ 100_000_000 : CLK_FREQ > 0,            // clock frequency
     BAUD = 1_000_000 : BAUD > 0 && BAUD <= CLK_FREQ/4 // desired baud rate
 )(
-    input clk,      // clock input
-    input rst,      // reset active high
-    input rx,       // UART rx input
-    output data[8], // received data
+    input clk,       // clock input
+    input rst,       // reset active high
+    input rx,        // UART rx input
+    output data[8],  // received data
     output new_data  // new data flag (1 = new data)
 ) {
 
@@ -48,11 +48,11 @@ module uart_rx #(
         .rst(rst) {
             dff state[$width(States)] // FSM for receiver
         }
-        dff ctr[CTR_SIZE] // delay counter
-        dff bit_ctr[3]     // bit counter
-        dff saved_data[8]  // received data
-        dff new_data_buffer // new data flag buffer
-        dff rxd           // input buffer
+        dff ctr[CTR_SIZE]    // delay counter
+        dff bit_ctr[3]       // bit counter
+        dff saved_data[8]    // received data
+        dff new_data_buffer  // new data flag buffer
+        dff rxd              // input buffer
     }
 
     always {
@@ -74,7 +74,7 @@ module uart_rx #(
        receive the next byte.                                               */
         case (state.q) {
             States.IDLE:
-                bit_ctr.d = 0                               // reset counter
+                bit_ctr.d = 0                              // reset counter
                 ctr.d = 0                                  // reset counter
                 if (rxd.q == 0)                            // if rx line is low (start bit)
                     state.d = States.WAIT_HALF             // switch state
@@ -87,14 +87,14 @@ module uart_rx #(
                 }
 
             States.WAIT_FULL:
-                ctr.d = ctr.q + 1                            // increment counter
-                if (ctr.q == CLK_PER_BIT - 1) {              // if ctr is the max value
+                ctr.d = ctr.q + 1                              // increment counter
+                if (ctr.q == CLK_PER_BIT - 1) {                // if ctr is the max value
                     saved_data.d = c{rxd.q, saved_data.q[7:1]} // shift in new data
                     bit_ctr.d = bit_ctr.q + 1                  // increment bit counter
-                    ctr.d = 0                                // reset counter
-                    if (bit_ctr.q == 7) {                     // if we have received 8 bits
-                        state.d = States.WAIT_HIGH           // switch state
-                        new_data_buffer.d = 1                        // signal new byte received
+                    ctr.d = 0                                  // reset counter
+                    if (bit_ctr.q == 7) {                      // if we have received 8 bits
+                        state.d = States.WAIT_HIGH             // switch state
+                        new_data_buffer.d = 1                  // signal new byte received
                     }
                 }
 

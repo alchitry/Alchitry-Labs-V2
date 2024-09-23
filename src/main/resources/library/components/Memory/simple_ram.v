@@ -52,17 +52,17 @@
 */
 
 module simple_ram #(
-    parameter WIDTH = 1,                 // size of each entry
-    parameter ENTRIES = 1                // number of entries
+    parameter WIDTH = 1,                  // size of each entry
+    parameter ENTRIES = 1                 // number of entries
   )(
-    input clk,                           // clock
-    input [$clog2(ENTRIES)-1:0] address, // address to read or write
+    input clk,                            // clock
+    input [$clog2(ENTRIES)-1:0] address,  // address to read or write
     output reg [WIDTH-1:0] read_data,     // data read
     input [WIDTH-1:0] write_data,         // data to write
     input write_enable                    // write enable (1 = write)
   );
 
-  reg [WIDTH-1:0] ram [ENTRIES-1:0];     // memory array
+  reg [WIDTH-1:0] ram [ENTRIES-1:0];      // memory array
 
   always @(posedge clk) begin
     read_data <= ram[address];            // read the entry

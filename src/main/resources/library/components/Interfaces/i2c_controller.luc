@@ -92,10 +92,10 @@ module i2c_controller #(
         .rst(rst) {
             dff state[$width(States)]
         }
-        dff data[8]         // data to send or data received
+        dff data[8]           // data to send or data received
         dff out_valid_reg     // out_valid buffer
-        dff scl_reg[CLK_DIV] // clock divider
-        dff bit_ctr[4]       // bit counter
+        dff scl_reg[CLK_DIV]  // clock divider
+        dff bit_ctr[4]        // bit counter
         dff ack_write_reg     // ack_write buffer
         dff ack_read_reg      // ack_read buffer
     }
@@ -156,13 +156,13 @@ module i2c_controller #(
                     scl_reg.d = c{2b11, ($width(scl_reg.q)-2)x{1b0}} + 1
                     state.d = States.WRITE // enter write state
 
-                } else if (read) {           // new read command
-                    ack_read_reg.d = ack_read   // save if read should be acknowledged
-                    state.d = States.READ    // enter read state
-                } else if (stop) {           // stop command
-                    state.d = States.STOP    // enter stop state
-                } else if (start) {          // start command
-                    state.d = States.START   // enter start state
+                } else if (read) {             // new read command
+                    ack_read_reg.d = ack_read  // save if read should be acknowledged
+                    state.d = States.READ      // enter read state
+                } else if (stop) {             // stop command
+                    state.d = States.STOP      // enter stop state
+                } else if (start) {            // start command
+                    state.d = States.START     // enter start state
 
                     // set clock to just over 3/4 full so it starts low
                     scl_reg.d = c{2b11, ($width(scl_reg.q)-2)x{1b0}} + 1
@@ -229,7 +229,7 @@ module i2c_controller #(
                 // the clock output would then go low
                 if (scl_reg.q == ($width(scl_reg.q)-1)x{1b1}) {
                     sda_value = 1          // set the output high
-                    state.d = States.WAIT // enter wait state
+                    state.d = States.WAIT  // enter wait state
                     scl_reg.d = 0          // reset clock counter
                 }
 
@@ -241,7 +241,7 @@ module i2c_controller #(
                 // We don't want it to reach 1/2 full because
                 // the clock output would then go low
                 if (scl_reg.q == ($width(scl_reg.q)-1)x{1b1}){
-                    state.d = States.IDLE // enter idle state
+                    state.d = States.IDLE  // enter idle state
                     scl_reg.d = 0          // reset clock counter
                 }
 

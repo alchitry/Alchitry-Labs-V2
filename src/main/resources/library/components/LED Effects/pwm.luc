@@ -91,7 +91,7 @@ module pwm #(
         // if ctr.value is 0 and we need to update
         if (!|ctr.value && need_update.q) {
             cur_value.d = next_value.q // set our new value
-            need_update.d = 0         // don't need update now
+            need_update.d = 0          // don't need update now
         }
 
         // if value is valid

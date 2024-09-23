@@ -88,7 +88,7 @@ module pulse_delay_chain #(
         write_flag.d = write_flag.q | in
 
         if (&cycle.q) { // last cycle
-            ram.write_enable = 1       // write data
+            ram.write_enable = 1      // write data
             write_flag.d = in         // set the flag for the next cycle
             wr_addr.d = wr_addr.q + 1 // increment the write address
         }

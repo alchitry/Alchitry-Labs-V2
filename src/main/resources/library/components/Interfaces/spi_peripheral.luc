@@ -42,20 +42,20 @@ module spi_peripheral #(
     output sdo,         // SPI data out
     input sck,          // SPI SCK
     output done,        // transfer done
-    input data_in[8],    // data to send
-    output data_out[8]   // data received
+    input data_in[8],   // data to send
+    output data_out[8]  // data received
 ) {
 
     .clk(clk) {
         .rst(rst) {
-            dff bit_ct[3]      // bit counter
-            dff data[8]       // received data
+            dff bit_ct[3]    // bit counter
+            dff data[8]      // received data
         }
         dff sdi_reg          // input buffer
         dff sdo_reg          // output buffer
         dff sck_reg[2]       // sck buffer
         dff cs_reg           // cs buffer
-        dff data_out_reg[8]   // data_out buffer
+        dff data_out_reg[8]  // data_out buffer
         dff done_reg         // done buffer
     }
 
@@ -75,7 +75,7 @@ module spi_peripheral #(
         if (cs_reg.q) { // not selected
             bit_ct.d = 3b111        // reset counter
             data.d = data_in        // copy in data for next byte
-            sdo_reg.d = data_in[7]   // write first bit out
+            sdo_reg.d = data_in[7]  // write first bit out
         } else {
             // When CPOL and CPHA are different, we read on the falling edge.
             // When they are the same we read on the rising edge.
