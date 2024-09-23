@@ -2,6 +2,7 @@ package com.alchitry.labs2.project
 
 import com.alchitry.labs2.project.files.*
 import com.alchitry.labs2.ui.tabs.Workspace
+import kotlin.io.path.createParentDirectories
 
 fun Project.removeFile(file: ProjectFile, delete: Boolean) {
     if (delete && !file.isReadOnly && !file.isLibFile && file.file is FileProvider.DiskFile) {
@@ -72,6 +73,7 @@ fun Project.addAlchitryConstraint(name: String) = addConstraintFile("$name.${Lan
 
 private fun Project.addSourceFile(name: String, contents: String): SourceFile {
     val newFilePath = sourceDirectory.resolve(name)
+    newFilePath.createParentDirectories()
     newFilePath.toFile().writeText(contents)
     val newSourceFile = SourceFile(FileProvider.DiskFile(path.relativize(newFilePath)))
     val newSourceFiles = data.sourceFiles.toMutableSet().apply {
@@ -85,6 +87,7 @@ private fun Project.addSourceFile(name: String, contents: String): SourceFile {
 
 private fun Project.addConstraintFile(name: String, contents: String = ""): ConstraintFile {
     val newFilePath = constraintDirectory.resolve(name)
+    newFilePath.createParentDirectories()
     newFilePath.toFile().writeText(contents)
     val newConstraintFile = ConstraintFile(FileProvider.DiskFile(path.relativize(newFilePath)))
     val newConstraintFiles = data.constraintFiles.toMutableSet().apply {
