@@ -1,4 +1,4 @@
-package com.alchitry.labs2.parsers.lucid
+package com.alchitry.labs2.parsers.hdl.lucid
 
 object Lucid {
     val RESERVED_WORDS = listOf(
@@ -10,7 +10,7 @@ object Lucid {
         "module",
         "always",
         "global",
-        "testBench",
+        "testbench",
         "const",
         "enum",
         "struct",

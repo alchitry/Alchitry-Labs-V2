@@ -15,7 +15,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.Log
-import com.alchitry.labs2.parsers.lucid.Lucid
+import com.alchitry.labs2.parsers.hdl.lucid.Lucid
 import com.alchitry.labs2.project.*
 import com.alchitry.labs2.ui.tabs.Workspace
 import kotlinx.coroutines.Dispatchers
