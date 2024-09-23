@@ -185,7 +185,7 @@ class LucidParser(input: TokenStream) : Parser(input) {
         private val LITERAL_NAMES: List<String?> = listOf(
             null, "'global'",
             "'{'", "'}'",
-            "'module'", "'testBench'",
+            "'module'", "'testbench'",
             "'#('", "','",
             "')'", "'('",
             "':'", "'='",

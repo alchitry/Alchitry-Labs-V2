@@ -1,0 +1,113 @@
+/**
+    "name": "SPI Controller"
+    "description": "SPI controller (master). It has configurable CPOL and CPHA as well as a configurable clock divider."
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2024 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   *****************************************************************************/
+
+module spi_controller #(
+    CLK_DIV = 8 : CLK_DIV > 1, // Clock divider
+
+    // clock polarity, 0 = inactive low, 1 = inactive high
+    CPOL = 0 : CPOL == 0 || CPOL == 1,
+
+    // clock phase, 0 = valid on leading edge, 1 = valid on trailing edge
+    CPHA = 0 : CPHA == 0 || CPHA == 1
+)(
+    input clk,           // clock
+    input rst,           // reset
+    input sdi,           // SPI data in
+    output sdo,          // SPI data out
+    output sck,          // SPI SCK
+    input start,         // start transfer flag
+    input data_in[8],     // data to send
+    output data_out[8],   // data received
+    output new_data,      // data_out is valid
+    output busy          // bus is busy
+) {
+
+    enum States {IDLE, TRANSFER}
+
+    .clk(clk) {
+        .rst(rst) { // only the FSM needs reset
+            dff state[$width(States)]
+        }
+
+        dff data[8]          // data storage for rx and tx
+        dff sck_reg[CLK_DIV]  // counter for SPI clock
+        dff sdo_reg           // output buffer
+        dff ctr[3]           // bit counter
+    }
+
+    always {
+        new_data = 0                  // default to no new data
+        busy = state.q != States.IDLE  // busy when not idle
+
+        // data out can be set to data.q since we only
+        // guarentee it's valid when new_data is 1
+        data_out = data.q
+
+        // the output clock is only active when we are sending data
+        sck = ((CPHA ^ sck_reg.q[$width(sck_reg.q)-1]) & (state.q == States.TRANSFER)) ^ CPOL
+
+        sdo = sdo_reg.q // sdo_reg is just a buffer for sdo
+
+        case (state.q) {
+            States.IDLE:
+                // reset the counters
+                sck_reg.d = 0
+                ctr.d = 0
+
+                if (start) { // if we should start a new transfer
+                    data.d = data_in         // save the data to send
+                    state.d = States.TRANSFER // switch states
+                }
+
+            States.TRANSFER:
+                sck_reg.d = sck_reg.q + 1
+
+                // at the start of each clock cycle
+                // output a new bit of data
+                if (sck_reg.q == 0) {
+                    sdo_reg.d = data.q[7]
+                } else { // at the half way point read in miso
+                    if (sck_reg.q == ($width(sck_reg.q)-1)x{1}) {
+                        data.d = c{data.q[6:0], sdi}
+                    } else { // at the end of the clock cycle
+                        if (sck_reg.q == ($width(sck_reg.q))x{1}) {
+                            ctr.d = ctr.q + 1 // increment bit counter
+
+                            // if we sent/received 8 bits
+                            if (ctr.q == 3b111) {
+                                state.d = States.IDLE // we're done
+                                new_data = 1           // there's new data
+                            }
+                        }
+                    }
+                }
+        }
+    }
+}

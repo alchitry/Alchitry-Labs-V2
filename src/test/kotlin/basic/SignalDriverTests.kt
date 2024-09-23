@@ -13,15 +13,15 @@ class SignalDriverTests {
     fun basicDriverTest(): Unit = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a
                 ) {
-                    sig mySig[8]
+                    sig my_sig[8]
                    
                     always {
-                        mySig = 8b0;
+                        my_sig = 8b0;
                         
-                        if (mySig) {} // to remove unused signal warning
+                        if (my_sig) {} // to remove unused signal warning
                         if (a) {}
                     }
                 }
@@ -35,13 +35,13 @@ class SignalDriverTests {
     fun signalNotWrittenTest(): Unit = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a
                 ) {
-                    sig mySig[8]
+                    sig my_sig[8]
                    
                     always {
-                        if (mySig) {} // to remove unused signal warning
+                        if (my_sig) {} // to remove unused signal warning
                         if (a) {}
                     }
                 }
@@ -55,18 +55,18 @@ class SignalDriverTests {
     fun checkSigInRepeat() = runBlocking {
         val tester = ProjectTester(
             """
-                module errorTest (
+                module error_test (
                     input in[32],
                     output out[32]
                 ) {
-                    sig currentIdx[6]
+                    sig current_idx[6]
                     always {
-                        currentIdx = 0
+                        current_idx = 0
                         //out = 0
                         repeat(i, 16) {
-                            out[currentIdx] = 0
-                            out[currentIdx+1] = 1
-                            currentIdx = currentIdx + 2
+                            out[current_idx] = 0
+                            out[current_idx+1] = 1
+                            current_idx = current_idx + 2
                         }
                     }
                 }
@@ -80,19 +80,19 @@ class SignalDriverTests {
     fun doubleDriverTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a
                 ) {
-                    sig mySig[8]
+                    sig my_sig[8]
                     
                     always {
-                        mySig = 8b1;
+                        my_sig = 8b1;
                     }
                    
                     always {
-                        mySig = 8b0;
+                        my_sig = 8b0;
                         
-                        if (mySig) {} // to remove unused signal warning
+                        if (my_sig) {} // to remove unused signal warning
                         if (a) {}
                     }
                 }
@@ -107,15 +107,15 @@ class SignalDriverTests {
     fun basicPartialDrivenTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a
                 ) {
-                    sig mySig[8]
+                    sig my_sig[8]
                    
                     always {
-                        mySig[4:0] = 0;
+                        my_sig[4:0] = 0;
                         
-                        if (mySig) { } // to remove unused signal warning
+                        if (my_sig) { } // to remove unused signal warning
                         if (a) {}
                     }
                 }
@@ -130,16 +130,16 @@ class SignalDriverTests {
     fun multiPartialDrivenTest(): Unit = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a
                 ) {
-                    sig mySig[8]
+                    sig my_sig[8]
                    
                     always {
-                        mySig[4:0] = 0;
-                        mySig[7:5] = 1;
+                        my_sig[4:0] = 0;
+                        my_sig[7:5] = 1;
                         
-                        if (mySig) { } // to remove unused signal warning
+                        if (my_sig) { } // to remove unused signal warning
                         if (a) {}
                     }
                 }
@@ -153,16 +153,16 @@ class SignalDriverTests {
     fun basicIfPartialDrivenTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a
                 ) {
                     sig dummy
-                    sig mySig[8]
+                    sig my_sig[8]
                    
                     always {
                         dummy = 1
                         if (dummy) {
-                            mySig = 0
+                            my_sig = 0
                         }
                         if (a) {}
                     }
@@ -177,18 +177,18 @@ class SignalDriverTests {
     fun basicIfCompleteDrivenTest(): Unit = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a
                 ) {
-                    sig mySig[8]
+                    sig my_sig[8]
                    
                     always {
                         if (1) 
-                            mySig = a
+                            my_sig = a
                         else
-                            mySig = 1
+                            my_sig = 1
                             
-                        if (mySig) {} // used to remove unread warnings
+                        if (my_sig) {} // used to remove unread warnings
                         if (a) {}
                     }
                 }
@@ -202,14 +202,14 @@ class SignalDriverTests {
     fun sigDirectAssignTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a,
                     output b[8]
                 ) {
-                    sig mySig[8] = 12
+                    sig my_sig[8] = 12
                    
                     always {
-                        b = mySig
+                        b = my_sig
                         if (a) {}
                     }
                 }
@@ -229,15 +229,15 @@ class SignalDriverTests {
     fun sigDirectAssignOverdriveTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a,
                     output b[8]
                 ) {
-                    sig mySig[8] = 12
+                    sig my_sig[8] = 12
                    
                     always {
-                        mySig = a
-                        b = mySig
+                        my_sig = a
+                        b = my_sig
                     }
                 }
             """.trimIndent().toSourceFile()
@@ -251,15 +251,15 @@ class SignalDriverTests {
     fun sigDirectAssignTruncationTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a,
                     output b[8]
                 ) {
-                    sig mySig[8] = 9b0 // 9b0 is wider than 8 bits
+                    sig my_sig[8] = 9b0 // 9b0 is wider than 8 bits
                    
                     always {
                         if (a) {}
-                        b = mySig
+                        b = my_sig
                     }
                 }
             """.trimIndent().toSourceFile()
@@ -273,14 +273,14 @@ class SignalDriverTests {
     fun localSignalTruncationTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a,
                     output b[8]
                 ) {
                     always {
-                        sig mySig[8] = 9b0 // 9b0 is wider than 8 bits
+                        sig my_sig[8] = 9b0 // 9b0 is wider than 8 bits
                         if (a) {}
-                        b = mySig
+                        b = my_sig
                     }
                 }
             """.trimIndent().toSourceFile()
@@ -294,17 +294,17 @@ class SignalDriverTests {
     fun localSignalNestedNameTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a,
                     output b[8]
                 ) {
                     always {
-                        sig mySig[8] = 8haa
+                        sig my_sig[8] = 8haa
                         if (a) {
-                            sig mySig2[8] = 8hbb
-                            b = mySig2
+                            sig my_sig2[8] = 8hbb
+                            b = my_sig2
                         }
-                        b = mySig
+                        b = my_sig
                     }
                 }
             """.trimIndent().toSourceFile()
@@ -317,14 +317,14 @@ class SignalDriverTests {
     fun localSignalReadBeforeWrittenTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a,
                     output b[8]
                 ) {
                     always {
                         if (a) {}
-                        sig mySig[8]
-                        b = mySig
+                        sig my_sig[8]
+                        b = my_sig
                     }
                 }
             """.trimIndent().toSourceFile()
@@ -337,15 +337,15 @@ class SignalDriverTests {
     fun localSignalLocalWriteTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a,
                     output b[8]
                 ) {
                     always {
                         if (a) {}
-                        sig mySig[8]
-                        mySig = 8haa
-                        b = mySig
+                        sig my_sig[8]
+                        my_sig = 8haa
+                        b = my_sig
                     }
                 }
             """.trimIndent().toSourceFile()
@@ -358,7 +358,7 @@ class SignalDriverTests {
     fun localSignalDriverTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module binToDec #(
+                module bin_to_dec #(
                     DIGITS = 4 : DIGITS > 0 && DIGITS < 20,           // limited by 64 bit constants in the tools
                     LEADING_ZEROS = 0 : LEADING_ZEROS == 0 || LEADING_ZEROS == 1
                 )(

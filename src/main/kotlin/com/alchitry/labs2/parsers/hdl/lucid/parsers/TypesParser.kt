@@ -17,7 +17,7 @@ import com.alchitry.labs2.project.files.FileProvider
 import com.alchitry.labs2.project.files.SourceFile
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 
-fun String.toSourceFile(name: String = "alchitryTop.luc") = SourceFile(FileProvider.StringFile(name, contents = this))
+fun String.toSourceFile(name: String = "alchitry_top.luc") = SourceFile(FileProvider.StringFile(name, contents = this))
 
 sealed class ArraySize {
     data class Fixed(val size: Int) : ArraySize()

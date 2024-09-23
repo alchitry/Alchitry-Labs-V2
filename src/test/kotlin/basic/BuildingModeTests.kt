@@ -11,7 +11,7 @@ class BuildingModeTests {
     fun fakePullDownTest() = runBlocking {
         val tester = ProjectTester(
             """
-            module fakePullDown #(
+            module fake_pull_down #(
                 SIZE = 1 : SIZE > 0
             )(
                 input clk,  // clock
@@ -42,7 +42,7 @@ class BuildingModeTests {
     fun fakePullDownTest2D() = runBlocking {
         val tester = ProjectTester(
             """
-            module fakePullDown2D #(
+            module fake_pull_down2_d #(
                 DIM_1 = 1 : DIM_1 > 0,
                 DIM_2 = 1 : DIM_2 > 0
             )(

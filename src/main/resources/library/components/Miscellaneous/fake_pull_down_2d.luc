@@ -1,0 +1,62 @@
+/**
+    "name": "Fake Pull-Down 2D"
+    "description": "This module fakes a pull-down resistor on a 2D array by pulling an inout low periodically."
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2024 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   *****************************************************************************
+
+   Pull Down 2D: This module can be used to fake a pull-down resistor
+   by setting the pin to an output and pulling it low for a
+   brief period of time. It then releases it and takes a reading
+   of the value. This is repeated over an over so that the output
+   of this module looks as if it was simply an input with a
+   pull-down.
+
+   This version of the module can be used on 2D arrays.
+*/
+
+module fake_pull_down_2d #(
+    DIM_1 = 1 : DIM_1 > 0,
+    DIM_2 = 1 : DIM_2 > 0
+)(
+    input clk,  // clock
+    inout in[DIM_2][DIM_1],
+    output out[DIM_2][DIM_1]
+) {
+
+    .clk(clk) {
+        dff flip[4]
+        dff saved[DIM_2][DIM_1]
+    }
+
+    always {
+        flip.d = flip.q + 1
+        in = flip.q ? DIM_2x{{DIM_1x{bz}}} : DIM_2x{{DIM_1x{b0}}}
+        if (flip.q > 2)
+            saved.d = in
+        out = saved.q
+    }
+}

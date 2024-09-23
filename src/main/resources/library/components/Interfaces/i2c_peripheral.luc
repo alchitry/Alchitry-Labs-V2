@@ -1,0 +1,171 @@
+/**
+    "name": "I2C Peripheral"
+    "description": "I2C peripheral (slave) that can be used to interface with an I2C controller. It has a configurable device ID. After a byte is read, you need to tell the module if it should respond with a byte or wait for more bytes to be read."
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2024 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   *****************************************************************************/
+
+module i2c_peripheral #(
+    DEVICE_ID = 7h50 : $resize($unsigned(DEVICE_ID),7) == DEVICE_ID
+)(
+    input clk,  // clock
+    input rst,  // reset
+    inout sda,
+    input scl,
+    output start,
+    output stop,
+    output write,
+    output rx_data[8],
+    output rx_valid,
+    output next,
+    input tx_enable,
+    input tx_data[8],
+    output ack,
+    output enabled
+) {
+
+    enum States {IDLE, WAIT_ID, WAIT_STOP, READ_BYTE, WRITE_BYTE, ACK, ACK_WAIT, READ_ACK, READ_ACK_WAIT}
+
+    .clk(clk) {
+        .rst(rst) {
+            dff state[$width(States)]
+        }
+        dff sda_sync[3]
+        dff scl_sync[3]
+        dff bit_ctr[3]
+        dff data[8]
+        dff tx_flag
+        dff valid
+        dff capture_tx
+        dff write_ack
+    }
+
+    sig clk_rise
+    sig clk_fall
+
+    always {
+        // defaults
+        start = 0
+        stop = 0
+        write = 0
+        rx_data = data.q
+        rx_valid = valid.q
+        next = 0
+        ack = 0
+        sda = bz
+        valid.d = 0
+
+        enabled = 0
+
+        sda_sync.d = c{sda_sync.q[1:0], sda}
+        scl_sync.d = c{scl_sync.q[1:0], scl}
+
+        clk_rise = scl_sync.q[1] && !scl_sync.q[2]
+        clk_fall = !scl_sync.q[1] && scl_sync.q[2]
+
+        case (state.q) {
+            States.WAIT_ID:
+                if (clk_rise) {
+                    data.d = c{data.q[6:0], sda_sync.q[2]}
+                    bit_ctr.d = bit_ctr.q + 1
+                    if (bit_ctr.q == 7) {
+                        if (data.q[6:0] == DEVICE_ID){
+                            start = 1
+                            capture_tx.d = 1
+                            write = ~sda_sync.q[2]
+                            state.d = States.ACK
+                        } else {
+                            state.d = States.WAIT_STOP
+                        }
+                    }
+                }
+            States.ACK:
+                if (clk_fall)
+                    state.d = States.ACK_WAIT
+            States.ACK_WAIT:
+                if (clk_fall)
+                    state.d = tx_flag.q ? States.WRITE_BYTE : States.READ_BYTE
+                sda = 0
+                enabled = 1
+            States.READ_BYTE:
+                if (clk_rise) {
+                    data.d = c{data.q[6:0], sda_sync.q[2]}
+                    bit_ctr.d = bit_ctr.q + 1
+                    if (bit_ctr.q == 7) {
+                        state.d = States.ACK
+                        next = 1
+                        capture_tx.d = 1
+                        valid.d = 1
+                    }
+                }
+            States.WRITE_BYTE:
+                sda = data.q[7] ? bz : 0
+                enabled = ~data.q[7]
+                if (clk_fall) {
+                    bit_ctr.d = bit_ctr.q + 1
+                    data.d = c{data.q[6:0], 1bx}
+                    if (bit_ctr.q == 7) {
+                        state.d = States.READ_ACK
+                    }
+                }
+            States.READ_ACK:
+                if (clk_rise) {
+                    write_ack.d = !sda_sync.q[2]
+                    ack = sda_sync.q[2]
+                    next = 1
+                    capture_tx.d = 1
+                    state.d = States.READ_ACK_WAIT
+                }
+            States.READ_ACK_WAIT:
+                if (clk_fall) {
+                    if (write_ack.q)
+                        state.d = tx_flag.q ? States.WRITE_BYTE : States.READ_BYTE
+                    else
+                        state.d = States.IDLE
+                }
+
+        }
+
+        if (capture_tx.q) {
+            capture_tx.d = 0
+            tx_flag.d = tx_enable
+            if (tx_enable)
+                data.d = tx_data
+        }
+
+        if (scl_sync.q[2]) {
+            if (sda_sync.q[2] && !sda_sync.q[1]) { // falling edge
+                // start condition
+                state.d = States.WAIT_ID
+                bit_ctr.d = 0
+            } else if (!sda_sync.q[2] && sda_sync.q[1]) { // rising edge
+                // stop condition
+                state.d = States.IDLE
+                stop = 1
+            }
+        }
+    }
+}

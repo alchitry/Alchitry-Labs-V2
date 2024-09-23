@@ -30,7 +30,7 @@ object LucidTokenizer : EditorTokenizer {
                 else -> when (token.text) {
                     "input", "output", "inout", "dff", "sig", "const", "struct", "enum" -> LucidStyle.variable
                     "always", "if", "else", "repeat", "case", "test", "fun" -> LucidStyle.keyword
-                    "module", "global", "testBench" -> LucidStyle.module
+                    "module", "global", "testbench" -> LucidStyle.module
                     "default" -> LucidStyle.defaultKeyword
                     else ->
                         if (token.text?.let { operatorRegex.matches(it) } == true) LucidStyle.operator else null

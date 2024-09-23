@@ -1,5 +1,6 @@
 package com.alchitry.labs2.project.files
 
+import com.alchitry.labs2.camelToSnakeCase
 import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.Language
 import com.alchitry.labs2.project.Locations
@@ -92,7 +93,10 @@ data class Component(
                 val index = decodeElementIndex(descriptor)
                 if (index != 0)
                     error("Unexpected index: $index")
-                val resourcePath = decodeStringElement(descriptor, 0)
+                val resourcePath = decodeStringElement(descriptor, 0).replace(Regex("/([a-zA-Z0-9]+)\\.")) {
+                    "/${it.groupValues[1].camelToSnakeCase()}."
+                }
+
                 ComponentLibrary.findByPath(resourcePath) ?: error("Failed to find component: $resourcePath")
             }
         }

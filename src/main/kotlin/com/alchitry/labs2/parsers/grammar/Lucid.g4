@@ -12,7 +12,7 @@ globalStat
   ;
 
 module: 'module' NL* name NL* paramList? NL* portList NL* moduleBody;
-testBench: 'testBench' NL* name NL* moduleBody;
+testBench: 'testbench' NL* name NL* moduleBody;
 
 paramList: '#(' ((NL* paramDec NL* ',')* (NL* paramDec (NL* ',')?))? NL* ')';
 portList: '(' ((NL* portDec NL* ',')* (NL* portDec (NL* ',')?))? NL* ')';

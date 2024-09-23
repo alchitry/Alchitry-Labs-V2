@@ -1,11 +1,11 @@
 module greeter (
-    input clk,        // clock
-    input rst,        // reset
-    input newRx,      // new RX flag
-    input rxData[8],  // RX data
-    output newTx,     // new TX flag
-    output txData[8], // TX data
-    input txBusy      // TX is busy flag
+    input clk,         // clock
+    input rst,         // reset
+    input new_rx,      // new RX flag
+    input rx_data[8],  // RX data
+    output new_tx,     // new TX flag
+    output tx_data[8], // TX data
+    input tx_busy      // TX is busy flag
 ) {
     const NUM_LETTERS = 14
     
@@ -18,24 +18,24 @@ module greeter (
         dff count[$clog2(NUM_LETTERS)] // min bits to store NUM_LETTERS - 1
     }
     
-    helloWorldRom rom
+    hello_world_rom rom
     
     always {
         rom.address = count.q
-        txData = rom.letter
+        tx_data = rom.letter
         
-        newTx = 0 // default to 0
+        new_tx = 0 // default to 0
         
         case (state.q) {
             States.IDLE:
                 count.d = 0
-                if (newRx && rxData == "h")
+                if (new_rx && rx_data == "h")
                     state.d = States.GREET
             
             States.GREET:
-                if (!txBusy) {
+                if (!tx_busy) {
                     count.d = count.q + 1
-                    newTx = 1
+                    new_tx = 1
                     if (count.q == NUM_LETTERS - 1)
                         state.d = States.IDLE
                 }

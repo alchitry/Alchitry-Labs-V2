@@ -80,28 +80,28 @@ module pwm #(
     .clk(clk) {
         .rst(rst) {
             counter ctr(#SIZE(WIDTH), #DIV(DIV), #TOP(TOP))
-            dff curValue[WIDTH]
-            dff needUpdate
+            dff cur_value[WIDTH]
+            dff need_update
         }
-        // nextValue doesn't need reset
-        dff nextValue[WIDTH]
+        // next_value doesn't need reset
+        dff next_value[WIDTH]
     }
 
     always {
         // if ctr.value is 0 and we need to update
-        if (!|ctr.value && needUpdate.q) {
-            curValue.d = nextValue.q // set our new value
-            needUpdate.d = 0         // don't need update now
+        if (!|ctr.value && need_update.q) {
+            cur_value.d = next_value.q // set our new value
+            need_update.d = 0         // don't need update now
         }
 
         // if value is valid
         if (update) {
-            nextValue.d = value // save it
-            needUpdate.d = 1    // flag for update
+            next_value.d = value // save it
+            need_update.d = 1    // flag for update
         }
 
         // if the counter is less than the set
         // value output 1, otherwise output 0
-        pulse = ctr.value < curValue.q
+        pulse = ctr.value < cur_value.q
     }
 }

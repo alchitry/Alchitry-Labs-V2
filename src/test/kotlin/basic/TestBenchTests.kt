@@ -14,12 +14,12 @@ class TestBenchTests {
     fun basicTestBenchTest() = runBlocking {
         val tester = ProjectTester(
             """
-                testBench myTestBench {
+                testbench my_test_bench {
                     sig clk
                     
                     counter dut (.clk(clk))
                     
-                    test simpleTest {
+                    test simple_test {
                         repeat(i, 100) {
                             clk = 0
                             ${"$"}tick()
@@ -53,25 +53,25 @@ class TestBenchTests {
     fun basicFunctionTest() = runBlocking {
         val tester = ProjectTester(
             """
-                testBench myTestBench {
+                testbench my_test_bench {
                     sig clk
                     
                     counter dut (.clk(clk))
                     
-                    fun tickClock() {
+                    fun tick_clock() {
                         clk = 1
-                        ${"$"}silentTick()
+                        ${"$"}silent_tick()
                         clk = 0
                         ${"$"}tick()
                     }
                     
-                    test simpleTest {
+                    test simple_test {
                         clk = 0
                         ${"$"}tick()
                         
                         repeat(i, 100) {
                             ${"$"}assert(dut.count == i)
-                            ${"$"}tickClock()
+                            ${"$"}tick_clock()
                         }
                         ${"$"}assert(dut.count == 100)
                     }
@@ -103,12 +103,12 @@ class TestBenchTests {
     fun basicFunctionArgTest() = runBlocking {
         val tester = ProjectTester(
             """
-                testBench myTestBench {
+                testbench my_test_bench {
                     sig clk
                     
                     counter dut (.clk(clk))
                     
-                    fun tickClock(times[32]) {
+                    fun tick_clock(times[32]) {
                         repeat(times) {
                             clk = 1
                             ${"$"}tick()
@@ -117,10 +117,10 @@ class TestBenchTests {
                         }
                     }
                     
-                    test simpleTest {
+                    test simple_test {
                         clk = 0
                         ${"$"}tick()
-                        ${"$"}tickClock(100)
+                        ${"$"}tick_clock(100)
                        
                         ${"$"}assert(dut.count == 100)
                     }
@@ -148,12 +148,12 @@ class TestBenchTests {
     fun doubleFunctionArgTests() = runBlocking {
         val tester = ProjectTester(
             """
-                testBench myTestBench {
+                testbench my_test_bench {
                     sig clk
                     
                     counter dut (.clk(clk))
                     
-                    fun tickClock(times[32]) {
+                    fun tick_clock(times[32]) {
                         repeat(times) {
                             clk = 1
                             ${"$"}tick()
@@ -162,20 +162,20 @@ class TestBenchTests {
                         }
                     }
                     
-                    test simpleTest {
+                    test simple_test {
                         clk = 0
                         ${"$"}tick()
                         ${"$"}assert(dut.count == 0)
-                        ${"$"}tickClock(100)
+                        ${"$"}tick_clock(100)
                        
                         ${"$"}assert(dut.count == 100)
                     }
                     
-                    test simpleTest2 {
+                    test simple_test2 {
                         clk = 0
                         ${"$"}tick()
                         ${"$"}assert(dut.count == 0)
-                        ${"$"}tickClock(200)
+                        ${"$"}tick_clock(200)
                        
                         ${"$"}assert(dut.count == 200)
                     }
@@ -203,12 +203,12 @@ class TestBenchTests {
     fun manyFunctionArgTests() = runBlocking {
         val tester = ProjectTester(
             """
-                testBench myTestBench {
+                testbench my_test_bench {
                     sig clk
                     
                     counter dut (.clk(clk))
                     
-                    fun tickClock(times[32]) {
+                    fun tick_clock(times[32]) {
                         repeat(times) {
                             clk = 1
                             ${"$"}tick()
@@ -217,92 +217,92 @@ class TestBenchTests {
                         }
                     }
                     
-                    test simpleTest {
+                    test simple_test {
                         clk = 0
                         ${"$"}tick()
                         ${"$"}assert(dut.count == 0)
-                        ${"$"}tickClock(100)
+                        ${"$"}tick_clock(100)
                        
                         ${"$"}assert(dut.count == 100)
                     }
                     
-                    test simpleTest2 {
+                    test simple_test2 {
                         clk = 0
                         ${"$"}tick()
                         ${"$"}assert(dut.count == 0)
-                        ${"$"}tickClock(150)
+                        ${"$"}tick_clock(150)
                        
                         ${"$"}assert(dut.count == 150)
                     }
                     
-                    test simpleTest3 {
+                    test simple_test3 {
                         clk = 0
                         ${"$"}tick()
                         ${"$"}assert(dut.count == 0)
-                        ${"$"}tickClock(50)
+                        ${"$"}tick_clock(50)
                        
                         ${"$"}assert(dut.count == 50)
                     }
                     
-                    test simpleTest4 {
+                    test simple_test4 {
                         clk = 0
                         ${"$"}tick()
                         ${"$"}assert(dut.count == 0)
-                        ${"$"}tickClock(120)
+                        ${"$"}tick_clock(120)
                        
                         ${"$"}assert(dut.count == 120)
                     }
                     
-                    test simpleTest5 {
+                    test simple_test5 {
                         clk = 0
                         ${"$"}tick()
                         ${"$"}assert(dut.count == 0)
-                        ${"$"}tickClock(200)
+                        ${"$"}tick_clock(200)
                        
                         ${"$"}assert(dut.count == 200)
                     }
                     
-                    test simpleTest6 {
+                    test simple_test6 {
                         clk = 0
                         ${"$"}tick()
                         ${"$"}assert(dut.count == 0)
-                        ${"$"}tickClock(100)
+                        ${"$"}tick_clock(100)
                        
                         ${"$"}assert(dut.count == 100)
                     }
                     
-                    test simpleTest7 {
+                    test simple_test7 {
                         clk = 0
                         ${"$"}tick()
                         ${"$"}assert(dut.count == 0)
-                        ${"$"}tickClock(150)
+                        ${"$"}tick_clock(150)
                        
                         ${"$"}assert(dut.count == 150)
                     }
                     
-                    test simpleTest8 {
+                    test simple_test8 {
                         clk = 0
                         ${"$"}tick()
                         ${"$"}assert(dut.count == 0)
-                        ${"$"}tickClock(50)
+                        ${"$"}tick_clock(50)
                        
                         ${"$"}assert(dut.count == 50)
                     }
                     
-                    test simpleTest9 {
+                    test simple_test9 {
                         clk = 0
                         ${"$"}tick()
                         ${"$"}assert(dut.count == 0)
-                        ${"$"}tickClock(120)
+                        ${"$"}tick_clock(120)
                        
                         ${"$"}assert(dut.count == 120)
                     }
                     
-                    test simpleTest10 {
+                    test simple_test10 {
                         clk = 0
                         ${"$"}tick()
                         ${"$"}assert(dut.count == 0)
-                        ${"$"}tickClock(200)
+                        ${"$"}tick_clock(200)
                        
                         ${"$"}assert(dut.count == 200)
                     }
@@ -330,10 +330,10 @@ class TestBenchTests {
     fun reductionTestbench() = runBlocking {
         val tester = ProjectTester(
             """
-                testBench playground {
+                testbench playground {
                     sig cumulative[10]
                 
-                    test myTest {
+                    test my_test {
                         cumulative = 0
                         cumulative = cumulative + 1
                         ${"$"}assert(&cumulative == 0)

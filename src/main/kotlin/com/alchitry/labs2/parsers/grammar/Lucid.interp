@@ -4,7 +4,7 @@ null
 '{'
 '}'
 'module'
-'testBench'
+'testbench'
 '#('
 ','
 ')'

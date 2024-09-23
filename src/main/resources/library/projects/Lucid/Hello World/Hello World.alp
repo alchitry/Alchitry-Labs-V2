@@ -6,33 +6,33 @@
         "priority": 3
     },
     "project": {
-        "type": "V1.0",
+        "type": "V1.2",
         "projectName": "Hello World",
         "board": "Alchitry Cu",
         "sourceFiles": [
             {
                 "file": {
                     "type": "DiskFile",
-                    "path": "source/alchitryTop.luc"
+                    "path": "source/alchitry_top.luc"
                 },
                 "top": true
             },
             {
                 "file": {
                     "type": "Component",
-                    "path": "Conditioning/resetConditioner.luc"
+                    "path": "Conditioning/reset_conditioner.luc"
                 }
             },
             {
                 "file": {
                     "type": "Component",
-                    "path": "Interfaces/uartRx.luc"
+                    "path": "Interfaces/uart_rx.luc"
                 }
             },
             {
                 "file": {
                     "type": "Component",
-                    "path": "Interfaces/uartTx.luc"
+                    "path": "Interfaces/uart_tx.luc"
                 }
             },
             {
@@ -44,7 +44,7 @@
             {
                 "file": {
                     "type": "DiskFile",
-                    "path": "source/helloWorldRom.luc"
+                    "path": "source/hello_world_rom.luc"
                 }
             }
         ],
@@ -55,6 +55,7 @@
                     "path": "Constraints/alchitry.acf"
                 }
             }
-        ]
+        ],
+        "ipCores": []
     }
 }

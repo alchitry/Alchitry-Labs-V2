@@ -30,7 +30,7 @@ class ComponentTests {
     fun fakePullDown2DTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module fakePullDown2D #(
+                module fake_pull_down2_d #(
                     DIM_1 = 1 : DIM_1 > 0,
                     DIM_2 = 1 : DIM_2 > 0
                 )(

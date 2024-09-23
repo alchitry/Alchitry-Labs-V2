@@ -17,19 +17,19 @@ class ModuleInstanceTests {
     fun basicTwoModules() = runBlocking {
         val tester = ProjectTester(
             """
-                module alchitryTop (
+                module alchitry_top (
                     input clk
                 ) {
                 
-                    testModule myMod (.clk(clk))
+                    test_module my_mod (.clk(clk))
                     
                     always {
-                        if (myMod.a) { } // to remove unused signal warning
+                        if (my_mod.a) { } // to remove unused signal warning
                     }
                 }
             """.trimIndent().toSourceFile(),
             """
-                module testModule (
+                module test_module (
                     input clk,
                     output a
                 ) {
@@ -42,7 +42,7 @@ class ModuleInstanceTests {
 
         val top = tester.fullParse()
         tester.assertNoErrors()
-        val myModInst = top.context.types.resolve(top.moduleContext, "myMod") as ModuleInstance
+        val myModInst = top.context.types.resolve(top.moduleContext, "my_mod") as ModuleInstance
         assertEquals(SignalDirection.Read, myModInst.getSignal("a")?.direction)
     }
 
@@ -50,20 +50,20 @@ class ModuleInstanceTests {
     fun basicModuleArray() = runBlocking {
         val tester = ProjectTester(
             """
-                module alchitryTop (
+                module alchitry_top (
                     input clk
                 ) {
                     .clk(clk) {
-                        testModule myMod[8]
+                        test_module my_mod[8]
                     }
                     
                     always {
-                        if (myMod.a[0]) { } // to remove unused signal warning
+                        if (my_mod.a[0]) { } // to remove unused signal warning
                     }
                 }
             """.trimIndent().toSourceFile(),
             """
-                module testModule (
+                module test_module (
                     input clk,
                     output a[5]
                 ) {
@@ -71,12 +71,12 @@ class ModuleInstanceTests {
                         a = clk
                     }
                 }
-            """.trimIndent().toSourceFile("testModule.luc")
+            """.trimIndent().toSourceFile("test_module.luc")
         )
 
         val top = tester.fullParse()
         tester.assertNoIssues()
-        val myModInst = top.context.types.resolve(top.moduleContext, "myMod") as ModuleInstanceArray
+        val myModInst = top.context.types.resolve(top.moduleContext, "my_mod") as ModuleInstanceArray
         assertEquals(DefinedArrayWidth(8, BitListWidth(5)), myModInst.getSignal("a")?.width)
         assertEquals(SignalDirection.Read, myModInst.getSignal("a")?.direction)
     }
@@ -85,7 +85,7 @@ class ModuleInstanceTests {
     fun counterTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module alchitryTop (
+                module alchitry_top (
                     input clk,
                     output count[8]
                 ) {
@@ -126,15 +126,15 @@ class ModuleInstanceTests {
     fun complexParamTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module alchitryTop (
+                module alchitry_top (
                     input clk,
                     output count[8]
                 ) {
-                    decoder myMod (#WIDTH(3))
+                    decoder my_mod (#WIDTH(3))
                     
                     always {
-                        myMod.in = 3
-                        count = myMod.out
+                        my_mod.in = 3
+                        count = my_mod.out
                     }
                 }
             """.trimIndent().toSourceFile(),
@@ -177,21 +177,21 @@ class ModuleInstanceTests {
     fun counterParamTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module alchitryTop (
+                module alchitry_top (
                     input clk,
                     output count[8]
                 ) {
                     .clk(clk) {
-                        testModule myMod (#INC(2), #CTR_SIZE(8))
+                        test_module my_mod (#INC(2), #CTR_SIZE(8))
                     }
                    
                     always {
-                        count = myMod.count
+                        count = my_mod.count
                     }
                 }
             """.trimIndent().toSourceFile(),
             """
-                module testModule #(
+                module test_module #(
                     INC ~ 1,
                     CTR_SIZE ~ 4
                 )(
@@ -235,17 +235,17 @@ class ModuleInstanceTests {
     fun inoutPassthroughModules() = runBlocking {
         val tester = ProjectTester(
             """
-                module alchitryTop (
+                module alchitry_top (
                     input clk,
                     inout btn[5]
                 ) {
               
-                    testModule myMod (.clk(clk), .btn(btn))
+                    test_module my_mod (.clk(clk), .btn(btn))
                    
                 }
             """.trimIndent().toSourceFile(),
             """
-                module testModule (
+                module test_module (
                     input clk,
                     inout btn
                 ) {
@@ -258,7 +258,7 @@ class ModuleInstanceTests {
 
         val top = tester.fullParse()
         tester.assertNoErrors()
-        val myModInst = top.context.types.resolve(top.moduleContext, "myMod") as ModuleInstance
+        val myModInst = top.context.types.resolve(top.moduleContext, "my_mod") as ModuleInstance
         top.ports["btn"]!!.external.write(Bit.B1.toBitValue())
         tester.project.processQueue()
         assertEquals(Bit.B1.toBitValue().asBitListValue(), myModInst.ports["btn"]?.internal?.read())
@@ -268,17 +268,17 @@ class ModuleInstanceTests {
     fun badResolvableWidthModules() = runBlocking {
         val tester = ProjectTester(
             """
-                module alchitryTop (
+                module alchitry_top (
                     input clk,
                     inout btn[5][3]
                 ) {
               
-                    testModule myMod (#DIM_1(1), #DIM_2(5), .clk(clk), .in(btn))
+                    test_module my_mod (#DIM_1(1), #DIM_2(5), .clk(clk), .in(btn))
                    
                 }
             """.trimIndent().toSourceFile(),
             """
-                module testModule #(
+                module test_module #(
                     DIM_1 = 1 : DIM_1 > 0,
                     DIM_2 = 1 : DIM_2 > 0
                 )(
@@ -301,7 +301,7 @@ class ModuleInstanceTests {
     fun missingParamValueInModuleArray() = runBlocking {
         val tester = ProjectTester(
             """
-                module multiDecimalCounter #(
+                module multi_decimal_counter #(
                     DIGITS : DIGITS >= 2  // number of digits
                 ) (
                     input clk,                // clock
@@ -310,7 +310,7 @@ class ModuleInstanceTests {
                     output digits[DIGITS][4]  // digit values
                 ) {
                     .clk(clk), .rst(rst) {
-                        decimalCounter dctr [DIGITS] // digit counters
+                        decimal_counter dctr [DIGITS] // digit counters
                     }
                     
                     always {
@@ -323,7 +323,7 @@ class ModuleInstanceTests {
                 }
             """.trimIndent().toSourceFile(),
             """
-                module decimalCounter (
+                module decimal_counter (
                     input clk,      // clock
                     input rst,      // reset
                     input inc,      // increment the counter

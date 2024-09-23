@@ -226,11 +226,11 @@ internal class TypesParserTests {
     fun testDffSimpleStruct() = runBlocking {
         val tester = SimpleLucidTester(
             """
-            module myMod (
+            module my_mod (
             input a
             ){
-            struct myStruct { a, b[2][3], c[4] }
-            dff testing<myStruct>(.clk(1))
+            struct my_struct { a, b[2][3], c[4] }
+            dff testing<my_struct>(.clk(1))
             }
             """.trimIndent()
         )
@@ -239,7 +239,7 @@ internal class TypesParserTests {
         assert(tester.hasNoIssues)
 
         val struct = StructType(
-            "myStruct", linkedMapOf(
+            "my_struct", linkedMapOf(
                 "a" to StructMember("a", BitWidth, false),
                 "b" to StructMember("b", DefinedArrayWidth(2, BitListWidth(3)), false),
                 "c" to StructMember("c", BitListWidth(4), false)
@@ -256,11 +256,11 @@ internal class TypesParserTests {
     fun testDffStructArray() = runBlocking {
         val tester = SimpleLucidTester(
             """
-            module myMod (
+            module my_mod (
             input a
             ){
-            struct myStruct { a, b[2][3], c[4] };
-            dff testing[6]<myStruct>(.clk(1));
+            struct my_struct { a, b[2][3], c[4] };
+            dff testing[6]<my_struct>(.clk(1));
             }
             """.trimIndent()
         )
@@ -269,7 +269,7 @@ internal class TypesParserTests {
         assert(tester.hasNoIssues)
 
         val struct = StructType(
-            "myStruct", linkedMapOf(
+            "my_struct", linkedMapOf(
                 "a" to StructMember("a", BitWidth, false),
                 "b" to StructMember("b", DefinedArrayWidth(2, BitListWidth(3)), false),
                 "c" to StructMember("c", BitListWidth(4), false)
@@ -287,7 +287,7 @@ internal class TypesParserTests {
     fun testBadParam() = runBlocking {
         val tester = SimpleLucidTester(
             """
-            module myMod #(
+            module my_mod #(
                 MY_PARAM = 2 : MY_PARAM > 3
             )(
                 input a,
@@ -305,10 +305,10 @@ internal class TypesParserTests {
     fun testSimpleSig() = runBlocking {
         val tester = SimpleLucidTester(
             """
-            module myMod (
+            module my_mod (
                 input a
             ) {
-                sig testSig;
+                sig test_sig;
             }
             """.trimIndent()
         )
@@ -316,7 +316,7 @@ internal class TypesParserTests {
         tester.context.walk(tree)
         assert(tester.hasNoErrors)
         // TODO: warn about unused signal
-        val sig = tester.context.resolveSignal(tree, "testSig")
+        val sig = tester.context.resolveSignal(tree, "test_sig")
         sig as Signal
         assertEquals(SignalDirection.Both, sig.direction)
         assertEquals(BitValue(Bit.Bx, false), sig.read(tester.context.evalContext))
@@ -329,10 +329,10 @@ internal class TypesParserTests {
     fun testArraySig() = runBlocking {
         val tester = SimpleLucidTester(
             """
-            module myMod (
+            module my_mod (
                 input a
             ) {
-                sig testSig[8];
+                sig test_sig[8];
             }
             """.trimIndent()
         )
@@ -340,7 +340,7 @@ internal class TypesParserTests {
         tester.context.walk(tree)
         assert(tester.hasNoErrors)
         // TODO: warn about unused signal
-        val sig = tester.context.resolveSignal(tree, "testSig")
+        val sig = tester.context.resolveSignal(tree, "test_sig")
         sig as Signal
 
         val width = BitListWidth(8)

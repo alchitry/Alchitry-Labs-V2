@@ -45,14 +45,14 @@ internal class LucidToVerilogTests {
                   sig rst = ~rst_n                 // reset signal
                   signed sig clk_n = ~clk
                   
-                  sig mySig[2] = 2h1;
+                  sig my_sig[2] = 2h1;
                   //const TEST_CONST = 1
                   
                   .clk(clk) {
                     dff ct[8](#INIT(25), .rst(rst))
                     dff ct2[8]
                       #OUT_SIZE(Globals.SIZE[1]) {
-                    reset_conditioner cond[2](.in(mySig))
+                    reset_conditioner cond[2](.in(my_sig))
                     }
                     
                   }
@@ -104,17 +104,17 @@ internal class LucidToVerilogTests {
         System.setProperty("app.dir", "../")
         val tester = ProjectTester(
             """
-                module alchitryTop (
+                module alchitry_top (
                     input clk,              // 100MHz clock
                     input rst_n,            // reset button (active low)
                     output led[8],          // 8 user controllable LEDs
-                    input usbRx,            // USB->Serial input
-                    output usbTx,           // USB->Serial output
-                    output ioLed[3][8],     // LEDs on IO Shield
-                    output ioSeg[8],        // 7-segment LEDs on IO Shield
-                    output ioSel[4],        // Digit select on IO Shield
-                    input ioButton[5],      // 5 buttons on IO Shield
-                    input ioDip[3][8]       // DIP switches on IO Shield
+                    input usb_rx,            // USB->Serial input
+                    output usb_tx,           // USB->Serial output
+                    output io_led[3][8],     // LEDs on IO Shield
+                    output io_seg[8],        // 7-segment LEDs on IO Shield
+                    output io_sel[4],        // Digit select on IO Shield
+                    input io_button[5],      // 5 buttons on IO Shield
+                    input io_dip[3][8]       // DIP switches on IO Shield
                 ) {
                     
                     sig rst                 // reset signal
@@ -122,51 +122,51 @@ internal class LucidToVerilogTests {
                     .clk(clk) {
                         // The reset conditioner is used to synchronize the reset signal to the FPGA
                         // clock. This ensures the entire FPGA comes out of reset at the same time.
-                        resetConditioner resetCond
+                        reset_conditioner reset_cond
                         .rst(rst){
-                            multiSevenSeg seg(#DIV(${"$"}isSim() ? 3 : 16)) // 3 for simulation, 16 for hardware
+                            multi_seven_seg seg(#DIV(${"$"}is_sim() ? 3 : 16)) // 3 for simulation, 16 for hardware
                         }
                     }
-                    binToDec binToDecOriginal(#DIGITS(4))
-                    binToDecV1 binToDecV1(#DIGITS(4))
+                    bin_to_dec bin_to_dec_original(#DIGITS(4))
+                    bin_to_dec_v1 bin_to_dec_v1(#DIGITS(4))
                     
                     always {
-                        resetCond.in = ~rst_n  // input raw inverted reset signal
-                        rst = resetCond.out    // conditioned reset
+                        reset_cond.in = ~rst_n  // input raw inverted reset signal
+                        rst = reset_cond.out    // conditioned reset
                         
                         led = 8h00             // turn LEDs off
                         
-                        usbTx = usbRx          // loop serial port
+                        usb_tx = usb_rx          // loop serial port
                         
-                        binToDecOriginal.value = 4b0101
-                        binToDecV1.value = 4b0111
+                        bin_to_dec_original.value = 4b0101
+                        bin_to_dec_v1.value = 4b0111
                         
                         seg.values={4d4,4d3,4d2,4d1}
                         
-                        ioLed = 3x{{8h00}}
+                        io_led = 3x{{8h00}}
                         
-                        if (ioDip[0][0]){
-                            seg.values = binToDecOriginal.digits
-                            ioLed[0] = binToDecOriginal.digits[0]
-                            ioLed[1] = binToDecOriginal.digits[1]
-                            ioLed[2] = binToDecOriginal.digits[2]
+                        if (io_dip[0][0]){
+                            seg.values = bin_to_dec_original.digits
+                            io_led[0] = bin_to_dec_original.digits[0]
+                            io_led[1] = bin_to_dec_original.digits[1]
+                            io_led[2] = bin_to_dec_original.digits[2]
                         }
                         
-                        if (ioDip[0][1]){
-                            seg.values = binToDecV1.digits
-                            ioLed[0] = binToDecV1.digits[0]
-                            ioLed[1] = binToDecV1.digits[1]
-                            ioLed[2] = binToDecV1.digits[2]
+                        if (io_dip[0][1]){
+                            seg.values = bin_to_dec_v1.digits
+                            io_led[0] = bin_to_dec_v1.digits[0]
+                            io_led[1] = bin_to_dec_v1.digits[1]
+                            io_led[2] = bin_to_dec_v1.digits[2]
                         }
                         
                         
-                        ioSeg = ~seg.seg
-                        ioSel = ~seg.sel
+                        io_seg = ~seg.seg
+                        io_sel = ~seg.sel
                     }
                 }
             """.trimIndent().toSourceFile("alchitryTop.luc"),
             """
-                module binToDecV1 #(
+                module bin_to_dec_v1 #(
                     DIGITS ~ 1 : DIGITS > 0 && DIGITS < 20,           // limited by 64 bit constants in the tools
                     LEADING_ZEROS = 0 : LEADING_ZEROS == 0 || LEADING_ZEROS == 1
                 )(
@@ -216,7 +216,7 @@ internal class LucidToVerilogTests {
                 }
             """.trimIndent().toSourceFile("binToDecV1.luc"),
             """
-                module multiSevenSeg #(
+                module multi_seven_seg #(
                     DIGITS = 4 : DIGITS > 0,
                     DIV = 16 : DIV >= 0
                 )(
@@ -234,12 +234,12 @@ internal class LucidToVerilogTests {
                         counter ctr (#DIV(DIV), #SIZE(DIGIT_BITS), #TOP(DIGITS-1)) 
                     }
                     
-                    sevenSeg segDec                        // segment decoder
+                    seven_seg seg_dec                        // segment decoder
                     decoder digit_dec (#WIDTH(DIGIT_BITS)) // digit decoder
                     
                     always {
-                        segDec.char = values[ctr.value]    // select the value for the active digit
-                        seg = segDec.segs                  // output the decoded value
+                        seg_dec.char = values[ctr.value]    // select the value for the active digit
+                        seg = seg_dec.segs                  // output the decoded value
                         
                         digit_dec.in = ctr.value           // decode active digit to one-hot
                         sel = digit_dec.out                // output the active digit
@@ -247,7 +247,7 @@ internal class LucidToVerilogTests {
                 }
             """.trimIndent().toSourceFile("multiSevenSeg.luc"),
             """
-                module sevenSeg (
+                module seven_seg (
                     input char[4],
                     output segs[7]
                 ) {
@@ -269,9 +269,9 @@ internal class LucidToVerilogTests {
                 }
             """.trimIndent().toSourceFile("sevenSeg.luc"),
             ComponentLibrary.findByPath("Miscellaneous/counter.luc")!!.content.toSourceFile("counter.luc"),
-            ComponentLibrary.findByPath("Conditioning/resetConditioner.luc")!!.content.toSourceFile("resetConditioner.luc"),
+            ComponentLibrary.findByPath("Conditioning/reset_conditioner.luc")!!.content.toSourceFile("resetConditioner.luc"),
             ComponentLibrary.findByPath("Miscellaneous/decoder.luc")!!.content.toSourceFile("decoder.luc"),
-            ComponentLibrary.findByPath("Miscellaneous/binToDec.luc")!!.content.toSourceFile("binToDec.luc"),
+            ComponentLibrary.findByPath("Miscellaneous/bin_to_dec.luc")!!.content.toSourceFile("binToDec.luc"),
         )
 
         val verilog = tester.getVerilog(allowWarnings = true)

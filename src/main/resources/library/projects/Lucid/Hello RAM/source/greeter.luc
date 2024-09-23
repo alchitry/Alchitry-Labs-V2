@@ -1,13 +1,13 @@
 module greeter (
-    input clk,        // clock
-    input rst,        // reset
-    input newRx,      // new RX flag
-    input rxData[8],  // RX data
-    output newTx,     // new TX flag
-    output txData[8], // TX data
-    input txBusy      // TX is busy flag
+    input clk,         // clock
+    input rst,         // reset
+    input new_rx,      // new RX flag
+    input rx_data[8],  // RX data
+    output new_tx,     // new TX flag
+    output tx_data[8], // TX data
+    input tx_busy      // TX is busy flag
 ) {
-    const HELLO_TEXT = $reverse("\r\nHello @!\r\n")
+    const HELLO_TEXT = $reverse("\r\n_hello @!\r\n")
     const PROMPT_TEXT = $reverse("Please type your name: ")
     
     enum States {IDLE, PROMPT, LISTEN, HELLO} // our state machine
@@ -17,83 +17,83 @@ module greeter (
             dff state[$width(States)]
         }
         // we need our counters to be large enough to store all the indices of our text
-        dff helloCount[$clog2($width(HELLO_TEXT, 0))] // HELLO_TEXT is 2D so HELLO_WIDTH[0] gets the first dimension
-        dff promptCount[$clog2($width(PROMPT_TEXT, 0))]
+        dff hello_count[$clog2($width(HELLO_TEXT, 0))] // HELLO_TEXT is 2D so HELLO_WIDTH[0] gets the first dimension
+        dff prompt_count[$clog2($width(PROMPT_TEXT, 0))]
 
-        dff nameCount[5] // 5 allows for 2^5 = 32 letters
+        dff name_count[5] // 5 allows for 2^5 = 32 letters
         // we need our RAM to have an entry for every value of name_count
-        simpleRam ram (#WIDTH(8), #ENTRIES($pow(2,$width(nameCount.q))))
+        simple_ram ram (#WIDTH(8), #ENTRIES($pow(2,$width(name_count.q))))
     }
 
     always {
-        ram.address = nameCount.q // use name_count as the address
-        ram.writeData = 8hxx      // don't care
-        ram.writeEnable = 0       // read by default
+        ram.address = name_count.q // use name_count as the address
+        ram.write_data = 8hxx      // don't care
+        ram.write_enable = 0       // read by default
 
-        newTx = 0                 // default to no new data
-        txData = 8hxx             // don't care
+        new_tx = 0                 // default to no new data
+        tx_data = 8hxx             // don't care
 
         case (state.q) { // our FSM
             // IDLE: Reset everything and wait for a new byte.
             States.IDLE:
-                helloCount.d = 0
-                promptCount.d = 0
-                nameCount.d = 0
-                if (newRx) // wait for any letter
+                hello_count.d = 0
+                prompt_count.d = 0
+                name_count.d = 0
+                if (new_rx) // wait for any letter
                     state.d = States.PROMPT
 
             // PROMPT: Print out name prompt.
             States.PROMPT:
-                if (!txBusy) {
-                    promptCount.d = promptCount.q + 1   // move to the next letter
-                    newTx = 1                           // send data
-                    txData = PROMPT_TEXT[promptCount.q] // send letter from PROMPT_TEXT
-                    if (promptCount.q == $width(PROMPT_TEXT, 0) - 1) // no more letters
-                        state.d = States.LISTEN               // change states
+                if (!tx_busy) {
+                    prompt_count.d = prompt_count.q + 1   // move to the next letter
+                    new_tx = 1                            // send data
+                    tx_data = PROMPT_TEXT[prompt_count.q] // send letter from PROMPT_TEXT
+                    if (prompt_count.q == $width(PROMPT_TEXT, 0) - 1) // no more letters
+                        state.d = States.LISTEN           // change states
                 }
 
             // LISTEN: Listen to the user as they type his/her name.
             States.LISTEN:
-                if (newRx) { // wait for a new byte
-                    ram.writeData = rxData        // write the received letter to RAM
-                    ram.writeEnable = 1           // signal we want to write
-                    nameCount.d = nameCount.q + 1 // increment the address
+                if (new_rx) { // wait for a new byte
+                    ram.write_data = rx_data        // write the received letter to RAM
+                    ram.write_enable = 1            // signal we want to write
+                    name_count.d = name_count.q + 1 // increment the address
 
                     // We aren't checking tx_busy here that means if someone types super
                     // fast we could drop bytes. In practice this doesn't happen.
-                    newTx = rxData != "\n" && rxData != "\r" // only echo non-new line characters
-                    txData = rxData // echo text back so you can see what you type
+                    new_tx = rx_data != "\n" && rx_data != "\r" // only echo non-new line characters
+                    tx_data = rx_data // echo text back so you can see what you type
 
                     // if we run out of space or they pressed enter
-                    if (&nameCount.q || rxData == "\n" || rxData == "\r") {
+                    if (&name_count.q || rx_data == "\n" || rx_data == "\r") {
                         state.d = States.HELLO
-                        nameCount.d = 0 // reset name_count
+                        name_count.d = 0 // reset name_count
                     }
                 }
 
             // HELLO: Prints the hello text with the given name inserted
             States.HELLO:
-                if (!txBusy) { // wait for tx to not be busy
-                    if (HELLO_TEXT[helloCount.q] != "@") { // if we are not at the sentry
-                        helloCount.d = helloCount.q + 1    // increment to next letter
-                        newTx = 1                          // new data to send
-                        txData = HELLO_TEXT[helloCount.q]  // send the letter
-                    } else {                               // we are at the sentry
-                        nameCount.d = nameCount.q + 1      // increment the name_count letter
+                if (!tx_busy) { // wait for tx to not be busy
+                    if (HELLO_TEXT[hello_count.q] != "@") {  // if we are not at the sentry
+                        hello_count.d = hello_count.q + 1    // increment to next letter
+                        new_tx = 1                           // new data to send
+                        tx_data = HELLO_TEXT[hello_count.q]  // send the letter
+                    } else {                                 // we are at the sentry
+                        name_count.d = name_count.q + 1      // increment the name_count letter
 
-                        if (ram.readData != "\n" && ram.readData != "\r") // if we are not at the end
-                            newTx = 1                                     // send data
+                        if (ram.read_data != "\n" && ram.read_data != "\r") // if we are not at the end
+                            new_tx = 1                                      // send data
 
-                        txData = ram.readData // send the letter from the RAM
+                        tx_data = ram.read_data // send the letter from the RAM
 
                         // if we are at the end of the name or out of letters to send
-                        if (ram.readData == "\n" || ram.readData == "\r" || &nameCount.q) {
-                            helloCount.d = helloCount.q + 1  // increment hello_count to pass the sentry
+                        if (ram.read_data == "\n" || ram.read_data == "\r" || &name_count.q) {
+                            hello_count.d = hello_count.q + 1  // increment hello_count to pass the sentry
                         }
                     }
 
                     // if we have sent all of HELLO_TEXT
-                    if (helloCount.q == $width(HELLO_TEXT, 0) - 1)
+                    if (hello_count.q == $width(HELLO_TEXT, 0) - 1)
                         state.d = States.IDLE // return to IDLE
                 }
         }

@@ -42,9 +42,9 @@ class ProjectTests {
             <?xml version="1.0" encoding="UTF-8"?>
             <project name="Base Project" board="Alchitry Au" language="Lucid" version="4">
               <files>
-                <src top="true">alchitryTop.luc</src>
+                <src top="true">alchitry_top.luc</src>
                 <constraint lib="true">alchitry.acf</constraint>
-                <component>resetConditioner.luc</component>
+                <component>reset_conditioner.luc</component>
               </files>
             </project>
         """.trimIndent()

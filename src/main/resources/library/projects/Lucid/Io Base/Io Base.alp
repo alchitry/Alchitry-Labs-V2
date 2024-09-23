@@ -6,21 +6,21 @@
         "priority": 5
     },
     "project": {
-        "type": "V1.0",
+        "type": "V1.2",
         "projectName": "Io Base",
         "board": "Alchitry Cu",
         "sourceFiles": [
             {
                 "file": {
                     "type": "DiskFile",
-                    "path": "source/alchitryTop.luc"
+                    "path": "source/alchitry_top.luc"
                 },
                 "top": true
             },
             {
                 "file": {
                     "type": "Component",
-                    "path": "Conditioning/resetConditioner.luc"
+                    "path": "Conditioning/reset_conditioner.luc"
                 }
             }
         ],
@@ -37,6 +37,7 @@
                     "path": "Constraints/io.acf"
                 }
             }
-        ]
+        ],
+        "ipCores": []
     }
 }

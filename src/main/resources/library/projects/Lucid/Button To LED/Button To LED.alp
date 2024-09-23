@@ -6,21 +6,21 @@
         "priority": 1
     },
     "project": {
-        "type": "V1.0",
+        "type": "V1.2",
         "projectName": "Base",
         "board": "Alchitry Au",
         "sourceFiles": [
             {
                 "file": {
                     "type": "DiskFile",
-                    "path": "source/alchitryTop.luc"
+                    "path": "source/alchitry_top.luc"
                 },
                 "top": true
             },
             {
                 "file": {
                     "type": "Component",
-                    "path": "Conditioning/resetConditioner.luc"
+                    "path": "Conditioning/reset_conditioner.luc"
                 }
             }
         ],
@@ -31,6 +31,7 @@
                     "path": "Constraints/alchitry.acf"
                 }
             }
-        ]
+        ],
+        "ipCores": []
     }
 }

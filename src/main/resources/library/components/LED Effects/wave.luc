@@ -35,8 +35,8 @@
 */
 
 module wave #(
-    RES = $isSim() ? 3 : 8 : RES > 1,
-    CTR_LEN = $isSim() ? 9 : 25 : CTR_LEN >= RES+1,
+    RES = $is_sim() ? 3 : 8 : RES > 1,
+    CTR_LEN = $is_sim() ? 9 : 25 : CTR_LEN >= RES+1,
     OUT_SIZE = 8 : OUT_SIZE > 0
 )(
     input clk,     // clock

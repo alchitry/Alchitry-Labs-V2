@@ -113,7 +113,7 @@ class DynamicEvalTests {
 
         val tester = SimpleLucidTester(
             """
-                module myMod () {
+                module my_mod () {
                     always {
                         sig1 = sig2
                     }
@@ -154,7 +154,7 @@ class DynamicEvalTests {
         val sig2 = Signal("sig2", SignalDirection.Read, null, BitValue(Bit.B1, signed = false), ExprType.Dynamic, false)
         val tester = SimpleLucidTester(
             """
-                module myMod () {
+                module my_mod () {
                     always {
                         if (sig2) 
                             sig1 = 1

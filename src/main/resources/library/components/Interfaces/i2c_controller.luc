@@ -1,0 +1,256 @@
+/**
+    "name": "I2C Controller"
+    "description": "I2C controller (master) that can be used to talk to I2C devices. It has a configurable clock divider."
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2024 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   *****************************************************************************
+
+   I2C Controller: This is an I2C controller interface. With this
+   you can communicate to multiple I2C peripheral devices.
+
+   Each I2C transaction begins with the start event. This
+   is triggered by setting the start input high for one
+   clock cycle. You can then send as many read and write
+   commands as you want. To end a transaction, you need
+   to set the stop input high for one clock cycle.
+
+   Each time a command is sent (start, stop,
+   read, or write) you must make sure the busy flag is
+   not set before issuing the command. Otherwise, your
+   command will be ignored.
+
+   Typically, a transaction will start by writing a byte
+   that contains the ID of the device to talk to and
+   if the operation is a read or write to it. See your
+   device's datasheet for what to send.
+
+   After that, multiple reads or writes can take place
+   depending on the operation.
+
+   When performing a read, you must specify if the read
+   should be acknowledged by setting ack_read to 1 to
+   acknowledge or 0 to not.
+
+   When performing a write, ack_write will tell if your
+   write was acknowledged by the peripheral device.
+*/
+
+module i2c_controller #(
+    CLK_DIV = 8 : CLK_DIV >= 3 // divide clock by 2^CLK_DIV, must be 3 or more
+)(
+    input clk,          // clock
+    input rst,          // reset
+
+    // Device interface
+    inout sda,          // bi-directional
+    output scl,         // data clock
+
+    // Control signals
+    input start,        // send start signal
+    input stop,         // send stop signal
+
+    // Write interface
+    input data_in[8],    // data to write
+    input write,        // start write signal (1 = start write)
+    output ack_write,    // was the last write acknowledged (1 = ack, 0 = no_ack)
+
+    // Read interface
+    output data_out[8],  // data read
+    output out_valid,    // output valid (1 = valid)
+    input read,         // start read signal (1 = start read)
+    input ack_read,      // should read be acknowledged (1 = ack, 0 = no ack)
+
+    // Status
+    output busy         // I2C is busy (1 = busy, 0 = idle)
+) {
+    enum States {IDLE, START, WAIT_CMD, READ, WRITE, STOP, WAIT}
+
+    .clk(clk){
+        .rst(rst) {
+            dff state[$width(States)]
+        }
+        dff data[8]         // data to send or data received
+        dff out_valid_reg     // out_valid buffer
+        dff scl_reg[CLK_DIV] // clock divider
+        dff bit_ctr[4]       // bit counter
+        dff ack_write_reg     // ack_write buffer
+        dff ack_read_reg      // ack_read buffer
+    }
+
+    sig sda_value
+
+    always {
+        // the clock is the MSB of scl_reg inverted
+        scl = ~scl_reg.q[CLK_DIV - 1]
+
+        // we are busy if we aren't idle or waiting for a command
+        busy = state.q != States.IDLE && state.q != States.WAIT_CMD
+
+        // write the outputs
+        data_out = data.q
+        out_valid = out_valid_reg.q
+        ack_write = ack_write_reg.q
+
+        // defaults
+        out_valid_reg.d = 0 // not valid
+        sda_value = 1 // default to floating pin
+
+        case (state.q) {
+            // Start here
+            States.IDLE:
+                scl_reg.d = 0  // reset clock counter (clock goes high)
+
+                // if we have a start command
+                if (start) {
+                    state.d = States.START // go to start state
+                }
+
+            // Send start command
+            States.START:
+                scl_reg.d = scl_reg.q + 1 // increment the counter
+
+                // if the clock counter is less than 1/4 full or more than 3/4 full
+                if (scl_reg.q < c{2b01, ($width(scl_reg.q)-2)x{1b0}} || scl_reg.q > c{2b11, ($width(scl_reg.q)-2)x{1b0}})
+                    sda_value = 1             // float output
+                else
+                    sda_value = 0             // pull low
+
+                // if the clock counter is 3/4 full
+                if (scl_reg.q == c{2b11, ($width(scl_reg.q)-2)x{1b0}})
+                    state.d = States.WAIT_CMD // enter wait command state
+
+            // Wait for read or write command
+            States.WAIT_CMD:
+                bit_ctr.d = 0 // reset bit counter
+
+                // set clock counter to just over half full
+                scl_reg.d = c{1b1, ($width(scl_reg.q)-1)x{1b0}} + 1
+
+                if (write) { // new write command
+                    data.d = data_in // save the data to send
+
+                    // set clock counter to just over 3/4 full
+                    scl_reg.d = c{2b11, ($width(scl_reg.q)-2)x{1b0}} + 1
+                    state.d = States.WRITE // enter write state
+
+                } else if (read) {           // new read command
+                    ack_read_reg.d = ack_read   // save if read should be acknowledged
+                    state.d = States.READ    // enter read state
+                } else if (stop) {           // stop command
+                    state.d = States.STOP    // enter stop state
+                } else if (start) {          // start command
+                    state.d = States.START   // enter start state
+
+                    // set clock to just over 3/4 full so it starts low
+                    scl_reg.d = c{2b11, ($width(scl_reg.q)-2)x{1b0}} + 1
+                }
+
+            // Read in a byte
+            States.READ:
+                // if we at the end of the 8th bit or later
+                if (bit_ctr.q == 9 || (bit_ctr.q > 7 && scl_reg.q >= c{2b11, ($width(scl_reg.q)-2)x{1b0}})) {
+                    sda_value = ~ack_read_reg.q // write the acknowledge bit
+                }
+
+                // increment the clock counter
+                scl_reg.d = scl_reg.q + 1
+
+                // if the clock is 0
+                if (scl_reg.q == 0) {
+                    // if it's a data bit
+                    if (bit_ctr.q < 8)
+                        data.d = c{data.q[6:0], sda} // shift it in
+
+                    // increment the bit counter
+                    bit_ctr.d = bit_ctr.q + 1
+
+                    // otherwise, if the clock counter if half full and we're on the 9th bit
+                } else if (scl_reg.q == c{1b1, ($width(scl_reg.q)-1)x{1b0}} && bit_ctr.q == 9) {
+                    out_valid_reg.d = 1      // output data is valid
+                    state.d = States.WAIT_CMD // wait for next command
+                }
+
+            // Write a byte
+            States.WRITE:
+                // if we aren't on the acknowledge bit
+                if (bit_ctr.q != 8)
+                    sda_value = data.q[7]     // write the MSB of data
+
+                // otherwise, if the clock counter is 0
+                else if (scl_reg.q == 0)
+                    ack_write_reg.d = sda // read the acknowledge bit
+
+                // increment the clock counter
+                scl_reg.d = scl_reg.q + 1
+
+                // if the clock counter is 3/4 full
+                if (scl_reg.q ==  c{2b11, ($width(scl_reg.q)-2)x{1b0}}) {
+                    // shift data
+                    data.d = c{data.q[6:0], 1bx}
+
+                    // increment the bit counter
+                    bit_ctr.d = bit_ctr.q + 1
+
+                    // if we're on the last bit
+                    if (bit_ctr.q == 8)
+                        state.d = States.WAIT_CMD // wait for the next command
+                }
+
+            // Send stop command
+            States.STOP:
+                sda_value = 0
+                scl_reg.d = scl_reg.q + 1 // increment the clock counter
+
+                // if the clock counter is just under half full
+                // We don't want it to reach 1/2 full because
+                // the clock output would then go low
+                if (scl_reg.q == ($width(scl_reg.q)-1)x{1b1}) {
+                    sda_value = 1          // set the output high
+                    state.d = States.WAIT // enter wait state
+                    scl_reg.d = 0          // reset clock counter
+                }
+
+            // Wait 1/2 a clock period
+            States.WAIT:
+                scl_reg.d = scl_reg.q + 1 // increment the clock counter
+
+                // if the clock counter is just under half full
+                // We don't want it to reach 1/2 full because
+                // the clock output would then go low
+                if (scl_reg.q == ($width(scl_reg.q)-1)x{1b1}){
+                    state.d = States.IDLE // enter idle state
+                    scl_reg.d = 0          // reset clock counter
+                }
+
+            // Should never enter here
+            default:
+                state.d = States.IDLE // reset to idle if we do
+        }
+
+        // default values
+        sda = sda_value == 0 ? b0 : bz // only pull down
+    }
+}

@@ -12,19 +12,19 @@ class RepeatTests {
     fun nestedRepeats() = runBlocking {
         val tester = ProjectTester(
             """
-                module errorTest (
+                module error_test (
                     output out[32]
                 ) {
-                    sig currentIdx[8]
+                    sig current_idx[8]
                     always {
-                        currentIdx = 0
+                        current_idx = 0
                         //out = 0
                         repeat(i, 16) {
                             repeat(j, i+1) {
-                                currentIdx = currentIdx + 1
+                                current_idx = current_idx + 1
                             }
                         }
-                        out = currentIdx
+                        out = current_idx
                     }
                 }
             """.trimIndent().toSourceFile()
@@ -41,17 +41,17 @@ class RepeatTests {
     fun basicRepeat() = runBlocking {
         val tester = ProjectTester(
             """
-                module errorTest (
+                module error_test (
                     output out[32]
                 ) {
-                    sig currentIdx[8]
+                    sig current_idx[8]
                     always {
-                        currentIdx = 0
+                        current_idx = 0
                         //out = 0
                         repeat(8) {
-                           currentIdx = currentIdx + 1
+                           current_idx = current_idx + 1
                         }
-                        out = currentIdx
+                        out = current_idx
                     }
                 }
             """.trimIndent().toSourceFile()
@@ -67,17 +67,17 @@ class RepeatTests {
     fun indexedRepeat() = runBlocking {
         val tester = ProjectTester(
             """
-                module errorTest (
+                module error_test (
                     output out[32]
                 ) {
-                    sig currentIdx[8]
+                    sig current_idx[8]
                     always {
-                        currentIdx = 0
+                        current_idx = 0
                         //out = 0
                         repeat(i, 8) {
-                           currentIdx = currentIdx + i
+                           current_idx = current_idx + i
                         }
-                        out = currentIdx
+                        out = current_idx
                     }
                 }
             """.trimIndent().toSourceFile()
@@ -93,17 +93,17 @@ class RepeatTests {
     fun indexedOffsetRepeat() = runBlocking {
         val tester = ProjectTester(
             """
-                module errorTest (
+                module error_test (
                     output out[32]
                 ) {
-                    sig currentIdx[8]
+                    sig current_idx[8]
                     always {
-                        currentIdx = 0
+                        current_idx = 0
                         //out = 0
                         repeat(i, 8, 1) {
-                           currentIdx = currentIdx + i
+                           current_idx = current_idx + i
                         }
-                        out = currentIdx
+                        out = current_idx
                     }
                 }
             """.trimIndent().toSourceFile()
@@ -119,17 +119,17 @@ class RepeatTests {
     fun indexedOffsetStepRepeat() = runBlocking {
         val tester = ProjectTester(
             """
-                module errorTest (
+                module error_test (
                     output out[32]
                 ) {
-                    sig currentIdx[8]
+                    sig current_idx[8]
                     always {
-                        currentIdx = 0
+                        current_idx = 0
                         //out = 0
                         repeat(i, 8, 1, 2) {
-                           currentIdx = currentIdx + i
+                           current_idx = current_idx + i
                         }
-                        out = currentIdx
+                        out = current_idx
                     }
                 }
             """.trimIndent().toSourceFile()
@@ -145,10 +145,10 @@ class RepeatTests {
     fun rippleCarryAdderV1() = runBlocking {
         val tester = ProjectTester(
             """
-                testBench playground {
+                testbench playground {
                     rca dut(#SIZE(5))
 
-                    test myTest {
+                    test my_test {
                         dut.a = 5d12
                         dut.b = 5d4
                         dut.cin = 0
@@ -205,10 +205,10 @@ class RepeatTests {
     fun rippleCarryAdderV2() = runBlocking {
         val tester = ProjectTester(
             """
-                testBench playground {
+                testbench playground {
                     rca dut(#SIZE(5))
                     
-                    test myTest {
+                    test my_test {
                         dut.a = 5d12
                         dut.b = 5d4
                         dut.cin = 0
@@ -265,10 +265,10 @@ class RepeatTests {
     fun rippleCarryAdderV3() = runBlocking {
         val tester = ProjectTester(
             """
-                testBench playground {
+                testbench playground {
                     rca dut(#SIZE(5))
                     
-                    test myTest {
+                    test my_test {
                         dut.a = 5d12
                         dut.b = 5d4
                         dut.cin = 0

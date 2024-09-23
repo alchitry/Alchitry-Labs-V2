@@ -18,19 +18,19 @@ class ModuleMultiPassTests {
     fun testGlobalUse() = runBlocking {
         val tester = ProjectTester(
             """
-                global MyGlobal {
+                global My_global {
                     const ONE = 1
                 }
                 
-                module myModule (
+                module my_module (
                     input a
                 ) {
                 
-                    dff myDff(.clk(MyGlobal.ONE))
+                    dff my_dff(.clk(My_global.ONE))
                     
                     always {
-                        myDff.d = 0
-                        if (myDff.q) {}
+                        my_dff.d = 0
+                        if (my_dff.q) {}
                         if (a) {}
                     }
                 }
@@ -39,7 +39,7 @@ class ModuleMultiPassTests {
         val top = tester.fullParse()
         tester.assertNoIssues()
 
-        val dff = top.context.resolveSignal(top.moduleContext, "myDff") as Dff
+        val dff = top.context.resolveSignal(top.moduleContext, "my_dff") as Dff
 
         assertEquals(BitValue(Bit.B1, false), dff.clk.value)
     }
@@ -48,17 +48,17 @@ class ModuleMultiPassTests {
     fun basicRepeatTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a
                 ) {
-                    sig endValue[16]
+                    sig end_value[16]
                     const REP_CT = 5
                 
                     always {
                         if (a) {}
-                        endValue = 0
+                        end_value = 0
                         repeat(i, REP_CT) {
-                            endValue = endValue + i
+                            end_value = end_value + i
                         }
                     }
                 }
@@ -66,7 +66,7 @@ class ModuleMultiPassTests {
         )
         val top = tester.fullParse()
         tester.assertNoIssues()
-        val testSig = top.context.resolveSignal(top.moduleContext, "endValue") as Signal
+        val testSig = top.context.resolveSignal(top.moduleContext, "end_value") as Signal
 
         top.context.initialize()
 
@@ -77,21 +77,21 @@ class ModuleMultiPassTests {
     fun doubleDriverTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a
                 ) {
-                    sig testA
-                    sig testB
+                    sig test_a
+                    sig test_b
                 
                     always {
-                        testB = testA
+                        test_b = test_a
                     }
                     
                     always {
-                        if (testB) { } // to remove unused signal warning
+                        if (test_b) { } // to remove unused signal warning
                         if (a) {}
                         
-                        testA = 1
+                        test_a = 1
                     }
                 }
             """.trimIndent().toSourceFile()
@@ -99,7 +99,7 @@ class ModuleMultiPassTests {
         val top = tester.fullParse()
         tester.assertNoIssues()
         val context = top.context
-        val testSig = context.resolveSignal(top.moduleContext, "testB") as Signal
+        val testSig = context.resolveSignal(top.moduleContext, "test_b") as Signal
 
         context.initialize()
 
@@ -110,21 +110,21 @@ class ModuleMultiPassTests {
     fun endlessLoopTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a
                 ) {
-                    sig testA
-                    sig testB
+                    sig test_a
+                    sig test_b
                 
                     always {
                         if (a)
-                            testB = ~testA
+                            test_b = ~test_a
                         else
-                            testB = 1
+                            test_b = 1
                     }
                     
                     always {
-                        testA = testB
+                        test_a = test_b
                     }
                 }
             """.trimIndent().toSourceFile()
@@ -149,7 +149,7 @@ class ModuleMultiPassTests {
     fun enumTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     input a,
                     output b[2]
                 ) {
@@ -200,7 +200,7 @@ class ModuleMultiPassTests {
     fun globalEnumTest() = runBlocking {
         val tester = ProjectTester(
             """
-                module myModule (
+                module my_module (
                     output a[2]
                 ) {
                     always {

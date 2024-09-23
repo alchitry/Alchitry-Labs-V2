@@ -1,0 +1,65 @@
+/**
+    "name": "Button Conditioner"
+    "description": "This module will clean up an input from a button. It will both synchronize and debounce the signal. The debounce timeout is configurable as well as the length of the synchronizer."
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2024 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   *****************************************************************************
+
+   Button Conditioner: This module will synchronize and debounce a button input
+   so that you can reliably tell when it is pressed.
+
+   The debounce time can be adjusted by setting MIN_DELAY. Note that the actual
+   delay will be between MIN_DELAY and 2 * MIN_DELAY.
+*/
+
+module button_conditioner #(
+    CLK_FREQ ~ 100000000 : CLK_FREQ > 0,// clock frequency
+    MIN_DELAY = 20 : MIN_DELAY > 0,     // minimum delay in ms
+    NUM_SYNC = 2 : NUM_SYNC > 1         // number of sync flip flops
+)(
+    input clk, // clock
+    input in,  // button in (active high)
+    output out // output
+) {
+
+    .clk(clk) {
+        pipeline sync(#DEPTH(NUM_SYNC)) // synchronizing chain
+
+        // CLK_FREQ * MIN_DELAY / 1000 = clock cycles for MIN_DELAY milliseconds
+        dff ctr[$clog2(CLK_FREQ * MIN_DELAY / 1000)]
+    }
+
+    always {
+        sync.in = in
+        out = &ctr.q          // output 1 when ctr is full
+
+        if (!&ctr.q)          // if counter isn't full
+            ctr.d = ctr.q + 1 // increment it
+
+        if (!sync.out)        // if button is low
+            ctr.d = 0         // reset the counter
+    }
+}

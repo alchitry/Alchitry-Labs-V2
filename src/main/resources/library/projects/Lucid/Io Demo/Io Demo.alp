@@ -6,39 +6,39 @@
         "priority": 6
     },
     "project": {
-        "type": "V1.0",
+        "type": "V1.2",
         "projectName": "Io Demo",
         "board": "Alchitry Au",
         "sourceFiles": [
             {
                 "file": {
                     "type": "DiskFile",
-                    "path": "source/alchitryTop.luc"
+                    "path": "source/alchitry_top.luc"
                 },
                 "top": true
             },
             {
                 "file": {
                     "type": "Component",
-                    "path": "Conditioning/resetConditioner.luc"
+                    "path": "Conditioning/reset_conditioner.luc"
                 }
             },
             {
                 "file": {
                     "type": "DiskFile",
-                    "path": "source/decimalCounter.luc"
+                    "path": "source/decimal_counter.luc"
                 }
             },
             {
                 "file": {
                     "type": "DiskFile",
-                    "path": "source/multiDecimalCounter.luc"
+                    "path": "source/multi_decimal_counter.luc"
                 }
             },
             {
                 "file": {
                     "type": "DiskFile",
-                    "path": "source/multiSevenSeg.luc"
+                    "path": "source/multi_seven_seg.luc"
                 }
             },
             {
@@ -56,13 +56,13 @@
             {
                 "file": {
                     "type": "DiskFile",
-                    "path": "source/sevenSeg.luc"
+                    "path": "source/seven_seg.luc"
                 }
             },
             {
                 "file": {
                     "type": "Component",
-                    "path": "Pulses/edgeDetector.luc"
+                    "path": "Pulses/edge_detector.luc"
                 }
             }
         ],
@@ -79,6 +79,7 @@
                     "path": "Constraints/io.acf"
                 }
             }
-        ]
+        ],
+        "ipCores": []
     }
 }

@@ -21,7 +21,7 @@ class ModuleTypeTests {
     fun basicModuleTest() = runBlocking {
         val test = ProjectTester(
             """
-                module myModule #(
+                module my_module #(
                     CLK_FREQ ~ 100000000 : CLK_FREQ > 0,
                     MAX_CT = 100,
                     NEG_TEST = -100 : NEG_TEST < ${"\$"}signed(0)
@@ -42,7 +42,7 @@ class ModuleTypeTests {
 
         assertEquals(
             Module(
-                "myModule",
+                "my_module",
                 mapOf(
                     "CLK_FREQ" to Parameter(
                         "CLK_FREQ",

@@ -41,5 +41,9 @@ data class ProjectVersion(
         }
     }
 
+    override fun toString(): String {
+        return "V$major.$minor"
+    }
+
     fun isLatest(): Boolean = this == ProjectData.latestVersion
 }

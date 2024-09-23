@@ -1158,7 +1158,7 @@ internal class ExprParserTests {
     @Test
     fun fixedPointTest() = runBlocking {
         val test =
-            SimpleLucidTester("\$fixedPoint(3.14, 8, 4)")
+            SimpleLucidTester("\$fixed_point(3.14, 8, 4)")
         val expr = test.parser.expr().also { test.context.walk(it) }
 
         assert(test.hasNoIssues)
@@ -1174,7 +1174,7 @@ internal class ExprParserTests {
     @Test
     fun fixedPointIntTest() = runBlocking {
         val test =
-            SimpleLucidTester("\$fixedPoint(10, 8, 4)")
+            SimpleLucidTester("\$fixed_point(10, 8, 4)")
         val expr = test.parser.expr().also { test.context.walk(it) }
 
         assert(test.hasNoIssues)
@@ -1190,7 +1190,7 @@ internal class ExprParserTests {
     @Test
     fun fixedPointOverflowTest() = runBlocking {
         val test =
-            SimpleLucidTester("\$fixedPoint(300.14, 8, 4)")
+            SimpleLucidTester("\$fixed_point(300.14, 8, 4)")
         val expr = test.parser.expr().also { test.context.walk(it) }
 
         assert(test.hasNoErrors)
@@ -1207,7 +1207,7 @@ internal class ExprParserTests {
     @Test
     fun cFixedPointTest() = runBlocking {
         val test =
-            SimpleLucidTester("\$cFixedPoint(3.14, 8, 4)")
+            SimpleLucidTester("\$c_fixed_point(3.14, 8, 4)")
         val expr = test.parser.expr().also { test.context.walk(it) }
 
         assert(test.hasNoIssues)
@@ -1223,7 +1223,7 @@ internal class ExprParserTests {
     @Test
     fun fFixedPointTest() = runBlocking {
         val test =
-            SimpleLucidTester("\$fFixedPoint(3.16, 8, 4)")
+            SimpleLucidTester("\$f_fixed_point(3.16, 8, 4)")
         val expr = test.parser.expr().also { test.context.walk(it) }
 
         assert(test.hasNoIssues)

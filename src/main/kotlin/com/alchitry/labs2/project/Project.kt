@@ -53,7 +53,7 @@ class QueueExhaustionException(message: String) : IllegalStateException(message)
 
 data class Project(
     val path: Path,
-    val data: ProjectData1V1
+    val data: ProjectData1V2
 ) {
     val top: SourceFile get() = data.sourceFiles.firstOrNull { it.top } ?: throw Exception("Missing top module!")
     val projectFile: File = path.resolve("${data.projectName}.alp").toFile()
@@ -135,12 +135,14 @@ data class Project(
 
         fun load(file: File, json: Json = this.json): Project {
             validateProjectFile(file)
+            val projectPath = file.parentFile.toPath()
             if (isXmlProject(file)) {
                 val projectData = openXml(file)
-                return Project(file.parentFile.toPath(), projectData.upgradeToLatest())
+                return Project(file.parentFile.toPath(), projectData.upgradeToLatest(projectPath))
             }
             val alpData = json.decodeFromString(AlchitryLabsProjectData.serializer(), file.readText())
-            return Project(file.parentFile.toPath(), alpData.project.upgradeToLatest())
+            return Project(file.parentFile.toPath(), alpData.project.upgradeToLatest(projectPath))
+                .also { it.save() }
         }
 
         fun close() {

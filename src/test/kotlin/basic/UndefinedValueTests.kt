@@ -34,7 +34,7 @@ class UndefinedValueTests {
 
                 .clk(clk), .rst(rst) {
                     dff ctr[SIZE+DIV]
-                    dff testArray[SIZE][8]
+                    dff test_array[SIZE][8]
                 }
 
                 const MAX_VALUE = TOP << DIV // value when maxed out
@@ -42,7 +42,7 @@ class UndefinedValueTests {
                 always {
                     value = ctr.q[SIZE+DIV-1-:SIZE] // set the output
                     
-                    testArray.d[0] = testArray.q[0] + 1
+                    test_array.d[0] = test_array.q[0] + 1
 
                     if (UP) { // when this is an up counter
                         ctr.d = ctr.q + 1 // increase
@@ -603,7 +603,7 @@ class UndefinedValueTests {
 
     @Test
     fun undefinedFixedPoint() = runBlocking {
-        val test = testExprWithLocalValues("${'$'}fixedPoint(3.145, SIZE, 4)", undefinedSignal("SIZE"))
+        val test = testExprWithLocalValues("${'$'}fixed_point(3.145, SIZE, 4)", undefinedSignal("SIZE"))
         val tree = test.parser.expr().also { test.context.walk(it) }
         val result = test.context.expr.resolve(tree)?.value
         assertIs<UndefinedValue>(result)
@@ -613,7 +613,7 @@ class UndefinedValueTests {
 
     @Test
     fun undefinedCFixedPoint() = runBlocking {
-        val test = testExprWithLocalValues("${'$'}cFixedPoint(3.145, SIZE, 4)", undefinedSignal("SIZE"))
+        val test = testExprWithLocalValues("${'$'}c_fixed_point(3.145, SIZE, 4)", undefinedSignal("SIZE"))
         val tree = test.parser.expr().also { test.context.walk(it) }
         val result = test.context.expr.resolve(tree)?.value
         assertIs<UndefinedValue>(result)
@@ -623,7 +623,7 @@ class UndefinedValueTests {
 
     @Test
     fun undefinedFFixedPoint() = runBlocking {
-        val test = testExprWithLocalValues("${'$'}fFixedPoint(3.145, SIZE, 4)", undefinedSignal("SIZE"))
+        val test = testExprWithLocalValues("${'$'}f_fixed_point(3.145, SIZE, 4)", undefinedSignal("SIZE"))
         val tree = test.parser.expr().also { test.context.walk(it) }
         val result = test.context.expr.resolve(tree)?.value
         assertIs<UndefinedValue>(result)

@@ -34,12 +34,12 @@ fun Project.addLucidModule(moduleName: String) = addSourceFile(
 fun Project.addLucidTestBench(name: String) = addSourceFile(
     name = "$name.${Languages.Lucid.extension}",
     contents = """
-        testBench $name {
+        testbench $name {
             sig clk
         
-            fun tickClock() {
+            fun tick_clock() {
                 clk = 1
-                ${'$'}silentTick() // tick without capturing signals
+                ${'$'}silent_tick() // tick without capturing signals
                 clk = 0
                 ${'$'}tick()
             }

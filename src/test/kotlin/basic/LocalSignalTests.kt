@@ -12,7 +12,7 @@ class LocalSignalTests {
     fun localSignalTest() = runBlocking {
         val test = ProjectTester(
             """
-                module controlModule #(
+                module control_module #(
                     DIGITS ~ 1 : DIGITS > 0 && DIGITS < 20,           // limited by 64 bit constants in the tools
                     LEADING_ZEROS = 0 : LEADING_ZEROS == 0 || LEADING_ZEROS == 1
                 )(
@@ -62,7 +62,7 @@ class LocalSignalTests {
                 } 
             """.trimIndent().toSourceFile("control.luc"),
             """
-                module testModule #(
+                module test_module #(
                     DIGITS ~ 1 : DIGITS > 0 && DIGITS < 20,           // limited by 64 bit constants in the tools
                     LEADING_ZEROS = 0 : LEADING_ZEROS == 0 || LEADING_ZEROS == 1
                 )(
@@ -102,15 +102,15 @@ class LocalSignalTests {
                 }
             """.trimIndent().toSourceFile("local.luc"),
             """
-                testBench localTests {
-                    testModule testModule(#DIGITS(4))
-                    controlModule controlModule(#DIGITS(4))
+                testbench local_tests {
+                    test_module test_module(#DIGITS(4))
+                    control_module control_module(#DIGITS(4))
                     
-                    test myTest {
-                        testModule.value = 1234
-                        controlModule.value = 1234
-                        ${"$"}silentTick()
-                        ${"$"}assert(testModule.digits == controlModule.digits)
+                    test my_test {
+                        test_module.value = 1234
+                        control_module.value = 1234
+                        ${"$"}silent_tick()
+                        ${"$"}assert(test_module.digits == control_module.digits)
                     }
                 }
             """.trimIndent().toSourceFile("localTest.luc")
@@ -122,7 +122,7 @@ class LocalSignalTests {
     fun simpleLocalTest() = runBlocking {
         val test = ProjectTester(
             """
-                module localTest (
+                module local_test (
                     input value[4],  // clock
                     output digit[4]
                 ) {
