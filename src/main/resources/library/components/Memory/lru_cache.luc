@@ -1,0 +1,383 @@
+/**
+    "name": "LRU Cache"
+    "description": "This module is a cache that approximates a fully associative LRU (least recently used) cache. It can be used with the MIG Wrapper interface to the DDR3 memory."
+    "supportedBoards": ["Au", "Au+"]
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2019 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   *****************************************************************************
+
+   This is a cache the approximates a fully associative LRU cache.
+
+   This module can be used with the memory interface for the DDR3 on the
+   Alchitry Au to provide cached access to the memory with configurable
+   word sizes.
+
+   Due to the cache being fully associative and not using BRAM to store
+   cache lines, you should set ENTRIES to be as small as possible to save
+   resources. For most simple loads, a value of 2 works well.
+
+   The WORD_SIZE parameter sets the number of bits per word. The cache
+   line size is fixed at 128 bits and words can be set to 8, 16, 32, 64,
+   or 128 bits.
+
+   The AGE_BITS parameter can be used to allow for more precise cache line
+   ages. The default value of 3 is fine for most applications. Small values
+   will result in less accurate LRU behavior while large values incur
+   a performance penalty.
+
+   The cache is lazy in that it will not actively write values to the RAM
+   until the cache line is needed. You can use the flush input to signal
+   that it should write all dirty data to the DDR memory.
+*/
+
+module lru_cache #(
+    ENTRIES = 4 : ENTRIES > 0,
+    WORD_SIZE = 16 : WORD_SIZE >= 8 && WORD_SIZE <= 128 && (WORD_SIZE == $pow(2,$clog2(WORD_SIZE/8))*8), // 8,16,32,64,128 valid
+    AGE_BITS = 3 : AGE_BITS > 0
+)(
+    input clk,  // clock
+    input rst,  // reset
+    input wr_addr[24 + $clog2(128/WORD_SIZE)], // 24-28 bits
+    input wr_data[WORD_SIZE],
+    input wr_valid,
+    output wr_ready,
+    input rd_addr[24 + $clog2(128/WORD_SIZE)],
+    input rd_cmd_valid,
+    output rd_ready,
+    output rd_data[WORD_SIZE],
+    output rd_data_valid,
+    input flush,
+    output flush_ready,
+    input mem_out<Memory.out>,
+    output mem_in<Memory.in>
+) {
+
+    const WORDS_PER_LINE = 128 / WORD_SIZE
+    const BYTES_PER_WORD = WORD_SIZE / 8
+    const SUB_ADDR_BITS = $clog2(WORDS_PER_LINE)
+    const ADDR_SIZE = 24 + SUB_ADDR_BITS
+
+    enum State {IDLE, PREP_WRITE_ENTRY, PREP_READ_ENTRY, FLUSH, WRITE_DATA, WRITE_CMD, READ_CMD, WAIT_READ}
+    enum WriteState {IDLE, PUT}
+    enum ReadState {IDLE, FETCH}
+
+    .clk(clk) {
+        .rst(rst) {
+            dff active[ENTRIES]
+
+            dff state[$width(State)]
+            dff write_state[$width(WriteState)]
+            dff read_state[$width(ReadState)]
+        }
+
+        dff buffer[ENTRIES][WORDS_PER_LINE][WORD_SIZE]
+        dff address[ENTRIES][25]
+
+        dff written[ENTRIES]
+        dff valid[ENTRIES][WORDS_PER_LINE]
+        dff age[ENTRIES][AGE_BITS]
+
+        dff active_entry[ENTRIES > 1 ? $clog2(ENTRIES) : 1]
+
+        dff read_data[WORD_SIZE]
+        dff read_valid
+
+        dff read_pending
+        dff read_addr[ADDR_SIZE]
+
+        dff write_pending
+        dff write_addr[ADDR_SIZE]
+        dff write_data[WORD_SIZE]
+
+        dff old_active[ENTRIES]
+        dff return_state[$width(State)]
+    }
+
+    sig handled
+    sig oldest_entry[ENTRIES > 1 ? $clog2(ENTRIES) : 1]
+    sig entry[ENTRIES > 1 ? $clog2(ENTRIES) : 1]
+    sig max_age[$width(age.q, 1)]
+
+    always {
+        mem_in.enable = 0
+        mem_in.wr_data = $flatten(buffer.q[active_entry.q])
+        mem_in.cmd = bx
+        mem_in.addr = c{address.q[active_entry.q], 3b000}
+        mem_in.wr_enable = 0
+        flush_ready = state.q == State.IDLE
+        wr_ready = write_state.q == WriteState.IDLE
+        rd_ready = read_state.q == ReadState.IDLE
+        rd_data = read_data.q
+        rd_data_valid = read_valid.q
+
+        read_valid.d = 0
+
+        // only write out valid bytes (0 = write)
+        repeat(i, WORDS_PER_LINE)
+            mem_in.wr_mask[i*BYTES_PER_WORD+:BYTES_PER_WORD] = BYTES_PER_WORDx{~valid.q[active_entry.q][i]}
+
+        // Keep track of the oldest entry (the one to replace)
+        max_age = 0
+        oldest_entry = 0
+        entry = bx
+
+        handled = 0
+        repeat(i, ENTRIES) {
+            if (!handled) {
+                if (!active.q[i]) { // entry isn't in use
+                    oldest_entry = i[$width(oldest_entry)-1:0] // use the inactive entry
+                    handled = 1      // stop the for loop
+                }
+                if (age.q[i] > max_age) {
+                    max_age = age.q[i]
+                    oldest_entry = i[$width(oldest_entry)-1:0]
+                }
+            }
+        }
+
+        case (read_state.q) {
+            ReadState.IDLE:
+                if (rd_cmd_valid) {
+                    repeat(i, ENTRIES) // increment all the entry ages
+                        if (!(&age.q[i]))
+                            age.d[i] = age.q[i] + 1
+
+
+                    handled = 0
+                    repeat(i, ENTRIES) {
+                        if (!handled && active.q[i] && valid.q[i][SUB_ADDR_BITS > 0 ? rd_addr[SUB_ADDR_BITS-1:0] : 0] && (address.q[i] == rd_addr[ADDR_SIZE-1:SUB_ADDR_BITS])) {
+                            handled = 1
+                            read_valid.d = 1
+                            read_data.d = buffer.q[i][SUB_ADDR_BITS > 0 ? rd_addr[SUB_ADDR_BITS-1:0] : 0]
+                            age.d[i] = 0 // reset the age on an access
+                        }
+                    }
+                    if (!handled) { // entry isn't in the cache
+                        read_pending.d = 1
+                        read_addr.d = rd_addr
+                        read_state.d = ReadState.FETCH
+                    }
+                }
+
+            ReadState.FETCH:
+                read_pending.d = 1
+
+                handled = 0
+                repeat(i, ENTRIES) {
+                    if (!handled && active.q[i] && valid.q[i][SUB_ADDR_BITS > 0 ? read_addr.q[SUB_ADDR_BITS-1:0] : 0] && (address.q[i] == read_addr.q[ADDR_SIZE-1:SUB_ADDR_BITS])) {
+                        handled = 1
+                        read_valid.d = 1
+                        read_data.d = buffer.q[i][SUB_ADDR_BITS > 0 ? read_addr.q[SUB_ADDR_BITS-1:0] : 0]
+                        age.d[i] = 0 // reset the age on an access
+                    }
+                }
+                if (handled) {
+                    read_pending.d = 0
+                    read_state.d = ReadState.IDLE
+                }
+        }
+
+        case (write_state.q) {
+            WriteState.IDLE:
+                if (wr_valid) {
+                    repeat(i, ENTRIES) // increment all the entry ages
+                        if (!(&age.q[i]))
+                            age.d[i] = age.q[i] + 1
+
+                    handled = 0
+                    repeat(i, ENTRIES) {
+                        if (!handled && active.q[i] && (address.q[i] == wr_addr[ADDR_SIZE-1:SUB_ADDR_BITS])) {
+                            handled = 1
+                            written.d[i] = 1
+                            valid.d[i][SUB_ADDR_BITS > 0 ? wr_addr[SUB_ADDR_BITS-1:0] : 0] = 1
+                            buffer.d[i][SUB_ADDR_BITS > 0 ? wr_addr[SUB_ADDR_BITS-1:0] : 0] = wr_data
+                            age.d[i] = 0 // reset the age on an access
+                        }
+                    }
+
+                    if (!handled) { // entry isn't in the cache
+                        write_pending.d = 1
+                        write_data.d = wr_data
+                        write_addr.d = wr_addr
+                        write_state.d = WriteState.PUT
+                    }
+                }
+
+            WriteState.PUT:
+                write_pending.d = 1
+
+                handled = 0
+                repeat(i, ENTRIES) {
+                    if (!handled && active.q[i] && (address.q[i] == write_addr.q[ADDR_SIZE-1:SUB_ADDR_BITS])) {
+                        handled = 1
+                        written.d[i] = 1
+                        valid.d[i][SUB_ADDR_BITS > 0 ? write_addr.q[SUB_ADDR_BITS-1:0] : 0] = 1
+                        buffer.d[i][SUB_ADDR_BITS > 0 ? write_addr.q[SUB_ADDR_BITS-1:0] : 0] = write_data.q
+                        age.d[i] = 0 // reset the age on an access
+                    }
+                }
+
+                if (handled) {
+                    write_pending.d = 0
+                    write_state.d = WriteState.IDLE
+                }
+        }
+
+        case (state.q) {
+            WriteState.IDLE:
+                if (flush) { // flush command takes priority
+                    active.d = 0
+                    old_active.d = active.q
+                    state.d = State.FLUSH
+
+                } else if (read_pending.q) { // Read command is pending
+                    entry = oldest_entry // default to oldest
+
+                    // check for a cache line that was written but never read (ie only partially valid)
+                    handled = 0
+                    repeat(i, ENTRIES) {
+                        if (!handled && active.q[i] && valid.q[i][SUB_ADDR_BITS > 0 ? read_addr.q[SUB_ADDR_BITS-1:0] : 0] && (address.q[i] == read_addr.q[ADDR_SIZE-1:SUB_ADDR_BITS])) {
+                            handled = 1
+                            entry = i[$width(entry)-1:0]
+                        }
+                    }
+
+                    // save the entry
+                    active_entry.d = entry
+
+                    // if entry is active and not our address
+                    if (active.q[entry] && address.q[entry] != read_addr.q[ADDR_SIZE-1:SUB_ADDR_BITS]) {
+                        // need to mark inactive then wait for any potential writes
+                        active.d[entry] = 0
+                        state.d = State.PREP_READ_ENTRY
+                    } else {
+                        state.d = State.READ_CMD
+                        address.d[entry] = read_addr.q[ADDR_SIZE-1:SUB_ADDR_BITS]
+                        if (address.q[entry] != read_addr.q[ADDR_SIZE-1:SUB_ADDR_BITS])
+                            valid.d[entry] = 0
+                    }
+
+                } else if (write_pending.q) { // Write command is pending
+                    // if oldest entry is active
+                    if (active.q[oldest_entry]) {
+                        // need to mark inactive then wait for any potential writes
+                        active.d[oldest_entry] = 0
+                        active_entry.d = oldest_entry
+                        state.d = State.PREP_WRITE_ENTRY
+                    } else { // oldest entry can be cleared
+                        // prep the new entry
+                        written.d[oldest_entry] = 0
+                        valid.d[oldest_entry] = 0
+                        address.d[oldest_entry] = write_addr.q[ADDR_SIZE-1:SUB_ADDR_BITS]
+                        age.d[oldest_entry] = 0
+                        active.d[oldest_entry] = 1
+                        write_pending.d = 0
+                    }
+                }
+
+            State.PREP_WRITE_ENTRY:
+                // if entry was written to
+                if (written.q[active_entry.q]) {
+                    // write the data out
+                    return_state.d = State.PREP_WRITE_ENTRY
+                    state.d = State.WRITE_DATA
+                } else {
+                    // prep the new entry
+                    written.d[active_entry.q] = 0
+                    valid.d[active_entry.q] = 0
+                    address.d[active_entry.q] = write_addr.q[ADDR_SIZE-1:SUB_ADDR_BITS]
+                    age.d[active_entry.q] = 0
+                    active.d[active_entry.q] = 1
+                    state.d = State.IDLE
+                    write_pending.d = 0
+                }
+
+            State.PREP_READ_ENTRY:
+                if (written.q[active_entry.q]) {
+                    // write the data out
+                    return_state.d = State.PREP_READ_ENTRY
+                    state.d = State.WRITE_DATA
+                } else {
+                    // read in new active_entry
+                    state.d = State.READ_CMD
+                    address.d[active_entry.q] = read_addr.q[ADDR_SIZE-1:SUB_ADDR_BITS]
+                    valid.d[active_entry.q] = 0
+                }
+
+            State.FLUSH:
+                state.d = State.IDLE // default to returning if no entries to flush
+
+                handled = 0
+                repeat(i, ENTRIES) {
+                    // find the first entry that needs to be flushed
+                    if (!handled && old_active.q[i] && written.q[i]) {
+                        handled = 1
+                        active_entry.d = i[$width(active_entry.q)-1:0]
+                        state.d = State.WRITE_DATA
+                        old_active.d[i] = 0
+                        return_state.d = State.FLUSH
+                    }
+                }
+
+            State.WRITE_DATA:
+                mem_in.wr_enable = 1
+                if (mem_out.wr_rdy) {
+                    state.d = State.WRITE_CMD
+                }
+
+            State.WRITE_CMD:
+                mem_in.enable = 1
+                mem_in.cmd = 0 // write
+                if (mem_out.rdy) {
+                    state.d = return_state.q
+                    written.d[active_entry.q] = 0
+                }
+
+            State.READ_CMD:
+                mem_in.enable = 1
+                mem_in.cmd = 1 // read
+                if (mem_out.rdy) {
+                    state.d = State.WAIT_READ
+                }
+
+            State.WAIT_READ:
+                if (mem_out.rd_valid) {
+                    repeat(i, WORDS_PER_LINE)
+                        if (!valid.q[active_entry.q][i]) // only read in unwritten words
+                            buffer.d[active_entry.q][i] = mem_out.rd_data[WORD_SIZE*i+:WORD_SIZE]
+
+                    // prep the new entry
+                    active.d[active_entry.q] = 1
+                    valid.d[active_entry.q] = WORDS_PER_LINEx{1b1} // everything valid
+                    age.d[active_entry.q] = 0
+                    read_pending.d = 0
+                    written.d[active_entry.q] = 0
+
+                    state.d = State.IDLE
+                }
+        }
+    }
+}

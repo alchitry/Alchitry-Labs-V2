@@ -1,0 +1,138 @@
+/**
+    "name": "DDR Arbiter"
+    "description": "This module allows you to connect multiple clients to a single DDR3 memory interface (the interface used by the DDR3 MIG). It uses a simple priority scheme where each client gets a unique priority (lower IDs = higher priority). This means it is possible for high priority clients to starve out low priority clients."
+    "supportedBoards": ["Au", "Au+"]
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2019 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   *****************************************************************************
+
+   This is an arbiter for the DDR3 memory on the Alchitry Au.
+
+   It takes the single memory interface to the MIG and creates DEVICES number
+   of identically behaving interfaces. The interface 0 has the highest priority
+   for any read or write commands. It is possible for a higher priority client to
+   starve a lower priority one.
+*/
+
+module ddr_arbiter #(
+    DEVICES ~ 2 : DEVICES > 1
+)(
+    input clk,  // clock
+    input rst,  // reset
+    // Master
+    output master_in<Memory.in>,
+    input master_out<Memory.out>,
+    // Devices
+    input device_in[DEVICES]<Memory.in>,
+    output device_out[DEVICES]<Memory.out>
+) {
+
+    enum State {WAIT_CMD, WAIT_WRITE, WAIT_RDY}
+
+    .clk(clk) {
+        .rst(rst) {
+            dff state[$width(State)]
+
+            fifo fifo (#WIDTH($clog2(DEVICES)), #ENTRIES(256)) // ignore full flag as it can never fill anyways
+            dff device[$clog2(DEVICES)]
+        }
+    }
+
+    sig act
+
+    always {
+        fifo.din = bx
+        fifo.wput = 0
+        fifo.rget = 0
+
+        master_in.enable = 0
+        master_in.wr_data = bx
+        master_in.cmd = 0
+        master_in.wr_mask = 0
+        master_in.addr = bx
+        master_in.wr_enable = 0
+
+        repeat(i, DEVICES) {
+            device_out[i].rdy = 0
+            device_out[i].wr_rdy = 0
+        }
+
+        act = 0
+        case (state.q) {
+            State.WAIT_CMD:
+                repeat(i, DEVICES) {
+                    if ((device_in[i].enable || device_in[i].wr_enable) && !act) {
+                        act = 1
+                        device.d = i[$width(device.q)-1:0]
+                        master_in = device_in[i]
+                        device_out[i] = master_out
+                        if (device_in[i].enable && (device_in[i].cmd == 3b001)) { // read
+                            fifo.wput = 1
+                            fifo.din = i[$clog2(DEVICES)-1:0]
+                            if (!master_out.rdy) {
+                                state.d = State.WAIT_RDY
+                            }
+                        } else { // write
+                            if (!master_out.wr_rdy) {
+                                state.d = State.WAIT_WRITE
+                            } else {
+                                state.d = State.WAIT_RDY
+                            }
+                        }
+                    }
+                }
+
+            State.WAIT_WRITE:
+                master_in = device_in[device.q]
+                device_out[device.q] = master_out
+                if (master_out.wr_rdy) {
+                    if (device_in[device.q].enable && master_out.rdy) {
+                        state.d = State.WAIT_CMD
+                    } else {
+                        state.d = State.WAIT_RDY
+                    }
+                }
+
+            State.WAIT_RDY:
+                master_in = device_in[device.q]
+                device_out[device.q] = master_out
+                if (master_out.rdy) {
+                    state.d = State.WAIT_CMD
+                }
+        }
+
+        repeat(i, DEVICES) {
+            device_out[i].rd_data = bx
+            device_out[i].rd_valid = 0
+        }
+
+        if (master_out.rd_valid) {
+            device_out[fifo.dout].rd_data = master_out.rd_data
+            device_out[fifo.dout].rd_valid = 1
+            fifo.rget = 1
+        }
+    }
+}
