@@ -17,7 +17,7 @@ module greeter (
             dff state[$width(States)]
         }
         // we need our counters to be large enough to store all the indices of our text
-        dff hello_count[$clog2($width(HELLO_TEXT, 0))] // HELLO_TEXT is 2D so HELLO_WIDTH[0] gets the first dimension
+        dff hello_count[$clog2($width(HELLO_TEXT, 0))]
         dff prompt_count[$clog2($width(PROMPT_TEXT, 0))]
 
         dff name_count[5] // 5 allows for 2^5 = 32 letters
