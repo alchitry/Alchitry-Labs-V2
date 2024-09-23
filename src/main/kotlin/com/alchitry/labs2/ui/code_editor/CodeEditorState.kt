@@ -149,6 +149,7 @@ class CodeEditorState(
     var clipboardManager: ClipboardManager? = null
 
     val codeFormatter: CodeFormatter
+    var showReadOnlyDialog by mutableStateOf(false)
 
     init {
         Project.current?.currentNotationCollectorForFile(file)?.let { collector ->
@@ -377,8 +378,10 @@ class CodeEditorState(
         range: OpenEndRange<TextPosition> = selectionManager.selectedRange,
         updateCaret: Boolean = true
     ) {
-        if (readOnly)
+        if (readOnly) {
+            showReadOnlyDialog = true
             return
+        }
 
         val start = range.start.coerceInRange()
         val end = range.endExclusive.coerceInRange()

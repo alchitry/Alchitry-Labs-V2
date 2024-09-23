@@ -30,6 +30,7 @@ import com.alchitry.labs2.project.files.ProjectFile
 import com.alchitry.labs2.project.files.SourceFile
 import com.alchitry.labs2.ui.code_editor.TextPosition
 import com.alchitry.labs2.ui.code_editor.line_actions.LineActionButton
+import com.alchitry.labs2.ui.tabs.FileTab
 import com.alchitry.labs2.ui.tabs.SimulationResultTab
 import com.alchitry.labs2.ui.tabs.Workspace
 import com.alchitry.labs2.ui.theme.AlchitryColors
@@ -77,6 +78,8 @@ data class Project(
     private val mutableModuleMapFlow = MutableStateFlow<Map<SourceFile, List<Module>>>(emptyMap())
     val moduleMapFlow = mutableModuleMapFlow.asStateFlow()
 
+    val projectFiles = (data.sourceFiles + data.constraintFiles + data.ipCores.mapNotNull { it.stub })
+
     fun binFileIsUpToDate(): Boolean = binFile.lastModified() >= lastModified() && binFile.lastModified() > 0L
     fun lastModified(): Long {
         return max(
@@ -119,6 +122,9 @@ data class Project(
             mutableCurrentFlow.tryEmit(project)
             Settings.openProject = project.projectFile.absolutePath
             project.queueNotationsUpdate()
+            Workspace.closeSelectTabs {
+                it is FileTab && !project.projectFiles.contains(it.file)
+            }
             return project
         }
 

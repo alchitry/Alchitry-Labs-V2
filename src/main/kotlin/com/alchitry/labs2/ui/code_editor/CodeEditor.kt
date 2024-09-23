@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.ui.code_editor.tooltip.EditorTooltipArea
+import com.alchitry.labs2.ui.dialogs.CopyReadOnlyDialog
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.ui.theme.AlchitryTypography
 import java.awt.Cursor
@@ -36,6 +37,8 @@ fun CodeEditor(
     state: CodeEditorState
 ) {
     state.clipboardManager = LocalClipboardManager.current
+
+    CopyReadOnlyDialog(state.showReadOnlyDialog, state.file) { state.showReadOnlyDialog = false }
 
     Box(contentAlignment = Alignment.TopStart) {
         Canvas(

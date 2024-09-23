@@ -27,6 +27,10 @@ data object Workspace : TabParent {
         }
     }
 
+    fun closeSelectTabs(shouldClose: (Tab) -> Boolean) {
+        tabSection.getTabs().filter(shouldClose).forEach { it.parent.closeTab(it, true) }
+    }
+
     override fun closeAll() {
         tabSection.closeAll()
         tabSection = TabPanel(this)
