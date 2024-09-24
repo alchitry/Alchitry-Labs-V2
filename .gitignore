@@ -12,3 +12,4 @@
 *.bak
 *.tcl
 /.kotlin/
+!src/**/*.tcl
