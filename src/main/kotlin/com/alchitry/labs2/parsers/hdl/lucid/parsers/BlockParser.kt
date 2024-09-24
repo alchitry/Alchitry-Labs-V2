@@ -51,7 +51,7 @@ data class BlockParser(
 
     override suspend fun exitAlwaysBlock(ctx: AlwaysBlockContext) {
         alwaysBlocks[ctx] =
-            com.alchitry.labs2.parsers.hdl.types.AlwaysBlock(context, dependencies.toSet(), drivenSignals.toSet(), ctx)
+            AlwaysBlock(context, dependencies.toSet(), drivenSignals.toSet(), ctx)
     }
 
     override suspend fun enterTestBlock(ctx: TestBlockContext) {
@@ -337,7 +337,7 @@ data class RepeatBlock(
     private val startExpr: Expr? get() = startExprCtx?.let { context.resolve(it) }
     private val stepExpr: Expr? get() = stepExprCtx?.let { context.resolve(it) }
 
-    val count: Int get() = (countExpr?.value as? SimpleValue)?.toBigInt()?.intValueExact() ?: 0
+    val count: Int get() = (countExpr?.value as? SimpleValue)?.toBigInt()?.intValueExact() ?: 1
     val start: Int get() = (startExpr?.value as? SimpleValue)?.toBigInt()?.intValueExact() ?: 0
     val step: Int get() = (stepExpr?.value as? SimpleValue)?.toBigInt()?.intValueExact() ?: 1
 

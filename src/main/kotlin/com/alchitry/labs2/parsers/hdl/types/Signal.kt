@@ -94,6 +94,6 @@ open class Signal(
         return parts.asReversed().joinToString(".")
     }
 
-    override fun toString(): String = name
+    override fun toString(): String = fullName()
 
 }
