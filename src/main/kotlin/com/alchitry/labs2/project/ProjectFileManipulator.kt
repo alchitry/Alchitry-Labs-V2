@@ -1,5 +1,6 @@
 package com.alchitry.labs2.project
 
+import com.alchitry.labs2.Log
 import com.alchitry.labs2.project.files.*
 import com.alchitry.labs2.ui.tabs.Workspace
 import kotlin.io.path.createParentDirectories
@@ -71,32 +72,42 @@ fun Project.addVerilogModule(moduleName: String) = addSourceFile(
 
 fun Project.addAlchitryConstraint(name: String) = addConstraintFile("$name.${Languages.ACF.extension}")
 
-private fun Project.addSourceFile(name: String, contents: String): SourceFile {
-    val newFilePath = sourceDirectory.resolve(name)
-    newFilePath.createParentDirectories()
-    newFilePath.toFile().writeText(contents)
-    val newSourceFile = SourceFile(FileProvider.DiskFile(path.relativize(newFilePath)))
-    val newSourceFiles = data.sourceFiles.toMutableSet().apply {
-        add(newSourceFile)
+private fun Project.addSourceFile(name: String, contents: String): SourceFile? {
+    try {
+        val newFilePath = sourceDirectory.resolve(name)
+        newFilePath.createParentDirectories()
+        newFilePath.toFile().writeText(contents)
+        val newSourceFile = SourceFile(FileProvider.DiskFile(path.relativize(newFilePath)))
+        val newSourceFiles = data.sourceFiles.toMutableSet().apply {
+            add(newSourceFile)
+        }
+        val newProj = copy(data = data.copy(sourceFiles = newSourceFiles))
+        newProj.save()
+        Project.open(newProj)
+        return newSourceFile
+    } catch (e: Exception) {
+        Log.showError("Failed to create source file!", e)
     }
-    val newProj = copy(data = data.copy(sourceFiles = newSourceFiles))
-    newProj.save()
-    Project.open(newProj)
-    return newSourceFile
+    return null
 }
 
-private fun Project.addConstraintFile(name: String, contents: String = ""): ConstraintFile {
-    val newFilePath = constraintDirectory.resolve(name)
-    newFilePath.createParentDirectories()
-    newFilePath.toFile().writeText(contents)
-    val newConstraintFile = ConstraintFile(FileProvider.DiskFile(path.relativize(newFilePath)))
-    val newConstraintFiles = data.constraintFiles.toMutableSet().apply {
-        add(newConstraintFile)
+private fun Project.addConstraintFile(name: String, contents: String = ""): ConstraintFile? {
+    try {
+        val newFilePath = constraintDirectory.resolve(name)
+        newFilePath.createParentDirectories()
+        newFilePath.toFile().writeText(contents)
+        val newConstraintFile = ConstraintFile(FileProvider.DiskFile(path.relativize(newFilePath)))
+        val newConstraintFiles = data.constraintFiles.toMutableSet().apply {
+            add(newConstraintFile)
+        }
+        val newProj = copy(data = data.copy(constraintFiles = newConstraintFiles))
+        newProj.save()
+        Project.open(newProj)
+        return newConstraintFile
+    } catch (e: Exception) {
+        Log.showError("Failed to create constraint file!", e)
     }
-    val newProj = copy(data = data.copy(constraintFiles = newConstraintFiles))
-    newProj.save()
-    Project.open(newProj)
-    return newConstraintFile
+    return null
 }
 
 fun Project.addComponents(components: List<Component>) {
