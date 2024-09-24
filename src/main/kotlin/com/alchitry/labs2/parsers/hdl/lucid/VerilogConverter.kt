@@ -1107,7 +1107,7 @@ class VerilogConverter(
     }
 
     override fun exitExprStruct(ctx: LucidParser.ExprStructContext) {
-        if (handleConstant(ctx))
+        if (!handleConstant(ctx))
             error(ctx, "Missing value for struct constant: \"${ctx.text}\"")
     }
 

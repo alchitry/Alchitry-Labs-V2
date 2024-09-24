@@ -52,12 +52,14 @@ module alchitry_top (
         ddr3_odt = mig.ddr3_odt
 
         // default values
-        mig.mem_in.enable = 0
-        mig.mem_in.cmd = 3bx
-        mig.mem_in.addr = 28bx
-        mig.mem_in.wr_data = 128bx
-        mig.mem_in.wr_mask = 0
-        mig.mem_in.wr_enable = 0
+        mig.mem_in = <Memory.in>(
+            .enable(0),
+            .cmd(3bx),
+            .addr(28bx),
+            .wr_data(128bx),
+            .wr_mask(0),
+            .wr_enable(0)
+        )
 
         led = 8h00              // turn LEDs off
 
