@@ -23,7 +23,6 @@ import com.alchitry.labs2.ui.selection.Selectable
 import com.alchitry.labs2.ui.selection.SingleSelectionContext
 import com.alchitry.labs2.ui.tabs.Workspace
 import com.alchitry.labs2.ui.theme.AlchitryColors
-import com.alchitry.labs2.windows.LocalLabsState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -31,7 +30,6 @@ fun ProjectTree() {
     val project = Project.currentFlow.collectAsState().value ?: return
     val selectionContext = remember { SingleSelectionContext<String>() }
     val scope = rememberCoroutineScope()
-    var running by LocalLabsState.current.runningJob
 
     with(selectionContext) {
         Row(
@@ -110,16 +108,13 @@ fun ProjectTree() {
                             items = {
                                 listOf(
                                     ContextMenuItem("Vivado IP Catalog") {
-                                        if (running) {
+                                        if (Project.building) {
                                             Log.warn("Something is already running. Can't open Vivado IP Catalog.")
                                             return@ContextMenuItem
                                         }
                                         scope.launch {
-                                            try {
-                                                running = true
+                                            Project.withBuildLock {
                                                 VivadoIP.generateCores(project)
-                                            } finally {
-                                                running = false
                                             }
                                         }
                                     }
@@ -134,7 +129,7 @@ fun ProjectTree() {
                                             items = {
                                                 listOf(
                                                     ContextMenuItem("Delete ${core.name}") {
-                                                        if (running) {
+                                                        if (Project.building) {
                                                             Log.warn("Something is already running. Can't delete IP core.")
                                                             return@ContextMenuItem
                                                         }

@@ -36,7 +36,7 @@ object VivadoIP {
         runTclScript(tclScript)
     }
 
-    private suspend fun runTclScript(tclScript: Path) = coroutineScope {
+    suspend fun runTclScript(tclScript: Path) = coroutineScope {
         val vivado = Locations.vivadoBin
         if (vivado == null) {
             Log.error("Couldn't find Vivado!")
@@ -73,7 +73,7 @@ object VivadoIP {
         ProjectBuilder.runProcess(cmd, this)
     }
 
-    private suspend fun createCoreProjectIfNeeded(project: Project) {
+    suspend fun createCoreProjectIfNeeded(project: Project) {
         val coresDirectory = project.ipCoreDirectory
         if (!coresDirectory.exists())
             coresDirectory.createDirectory()
@@ -195,6 +195,7 @@ object VivadoIP {
             val coresFolder = project.ipCoreDirectory.absolutePathString().replace("\\", "/")
             val xciFile =
                 project.ipCoreDirectory.resolve("mig_7series_0").resolve("mig_7series_0.xci").absolutePathString()
+                    .replace("\\", "/")
                     .replace(" ", "\\ ")
 
             val tclScript = project.ipCoreDirectory.resolve("mig_ip.tcl")
@@ -203,7 +204,7 @@ object VivadoIP {
 
             tclScript.writeText(buildString {
                 val nl = System.lineSeparator()
-                append("open_project {${project.coresProjectFile}}")
+                append("open_project {${project.coresProjectFile.absolutePathString().replace("\\", "/")}}")
                 append(nl)
                 append("create_ip -name mig_7series -vendor xilinx.com -library ip -module_name mig_7series_0 -dir {$coresFolder}")
                 append(nl)

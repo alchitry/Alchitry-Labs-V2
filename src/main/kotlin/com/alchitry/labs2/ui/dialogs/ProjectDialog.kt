@@ -122,8 +122,7 @@ fun NewProjectDialog(visible: Boolean, onClose: () -> Unit) {
                             loading = true
                             scope.launch(Dispatchers.IO) {
                                 try {
-                                    template?.copyTo(projectName, workspace, board)?.let { project ->
-                                        Project.open(project)
+                                    template?.instantiate(projectName, workspace, board)?.let {
                                         onClose()
                                     }
                                 } catch (e: IllegalStateException) {

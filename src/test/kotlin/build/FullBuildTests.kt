@@ -24,10 +24,12 @@ class FullBuildTests {
     suspend fun buildAllProjectsForBoard(board: Board) {
         val validTemplates = templates.filter { it.boards.contains(board) }
         validTemplates.forEach { template ->
-            val project = template.copyTo("${template.name}_${board.name}", tempFolder, board)
+            template.instantiate("${template.name}_${board.name}", tempFolder, board)
             println("Building ${template.name} for $board.")
-            Project.open(project)
-            assert(project.build()) { "Failed to build ${template.name} for $board!" }
+            val project = Project.current!!
+            Project.withBuildLock {
+                assert(project.build()) { "Failed to build ${template.name} for $board!" }
+            }
             assert(project.binFile.exists()) { "Bin file does not exist for ${template.name} with $board!" }
         }
     }

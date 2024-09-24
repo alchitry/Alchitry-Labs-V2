@@ -36,7 +36,6 @@ import java.io.File
 val LocalLabsState = compositionLocalOf<LabsState> { error("No LabsState provided!") }
 
 data class LabsState(
-    val runningJob: MutableState<Boolean> = mutableStateOf(false),
     val detectedBoards: MutableState<Map<Board, Int>> = mutableStateOf(emptyMap()),
     val attachedToBoard: MutableState<Boolean> = mutableStateOf(false),
 )

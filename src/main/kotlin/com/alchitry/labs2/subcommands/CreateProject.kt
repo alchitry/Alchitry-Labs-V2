@@ -75,7 +75,7 @@ class CreateProject : Subcommand("new", "Create a new project") {
         }
 
         try {
-            template.copyTo(projName, workspace, board)
+            template.instantiate(projName, workspace, board)
         } catch (e: Exception) {
             println("Failed to create project:")
             println("    ${e.message}")

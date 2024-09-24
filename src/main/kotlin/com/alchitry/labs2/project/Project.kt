@@ -1,5 +1,8 @@
 package com.alchitry.labs2.project
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
 import com.alchitry.labs2.hardware.pinout.AuPin
@@ -39,6 +42,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
@@ -105,6 +110,21 @@ data class Project(
     }
 
     companion object {
+        private val buildLock = Mutex()
+        var building by mutableStateOf(false)
+            private set
+
+        suspend fun withBuildLock(block: suspend () -> Unit) {
+            buildLock.withLock {
+                building = true
+                try {
+                    block()
+                } finally {
+                    building = false
+                }
+            }
+        }
+
         private val json = Json {
             prettyPrint = true
         }
@@ -125,6 +145,7 @@ data class Project(
             Workspace.closeSelectTabs {
                 it is FileTab && !project.projectFiles.contains(it.file)
             }
+            project.save()
             return project
         }
 
@@ -148,7 +169,6 @@ data class Project(
             }
             val alpData = json.decodeFromString(AlchitryLabsProjectData.serializer(), file.readText())
             return Project(file.parentFile.toPath(), alpData.project.upgradeToLatest(projectPath))
-                .also { it.save() }
         }
 
         fun close() {

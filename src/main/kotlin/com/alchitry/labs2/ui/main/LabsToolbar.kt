@@ -36,8 +36,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun LabsToolbar() {
     val scope = rememberCoroutineScope()
-    var running by LocalLabsState.current.runningJob
     val project by Project.currentFlow.collectAsState()
+    val running = Project.building
 
     var showProjectDialog by remember { mutableStateOf(false) }
     NewProjectDialog(showProjectDialog) { showProjectDialog = false }
@@ -108,16 +108,15 @@ fun LabsToolbar() {
                 Log.println("Project must be open first!", AlchitryColors.current.Error)
                 return
             }
-            running = true
             scope.launch(Dispatchers.Default) {
-                try {
-                    block(currentProj)
-                } catch (e: Exception) {
-                    if (e is CancellationException)
-                        throw e
-                    Log.printlnError(e.message)
-                } finally {
-                    running = false
+                Project.withBuildLock {
+                    try {
+                        block(currentProj)
+                    } catch (e: Exception) {
+                        if (e is CancellationException)
+                            throw e
+                        Log.printlnError(e.message)
+                    }
                 }
             }
         }

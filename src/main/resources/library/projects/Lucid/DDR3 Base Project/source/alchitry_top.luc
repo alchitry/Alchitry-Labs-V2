@@ -1,0 +1,66 @@
+module alchitry_top (
+    input clk,              // 100MHz clock
+    input rst_n,            // reset button (active low)
+    output led[8],          // 8 user controllable LEDs
+    input usb_rx,           // USB->Serial input
+    output usb_tx,          // USB->Serial output
+    /* DDR3 Connections */
+    inout ddr3_dq[16],
+    inout ddr3_dqs_n[2],
+    inout ddr3_dqs_p[2],
+    output ddr3_addr[14],
+    output ddr3_ba[3],
+    output ddr3_ras_n,
+    output ddr3_cas_n,
+    output ddr3_we_n,
+    output ddr3_reset_n,
+    output ddr3_ck_p,
+    output ddr3_ck_n,
+    output ddr3_cke,
+    output ddr3_cs_n,
+    output ddr3_dm[2],
+    output ddr3_odt
+) {
+    // clock generator takes 100MHz in and creates 100MHz + 200MHz
+    clk_wiz_0 clk_wiz(.resetn(rst_n), .clk_in(clk))
+
+    // DDR3 Interface - connect inouts directly
+    mig_wrapper mig (
+        .ddr3_dq(ddr3_dq),
+        .ddr3_dqs_n(ddr3_dqs_n),
+        .ddr3_dqs_p(ddr3_dqs_p),
+        .sys_rst(!clk_wiz.locked), // reset when clk_wiz isn't locked
+        .sys_clk(clk_wiz.clk_100), // 100MHz clock
+        .clk_ref(clk_wiz.clk_200)  // 200MHz clock
+    )
+
+    sig rst = mig.sync_rst // use the reset signal from the mig core
+
+    always {
+        /* DDR3 Connections */
+        ddr3_addr = mig.ddr3_addr
+        ddr3_ba = mig.ddr3_ba
+        ddr3_ras_n = mig.ddr3_ras_n
+        ddr3_cas_n = mig.ddr3_cas_n
+        ddr3_we_n = mig.ddr3_we_n
+        ddr3_reset_n = mig.ddr3_reset_n
+        ddr3_ck_p = mig.ddr3_ck_p
+        ddr3_ck_n = mig.ddr3_ck_n
+        ddr3_cke = mig.ddr3_cke
+        ddr3_cs_n = mig.ddr3_cs_n
+        ddr3_dm = mig.ddr3_dm
+        ddr3_odt = mig.ddr3_odt
+
+        // default values
+        mig.mem_in.enable = 0
+        mig.mem_in.cmd = 3bx
+        mig.mem_in.addr = 28bx
+        mig.mem_in.wr_data = 128bx
+        mig.mem_in.wr_mask = 0
+        mig.mem_in.wr_enable = 0
+
+        led = 8h00              // turn LEDs off
+
+        usb_tx = usb_rx         // echo the serial data
+    }
+}

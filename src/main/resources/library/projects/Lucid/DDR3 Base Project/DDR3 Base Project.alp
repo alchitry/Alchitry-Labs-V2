@@ -1,0 +1,38 @@
+{
+    "template": {
+        "name": "DDR3 Base Project",
+        "description": "Minimum boilerplate project for using DDR3 on the Au or Au+",
+        "boards": ["Au", "Au+"],
+        "priority": 0,
+        "requiresMig": true
+    },
+    "project": {
+        "type": "V1.2",
+        "projectName": "DDR3 Base Project",
+        "board": "Alchitry Au",
+"sourceFiles": [
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/alchitry_top.luc"
+                },
+                "top": true
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Memory/mig_wrapper.luc"
+                }
+            }
+        ],
+        "constraintFiles": [
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Constraints/alchitry.acf"
+                }
+            }
+        ],
+        "ipCores": []
+    }
+}

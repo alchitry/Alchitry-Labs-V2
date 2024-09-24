@@ -15,7 +15,6 @@ import com.alchitry.labs2.project.files.ProjectFile
 import com.alchitry.labs2.project.library.VivadoIP
 import com.alchitry.labs2.project.removeFile
 import com.alchitry.labs2.ui.theme.AlchitryColors
-import com.alchitry.labs2.windows.LocalLabsState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -75,7 +74,6 @@ fun DeleteCoreDialog(
     scope: CoroutineScope,
     onClose: () -> Unit
 ) {
-    var running by LocalLabsState.current.runningJob
     AlchitryDialog(core != null, "Delete IP Core", onClose = onClose) {
         val spacedBy = Arrangement.spacedBy(10.dp)
         Column(
@@ -85,6 +83,7 @@ fun DeleteCoreDialog(
         ) {
             Text("Delete IP Core ${core?.name}?")
             Text("This cannot be undone!")
+            val running = Project.building
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = spacedBy) {
                 Spacer(Modifier.weight(1f))
                 Button(onClick = onClose, colors = AlchitryColors.current.cancelButton, enabled = !running) {
@@ -95,19 +94,18 @@ fun DeleteCoreDialog(
                 } else {
                     Button(
                         onClick = {
-                            running = true
                             scope.launch(Dispatchers.IO) {
-                                try {
-                                    onClose()
-                                    Project.current?.let { project ->
-                                        core?.let { core ->
-                                            VivadoIP.deleteCore(project, core)
+                                Project.withBuildLock {
+                                    try {
+                                        onClose()
+                                        Project.current?.let { project ->
+                                            core?.let { core ->
+                                                VivadoIP.deleteCore(project, core)
+                                            }
                                         }
+                                    } catch (e: IllegalStateException) {
+                                        Log.showError("Failed to delete file!", e)
                                     }
-                                } catch (e: IllegalStateException) {
-                                    Log.showError("Failed to delete file!", e)
-                                } finally {
-                                    running = false
                                 }
                             }
                         },
