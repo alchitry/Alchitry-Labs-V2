@@ -199,32 +199,6 @@ sealed class SimpleValue(
         return BitListValue(newBits, false)
     }
 
-    fun asVerilog(): String? {
-        if (!width.isDefined())
-            return null
-        val sb = StringBuilder()
-        sb.append(width.bitCount)
-        sb.append("'")
-        if (signed)
-            sb.append("s")
-        if (isNumber()) {
-            sb.append("h")
-            val bigInt = toBigInt()!!
-            if (bigInt.signum() < 0) {
-                sb.insert(0, "-")
-                sb.append(bigInt.toString(16).replace("-", ""))
-            } else {
-                sb.append(bigInt.toString(16))
-            }
-        } else {
-            sb.append("b")
-            bits.reversed().forEach {
-                sb.append(it.char)
-            }
-        }
-        return sb.toString()
-    }
-
     override fun toString() = buildString {
         if (signed)
             append("signed ")

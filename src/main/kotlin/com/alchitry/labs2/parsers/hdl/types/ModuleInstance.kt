@@ -17,7 +17,7 @@ class ModuleInstance(
     project: ProjectContext,
     override val parent: ModuleInstance?,
     override val module: Module,
-    override val paramAssignments: Map<String, DynamicExpr>,
+    override val paramAssignments: Map<String, ParamAssignment>,
     parameters: Map<String, Value>,
     val connections: Map<String, SignalOrSubSignal>,
     mode: ExprEvalMode = ExprEvalMode.Default
@@ -112,24 +112,6 @@ class ModuleInstance(
                     port.connectTo(sig, project)
                 }
             }
-    }
-
-
-    /**
-     * Generates a unique suffix to attach to this instance corresponding to the parameter set.
-     */
-    private fun generateSuffix(): String {
-        if (parameters.isEmpty())
-            return ""
-        var hash = 0
-        // sort the list to make it order independent
-        parameters.asIterable().sortedBy { it.key }.forEach { (name, signal) ->
-            hash += name.hashCode()
-            hash *= 31
-            hash += signal.initialValue.hashCode()
-            hash *= 31
-        }
-        return "_${hash.toUInt().toString(16)}"
     }
 
     fun getInternalSignal(name: String) = internal[name] ?: parameters[name]

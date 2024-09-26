@@ -39,6 +39,13 @@ data class ConstantParser(
         val exprCtx = ctx.expr() ?: return
         val expr = context.resolve(exprCtx)
         val value = expr?.value ?: UndefinedValue(UndefinedSimpleWidth())
+        val valueWidth = value.width
+        if (!valueWidth.isSimple() && !valueWidth.isResolvable()) {
+            context.reportError(
+                exprCtx,
+                "The width for constant \"$constName\" could not be resolved. Consider using \$resize() to define the width of expressions that use parameters."
+            )
+        }
         if (expr?.type?.fixed != true) {
             context.reportError(
                 exprCtx,

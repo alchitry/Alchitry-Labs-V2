@@ -279,7 +279,7 @@ class TypesParser(
         }
 
         val paramCtx = localParamConnections.union(extParamConnections).associate {
-            it.port to it.value
+            it.port to ParamAssignment(it.value, localParamConnections.contains(it))
         }
 
         extParamConnections.forEach {
@@ -347,6 +347,9 @@ class TypesParser(
             } catch (e: ConnectionException) {
                 val portContext = (localSignals + extSignals).keys.first { it.port == e.port }.portCtx
                 context.reportError(portContext, e.message)
+                return
+            } catch (e: IllegalStateException) {
+                context.reportError(ctx, e.message ?: "Failed to instantiate module!")
                 return
             }
         } else {

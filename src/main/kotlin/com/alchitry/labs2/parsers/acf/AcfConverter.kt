@@ -2,10 +2,7 @@ package com.alchitry.labs2.parsers.acf
 
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.acf.types.Constraint
-import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
-import com.alchitry.labs2.parsers.hdl.types.Signal
-import com.alchitry.labs2.parsers.hdl.types.SignalOrSubSignal
-import com.alchitry.labs2.parsers.hdl.types.SubSignal
+import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.ConstraintLang
@@ -18,10 +15,23 @@ data class NativeConstraint(
 )
 
 sealed interface AcfConverter {
+    private fun SignalSelection.toVerilogSelectors() = buildString {
+        this@toVerilogSelectors.forEach { selector ->
+            when (selector) {
+                is SignalSelector.Bits -> {
+                    check(selector.context is SelectionContext.Constant) { "Constraint selector is not constant!" }
+                    append("[${selector.range.first}]")
+                }
+
+                is SignalSelector.Struct -> append(".${selector.member}")
+            }
+        }
+    }
+
     val SignalOrSubSignal.fullPortName: String
         get() = when (this) {
             is Signal -> name
-            is SubSignal -> "${parent.name}[${flatSelectionData.offset}]"
+            is SubSignal -> "${parent.name}${selection.toVerilogSelectors()}"
         }
 
     suspend fun convert(

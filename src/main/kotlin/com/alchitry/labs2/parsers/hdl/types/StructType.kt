@@ -4,7 +4,8 @@ import com.alchitry.labs2.parsers.hdl.values.SignalWidth
 
 data class StructType(
     val name: String,
-    private val members: LinkedHashMap<String, StructMember> // linked required to keep the order of members
+    private val members: LinkedHashMap<String, StructMember>, // linked required to keep the order of members
+    val namespace: String?
 ) : Map<String, StructMember> by members {
     fun offsetOf(member: String): Int? {
         val keys = members.keys

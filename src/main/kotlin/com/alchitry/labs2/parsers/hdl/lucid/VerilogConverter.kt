@@ -25,7 +25,6 @@ class VerilogConverter(
 ) : LucidBaseListener() {
     val verilog = mutableMapOf<ParseTree, String>()
     private var tabCount: Int = 0
-    private val globals = mutableSetOf<Signal>()
 
     /**
      * Throws an [IllegalStateException] with the provided message and line/offset of the provided context.
@@ -41,7 +40,7 @@ class VerilogConverter(
     private fun StringBuilder.newLine(): StringBuilder {
         append("\n")
         for (i in 0..<tabCount)
-            append("  ")
+            append("    ")
         return this
     }
 
@@ -52,7 +51,11 @@ class VerilogConverter(
     private fun handleConstant(ctx: LucidParser.ExprContext): Boolean {
         val value = context.resolve(ctx) ?: return false
         if (value.type == ExprType.Constant) {
-            ctx.verilog = value.value.flatten().asVerilog() ?: error(ctx, "$value could not be converted to verilog!")
+            ctx.verilog = try {
+                value.value.toVerilog()
+            } catch (e: Exception) {
+                error(ctx, "$value could not be converted to verilog: ${e.message}")
+            }
             return true
         }
         return false
@@ -80,6 +83,18 @@ class VerilogConverter(
         )
     }
 
+    private fun SignalWidth.verilogArrayWidths(): String {
+        return when (this) {
+            is BitWidth -> ""
+            is DefinedArrayWidth -> "[${size - 1}:0]${next.verilogArrayWidths()}"
+            is DefinedSimpleWidth -> "[${size - 1}:0]"
+            is StructWidth -> ""
+            is ResolvableSimpleWidth<*> -> "[(${context.verilog})-1:0]"
+            is ResolvableArrayWidth<*> -> "[(${context.verilog})-1:0]${next.verilogArrayWidths()}"
+            is UndefinedWidth -> error("Undefined width during verilog conversion!")
+        }
+    }
+
     private fun StringBuilder.addParams(params: Collection<Parameter>) {
         if (params.isEmpty())
             return
@@ -93,7 +108,7 @@ class VerilogConverter(
             append(param.name)
             append(" = ")
             if (param.default != null) {
-                append(param.default.flatten().asVerilog())
+                append(param.default.toVerilog())
             } else {
                 append("0")
             }
@@ -112,18 +127,15 @@ class VerilogConverter(
         tabCount++
         ports.forEachIndexed { index, port ->
             newLine()
+            val type = port.width.firstStructType() ?: "logic"
             when (port.direction) {
-                SignalDirection.Read -> append("input ")
-                SignalDirection.Write -> append("output reg ")
-                SignalDirection.Both -> append("inout ")
+                SignalDirection.Read -> append("input $type ")
+                SignalDirection.Write -> append("output $type ")
+                SignalDirection.Both -> append("inout $type ")
             }
             if (port.signed)
                 append("signed ")
-            if (port.width.bitCount != 1) {
-                append("[")
-                append(port.width.verilogBitCount())
-                append("-1:0] ")
-            }
+            append(port.width.verilogArrayWidths().appendSpaceIfNotBlank())
             append(port.verilogName)
             if (index != ports.size - 1)
                 append(",")
@@ -141,14 +153,11 @@ class VerilogConverter(
             if (context.boundInouts.contains(port.name))
                 return@forEach
 
-            append("reg ")
+            val type = port.width.firstStructType() ?: "logic"
+            append("$type ")
             if (port.signed)
                 append("signed ")
-            if (port.width.bitCount != 1) {
-                append("[")
-                append(port.width.verilogBitCount())
-                append("-1:0] ")
-            }
+            append(port.width.verilogArrayWidths().appendSpaceIfNotBlank())
 
             val name = port.verilogName
             append("IO_")
@@ -169,7 +178,6 @@ class VerilogConverter(
 
     private fun StringBuilder.addConstants() {
         val constants = mutableListOf<Signal>().apply {
-            addAll(globals)
             addAll(context.constant.localConstants.values.filter { it.type == ExprType.Constant })
             context.enum.localEnumType.values.forEach {
                 addAll(it.memberSignals.values)
@@ -178,6 +186,13 @@ class VerilogConverter(
 
         context.constant.localConstants.filter { it.value.type == ExprType.Fixed }.forEach { (name, signal) ->
             append("localparam ")
+
+            if (!signal.width.isSimple()) {
+                append("logic ")
+                signal.width.firstStructType()?.appendSpaceIfNotBlank()?.let { append(it) }
+                append(signal.width.verilogArrayWidths().appendSpaceIfNotBlank())
+            }
+
             append(signal.verilogName)
             append(" = ")
             append(
@@ -191,9 +206,14 @@ class VerilogConverter(
         constants.forEach {
             check(it.type == ExprType.Constant) { "Constant value wasn't marked as constant!" }
             append("localparam ")
+            if (!it.width.isSimple()) {
+                append("logic ")
+                it.width.firstStructType()?.appendSpaceIfNotBlank()?.let { append(it) }
+                append(it.width.verilogArrayWidths().appendSpaceIfNotBlank())
+            }
             append(it.verilogName)
             append(" = ")
-            append(it.initialValue.flatten().asVerilog())
+            append(it.initialValue.toVerilog())
             append(";")
             newLine()
         }
@@ -201,14 +221,11 @@ class VerilogConverter(
 
     private fun StringBuilder.addDffs() {
         context.types.dffs.values.forEach { dff ->
-            append("reg ")
+            val type = dff.d.width.firstStructType() ?: "logic"
+            append("$type ")
             if (dff.signed)
                 append("signed ")
-            if (dff.d.width.bitCount != 1) {
-                append("[")
-                append(dff.d.width.verilogBitCount())
-                append("-1:0] ")
-            }
+            append(dff.d.width.verilogArrayWidths().appendSpaceIfNotBlank())
             append(dff.d.verilogName)
             append(", ")
             append(dff.q.verilogName)
@@ -224,21 +241,11 @@ class VerilogConverter(
                 context.blockParser.repeatSignals.values +
                 context.types.localSignals.flatMap { scope -> scope.value.map { it.value.signal } }).forEach { sig ->
             val dynamicExpr = context.types.signalDynamicExprs[sig]
-            if (dynamicExpr != null) {
-                append("wire ")
-            } else {
-                append("reg ")
-            }
+            val type = sig.width.firstStructType() ?: "logic"
+            append("$type ")
             if (sig.signed)
                 append("signed ")
-            if (sig.width.bitCount != 1) {
-                append("[")
-                append(sig.width.verilogBitCount())
-                if (sig.parent !is RepeatSignal) { // Ensure repeat signals are big enough to hold their max value + 1.
-                    append("-1")
-                }
-                append(":0] ")
-            }
+            append(sig.width.verilogArrayWidths().appendSpaceIfNotBlank())
             append(sig.verilogName)
             if (sig.parent is RepeatSignal) {
                 append(", R")
@@ -327,7 +334,7 @@ class VerilogConverter(
                 append(" = ")
                 val paramValue = instance.paramAssignments[name]
                 if (paramValue != null) {
-                    append(paramValue.expr.verilog)
+                    append(paramValue.dynamicExpr.expr.verilog)
                 } else {
                     append(getValue())
                 }
@@ -412,19 +419,12 @@ class VerilogConverter(
             parameterNameMap.keys.forEach { context.localSignals.remove(it) }
 
             instance.external.values.forEach { port ->
-                when (port.direction) {
-                    SignalDirection.Read -> append("wire ") // output
-                    SignalDirection.Write -> append("reg ") // input
-                    SignalDirection.Both -> error("Direct use of inout is not allowed!")
-                }
+                append(port.width.firstStructType() ?: "logic")
+                append(" ")
                 if (port.signed)
                     append("signed ")
 
-                if (port.width.bitCount != 1) {
-                    append("[")
-                    append(port.width.verilogBitCount())
-                    append("-1:0] ")
-                }
+                append(port.width.verilogArrayWidths().appendSpaceIfNotBlank())
 
                 append(port.verilogName)
 
@@ -440,12 +440,12 @@ class VerilogConverter(
                 instance.modules.first().connections.forEach { (port, connection) ->
                     if (connection is SubSignal) { // only happens when this is selected per instance
                         val sig = connection.getSignal()
-                        append("wire ")
+                        append(sig.width.firstStructType() ?: "logic")
+                        append(" ")
                         if (sig.signed)
                             append("signed ")
-                        append("[")
-                        append(sig.width.verilogBitCount())
-                        append("-1:0] M_")
+                        append(sig.width.verilogArrayWidths().appendSpaceIfNotBlank())
+                        append("M_")
                         append(instance.name)
                         append("_")
                         append(port)
@@ -456,8 +456,6 @@ class VerilogConverter(
                     }
                 }
             }
-
-            val dimensions = (instance as? ModuleInstanceArray)?.dimensions
 
             fun addInstModule(module: ModuleInstance, dim: List<String>?) {
                 append(module.module.name)
@@ -475,6 +473,8 @@ class VerilogConverter(
                         append(param.name)
                         append("(")
                         append(parameterNameMap[param.name]!!)
+                        if (instance.paramAssignments[param.name]?.local == true)
+                            dim?.forEach { append("[$it]") }
                         append(")")
                     }
 
@@ -486,10 +486,6 @@ class VerilogConverter(
                 }
 
                 append(module.name.sanitize())
-                dim?.forEach {
-                    append("_")
-                    append(it)
-                }
                 append(" (")
                 tabCount++
                 (module.connections + module.external).asIterable()
@@ -520,41 +516,8 @@ class VerilogConverter(
                             }
                         }
                         //append(signalOrSubSignal.verilogName)
-                        if (module.external.contains(portName) && dim != null && dimensions != null) {
-                            append("[")
-
-                            val bitCount = signalOrSubSignal.width.verilogBitCount()
-                            val singleBit = signalOrSubSignal.width.bitCount == 1
-                            dim.indices.forEach { idx ->
-                                if (idx != 0)
-                                    append(" + ")
-                                append("(")
-                                append(dim[idx])
-                                dimensions.subList(idx + 1, dimensions.size).forEachIndexed { index, dimension ->
-                                    append(" * (")
-                                    when (dimension) {
-                                        is ArraySize.Fixed -> append(dimension.size)
-                                        is ArraySize.Resolvable -> append(dimension.context.verilog)
-                                    }
-                                    append(")")
-                                }
-                                if (!singleBit) {
-                                    append(" * ")
-                                    append(bitCount)
-                                    append("")
-                                }
-                                append(")")
-                            }
-                            if (!singleBit) {
-                                append(" + ")
-                                append(bitCount)
-                                append("-1-:")
-                                append(bitCount)
-                            }
-                            append("]")
-                        }
-                        if (signalOrSubSignal is SubSignal) {
-                            append(signalOrSubSignal.toVerilog().selection)
+                        if (module.external.contains(portName) || signalOrSubSignal is SubSignal) {
+                            dim?.forEach { append("[$it]") }
                         }
                         append(")")
                     }
@@ -615,7 +578,6 @@ class VerilogConverter(
     }
 
     override fun enterModule(ctx: LucidParser.ModuleContext) {
-        globals.clear()
         tabCount++
     }
 
@@ -627,6 +589,9 @@ class VerilogConverter(
         ctx.verilog = buildString {
             tabCount--
             append(HEADER)
+            newLine()
+            append("import LucidGlobals::*;")
+            newLine()
             newLine()
             tabCount++
             append("module ")
@@ -736,106 +701,30 @@ class VerilogConverter(
         val selection: String
     )
 
-    private fun SignalWidth.verilogBitCount(): String {
-        return "(${
-            buildString {
-                if (bitCount != null) {
-                    append(bitCount)
-                    return@buildString
-                }
-
-                when (this@verilogBitCount) {
-                    is DefinedArrayWidth -> {
-                        append(size)
-                        append(" * ")
-                        append(next.verilogBitCount())
-                    }
-
-                    is DefinedSimpleWidth -> {
-                        append(size)
-                    }
-
-                    is StructWidth -> {
-                        type.values.forEachIndexed { index, member ->
-                            if (index != 0) {
-                                append(" + ")
-                            }
-                            append(member.width.verilogBitCount())
-                        }
-                    }
-
-                    is ResolvableSimpleWidth<*> -> {
-                        append(context.verilog)
-                    }
-
-                    is ResolvableArrayWidth<*> -> {
-                        append(context.verilog)
-                        append(" * ")
-                        append(next.verilogBitCount())
-                    }
-
-                    is UndefinedWidth -> error("Undefined width during verilog conversion!")
-                }
-            }
-        })"
-    }
-
     private fun SubSignal.toVerilog(): SubSignalData {
         var signed = getSignal().signed
         val selection = buildString {
             var currentWidth: SignalWidth? = parent.width
             checkNotNull(currentWidth) { "Signal width was not defined!" }
 
-            var selectedBitCount: String? = null
-
-            var first = true
-
-            if (selection.isNotEmpty())
-                append("[")
 
             for (selector in selection) {
-                if (!first)
-                    append("+")
-                else
-                    first = false
-
                 when (currentWidth) {
                     is DefinedArrayWidth, is DefinedSimpleWidth, is ResolvableWidth<*> -> {
                         val s = selector as? SignalSelector.Bits ?: error("Struct selector used on an array!")
 
-                        append("(")
+                        append("[")
                         when (s.context) {
-                            is SelectionContext.Constant -> append(s.range.first)
+                            is SelectionContext.Constant -> append("${s.range.last}:${s.range.first}")
                             is SelectionContext.Single -> append(s.context.bit.verilog)
-                            is SelectionContext.Fixed -> append(s.context.start.verilog)
-                            is SelectionContext.DownTo -> append("(${s.context.stop.verilog})-(${s.context.width.verilog}-1)")
-                            is SelectionContext.UpTo -> append(s.context.start.verilog)
+                            is SelectionContext.Fixed -> append("${s.context.stop.verilog}:${s.context.start.verilog}")
+                            is SelectionContext.DownTo -> append("${s.context.stop.verilog}-:${s.context.width.verilog}")
+                            is SelectionContext.UpTo -> append("${s.context.start.verilog}+:${s.context.width.verilog}")
                         }
-                        append(")")
-
-                        val elementSize = (currentWidth as? ArrayWidth)?.next?.verilogBitCount()
-
-                        // scale the offset by the size of each element
-                        if (elementSize != null && elementSize != "(1)") {
-                            append("*")
-                            append(elementSize)
-                        }
-
-                        val selectedWidth = when (s.context) {
-                            SelectionContext.Constant -> if (s.count > 1) "(${s.count})" else null
-                            is SelectionContext.DownTo -> s.context.width.verilog
-                            is SelectionContext.Fixed -> "(${s.context.stop.verilog})-(${s.context.start.verilog})+1"
-                            is SelectionContext.Single -> null
-                            is SelectionContext.UpTo -> s.context.width.verilog
-                        }
+                        append("]")
 
                         signed = false
-                        selectedBitCount = when {
-                            elementSize != null && selectedWidth != null -> "(($selectedWidth) * $elementSize)"
-                            elementSize != null -> elementSize
-                            selectedWidth != null -> "($selectedWidth)"
-                            else -> null
-                        }
+
                         currentWidth = if (currentWidth is ArrayWidth)
                             when (s.context) {
                                 is SelectionContext.Constant,
@@ -854,27 +743,14 @@ class VerilogConverter(
                         val type = currentWidth.type
                         val member = type[s.member] ?: error("Struct member could not be found!")
 
-                        append(type.offsetOf(s.member) ?: error("Struct member offset not well defined!"))
+                        append(".${member.name}")
 
                         signed = member.signed
                         currentWidth = member.width
-                        selectedBitCount = currentWidth.verilogBitCount()
                     }
 
                     is UndefinedWidth -> error("Undefined width during verilog conversion!")
                     null -> error("Too many selectors for the signal width!")
-                }
-            }
-
-            if (selection.isNotEmpty()) {
-                if (selectedBitCount != null) {
-                    append("+")
-                    append(selectedBitCount)
-                    append(" - 1 -:")
-                    append(selectedBitCount)
-                    append("]")
-                } else {
-                    append("]")
                 }
             }
         }
@@ -887,11 +763,6 @@ class VerilogConverter(
 
     private fun SignalOrSubSignal.toVerilog(write: Boolean): String {
         val baseSignal = getSignal()
-
-        // Keep track of globals that are read and indexed as we may need the full value for dynamic indexing
-        if (this is SubSignal && parent.parent is GlobalNamespace) {
-            globals.add(parent)
-        }
 
         val verilogName = verilogName
 
@@ -1479,5 +1350,123 @@ class VerilogConverter(
             */
         """.trimIndent()
 
+        fun globalsToVerilog(globals: Collection<GlobalNamespace>) = buildString {
+            var tabCount = 0
+
+            fun StringBuilder.newLine(): StringBuilder {
+                append("\n")
+                repeat(tabCount) {
+                    append("    ")
+                }
+                return this
+            }
+
+            fun SignalWidth.verilogArrayWidths(): String {
+                return when (this) {
+                    is BitWidth -> ""
+                    is DefinedArrayWidth -> "[${size - 1}:0]${next.verilogArrayWidths()}"
+                    is DefinedSimpleWidth -> "[${size - 1}:0]"
+                    is StructWidth -> ""
+                    is ResolvableWidth<*> -> error("Resolvable widths are not allowed in globals!")
+                    is UndefinedWidth -> error("Undefined width during verilog conversion!")
+                }
+            }
+            append(HEADER)
+            newLine()
+            append("package LucidGlobals;")
+            tabCount++
+            newLine()
+            newLine()
+
+            globals.forEach { global ->
+                val prefix = "G_${global.name}_"
+                global.constants.values.forEach { constant ->
+                    append("localparam ")
+                    constant.width.firstStructType()?.appendSpaceIfNotBlank()?.let { append(it) }
+                    append(constant.width.verilogArrayWidths().appendSpaceIfNotBlank())
+                    append(prefix)
+                    append(constant.name)
+                    append(" = ")
+                    append(constant.initialValue.toVerilog())
+                    append(";")
+                    newLine()
+                }
+
+                global.structs.values.forEach { struct ->
+                    append("typedef struct packed {")
+                    tabCount++
+                    struct.values.forEach { member ->
+                        newLine()
+                        append("logic ")
+                        member.width.firstStructType()?.appendSpaceIfNotBlank()?.let { append(it) }
+                        append(member.width.verilogArrayWidths().appendSpaceIfNotBlank())
+                        append(member.name)
+                        append(";")
+                    }
+                    tabCount--
+                    newLine()
+                    append("} ")
+                    append(prefix)
+                    append(struct.name)
+                    append(";")
+                    newLine()
+                }
+            }
+
+            tabCount--
+            newLine()
+            append("endpackage")
+
+        }
     }
 }
+
+private fun Value.toVerilog(): String {
+    return when (this) {
+        is ArrayValue -> "{${elements.asReversed().joinToString(", ") { it.toVerilog() }}}"
+        is SimpleValue -> buildString {
+            if (!width.isDefined())
+                error("Can't convert undefined width value to Verilog!")
+            append(width.bitCount)
+            append("'")
+            if (signed)
+                append("s")
+            if (isNumber()) {
+                append("h")
+                val bigInt = toBigInt()!!
+                if (bigInt.signum() < 0) {
+                    insert(0, "-")
+                    append(bigInt.toString(16).replace("-", ""))
+                } else {
+                    append(bigInt.toString(16))
+                }
+            } else {
+                append("b")
+                bits.reversed().forEach {
+                    append(it.char)
+                }
+            }
+        }
+
+        is StructValue -> "'{${type.values.joinToString(", ") { this[it.name]!!.toVerilog() }}}"
+        is UndefinedValue -> error("Can't convert undefined values to Verilog!")
+    }
+}
+
+private fun SignalWidth.firstStructType(): String? {
+    return when (this) {
+        is StructWidth -> buildString {
+            if (type.namespace != null) {
+                append("G_")
+                append(type.namespace)
+                append("_")
+            }
+            append(type.name)
+        }
+
+        is ArrayWidth -> next.firstStructType()
+        else -> null
+    }
+}
+
+private fun String.appendSpaceIfNotBlank(): String = if (isNotBlank()) "$this " else this

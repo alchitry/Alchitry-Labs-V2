@@ -16,12 +16,19 @@ data class StructParser(
     fun resolve(structTypeContext: StructTypeContext) = resolvedStructTypes[structTypeContext]
     fun resolve(structDecContext: StructDecContext) = structTypes[structDecContext]
 
+    private var namespace: String? = null
+
     override fun enterModule(ctx: ModuleContext) {
         localStructType.clear()
     }
 
     override fun enterGlobal(ctx: GlobalContext) {
         localStructType.clear()
+        namespace = ctx.name()?.text
+    }
+
+    override fun exitGlobal(ctx: GlobalContext) {
+        namespace = null
     }
 
     override fun exitStructDec(ctx: StructDecContext) {
@@ -64,7 +71,7 @@ data class StructParser(
             members[memberName] = StructMember(memberName, width, signed)
         }
 
-        structTypes[ctx] = StructType(name, members).also {
+        structTypes[ctx] = StructType(name, members, namespace).also {
             localStructType[name] = it
         }
     }

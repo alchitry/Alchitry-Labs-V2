@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers
 
 import com.alchitry.labs2.parsers.acf.types.Constraint
+import com.alchitry.labs2.parsers.hdl.lucid.VerilogConverter
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.notations.NotationManager
 import com.alchitry.labs2.project.Languages
@@ -73,6 +74,7 @@ class ProjectContext(val notationManager: NotationManager, val simulating: Boole
                 Languages.Verilog -> sourceFiles[module.sourceFile.name] = module.sourceFile.readText()
             }
         }
+        sourceFiles["lucid_globals"] = VerilogConverter.globalsToVerilog(globals.values)
         return sourceFiles
     }
 

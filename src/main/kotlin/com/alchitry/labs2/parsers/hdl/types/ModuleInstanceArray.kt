@@ -17,8 +17,13 @@ sealed interface ModuleInstanceOrArray : SignalParent, Snapshotable {
     val module: Module
     val internal: Map<String, Signal>
     val external: Map<String, Signal>
-    val paramAssignments: Map<String, DynamicExpr>
+    val paramAssignments: Map<String, ParamAssignment>
 }
+
+data class ParamAssignment(
+    val dynamicExpr: DynamicExpr,
+    val local: Boolean
+)
 
 class ModuleInstanceArray(
     override val name: String,
@@ -28,7 +33,7 @@ class ModuleInstanceArray(
     override val module: Module,
     val dimensions: List<ArraySize>,
     mode: ExprEvalMode,
-    override val paramAssignments: Map<String, DynamicExpr>,
+    override val paramAssignments: Map<String, ParamAssignment>,
     paramProvider: (List<Int>) -> Map<String, Value>,
     signalProvider: (List<Int>) -> Map<String, SignalOrSubSignal>
 ) : ModuleInstanceOrArray {
