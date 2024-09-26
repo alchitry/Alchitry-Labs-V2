@@ -24,7 +24,7 @@ class GlobalParserTests {
         val global = tester.project.resolveGlobal("MyGlobal")
 
         assertNotNull(global)
-        assertEquals(BitValue(Bit.B1, signed = false), global.constants["ONE"]?.value)
+        assertEquals(BitValue(Bit.B1, signed = false), global.constants["ONE"]?.read())
     }
 
     @Test
@@ -41,7 +41,7 @@ class GlobalParserTests {
         val global = tester.project.resolveGlobal("MyGlobal")
 
         assertNotNull(global)
-        assertEquals(BitListValue("10", 2, signed = false), global.constants["TWO"]?.value)
+        assertEquals(BitListValue("10", 2, signed = false), global.constants["TWO"]?.read())
     }
 
     @Test
@@ -67,7 +67,8 @@ class GlobalParserTests {
                     "r" to StructMember("r", BitListWidth(8), false),
                     "g" to StructMember("g", BitListWidth(7), false),
                     "b" to StructMember("b", BitListWidth(6), false),
-                )
+                ),
+                "MyGlobal"
             ),
             global.structs["rgb"]
         )
@@ -97,7 +98,8 @@ class GlobalParserTests {
                 "r" to StructMember("r", BitListWidth(8), false),
                 "g" to StructMember("g", BitListWidth(8), false),
                 "b" to StructMember("b", BitListWidth(8), false),
-            )
+            ),
+            "MyGlobal"
         )
 
         val value = StructValue(
@@ -109,7 +111,7 @@ class GlobalParserTests {
             )
         )
 
-        assertEquals(value, global.constants["BLUE"]?.value)
+        assertEquals(value, global.constants["BLUE"]?.read())
     }
 
     @Test
@@ -138,7 +140,8 @@ class GlobalParserTests {
                 "r" to StructMember("r", BitListWidth(8), false),
                 "g" to StructMember("g", BitListWidth(7), false),
                 "b" to StructMember("b", BitListWidth(6), false),
-            )
+            ),
+            "MyGlobal"
         )
 
 
@@ -148,7 +151,8 @@ class GlobalParserTests {
                 linkedMapOf(
                     "color" to StructMember("color", StructWidth(rgbStruct), false),
                     "type" to StructMember("type", BitListWidth(8), false)
-                )
+                ),
+                "MyGlobal"
             ),
             global.structs["my_struct"]
         )

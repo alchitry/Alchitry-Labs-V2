@@ -243,7 +243,8 @@ internal class TypesParserTests {
                 "a" to StructMember("a", BitWidth, false),
                 "b" to StructMember("b", DefinedArrayWidth(2, BitListWidth(3)), false),
                 "c" to StructMember("c", BitListWidth(4), false)
-            )
+            ),
+            null
         )
 
         val dff = tester.context.types.resolve(tree, "testing")
@@ -273,7 +274,8 @@ internal class TypesParserTests {
                 "a" to StructMember("a", BitWidth, false),
                 "b" to StructMember("b", DefinedArrayWidth(2, BitListWidth(3)), false),
                 "c" to StructMember("c", BitListWidth(4), false)
-            )
+            ),
+            null
         )
         val width = DefinedArrayWidth(6, StructWidth(struct))
 

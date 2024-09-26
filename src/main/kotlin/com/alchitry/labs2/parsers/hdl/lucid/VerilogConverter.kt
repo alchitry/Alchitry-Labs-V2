@@ -1421,7 +1421,7 @@ class VerilogConverter(
     }
 }
 
-private fun Value.toVerilog(): String {
+fun Value.toVerilog(): String {
     return when (this) {
         is ArrayValue -> "{${elements.asReversed().joinToString(", ") { it.toVerilog() }}}"
         is SimpleValue -> buildString {

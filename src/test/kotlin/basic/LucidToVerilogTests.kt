@@ -1,6 +1,7 @@
 package basic
 
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
+import com.alchitry.labs2.parsers.hdl.lucid.toVerilog
 import com.alchitry.labs2.parsers.hdl.values.Bit
 import com.alchitry.labs2.parsers.hdl.values.BitListValue
 import com.alchitry.labs2.project.library.ComponentLibrary
@@ -15,15 +16,15 @@ internal class LucidToVerilogTests {
     fun simpleValue() {
         assertEquals(
             "4'ha",
-            BitListValue(BigInteger.valueOf(10), signed = false).asVerilog()
+            BitListValue(BigInteger.valueOf(10), signed = false).toVerilog()
         )
         assertEquals(
             "5'sha",
-            BitListValue(BigInteger.valueOf(10), signed = true).asVerilog()
+            BitListValue(BigInteger.valueOf(10), signed = true).toVerilog()
         )
         assertEquals(
             "4'b1x01",
-            BitListValue(listOf(Bit.B1, Bit.B0, Bit.Bx, Bit.B1), signed = false).asVerilog()
+            BitListValue(listOf(Bit.B1, Bit.B0, Bit.Bx, Bit.B1), signed = false).toVerilog()
         )
     }
 

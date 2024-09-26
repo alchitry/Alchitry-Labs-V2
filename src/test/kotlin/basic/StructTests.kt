@@ -24,7 +24,8 @@ class StructTests {
                 "a" to StructMember("a", BitWidth, false),
                 "b" to StructMember("b", DefinedArrayWidth(2, BitListWidth(3)), false),
                 "c" to StructMember("c", BitListWidth(4), false)
-            )
+            ),
+            null
         )
 
         assertEquals(expected, tester.context.resolve(ctx))
@@ -37,7 +38,8 @@ class StructTests {
                 "a" to StructMember("a", BitWidth, false),
                 "b" to StructMember("b", DefinedArrayWidth(2, BitListWidth(3)), false),
                 "c" to StructMember("c", BitListWidth(4), false)
-            )
+            ),
+            null
         )
 
         assertEquals(0, struct.offsetOf("a"))
