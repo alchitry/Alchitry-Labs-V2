@@ -11,8 +11,10 @@ import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstanceArray
 import com.alchitry.labs2.parsers.hdl.verilog.context.VerilogModuleTypeContext
 import com.alchitry.labs2.parsers.notations.NotationManager
+import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.Project
+import com.alchitry.labs2.project.builders.ProjectBuilder
 import com.alchitry.labs2.project.files.SourceFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -172,7 +174,10 @@ class ProjectTester(vararg val files: SourceFile) {
         }
     }
 
-    suspend fun getVerilog(allowWarnings: Boolean = false): Map<String, String> {
+    suspend fun getVerilog(
+        allowWarnings: Boolean = false,
+        targetTool: ProjectBuilder = Board.AlchitryAu.projectBuilder
+    ): Map<String, String> {
         val topInstance = fullParse()
         if (allowWarnings) {
             assertNoErrors()
@@ -192,7 +197,7 @@ class ProjectTester(vararg val files: SourceFile) {
         add(topInstance)
         return usedModules.mapValues {
             assert(project.notationManager.hasNoErrors) { project.notationManager.getReport() }
-            it.value.module.convertToVerilog(project) ?: error("Missing verilog for ${it.key}")
+            it.value.module.convertToVerilog(project, targetTool) ?: error("Missing verilog for ${it.key}")
         }.also { assert(project.notationManager.hasNoErrors) { project.notationManager.getReport() } }
     }
 

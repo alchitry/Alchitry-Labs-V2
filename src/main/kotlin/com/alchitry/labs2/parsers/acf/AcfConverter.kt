@@ -34,6 +34,12 @@ sealed interface AcfConverter {
             is SubSignal -> "${parent.name}${selection.toVerilogSelectors()}"
         }
 
+    val SignalOrSubSignal.flatFullPortName: String
+        get() = when (this) {
+            is Signal -> name
+            is SubSignal -> "${parent.name}[${flatSelectionData.offset}]"
+        }
+
     suspend fun convert(
         context: ProjectContext,
         board: Board,

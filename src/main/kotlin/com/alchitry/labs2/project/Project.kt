@@ -313,7 +313,7 @@ data class Project(
         val topModule = context.top ?: return@withContext false
 
         val sourceFiles = try {
-            context.convertToVerilog()
+            context.convertToVerilog(data.board.projectBuilder)
         } catch (e: Exception) {
             Log.printlnError("Failed to convert source files to Verilog. This should be considered a bug!", e)
             Log.print(context.notationManager.getReport())
@@ -534,7 +534,7 @@ data class Project(
             val topModuleInstance =
                 try {
                     ModuleInstance(
-                        "alchitryTop",
+                        "alchitry_top",
                         projectContext,
                         null,
                         topModule,

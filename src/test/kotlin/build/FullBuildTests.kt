@@ -60,16 +60,4 @@ class FullBuildTests {
             Settings.useIceCube = default
         }
     }
-
-    @Test
-    fun buildAllCuProjects() {
-        buildAllCuProjectsWithYosys()
-        buildAllCuProjectsWithIceCube()
-    }
-
-    @Test
-    fun buildAllExampleProjects() {
-        buildAllAuProjects()
-        buildAllCuProjects()
-    }
 }

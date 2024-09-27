@@ -13,7 +13,7 @@ data object LatticeConverter : AcfConverter {
     ): List<NativeConstraint> {
         val sdc = buildString {
             constraints.mapNotNull { it as? ClockConstraint }.forEachIndexed { index, clock ->
-                val portName = clock.port.fullPortName
+                val portName = clock.port.flatFullPortName
                 append("# ")
                 append(portName)
                 append(" => ")
@@ -36,7 +36,7 @@ data object LatticeConverter : AcfConverter {
         val pcf = buildString {
             constraints.forEach { constraint ->
                 append("set_io ")
-                append(constraint.port.fullPortName)
+                append(constraint.port.flatFullPortName)
                 append(" ")
                 append(constraint.pin.fpgaPin)
                 appendLine()

@@ -8,6 +8,8 @@ import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.ExprType
+import com.alchitry.labs2.parsers.hdl.lucid.BasicVerilogConverter
+import com.alchitry.labs2.parsers.hdl.lucid.SystemVerilogConverter
 import com.alchitry.labs2.parsers.hdl.lucid.VerilogConverter
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.*
 import com.alchitry.labs2.parsers.hdl.types.*
@@ -16,6 +18,8 @@ import com.alchitry.labs2.parsers.hdl.values.Bit
 import com.alchitry.labs2.parsers.hdl.values.Value
 import com.alchitry.labs2.parsers.notations.ErrorListener
 import com.alchitry.labs2.parsers.notations.NotationCollector
+import com.alchitry.labs2.project.builders.IceStormBuilder
+import com.alchitry.labs2.project.builders.ProjectBuilder
 import com.alchitry.labs2.project.files.SourceFile
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.RuleContext
@@ -94,61 +98,59 @@ class LucidBlockContext(
     val constant = constant ?: ConstantParser(this)
     val blockParser = blockParser ?: BlockParser(this)
     val signalDriver = signalDriver ?: SignalDriverParser(this)
-    private val verilogConverter = VerilogConverter(this)
     private val pruner = LucidPruner(this)
+    var converter: VerilogConverter? = null
 
-    private val listenerMap = ParseStage.entries.associateWith {
-        when (it) {
-            ParseStage.ModuleInternals -> listOf(
-                this.expr,
-                this.bitSelection,
-                this.struct,
-                this.enum,
-                this.constant,
-                this.types,
-                this.blockParser,
-                this.signal
-            )
+    private fun listeners() = when (stage) {
+        ParseStage.ModuleInternals -> listOf(
+            this.expr,
+            this.bitSelection,
+            this.struct,
+            this.enum,
+            this.constant,
+            this.types,
+            this.blockParser,
+            this.signal
+        )
 
-            ParseStage.ModuleExpr -> listOf(
-                this.expr,
-            )
+        ParseStage.ModuleExpr -> listOf(
+            this.expr,
+        )
 
-            ParseStage.Drivers -> listOf(
-                this.expr,
-                this.bitSelection,
-                this.signal,
-                this.signalDriver
-            )
+        ParseStage.Drivers -> listOf(
+            this.expr,
+            this.bitSelection,
+            this.signal,
+            this.signalDriver
+        )
 
-            ParseStage.Evaluation -> listOf(
-                this.expr,
-                this.bitSelection,
-                this.signal,
-                this.blockEvaluator
-            )
+        ParseStage.Evaluation -> listOf(
+            this.expr,
+            this.bitSelection,
+            this.signal,
+            this.blockEvaluator
+        )
 
-            ParseStage.ErrorCheck -> listOf(
-                this.expr,
-                this.bitSelection,
-                this.struct,
-                this.enum,
-                this.constant,
-                this.signal,
-                this.types,
-                this.blockParser
-            )
+        ParseStage.ErrorCheck -> listOf(
+            this.expr,
+            this.bitSelection,
+            this.struct,
+            this.enum,
+            this.constant,
+            this.signal,
+            this.types,
+            this.blockParser
+        )
 
-            ParseStage.Convert -> listOf(
-                this.expr,
-                this.signal,
-                this.verilogConverter
-            )
+        ParseStage.Convert -> listOf(
+            this.expr,
+            this.signal,
+            this.converter ?: error("Converter must be set for stage $stage!")
+        )
 
-            ParseStage.Prune -> listOf(
-                this.pruner
-            )
-        }
+        ParseStage.Prune -> listOf(
+            this.pruner
+        )
     }
 
     fun withEvalContext(evalContext: Evaluable, name: String) = LucidBlockContext(
@@ -209,7 +211,7 @@ class LucidBlockContext(
     }
 
     suspend fun walk(t: ParseTree, ignoreSkip: Boolean = stage != ParseStage.Evaluation) =
-        ParseTreeMultiWalker.walk(listenerMap[stage]!!, t, stage.filter, ignoreSkip)
+        ParseTreeMultiWalker.walk(listeners(), t, stage.filter, ignoreSkip)
 
     suspend fun checkParameters(errorListener: ErrorListener = notationCollector): Boolean {
         val instance = (instance as? ModuleInstance)
@@ -232,12 +234,13 @@ class LucidBlockContext(
         return true
     }
 
-    suspend fun convertToVerilog(): String? {
+    suspend fun convertToVerilog(targetTool: ProjectBuilder): String? {
         val instance = (instance as? ModuleInstance)
             ?: error("convertToVerilog() can only be called on contexts with a ModuleInstance!")
         stage = ParseStage.Convert
+        converter = if (targetTool is IceStormBuilder) BasicVerilogConverter(this) else SystemVerilogConverter(this)
         walk(instance.moduleContext)
-        return verilogConverter.verilog[instance.moduleContext]
+        return converter?.verilog?.get(instance.moduleContext)
     }
 
     override fun resolve(exprCtx: ExprContext) = expr.resolve(exprCtx)
