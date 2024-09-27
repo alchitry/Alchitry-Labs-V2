@@ -107,7 +107,7 @@ data object IceStormBuilder : ProjectBuilder() {
         )
 
         Log.println("Starting nextpnr...", AlchitryColors.current.Info)
-        val nextpnrStatus = runProcess(nextpnrCmd, this, nextpnrEnv, errorsRed = false)
+        val nextpnrStatus = runProcess(nextpnrCmd, this, env = nextpnrEnv, errorsRed = false)
 
         if (nextpnrStatus != 0) {
             Log.printlnError("Nextpnr exited with status: $nextpnrStatus")

@@ -11,6 +11,8 @@ import java.io.InputStreamReader
 import java.nio.CharBuffer
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.pathString
+import kotlin.io.path.relativeTo
 
 sealed class ProjectBuilder {
     abstract suspend fun buildProject(
@@ -26,6 +28,14 @@ sealed class ProjectBuilder {
 
     fun getSanitizedPath(f: Path): String {
         return getSanitizedPath(f.absolutePathString())
+    }
+
+    fun getRelativeSanitizedPath(f: File, project: Project): String {
+        return "./${getSanitizedPath(f.relativeTo(project.buildDirectory.toFile()).path)}"
+    }
+
+    fun getRelativeSanitizedPath(f: Path, project: Project): String {
+        return "./${getSanitizedPath(f.relativeTo(project.buildDirectory).pathString)}"
     }
 
     fun getSanitizedPath(f: String): String {
@@ -77,12 +87,14 @@ sealed class ProjectBuilder {
         suspend fun runProcess(
             cmd: List<String>,
             scope: CoroutineScope,
+            directory: File? = null,
             env: Map<String, String>? = null,
             errorsRed: Boolean = true
         ): Int? {
             val builder = ProcessBuilder(cmd)
             if (env != null)
                 builder.environment().putAll(env)
+            directory?.let { builder.directory(it) }
             val process = try {
                 withContext(Dispatchers.IO) {
                     builder.start()

@@ -40,7 +40,7 @@ data object IceCubeBuilder : ProjectBuilder() {
 
         val synProjectFile = project.buildDirectory.resolve(SYN_PROJECT_FILE).toFile()
         synProjectFile.bufferedWriter().use {
-            it.write(generateProjectFile(topModuleName, sourceFiles, constraintFiles))
+            it.write(generateProjectFile(project, topModuleName, sourceFiles, constraintFiles))
         }
 
         val tclScript = project.buildDirectory.resolve(TCL_SCRIPT).toFile()
@@ -59,7 +59,7 @@ data object IceCubeBuilder : ProjectBuilder() {
         cmd.add(bashScript.absolutePath)
 
         Log.println("Starting iCEcube2...", AlchitryColors.current.Info)
-        runProcess(cmd, this)
+        runProcess(cmd, this, directory = project.buildDirectory.toFile())
         Log.println("iCEcube2 exited.", AlchitryColors.current.Info)
         Log.println("")
 
@@ -118,13 +118,13 @@ data object IceCubeBuilder : ProjectBuilder() {
             appendLine()
             appendLine("set device iCE40HX8K-CB132")
             append("set top_module ").appendLine(topModuleName)
-            append("set proj_dir \"").append(getSanitizedPath(project.buildDirectory)).appendLine("\"")
+            append("set proj_dir \"").append(".").appendLine("\"")
             append("set output_dir \"").append(IMP_DIR).appendLine("\"")
             append("set edif_file \"").append(topModuleName).appendLine("\"")
             append("set tool_options \":edifparser -y \\\"")
             constraintFiles.forEach { file ->
                 if (file.extension == "pcf")
-                    append(getSanitizedPath(file)).append(" ")
+                    append(getRelativeSanitizedPath(file, project)).append(" ")
             }
             appendLine("\\\"\"")
             appendLine("set sbt_root \$::env(SBT_DIR)")
@@ -135,6 +135,7 @@ data object IceCubeBuilder : ProjectBuilder() {
         }
 
     private fun generateProjectFile(
+        project: Project,
         topModuleName: String,
         sourceFiles: List<File>,
         constraintFiles: List<File>
@@ -143,13 +144,13 @@ data object IceCubeBuilder : ProjectBuilder() {
             appendLine("#project files")
             sourceFiles.asReversed().forEach { file -> // reversed as the tools look for the top module last...
                 append("add_file -verilog -lib work \"")
-                append(getSanitizedPath(file))
+                append(getRelativeSanitizedPath(file, project))
                 appendLine("\"")
             }
             constraintFiles.forEach { file ->
                 if (file.extension == "sdc") {
                     append("add_file -constraint -lib work \"")
-                    append(getSanitizedPath(file))
+                    append(getRelativeSanitizedPath(file, project))
                     appendLine("\"")
                 }
             }
