@@ -77,6 +77,7 @@ object Locations {
             return path
         }
 
-    val iceCubeLicense: File? =
-        Settings.iceCubeLicense?.let { File(it).let { file -> if (file.exists()) file else null } }
+    val iceCubeLicense: File?
+        get() =
+            Settings.iceCubeLicense?.let { File(it).let { file -> if (file.exists()) file else null } }
 }
