@@ -7,7 +7,6 @@ import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import kotlinx.coroutines.coroutineScope
 import java.io.File
-import kotlin.io.path.absolutePathString
 
 data object IceCubeBuilder : ProjectBuilder() {
     private val IMP_DIR = "alchitry_imp"
@@ -48,18 +47,25 @@ data object IceCubeBuilder : ProjectBuilder() {
             it.write(generateTclScript(project, topModuleName, constraintFiles))
         }
 
-        val bashScript = project.buildDirectory.resolve(if (Env.isWindows) "build.cmd" else "build.sh").toFile()
-        bashScript.bufferedWriter().use {
-            it.write(generateBashScript(project, iceCube, iceCubeLicense))
-        }
+        val synpwrapDir = iceCube.resolve("sbt_backend/bin/${if (Env.isWindows) "win32" else "linux"}/opt/synpwrap")
+        val envVars = getEnvVars(iceCube, iceCubeLicense, synpwrapDir)
 
-        val cmd = mutableListOf<String>()
-        if (Env.isLinux)
-            cmd.add("bash")
-        cmd.add(bashScript.absolutePath)
+        val synCmd = mutableListOf<String>()
+        val extension = when (Env.os) {
+            Env.OS.Windows -> ".exe"
+            Env.OS.Linux, Env.OS.MacOS, Env.OS.Unknown -> ""
+        }
+        synCmd.add(synpwrapDir.resolve("synpwrap$extension").absolutePath)
+        synCmd.add("-prj")
+        synCmd.add(synProjectFile.absolutePath)
+
+        val tclCmd = mutableListOf<String>()
+        tclCmd.add(Locations.getToolNamed("tclkit-8.5.17").absolutePath)
+        tclCmd.add(tclScript.absolutePath)
 
         Log.println("Starting iCEcube2...", AlchitryColors.current.Info)
-        runProcess(cmd, this, directory = project.buildDirectory.toFile())
+        runProcess(synCmd, this, env = envVars, directory = project.buildDirectory.toFile())
+        runProcess(tclCmd, this, env = envVars, directory = project.buildDirectory.toFile())
         Log.println("iCEcube2 exited.", AlchitryColors.current.Info)
         Log.println("")
 
@@ -77,39 +83,16 @@ data object IceCubeBuilder : ProjectBuilder() {
         }
     }
 
-    private fun generateBashScript(project: Project, iceCube: File, license: File): String = buildString {
-        val export = when (Env.os) {
-            Env.OS.Windows -> "SET"
-            Env.OS.Linux -> "export"
-            else -> error("Unsupported OS: ${Env.os}")
-        }
-
-        val synpwrapDir = iceCube.resolve("sbt_backend/bin/${if (Env.isWindows) "win32" else "linux"}/opt/synpwrap")
-        val extension = when (Env.os) {
-            Env.OS.Windows -> ".exe"
-            Env.OS.Linux, Env.OS.MacOS, Env.OS.Unknown -> ""
-        }
+    private fun getEnvVars(iceCube: File, license: File, synpwrapDir: File): Map<String, String> {
+        val env = mutableMapOf<String, String>()
+        env["LM_LICENSE_FILE"] = license.absolutePath
+        env["SYNPLIFY_PATH"] = iceCube.resolve("synpbase").absolutePath
+        env["SBT_DIR"] = iceCube.resolve("sbt_backend").absolutePath
         if (Env.isLinux) {
-            appendLine("#!/bin/bash")
-            append(export).append(" LD_LIBRARY_PATH=")
-                .append(synpwrapDir.absolutePath)
-                .appendLine(":\$LD_LIBRARY_PATH")
+            env["LD_LIBRARY_PATH"] =
+                "${synpwrapDir.absolutePath}${System.getenv("LD_LIBRARY_PATH")?.let { ":$it" } ?: ""}"
         }
-
-        append(export).append(" LM_LICENSE_FILE=").appendLine(license.absolutePath)
-        append(export).append(" SYNPLIFY_PATH=").appendLine(iceCube.resolve("synpbase").absolutePath)
-        append(export).append(" SBT_DIR=").appendLine(iceCube.resolve("sbt_backend").absolutePath)
-
-        append("\"")
-        append(synpwrapDir.resolve("synpwrap$extension").absolutePath).append("\" -prj \"")
-            .append(project.buildDirectory.resolve(SYN_PROJECT_FILE).absolutePathString())
-            .appendLine("\"")
-
-        val tclKit = Locations.getToolNamed("tclkit-8.5.17").absolutePath
-
-        append("\"").append(tclKit).append("\" \"")
-            .append(project.buildDirectory.resolve(TCL_SCRIPT).absolutePathString())
-            .appendLine("\"")
+        return env
     }
 
     private fun generateTclScript(project: Project, topModuleName: String, constraintFiles: List<File>): String =
