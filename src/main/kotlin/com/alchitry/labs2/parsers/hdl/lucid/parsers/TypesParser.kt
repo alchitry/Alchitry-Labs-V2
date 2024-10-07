@@ -279,6 +279,13 @@ class TypesParser(
         }
 
         val paramCtx = localParamConnections.union(extParamConnections).associate {
+            val width = it.value.value.width
+            if (!width.isResolvable() && !width.isSimple()) {
+                context.reportError(
+                    it.value.expr,
+                    "The width for parameter \"${it.port}\" could not be resolved. Consider using \$resize() to define the width of parameters used in expressions."
+                )
+            }
             it.port to ParamAssignment(it.value, localParamConnections.contains(it))
         }
 
@@ -290,6 +297,7 @@ class TypesParser(
                 it.value.value.width
             )
         }
+
 
         val instance = if (ctx.arraySize().isEmpty()) {
             localParamConnections.forEach {

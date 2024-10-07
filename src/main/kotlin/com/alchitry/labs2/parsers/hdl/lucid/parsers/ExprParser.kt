@@ -820,7 +820,7 @@ class ExprParser(
                 val value = valArgs[0]
                 val dimArgs = valArgs.subList(1, valArgs.size)
                 if (!value.width.isSimple()) {
-                    context.reportError(ctx.functionExpr(0) ?: ctx, ErrorStrings.BUILD_MULTI_DIM)
+                    context.reportError(ctx.functionExpr(0) ?: ctx, "Only single dimensional arrays can be built")
                     return
                 }
                 for (i in 1 until valArgs.size) {

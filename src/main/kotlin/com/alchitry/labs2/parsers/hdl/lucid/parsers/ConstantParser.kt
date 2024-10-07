@@ -43,7 +43,7 @@ data class ConstantParser(
         if (!valueWidth.isSimple() && !valueWidth.isResolvable()) {
             context.reportError(
                 exprCtx,
-                "The width for constant \"$constName\" could not be resolved. Consider using \$resize() to define the width of expressions that use parameters."
+                "The width for constant \"$constName\" could not be resolved. Consider using \$resize() to define the width of parameters used in expression."
             )
         }
         if (expr?.type?.fixed != true) {

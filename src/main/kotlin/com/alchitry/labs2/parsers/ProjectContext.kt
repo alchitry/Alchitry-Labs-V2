@@ -1,5 +1,6 @@
 package com.alchitry.labs2.parsers
 
+import com.alchitry.labs2.Log
 import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.hdl.lucid.SystemVerilogConverter
 import com.alchitry.labs2.parsers.hdl.types.*
@@ -64,15 +65,20 @@ class ProjectContext(val notationManager: NotationManager, val simulating: Boole
     suspend fun convertToVerilog(targetTool: ProjectBuilder): Map<String, String?> {
         val sourceFiles = mutableMapOf<String, String?>()
         modules.values.forEach { module ->
-            // skip IP core files
-            if ((module.sourceFile.file as? FileProvider.DiskFile)?.path?.startsWith("cores") == true)
-                return@forEach
+            try {
+                // skip IP core files
+                if ((module.sourceFile.file as? FileProvider.DiskFile)?.path?.startsWith("cores") == true)
+                    return@forEach
 
-            when (module.sourceFile.language) {
-                Languages.Lucid -> sourceFiles[module.name] =
-                    module.convertToVerilog(this, targetTool) ?: error("Missing verilog for ${module.name}")
+                when (module.sourceFile.language) {
+                    Languages.Lucid -> sourceFiles[module.name] =
+                        module.convertToVerilog(this, targetTool) ?: error("Missing verilog for ${module.name}")
 
-                Languages.Verilog -> sourceFiles[module.sourceFile.name] = module.sourceFile.readText()
+                    Languages.Verilog -> sourceFiles[module.sourceFile.name] = module.sourceFile.readText()
+                }
+            } catch (e: Exception) {
+                Log.printlnError("Failed to convert module \"${module.name}\" to Verilog!")
+                throw e
             }
         }
         sourceFiles["lucid_globals"] = SystemVerilogConverter.globalsToVerilog(globals.values)
