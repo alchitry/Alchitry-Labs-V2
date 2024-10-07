@@ -258,7 +258,7 @@ data class SignalDriverParser(
     override fun exitRepeatStat(ctx: RepeatStatContext) {
         val repeatBlock = context.blockParser.resolveRepeatBlock(ctx) ?: return
         val block = ctx.repeatBlock()?.block() ?: return
-        val signal = if (repeatBlock.signal_hidden) null else repeatBlock.createSignal()
+        val signal = if (repeatBlock.signalHidden) null else repeatBlock.createSignal()
 
         startBlock()
 

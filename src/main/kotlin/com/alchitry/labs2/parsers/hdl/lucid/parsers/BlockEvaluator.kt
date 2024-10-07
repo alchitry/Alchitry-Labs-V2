@@ -108,7 +108,7 @@ data class BlockEvaluator(
 
     override suspend fun exitRepeatStat(ctx: RepeatStatContext) {
         val repeatBlock = context.blockParser.resolveRepeatBlock(ctx) ?: return
-        val signal = if (repeatBlock.signal_hidden) null else repeatBlock.createSignal()
+        val signal = if (repeatBlock.signalHidden) null else repeatBlock.createSignal()
 
         signal?.let { context.localSignals[signal.name] = signal }
 

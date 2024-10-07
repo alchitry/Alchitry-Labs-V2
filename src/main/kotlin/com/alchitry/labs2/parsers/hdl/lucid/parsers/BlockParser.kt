@@ -8,6 +8,7 @@ import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.types.Function
 import com.alchitry.labs2.parsers.hdl.values.*
+import java.math.BigInteger
 
 /**
  * The job of the BlockParser is to parse out always blocks and check them for errors.
@@ -260,7 +261,7 @@ data class BlockParser(
             context,
             hiddenSignalName,
             sigName == null,
-            exprCtx[0],
+            exprCtx.getOrNull(0) ?: return, // syntax error
             exprCtx.getOrNull(1),
             exprCtx.getOrNull(2),
             repCtx
@@ -327,7 +328,7 @@ data class BlockParser(
 data class RepeatBlock(
     val context: LucidBlockContext,
     val signal: String,
-    val signal_hidden: Boolean,
+    val signalHidden: Boolean,
     val countExprCtx: ExprContext,
     val startExprCtx: ExprContext?,
     val stepExprCtx: ExprContext?,
@@ -350,14 +351,26 @@ data class RepeatBlock(
     }
 
     fun createSignal(): Signal {
-        return RepeatSignal(signal, BitListValue(start, minBits, false), repeatStatCtx).signal
+        return RepeatSignal(signal, BitListValue(start, minBits, false), repeatStatCtx, this).signal
     }
 
+    /**
+     * The minimum number of bits to use for the loop value.
+     */
     val minBits: Int
         get() = when (countExpr?.type) {
             ExprType.Constant -> start.toBigInteger().minBits()
                 .coerceAtLeast((start + step * (count - 1)).toBigInteger().minBits())
 
+            else -> 32 // TODO: attempt to evaluate proper size when count isn't constant
+        }
+
+    /**
+     * The minimum number of bits to use as the Verilog index variable.
+     */
+    val minIndexBits: Int
+        get() = when (countExpr?.type) {
+            ExprType.Constant -> count.toBigInteger().plus(BigInteger.ONE).minBits()
             else -> 32 // TODO: attempt to evaluate proper size when count isn't constant
         }
 }

@@ -258,13 +258,14 @@ class SystemVerilogConverter(
             }
 
             append(";")
-
-            if (sig.parent is RepeatSignal) {
+            val parent = sig.parent
+            if (parent is RepeatSignal) {
                 newLine()
                 append("$type ")
                 if (sig.signed)
                     append("signed ")
-                append(sig.width.verilogArrayWidths())
+                val width = BitListWidth(parent.block.minIndexBits)
+                append(width.verilogArrayWidths().appendSpaceIfNotBlank())
                 append("R${sig.verilogName}")
                 append(";")
             }
