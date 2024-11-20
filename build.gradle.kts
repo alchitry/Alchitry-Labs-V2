@@ -57,7 +57,7 @@ dependencies {
     implementation("org.usb4java:usb4java:1.3.0")
     macAarch64("io.github.dsheirer:libusb4java-darwin-aarch64:1.3.1") // ARM Mac binary
     implementation("com.fazecast:jSerialComm:2.11.0")
-    implementation("com.github.alchitry.yad2xx:yad2xxJava:db60b85c1c")
+    implementation("com.github.alchitry.yad2xx:yad2xxJava:d679690")
     implementation("me.tongfei:progressbar:0.10.1")
     implementation("org.jline:jline:3.26.3")
     implementation("org.fusesource.jansi:jansi:2.4.1")
