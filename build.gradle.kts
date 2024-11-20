@@ -24,7 +24,7 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
-val fullVersion = "2.0.19-BETA"
+val fullVersion = "2.0.20-BETA"
 val numOnlyVersion = fullVersion.split('-').first()
 
 group = "com.alchitry"
