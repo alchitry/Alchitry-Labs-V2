@@ -26,11 +26,10 @@ class FullBuildTests {
         validTemplates.forEach { template ->
             template.instantiate("${template.name}_${board.name}", tempFolder, board)
             println("Building ${template.name} for $board.")
-            val project = Project.current!!
             Project.withBuildLock {
-                assert(project.build()) { "Failed to build ${template.name} for $board!" }
+                assert(Project.current!!.build()) { "Failed to build ${template.name} for $board!" }
             }
-            assert(project.binFile.exists()) { "Bin file does not exist for ${template.name} with $board!" }
+            assert(Project.current!!.binFile.exists()) { "Bin file does not exist for ${template.name} with $board!" }
         }
     }
 

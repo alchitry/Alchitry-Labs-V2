@@ -1462,7 +1462,7 @@ fun List<String>.surroundNameWithWidths(name: String) = buildString {
 
 fun Value.toVerilog(): String {
     return when (this) {
-        is ArrayValue -> "'{${elements.asReversed().joinToString(", ") { it.toVerilog() }}}"
+        is ArrayValue -> "{{${elements.asReversed().joinToString(", ") { it.toVerilog() }}}}"
         is SimpleValue -> buildString {
             if (!width.isDefined())
                 error("Can't convert undefined width value to Verilog!")
@@ -1487,7 +1487,7 @@ fun Value.toVerilog(): String {
             }
         }
 
-        is StructValue -> "'{${type.values.joinToString(", ") { this[it.name]!!.toVerilog() }}}"
+        is StructValue -> "{{${type.values.joinToString(", ") { this[it.name]!!.toVerilog() }}}}"
         is UndefinedValue -> error("Can't convert undefined values to Verilog!")
     }
 }
