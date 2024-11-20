@@ -1,7 +1,6 @@
 package com.alchitry.labs2.hardware.usb
 
 
-import com.alchitry.labs2.Env
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.hardware.usb.ftdi.Ftdi
 import com.alchitry.labs2.hardware.usb.ftdi.FtdiD2xx
@@ -37,7 +36,7 @@ object UsbUtil {
     fun detectAttachedBoards(): Map<Board, Int> {
         try {
             val detected = if (hasD2XX) {
-                findAllD2xxDevices(Board.All).map { it.board }
+                findAllD2xxDevices(Board.All, false).map { it.board }
             } else {
                 val devices = UsbDevice.usbFindAll(Board.All)
                 val boards = devices.map { it.board }
@@ -55,12 +54,13 @@ object UsbUtil {
         }
     }
 
-    private fun findAllD2xxDevices(board: List<Board>): List<D2xxDeviceEntry> {
+    private fun findAllD2xxDevices(board: List<Board>, serialDescriptor: Boolean): List<D2xxDeviceEntry> {
         if (!hasD2XX) return emptyList()
         return FTDIInterface.getDevices().mapNotNull { d ->
             val desc = d.description
             for (b in board) {
-                if (desc.isNotEmpty() && b.usbDescriptor.d2xxInterface.letterMatches(
+                val usbDescriptor = if (serialDescriptor) b.serialUsbDescriptor else b.usbDescriptor
+                if (desc.isNotEmpty() && usbDescriptor.d2xxInterface.letterMatches(
                         desc[(desc.length - 1).coerceAtLeast(
                             0
                         )]
@@ -77,15 +77,15 @@ object UsbUtil {
     }
 
     @Throws(FTDIException::class)
-    private fun findD2xxDevice(board: Board, deviceIndex: Int): Device? {
+    private fun findD2xxDevice(board: Board, deviceIndex: Int, serialDescriptor: Boolean): Device? {
         if (!hasD2XX) return null
-        return findAllD2xxDevices(listOf(board)).getOrNull(deviceIndex)?.device
+        return findAllD2xxDevices(listOf(board), serialDescriptor).getOrNull(deviceIndex)?.device
     }
 
     fun openFtdiDevice(board: Board, deviceIndex: Int): Ftdi? {
         if (hasD2XX) {
             try {
-                val dev = findD2xxDevice(board, deviceIndex)
+                val dev = findD2xxDevice(board, deviceIndex, false)
                 if (dev != null) {
                     dev.open()
                     return FtdiD2xx(dev)
@@ -108,30 +108,34 @@ object UsbUtil {
 
     fun openSerial(board: Board, deviceIndex: Int): SerialDevice? {
         try {
-            if (Env.isWindows) {
+            if (hasD2XX) {
                 try {
-                    val d2xx = findD2xxDevice(board, deviceIndex)
+                    val d2xx = findD2xxDevice(board, deviceIndex, true)
                     if (d2xx != null) {
                         d2xx.open()
                         val portName = "COM" + d2xx.comPortNumber
                         d2xx.close()
-                        //Util.println("Found board on $portName")
                         val port = SerialPort.getCommPort(portName)
                         if (port != null) {
                             val serial = GenericSerial(port)
-                            if (serial.open()) return serial //else //Util.println(
-                            //  "Failed to open serial port $portName",
-                            //  true
-                            // )
+                            if (serial.open()) {
+                                return serial
+                            } else {
+                                Log.error("Failed to open generic serial port: $portName")
+                            }
                         }
                     }
                 } catch (e: FTDIException) {
                     Log.exception(e)
                 }
+                return null
             }
 
             val dev = getDevice(board, deviceIndex)
-                ?: return null
+            if (dev == null) {
+                Log.error("Failed to get device: $board[$deviceIndex]")
+                return null
+            }
 
             val device: SerialDevice = FtdiLibUSB(dev.device, board.serialUsbDescriptor.d2xxInterface)
             LibUsb.unrefDevice(dev.device)
