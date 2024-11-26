@@ -28,7 +28,9 @@ data class ArrayValue(
     override val width: DefinedArrayWidth =
         DefinedArrayWidth(
             elements.size,
-            elements.firstOrNull { it.width !is UndefinedSimpleWidth }?.width ?: UndefinedSimpleWidth()
+            elements.firstOrNull { it.width !is UndefinedSimpleWidth }?.width
+                ?: elements.firstOrNull()?.width // UndefinedSimpleWidth may be resolvable so use the first one
+                ?: UndefinedSimpleWidth()
         )
 
     override fun invert(): ArrayValue = copy(elements = elements.map { it.invert() })
