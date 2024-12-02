@@ -127,6 +127,7 @@ tasks.registerConveyorTask("app")
 tasks.registerConveyorTask("site") // makes the site files locally
 tasks.registerConveyorTask("windows-msix") // builds a windows msix
 tasks.registerConveyorTask("windows-app") // builds a windows app
+tasks.registerConveyorTask("ms-store-release") // publish to microsoft store
 tasks.registerConveyorTask("copied-site") // pushes the site files to GitHub
 tasks.registerConveyorTask("mac-app", "-Kapp.machines=mac.aarch64")
 

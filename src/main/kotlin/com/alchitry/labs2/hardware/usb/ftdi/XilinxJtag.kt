@@ -78,6 +78,7 @@ class XilinxJtag private constructor(private val ftdi: Ftdi, private val board: 
         loadBin(binFile.inputStream())
     }
 
+    // See page 166 of UG470
     @Throws(IOException::class)
     private suspend fun loadBin(binData: ByteArray) {
         for (i in binData.indices) binData[i] = reverse(binData[i])
@@ -88,8 +89,6 @@ class XilinxJtag private constructor(private val ftdi: Ftdi, private val board: 
         setIR(Instruction.JPROGRAM)
         setIR(Instruction.ISC_NOOP)
         delay(100)
-
-        // config/jprog/poll
         jtag.sendClocks(10000)
         jtag.shiftIRWithCheck(6, "14", "11", "31")
 
@@ -138,12 +137,19 @@ class XilinxJtag private constructor(private val ftdi: Ftdi, private val board: 
             val binData = withContext(Dispatchers.IO) {
                 binFile.readBytes()
             }
+            val bufferFull = ByteArray(binData.size)
+            jtag.setFreq(1500000.0)
             Log.progressBar("Flashing", binData.size.toLong() - 1) { progressBar ->
-                jtag.shiftDR(binData.size * 8, binData) {
+                jtag.shiftDR(binData.size * 8, binData, bufferFull) {
                     progressBar.stepTo(it.toLong())
                 }
             }
+            Log.println()
+            if (bufferFull.any { it != 0x00.toByte() }) {
+                Log.error("Flash buffer overflowed!")
+            }
             Log.println("Resetting FPGA...")
+            delay(1000) // wait for flash buffer to flush
             jtag.resetState()
             delay(100)
             setIR(Instruction.JPROGRAM)

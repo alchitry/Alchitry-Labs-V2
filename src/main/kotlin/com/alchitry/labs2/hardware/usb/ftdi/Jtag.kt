@@ -66,7 +66,12 @@ class Jtag(ftdi: Ftdi) : Mpsse(ftdi) {
         }
         val reqBytes = bitCount / 8 + if (bitCount % 8 > 0) 1 else 0
 
-        tdo?.let { ftdi.readData(it) }
+        if (tdo != null) {
+            val buff = ByteArray(4096)
+            while (ftdi.readData(buff) == buff.size) {
+                Unit
+            }
+        }
 
         var tdoBytes = 0
         if (tdo != null && tdo.size != tdi.size) throw MpsseException("tdo length do not match tdi length")

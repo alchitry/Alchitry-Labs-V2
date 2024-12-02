@@ -92,7 +92,7 @@ class Console {
                 end?.let { append(it) }
             }
 
-            if (content.isNotEmpty() && content.last() == activeProgressBar) {
+            if (content.isNotEmpty() && (content.last() == activeProgressBar || content.last().isBlank())) {
                 content.removeLastOrNull()
             }
             content.add(newLine)
