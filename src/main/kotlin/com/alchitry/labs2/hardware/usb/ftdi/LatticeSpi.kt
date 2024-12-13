@@ -1,6 +1,7 @@
 package com.alchitry.labs2.hardware.usb.ftdi
 
 import com.alchitry.labs2.Log
+import com.alchitry.labs2.allSealedObjects
 import com.alchitry.labs2.hardware.usb.BoardLoader
 import com.alchitry.labs2.hardware.usb.ftdi.enums.FlashCommand
 import com.alchitry.labs2.hardware.usb.ftdi.enums.MpsseCommand
@@ -11,6 +12,9 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 import kotlin.math.min
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+
 
 class LatticeSpi private constructor(ftdi: Ftdi) : Mpsse(ftdi), BoardLoader {
     companion object {
@@ -25,6 +29,15 @@ class LatticeSpi private constructor(ftdi: Ftdi) : Mpsse(ftdi), BoardLoader {
 
         suspend fun init(ftdi: Ftdi): LatticeSpi {
             return LatticeSpi(ftdi).apply { init() }
+        }
+
+        private sealed class FlashChip(val id: ByteArray, val pageProgramTime: Duration) {
+            companion object {
+                val all = FlashChip::class.allSealedObjects()
+            }
+
+            data object W25Q32JV : FlashChip(byteArrayOf(0xEF.toByte(), 0x40, 0x16), 3.milliseconds)
+            data object SST26VF032B : FlashChip(byteArrayOf(0xBF.toByte(), 0x26, 0x42), 1.5.milliseconds)
         }
     }
 
@@ -119,29 +132,26 @@ class LatticeSpi private constructor(ftdi: Ftdi) : Mpsse(ftdi), BoardLoader {
         setGpio(true, false)
     }
 
-    fun flashReadId() {
-        val buf = ByteArray(5)
-        var ext: ByteArray? = null
+    private fun flashReadId(): FlashChip {
+        val buf = ByteArray(4)
         buf[0] = FlashCommand.JEDECID.command
         flashChipSelect()
         xferSpi(buf)
-        if (buf[4] == 0xFF.toByte()) {
-            Log.println(
-                "Extended device string length is 0xff. This is likely an error. Ignoring...",
-                AlchitryColors.current.Warning
-            )
-        } else if (buf[4].toInt() != 0) {
-            ext = ByteArray(buf[4].toInt())
-            xferSpi(ext)
-        }
         flashChipDeselect()
-        if (buf[1] != 0xEF.toByte() || buf[2] != 0x40.toByte() || buf[3] != 0x16.toByte() || buf[4] != 0x00.toByte()) {
+        buf[0] = 0
+        val id = buf.copyOfRange(1, 4)
+        val chip = FlashChip.all.firstOrNull { it.id.contentEquals(id) }
+        if (chip == null) {
             val sb = StringBuilder()
             sb.append("0x")
-            for (i in 1..4) sb.append(String.format("%02X", buf[i]))
-            if (ext != null) for (i in ext.indices) sb.append(String.format("%02X", ext[i]))
-            throw MpsseException("Flash ID was $sb expected 0xEF401600")
+            for (i in 1..3) sb.append(String.format("%02X", buf[i]))
+            throw MpsseException(
+                "Unknown flash ID of 0x${
+                    buf.toList().subList(1, 4).joinToString("") { "%02x".format(it) }
+                }"
+            )
         }
+        return chip
     }
 
     private fun flashReset() {
@@ -271,6 +281,13 @@ class LatticeSpi private constructor(ftdi: Ftdi) : Mpsse(ftdi), BoardLoader {
         Log.println("Done.", AlchitryColors.current.Success)
     }
 
+    private fun flashUnlock() {
+        val data = byteArrayOf(FlashCommand.GBU.command)
+        flashChipSelect()
+        sendSpi(data)
+        flashChipDeselect()
+    }
+
     @Throws(IOException::class)
     override suspend fun writeBin(binFile: File, flash: Boolean) {
         check(flash) { "Lattice chips only support programming the Flash" }
@@ -282,14 +299,27 @@ class LatticeSpi private constructor(ftdi: Ftdi) : Mpsse(ftdi), BoardLoader {
         delay(250)
         flashReset()
         flashPowerUp()
-        flashReadId()
-        val endAddr = binData.size + 0xffff and 0xffff.inv()
-        Log.progressBar("Erase  ", endAddr.toLong()) {
-            for (addr in 0..<endAddr step 0x10000) {
+        val chip = flashReadId()
+        when (chip) {
+            FlashChip.SST26VF032B -> {
+                Log.println("Erasing...")
                 flashWriteEnable()
-                flash64KbSectorErase(addr)
+                flashUnlock()
+                flashWriteEnable()
+                flashBulkErase()
                 flashWait()
-                it.stepBy(0x10000)
+            }
+
+            FlashChip.W25Q32JV -> {
+                val endAddr = binData.size + 0xffff and 0xffff.inv()
+                Log.progressBar("Erase  ", endAddr.toLong()) {
+                    for (addr in 0..<endAddr step 0x10000) {
+                        flashWriteEnable()
+                        flash64KbSectorErase(addr)
+                        flashWait()
+                        it.stepBy(0x10000)
+                    }
+                }
             }
         }
 
@@ -303,7 +333,7 @@ class LatticeSpi private constructor(ftdi: Ftdi) : Mpsse(ftdi), BoardLoader {
                 flashProg(offset, pageBuf)
                 // datasheet for W25Q64FV specifies 3ms as max page program time
                 // simply delaying 3ms is MUCH faster than querying the chip's status register
-                delay(3)
+                delay(chip.pageProgramTime)
                 // flashWait()
                 it.stepBy(ct.toLong())
             }
