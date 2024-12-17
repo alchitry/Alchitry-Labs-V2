@@ -805,7 +805,7 @@ class TypesParser(
             return
         }
 
-        if (clkWidth != BitWidth) {
+        if (clkWidth.bitCount != 1) {
             context.reportWarning(
                 resolvedClk.expr,
                 "The clk connection is wider than 1 bit and will be truncated."
@@ -817,7 +817,7 @@ class TypesParser(
                 context.reportError(ctx, "The rst connection can't be reduced to a single bit.")
                 return
             }
-            if (rstWidth != BitWidth) {
+            if (rstWidth.bitCount != 1) {
                 context.reportWarning(
                     resolvedClk.expr,
                     "The rst connection is wider than 1 bit and will be truncated."
