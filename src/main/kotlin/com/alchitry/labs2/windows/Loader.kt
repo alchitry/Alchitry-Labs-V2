@@ -18,9 +18,9 @@ import androidx.compose.ui.window.ApplicationScope
 import com.alchitry.labs2.Env
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.hardware.usb.BoardLoader
 import com.alchitry.labs2.hardware.usb.UsbUtil
-import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.switchActiveWindow
 import com.alchitry.labs2.ui.components.AlchitryToolTip
 import com.alchitry.labs2.ui.components.WindowDecoration

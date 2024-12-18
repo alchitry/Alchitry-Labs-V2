@@ -1,7 +1,7 @@
 package com.alchitry.labs2.project.library
 
 import com.alchitry.labs2.Log
-import com.alchitry.labs2.project.Board
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.project.Locations
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.builders.ProjectBuilder
@@ -181,6 +181,7 @@ object VivadoIP {
             val migCompFile = when (project.data.board) {
                 Board.AlchitryAu -> "mig.prj"
                 Board.AlchitryAuPlus -> "mig_plus.prj"
+                Board.AlchitryAuV2 -> "mig_v2.prj"
                 Board.AlchitryCu -> error("Can't generate MIG core for Cu!")
             }
             val migCompFilePath = "${Locations.cores}/${migCompFile}"

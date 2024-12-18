@@ -16,9 +16,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.Log
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.hardware.usb.SerialDevice
 import com.alchitry.labs2.hardware.usb.UsbUtil
-import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.ui.components.DeviceSelector
 import com.alchitry.labs2.ui.components.ToolbarButton
 import com.alchitry.labs2.ui.hiddenClickable

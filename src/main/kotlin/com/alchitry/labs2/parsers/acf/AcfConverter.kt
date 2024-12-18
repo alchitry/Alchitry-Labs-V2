@@ -1,10 +1,10 @@
 package com.alchitry.labs2.parsers.acf
 
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.notations.NotationCollector
-import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.ConstraintLang
 import com.alchitry.labs2.project.files.ConstraintFile
 

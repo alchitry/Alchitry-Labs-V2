@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
-import com.alchitry.labs2.hardware.pinout.AuPin
+import com.alchitry.labs2.hardware.Board.XilinxBoard
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.acf.AcfExtractor
 import com.alchitry.labs2.parsers.acf.NativeConstraint
@@ -654,7 +654,7 @@ data class Project(
                 )
             }
 
-            if (data.board.pinConverter === AuPin && data.ipCores.any { it.name == "mig_7series_0" }) {
+            if (data.board is XilinxBoard && data.ipCores.any { it.name == "mig_7series_0" }) {
                 addMigConstraints(ports)
             }
 

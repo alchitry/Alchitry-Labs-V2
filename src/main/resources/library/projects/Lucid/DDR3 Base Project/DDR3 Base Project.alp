@@ -2,7 +2,7 @@
     "template": {
         "name": "DDR3 Base Project",
         "description": "Minimum boilerplate project for using DDR3 on the Au or Au+",
-        "boards": ["Au", "Au+"],
+        "boards": ["Au", "Au+", "AuV2"],
         "priority": 0,
         "requiresMig": true
     },

@@ -14,7 +14,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
-import com.alchitry.labs2.project.*
+import com.alchitry.labs2.hardware.Board
+import com.alchitry.labs2.project.Locations
+import com.alchitry.labs2.project.Project
+import com.alchitry.labs2.project.ProjectCreator
+import com.alchitry.labs2.project.ProjectTemplate
 import com.alchitry.labs2.switchActiveWindow
 import com.alchitry.labs2.windows.mainWindow
 import kotlinx.coroutines.Dispatchers

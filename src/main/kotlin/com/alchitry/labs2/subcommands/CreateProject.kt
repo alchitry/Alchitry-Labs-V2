@@ -1,7 +1,7 @@
 package com.alchitry.labs2.subcommands
 
 import com.alchitry.labs2.allSealedObjects
-import com.alchitry.labs2.project.Board
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.project.Locations
 import com.alchitry.labs2.project.ProjectTemplate
 import com.alchitry.labs2.showHelp

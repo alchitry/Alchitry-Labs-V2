@@ -5,7 +5,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.alchitry.labs2.project.Board
+import com.alchitry.labs2.hardware.Board
 
 @Composable
 fun DeviceSelector(

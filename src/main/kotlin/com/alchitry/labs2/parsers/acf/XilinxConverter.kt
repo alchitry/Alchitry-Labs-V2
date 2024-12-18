@@ -1,9 +1,10 @@
 package com.alchitry.labs2.parsers.acf
 
-import com.alchitry.labs2.parsers.acf.types.ClockConstraint
+import com.alchitry.labs2.firstOfTypeOrNull
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.parsers.acf.types.Constraint
+import com.alchitry.labs2.parsers.acf.types.PinAttribute
 import com.alchitry.labs2.parsers.acf.types.PinPull
-import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.Languages
 
 
@@ -17,24 +18,40 @@ data object XilinxConverter : AcfConverter {
         append(portName)
         append("}]\n")
 
-        append("set_property IOSTANDARD LVCMOS33 [get_ports {")
-        append(portName)
-        append("}]\n")
+        attributes.firstOfTypeOrNull<PinAttribute.Standard>()?.let { standard ->
+            append("set_property IOSTANDARD ")
+            append(standard.value.name)
+            append(" [get_ports {")
+            append(portName)
+            append("}]\n")
+        }
 
-        when (pull) {
-            PinPull.PullUp -> {
-                append("set_property PULLUP true [get_ports {")
-                append(portName)
-                append("}]\n")
+        attributes.firstOfTypeOrNull<PinAttribute.Pull>()?.let { pull ->
+            append("set_property ")
+            when (pull.value) {
+                PinPull.Up -> append("PULLUP")
+                PinPull.Down -> append("PULLDOWN")
+                PinPull.Keep -> append("KEEPER")
             }
+            append(" true [get_ports {")
+            append(portName)
+            append("}]\n")
+        }
 
-            PinPull.PullDown -> {
-                append("set_property PULLDOWN true [get_ports {")
-                append(portName)
-                append("}]\n")
-            }
+        attributes.firstOfTypeOrNull<PinAttribute.Drive>()?.let { drive ->
+            append("set_property DRIVE ")
+            append(drive.value)
+            append(" [get_ports {")
+            append(portName)
+            append("}]\n")
+        }
 
-            null -> {}
+        attributes.firstOfTypeOrNull<PinAttribute.Slew>()?.let { slew ->
+            append("set_property SLEW ")
+            append(slew.value.name)
+            append(" [get_ports {")
+            append(portName)
+            append("}]\n")
         }
     }
 
@@ -50,25 +67,26 @@ data object XilinxConverter : AcfConverter {
                 constraints.forEachIndexed { index, constraint ->
                     constraint.toXdc()
 
-                    if (constraint is ClockConstraint) {
+                    constraint.attributes.firstOfTypeOrNull<PinAttribute.Frequency>()?.let { frequency ->
                         val portName = constraint.port.fullPortName
                         append("# ")
                         append(portName)
                         append(" => ")
-                        append(constraint.frequency)
+                        append(frequency.value)
                         append("Hz\n")
 
                         append("create_clock -period ")
-                        val nsPeriod = 1000000000.0 / constraint.frequency
+                        val nsPeriod = 1000000000.0 / frequency.value
                         append(nsPeriod)
                         append(" -name ")
                         append(portName.replace("[", "_").replace("]", "_"))
                         append("_")
                         append(index)
-                        append(" -waveform {0.000 5.000} [get_ports ")
+                        append(" -waveform {0.000 ${nsPeriod / 2.0}} [get_ports ")
                         append(portName)
                         append("]\n")
                     }
+                    appendLine()
                 }
             }
         )

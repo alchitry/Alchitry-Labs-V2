@@ -1,16 +1,17 @@
 package com.alchitry.labs2.parsers.acf
 
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.parsers.ProjectContext
-import com.alchitry.labs2.parsers.acf.types.ClockConstraint
 import com.alchitry.labs2.parsers.acf.types.Constraint
-import com.alchitry.labs2.parsers.acf.types.PinConstraint
+import com.alchitry.labs2.parsers.acf.types.PinAttribute
 import com.alchitry.labs2.parsers.acf.types.PinPull
+import com.alchitry.labs2.parsers.acf.types.PinSlew
 import com.alchitry.labs2.parsers.grammar.AcfBaseListener
 import com.alchitry.labs2.parsers.grammar.AcfLexer
 import com.alchitry.labs2.parsers.grammar.AcfParser
+import com.alchitry.labs2.parsers.grammar.AcfParser.*
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.notations.NotationCollector
-import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.files.ConstraintFile
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 import org.antlr.v4.kotlinruntime.ParserRuleContext
@@ -23,8 +24,10 @@ class AcfExtractor(
     val board: Board,
     val notationCollector: NotationCollector,
 ) : AcfBaseListener() {
-    private val signals = mutableMapOf<AcfParser.PortNameContext, SignalOrSubSignal>()
+    private val signals = mutableMapOf<PortNameContext, SignalOrSubSignal>()
     val constraints: MutableList<Constraint> = mutableListOf()
+
+    private val blockAttributes = mutableListOf<Map<AttributeContext, PinAttribute>>()
 
     companion object {
         suspend fun extract(
@@ -65,6 +68,122 @@ class AcfExtractor(
         }
     }
 
+    override fun enterSource(ctx: SourceContext) {
+        blockAttributes.clear()
+    }
+
+    private fun parseFrequency(ctx: FrequencyContext): Int? {
+        val frequencyUnit = ctx.FREQ_UNIT()?.text ?: return null
+        val frequencyScale = when (frequencyUnit.lowercase()) {
+            "hz" -> 1
+            "khz" -> 1000
+            "mhz" -> 1000000
+            "ghz" -> 1000000000
+            else -> {
+                notationCollector.reportError(
+                    ctx.FREQ_UNIT()!!,
+                    "Unknown frequency unit \"$frequencyUnit\"!"
+                )
+                return null
+            }
+        }
+        val numCtx = ctx.number() ?: return null
+        val freq = numCtx.text.toDoubleOrNull()
+        if (freq == null) {
+            notationCollector.reportError(numCtx, "Failed to parse number \"${numCtx.text}\"!")
+            return null
+        }
+        val hz = freq * frequencyScale
+        return hz.roundToInt()
+    }
+
+    private fun parseAttribute(ctx: AttributeContext): PinAttribute? {
+        val name = ctx.BASIC_NAME()?.text ?: return null
+        val valueText = ctx.attributeValue()?.text ?: return null
+        when (name) {
+            "PULL" -> return when (valueText) {
+                "UP" -> PinAttribute.Pull(PinPull.Up)
+                "DOWN" -> PinAttribute.Pull(PinPull.Down)
+                "KEEP" -> PinAttribute.Pull(PinPull.Keep)
+                else -> {
+                    notationCollector.reportError(
+                        ctx.attributeValue() ?: ctx,
+                        "Invalid PULL value \"$valueText\". Expected \"UP\", \"DOWN\", or \"KEEP\"."
+                    )
+                    null
+                }
+            }
+
+
+            "STANDARD" -> {
+                val standard = board.pinConverter.standards.firstOrNull { it.name == valueText }
+                if (standard == null) {
+                    notationCollector.reportError(
+                        ctx.attributeValue() ?: ctx,
+                        "Invalid STANDARD value \"$valueText\". Expected ${board.pinConverter.standards.joinToString(", ") { "\"${it.name}\"" }}."
+                    )
+                    return null
+                }
+                return PinAttribute.Standard(standard)
+            }
+
+            "DRIVE" -> {
+                val value = valueText.toIntOrNull()
+                if (value == null) {
+                    notationCollector.reportError(
+                        ctx.attributeValue() ?: ctx,
+                        "Invalid DRIVE value \"$valueText\". Expected an integer."
+                    )
+                    return null
+                }
+                return PinAttribute.Drive(value)
+            }
+
+            "SLEW" -> {
+                val slew = PinSlew.entries.firstOrNull { it.name == valueText }
+                if (slew == null) {
+                    notationCollector.reportError(
+                        ctx.attributeValue() ?: ctx,
+                        "Invalid SLEW value \"$valueText\". Expected ${PinSlew.entries.joinToString(", ") { "\"${it.name}\"" }}."
+                    )
+                    return null
+                }
+                return PinAttribute.Slew(slew)
+            }
+
+            "FREQUENCY" -> {
+                val frequency = ctx.attributeValue()?.frequency()?.let(::parseFrequency)
+                if (frequency == null) {
+                    notationCollector.reportError(
+                        ctx.attributeValue() ?: ctx,
+                        "Invalid FREQUENCY value \"$valueText\". Expected a number followed by a frequency unit (e.g. \"100MHz\")."
+                    )
+                    return null
+                }
+                return PinAttribute.Frequency(frequency)
+            }
+
+            else -> {
+                notationCollector.reportError(ctx, "Unknown attribute \"$name\".")
+                return null
+            }
+        }
+    }
+
+    override fun enterAttributeBlock(ctx: AttributeBlockContext) {
+        val attributeMap = ctx.attribute().mapNotNull { it to (parseAttribute(it) ?: return@mapNotNull null) }.toMap()
+        attributeMap.forEach { (ctx, attr) ->
+            if (blockAttributes.any { block -> block.any { it.value.name == attr.name } } || attributeMap.any { it.value.name == attr.name && it.value !== attr }) {
+                notationCollector.reportError(ctx, "The attribute \"${attr.name}\" has already been defined.")
+            }
+        }
+        blockAttributes.add(attributeMap)
+    }
+
+    override fun exitAttributeBlock(ctx: AttributeBlockContext) {
+        blockAttributes.removeLast()
+    }
+
     private fun addConstraint(constraint: Constraint, pinContext: ParserRuleContext, portContext: ParserRuleContext) {
         when (context.addConstraint(constraint)) {
             ProjectContext.AddConstraintResult.Success -> constraints.add(constraint)
@@ -80,7 +199,7 @@ class AcfExtractor(
         }
     }
 
-    override fun exitPortName(ctx: AcfParser.PortNameContext) {
+    override fun exitPortName(ctx: PortNameContext) {
         val name = ctx.name(0)?.text ?: return
         val port = topModule.ports[name]
         if (port == null) {
@@ -91,11 +210,11 @@ class AcfExtractor(
             return
         }
         val children =
-            ctx.children?.filter { it is AcfParser.NameContext || it is AcfParser.ArrayIndexContext } ?: emptyList()
+            ctx.children?.filter { it is NameContext || it is ArrayIndexContext } ?: emptyList()
         val selectionMap = children.subList(1, children.size).map {
             when (it) {
-                is AcfParser.NameContext -> SignalSelector.Struct(it.text) to it
-                is AcfParser.ArrayIndexContext -> SignalSelector.Bits(
+                is NameContext -> SignalSelector.Struct(it.text) to it
+                is ArrayIndexContext -> SignalSelector.Bits(
                     (it.INT() ?: return).text.toInt(),
                     SelectionContext.Constant
                 ) to it
@@ -127,23 +246,11 @@ class AcfExtractor(
         signals[ctx] = selectedSignal
     }
 
-    override fun exitPin(ctx: AcfParser.PinContext) {
-        val signal = signals[ctx.portName() ?: return] ?: return
-        val pinName = ctx.pinName()?.text ?: return
-        val pin = board.pinConverter.acfToPin(pinName)
-        if (pin == null) {
-            notationCollector.reportError(ctx.pinName()!!, "Pin \"$pinName\" does not exist on the ${board.name}")
-            return
-        }
-        val pinPull = when {
-            ctx.PULLUP() != null -> PinPull.PullUp
-            ctx.PULLDOWN() != null -> PinPull.PullDown
-            else -> null
-        }
-        addConstraint(PinConstraint(pin, signal, pinPull, ctx), ctx.pinName() ?: ctx, ctx.portName() ?: ctx)
+    private inline fun <reified T : PinAttribute> Map<AttributeContext, PinAttribute>.firstOfType(): Pair<AttributeContext, T>? {
+        return firstNotNullOfOrNull { if (it.value is T) it.key to it.value as T else null }
     }
 
-    override fun exitClock(ctx: AcfParser.ClockContext) {
+    override fun exitPin(ctx: PinContext) {
         val signal = signals[ctx.portName() ?: return] ?: return
         val pinName = ctx.pinName()?.text ?: return
         val pin = board.pinConverter.acfToPin(pinName)
@@ -151,36 +258,85 @@ class AcfExtractor(
             notationCollector.reportError(ctx.pinName()!!, "Pin \"$pinName\" does not exist on the ${board.name}")
             return
         }
-        val pinPull = when {
-            ctx.PULLUP() != null -> PinPull.PullUp
-            ctx.PULLDOWN() != null -> PinPull.PullDown
-            else -> null
+        val attributes = mutableMapOf<AttributeContext, PinAttribute>()
+        blockAttributes.forEach { attributes.putAll(it) }
+        ctx.attribute().forEach {
+            parseAttribute(it)?.let { attr ->
+                if (attributes.any { it.value.name == attr.name }) {
+                    notationCollector.reportError(it, "The attribute \"${attr.name}\" has already been defined.")
+                }
+                attributes[it] = attr
+            }
         }
-        val frequencyUnit = ctx.frequency()?.FREQ_UNIT()?.text ?: return
-        val frequencyScale = when (frequencyUnit.lowercase()) {
-            "hz" -> 1
-            "khz" -> 1000
-            "mhz" -> 1000000
-            "ghz" -> 1000000000
-            else -> {
+
+
+        val standard = attributes.firstOfType<PinAttribute.Standard>()
+        if (standard == null) {
+            notationCollector.reportError(
+                ctx,
+                "The signal \"${ctx.portName()?.text}\" is missing the STANDARD attribute."
+            )
+            return
+        }
+
+        val pull = attributes.firstOfType<PinAttribute.Pull>()
+        if (pull != null && board is Board.AlchitryCu && pull.second.value != PinPull.Up) {
+            notationCollector.reportError(pull.first, "The Alchitry Cu board only supports PULL(UP).")
+            return
+        }
+
+        val drive = attributes.firstOfType<PinAttribute.Drive>()
+        if (drive != null) {
+            val supportedDrives = standard.second.value.drive
+            if (supportedDrives == null) {
                 notationCollector.reportError(
-                    ctx.frequency()?.FREQ_UNIT()!!,
-                    "Unknown frequency unit \"$frequencyUnit\"!"
+                    drive.first,
+                    "The STANDARD \"${standard.second.value.name}\" does not support drive values."
+                )
+                return
+            }
+            if (!supportedDrives.contains(drive.second.value)) {
+                notationCollector.reportError(
+                    drive.first,
+                    "The STANDARD \"${standard.second.value.name}\" does not support the drive value \"${drive.second.value}\". Expected ${
+                        supportedDrives.joinToString(
+                            ", "
+                        )
+                    }."
                 )
                 return
             }
         }
-        val numCtx = ctx.frequency()?.number() ?: return
-        val freq = numCtx.text.toDoubleOrNull()
-        if (freq == null) {
-            notationCollector.reportError(numCtx, "Failed to parse number \"${numCtx.text}\"!")
-            return
+
+        val slew = attributes.firstOfType<PinAttribute.Slew>()
+        if (slew != null) {
+            val supportedSlews = standard.second.value.slew
+            if (supportedSlews == null) {
+                notationCollector.reportError(
+                    slew.first,
+                    "The STANDARD \"${standard.second.value.name}\" does not support slew values."
+                )
+                return
+            }
+            if (!supportedSlews.contains(slew.second.value)) {
+                notationCollector.reportError(
+                    slew.first,
+                    "The STANDARD \"${standard.second.value.name}\" does not support the slew value \"${slew.second.value}\". Expected ${
+                        supportedSlews.joinToString(
+                            ", "
+                        )
+                    }."
+                )
+                return
+            }
         }
-        val hz = freq * frequencyScale
+
         addConstraint(
-            ClockConstraint(pin, signal, pinPull, hz.roundToInt(), ctx),
+            Constraint(pin, signal, ctx, attributes.values.toList()),
             ctx.pinName() ?: ctx,
             ctx.portName() ?: ctx
         )
     }
+
+
 }

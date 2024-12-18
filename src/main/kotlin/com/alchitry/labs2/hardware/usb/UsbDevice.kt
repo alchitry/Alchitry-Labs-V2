@@ -1,7 +1,7 @@
 package com.alchitry.labs2.hardware.usb
 
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.hardware.usb.ftdi.enums.DetachMode
-import com.alchitry.labs2.project.Board
 import org.usb4java.*
 import java.io.Closeable
 import java.nio.ByteBuffer

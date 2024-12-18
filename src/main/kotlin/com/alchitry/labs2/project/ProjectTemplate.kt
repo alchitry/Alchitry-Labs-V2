@@ -2,6 +2,7 @@ package com.alchitry.labs2.project
 
 import com.alchitry.labs2.JarUtils
 import com.alchitry.labs2.Log
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.project.library.VivadoIP
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch

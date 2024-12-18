@@ -2,6 +2,7 @@ package com.alchitry.labs2.project
 
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.camelToSnakeCase
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.project.files.ConstraintFile
 import com.alchitry.labs2.project.files.FileProvider
 import com.alchitry.labs2.project.files.IPCore

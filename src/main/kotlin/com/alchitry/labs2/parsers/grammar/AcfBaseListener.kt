@@ -30,6 +30,20 @@ open class AcfBaseListener : AcfListener {
      *f
      * <p>The default implementation does nothing.</p>
      */
+    override fun enterLine(ctx: AcfParser.LineContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override fun exitLine(ctx: AcfParser.LineContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
     override fun enterPin(ctx: AcfParser.PinContext) {}
 
     /**
@@ -44,14 +58,14 @@ open class AcfBaseListener : AcfListener {
      *f
      * <p>The default implementation does nothing.</p>
      */
-    override fun enterClock(ctx: AcfParser.ClockContext) {}
+    override fun enterAttributeBlock(ctx: AcfParser.AttributeBlockContext) {}
 
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    override fun exitClock(ctx: AcfParser.ClockContext) {}
+    override fun exitAttributeBlock(ctx: AcfParser.AttributeBlockContext) {}
 
     /**
      * {@inheritDoc}
@@ -66,6 +80,34 @@ open class AcfBaseListener : AcfListener {
      * <p>The default implementation does nothing.</p>
      */
     override fun exitName(ctx: AcfParser.NameContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
+    override fun enterAttribute(ctx: AcfParser.AttributeContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override fun exitAttribute(ctx: AcfParser.AttributeContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
+    override fun enterAttributeValue(ctx: AcfParser.AttributeValueContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override fun exitAttributeValue(ctx: AcfParser.AttributeValueContext) {}
 
     /**
      * {@inheritDoc}
@@ -205,6 +247,20 @@ open class SuspendAcfBaseListener : SuspendAcfListener {
      *f
      * <p>The default implementation does nothing.</p>
      */
+    override suspend fun enterLine(ctx: AcfParser.LineContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override suspend fun exitLine(ctx: AcfParser.LineContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
     override suspend fun enterPin(ctx: AcfParser.PinContext) {}
 
     /**
@@ -219,14 +275,14 @@ open class SuspendAcfBaseListener : SuspendAcfListener {
      *f
      * <p>The default implementation does nothing.</p>
      */
-    override suspend fun enterClock(ctx: AcfParser.ClockContext) {}
+    override suspend fun enterAttributeBlock(ctx: AcfParser.AttributeBlockContext) {}
 
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    override suspend fun exitClock(ctx: AcfParser.ClockContext) {}
+    override suspend fun exitAttributeBlock(ctx: AcfParser.AttributeBlockContext) {}
 
     /**
      * {@inheritDoc}
@@ -241,6 +297,34 @@ open class SuspendAcfBaseListener : SuspendAcfListener {
      * <p>The default implementation does nothing.</p>
      */
     override suspend fun exitName(ctx: AcfParser.NameContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
+    override suspend fun enterAttribute(ctx: AcfParser.AttributeContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override suspend fun exitAttribute(ctx: AcfParser.AttributeContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
+    override suspend fun enterAttributeValue(ctx: AcfParser.AttributeValueContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override suspend fun exitAttributeValue(ctx: AcfParser.AttributeValueContext) {}
 
     /**
      * {@inheritDoc}

@@ -1,8 +1,10 @@
 package com.alchitry.labs2.parsers.acf
 
-import com.alchitry.labs2.parsers.acf.types.ClockConstraint
+import com.alchitry.labs2.firstOfTypeOrNull
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.parsers.acf.types.Constraint
-import com.alchitry.labs2.project.Board
+import com.alchitry.labs2.parsers.acf.types.PinAttribute
+import com.alchitry.labs2.parsers.acf.types.PinPull
 import com.alchitry.labs2.project.Languages
 
 data object LatticeConverter : AcfConverter {
@@ -12,12 +14,14 @@ data object LatticeConverter : AcfConverter {
         constraints: List<Constraint>
     ): List<NativeConstraint> {
         val sdc = buildString {
-            constraints.mapNotNull { it as? ClockConstraint }.forEachIndexed { index, clock ->
+            constraints.filter { it.attributes.any { attr -> attr is PinAttribute.Frequency } }
+                .forEachIndexed { index, clock ->
+                    val frequency = clock.attributes.first { it is PinAttribute.Frequency } as PinAttribute.Frequency
                 val portName = clock.port.flatFullPortName
                 append("# ")
                 append(portName)
                 append(" => ")
-                append(clock.frequency)
+                    append(frequency.value)
                 append("Hz\n")
 
                 append("create_clock -name ")
@@ -25,7 +29,7 @@ data object LatticeConverter : AcfConverter {
                 append("_")
                 append(index)
                 append(" -period ")
-                val nsPeriod = 1000000000.0 / clock.frequency
+                    val nsPeriod = 1000000000.0 / frequency.value
                 append(nsPeriod)
                 append(" [get_ports ")
                 append(portName)
@@ -39,6 +43,10 @@ data object LatticeConverter : AcfConverter {
                 append(constraint.port.flatFullPortName)
                 append(" ")
                 append(constraint.pin.fpgaPin)
+                val pull = constraint.attributes.firstOfTypeOrNull<PinAttribute.Pull>()
+                if (pull != null && pull.value == PinPull.Up) {
+                    append(" -pullup yes")
+                }
                 appendLine()
             }
         }

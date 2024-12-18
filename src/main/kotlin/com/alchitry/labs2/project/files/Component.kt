@@ -1,7 +1,7 @@
 package com.alchitry.labs2.project.files
 
 import com.alchitry.labs2.camelToSnakeCase
-import com.alchitry.labs2.project.Board
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.project.Language
 import com.alchitry.labs2.project.Locations
 import com.alchitry.labs2.project.library.ComponentLibrary

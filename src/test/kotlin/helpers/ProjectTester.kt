@@ -1,5 +1,6 @@
 package helpers
 
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidGlobalContext
@@ -11,7 +12,6 @@ import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstanceArray
 import com.alchitry.labs2.parsers.hdl.verilog.context.VerilogModuleTypeContext
 import com.alchitry.labs2.parsers.notations.NotationManager
-import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.builders.ProjectBuilder

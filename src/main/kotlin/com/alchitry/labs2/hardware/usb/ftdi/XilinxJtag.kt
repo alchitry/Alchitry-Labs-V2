@@ -1,8 +1,8 @@
 package com.alchitry.labs2.hardware.usb.ftdi
 
 import com.alchitry.labs2.Log
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.hardware.usb.BoardLoader
-import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

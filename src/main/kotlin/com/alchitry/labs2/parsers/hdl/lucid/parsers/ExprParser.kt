@@ -1079,12 +1079,6 @@ class ExprParser(
                         )
                         return
                     }
-                    if (value is SimpleValue && value.minBits() > numBits) {
-                        context.reportWarning(
-                            ctx.functionExpr(0) ?: ctx,
-                            ErrorStrings.TRUNC_WARN.format(ctx.functionExpr(1)?.text, size.toString())
-                        )
-                    }
                     evaluator.setExpr(
                         ctx, when (value) {
                         is SimpleValue -> value.asBitListValue().resize(numBits)

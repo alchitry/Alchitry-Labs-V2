@@ -2,11 +2,11 @@ package com.alchitry.labs2.hardware.usb
 
 
 import com.alchitry.labs2.Log
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.hardware.usb.ftdi.Ftdi
 import com.alchitry.labs2.hardware.usb.ftdi.FtdiD2xx
 import com.alchitry.labs2.hardware.usb.ftdi.FtdiLibUSB
 import com.alchitry.labs2.hardware.usb.ftdi.enums.PortInterfaceType
-import com.alchitry.labs2.project.Board
 import com.fazecast.jSerialComm.SerialPort
 import net.sf.yad2xx.Device
 import net.sf.yad2xx.FTDIException

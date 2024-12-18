@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
 import com.alchitry.labs2.Env
 import com.alchitry.labs2.Settings
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.hardware.usb.UsbUtil
-import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.ui.components.ResizePriority
 import com.alchitry.labs2.ui.components.Sash

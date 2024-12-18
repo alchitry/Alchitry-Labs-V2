@@ -11,3 +11,5 @@ fun <T : Any> List<T?>.noNulls(): List<T>? {
     @Suppress("UNCHECKED_CAST")
     return this as List<T>
 }
+
+inline fun <reified T> List<*>.firstOfTypeOrNull(): T? = firstOrNull { it is T } as T?

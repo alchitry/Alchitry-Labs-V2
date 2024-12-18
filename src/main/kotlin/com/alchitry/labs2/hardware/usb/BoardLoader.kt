@@ -1,8 +1,8 @@
 package com.alchitry.labs2.hardware.usb
 
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.hardware.usb.ftdi.LatticeSpi
 import com.alchitry.labs2.hardware.usb.ftdi.XilinxJtag
-import com.alchitry.labs2.project.Board
 import java.io.File
 
 interface BoardLoader {
@@ -31,7 +31,12 @@ interface BoardLoader {
 
         suspend fun load(board: Board, boardIdx: Int, binFile: File, flash: Boolean): Boolean {
             return useLoader(board, boardIdx) {
-                it.writeBin(binFile, flash)
+                try {
+                    it.writeBin(binFile, flash)
+                } catch (t: Throwable) {
+                    println(t)
+                    throw t
+                }
             }
         }
     }

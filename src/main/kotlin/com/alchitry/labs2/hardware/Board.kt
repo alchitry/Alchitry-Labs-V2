@@ -1,8 +1,9 @@
-package com.alchitry.labs2.project
+package com.alchitry.labs2.hardware
 
 import com.alchitry.labs2.Settings
 import com.alchitry.labs2.allSealedObjects
 import com.alchitry.labs2.hardware.pinout.AuPin
+import com.alchitry.labs2.hardware.pinout.AuV2Pin
 import com.alchitry.labs2.hardware.pinout.CuPin
 import com.alchitry.labs2.hardware.pinout.PinConverter
 import com.alchitry.labs2.hardware.usb.UsbUtil
@@ -61,6 +62,27 @@ sealed class Board {
     sealed interface XilinxBoard {
         val bridgeFile: String
         val idCode: String
+    }
+
+    data object AlchitryAuV2 : Board(), XilinxBoard {
+        override val name = "Alchitry Au V2"
+        override val alias = "AuV2"
+        override val fpgaName = "xc7a35tftg256-2"
+        override val usbDescriptor =
+            UsbUtil.UsbDescriptor(
+                "Alchitry Au V2",
+                0x0403.toShort(),
+                0x6010.toShort(),
+                "Alchitry Au V2",
+                PortInterfaceType.INTERFACE_A
+            )
+        override val serialUsbDescriptor = usbDescriptor.copy(d2xxInterface = PortInterfaceType.INTERFACE_B)
+        override val bridgeFile = "/bridges/au_v2.bin"
+        override val idCode = "0362D093"
+        override val pinConverter = AuV2Pin
+        override val acfConverter = XilinxConverter
+        override val projectBuilder = VivadoBuilder
+        override val supportsRamLoading = true
     }
 
     data object AlchitryAu : Board(), XilinxBoard {

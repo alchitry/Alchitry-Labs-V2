@@ -1,7 +1,7 @@
 package build
 
 import com.alchitry.labs2.Settings
-import com.alchitry.labs2.project.Board
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.ProjectTemplate
 import kotlinx.coroutines.runBlocking

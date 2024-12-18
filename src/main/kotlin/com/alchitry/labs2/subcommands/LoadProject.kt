@@ -1,9 +1,9 @@
 package com.alchitry.labs2.subcommands
 
 import com.alchitry.labs2.Log
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.hardware.usb.BoardLoader
 import com.alchitry.labs2.hardware.usb.UsbUtil
-import com.alchitry.labs2.project.Board
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.showHelp
 import kotlinx.cli.ArgType

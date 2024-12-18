@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.res.painterResource
-import com.alchitry.labs2.project.Board
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.ui.cache.CachedImage
 
 @Composable
@@ -24,6 +24,7 @@ fun AlchitryBoard(
         Board.AlchitryAu -> "au.svg"
         Board.AlchitryAuPlus -> "au.svg"
         Board.AlchitryCu -> "cu.svg"
+        Board.AlchitryAuV2 -> TODO("Not drawn yet")
     }
 
     BoxWithConstraints(modifier.aspectRatio(65.0f / 45.0f).fillMaxSize()) {

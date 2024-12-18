@@ -1,13 +1,18 @@
 grammar Acf;
 
 // starting rule
-source: (pin | clock | NL)* EOF?;
+source: line* EOF?;
 
-pin: 'pin' portName pinName (PULLUP|PULLDOWN)? semi;
+line: pin | attributeBlock | NL;
 
-clock: 'clock' portName pinName (PULLUP|PULLDOWN)? frequency semi;
+pin: 'pin' portName pinName attribute* semi;
+
+attributeBlock: attribute (',' attribute)* '{' line* '}';
 
 name: (BASIC_NAME | FREQ_UNIT);
+
+attribute: BASIC_NAME '(' attributeValue')';
+attributeValue: BASIC_NAME | number | frequency;
 
 portName: name arrayIndex* ('.' name arrayIndex*)*;
 pinName: name;

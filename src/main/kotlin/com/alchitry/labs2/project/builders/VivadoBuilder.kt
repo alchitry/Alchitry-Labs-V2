@@ -2,6 +2,7 @@ package com.alchitry.labs2.project.builders
 
 import com.alchitry.labs2.Env
 import com.alchitry.labs2.Log
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.project.Locations
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.ui.theme.AlchitryColors
@@ -19,14 +20,19 @@ data object VivadoBuilder : ProjectBuilder() {
             error("Can't build with Vivado on a Mac!")
 
         val propsFile = project.buildDirectory.resolve("constraint").resolve("au_props.xdc").toFile()
+        val spiBusWidth = when (project.data.board) {
+            Board.AlchitryAu, Board.AlchitryAuPlus -> 2
+            Board.AlchitryAuV2 -> 4
+            Board.AlchitryCu -> error("Cu isn't supported by the VivadoBuilder")
+        }
         propsFile.writeText(
             """
             set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design]
-            set_property BITSTREAM.CONFIG.CONFIGRATE 33 [current_design]
+            set_property BITSTREAM.CONFIG.CONFIGRATE 66 [current_design]
             set_property CONFIG_VOLTAGE 3.3 [current_design]
             set_property CFGBVS VCCO [current_design]
             set_property BITSTREAM.CONFIG.SPI_32BIT_ADDR NO [current_design]
-            set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 1 [current_design]
+            set_property BITSTREAM.CONFIG.SPI_BUSWIDTH $spiBusWidth [current_design]
             set_property BITSTREAM.CONFIG.SPI_FALL_EDGE YES [current_design]
         """.trimIndent()
         )
