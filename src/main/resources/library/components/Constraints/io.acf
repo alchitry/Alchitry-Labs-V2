@@ -3,72 +3,74 @@
     "description" : "Pin constraints for the Io element.",
     "supportedBoards" : ["Au", "Au+", "Cu"]
 **/
-pin io_led[0][0] B21;
-pin io_led[0][1] B20;
-pin io_led[0][2] B18;
-pin io_led[0][3] B17;
-pin io_led[0][4] B15;
-pin io_led[0][5] B14;
-pin io_led[0][6] B12;
-pin io_led[0][7] B11;
-pin io_led[1][0] B9;
-pin io_led[1][1] B8;
-pin io_led[1][2] B6;
-pin io_led[1][3] B5;
-pin io_led[1][4] B3;
-pin io_led[1][5] B2;
-pin io_led[1][6] A24;
-pin io_led[1][7] A23;
-pin io_led[2][0] A21;
-pin io_led[2][1] A20;
-pin io_led[2][2] A18;
-pin io_led[2][3] A17;
-pin io_led[2][4] A15;
-pin io_led[2][5] A14;
-pin io_led[2][6] A12;
-pin io_led[2][7] A11;
+STANDARD(LVCMOS33) {
+    pin io_led[0][0] B21
+    pin io_led[0][1] B20
+    pin io_led[0][2] B18
+    pin io_led[0][3] B17
+    pin io_led[0][4] B15
+    pin io_led[0][5] B14
+    pin io_led[0][6] B12
+    pin io_led[0][7] B11
+    pin io_led[1][0] B9
+    pin io_led[1][1] B8
+    pin io_led[1][2] B6
+    pin io_led[1][3] B5
+    pin io_led[1][4] B3
+    pin io_led[1][5] B2
+    pin io_led[1][6] A24
+    pin io_led[1][7] A23
+    pin io_led[2][0] A21
+    pin io_led[2][1] A20
+    pin io_led[2][2] A18
+    pin io_led[2][3] A17
+    pin io_led[2][4] A15
+    pin io_led[2][5] A14
+    pin io_led[2][6] A12
+    pin io_led[2][7] A11
 
-pin io_dip[0][0] B30 pulldown;
-pin io_dip[0][1] B31 pulldown;
-pin io_dip[0][2] B33 pulldown;
-pin io_dip[0][3] B34 pulldown;
-pin io_dip[0][4] B36 pulldown;
-pin io_dip[0][5] B37 pulldown;
-pin io_dip[0][6] B39 pulldown;
-pin io_dip[0][7] B40 pulldown;
-pin io_dip[1][0] B42 pulldown;
-pin io_dip[1][1] B43 pulldown;
-pin io_dip[1][2] B45 pulldown;
-pin io_dip[1][3] B46 pulldown;
-pin io_dip[1][4] B48 pulldown;
-pin io_dip[1][5] B49 pulldown;
-pin io_dip[1][6] A27 pulldown;
-pin io_dip[1][7] A28 pulldown;
-pin io_dip[2][0] A30 pulldown;
-pin io_dip[2][1] A31 pulldown;
-pin io_dip[2][2] A33 pulldown;
-pin io_dip[2][3] A34 pulldown;
-pin io_dip[2][4] A36 pulldown;
-pin io_dip[2][5] A37 pulldown;
-pin io_dip[2][6] A39 pulldown;
-pin io_dip[2][7] A40 pulldown;
+    pin io_dip[0][0] B30
+    pin io_dip[0][1] B31
+    pin io_dip[0][2] B33
+    pin io_dip[0][3] B34
+    pin io_dip[0][4] B36
+    pin io_dip[0][5] B37
+    pin io_dip[0][6] B39
+    pin io_dip[0][7] B40
+    pin io_dip[1][0] B42
+    pin io_dip[1][1] B43
+    pin io_dip[1][2] B45
+    pin io_dip[1][3] B46
+    pin io_dip[1][4] B48
+    pin io_dip[1][5] B49
+    pin io_dip[1][6] A27
+    pin io_dip[1][7] A28
+    pin io_dip[2][0] A30
+    pin io_dip[2][1] A31
+    pin io_dip[2][2] A33
+    pin io_dip[2][3] A34
+    pin io_dip[2][4] A36
+    pin io_dip[2][5] A37
+    pin io_dip[2][6] A39
+    pin io_dip[2][7] A40
 
-pin io_button[0] B28 pulldown;
-pin io_button[1] B27 pulldown;
-pin io_button[2] B23 pulldown;
-pin io_button[3] B24 pulldown;
-pin io_button[4] C49 pulldown;
-
-pin io_select[0] A9;
-pin io_select[1] A8;
-pin io_select[2] A42;
-pin io_select[3] A43;
-
-pin io_segment[0] A5;
-pin io_segment[1] A6;
-pin io_segment[2] A48;
-pin io_segment[3] A46;
-pin io_segment[4] A45;
-pin io_segment[5] A3;
-pin io_segment[6] A2;
-pin io_segment[7] A49;
+    pin io_button[0] B28
+    pin io_button[1] B27
+    pin io_button[2] B23
+    pin io_button[3] B24
+    pin io_button[4] C49
+    
+    pin io_select[0] A9
+    pin io_select[1] A8
+    pin io_select[2] A42
+    pin io_select[3] A43
+    
+    pin io_segment[0] A5
+    pin io_segment[1] A6
+    pin io_segment[2] A48
+    pin io_segment[3] A46
+    pin io_segment[4] A45
+    pin io_segment[5] A3
+    pin io_segment[6] A2
+    pin io_segment[7] A49
+}
