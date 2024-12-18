@@ -40,3 +40,11 @@ fun String.camelToSnakeCase() = foldIndexed(StringBuilder()) { index, acc, char 
 fun String.snakeToCamelCase() = split('_').mapIndexed { index, word ->
     if (index == 0) word else word.replaceFirstChar { it.uppercaseChar() }
 }.joinToString("")
+
+
+fun <T> List<T>.joinToOrList(): String = when (size) {
+    0 -> ""
+    1 -> first().toString()
+    2 -> "${first()} or ${last()}"
+    else -> "${dropLast(1).joinToString(", ")}, or ${last()}"
+}

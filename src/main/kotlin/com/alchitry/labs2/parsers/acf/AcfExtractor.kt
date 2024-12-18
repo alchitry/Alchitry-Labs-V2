@@ -1,11 +1,10 @@
 package com.alchitry.labs2.parsers.acf
 
+import com.alchitry.labs2.firstOfTypeOrNull
 import com.alchitry.labs2.hardware.Board
+import com.alchitry.labs2.joinToOrList
 import com.alchitry.labs2.parsers.ProjectContext
-import com.alchitry.labs2.parsers.acf.types.Constraint
-import com.alchitry.labs2.parsers.acf.types.PinAttribute
-import com.alchitry.labs2.parsers.acf.types.PinPull
-import com.alchitry.labs2.parsers.acf.types.PinSlew
+import com.alchitry.labs2.parsers.acf.types.*
 import com.alchitry.labs2.parsers.grammar.AcfBaseListener
 import com.alchitry.labs2.parsers.grammar.AcfLexer
 import com.alchitry.labs2.parsers.grammar.AcfParser
@@ -120,7 +119,9 @@ class AcfExtractor(
                 if (standard == null) {
                     notationCollector.reportError(
                         ctx.attributeValue() ?: ctx,
-                        "Invalid STANDARD value \"$valueText\". Expected ${board.pinConverter.standards.joinToString(", ") { "\"${it.name}\"" }}."
+                        "Invalid STANDARD value \"$valueText\". Expected ${
+                            board.pinConverter.standards.map { "\"${it.name}\"" }.joinToOrList()
+                        }."
                     )
                     return null
                 }
@@ -144,7 +145,9 @@ class AcfExtractor(
                 if (slew == null) {
                     notationCollector.reportError(
                         ctx.attributeValue() ?: ctx,
-                        "Invalid SLEW value \"$valueText\". Expected ${PinSlew.entries.joinToString(", ") { "\"${it.name}\"" }}."
+                        "Invalid SLEW value \"$valueText\". Expected ${
+                            PinSlew.entries.map { "\"${it.name}\"" }.joinToOrList()
+                        }."
                     )
                     return null
                 }
@@ -279,6 +282,57 @@ class AcfExtractor(
             return
         }
 
+        val ioStandard = standard.second.value
+
+        val pinDirection = when (signal.direction) {
+            SignalDirection.Read -> PinDirection.OUTPUT
+            SignalDirection.Write -> PinDirection.INPUT
+            SignalDirection.Both -> PinDirection.INOUT
+        }
+        if (!ioStandard.directions.contains(pinDirection)) {
+            notationCollector.reportError(
+                ctx,
+                "The STANDARD \"${ioStandard.name}\" does not support the direction \"${pinDirection.name}\"."
+            )
+            return
+        }
+
+        val bankVccos = board.pinConverter.bankToVcco(pin.bank)
+        val filteredVcco = context.getConstraints().firstNotNullOfOrNull {
+            if (pin.bank != it.pin.bank)
+                return@firstNotNullOfOrNull null
+            val pinStd =
+                it.attributes.firstOfTypeOrNull<PinAttribute.Standard>()?.value ?: return@firstNotNullOfOrNull null
+            if (it.port.direction != SignalDirection.Write && pinStd.inputAnyVcco)
+                return@firstNotNullOfOrNull null
+            pinStd.vcco
+        }
+
+        val vcco = if (pinDirection == PinDirection.INPUT && ioStandard.inputAnyVcco) null else ioStandard.vcco
+        if (vcco != null) {
+            if (filteredVcco != null && filteredVcco != vcco) {
+                val reason = if (bankVccos.size > 1) {
+                    "requires $filteredVcco from previous constraints"
+                } else {
+                    "has $filteredVcco"
+                }
+                notationCollector.reportError(
+                    ctx,
+                    "The STANDARD \"${ioStandard.name}\" requires a VCCO of $vcco but bank ${pin.bank} $reason."
+                )
+                return
+            }
+            if (!bankVccos.contains(vcco)) {
+                notationCollector.reportError(
+                    ctx,
+                    "The STANDARD \"${ioStandard.name}\" requires a VCCO of $vcco but bank ${pin.bank} has ${
+                        bankVccos.joinToOrList()
+                    }."
+                )
+                return
+            }
+        }
+
         val pull = attributes.firstOfType<PinAttribute.Pull>()
         if (pull != null && board is Board.AlchitryCu && pull.second.value != PinPull.Up) {
             notationCollector.reportError(pull.first, "The Alchitry Cu board only supports PULL(UP).")
@@ -287,21 +341,19 @@ class AcfExtractor(
 
         val drive = attributes.firstOfType<PinAttribute.Drive>()
         if (drive != null) {
-            val supportedDrives = standard.second.value.drive
+            val supportedDrives = ioStandard.drive
             if (supportedDrives == null) {
                 notationCollector.reportError(
                     drive.first,
-                    "The STANDARD \"${standard.second.value.name}\" does not support drive values."
+                    "The STANDARD \"${ioStandard.name}\" does not support drive values."
                 )
                 return
             }
             if (!supportedDrives.contains(drive.second.value)) {
                 notationCollector.reportError(
                     drive.first,
-                    "The STANDARD \"${standard.second.value.name}\" does not support the drive value \"${drive.second.value}\". Expected ${
-                        supportedDrives.joinToString(
-                            ", "
-                        )
+                    "The STANDARD \"${ioStandard.name}\" does not support the drive value \"${drive.second.value}\". Expected ${
+                        supportedDrives.joinToOrList()
                     }."
                 )
                 return
@@ -310,21 +362,19 @@ class AcfExtractor(
 
         val slew = attributes.firstOfType<PinAttribute.Slew>()
         if (slew != null) {
-            val supportedSlews = standard.second.value.slew
+            val supportedSlews = ioStandard.slew
             if (supportedSlews == null) {
                 notationCollector.reportError(
                     slew.first,
-                    "The STANDARD \"${standard.second.value.name}\" does not support slew values."
+                    "The STANDARD \"${ioStandard.name}\" does not support slew values."
                 )
                 return
             }
             if (!supportedSlews.contains(slew.second.value)) {
                 notationCollector.reportError(
                     slew.first,
-                    "The STANDARD \"${standard.second.value.name}\" does not support the slew value \"${slew.second.value}\". Expected ${
-                        supportedSlews.joinToString(
-                            ", "
-                        )
+                    "The STANDARD \"${ioStandard.name}\" does not support the slew value \"${slew.second.value}\". Expected ${
+                        supportedSlews.joinToOrList()
                     }."
                 )
                 return
