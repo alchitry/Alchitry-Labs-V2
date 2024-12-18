@@ -241,22 +241,31 @@ class TypesParser(
             return list.associate { connection ->
                 val port = moduleType.ports[connection.port] ?: error("Missing expected port!")
 
-                if (port.direction == SignalDirection.Both) {
-                    val exprCtx = connection.value.expr
-                    // TODO: Support arrayed signals for arrayed module instances
-                    if (exprCtx !is ExprSignalContext) {
-                        context.reportError(exprCtx, "Inout ports must be directly connected to another inout.")
+                when (port.direction) {
+                    SignalDirection.Read -> {
+                        context.reportError(
+                            connection.portCtx,
+                            "Module output \"${port.name}\" can't' be directly connected."
+                        )
                         return null
                     }
-                    val otherSig = context.resolve(exprCtx.signal() ?: error("Signal missing expression!"))
-                    if (otherSig !is Signal || otherSig.direction != SignalDirection.Both || otherSig.parent !is ModuleInstance) {
-                        context.reportError(exprCtx, "Inout ports must be directly connected to another inout.")
-                        return null
+
+                    SignalDirection.Write -> connection to connection.value.asSignal(connection.value.expr.text)
+                    SignalDirection.Both -> {
+                        val exprCtx = connection.value.expr
+                        // TODO: Support arrayed signals for arrayed module instances
+                        if (exprCtx !is ExprSignalContext) {
+                            context.reportError(exprCtx, "Inout ports must be directly connected to another inout.")
+                            return null
+                        }
+                        val otherSig = context.resolve(exprCtx.signal() ?: error("Signal missing expression!"))
+                        if (otherSig !is Signal || otherSig.direction != SignalDirection.Both || otherSig.parent !is ModuleInstance) {
+                            context.reportError(exprCtx, "Inout ports must be directly connected to another inout.")
+                            return null
+                        }
+                        ((otherSig.parent as ModuleInstance).ports[otherSig.name] as Inout).passthrough = true
+                        connection to otherSig
                     }
-                    ((otherSig.parent as ModuleInstance).ports[otherSig.name] as Inout).passthrough = true
-                    connection to otherSig
-                } else {
-                    connection to connection.value.asSignal(connection.value.expr.text)
                 }
             }
         }
