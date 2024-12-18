@@ -242,15 +242,15 @@ class TypesParser(
                 val port = moduleType.ports[connection.port] ?: error("Missing expected port!")
 
                 when (port.direction) {
-                    SignalDirection.Read -> {
+                    SignalDirection.Write -> {
                         context.reportError(
                             connection.portCtx,
-                            "Module output \"${port.name}\" can't' be directly connected."
+                            "Module output \"${port.name}\" can't' be directly connected. Use \"$moduleInstanceName.${port.name}\" instead."
                         )
                         return null
                     }
 
-                    SignalDirection.Write -> connection to connection.value.asSignal(connection.value.expr.text)
+                    SignalDirection.Read -> connection to connection.value.asSignal(connection.value.expr.text)
                     SignalDirection.Both -> {
                         val exprCtx = connection.value.expr
                         // TODO: Support arrayed signals for arrayed module instances
