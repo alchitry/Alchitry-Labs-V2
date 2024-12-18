@@ -1102,7 +1102,7 @@ internal class ExprParserTests {
         assertEquals(ExprType.Constant, expr.type)
 
         assert(test.hasNoErrors)
-        assert(test.hasWarnings) // should warn about truncation
+        assert(test.hasNoWarnings) // should not warn about truncation
 
         test = SimpleLucidTester("\$resize(1, 3)")
         tree = test.parser.expr().also { test.context.walk(it) }
