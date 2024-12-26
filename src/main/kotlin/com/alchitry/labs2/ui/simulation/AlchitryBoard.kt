@@ -24,7 +24,8 @@ fun AlchitryBoard(
         Board.AlchitryAu -> "au.svg"
         Board.AlchitryAuPlus -> "au.svg"
         Board.AlchitryCu -> "cu.svg"
-        Board.AlchitryAuV2 -> TODO("Not drawn yet")
+        Board.AlchitryAuV2 -> "au.svg" // TODO: Update Au V2 Image
+        Board.AlchitryCuV2 -> "cu.svg" // TODO: Update Cu V2 Image
     }
 
     BoxWithConstraints(modifier.aspectRatio(65.0f / 45.0f).fillMaxSize()) {

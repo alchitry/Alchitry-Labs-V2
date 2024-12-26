@@ -2,7 +2,7 @@
     "template": {
         "name": "Hello World",
         "description": "Prints \"Hello World\" when 'h' is received over the UART port",
-        "boards": ["Au", "Au+", "Cu", "AuV2"],
+        "boards": ["Au", "Au+", "Cu", "AuV2", "CuV2"],
         "priority": 3
     },
     "project": {

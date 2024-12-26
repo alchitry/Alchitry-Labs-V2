@@ -2,7 +2,7 @@
     "template": {
         "name": "Io Demo V2",
         "description": "Connects buttons/switches to LEDs and counts on the 7-segment LEDs",
-        "boards": ["AuV2"],
+        "boards": ["AuV2", "CuV2"],
         "priority": 6
     },
     "project": {

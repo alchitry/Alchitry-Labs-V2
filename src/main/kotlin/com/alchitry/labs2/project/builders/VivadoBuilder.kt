@@ -23,7 +23,7 @@ data object VivadoBuilder : ProjectBuilder() {
         val spiBusWidth = when (project.data.board) {
             Board.AlchitryAu, Board.AlchitryAuPlus -> 2
             Board.AlchitryAuV2 -> 4
-            Board.AlchitryCu -> error("Cu isn't supported by the VivadoBuilder")
+            Board.AlchitryCu, Board.AlchitryCuV2 -> error("Cu isn't supported by the VivadoBuilder")
         }
         propsFile.writeText(
             """

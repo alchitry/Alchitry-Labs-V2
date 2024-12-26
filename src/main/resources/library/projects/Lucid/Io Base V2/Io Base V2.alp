@@ -2,7 +2,7 @@
     "template": {
         "name": "Io Base V2",
         "description": "Minimum boilerplate project for the Io element",
-        "boards": ["AuV2"],
+        "boards": ["AuV2", "CuV2"],
         "priority": 5
     },
     "project": {

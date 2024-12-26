@@ -182,7 +182,7 @@ object VivadoIP {
                 Board.AlchitryAu -> "mig.prj"
                 Board.AlchitryAuPlus -> "mig_plus.prj"
                 Board.AlchitryAuV2 -> "mig_v2.prj"
-                Board.AlchitryCu -> error("Can't generate MIG core for Cu!")
+                Board.AlchitryCu, Board.AlchitryCuV2 -> error("Can't generate MIG core for Cu!")
             }
             val migCompFilePath = "${Locations.cores}/${migCompFile}"
             val migProjectContents =

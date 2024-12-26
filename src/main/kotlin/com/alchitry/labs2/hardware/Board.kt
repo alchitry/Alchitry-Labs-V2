@@ -41,7 +41,13 @@ sealed class Board {
             Board::class.allSealedObjects()
                 .firstOrNull { it.name.equals(name, ignoreCase = true) || it.alias.equals(name, ignoreCase = true) }
 
-        val All: List<Board> = listOf(AlchitryAuV2, AlchitryAu, AlchitryAuPlus, AlchitryCu)
+        val All: List<Board> = listOf(
+            AlchitryAuV2,
+            AlchitryCuV2,
+            AlchitryAu,
+            AlchitryAuPlus,
+            AlchitryCu
+        )
     }
 
     val binName: String get() = name.lowercase().replace(" ", "_")
@@ -80,6 +86,25 @@ sealed class Board {
         override val acfConverter = XilinxConverter
         override val projectBuilder = VivadoBuilder
         override val supportsRamLoading = true
+    }
+
+    data object AlchitryCuV2 : Board() {
+        override val name = "Alchitry Cu V2"
+        override val alias = "CuV2"
+        override val fpgaName = "ICE40HX8K-CB132IC"
+        override val usbDescriptor =
+            UsbUtil.UsbDescriptor(
+                "Alchitry Cu V2",
+                0x0403.toShort(),
+                0x6010.toShort(),
+                "Alchitry Cu V2",
+                PortInterfaceType.INTERFACE_A
+            )
+        override val serialUsbDescriptor = usbDescriptor.copy(d2xxInterface = PortInterfaceType.INTERFACE_B)
+        override val pinConverters = listOf(CuV2Pin, CuV2toV1Pin)
+        override val acfConverter = LatticeConverter
+        override val projectBuilder get() = if (Settings.useIceCube) IceCubeBuilder else IceStormBuilder
+        override val supportsRamLoading = false
     }
 
     data object AlchitryAu : Board(), XilinxBoard {

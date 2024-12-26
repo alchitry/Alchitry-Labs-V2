@@ -16,7 +16,7 @@ interface BoardLoader {
                     return false
                 val loader = when (board) {
                     is Board.XilinxBoard -> XilinxJtag.init(ftdi, board)
-                    Board.AlchitryCu -> LatticeSpi.init(ftdi)
+                    Board.AlchitryCu, Board.AlchitryCuV2 -> LatticeSpi.init(ftdi)
                 }
                 block(loader)
             }
