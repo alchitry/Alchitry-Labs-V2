@@ -1,5 +1,6 @@
 package basic
 
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.hdl.types.ports.Inout
 import com.alchitry.labs2.parsers.hdl.values.Bit
@@ -43,7 +44,7 @@ class InoutTests {
     fun connectedInoutTest() {
         val inout1 = Inout("test1", null, BitListWidth(4), false)
         val inout2 = Inout("test2", null, BitListWidth(4), false)
-        val project = ProjectContext(NotationManager())
+        val project = ProjectContext(NotationManager(), Board.AlchitryAuV2)
         inout1.passthrough = true
         inout1.internal.connectTo(inout2.external, project)
         inout2.external.connectTo(inout1.internal, project)

@@ -1,5 +1,6 @@
 package helpers
 
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.LucidParser
@@ -23,7 +24,7 @@ class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = nul
             ).also { it.removeErrorListeners() })
     )
 
-    val project = ProjectContext(NotationManager())
+    val project = ProjectContext(NotationManager(), Board.AlchitryAuV2)
     val sourceFile = SourceFile(FileProvider.DiskFile("test.luc"), true)
     val context = LucidBlockContext(
         project,
