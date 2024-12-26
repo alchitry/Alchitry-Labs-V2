@@ -2,6 +2,8 @@ package com.alchitry.labs2.simulation
 
 import androidx.compose.runtime.*
 import com.alchitry.labs2.hardware.pinout.AuPin
+import com.alchitry.labs2.hardware.pinout.AuV2Pin
+import com.alchitry.labs2.hardware.pinout.ConverterVersion
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.hdl.types.SignalOrSubSignal
 import com.alchitry.labs2.parsers.hdl.values.Bit
@@ -20,6 +22,7 @@ data class IoSimulator private constructor(
     val buttons: List<SignalOrSubSignal>,
     val segments: List<SignalOrSubSignal>,
     val selects: List<SignalOrSubSignal>,
+    private val version: Version
 ) {
     private val buttonValues = List(5) { mutableStateOf(false) }
     private val dipValues = List(24) { mutableStateOf(false) }
@@ -100,19 +103,32 @@ data class IoSimulator private constructor(
             }
         }
 
-        IoBoard(
-            leds = { ledStates[it] },
-            digits = { digit, segment -> segmentStates[digit][segment] },
-            onButtonChange = { idx, clicked -> buttonValues[idx].value = clicked },
-            onSwitchChange = { idx -> dipValues[idx].value = !dipValues[idx].value },
-            switchState = { idx -> dipValues[idx].value }
-        )
+        when (version) {
+            Version.V1 ->
+                IoBoard(
+                    leds = { ledStates[it] },
+                    digits = { digit, segment -> segmentStates[digit][segment] },
+                    onButtonChange = { idx, clicked -> buttonValues[idx].value = clicked },
+                    onSwitchChange = { idx -> dipValues[idx].value = !dipValues[idx].value },
+                    switchState = { idx -> dipValues[idx].value }
+                )
+
+            Version.V2 ->
+                IoBoard( // TODO: make V2
+                    leds = { ledStates[it] },
+                    digits = { digit, segment -> segmentStates[digit][segment] },
+                    onButtonChange = { idx, clicked -> buttonValues[idx].value = clicked },
+                    onSwitchChange = { idx -> dipValues[idx].value = !dipValues[idx].value },
+                    switchState = { idx -> dipValues[idx].value }
+                )
+        }
     }
 
     companion object {
-        fun connect(projectContext: ProjectContext): IoSimulator? {
-            val constraints = projectContext.getConstraints()
-            val reset = constraints.firstOrNull { it.pin.name == AuPin.RESET.name }?.port
+        private enum class Version { V1, V2 }
+
+        fun connectV1(projectContext: ProjectContext): IoSimulator? {
+            val constraints = projectContext.getConstraints(ConverterVersion.V1)
             val leds = listOf(
                 AuPin.B21.name,
                 AuPin.B20.name,
@@ -203,7 +219,105 @@ data class IoSimulator private constructor(
                 dips = dips,
                 buttons = buttons,
                 segments = segments,
-                selects = select
+                selects = select,
+                version = Version.V1
+            )
+        }
+
+        fun connectV2(projectContext: ProjectContext): IoSimulator? {
+            val constraints = projectContext.getConstraints(ConverterVersion.V2)
+            val leds = listOf(
+                AuV2Pin.A70.name,
+                AuV2Pin.A72.name,
+                AuV2Pin.A76.name,
+                AuV2Pin.A78.name,
+                AuV2Pin.A77.name,
+                AuV2Pin.A75.name,
+                AuV2Pin.A71.name,
+                AuV2Pin.A69.name,
+                AuV2Pin.A65.name,
+                AuV2Pin.A63.name,
+                AuV2Pin.A59.name,
+                AuV2Pin.A57.name,
+                AuV2Pin.A53.name,
+                AuV2Pin.A51.name,
+                AuV2Pin.A47.name,
+                AuV2Pin.A45.name,
+                AuV2Pin.A41.name,
+                AuV2Pin.A39.name,
+                AuV2Pin.A35.name,
+                AuV2Pin.A33.name,
+                AuV2Pin.A29.name,
+                AuV2Pin.A27.name,
+                AuV2Pin.A30.name,
+                AuV2Pin.A34.name,
+            ).map { name ->
+                constraints.firstOrNull { it.pin.name == name }?.port ?: return null
+            }
+            val dips = listOf(
+                AuV2Pin.A66.name,
+                AuV2Pin.A64.name,
+                AuV2Pin.A60.name,
+                AuV2Pin.A58.name,
+                AuV2Pin.A54.name,
+                AuV2Pin.A52.name,
+                AuV2Pin.A48.name,
+                AuV2Pin.A46.name,
+                AuV2Pin.A42.name,
+                AuV2Pin.A40.name,
+                AuV2Pin.A36.name,
+                AuV2Pin.B18.name,
+                AuV2Pin.B16.name,
+                AuV2Pin.B12.name,
+                AuV2Pin.B10.name,
+                AuV2Pin.B6.name,
+                AuV2Pin.B4.name,
+                AuV2Pin.B3.name,
+                AuV2Pin.B5.name,
+                AuV2Pin.B9.name,
+                AuV2Pin.B11.name,
+                AuV2Pin.B15.name,
+                AuV2Pin.B17.name,
+                AuV2Pin.B21.name,
+            ).map { name ->
+                constraints.firstOrNull { it.pin.name == name }?.port ?: return null
+            }
+            val select = listOf(
+                AuV2Pin.A4.name,
+                AuV2Pin.A6.name,
+                AuV2Pin.A12.name,
+                AuV2Pin.A10.name,
+            ).map { name ->
+                constraints.firstOrNull { it.pin.name == name }?.port ?: return null
+            }
+            val segments = listOf(
+                AuV2Pin.A9.name,
+                AuV2Pin.A3.name,
+                AuV2Pin.A21.name,
+                AuV2Pin.A15.name,
+                AuV2Pin.A11.name,
+                AuV2Pin.A5.name,
+                AuV2Pin.A23.name,
+                AuV2Pin.A17.name,
+            ).map { name ->
+                constraints.firstOrNull { it.pin.name == name }?.port ?: return null
+            }
+            val buttons = listOf(
+                AuV2Pin.A24.name,
+                AuV2Pin.A22.name,
+                AuV2Pin.A18.name,
+                AuV2Pin.A16.name,
+                AuV2Pin.A28.name,
+            ).map { name ->
+                constraints.firstOrNull { it.pin.name == name }?.port ?: return null
+            }
+            return IoSimulator(
+                leds = leds,
+                dips = dips,
+                buttons = buttons,
+                segments = segments,
+                selects = select,
+                version = Version.V2
             )
         }
     }

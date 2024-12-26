@@ -446,7 +446,7 @@ data class Project(
         val modulesMap = moduleMapFlow.value
         val globals = globalMapFlow.value
         val notationManager = NotationManager()
-        ProjectContext(notationManager).use { projectContext ->
+        ProjectContext(notationManager, data.board).use { projectContext ->
             globals.forEach { (_, global) -> projectContext.addGlobal(global) }
             modulesMap.forEach { (_, modules) -> modules.forEach { module -> projectContext.addModule(module) } }
 
@@ -476,7 +476,7 @@ data class Project(
         parsedTrees: List<Pair<SourceFile, LucidParser.SourceContext>>? = null,
         simulating: Boolean = false
     ): ProjectContext? {
-        val projectContext = ProjectContext(notationManager, simulating)
+        val projectContext = ProjectContext(notationManager, data.board, simulating)
         var success = false
         val trees = parsedTrees ?: parseAll(data.sourceFiles + ipCoreStubs, notationManager)
 

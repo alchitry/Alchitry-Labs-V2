@@ -1,7 +1,11 @@
 package com.alchitry.labs2.parsers
 
 import com.alchitry.labs2.Log
+import com.alchitry.labs2.firstOfTypeOrNull
+import com.alchitry.labs2.hardware.Board
+import com.alchitry.labs2.hardware.pinout.ConverterVersion
 import com.alchitry.labs2.parsers.acf.types.Constraint
+import com.alchitry.labs2.parsers.acf.types.PinAttribute
 import com.alchitry.labs2.parsers.hdl.lucid.SystemVerilogConverter
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.notations.NotationManager
@@ -15,7 +19,8 @@ import kotlinx.coroutines.*
 import java.io.Closeable
 import java.util.concurrent.ConcurrentHashMap
 
-class ProjectContext(val notationManager: NotationManager, val simulating: Boolean = false) : Closeable {
+class ProjectContext(val notationManager: NotationManager, val board: Board, val simulating: Boolean = false) :
+    Closeable {
     var top: ModuleInstance? = null
     private val constraints = mutableListOf<Constraint>()
     private val globals = mutableMapOf<String, GlobalNamespace>()
@@ -158,5 +163,11 @@ class ProjectContext(val notationManager: NotationManager, val simulating: Boole
     }
 
     fun getConstraints(): List<Constraint> = constraints.toImmutableList()
+    fun getConstraints(version: ConverterVersion) = constraints.filter {
+        (it.attributes.firstOfTypeOrNull<PinAttribute.Pinout>()?.value
+            ?: board.pinConverters.first()).version == version
+    }
 }
+
+
 

@@ -11,7 +11,7 @@ import com.alchitry.labs2.simulation.ProjectSimulator
 
 class BoardSimulationTab(
     override var parent: TabPanel,
-    val context: ProjectContext,
+    context: ProjectContext,
     private val simulator: ProjectSimulator = ProjectSimulator(context)
 ) : Tab {
     @Composable

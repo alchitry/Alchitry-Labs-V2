@@ -17,7 +17,8 @@ import kotlinx.coroutines.sync.withLock
 @Suppress("DataClassPrivateConstructor")
 data class AlchitrySimulator private constructor(
     val rstN: SignalOrSubSignal?,
-    val leds: List<SignalOrSubSignal?>
+    val leds: List<SignalOrSubSignal?>,
+    val board: Board
 ) {
     private var resetValue by mutableStateOf(false)
     private var ledAccumulators = List(8) { SampleAccumulator(0, 0) }
@@ -72,7 +73,7 @@ data class AlchitrySimulator private constructor(
             }
         }
 
-        AlchitryBoard(Board.AlchitryAu, leds = { ledStates[it] }, 1.0f) {
+        AlchitryBoard(board, leds = { ledStates[it] }, 1.0f) {
             resetValue = it
         }
     }
@@ -94,7 +95,7 @@ data class AlchitrySimulator private constructor(
             val led = ledNames.map { ledName ->
                 constraints.firstOrNull { it.pin.name == ledName }?.port
             }
-            return AlchitrySimulator(reset, led)
+            return AlchitrySimulator(reset, led, projectContext.board)
         }
     }
 }

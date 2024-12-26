@@ -68,7 +68,7 @@ class ProjectSimulator(private val projectContext: ProjectContext) : Closeable {
         alchitrySimulator = AlchitrySimulator.connect(projectContext)
         alchitrySimulator.reportMissingSignals()
 
-        ioSimulator = IoSimulator.connect(projectContext)
+        ioSimulator = IoSimulator.connectV2(projectContext) ?: IoSimulator.connectV1(projectContext)
 
         top = projectContext.top ?: error("Project is missing top module!")
 
