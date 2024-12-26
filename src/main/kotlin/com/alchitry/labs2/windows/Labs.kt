@@ -29,8 +29,10 @@ import com.alchitry.labs2.ui.main.LabsToolbar
 import com.alchitry.labs2.ui.tabs.Workspace
 import com.alchitry.labs2.ui.theme.AlchitryTheme
 import com.alchitry.labs2.ui.tree.ProjectTree
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
 import java.io.File
 
 val LocalLabsState = compositionLocalOf<LabsState> { error("No LabsState provided!") }
@@ -58,9 +60,11 @@ fun ApplicationScope.labsWindow() {
             if (labsState.attachedToBoard.value) {
                 return@LaunchedEffect
             }
-            while (isActive) {
-                labsState.detectedBoards.value = UsbUtil.detectAttachedBoards()
-                delay(1000)
+            withContext(Dispatchers.IO) {
+                while (isActive) {
+                    labsState.detectedBoards.value = UsbUtil.detectAttachedBoards()
+                    delay(1000)
+                }
             }
         }
 
