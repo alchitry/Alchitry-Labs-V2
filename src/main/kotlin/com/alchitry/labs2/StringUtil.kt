@@ -42,9 +42,9 @@ fun String.snakeToCamelCase() = split('_').mapIndexed { index, word ->
 }.joinToString("")
 
 
-fun <T> List<T>.joinToOrList(): String = when (size) {
+fun <T> List<T>.joinToOrString(transform: ((T) -> CharSequence)? = null): String = when (size) {
     0 -> ""
-    1 -> first().toString()
-    2 -> "${first()} or ${last()}"
-    else -> "${dropLast(1).joinToString(", ")}, or ${last()}"
+    1 -> (transform?.let { it(first()) } ?: first()).toString()
+    2 -> "${transform?.let { it(first()) } ?: first()} or ${transform?.let { it(last()) } ?: last()}"
+    else -> "${dropLast(1).joinToString(", ", transform = transform)}, or ${transform?.let { it(last()) } ?: last()}"
 }

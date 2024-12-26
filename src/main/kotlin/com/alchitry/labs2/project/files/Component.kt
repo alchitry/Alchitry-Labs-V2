@@ -97,7 +97,11 @@ data class Component(
                     "/${it.groupValues[1].camelToSnakeCase()}."
                 }
 
-                ComponentLibrary.findByPath(resourcePath) ?: error("Failed to find component: $resourcePath")
+                ComponentLibrary.findByPath(resourcePath)?.let { return@decodeStructure it }
+                val parts = resourcePath.split("/")
+                val name = parts.last()
+                val categories = parts.subList(0, parts.size - 1).map { it.lowercase() }
+                Component(name, "Missing", resourcePath, categories = categories, content = "")
             }
         }
 

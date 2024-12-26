@@ -73,7 +73,7 @@ fun NewProjectDialog(visible: Boolean, onClose: () -> Unit) {
 
         var projectName by remember { mutableStateOf("") }
         var workspace by remember { mutableStateOf(File(Locations.workspace)) }
-        var board by remember { mutableStateOf<Board>(Board.AlchitryAu) }
+        var board by remember { mutableStateOf<Board>(Board.AlchitryAuV2) }
         var template by remember { mutableStateOf<ProjectTemplate?>(null) }
 
         Column(Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {

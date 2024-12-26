@@ -1,13 +1,13 @@
 {
     "template": {
-        "name": "Hello World",
-        "description": "Prints \"Hello World\" when 'h' is received over the UART port",
-        "boards": ["Au", "Au+", "Cu", "AuV2"],
-        "priority": 3
+        "name": "Io Base V1 Fake Pull-downs",
+        "description": "Minimum boilerplate project for the Io element with fake pull-downs",
+        "boards": ["Cu"],
+        "priority": 5
     },
     "project": {
         "type": "V1.3",
-        "projectName": "Hello World",
+        "projectName": "Io Base",
         "board": "Alchitry Cu",
         "sourceFiles": [
             {
@@ -26,25 +26,13 @@
             {
                 "file": {
                     "type": "Component",
-                    "path": "Interfaces/uart_rx.luc"
+                    "path": "Miscellaneous/fake_pull_down_2d.luc"
                 }
             },
             {
                 "file": {
                     "type": "Component",
-                    "path": "Interfaces/uart_tx.luc"
-                }
-            },
-            {
-                "file": {
-                    "type": "DiskFile",
-                    "path": "source/greeter.luc"
-                }
-            },
-            {
-                "file": {
-                    "type": "DiskFile",
-                    "path": "source/hello_world_rom.luc"
+                    "path": "Miscellaneous/fake_pull_down.luc"
                 }
             }
         ],
@@ -53,6 +41,12 @@
                 "file": {
                     "type": "Component",
                     "path": "Constraints/alchitry.acf"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Constraints/io_v1.acf"
                 }
             }
         ],

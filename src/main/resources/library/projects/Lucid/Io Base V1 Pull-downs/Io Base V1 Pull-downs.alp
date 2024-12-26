@@ -1,14 +1,14 @@
 {
     "template": {
-        "name": "Io Base Fake Pull-downs",
-        "description": "Minimum boilerplate project for the Io element using fake pull-downs",
-        "boards": ["Cu"],
+        "name": "Io Base V1 Pull-downs",
+        "description": "Minimum boilerplate project for the Io element with pull-downs",
+        "boards": ["Au", "Au+"],
         "priority": 5
     },
     "project": {
-        "type": "V1.2",
+        "type": "V1.3",
         "projectName": "Io Base",
-        "board": "Alchitry Cu",
+        "board": "Alchitry Au",
         "sourceFiles": [
             {
                 "file": {
@@ -46,7 +46,7 @@
             {
                 "file": {
                     "type": "Component",
-                    "path": "Constraints/io.acf"
+                    "path": "Constraints/io_v1_pulldown.acf"
                 }
             }
         ],

@@ -59,7 +59,7 @@ class QueueExhaustionException(message: String) : IllegalStateException(message)
 
 data class Project(
     val path: Path,
-    val data: ProjectData1V2
+    val data: ProjectData1V3
 ) {
     val top: SourceFile get() = data.sourceFiles.firstOrNull { it.top } ?: throw Exception("Missing top module!")
     val projectFile: File = path.resolve("${data.projectName}.alp").toFile()
@@ -84,6 +84,14 @@ data class Project(
     val moduleMapFlow = mutableModuleMapFlow.asStateFlow()
 
     val projectFiles = (data.sourceFiles + data.constraintFiles + data.ipCores.mapNotNull { it.stub })
+
+    init {
+        projectFiles.forEach { fileProvider ->
+            if (fileProvider.file is Component && fileProvider.file.componentName == "Missing") {
+                error("Missing component with path \"${fileProvider.file.description}\"!")
+            }
+        }
+    }
 
     fun binFileIsUpToDate(): Boolean = binFile.lastModified() >= lastModified() && binFile.lastModified() > 0L
     fun lastModified(): Long {

@@ -1,14 +1,14 @@
 {
     "template": {
-        "name": "Button To LED",
-        "description": "Connects the reset button to the first LED",
-        "boards": ["Au", "Au+", "Cu", "AuV2"],
-        "priority": 1
+        "name": "Io Base V1",
+        "description": "Minimum boilerplate project for the Io element",
+        "boards": ["Au", "Au+", "Cu"],
+        "priority": 5
     },
     "project": {
         "type": "V1.3",
-        "projectName": "Base",
-        "board": "Alchitry Au",
+        "projectName": "Io Base V1",
+        "board": "Alchitry Cu",
         "sourceFiles": [
             {
                 "file": {
@@ -29,6 +29,12 @@
                 "file": {
                     "type": "Component",
                     "path": "Constraints/alchitry.acf"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Constraints/io_v1.acf"
                 }
             }
         ],

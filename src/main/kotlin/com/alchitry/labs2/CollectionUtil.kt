@@ -12,4 +12,4 @@ fun <T : Any> List<T?>.noNulls(): List<T>? {
     return this as List<T>
 }
 
-inline fun <reified T> List<*>.firstOfTypeOrNull(): T? = firstOrNull { it is T } as T?
+inline fun <reified T> Collection<*>.firstOfTypeOrNull(): T? = firstOrNull { it is T } as T?

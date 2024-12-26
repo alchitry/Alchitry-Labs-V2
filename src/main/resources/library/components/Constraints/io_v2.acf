@@ -1,0 +1,76 @@
+/**
+    "name" : "Io V2",
+    "description" : "Pin constraints for the Io V2 element.",
+    "supportedBoards" : ["AuV2"]
+**/
+PINOUT(V2), STANDARD(LVCMOS33) {
+    pin io_led[0][0] A70
+    pin io_led[0][1] A72
+    pin io_led[0][2] A76
+    pin io_led[0][3] A78
+    pin io_led[0][4] A77
+    pin io_led[0][5] A75
+    pin io_led[0][6] A71
+    pin io_led[0][7] A69
+    pin io_led[1][0] A65
+    pin io_led[1][1] A63
+    pin io_led[1][2] A59
+    pin io_led[1][3] A57
+    pin io_led[1][4] A53
+    pin io_led[1][5] A51
+    pin io_led[1][6] A47
+    pin io_led[1][7] A45
+    pin io_led[2][0] A41
+    pin io_led[2][1] A39
+    pin io_led[2][2] A35
+    pin io_led[2][3] A33
+    pin io_led[2][4] A29
+    pin io_led[2][5] A27
+    pin io_led[2][6] A30
+    pin io_led[2][7] A34
+
+    pin io_dip[0][0] A66
+    pin io_dip[0][1] A64
+    pin io_dip[0][2] A60
+    pin io_dip[0][3] A58
+    pin io_dip[0][4] A54
+    pin io_dip[0][5] A52
+    pin io_dip[0][6] A48
+    pin io_dip[0][7] A46
+    pin io_dip[1][0] A42
+    pin io_dip[1][1] A40
+    pin io_dip[1][2] A36
+    pin io_dip[1][3] B18
+    pin io_dip[1][4] B16
+    pin io_dip[1][5] B12
+    pin io_dip[1][6] B10
+    pin io_dip[1][7] B6
+    pin io_dip[2][0] B4
+    pin io_dip[2][1] B3
+    pin io_dip[2][2] B5
+    pin io_dip[2][3] B9
+    pin io_dip[2][4] B11
+    pin io_dip[2][5] B15
+    pin io_dip[2][6] B17
+    pin io_dip[2][7] B21
+
+    pin io_button[0] A24
+    pin io_button[1] A22
+    pin io_button[2] A18
+    pin io_button[3] A16
+    pin io_button[4] A28
+
+    pin io_select[0] A4
+    pin io_select[1] A6
+    pin io_select[2] A12
+    pin io_select[3] A10
+
+    pin io_segment[0] A9
+    pin io_segment[1] A3
+    pin io_segment[2] A21
+    pin io_segment[3] A15
+    pin io_segment[4] A11
+    pin io_segment[5] A5
+    pin io_segment[6] A23
+    pin io_segment[7] A17
+}

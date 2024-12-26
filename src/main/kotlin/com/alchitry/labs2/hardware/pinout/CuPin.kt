@@ -100,6 +100,7 @@ enum class CuPin(override val fpgaPin: String, override val bank: Int) : Pin {
     SPI_SS("P13", 2);
 
     companion object : PinConverter {
+        override val version = ConverterVersion.V1
         override val standards = Ice40IoStandard.entries
         override fun bankToVcco(bank: Int): List<String> = when (bank) {
             0, 1, 2, 3 -> listOf("3.3")

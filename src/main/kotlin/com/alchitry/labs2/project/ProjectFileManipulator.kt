@@ -70,7 +70,15 @@ fun Project.addVerilogModule(moduleName: String) = addSourceFile(
     """.trimIndent()
 )
 
-fun Project.addAlchitryConstraint(name: String) = addConstraintFile("$name.${Languages.ACF.extension}")
+fun Project.addAlchitryConstraint(name: String) = addConstraintFile(
+    name = "$name.${Languages.ACF.extension}",
+    contents = """
+        STANDARD(LVCMOS33) { // standard 3.3V IO standard
+            // add pin constraints here
+            // pin SIGNAL PORT OPTIONAL_ATTRIBUTES
+        }
+    """.trimIndent()
+)
 
 private fun Project.addSourceFile(name: String, contents: String): SourceFile? {
     try {

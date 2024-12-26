@@ -1,13 +1,13 @@
 {
     "template": {
-        "name": "Io Demo Fake Pull-downs",
-        "description": "Connects buttons/switches to LEDs and counts on the 7-segment LEDs using fake pull-downs",
-        "boards": ["Cu"],
+        "name": "Io Demo V1",
+        "description": "Connects buttons/switches to LEDs and counts on the 7-segment LEDs",
+        "boards": ["Au", "Au+", "Cu"],
         "priority": 6
     },
     "project": {
-        "type": "V1.2",
-        "projectName": "Io Demo",
+        "type": "V1.3",
+        "projectName": "Io Demo V1",
         "board": "Alchitry Au",
         "sourceFiles": [
             {
@@ -64,18 +64,6 @@
                     "type": "Component",
                     "path": "Pulses/edge_detector.luc"
                 }
-            },
-            {
-                "file": {
-                    "type": "Component",
-                    "path": "Miscellaneous/fake_pull_down.luc"
-                }
-            },
-            {
-                "file": {
-                    "type": "Component",
-                    "path": "Miscellaneous/fake_pull_down_2d.luc"
-                }
             }
         ],
         "constraintFiles": [
@@ -88,7 +76,7 @@
             {
                 "file": {
                     "type": "Component",
-                    "path": "Constraints/io.acf"
+                    "path": "Constraints/io_v1.acf"
                 }
             }
         ],

@@ -149,10 +149,10 @@ class ProjectContext(val notationManager: NotationManager, val simulating: Boole
     }
 
     fun addConstraint(constraint: Constraint): AddConstraintResult {
-        if (constraints.any { it.pin == constraint.pin })
-            return AddConstraintResult.PinTaken
         if (constraints.any { areOverlapping(it.port, constraint.port) })
             return AddConstraintResult.PortTaken
+        if (constraints.any { it.pin == constraint.pin })
+            return AddConstraintResult.PinTaken
         constraints.add(constraint)
         return AddConstraintResult.Success
     }

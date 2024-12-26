@@ -175,6 +175,7 @@ enum class AuPin(override val fpgaPin: String, override val bank: Int) : Pin {
     DDR_A13("J15", 15);
 
     companion object : PinConverter {
+        override val version = ConverterVersion.V1
         override val standards = Artix7IoStandard.entries
         override fun acfToPin(name: String): AuPin? = entries.firstOrNull { it.name == name }
 

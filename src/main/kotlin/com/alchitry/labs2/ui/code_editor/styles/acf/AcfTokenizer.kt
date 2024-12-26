@@ -9,7 +9,7 @@ import org.antlr.v4.kotlinruntime.CharStream
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 
 object AcfTokenizer : EditorTokenizer {
-    private val operatorRegex = Regex("[(){}\\]\\[;]+")
+    private val operatorRegex = Regex("[(){}\\]\\[;,]+")
     private val capRegex = Regex("[A-Z0-9_]+")
 
     override fun getTokens(stream: CharStream): List<EditorToken> {

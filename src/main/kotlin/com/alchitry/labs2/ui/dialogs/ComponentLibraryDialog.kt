@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.addComponents
 import com.alchitry.labs2.project.files.Component
@@ -43,7 +44,11 @@ fun ComponentLibraryDialog(visible: Boolean, onClose: () -> Unit) {
                             Surface(Modifier.matchParentSize()) {
                                 Column(Modifier.verticalScroll(rememberScrollState())) {
                                     with(selectionContext) {
-                                        LibrarySectionTree(library, 0)
+                                        LibrarySectionTree(
+                                            library,
+                                            Project.currentFlow.collectAsState().value?.data?.board,
+                                            0
+                                        )
                                     }
                                 }
                             }
@@ -97,28 +102,30 @@ fun ComponentLibraryDialog(visible: Boolean, onClose: () -> Unit) {
 @Composable
 private fun SelectionContext<Component?>.LibrarySectionTree(
     section: LibrarySection,
+    board: Board?,
     indentLevel: Int
 ) {
     val selected = LocalSelectedComponents.current
-    section.components.forEach { component ->
-        val alreadyInProject = Project.current?.components?.contains(component) == true
-        CheckBoxTreeItem(
-            component.componentName,
-            indentLevel,
-            remember { Selectable(component) },
-            checked = selected.contains(component) || alreadyInProject,
-            enabled = !alreadyInProject
-        ) {
-            if (it) {
-                selected.add(component)
-            } else {
-                selected.remove(component)
+    section.components.filter { board == null || it.supportedBoards == null || it.supportedBoards.contains(board) }
+        .forEach { component ->
+            val alreadyInProject = Project.current?.components?.contains(component) == true
+            CheckBoxTreeItem(
+                component.componentName,
+                indentLevel,
+                remember { Selectable(component) },
+                checked = selected.contains(component) || alreadyInProject,
+                enabled = !alreadyInProject
+            ) {
+                if (it) {
+                    selected.add(component)
+                } else {
+                    selected.remove(component)
+                }
             }
         }
-    }
     section.subSections.forEach { (name, subSection) ->
         TreeSection(name, indentLevel, remember { Selectable(null) }, false) {
-            LibrarySectionTree(subSection, indentLevel + 1)
+            LibrarySectionTree(subSection, board, indentLevel + 1)
         }
     }
 }

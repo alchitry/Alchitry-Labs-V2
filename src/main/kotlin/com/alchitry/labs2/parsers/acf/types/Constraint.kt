@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.acf.types
 
 import com.alchitry.labs2.hardware.pinout.Pin
+import com.alchitry.labs2.hardware.pinout.PinConverter
 import com.alchitry.labs2.parsers.hdl.types.SignalOrSubSignal
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 
@@ -13,6 +14,10 @@ data class Constraint(
 
 sealed interface PinAttribute {
     val name: String
+
+    data class Pinout(val value: PinConverter) : PinAttribute {
+        override val name: String = "PINOUT"
+    }
 
     data class Pull(val value: PinPull) : PinAttribute {
         override val name: String = "PULL"

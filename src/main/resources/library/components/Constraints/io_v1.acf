@@ -1,9 +1,8 @@
 /**
-    "name" : "Io",
-    "description" : "Pin constraints for the Io element.",
-    "supportedBoards" : ["Au", "Au+", "Cu"]
+    "name" : "Io V1",
+    "description" : "Pin constraints for the Io V1 element."
 **/
-STANDARD(LVCMOS33) {
+PINOUT(V1), STANDARD(LVCMOS33) {
     pin io_led[0][0] B21
     pin io_led[0][1] B20
     pin io_led[0][2] B18

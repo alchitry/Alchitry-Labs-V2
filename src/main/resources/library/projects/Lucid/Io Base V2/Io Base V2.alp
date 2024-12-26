@@ -1,14 +1,14 @@
 {
     "template": {
-        "name": "Io Base",
+        "name": "Io Base V2",
         "description": "Minimum boilerplate project for the Io element",
-        "boards": ["Au", "Au+", "Cu"],
+        "boards": ["AuV2"],
         "priority": 5
     },
     "project": {
-        "type": "V1.2",
-        "projectName": "Io Base",
-        "board": "Alchitry Cu",
+        "type": "V1.3",
+        "projectName": "Io Base V2",
+        "board": "Alchitry Au V2",
         "sourceFiles": [
             {
                 "file": {
@@ -34,7 +34,7 @@
             {
                 "file": {
                     "type": "Component",
-                    "path": "Constraints/io.acf"
+                    "path": "Constraints/io_v2.acf"
                 }
             }
         ],

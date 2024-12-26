@@ -119,7 +119,7 @@ data class SubSignal(
             return FlatSelectionData(offset, selectedBits)
         }
 
-    override fun toString() = getSignal().toString() + selection.joinToString { it.toString() }
+    override fun toString() = getSignal().toString() + selection.joinToString(separator = "") { it.toString() }
 }
 
 data class FlatSelectionData(val offset: Int, val bits: Int)

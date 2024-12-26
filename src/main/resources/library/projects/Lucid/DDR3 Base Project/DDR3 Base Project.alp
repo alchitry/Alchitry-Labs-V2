@@ -1,13 +1,13 @@
 {
     "template": {
         "name": "DDR3 Base Project",
-        "description": "Minimum boilerplate project for using DDR3 on the Au or Au+",
+        "description": "Minimum boilerplate project for using DDR3",
         "boards": ["Au", "Au+", "AuV2"],
         "priority": 0,
         "requiresMig": true
     },
     "project": {
-        "type": "V1.2",
+        "type": "V1.3",
         "projectName": "DDR3 Base Project",
         "board": "Alchitry Au",
 "sourceFiles": [

@@ -1,14 +1,14 @@
 {
     "template": {
-        "name": "Io Demo",
+        "name": "Io Demo V2",
         "description": "Connects buttons/switches to LEDs and counts on the 7-segment LEDs",
-        "boards": ["Au", "Au+", "Cu"],
+        "boards": ["AuV2"],
         "priority": 6
     },
     "project": {
-        "type": "V1.2",
-        "projectName": "Io Demo",
-        "board": "Alchitry Au",
+        "type": "V1.3",
+        "projectName": "Io Demo V2",
+        "board": "Alchitry Au V2",
         "sourceFiles": [
             {
                 "file": {
@@ -76,7 +76,7 @@
             {
                 "file": {
                     "type": "Component",
-                    "path": "Constraints/io.acf"
+                    "path": "Constraints/io_v2.acf"
                 }
             }
         ],

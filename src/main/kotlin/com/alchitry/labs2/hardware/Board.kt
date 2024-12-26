@@ -2,10 +2,7 @@ package com.alchitry.labs2.hardware
 
 import com.alchitry.labs2.Settings
 import com.alchitry.labs2.allSealedObjects
-import com.alchitry.labs2.hardware.pinout.AuPin
-import com.alchitry.labs2.hardware.pinout.AuV2Pin
-import com.alchitry.labs2.hardware.pinout.CuPin
-import com.alchitry.labs2.hardware.pinout.PinConverter
+import com.alchitry.labs2.hardware.pinout.*
 import com.alchitry.labs2.hardware.usb.UsbUtil
 import com.alchitry.labs2.hardware.usb.ftdi.enums.PortInterfaceType
 import com.alchitry.labs2.parsers.acf.AcfConverter
@@ -44,7 +41,7 @@ sealed class Board {
             Board::class.allSealedObjects()
                 .firstOrNull { it.name.equals(name, ignoreCase = true) || it.alias.equals(name, ignoreCase = true) }
 
-        val All: List<Board> get() = Board::class.allSealedObjects()
+        val All: List<Board> = listOf(AlchitryAuV2, AlchitryAu, AlchitryAuPlus, AlchitryCu)
     }
 
     val binName: String get() = name.lowercase().replace(" ", "_")
@@ -54,7 +51,7 @@ sealed class Board {
     abstract val fpgaName: String
     abstract val usbDescriptor: UsbUtil.UsbDescriptor
     abstract val serialUsbDescriptor: UsbUtil.UsbDescriptor
-    abstract val pinConverter: PinConverter
+    abstract val pinConverters: List<PinConverter>
     abstract val acfConverter: AcfConverter
     abstract val projectBuilder: ProjectBuilder
     abstract val supportsRamLoading: Boolean
@@ -79,7 +76,7 @@ sealed class Board {
         override val serialUsbDescriptor = usbDescriptor.copy(d2xxInterface = PortInterfaceType.INTERFACE_B)
         override val bridgeFile = "/bridges/au_v2.bin"
         override val idCode = "0362D093"
-        override val pinConverter = AuV2Pin
+        override val pinConverters = listOf(AuV2Pin, AuV2toV1Pin)
         override val acfConverter = XilinxConverter
         override val projectBuilder = VivadoBuilder
         override val supportsRamLoading = true
@@ -100,7 +97,7 @@ sealed class Board {
         override val serialUsbDescriptor = usbDescriptor.copy(d2xxInterface = PortInterfaceType.INTERFACE_B)
         override val bridgeFile = "/bridges/au.bin"
         override val idCode = "0362D093"
-        override val pinConverter = AuPin
+        override val pinConverters = listOf(AuPin)
         override val acfConverter = XilinxConverter
         override val projectBuilder = VivadoBuilder
         override val supportsRamLoading = true
@@ -121,7 +118,7 @@ sealed class Board {
         override val serialUsbDescriptor = usbDescriptor.copy(d2xxInterface = PortInterfaceType.INTERFACE_B)
         override val bridgeFile = "/bridges/au_plus.bin"
         override val idCode = "13631093"
-        override val pinConverter = AuPin
+        override val pinConverters = listOf(AuPin)
         override val acfConverter = XilinxConverter
         override val projectBuilder = VivadoBuilder
         override val supportsRamLoading = true
@@ -140,7 +137,7 @@ sealed class Board {
                 PortInterfaceType.INTERFACE_A
             )
         override val serialUsbDescriptor = usbDescriptor.copy(d2xxInterface = PortInterfaceType.INTERFACE_B)
-        override val pinConverter = CuPin
+        override val pinConverters = listOf(CuPin)
         override val acfConverter = LatticeConverter
         override val projectBuilder get() = if (Settings.useIceCube) IceCubeBuilder else IceStormBuilder
         override val supportsRamLoading = false

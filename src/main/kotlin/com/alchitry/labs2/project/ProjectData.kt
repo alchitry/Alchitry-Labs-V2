@@ -3,10 +3,8 @@ package com.alchitry.labs2.project
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.camelToSnakeCase
 import com.alchitry.labs2.hardware.Board
-import com.alchitry.labs2.project.files.ConstraintFile
-import com.alchitry.labs2.project.files.FileProvider
-import com.alchitry.labs2.project.files.IPCore
-import com.alchitry.labs2.project.files.SourceFile
+import com.alchitry.labs2.project.files.*
+import com.alchitry.labs2.project.library.ComponentLibrary
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.io.File
@@ -17,7 +15,7 @@ import kotlin.io.path.relativeTo
 @Serializable
 @SerialName("Project")
 sealed interface ProjectData {
-    fun upgradeToLatest(projectPath: Path): ProjectData1V2
+    fun upgradeToLatest(projectPath: Path): ProjectData1V3
 
     val version: ProjectVersion
         get() =
@@ -25,10 +23,11 @@ sealed interface ProjectData {
                 is ProjectData1V0 -> ProjectData1V0.version
                 is ProjectData1V1 -> ProjectData1V1.version
                 is ProjectData1V2 -> ProjectData1V2.version
+                is ProjectData1V3 -> ProjectData1V3.version
             }
 
     companion object {
-        val latestVersion = ProjectData1V2.version
+        val latestVersion = ProjectData1V3.version
     }
 }
 
@@ -40,7 +39,7 @@ data class ProjectData1V0(
     val sourceFiles: Set<SourceFile>,
     val constraintFiles: Set<ConstraintFile>
 ) : ProjectData {
-    override fun upgradeToLatest(projectPath: Path): ProjectData1V2 {
+    override fun upgradeToLatest(projectPath: Path): ProjectData1V3 {
         Log.info("Upgrading from project $version to ${ProjectData1V1.version}")
         return ProjectData1V1(projectName, board, sourceFiles, constraintFiles, emptySet()).upgradeToLatest(projectPath)
     }
@@ -59,7 +58,7 @@ data class ProjectData1V1(
     val constraintFiles: Set<ConstraintFile>,
     val ipCores: Set<IPCore>
 ) : ProjectData {
-    override fun upgradeToLatest(projectPath: Path): ProjectData1V2 {
+    override fun upgradeToLatest(projectPath: Path): ProjectData1V3 {
         Log.info("Upgrading from project $version to ${ProjectData1V2.version}")
         val camelCaseRegex = Regex("\\b[a-z][A-Za-z0-9]*\\b")
         val newSourceFiles = sourceFiles.map { file ->
@@ -107,7 +106,9 @@ data class ProjectData1V1(
             file
         }.toSet()
 
-        return ProjectData1V2(projectName, board, newSourceFiles, newConstraintFiles, ipCores)
+        return ProjectData1V2(projectName, board, newSourceFiles, newConstraintFiles, ipCores).upgradeToLatest(
+            projectPath
+        )
     }
 
     companion object {
@@ -124,10 +125,44 @@ data class ProjectData1V2(
     val constraintFiles: Set<ConstraintFile>,
     val ipCores: Set<IPCore>
 ) : ProjectData {
-    override fun upgradeToLatest(projectPath: Path): ProjectData1V2 = this
+    override fun upgradeToLatest(projectPath: Path): ProjectData1V3 {
+        Log.info("Upgrading from project $version to ${ProjectData1V3.version}")
+
+        val newConstraintFiles = constraintFiles.map { file ->
+            val provider = file.file
+            if (provider is Component && provider.componentName == "Missing") {
+                val path = provider.description
+                if (path == "Constraints/io.acf") {
+                    return@map ConstraintFile(
+                        ComponentLibrary.findByPath("Constraints/io_v1.acf") ?: error("Io V1 component missing!")
+                    )
+                }
+            }
+            file
+        }.toSet()
+
+        return ProjectData1V3(projectName, board, sourceFiles, newConstraintFiles, ipCores)
+    }
 
 
     companion object {
         val version = ProjectVersion(1, 2)
+    }
+}
+
+@Serializable
+@SerialName("V1.3")
+data class ProjectData1V3(
+    val projectName: String,
+    val board: Board,
+    val sourceFiles: Set<SourceFile>,
+    val constraintFiles: Set<ConstraintFile>,
+    val ipCores: Set<IPCore>
+) : ProjectData {
+    override fun upgradeToLatest(projectPath: Path): ProjectData1V3 = this
+
+
+    companion object {
+        val version = ProjectVersion(1, 3)
     }
 }

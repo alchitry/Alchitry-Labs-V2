@@ -2,11 +2,11 @@
     "template": {
         "name": "Hello RAM",
         "description": "Asks for your name and greats you over UART",
-        "boards": ["Au", "Au+", "Cu"],
+        "boards": ["Au", "Au+", "Cu", "AuV2"],
         "priority": 4
     },
     "project": {
-        "type": "V1.2",
+        "type": "V1.3",
         "projectName": "Hello RAM",
         "board": "Alchitry Cu",
         "sourceFiles": [

@@ -2,7 +2,8 @@ package com.alchitry.labs2.parsers.acf
 
 import com.alchitry.labs2.firstOfTypeOrNull
 import com.alchitry.labs2.hardware.Board
-import com.alchitry.labs2.joinToOrList
+import com.alchitry.labs2.hardware.pinout.PinConverter
+import com.alchitry.labs2.joinToOrString
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.acf.types.*
 import com.alchitry.labs2.parsers.grammar.AcfBaseListener
@@ -96,10 +97,25 @@ class AcfExtractor(
         return hz.roundToInt()
     }
 
+    private fun currentConverter(): PinConverter {
+        blockAttributes.forEach { map -> map.values.firstOfTypeOrNull<PinAttribute.Pinout>()?.let { return it.value } }
+        return board.pinConverters.first()
+    }
+
     private fun parseAttribute(ctx: AttributeContext): PinAttribute? {
         val name = ctx.BASIC_NAME()?.text ?: return null
         val valueText = ctx.attributeValue()?.text ?: return null
         when (name) {
+            "PINOUT" -> {
+                board.pinConverters.firstOrNull { it.version.name == valueText }?.let {
+                    return PinAttribute.Pinout(it)
+                }
+                notationCollector.reportError(
+                    ctx,
+                    "Invalid PINOUT value \"$valueText\". Expected ${board.pinConverters.joinToOrString { "\"${it.version.name}\"" }}."
+                )
+                return null
+            }
             "PULL" -> return when (valueText) {
                 "UP" -> PinAttribute.Pull(PinPull.Up)
                 "DOWN" -> PinAttribute.Pull(PinPull.Down)
@@ -115,12 +131,13 @@ class AcfExtractor(
 
 
             "STANDARD" -> {
-                val standard = board.pinConverter.standards.firstOrNull { it.name == valueText }
+                val converter = currentConverter()
+                val standard = converter.standards.firstOrNull { it.name == valueText }
                 if (standard == null) {
                     notationCollector.reportError(
                         ctx.attributeValue() ?: ctx,
                         "Invalid STANDARD value \"$valueText\". Expected ${
-                            board.pinConverter.standards.map { "\"${it.name}\"" }.joinToOrList()
+                            converter.standards.map { "\"${it.name}\"" }.joinToOrString()
                         }."
                     )
                     return null
@@ -146,7 +163,7 @@ class AcfExtractor(
                     notationCollector.reportError(
                         ctx.attributeValue() ?: ctx,
                         "Invalid SLEW value \"$valueText\". Expected ${
-                            PinSlew.entries.map { "\"${it.name}\"" }.joinToOrList()
+                            PinSlew.entries.map { "\"${it.name}\"" }.joinToOrString()
                         }."
                     )
                     return null
@@ -174,13 +191,15 @@ class AcfExtractor(
     }
 
     override fun enterAttributeBlock(ctx: AttributeBlockContext) {
-        val attributeMap = ctx.attribute().mapNotNull { it to (parseAttribute(it) ?: return@mapNotNull null) }.toMap()
-        attributeMap.forEach { (ctx, attr) ->
-            if (blockAttributes.any { block -> block.any { it.value.name == attr.name } } || attributeMap.any { it.value.name == attr.name && it.value !== attr }) {
+        val attributeMap = mutableMapOf<AttributeContext, PinAttribute>()
+        blockAttributes.add(attributeMap)
+        ctx.attribute().forEach { attrCtx ->
+            val attr = parseAttribute(attrCtx) ?: return@forEach
+            if (blockAttributes.any { block -> block.any { it.value.name == attr.name } }) {
                 notationCollector.reportError(ctx, "The attribute \"${attr.name}\" has already been defined.")
             }
+            attributeMap[attrCtx] = attr
         }
-        blockAttributes.add(attributeMap)
     }
 
     override fun exitAttributeBlock(ctx: AttributeBlockContext) {
@@ -194,7 +213,6 @@ class AcfExtractor(
                 pinContext,
                 "The pin \"${constraint.pin.name}\" has already been connected!"
             )
-
             ProjectContext.AddConstraintResult.PortTaken -> notationCollector.reportError(
                 portContext,
                 "The port \"${constraint.port}\" has already been connected!"
@@ -256,22 +274,30 @@ class AcfExtractor(
     override fun exitPin(ctx: PinContext) {
         val signal = signals[ctx.portName() ?: return] ?: return
         val pinName = ctx.pinName()?.text ?: return
-        val pin = board.pinConverter.acfToPin(pinName)
-        if (pin == null) {
-            notationCollector.reportError(ctx.pinName()!!, "Pin \"$pinName\" does not exist on the ${board.name}")
-            return
-        }
+
         val attributes = mutableMapOf<AttributeContext, PinAttribute>()
         blockAttributes.forEach { attributes.putAll(it) }
-        ctx.attribute().forEach {
-            parseAttribute(it)?.let { attr ->
+        ctx.attribute().forEach { attributeContext ->
+            parseAttribute(attributeContext)?.let { attr ->
                 if (attributes.any { it.value.name == attr.name }) {
-                    notationCollector.reportError(it, "The attribute \"${attr.name}\" has already been defined.")
+                    notationCollector.reportError(
+                        attributeContext,
+                        "The attribute \"${attr.name}\" has already been defined."
+                    )
                 }
-                attributes[it] = attr
+                attributes[attributeContext] = attr
             }
         }
 
+        val converter = attributes.values.firstOfTypeOrNull<PinAttribute.Pinout>()?.value ?: board.pinConverters.first()
+        val pin = converter.acfToPin(pinName)
+        if (pin == null) {
+            notationCollector.reportError(
+                ctx.pinName()!!,
+                "Pin \"$pinName\" does not exist in pinout ${converter.version.name} on the ${board.name}."
+            )
+            return
+        }
 
         val standard = attributes.firstOfType<PinAttribute.Standard>()
         if (standard == null) {
@@ -297,7 +323,7 @@ class AcfExtractor(
             return
         }
 
-        val bankVccos = board.pinConverter.bankToVcco(pin.bank)
+        val bankVccos = converter.bankToVcco(pin.bank)
         val filteredVcco = context.getConstraints().firstNotNullOfOrNull {
             if (pin.bank != it.pin.bank)
                 return@firstNotNullOfOrNull null
@@ -326,7 +352,7 @@ class AcfExtractor(
                 notationCollector.reportError(
                     ctx,
                     "The STANDARD \"${ioStandard.name}\" requires a VCCO of $vcco but bank ${pin.bank} has ${
-                        bankVccos.joinToOrList()
+                        bankVccos.joinToOrString()
                     }."
                 )
                 return
@@ -353,7 +379,7 @@ class AcfExtractor(
                 notationCollector.reportError(
                     drive.first,
                     "The STANDARD \"${ioStandard.name}\" does not support the drive value \"${drive.second.value}\". Expected ${
-                        supportedDrives.joinToOrList()
+                        supportedDrives.joinToOrString()
                     }."
                 )
                 return
@@ -374,7 +400,7 @@ class AcfExtractor(
                 notationCollector.reportError(
                     slew.first,
                     "The STANDARD \"${ioStandard.name}\" does not support the slew value \"${slew.second.value}\". Expected ${
-                        supportedSlews.joinToOrList()
+                        supportedSlews.joinToOrString()
                     }."
                 )
                 return

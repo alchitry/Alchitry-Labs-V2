@@ -1,7 +1,7 @@
 /**
     "name": "LRU Cache"
     "description": "This module is a cache that approximates a fully associative LRU (least recently used) cache. It can be used with the MIG Wrapper interface to the DDR3 memory."
-    "supportedBoards": ["Au", "Au+"]
+    "supportedBoards": ["Au", "Au+", "AuV2"]
 **/
 /******************************************************************************
 

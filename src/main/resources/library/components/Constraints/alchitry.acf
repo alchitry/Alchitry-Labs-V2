@@ -1,7 +1,6 @@
 /**
     "name" : "Alchitry",
-    "description" : "Basic pin and clock constraints for the Alchitry Au, Au+, and Cu.",
-    "supportedBoards" : ["Au", "Au+", "Cu"]
+    "description" : "Basic pin and clock constraints for the Alchitry boards."
 **/
 STANDARD(LVCMOS33) {
     pin clk CLOCK FREQUENCY(100MHz)
