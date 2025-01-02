@@ -1,0 +1,38 @@
+/**
+    "name" : "Ft V2",
+    "description" : "Pin constraints for the Ft V2 element."
+**/
+STANDARD(LVCMOS33) { // standard 3.3V IO standard
+    pin ft_clk A41 FREQUENCY(100MHz)
+
+    pin ft_wakeup A3
+    pin ft_reset A5
+
+    pin ft_rxf A10
+    pin ft_txe A12
+
+    pin ft_oe A4
+    pin ft_rd A6
+    pin ft_wr A9
+
+    pin ft_be[0] A15
+    pin ft_be[1] A11
+
+    pin ft_data[0] A39
+    pin ft_data[1] A35
+    pin ft_data[2] A33
+    pin ft_data[3] A36
+    pin ft_data[4] A34
+    pin ft_data[5] A29
+    pin ft_data[6] A27
+    pin ft_data[7] A30
+
+    pin ft_data[8] A28
+    pin ft_data[9] A23
+    pin ft_data[10] A21
+    pin ft_data[11] A24
+    pin ft_data[12] A22
+    pin ft_data[13] A17
+    pin ft_data[14] A18
+    pin ft_data[15] A16
+}
