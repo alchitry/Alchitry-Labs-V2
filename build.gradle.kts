@@ -177,3 +177,8 @@ tasks.register<com.alchitry.antlrkotlin.gradleplugin.AntlrKotlinTask>("generateK
     // use this setting if you want to add the generated sources to version control
     outputDirectory = File("src/main/kotlin")
 }
+
+tasks.register("publish") {
+    group = "conveyor"
+    dependsOn("copied-site", "ms-store-release")
+}
