@@ -120,7 +120,7 @@ module async_fifo #(
         // if we have space and should write
         if (wput && wrdy) {
             waddr.d = waddr.q + 1 // increment write address
-            ram.write_data = 1 // set write flag
+            ram.write_enable = 1 // set write flag
         }
 
         // if we have data and a read request
