@@ -7,7 +7,6 @@ import com.alchitry.labs2.hardware.usb.ftdi.Ftdi
 import com.alchitry.labs2.hardware.usb.ftdi.FtdiD2xx
 import com.alchitry.labs2.hardware.usb.ftdi.FtdiLibUSB
 import com.alchitry.labs2.hardware.usb.ftdi.enums.PortInterfaceType
-import com.fazecast.jSerialComm.SerialPort
 import net.sf.yad2xx.Device
 import net.sf.yad2xx.FTDIException
 import net.sf.yad2xx.FTDIInterface
@@ -110,21 +109,9 @@ object UsbUtil {
         try {
             if (hasD2XX) {
                 try {
-                    val d2xx = findD2xxDevice(board, deviceIndex, true)
-                    if (d2xx != null) {
-                        d2xx.open()
-                        val portName = "COM" + d2xx.comPortNumber
-                        d2xx.close()
-                        val port = SerialPort.getCommPort(portName)
-                        if (port != null) {
-                            val serial = GenericSerial(port)
-                            if (serial.open()) {
-                                return serial
-                            } else {
-                                Log.error("Failed to open generic serial port: $portName")
-                            }
-                        }
-                    }
+                    val d2xx = findD2xxDevice(board, deviceIndex, true) ?: return null
+                    d2xx.open()
+                    return FtdiD2xx(d2xx)
                 } catch (e: FTDIException) {
                     Log.exception(e)
                 }
