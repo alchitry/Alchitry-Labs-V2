@@ -6,14 +6,9 @@ import net.sf.yad2xx.Device
 import net.sf.yad2xx.FTDIConstants
 import net.sf.yad2xx.FTDIException
 
-class FtdiD2xx(device: Device) : Ftdi, SerialDevice {
-    private val device: Device
-    protected var readTimeout = 0
-    protected var writeTimeout = 0
-
-    init {
-        this.device = device
-    }
+class FtdiD2xx(private val device: Device) : Ftdi, SerialDevice {
+    private var readTimeout = 0
+    private var writeTimeout = 0
 
     override fun setTimeouts(read: Int, write: Int) {
         readTimeout = read
