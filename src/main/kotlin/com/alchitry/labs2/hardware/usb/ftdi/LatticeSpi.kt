@@ -5,7 +5,6 @@ import com.alchitry.labs2.allSealedObjects
 import com.alchitry.labs2.hardware.usb.BoardLoader
 import com.alchitry.labs2.hardware.usb.ftdi.enums.FlashCommand
 import com.alchitry.labs2.hardware.usb.ftdi.enums.MpsseCommand
-import com.alchitry.labs2.ui.theme.AlchitryColors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -278,7 +277,7 @@ class LatticeSpi private constructor(ftdi: Ftdi) : Mpsse(ftdi), BoardLoader {
         flashPowerDown()
         flashReleaseReset()
         delay(250)
-        Log.println("Done.", AlchitryColors.current.Success)
+        Log.success("Done.")
     }
 
     private fun flashUnlock() {
@@ -342,6 +341,6 @@ class LatticeSpi private constructor(ftdi: Ftdi) : Mpsse(ftdi), BoardLoader {
         flashPowerDown()
         flashReleaseReset()
         delay(250)
-        Log.println("Done.", AlchitryColors.current.Success)
+        Log.success("Done.")
     }
 }
