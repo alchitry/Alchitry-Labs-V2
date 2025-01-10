@@ -44,8 +44,8 @@ class ExprParser(
     override suspend fun enterBlock(ctx: BlockContext) {
         when (val parent = ctx.parent) {
             is RepeatBlockContext -> {
-                val exprs = (parent.parent as? RepeatStatContext)?.expr() ?: return
-                val expr = context.resolve(if (exprs.size > 1) exprs[1] else exprs[0]) ?: return
+                val exprContexts = (parent.parent as? RepeatStatContext)?.expr() ?: return
+                val expr = context.resolve(if (exprContexts.size > 1) exprContexts[1] else exprContexts[0]) ?: return
                 if (!expr.type.known) return
                 evaluator.setDeadBlock(ctx, expr.value.isEqualTo(Bit.B0.toBitValue()).bit == Bit.B1)
             }
