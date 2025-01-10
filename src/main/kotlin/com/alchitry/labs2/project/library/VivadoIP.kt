@@ -148,7 +148,7 @@ object VivadoIP {
             tclScript.writeText(buildString {
                 val nl = System.lineSeparator()
                 val fileList = core.files.joinToString(" ", "{", "}") {
-                    project.path.resolve(it.path).absolutePathString().replace("\\", "/")
+                    "{${project.path.resolve(it.path).absolutePathString().replace("\\", "/")}}"
                 }
                 append("open_project {${project.coresProjectFile}}")
                 append(nl)
@@ -160,9 +160,9 @@ object VivadoIP {
                 append(fileList)
                 append(nl)
                 append(
-                    "file delete -force ${
+                    "file delete -force {${
                         project.ipCoreDirectory.resolve(core.name).absolutePathString().replace("\\", "/")
-                    }"
+                    }}"
                 )
                 append(nl)
             })
