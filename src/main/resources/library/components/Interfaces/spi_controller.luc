@@ -1,3 +1,7 @@
+/**
+    "name": "SPI Controller"
+    "description": "SPI controller (master). It has configurable CPOL and CPHA as well as a configurable clock divider."
+**/
 /******************************************************************************
 
    The MIT License (MIT)
@@ -76,8 +80,8 @@ module spi_controller #(
                 ctr.d = 0
 
                 if (start) { // if we should start a new transfer
-                    data_in_buffer.d = data_in // save the data to send
-                    state.d = States.TRANSFER  // switch states
+                    data_in_buffer.d = data_in          // save the data to send
+                    state.d = States.TRANSFER // switch states
                 }
 
             States.TRANSFER:
@@ -91,7 +95,7 @@ module spi_controller #(
                 // at the start of each clock cycle
                 // output a new bit of data
                 if (&sck_reg.q) { // edge about to fall
-                    data_in_buffer.d = c{data_in_buffer.q[6:0], 0} // shift data 1 bit over
+                    data_in_buffer.d = c{data_in_buffer.q[6:0], data_in_buffer.q[0]} // shift data 1 bit over
 
                     ctr.d = ctr.q + 1 // increment bit counter
 

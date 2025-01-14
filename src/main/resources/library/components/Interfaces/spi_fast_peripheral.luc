@@ -1,0 +1,149 @@
+/**
+    "name": "SPI Fast Peripheral"
+    "description": "SPI fast peripheral (slave). Supports fast SPI bus speeds up to 1:1 of the system clock."
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2025 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   ****************************************************************************
+
+   This module works well for faster SPI buses. The frequency of sck may be at
+   most 1x of the frequency of clk. With a clk frequency of 100MHz, sck must
+   not exceed 100MHz. For slower clocks, see the spi_peripheral which allows for
+   faster responses.
+
+   The parameter OUTPUT_ON_FALLING should usually be set to 0 to output bits on
+   the rising edge if clock speeds are above 40MHz to improve timing.
+
+   The sck signal is used to directly clock DFFs so it should be connected to
+   a clock capable pin (MRCC or SRCC) or routed through a BUFR. Failing to do
+   this will cause the build to fail.
+
+   Data to be sent out is saved during bits 2-3 of a transmission and is sent on
+   the following byte. This means that this module will always send 0 for the
+   byte. It also can't use data from the first received byte during the second
+   byte. This means that a typical application would have a dummy byte between
+   the first and third bytes.
+
+   This module uses SPI mode 0, CPOL = 0 and CPHA = 0.
+*/
+
+module spi_fast_peripheral #(
+    OUTPUT_ON_FALLING ~ 1 : OUTPUT_ON_FALLING == 0 || OUTPUT_ON_FALLING == 1
+)(
+    input clk,             // clock
+    input rst,             // reset
+    input cs,              // SPI chip select
+    input sdi,             // SPI data in
+    output sdo,            // SPI data out
+    input sck,             // SPI SCK
+    output cs_sync,        // CS synced to system clock
+    output need_data,      // 1 if data in buffer is empty
+    input data_in_valid,   // 1 when data_in is valid
+    input data_in[8],      // data to send
+    output data_out_valid, // transfer done
+    output data_out[8],    // data received
+) {
+
+    .clk(clk) {
+        dff cs_pipe[3]
+
+        .rst(rst) {
+            dff data_out_valid_sync[4]
+
+            dff data_in_buffer[8]
+            dff data_in_full
+
+            dff bit_in_ct_is_0_to_1_sync[3]
+            dff bit_in_ct_is_2_to_3_sync[3]
+        }
+    }
+
+    sig data_out_flag_rst
+    .clk(sck) {
+        dff data_out_flag(.arst(data_out_flag_rst))
+    }
+    .arst(cs) {
+        .clk(sck) { // read edge
+            dff data_out_buffer[8]
+            dff data_out_shift[8]
+            dff bit_out_ct[3]
+        }
+        .clk(sck ^ OUTPUT_ON_FALLING) { // write edge
+            dff data_in_shift[8]
+            dff bit_in_ct[3]
+        }
+    }
+
+    always {
+        /* WRITE EDGE */
+
+        data_in_shift.d = c{data_in_shift.q[6:0], 0}
+        bit_in_ct.d = bit_in_ct.q + 1
+        sdo = data_in_shift.q[7]
+        if (bit_in_ct.q == 7 && data_in_full.q) {
+            data_in_shift.d = data_in_buffer.q
+        }
+
+        /* READ EDGE */
+
+        data_out_shift.d = c{data_out_shift.q[6:0], sdi}
+
+        bit_out_ct.d = bit_out_ct.q + 1
+        if (bit_out_ct.q == 7) {
+            data_out_buffer.d = c{data_out_shift.q[6:0], sdi}
+            data_out_flag.d = 1
+        }
+
+        /* SYS CLOCK */
+
+        bit_in_ct_is_0_to_1_sync.d = c{bit_in_ct_is_0_to_1_sync.q[1:0], bit_in_ct.q <= 1}
+        bit_in_ct_is_2_to_3_sync.d = c{bit_in_ct_is_2_to_3_sync.q[1:0], bit_in_ct.q >= 2 && bit_in_ct.q <= 3}
+
+        if (bit_in_ct_is_0_to_1_sync.q[2]) {
+            data_in_full.d = 0
+        }
+
+        sig accept_data = bit_in_ct_is_2_to_3_sync.q[2] && !data_in_full.q
+        need_data = accept_data
+        if (accept_data && data_in_valid) {
+            data_in_buffer.d = data_in
+            data_in_full.d = 1
+        }
+
+        data_out_valid_sync.d = c{data_out_valid_sync.q[2:0], data_out_flag.q}
+
+        data_out = hx
+        data_out_valid = 0
+        data_out_flag_rst = 0
+        if (data_out_valid_sync.q[3:2] == 2b01) {
+            data_out_valid = 1
+            data_out_flag_rst = 1
+            data_out = data_out_buffer.q
+        }
+
+        cs_pipe.d = c{cs_pipe.q[1:0], cs}
+        cs_sync = cs_pipe.q[2]
+    }
+}

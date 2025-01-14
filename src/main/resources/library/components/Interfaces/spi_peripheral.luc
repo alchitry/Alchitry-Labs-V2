@@ -6,7 +6,7 @@
 
    The MIT License (MIT)
 
-   Copyright (c) 2024 Alchitry
+   Copyright (c) 2025 Alchitry
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,16 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
    THE SOFTWARE.
 
-   *****************************************************************************/
+   ****************************************************************************
+
+   This module works well for slower SPI buses. The frequency of sck must be at
+   most 1/16th of the frequency of clk. With a clk frequency of 100MHz, sck must
+   not exceed 6.25MHz. For faster clocks, see the spi_fast_peripheral which comes
+   with its own tradeoffs.
+
+   Data to be sent out is saved on the falling edge of cs as well as at the end
+   of each byte on the cycle that data_out_valid is high.
+*/
 
 module spi_peripheral #(
     // clock polarity, 0 = inactive low, 1 = inactive high
@@ -35,70 +44,75 @@ module spi_peripheral #(
     // clock phase, 0 = valid on leading edge, 1 = valid on trailing edge
     CPHA = 0 : CPHA == 0 || CPHA == 1
 )(
-    input clk,          // clock
-    input rst,          // reset
-    input cs,           // SPI chip select
-    input sdi,          // SPI data in
-    output sdo,         // SPI data out
-    input sck,          // SPI SCK
-    output done,        // transfer done
-    input data_in[8],   // data to send
-    output data_out[8]  // data received
+    input clk,             // clock
+    input rst,             // reset
+    input cs,              // SPI chip select
+    input sdi,             // SPI data in
+    output sdo,            // SPI data out
+    input sck,             // SPI SCK
+    output cs_sync,        // CS synced to system clock
+    input data_in[8],      // data to send
+    output data_out_valid, // data_out is valid
+    output data_out[8]     // data received
 ) {
 
     .clk(clk) {
         .rst(rst) {
-            dff bit_ct[3]    // bit counter
-            dff data[8]      // received data
+            dff bit_ct[3]         // bit counter
+            dff data_in_shift[8]  // received data
+            dff data_out_shift[8] // transmit data
         }
-        dff sdi_reg          // input buffer
-        dff sdo_reg          // output buffer
-        dff sck_reg[2]       // sck buffer
-        dff cs_reg           // cs buffer
-        dff data_out_reg[8]  // data_out buffer
+        dff sdi_reg[3]       // input buffer
+        dff sck_reg[4]       // sck buffer
+        dff cs_reg[3]        // cs buffer
         dff done_reg         // done buffer
     }
 
     always {
         // connect to buffer output
-        sdo = sdo_reg.q
-        done = done_reg.q
-        data_out = data_out_reg.q
+        sdo = data_in_shift.q[7]
+        data_out_valid = done_reg.q
+        data_out = data_out_shift.q
 
         // read in buffered inputs
-        cs_reg.d = cs
-        sdi_reg.d = sdi
-        sck_reg.d = c{sck_reg.q[0], sck} // save old sck
+        cs_reg.d = c{cs_reg.q[1:0], cs}
+        sdi_reg.d = c{sdi_reg.q[1:0], sdi}
+        sck_reg.d = c{sck_reg.q[2:0], sck} // save old sck
+
+        cs_sync = cs_reg.q[$width(cs_reg.q)-1]
 
         done_reg.d = 0 // default to not done
 
-        if (cs_reg.q) { // not selected
-            bit_ct.d = 3b111        // reset counter
-            data.d = data_in        // copy in data for next byte
-            sdo_reg.d = data_in[7]  // write first bit out
+        if (cs_reg.q[$width(cs_reg.q)-1]) { // not selected
+            bit_ct.d = 0              // reset counter
+            data_in_shift.d = data_in // copy in data for next byte
         } else {
             // When CPOL and CPHA are different, we read on the falling edge.
             // When they are the same we read on the rising edge.
             // Therefore we can use XOR to check that and invert the
             // edge detector. If you XOR with 1, the bit is flipped.
 
-            if (sck_reg.q == (b01 ^ 2x{CPOL^CPHA})) { // reading edge
+            if (sck_reg.q[3:2] == (b01 ^ 2x{CPOL^CPHA})) { // reading edge
 
                 // read in the bit
-                data_out_reg.d[bit_ct.q] = sdi_reg.q
+                data_out_shift.d = c{data_out_shift.q[6:0], sdi_reg.q[$width(sdi_reg.q)-1]}
 
                 // increment the bit counter
-                bit_ct.d = bit_ct.q - 1
+                bit_ct.d = bit_ct.q + 1
 
                 // if we read the last bit
-                if (bit_ct.q == b0) {
+                if (bit_ct.q == 7) {
                     done_reg.d = 1   // signal we are done
-                    data.d = data_in // copy new data in
                 }
-            } else if (sck_reg.q == (b10 ^ 2x{CPOL^CPHA})) { // writing edge
-                    // write a bit out
-                    sdo_reg.d = data.q[bit_ct.q]
+            } else if (sck_reg.q[3:2] == (b10 ^ 2x{CPOL^CPHA})) { // writing edge
+                // write a bit out
+                if (bit_ct.q != 0) { // skip shift when bit_ct is 0 as new data was just loaded
+                    data_in_shift.d = c{data_in_shift.q[6:0], data_in_shift.q[0]}
                 }
+            }
+        }
+        if (done_reg.q) {
+            data_in_shift.d = data_in // copy new data in
         }
     }
 }
