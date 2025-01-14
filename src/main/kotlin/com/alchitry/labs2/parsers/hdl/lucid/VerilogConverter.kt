@@ -261,20 +261,26 @@ class BasicVerilogConverter(
     }
 
     private fun StringBuilder.addSequentialBlocks() {
-        val clkGroupedDffs = mutableMapOf<String, MutableSet<Dff>>()
+        val groupedDffs = mutableMapOf<Pair<String, String?>, MutableSet<Dff>>()
         context.types.dffs.values.forEach { dff ->
-            clkGroupedDffs.getOrPut(dff.clk.expr.text) { mutableSetOf() }.add(dff)
+            groupedDffs.getOrPut(dff.clk.expr.text to dff.rst?.expr?.text) { mutableSetOf() }.add(dff)
         }
-        clkGroupedDffs.forEach { (_, clkDffs) ->
+
+        groupedDffs.forEach { (_, dffGroup) ->
+            val asyncReset = dffGroup.first().asyncReset
             newLine()
             append("always @(posedge (")
-            append(clkDffs.first().clk.expr.verilog)
+            append(dffGroup.first().clk.expr.verilog)
+            if (asyncReset) {
+                append(") or posedge (")
+                append(dffGroup.first().rst!!.expr.verilog)
+            }
             append(")) begin")
             tabCount++
             newLine()
 
             val rstGroupedDffs = mutableMapOf<String, MutableSet<Dff>>()
-            clkDffs.forEach { dff ->
+            dffGroup.forEach { dff ->
                 if (dff.rst == null) {
                     append(dff.q.verilogName)
                     append(" <= ")

@@ -687,6 +687,7 @@ class TypesParser(
 
         var clk: DynamicExpr? = null
         var rst: DynamicExpr? = null
+        var asyncRst = false
         val width = ctx.signalWidth()?.let { context.resolve(it) }
 
         if (width == null) {
@@ -786,7 +787,14 @@ class TypesParser(
             if (connectedSignals.add(sigName)) {
                 when (sigName) {
                     "clk" -> clk = sig.value
-                    "rst" -> rst = sig.value
+                    "rst", "arst" -> {
+                        if (rst != null) {
+                            context.reportError(sig.portCtx, "DFFs can't have both \"rst\" and \"arst\" connections!")
+                        }
+                        rst = sig.value
+                        asyncRst = sigName == "arst"
+                    }
+
                     else -> context.reportError(
                         sig.portCtx,
                         "DFFs don't have a signal named \"$sigName\"."
@@ -835,13 +843,14 @@ class TypesParser(
         }
 
         val dff = Dff(
-            context.project,
-            name,
-            init,
-            resolvedClk.constrain(BitWidth),
-            rst?.constrain(BitWidth),
-            signed,
-            initContext
+            context = context.project,
+            name = name,
+            init = init,
+            clk = resolvedClk.constrain(BitWidth),
+            rst = rst?.constrain(BitWidth),
+            asyncReset = asyncRst,
+            signed = signed,
+            initContext = initContext
         )
         dffs[name] = dff
     }

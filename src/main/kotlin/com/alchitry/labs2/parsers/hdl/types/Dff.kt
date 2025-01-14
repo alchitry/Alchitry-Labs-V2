@@ -16,6 +16,7 @@ data class Dff(
     val init: Value,
     val clk: DynamicExpr,
     val rst: DynamicExpr?,
+    val asyncReset: Boolean,
     val signed: Boolean,
     val initContext: LucidParser.ExprContext?
 ) : SignalParent, Snapshotable {
@@ -28,6 +29,13 @@ data class Dff(
         clk.addDependant {
             if (!context.initializing)
                 context.queue(evaluable)
+        }
+        if (asyncReset) {
+            require(rst != null) { "Async reset requested but no reset signal provided!" }
+            rst.addDependant {
+                if (!context.initializing)
+                    context.queue(evaluable)
+            }
         }
     }
 
@@ -55,14 +63,18 @@ data class Dff(
         val rstValue = rst?.value
         require(clkValue is SimpleValue) { "Dff clk was not a SimpleValue!" }
         require(rstValue == null || rstValue is SimpleValue) { "Dff rst was not a SimpleValue!" }
-        if (lastClk == Bit.B0 && clkValue.lsb == Bit.B1) { // rising edge
-            if ((rstValue as? SimpleValue)?.lsb == Bit.B1) {
-                q.write(init)
-            } else {
-                q.write(d.read())
+        if (asyncReset && (rstValue as? SimpleValue)?.lsb == Bit.B1) {
+            q.write(init)
+        } else {
+            if (lastClk == Bit.B0 && clkValue.lsb == Bit.B1) { // rising edge
+                if ((rstValue as? SimpleValue)?.lsb == Bit.B1) {
+                    q.write(init)
+                } else {
+                    q.write(d.read())
+                }
+            } else if (lastClk?.isNumber() == false || !clkValue.isNumber()) {
+                q.write(q.width.filledWith(Bit.Bx, q.signed))
             }
-        } else if (lastClk?.isNumber() == false || !clkValue.isNumber()) {
-            q.write(q.width.filledWith(Bit.Bx, q.signed))
         }
         lastClk = clkValue.lsb
     }

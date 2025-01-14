@@ -64,7 +64,7 @@ class DynamicEvalTests {
         test.context.walk(exprCtx)
         val clkExpr = DynamicExpr(exprCtx, test.context)
 
-        val dff = Dff(test.project, "myDff", b0, clkExpr, null, false, null)
+        val dff = Dff(test.project, "myDff", b0, clkExpr, null, false, false, null)
 
 
         clk.write(b0)
