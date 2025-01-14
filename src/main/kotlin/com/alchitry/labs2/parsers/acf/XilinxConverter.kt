@@ -69,6 +69,7 @@ data object XilinxConverter : AcfConverter {
 
                     constraint.attributes.firstOfTypeOrNull<PinAttribute.Frequency>()?.let { frequency ->
                         val portName = constraint.port.fullPortName
+                        val clockName = "${portName.replace("[", "_").replace("]", "_")}_$index"
                         append("# ")
                         append(portName)
                         append(" => ")
@@ -79,12 +80,13 @@ data object XilinxConverter : AcfConverter {
                         val nsPeriod = 1000000000.0 / frequency.value
                         append(nsPeriod)
                         append(" -name ")
-                        append(portName.replace("[", "_").replace("]", "_"))
-                        append("_")
-                        append(index)
+                        append(clockName)
                         append(" -waveform {0.000 ${nsPeriod / 2.0}} [get_ports ")
                         append(portName)
                         append("]\n")
+                        append("set_clock_groups -asynchronous -group {")
+                        append(clockName)
+                        append("}\n")
                     }
                     appendLine()
                 }
