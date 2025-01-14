@@ -5,8 +5,12 @@ import com.alchitry.labs2.Log
 import com.alchitry.labs2.project.Locations
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.ui.theme.AlchitryColors
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import java.io.File
+import kotlin.io.path.exists
+import kotlin.io.path.readText
 
 data object IceCubeBuilder : ProjectBuilder() {
     private val IMP_DIR = "alchitry_imp"
@@ -74,13 +78,29 @@ data object IceCubeBuilder : ProjectBuilder() {
                 .resolve("$IMP_DIR/sbt/outputs/bitmap/${topModuleName}_bitmap.bin").toFile()
         if (binFile.exists()) {
             binFile.copyTo(project.binFile)
-            Log.println("Project built successfully.", AlchitryColors.current.Success)
+            when (didTimingPass(project)) {
+                true -> Log.success("Project built successfully.")
+                false -> Log.warn("Project built but failed to meet timing.")
+                null -> Log.warn("Project built but timing was unchecked.")
+            }
         } else {
             Log.println(
                 "Bin file (${binFile.absolutePath}) could not be found! The build likely failed.",
                 AlchitryColors.current.Error
             )
         }
+    }
+
+    private suspend fun didTimingPass(project: Project): Boolean? = withContext(Dispatchers.IO) {
+        val timingReport = project.buildDirectory
+            .resolve(IMP_DIR)
+            .resolve("alchitry_top_cck.rpt")
+        if (!timingReport.exists()) {
+            Log.warn("The timing report could not be located! Checked: $timingReport")
+            return@withContext null
+        }
+
+        return@withContext timingReport.readText().contains("Found 0 issues in 0 out of")
     }
 
     private fun getEnvVars(iceCube: File, license: File, synpwrapDir: File): Map<String, String> {

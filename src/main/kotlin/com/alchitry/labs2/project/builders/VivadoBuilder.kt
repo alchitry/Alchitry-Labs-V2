@@ -5,9 +5,12 @@ import com.alchitry.labs2.Log
 import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.project.Locations
 import com.alchitry.labs2.project.Project
-import com.alchitry.labs2.ui.theme.AlchitryColors
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import java.io.File
+import kotlin.io.path.exists
+import kotlin.io.path.readText
 
 data object VivadoBuilder : ProjectBuilder() {
     override suspend fun buildProject(
@@ -65,9 +68,9 @@ data object VivadoBuilder : ProjectBuilder() {
             tclScript.absolutePath
         )
 
-        Log.println("Starting Vivado...", AlchitryColors.current.Info)
+        Log.info("Starting Vivado...")
         runProcess(cmd, this)
-        Log.println("Vivado exited.", AlchitryColors.current.Info)
+        Log.info("Vivado exited.")
 
         Log.println("")
         val binFile =
@@ -78,14 +81,34 @@ data object VivadoBuilder : ProjectBuilder() {
                 .resolve("$topModuleName.bin").toFile()
         if (binFile.exists()) {
             binFile.copyTo(project.binFile)
-            Log.println("Project built successfully.", AlchitryColors.current.Success)
+
+            when (didTimingPass(project)) {
+                true -> Log.success("Project built successfully.")
+                false -> Log.warn("Project built but failed to meet timing.")
+                null -> Log.warn("Project built but timing was unchecked.")
+            }
+
         } else {
-            Log.println(
-                "Bin file (${binFile.absolutePath}) could not be found! The build likely failed.",
-                AlchitryColors.current.Error
+            Log.error(
+                "Bin file (${binFile.absolutePath}) could not be found! The build likely failed."
             )
         }
     }
+
+    private suspend fun didTimingPass(project: Project): Boolean? = withContext(Dispatchers.IO) {
+        val timingReport = project.buildDirectory
+            .resolve("vivado")
+            .resolve("${project.data.projectName}.runs")
+            .resolve("impl_1")
+            .resolve("alchitry_top_timing_summary_routed.rpt")
+        if (!timingReport.exists()) {
+            Log.warn("The timing report could not be located! Checked: $timingReport")
+            return@withContext null
+        }
+
+        return@withContext timingReport.readText().contains("All user specified timing constraints are met.")
+    }
+
 
     private fun generateProjectFile(project: Project, sourceFiles: List<File>, constraintFiles: List<File>): String =
         buildString {
@@ -100,7 +123,6 @@ data object VivadoBuilder : ProjectBuilder() {
             appendLine("import_files -fileset [get_filesets sources_1] -force -norecurse \$verilogSources")
             append("set xdcSources [list ").addSpacedList(constraintFiles).appendLine("]")
             appendLine("read_xdc \$xdcSources")
-            // TODO Add IP Cores
             appendLine("set_property STEPS.WRITE_BITSTREAM.ARGS.BIN_FILE true [get_runs impl_1]")
             appendLine("update_compile_order -fileset sources_1")
             val cores = Runtime.getRuntime().availableProcessors()
