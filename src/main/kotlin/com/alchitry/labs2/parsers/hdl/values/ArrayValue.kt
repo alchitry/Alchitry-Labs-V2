@@ -73,7 +73,9 @@ data class ArrayValue(
 
     fun selectElements(selection: SignalSelector.Bits): Value {
         try {
-            val newElements = elements.subList(selection.range.first, selection.range.last + 1)
+            val last = if (selection.range.last >= 0) selection.range.last else size + selection.range.last
+            val first = if (selection.range.first >= 0) selection.range.first else size + selection.range.first
+            val newElements = elements.subList(first, last + 1)
             if (newElements.size == 1)
                 return newElements.first()
             return copy(elements = newElements)

@@ -19,6 +19,7 @@ import com.alchitry.labs2.parsers.notations.NotationType
 import kotlinx.coroutines.runBlocking
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree
+import kotlin.math.absoluteValue
 
 class BasicVerilogConverter(
     private val context: LucidBlockContext
@@ -842,13 +843,46 @@ class BasicVerilogConverter(
                     is DefinedArrayWidth, is DefinedSimpleWidth, is ResolvableWidth<*> -> {
                         val s = selector as? SignalSelector.Bits ?: error("Struct selector used on an array!")
 
+                        val widthString = when (currentWidth) {
+                            is DefinedArrayWidth -> currentWidth.size.toString()
+                            is DefinedSimpleWidth -> currentWidth.size.toString()
+                            is ResolvableWidth<*> -> currentWidth.context.verilog
+                            else -> error("Impossible width type!")
+                        }
+
+                        fun LucidParser.ExprContext.absString(): String {
+                            val expr = context.resolve(this)
+                            val value = (expr?.value as? SimpleValue)
+                            val curWidth = currentWidth
+                            return if (value?.signed == true) {
+                                if (expr.type.fixed && value.isNumber()) {
+                                    val v = value.toBigInt()!!.toInt()
+                                    val w = when (curWidth) {
+                                        is DefinedArrayWidth -> curWidth.size
+                                        is DefinedSimpleWidth -> curWidth.size
+                                        else -> return if (v < 0) {
+                                            "(($widthString) - ${v.absoluteValue})"
+                                        } else {
+                                            v.toString()
+                                        }
+                                    }
+                                    return (w + v).toString()
+                                } else {
+                                    val v = this.verilog
+                                    "(($v) < 0 ? ($widthString) + ($v) : ($v))"
+                                }
+                            } else {
+                                this.verilog
+                            }
+                        }
+
                         append("(")
                         when (s.context) {
                             is SelectionContext.Constant -> append(s.range.first)
-                            is SelectionContext.Single -> append(s.context.bit.verilog)
-                            is SelectionContext.Fixed -> append(s.context.start.verilog)
-                            is SelectionContext.DownTo -> append("(${s.context.stop.verilog})-(${s.context.width.verilog}-1)")
-                            is SelectionContext.UpTo -> append(s.context.start.verilog)
+                            is SelectionContext.Single -> append(s.context.bit.absString())
+                            is SelectionContext.Fixed -> append(s.context.start.absString())
+                            is SelectionContext.DownTo -> append("(${s.context.stop.absString()})-(${s.context.width.verilog}-1)")
+                            is SelectionContext.UpTo -> append(s.context.start.absString())
                         }
                         append(")")
 

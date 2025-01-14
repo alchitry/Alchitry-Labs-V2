@@ -99,51 +99,51 @@ module spi_fast_peripheral #(
     always {
         /* WRITE EDGE */
 
-        data_in_shift.d = c{data_in_shift.q[6:0], 0}
+        data_in_shift.d = c{data_in_shift.q[-2:0], 0}
         bit_in_ct.d = bit_in_ct.q + 1
-        sdo = data_in_shift.q[7]
+        sdo = data_in_shift.q[-1]
         if (bit_in_ct.q == 7 && data_in_full.q) {
             data_in_shift.d = data_in_buffer.q
         }
 
         /* READ EDGE */
 
-        data_out_shift.d = c{data_out_shift.q[6:0], sdi}
+        data_out_shift.d = c{data_out_shift.q[-2:0], sdi}
 
         bit_out_ct.d = bit_out_ct.q + 1
         if (bit_out_ct.q == 7) {
-            data_out_buffer.d = c{data_out_shift.q[6:0], sdi}
+            data_out_buffer.d = c{data_out_shift.q[-2:0], sdi}
             data_out_flag.d = 1
         }
 
         /* SYS CLOCK */
 
-        bit_in_ct_is_0_to_1_sync.d = c{bit_in_ct_is_0_to_1_sync.q[1:0], bit_in_ct.q <= 1}
-        bit_in_ct_is_2_to_3_sync.d = c{bit_in_ct_is_2_to_3_sync.q[1:0], bit_in_ct.q >= 2 && bit_in_ct.q <= 3}
+        bit_in_ct_is_0_to_1_sync.d = c{bit_in_ct_is_0_to_1_sync.q[-2:0], bit_in_ct.q <= 1}
+        bit_in_ct_is_2_to_3_sync.d = c{bit_in_ct_is_2_to_3_sync.q[-2:0], bit_in_ct.q >= 2 && bit_in_ct.q <= 3}
 
-        if (bit_in_ct_is_0_to_1_sync.q[2]) {
+        if (bit_in_ct_is_0_to_1_sync.q[-1]) {
             data_in_full.d = 0
         }
 
-        sig accept_data = bit_in_ct_is_2_to_3_sync.q[2] && !data_in_full.q
+        sig accept_data = bit_in_ct_is_2_to_3_sync.q[-1] && !data_in_full.q
         need_data = accept_data
         if (accept_data && data_in_valid) {
             data_in_buffer.d = data_in
             data_in_full.d = 1
         }
 
-        data_out_valid_sync.d = c{data_out_valid_sync.q[2:0], data_out_flag.q}
+        data_out_valid_sync.d = c{data_out_valid_sync.q[-2:0], data_out_flag.q}
 
         data_out = hx
         data_out_valid = 0
         data_out_flag_rst = 0
-        if (data_out_valid_sync.q[3:2] == 2b01) {
+        if (data_out_valid_sync.q[-1:-2] == 2b01) {
             data_out_valid = 1
             data_out_flag_rst = 1
             data_out = data_out_buffer.q
         }
 
-        cs_pipe.d = c{cs_pipe.q[1:0], cs}
-        cs_sync = cs_pipe.q[2]
+        cs_pipe.d = c{cs_pipe.q[-2:0], cs}
+        cs_sync = cs_pipe.q[-1]
     }
 }

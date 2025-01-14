@@ -70,20 +70,20 @@ module spi_peripheral #(
 
     always {
         // connect to buffer output
-        sdo = data_in_shift.q[7]
+        sdo = data_in_shift.q[-1]
         data_out_valid = done_reg.q
         data_out = data_out_shift.q
 
         // read in buffered inputs
-        cs_reg.d = c{cs_reg.q[1:0], cs}
-        sdi_reg.d = c{sdi_reg.q[1:0], sdi}
-        sck_reg.d = c{sck_reg.q[2:0], sck} // save old sck
+        cs_reg.d = c{cs_reg.q[-2:0], cs}
+        sdi_reg.d = c{sdi_reg.q[-2:0], sdi}
+        sck_reg.d = c{sck_reg.q[-2:0], sck} // save old sck
 
-        cs_sync = cs_reg.q[$width(cs_reg.q)-1]
+        cs_sync = cs_reg.q[-1]
 
         done_reg.d = 0 // default to not done
 
-        if (cs_reg.q[$width(cs_reg.q)-1]) { // not selected
+        if (cs_reg.q[-1]) { // not selected
             bit_ct.d = 0              // reset counter
             data_in_shift.d = data_in // copy in data for next byte
         } else {
@@ -92,10 +92,10 @@ module spi_peripheral #(
             // Therefore we can use XOR to check that and invert the
             // edge detector. If you XOR with 1, the bit is flipped.
 
-            if (sck_reg.q[3:2] == (b01 ^ 2x{CPOL^CPHA})) { // reading edge
+            if (sck_reg.q[-1:-2] == (b01 ^ 2x{CPOL^CPHA})) { // reading edge
 
                 // read in the bit
-                data_out_shift.d = c{data_out_shift.q[6:0], sdi_reg.q[$width(sdi_reg.q)-1]}
+                data_out_shift.d = c{data_out_shift.q[6:0], sdi_reg.q[-1]}
 
                 // increment the bit counter
                 bit_ct.d = bit_ct.q + 1
@@ -104,10 +104,10 @@ module spi_peripheral #(
                 if (bit_ct.q == 7) {
                     done_reg.d = 1   // signal we are done
                 }
-            } else if (sck_reg.q[3:2] == (b10 ^ 2x{CPOL^CPHA})) { // writing edge
+            } else if (sck_reg.q[-1:-2] == (b10 ^ 2x{CPOL^CPHA})) { // writing edge
                 // write a bit out
                 if (bit_ct.q != 0) { // skip shift when bit_ct is 0 as new data was just loaded
-                    data_in_shift.d = c{data_in_shift.q[6:0], data_in_shift.q[0]}
+                    data_in_shift.d = c{data_in_shift.q[-2:0], data_in_shift.q[0]}
                 }
             }
         }

@@ -74,7 +74,9 @@ data class BitListValue(
 
     fun selectBits(selection: SignalSelector.Bits): Value {
         try {
-            val newBits = bits.subList(selection.range.first, selection.range.last + 1)
+            val last = if (selection.range.last >= 0) selection.range.last else size + selection.range.last
+            val first = if (selection.range.first >= 0) selection.range.first else size + selection.range.first
+            val newBits = bits.subList(first, last + 1)
             if (newBits.size == 1)
                 return BitValue(newBits.first(), false)
             return copy(bits = newBits)
