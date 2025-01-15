@@ -53,8 +53,7 @@ fun CodeEditor(
                 itemProvider = {
                     object : LazyLayoutItemProvider {
                         override val itemCount: Int
-                            get() = // need to use redrawTriggerStates to get it to update
-                                if (state.redrawTriggerStates.value) state.lines.size else 0
+                            get() = state.lines.size
 
                         @Composable
                         override fun Item(index: Int, key: Any) {
@@ -128,13 +127,15 @@ fun CodeEditor(
                             val result = if (nextY >= 0 && y < constraints.maxHeight) {
                                 val measured =
                                     measure(lineNum, Constraints.fixed(state.gutterWidth, lineHeight))
-                                val yOffset = y + (lineHeight - (measured.maxOfOrNull { it.height } ?: 0)) / 2
+                                val yOffset = y + (lineHeight - (measured.maxOf { it.height })) / 2
                                 yOffset to measured
                             } else null
 
                             y = nextY
                             result
                         }
+
+                    println("placeables: ${placeables.size}")
 
                     return layout(
                         width = state.gutterWidth,
@@ -171,7 +172,6 @@ fun CodeEditor(
                             notation.message?.let { Text(it) }
                         }
                     ) {
-                        state.subscribe()
                         Canvas(
                             modifier = Modifier
                                 .scrollable(state.scrollState, Orientation.Vertical, reverseDirection = true)

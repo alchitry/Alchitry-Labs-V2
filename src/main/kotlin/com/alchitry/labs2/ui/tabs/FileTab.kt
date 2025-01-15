@@ -19,6 +19,7 @@ class FileTab(
 
     @Composable
     override fun content() {
+        codeEditorState.subscribe()
         CodeEditor(codeEditorState)
     }
 

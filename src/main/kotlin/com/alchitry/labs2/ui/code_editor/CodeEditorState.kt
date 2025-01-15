@@ -66,7 +66,7 @@ import kotlin.properties.Delegates
 fun rememberCodeEditorState(file: ProjectFile): CodeEditorState {
     return remember(file) {
         CodeEditorState(file)
-    }
+    }.apply { subscribe() }
 }
 
 @Composable
@@ -107,6 +107,12 @@ class CodeEditorState(
     val readOnly = file.isReadOnly
 
     var style: CodeEditorStyle? = null
+        set(value) {
+            if (field != value) {
+                field = value
+                refreshStyling()
+            }
+        }
     var uiScope: CoroutineScope? = null
     val scope = CoroutineScope(Dispatchers.Main)
     var saveJob: Job? = null
@@ -296,10 +302,6 @@ class CodeEditorState(
                 density = style.density,
                 fontFamilyResolver = style.fontFamilyResolver
             ).layout(Constraints(), LayoutDirection.Ltr, null).size.height * -0.07f
-        }
-
-        LaunchedEffect(style) {
-            refreshStyling()
         }
 
         LaunchedEffect(scrollState.value) {
