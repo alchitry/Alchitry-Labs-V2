@@ -37,7 +37,9 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.noNulls
+import com.alchitry.labs2.parsers.grammar.AcfLexer
 import com.alchitry.labs2.parsers.grammar.LucidLexer
+import com.alchitry.labs2.parsers.grammar.VerilogLexer
 import com.alchitry.labs2.parsers.notations.LineAction
 import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationCollector
@@ -584,6 +586,28 @@ class CodeEditorState(
 
     }
 
+    private fun selectWordAt(offset: TextPosition) {
+        val text = lines[offset.line].text.text
+        val lineOffset = offset.offset
+        // Check if offset is valid
+        if (lineOffset < 0 || lineOffset >= text.length) return
+
+        val isWordChar: (Char) -> Boolean = { it.isLetterOrDigit() || it == '_' }
+
+        // Find the start of the word
+        var start = lineOffset
+        while (start > 0 && isWordChar(text[start - 1])) {
+            start--
+        }
+
+        // Find the end of the word
+        var end = lineOffset
+        while (end < text.length && isWordChar(text[end])) {
+            end++
+        }
+        selectionManager.selectRange(TextPosition(offset.line, start)..TextPosition(offset.line, end))
+    }
+
     fun tapModifier() = Modifier
         .pointerInput(selectionManager) {
             detectEditorActions(
@@ -592,6 +616,37 @@ class CodeEditorState(
                 },
                 onDoubleClick = { offset ->
                     val token = offsetToToken(offset) ?: return@detectEditorActions
+
+                    when (file.language) {
+                        Languages.ACF -> when (token.token.type) {
+                            AcfLexer.Tokens.BLOCK_COMMENT.id,
+                            AcfLexer.Tokens.COMMENT.id -> {
+                                selectWordAt(screenOffsetToTextPosition(offset))
+                                return@detectEditorActions
+                            }
+                        }
+
+                        Languages.Lucid -> when (token.token.type) {
+                            LucidLexer.Tokens.BLOCK_COMMENT.id,
+                            LucidLexer.Tokens.COMMENT.id,
+                            LucidLexer.Tokens.STRING.id -> {
+                                selectWordAt(screenOffsetToTextPosition(offset))
+                                return@detectEditorActions
+                            }
+                        }
+
+                        Languages.Verilog -> when (token.token.type) {
+                            VerilogLexer.Tokens.BLOCK_COMMENT.id,
+                            VerilogLexer.Tokens.LINE_COMMENT.id,
+                            VerilogLexer.Tokens.STRING.id -> {
+                                selectWordAt(screenOffsetToTextPosition(offset))
+                                return@detectEditorActions
+                            }
+                        }
+
+                        else -> {}
+                    }
+
                     selectionManager.selectRange(token.range)
                 },
                 onTripleClick = { offset ->
@@ -873,6 +928,7 @@ class CodeEditorState(
                     replaceText(codeFormatter.getIndentFor(selectionManager.caret.line))
                 }
             }
+
             KeyCommand.TAB -> {
                 when {
                     selectionManager.start.line != selectionManager.end.line -> {
