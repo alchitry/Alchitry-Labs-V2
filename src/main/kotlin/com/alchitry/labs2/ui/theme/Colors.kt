@@ -55,7 +55,7 @@ data object DarkAlchitryColors : AlchitryColors {
 
     override val GutterForeground = Color(0xFFA1A1A1)
     override val LineHighlight = Accent.copy(alpha = 0.05f)
-    override val TokenHighlight = Accent.copy(alpha = 0.1f)
+    override val TokenHighlight = Accent.copy(alpha = 0.2f)
 
     override val SelectionColor = Color(0xFF6C5600)
 

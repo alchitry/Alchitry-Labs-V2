@@ -37,9 +37,8 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.noNulls
-import com.alchitry.labs2.parsers.grammar.AcfLexer
-import com.alchitry.labs2.parsers.grammar.LucidLexer
-import com.alchitry.labs2.parsers.grammar.VerilogLexer
+import com.alchitry.labs2.parsers.findFinalNode
+import com.alchitry.labs2.parsers.grammar.*
 import com.alchitry.labs2.parsers.notations.LineAction
 import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationCollector
@@ -60,6 +59,9 @@ import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.ui.theme.AlchitryTypography
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.*
+import org.antlr.v4.kotlinruntime.CharStreams
+import org.antlr.v4.kotlinruntime.CommonTokenStream
+import org.antlr.v4.kotlinruntime.tree.TerminalNode
 import kotlin.math.abs
 import kotlin.math.log10
 import kotlin.properties.Delegates
@@ -234,6 +236,44 @@ class CodeEditorState(
                 TODO("Multiline token highlighting not supported!")
             }
             lines[it.range.start.line].highlights.add(it)
+        }
+
+        val line = lines[selectionManager.caret.line].text.text
+        val leftChar = line.getOrNull(selectionManager.caret.offset - 1)
+        val rightChar = line.getOrNull(selectionManager.caret.offset)
+        val closingBrackets = listOf(')', ']', '}')
+        val openingBrackets = listOf('(', '[', '{')
+        val brackets = closingBrackets + openingBrackets
+        if (brackets.contains(leftChar) || brackets.contains(rightChar)) {
+            val caretOffset = when {
+                closingBrackets.contains(leftChar) -> selectionManager.caret.offset - 1
+                closingBrackets.contains(rightChar) -> selectionManager.caret.offset
+                openingBrackets.contains(rightChar) -> selectionManager.caret.offset + 1
+                else -> selectionManager.caret.offset
+            }
+
+            val stream = CommonTokenStream(BracketLexer(CharStreams.fromString(getText())))
+            val bracketParser = BracketParser(stream).source()
+            val offset = lines.subList(0, selectionManager.caret.line).sumOf { it.text.length + 1 } + caretOffset
+            var node = bracketParser.findFinalNode(stream, offset)
+            if (node is TerminalNode)
+                node = node.readParent()!!
+            (node.getChild(0) as? TerminalNode)?.symbol?.let {
+                lines[it.line - 1].highlights.add(
+                    HighlightAnnotation(
+                        it.toEditorToken(null).range,
+                        AlchitryColors.current.TokenHighlight
+                    )
+                )
+            }
+            (node.getChild(node.childCount - 1) as? TerminalNode)?.symbol?.let {
+                lines[it.line - 1].highlights.add(
+                    HighlightAnnotation(
+                        it.toEditorToken(null).range,
+                        AlchitryColors.current.TokenHighlight
+                    )
+                )
+            }
         }
     }
 
