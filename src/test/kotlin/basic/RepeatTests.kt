@@ -163,7 +163,7 @@ class RepeatTests {
                     input a[SIZE],
                     input b[SIZE],
                     input cin,
-                    output s[SIZE],
+                    output s[SIZE]
                 ) {
                     fa fa[SIZE]
                     
@@ -223,7 +223,7 @@ class RepeatTests {
                     input a[SIZE],
                     input b[SIZE],
                     input cin,
-                    output s[SIZE],
+                    output s[SIZE]
                 ) {
                     fa fa[SIZE]
                     
@@ -283,7 +283,7 @@ class RepeatTests {
                     input a[SIZE],
                     input b[SIZE],
                     input cin,
-                    output s[SIZE],
+                    output s[SIZE]
                 ) {
                     fa fa[SIZE]
                     

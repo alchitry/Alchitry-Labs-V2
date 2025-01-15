@@ -135,8 +135,6 @@ fun CodeEditor(
                             result
                         }
 
-                    println("placeables: ${placeables.size}")
-
                     return layout(
                         width = state.gutterWidth,
                         height = constraints.maxHeight

@@ -63,7 +63,7 @@ module spi_fast_peripheral #(
     input data_in_valid,   // 1 when data_in is valid
     input data_in[8],      // data to send
     output data_out_valid, // transfer done
-    output data_out[8],    // data received
+    output data_out[8]     // data received
 ) {
 
     .clk(clk) {

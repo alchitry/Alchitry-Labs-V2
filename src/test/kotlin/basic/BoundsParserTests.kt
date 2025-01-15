@@ -122,7 +122,7 @@ class BoundsParserTests {
                     SIZE = 4 : SIZE > 1
                 )(
                     input cin,
-                    output cout,
+                    output cout
                 ) {
                     sig fa[SIZE]
                     
@@ -153,7 +153,7 @@ class BoundsParserTests {
                     SIZE = 4 : SIZE > 1
                 )(
                     input cin,
-                    output cout,
+                    output cout
                 ) {
                     sig fa[SIZE]
                     
