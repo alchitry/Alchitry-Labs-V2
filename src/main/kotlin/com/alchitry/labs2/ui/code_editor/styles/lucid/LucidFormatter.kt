@@ -25,8 +25,10 @@ class LucidFormatter(private val codeEditorState: CodeEditorState) : CodeFormatt
 
         val firstDefaultTokenIdx =
             tokens.indexOfFirst { it.channel == LucidLexer.Channels.DEFAULT_TOKEN_CHANNEL.id && it.line == line + 1 }
-        if (firstDefaultTokenIdx == -1)
-            return ""
+        if (firstDefaultTokenIdx == -1) {
+            val previousLine = codeEditorState.lines.getOrNull(line - 1)?.text?.text ?: return ""
+            return " ".repeat(CodeFormatter.countStartingWhitespace(previousLine))
+        }
         return CodeFormatter.indentString(indents[firstDefaultTokenIdx])
     }
 
