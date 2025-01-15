@@ -15,8 +15,8 @@ buildscript {
 val antlrKotlinVersion = extra.get("antlrKotlinVersion") as String
 
 plugins {
-    kotlin("jvm") version "2.0.10"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.10" // TODO: newer versions break the code editor
+    kotlin("jvm") version "2.1.0"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.1.0" // TODO: newer versions break the code editor
     kotlin("plugin.serialization") version "2.0.10"
     id("org.jetbrains.compose") version "1.7.3"
     id("dev.hydraulic.conveyor") version "1.10"
@@ -49,7 +49,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
 
     implementation(kotlin("reflect"))
     implementation("org.jdom:jdom2:2.0.6.1")

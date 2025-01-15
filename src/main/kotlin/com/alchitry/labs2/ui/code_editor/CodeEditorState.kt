@@ -129,6 +129,8 @@ class CodeEditorState(
         private set
     var softWrap by Delegates.observable(false) { _, _, _ -> invalidate() }
     private var invalidator: (() -> Unit)? = null
+    val redrawTriggerStates = mutableStateOf(false, neverEqualPolicy())
+    private var layoutConstraints: Constraints = Constraints()
     var size: IntSize = IntSize.Zero
         private set
     private var scrollTarget: Int? = null
@@ -282,7 +284,7 @@ class CodeEditorState(
     }
 
     @Composable
-    internal fun subscribe(scope: RecomposeScope) {
+    internal fun subscribe() {
         val style = rememberCodeEditorStyle()
         this.style = style
         this.uiScope = rememberCoroutineScope()
@@ -315,9 +317,9 @@ class CodeEditorState(
             }
         }
 
-        DisposableEffect(scope) {
+        DisposableEffect(Unit) {
             invalidator = {
-                scope.invalidate()
+                redrawTriggerStates.value = true
             }
             onDispose {
                 invalidator = null
@@ -364,6 +366,7 @@ class CodeEditorState(
 
     internal fun newLineState(text: AnnotatedString) =
         CodeLineState(text, style?.density, mutableListOf(), style?.fontFamilyResolver, style?.style)
+            .also { it.layout(layoutConstraints) }
 
     /**
      * Replaces the text covered by range with newText.
@@ -501,6 +504,7 @@ class CodeEditorState(
     }
 
     fun DrawScope.draw() {
+        redrawTriggerStates.value // triggers redraws on demand
         with(selectionManager) {
             drawSelection()
         }
@@ -561,6 +565,8 @@ class CodeEditorState(
                 Constraints.fixedWidth((constraints.maxWidth - gutterWidth).coerceAtLeast(0))
             else
                 Constraints()
+
+        layoutConstraints = lineConstraints
 
         lines.forEach {
             it.layout(lineConstraints)

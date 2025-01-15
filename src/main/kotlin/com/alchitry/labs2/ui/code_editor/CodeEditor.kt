@@ -12,7 +12,6 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,12 +49,12 @@ fun CodeEditor(
         }
 
         Row {
-
             LazyLayout(
                 itemProvider = {
                     object : LazyLayoutItemProvider {
                         override val itemCount: Int
-                            get() = state.lines.size
+                            get() = // need to use redrawTriggerStates to get it to update
+                                if (state.redrawTriggerStates.value) state.lines.size else 0
 
                         @Composable
                         override fun Item(index: Int, key: Any) {
@@ -123,12 +122,13 @@ fun CodeEditor(
 
                     val placeables =
                         state.lines.mapIndexedNotNull { lineNum, lineState ->
-                            val nextY = y + (lineState.lineHeight ?: 0)
+                            val lineHeight = lineState.lineHeight ?: 0
+                            val nextY = y + lineHeight
 
-                            val result = if (nextY > 0 && y < constraints.maxHeight) {
+                            val result = if (nextY >= 0 && y < constraints.maxHeight) {
                                 val measured =
-                                    measure(lineNum, Constraints.fixed(state.gutterWidth, lineState.lineHeight ?: 0))
-                                val yOffset = y + ((lineState.lineHeight ?: 0) - (measured.maxOf { it.height })) / 2
+                                    measure(lineNum, Constraints.fixed(state.gutterWidth, lineHeight))
+                                val yOffset = y + (lineHeight - (measured.maxOfOrNull { it.height } ?: 0)) / 2
                                 yOffset to measured
                             } else null
 
@@ -154,7 +154,6 @@ fun CodeEditor(
                 Modifier
                     .scrollable(horizontalScroll, Orientation.Horizontal)
             ) {
-                state.subscribe(currentRecomposeScope)
                 ContextMenuArea(
                     items = {
                         listOf(
@@ -172,6 +171,7 @@ fun CodeEditor(
                             notation.message?.let { Text(it) }
                         }
                     ) {
+                        state.subscribe()
                         Canvas(
                             modifier = Modifier
                                 .scrollable(state.scrollState, Orientation.Vertical, reverseDirection = true)
