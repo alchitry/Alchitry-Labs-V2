@@ -241,9 +241,6 @@ class CodeEditorState(
         val line = lines[selectionManager.caret.line].text.text
         val leftChar = line.getOrNull(selectionManager.caret.offset - 1)
         val rightChar = line.getOrNull(selectionManager.caret.offset)
-        val closingBrackets = listOf(')', ']', '}')
-        val openingBrackets = listOf('(', '[', '{')
-        val brackets = closingBrackets + openingBrackets
         if (brackets.contains(leftChar) || brackets.contains(rightChar)) {
             val caretOffset = when {
                 closingBrackets.contains(leftChar) -> selectionManager.caret.offset - 1
@@ -909,7 +906,16 @@ class CodeEditorState(
             }
 
             KeyCommand.DELETE_PREV_CHAR -> deleteIfSelectedOr {
-                replaceText("", selectionManager.caret.getPrevious()..<selectionManager.caret)
+                var endPosition = selectionManager.caret
+                val charToRemove =
+                    lines[selectionManager.caret.line].text.text.getOrNull(selectionManager.caret.offset - 1)
+                if (openingBrackets.contains(charToRemove)) {
+                    val nextChar = lines[selectionManager.caret.line].text.text.getOrNull(selectionManager.caret.offset)
+                    if (nextChar == closingBrackets[openingBrackets.indexOf(charToRemove)]) {
+                        endPosition = selectionManager.caret.getNext()
+                    }
+                }
+                replaceText("", selectionManager.caret.getPrevious()..<endPosition)
                 if (autocomplete?.active == true)
                     autocomplete.updateSuggestions()
                 resetAutocomplete = false
@@ -1039,4 +1045,9 @@ class CodeEditorState(
         }
     }
 
+    companion object {
+        private val closingBrackets = listOf(')', ']', '}')
+        private val openingBrackets = listOf('(', '[', '{')
+        private val brackets = closingBrackets + openingBrackets
+    }
 }
