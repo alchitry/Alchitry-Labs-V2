@@ -240,7 +240,7 @@ class CodeEditorState(
             lines[it.range.start.line].highlights.add(it)
         }
 
-        val line = lines[selectionManager.caret.line].text.text
+        val line = lines.getOrNull(selectionManager.caret.line)?.text?.text ?: return
         val leftChar = line.getOrNull(selectionManager.caret.offset - 1)
         val rightChar = line.getOrNull(selectionManager.caret.offset)
         if (brackets.contains(leftChar) || brackets.contains(rightChar)) {
