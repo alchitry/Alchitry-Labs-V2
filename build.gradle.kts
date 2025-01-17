@@ -16,7 +16,7 @@ val antlrKotlinVersion = extra.get("antlrKotlinVersion") as String
 
 plugins {
     kotlin("jvm") version "2.1.0"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.0" // TODO: newer versions break the code editor
+    id("org.jetbrains.kotlin.plugin.compose") version "2.1.0"
     kotlin("plugin.serialization") version "2.0.10"
     id("org.jetbrains.compose") version "1.7.3"
     id("dev.hydraulic.conveyor") version "1.10"
