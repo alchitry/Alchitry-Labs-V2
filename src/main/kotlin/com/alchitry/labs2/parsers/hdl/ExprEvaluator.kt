@@ -774,9 +774,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
             return
         }
 
-        op1 as SimpleValue
-        op2 as SimpleValue
-
         exprs[ctx] = when (operator) {
             "||" -> op1.isTrue() or op2.isTrue()
             "&&" -> op1.isTrue() and op2.isTrue()
