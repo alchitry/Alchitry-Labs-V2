@@ -21,7 +21,7 @@ class FullBuildTests {
         templates = ProjectTemplate.getTemplates()
     }
 
-    suspend fun buildAllProjectsForBoard(board: Board) {
+    private suspend fun buildAllProjectsForBoard(board: Board) {
         val validTemplates = templates.filter { it.boards.contains(board) }
         validTemplates.forEach { template ->
             template.instantiate("${template.name}_${board.name}", tempFolder, board)
