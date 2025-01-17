@@ -214,6 +214,8 @@ class CodeEditorState(
     }
 
     private fun updateHighlightTokens() {
+        if (lines.isEmpty())
+            return
         lines.forEach { it.highlights.clear() }
         val token = textPositionToToken(selectionManager.caret) ?: return
 
