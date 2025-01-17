@@ -28,7 +28,7 @@ module alchitry_top (
         usb_tx = usb_rx         // loop serial port
         
         io_led = 3x{{8h00}}
-        io_segment = 8h_f_f
-        io_select = 4h_f
+        io_segment = 8hff
+        io_select = 4hf
     }
 }

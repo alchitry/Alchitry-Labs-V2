@@ -64,18 +64,6 @@
                     "type": "Component",
                     "path": "Pulses/edge_detector.luc"
                 }
-            },
-            {
-                "file": {
-                    "type": "Component",
-                    "path": "Miscellaneous/fake_pull_down.luc"
-                }
-            },
-            {
-                "file": {
-                    "type": "Component",
-                    "path": "Miscellaneous/fake_pull_down_2d.luc"
-                }
             }
         ],
         "constraintFiles": [

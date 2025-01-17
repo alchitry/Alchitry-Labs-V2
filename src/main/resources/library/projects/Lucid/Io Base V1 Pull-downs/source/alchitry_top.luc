@@ -7,8 +7,8 @@ module alchitry_top (
     output io_led[3][8],    // LEDs on IO Shield
     output io_segment[8],   // 7-segment LEDs on IO Shield
     output io_select[4],    // Digit select on IO Shield
-    inout io_button[5],     // 5 buttons on IO Shield
-    inout io_dip[3][8]      // DIP switches on IO Shield
+    input io_button[5],     // 5 buttons on IO Shield
+    input io_dip[3][8]      // DIP switches on IO Shield
 ) {
 
     sig rst                 // reset signal
@@ -17,9 +17,6 @@ module alchitry_top (
         // The reset conditioner is used to synchronize the reset signal to the FPGA
         // clock. This ensures the entire FPGA comes out of reset at the same time.
         reset_conditioner reset_cond
-
-        fake_pull_down button_pd(#SIZE(5), .in(io_button));
-        fake_pull_down_2d dip_pd(#DIM_1(8), #DIM_2(3), .in(io_dip));
     }
     
     always {
@@ -31,7 +28,7 @@ module alchitry_top (
         usb_tx = usb_rx         // loop serial port
         
         io_led = 3x{{8h00}}
-        io_segment = 8h_f_f
-        io_select = 4h_f
+        io_segment = 8hff
+        io_select = 4hf
     }
 }

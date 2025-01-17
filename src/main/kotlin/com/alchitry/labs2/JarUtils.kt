@@ -78,9 +78,10 @@ object JarUtils {
     ): Boolean {
         val jarFile: JarFile = jarConnection.jarFile
         val e: Enumeration<JarEntry> = jarFile.entries()
+        val entryName = jarConnection.entryName + "/" // and the / to match only complete names
         while (e.hasMoreElements()) {
             val entry: JarEntry = e.nextElement()
-            if (entry.name.startsWith(jarConnection.entryName)) {
+            if (entry.name.startsWith(entryName)) {
                 val filename: String = StringUtils.removeStart(
                     entry.name,
                     jarConnection.entryName

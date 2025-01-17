@@ -22,18 +22,6 @@
                     "type": "Component",
                     "path": "Conditioning/reset_conditioner.luc"
                 }
-            },
-            {
-                "file": {
-                    "type": "Component",
-                    "path": "Miscellaneous/fake_pull_down_2d.luc"
-                }
-            },
-            {
-                "file": {
-                    "type": "Component",
-                    "path": "Miscellaneous/fake_pull_down.luc"
-                }
             }
         ],
         "constraintFiles": [
