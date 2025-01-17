@@ -11,7 +11,6 @@ import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.notations.NotationManager
 import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.QueueExhaustionException
-import com.alchitry.labs2.project.builders.ProjectBuilder
 import com.alchitry.labs2.project.files.FileProvider
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
@@ -67,7 +66,7 @@ class ProjectContext(val notationManager: NotationManager, val board: Board, val
         throw QueueExhaustionException("Failed to resolve a stable state after 1000 iterations. There is likely a dependency loop.")
     }
 
-    suspend fun convertToVerilog(targetTool: ProjectBuilder): Map<String, String?> {
+    suspend fun convertToVerilog(): Map<String, String?> {
         val sourceFiles = mutableMapOf<String, String?>()
         modules.values.forEach { module ->
             try {
@@ -77,7 +76,7 @@ class ProjectContext(val notationManager: NotationManager, val board: Board, val
 
                 when (module.sourceFile.language) {
                     Languages.Lucid -> sourceFiles[module.name] =
-                        module.convertToVerilog(this, targetTool) ?: error("Missing verilog for ${module.name}")
+                        module.convertToVerilog(this) ?: error("Missing verilog for ${module.name}")
 
                     Languages.Verilog -> sourceFiles[module.sourceFile.name] = module.sourceFile.readText()
                 }

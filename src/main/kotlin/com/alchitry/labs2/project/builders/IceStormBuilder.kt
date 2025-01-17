@@ -38,6 +38,7 @@ data object IceStormBuilder : ProjectBuilder() {
     ) = coroutineScope {
         val yosys = Locations.getToolNamed("yosys").absolutePath
         val nextpnr = Locations.getToolNamed("nextpnr-ice40").absolutePath
+        val sv2v = Locations.getToolNamed("sv2v").absolutePath
         val nextpnrEnv = if (Env.isLinux) {
             mapOf(
                 "LD_LIBRARY_PATH" to Locations.binDir.absolutePath,
@@ -49,6 +50,21 @@ data object IceStormBuilder : ProjectBuilder() {
 
         val jsonFile = project.buildDirectory.resolve("alchitry.json")
 
+        val sv2vCommand = mutableListOf(
+            sv2v,
+            "-w",
+            "adjacent"
+        )
+        sv2vCommand.addAll(sourceFiles.map { it.absolutePath })
+
+        val sv2sStatus = runProcess(sv2vCommand, this)
+        if (sv2sStatus != 0) {
+            Log.printlnError("sv2v exited with status: $sv2sStatus")
+            return@coroutineScope
+        }
+
+        val verilogSource = sourceFiles.map { it.parentFile.resolve("${it.nameWithoutExtension}.v") }
+
         val cmdFile = project.buildDirectory.resolve("yosys.cmd")
         cmdFile.toFile().writeText("synth_ice40 -json \"${jsonFile.absolutePathString()}\" -top $topModuleName")
 
@@ -57,7 +73,7 @@ data object IceStormBuilder : ProjectBuilder() {
             "-s",
             cmdFile.absolutePathString(),
         )
-        yosysCmd.addAll(sourceFiles.map { it.absolutePath })
+        yosysCmd.addAll(verilogSource.map { it.absolutePath })
 
         Log.println("Starting yosys...", AlchitryColors.current.Info)
         val yosysStatus = runProcess(yosysCmd, this)

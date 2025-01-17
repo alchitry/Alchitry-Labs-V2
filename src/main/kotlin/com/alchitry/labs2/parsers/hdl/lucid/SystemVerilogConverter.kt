@@ -3,7 +3,6 @@ package com.alchitry.labs2.parsers.hdl.lucid
 import com.alchitry.labs2.Env
 import com.alchitry.labs2.asSingleLine
 import com.alchitry.labs2.parsers.grammar.LucidBaseListener
-import com.alchitry.labs2.parsers.grammar.LucidListener
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.LucidParser.FunctionContext
 import com.alchitry.labs2.parsers.grammar.VerilogParser
@@ -22,14 +21,10 @@ import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 import kotlin.math.absoluteValue
 
-sealed interface VerilogConverter : LucidListener {
-    val verilog: Map<ParseTree, String>
-}
-
 class SystemVerilogConverter(
     private val context: LucidBlockContext
-) : LucidBaseListener(), VerilogConverter {
-    override val verilog = mutableMapOf<ParseTree, String>()
+) : LucidBaseListener() {
+    val verilog = mutableMapOf<ParseTree, String>()
     private var tabCount: Int = 0
 
     /**
@@ -181,51 +176,56 @@ class SystemVerilogConverter(
         }
     }
 
-    private fun StringBuilder.addConstants() {
-        val constants = mutableListOf<Signal>().apply {
-            addAll(context.constant.localConstants.values.filter { it.type == ExprType.Constant })
-            context.enum.localEnumType.values.forEach {
-                addAll(it.memberSignals.values)
+    override fun exitConstDec(ctx: LucidParser.ConstDecContext) {
+        val name = ctx.name()?.text ?: error("Missing constant name!")
+        val constant =
+            context.constant.localConstants.values.firstOrNull { it.name == name }
+                ?: error("Failed to find constant \"$name\"!")
+        ctx.verilog = getVerilogForConstant(constant)
+    }
+
+    override fun exitEnumDec(ctx: LucidParser.EnumDecContext) {
+        val name = ctx.name(0)?.text ?: error("Failed to get enum name!")
+        val enum = context.enum.localEnumType.values.firstOrNull { it.name == name }
+            ?: error("Failed to find enum with name \"$name\"!")
+        ctx.verilog = buildString {
+            enum.memberSignals.values.forEachIndexed { index, member ->
+                if (index != 0)
+                    newLine()
+                append(getVerilogForConstant(member))
             }
-        }
-
-        context.constant.localConstants.filter { it.value.type == ExprType.Fixed }.forEach { (name, signal) ->
-            append("localparam ")
-
-            if (!signal.width.isSimple()) {
-                append(signal.width.firstStructType()?.appendSpaceIfNotBlank() ?: "logic ")
-                append(signal.width.verilogArrayWidths().appendSpaceIfNotBlank())
-            }
-
-            append(signal.verilogName)
-            append(" = ")
-            append(
-                context.constant.getContext(name)?.expr()?.verilog
-                    ?: error("Failed to resolve verilog for constant expression!")
-            )
-            append(";")
-            newLine()
-        }
-
-        constants.forEach {
-            check(it.type == ExprType.Constant) { "Constant value wasn't marked as constant!" }
-            append("localparam ")
-
-            if (!it.width.isSimple()) {
-                append(it.width.firstStructType()?.appendSpaceIfNotBlank() ?: "logic ")
-                append(it.width.verilogArrayWidths().appendSpaceIfNotBlank())
-            }
-
-            append(it.verilogName)
-            append(" = ")
-            append(it.initialValue.toVerilog())
-            append(";")
-            newLine()
         }
     }
 
-    private fun StringBuilder.addDffs() {
-        context.types.dffs.values.forEach { dff ->
+    private fun getVerilogForConstant(signal: Signal) = buildString {
+        append("localparam ")
+
+        if (!signal.width.isSimple()) {
+            append(signal.width.firstStructType()?.appendSpaceIfNotBlank() ?: "logic ")
+            append(signal.width.verilogArrayWidths().appendSpaceIfNotBlank())
+        }
+
+        append(signal.verilogName)
+        append(" = ")
+
+        when (signal.type) {
+            ExprType.Fixed -> append(
+                context.constant.getContext(signal.name)?.expr()?.verilog
+                    ?: error("Failed to resolve verilog for constant expression!")
+            )
+
+            ExprType.Constant -> append(signal.initialValue.toVerilog())
+            else -> error("Constant wasn't Fixed or Constant!")
+        }
+
+        append(";")
+    }
+
+    override fun exitDffDec(ctx: LucidParser.DffDecContext) {
+        val name = ctx.name()?.text ?: error("Failed to get name for dff!")
+        val dff = context.types.dffs.values.firstOrNull { it.name == name }
+            ?: error("Failed to find dff with name \"$name\"!")
+        ctx.verilog = buildString {
             val type = dff.d.width.firstStructType() ?: "logic"
             append("$type ")
             if (dff.signed)
@@ -237,40 +237,50 @@ class SystemVerilogConverter(
             append(" = ")
             append(dff.initContext?.verilog ?: "0")
             append(";")
+        }
+    }
+
+    override fun exitSigDec(ctx: LucidParser.SigDecContext) {
+        if (ctx.parent is LucidParser.AlwaysSignalContext)
+            return
+        val name = ctx.name()?.text ?: error("Failed to get name for sig!")
+        val sig = context.types.sigs.values.firstOrNull { it.name == name }
+            ?: error("Failed to find signal with name \"$name\"!")
+        ctx.verilog = signalVerilog(sig)
+    }
+
+    private fun signalVerilog(sig: Signal): String = buildString {
+        val dynamicExpr = context.types.signalDynamicExprs[sig]
+        val type = sig.width.firstStructType() ?: "logic"
+        append("$type ")
+        if (sig.signed)
+            append("signed ")
+        append(sig.width.verilogArrayWidths().appendSpaceIfNotBlank())
+        append(sig.verilogName)
+
+        if (dynamicExpr != null) {
+            append(" = ")
+            append(dynamicExpr.expr.verilog)
+        }
+
+        append(";")
+        val parent = sig.parent
+        if (parent is RepeatSignal) {
             newLine()
+            append("$type ")
+            if (sig.signed)
+                append("signed ")
+            val width = BitListWidth(parent.block.minIndexBits)
+            append(width.verilogArrayWidths().appendSpaceIfNotBlank())
+            append("R${sig.verilogName}")
+            append(";")
         }
     }
 
     private fun StringBuilder.addSigs() {
-        (context.types.sigs.values +
-                context.blockParser.repeatSignals.values +
+        (context.blockParser.repeatSignals.values +
                 context.types.localSignals.flatMap { scope -> scope.value.map { it.value.signal } }).forEach { sig ->
-            val dynamicExpr = context.types.signalDynamicExprs[sig]
-            val type = sig.width.firstStructType() ?: "logic"
-            append("$type ")
-            if (sig.signed)
-                append("signed ")
-            append(sig.width.verilogArrayWidths().appendSpaceIfNotBlank())
-            append(sig.verilogName)
-
-            if (dynamicExpr != null) {
-                append(" = ")
-                append(dynamicExpr.expr.verilog)
-            }
-
-            append(";")
-            val parent = sig.parent
-            if (parent is RepeatSignal) {
-                newLine()
-                append("$type ")
-                if (sig.signed)
-                    append("signed ")
-                val width = BitListWidth(parent.block.minIndexBits)
-                append(width.verilogArrayWidths().appendSpaceIfNotBlank())
-                append("R${sig.verilogName}")
-                append(";")
-            }
-
+            append(signalVerilog(sig))
             newLine()
         }
 
@@ -341,8 +351,25 @@ class SystemVerilogConverter(
         }
     }
 
-    private fun StringBuilder.addModuleInstances() {
-        context.types.moduleInstances.values.forEach { instance ->
+    private fun resolveAll(width: SignalWidth) {
+        when (width) {
+            is ResolvableArrayWidth<*> -> {
+                runBlocking { context.walk(width.context) }
+                resolveAll(width.next)
+            }
+
+            is ResolvableSimpleWidth<*> -> runBlocking { context.walk(width.context) }
+            is SimpleWidth -> return
+            is StructWidth -> width.type.values.forEach { resolveAll(it.width) }
+            is ArrayWidth -> resolveAll(width.next)
+        }
+    }
+
+    override fun exitModuleInst(ctx: LucidParser.ModuleInstContext) {
+        val instanceName = ctx.name(1)?.text ?: error("Failed to get module instance name!")
+        val instance =
+            context.types.moduleInstances[instanceName] ?: error("Failed to find instance \"$instanceName\"!")
+        ctx.verilog = buildString {
             val parameterNameMap = mutableMapOf<String, String>()
 
             fun addLocalParam(name: String, getValue: () -> String) {
@@ -390,20 +417,6 @@ class SystemVerilogConverter(
                                 ?: error("Parameter value wasn't specified and it has no default!")
                             runBlocking { context.walk(valueCtx) }
                             valueCtx.verilog
-                        }
-                    }
-
-                    fun resolveAll(width: SignalWidth) {
-                        when (width) {
-                            is ResolvableArrayWidth<*> -> {
-                                runBlocking { context.walk(width.context) }
-                                resolveAll(width.next)
-                            }
-
-                            is ResolvableSimpleWidth<*> -> runBlocking { context.walk(width.context) }
-                            is SimpleWidth -> return
-                            is StructWidth -> width.type.values.forEach { resolveAll(it.width) }
-                            is ArrayWidth -> resolveAll(width.next)
                         }
                     }
 
@@ -604,6 +617,20 @@ class SystemVerilogConverter(
         tabCount++
     }
 
+    private fun StringBuilder.addAssignBlock(ctx: LucidParser.AssignBlockContext) {
+        ctx.children?.forEach { child ->
+            when (child) {
+                is LucidParser.DffDecContext,
+                is LucidParser.ModuleInstContext -> {
+                    append(child.verilog)
+                    newLine()
+                }
+
+                is LucidParser.AssignBlockContext -> addAssignBlock(child)
+            }
+        }
+    }
+
     override fun exitModule(ctx: LucidParser.ModuleContext) {
         val instance = (context.instance as? ModuleInstance) ?: error(
             ctx,
@@ -620,20 +647,24 @@ class SystemVerilogConverter(
             addParams(instance.module.parameters.values)
             addPorts(instance.internal.values)
             newLine()
-            addConstants()
-            newLine()
-            addDffs()
-            newLine()
-            addSigs()
             addIoSignals(instance.internal.values)
-            newLine()
-            addModuleInstances()
-            newLine()
+            addSigs()
+            ctx.moduleBody()?.stat()?.forEach {
+                when (it) {
+                    is LucidParser.StatTestContext,
+                    is LucidParser.StatFunctionContext -> return@forEach
 
-            context.blockParser.alwaysBlocks.keys.forEach { context ->
-                append(context.verilog)
-                newLine()
+                    is LucidParser.StatAssignContext -> addAssignBlock(
+                        it.assignBlock() ?: error("Missing assignBlock!")
+                    )
+
+                    else -> {
+                        append(it.verilog)
+                        newLine()
+                    }
+                }
             }
+            newLine()
 
             addSequentialBlocks()
 

@@ -14,7 +14,6 @@ import com.alchitry.labs2.parsers.hdl.verilog.context.VerilogModuleTypeContext
 import com.alchitry.labs2.parsers.notations.NotationManager
 import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.Project
-import com.alchitry.labs2.project.builders.ProjectBuilder
 import com.alchitry.labs2.project.files.SourceFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -79,11 +78,26 @@ class ProjectTester(vararg val files: SourceFile) {
         globalParse(trees)
         val modules = moduleTypeParse(trees)
 
-        val moduleInstance = ModuleInstance("top", project, null, modules.first(), mapOf(), mapOf(), mapOf(), mode)
+        val topModuleInstance = ModuleInstance("top", project, null, modules.first(), mapOf(), mapOf(), mapOf(), mode)
 
-        moduleInstance.initialWalk()
+        topModuleInstance.initialWalk()
 
-        return moduleInstance
+        modules.forEach { mod ->
+            ModuleInstance(
+                mod.name,
+                project,
+                null,
+                mod,
+                mapOf(),
+                mapOf(),
+                mapOf(),
+                ExprEvalMode.Building
+            ).apply {
+                initialWalk()
+            }
+        }
+
+        return topModuleInstance
     }
 
     suspend fun runFirstTestBench(): SimParent? {
@@ -175,8 +189,7 @@ class ProjectTester(vararg val files: SourceFile) {
     }
 
     suspend fun getVerilog(
-        allowWarnings: Boolean = false,
-        targetTool: ProjectBuilder = Board.AlchitryAu.projectBuilder
+        allowWarnings: Boolean = false
     ): Map<String, String> {
         val topInstance = fullParse()
         if (allowWarnings) {
@@ -197,7 +210,7 @@ class ProjectTester(vararg val files: SourceFile) {
         add(topInstance)
         return usedModules.mapValues {
             assert(project.notationManager.hasNoErrors) { project.notationManager.getReport() }
-            it.value.module.convertToVerilog(project, targetTool) ?: error("Missing verilog for ${it.key}")
+            it.value.module.convertToVerilog(project) ?: error("Missing verilog for ${it.key}")
         }.also { assert(project.notationManager.hasNoErrors) { project.notationManager.getReport() } }
     }
 

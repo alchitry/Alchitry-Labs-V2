@@ -8,9 +8,7 @@ import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.ExprType
-import com.alchitry.labs2.parsers.hdl.lucid.BasicVerilogConverter
 import com.alchitry.labs2.parsers.hdl.lucid.SystemVerilogConverter
-import com.alchitry.labs2.parsers.hdl.lucid.VerilogConverter
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.*
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.types.Function
@@ -18,8 +16,6 @@ import com.alchitry.labs2.parsers.hdl.values.Bit
 import com.alchitry.labs2.parsers.hdl.values.Value
 import com.alchitry.labs2.parsers.notations.ErrorListener
 import com.alchitry.labs2.parsers.notations.NotationCollector
-import com.alchitry.labs2.project.builders.IceStormBuilder
-import com.alchitry.labs2.project.builders.ProjectBuilder
 import com.alchitry.labs2.project.files.SourceFile
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.RuleContext
@@ -99,7 +95,7 @@ class LucidBlockContext(
     val blockParser = blockParser ?: BlockParser(this)
     val signalDriver = signalDriver ?: SignalDriverParser(this)
     private val pruner = LucidPruner(this)
-    var converter: VerilogConverter? = null
+    private val converter: SystemVerilogConverter = SystemVerilogConverter(this)
 
     private fun listeners() = when (stage) {
         ParseStage.ModuleInternals -> listOf(
@@ -145,7 +141,7 @@ class LucidBlockContext(
         ParseStage.Convert -> listOf(
             this.expr,
             this.signal,
-            this.converter ?: error("Converter must be set for stage $stage!")
+            this.converter
         )
 
         ParseStage.Prune -> listOf(
@@ -234,13 +230,12 @@ class LucidBlockContext(
         return true
     }
 
-    suspend fun convertToVerilog(targetTool: ProjectBuilder): String? {
+    suspend fun convertToSystemVerilog(): String? {
         val instance = (instance as? ModuleInstance)
             ?: error("convertToVerilog() can only be called on contexts with a ModuleInstance!")
         stage = ParseStage.Convert
-        converter = if (targetTool is IceStormBuilder) BasicVerilogConverter(this) else SystemVerilogConverter(this)
         walk(instance.moduleContext)
-        return converter?.verilog?.get(instance.moduleContext)
+        return converter.verilog[instance.moduleContext]
     }
 
     override fun resolve(exprCtx: ExprContext) = expr.resolve(exprCtx)
