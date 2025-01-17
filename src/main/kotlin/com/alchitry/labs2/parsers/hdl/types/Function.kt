@@ -16,6 +16,9 @@ sealed class Function(val label: String, val argCount: Int, val exprType: ExprTy
             if (bigInt == BigInteger.ZERO) {
                 return BitValue(Bit.B0, false)
             }
+            if (bigInt < BigInteger.ZERO) {
+                return null
+            }
             return BigFunctions.ln(BigDecimal(bigInt), 32)
                 .divide(BigFunctions.LOG2, RoundingMode.HALF_UP)
                 .setScale(0, RoundingMode.CEILING)
