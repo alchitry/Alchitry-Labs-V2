@@ -58,6 +58,7 @@ fun CodeEditor(
                         @Composable
                         override fun Item(index: Int, key: Any) {
                             val notation = state.lineNotationLevel(index)
+                            state.redrawTriggerStates.value // trigger redraw on changes TODO: trigger only on notation color change
                             val alpha =
                                 if (state.selectionManager.active && state.selectionManager.caret.line == index || notation != null) 1f else 0.4f
                             CompositionLocalProvider(
