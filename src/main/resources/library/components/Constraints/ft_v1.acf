@@ -1,0 +1,34 @@
+/**
+    "name" : "Ft V1",
+    "description" : "Pin constraints for the Ft V1 element."
+**/
+STANDARD(LVCMOS33), PINOUT(V1) { // standard 3.3V IO standard
+    pin ft_clk B33 FREQUENCY(100MHz);
+
+    pin ft_rxf A28;
+    pin ft_txe A27;
+
+    pin ft_data[0] B24;
+    pin ft_data[1] B23;
+    pin ft_data[2] B21;
+    pin ft_data[3] B20;
+    pin ft_data[4] B18;
+    pin ft_data[5] B17;
+    pin ft_data[6] B15;
+    pin ft_data[7] B14;
+    pin ft_data[8] B27;
+    pin ft_data[9] B28;
+    pin ft_data[10] B30;
+    pin ft_data[11] B31;
+    pin ft_data[12] B36;
+    pin ft_data[13] B37;
+    pin ft_data[14] A21;
+    pin ft_data[15] A20;
+
+    pin ft_be[0] A18;
+    pin ft_be[1] A17;
+
+    pin ft_rd A31;
+    pin ft_wr A30;
+    pin ft_oe B34;
+}

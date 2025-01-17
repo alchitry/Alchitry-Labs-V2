@@ -1,0 +1,173 @@
+/**
+    "name": "Ft Interface"
+    "description": "Transfer data quickly over USB 3.0 using the Ft or Ft+."
+**/
+/******************************************************************************
+
+    The MIT License (MIT)
+
+    Copyright (c) 2025 Alchitry
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.
+
+    *****************************************************************************
+
+    This module can be used to interface with the Ft or Ft+.
+
+    Parameters:
+        BUS_WIDTH: Set to 16 for the Ft (FT600) or 32 for the Ft+ (FT601)
+
+        TX_BUFFER: The depth of the tx buffer. Must be a power of 2.
+
+        RX_BUFFER: The depth of the rx buffer. Must be a power of 2.
+
+        PRIORITY: Sets whether to prioritize receving or transmitting data.
+            Set to "RX" to prioritize receiving data and "TX" to prioritize
+            transmitting data. Caution should be taken not to starve the other
+            direction.
+
+        PREEMPT: Whether or not a non-priority transfer should be interrupted
+            when a priority transfer could be happening. Set to 1 to enable
+            the interruption. For example, if PRIORITY is set to "TX" and a
+            write is in progress but ft_rxf goes low the write operation will
+            end before emptying the TX_BUFFER and a read will start.
+
+            When it is 0, a read or write will continue as long as there is
+            data in the sending buffer and space in the receiving buffer.
+*/
+module ft #(
+    BUS_WIDTH ~ 16 : BUS_WIDTH == 16 || BUS_WIDTH == 32, // 16 = Ft,  32 = Ft+
+    TX_BUFFER = 64 : TX_BUFFER == $pow(2,$clog2(TX_BUFFER)), // TX_BUFFER must be a power of 2
+    RX_BUFFER = 64 : RX_BUFFER == $pow(2,$clog2(RX_BUFFER)), // RX_BUFFER must be a power of 2
+    PRIORITY = "RX" : PRIORITY == "TX" || PRIORITY == "RX",
+    PREEMPT = 0 : PREEMPT == 0 || PREEMPT == 1
+)(
+    input clk,  // system clock
+    input rst,  // reset
+    /* FTDI */
+    input ft_clk, // FTDI clock
+    input ft_rxf, // low when there is data in the rx buffer
+    input ft_txe, // low when there is space in the tx buffer
+    inout ft_data[BUS_WIDTH], // data bus
+    inout ft_be[BUS_WIDTH/8], // byte enable flags (one per byte), 1 = valid byte
+    output ft_rd, // read flag, 0 = reading
+    output ft_wr, // write flag, 0 = writing
+    output ft_oe, // output enable, 0 = FTDI, 1 = FPGA driving bus
+    /* Write interface */
+    input ui_din[BUS_WIDTH], // data in
+    input ui_din_be[BUS_WIDTH/8], // byte enable flags, 1 = valid
+    input ui_din_valid, // 1 = din valid
+    output ui_din_full, // tx buffer full flag, 1 = full
+    /* Read interface */
+    output ui_dout[BUS_WIDTH], // data out
+    output ui_dout_be[BUS_WIDTH/8], // byte enable flags, 1 = valid
+    output ui_dout_empty, // 0 = rx buffer has data and dout valid, 1 = empty
+    input ui_dout_get // 1 = dout was read
+) {
+
+    enum State {
+        IDLE,
+        BUS_SWITCH,
+        READ,
+        WRITE
+    }
+
+    .clk(ft_clk) {
+        dff state[$width(State)]
+    }
+
+    async_fifo write_fifo(
+        #WIDTH(BUS_WIDTH+BUS_WIDTH/8),
+        #ENTRIES(TX_BUFFER),
+        .rclk(ft_clk),
+        .rrst(rst),
+        .wclk(clk),
+        .wrst(rst)
+    )
+
+    async_fifo read_fifo(
+        #WIDTH(BUS_WIDTH+BUS_WIDTH/8),
+        #ENTRIES(RX_BUFFER),
+        .rclk(clk),
+        .rrst(rst),
+        .wclk(ft_clk),
+        .wrst(rst)
+    )
+
+    always {
+        // write fifo hookup
+        write_fifo.wput = ui_din_valid
+        write_fifo.din = c{ui_din_be, ui_din}
+        ui_din_full = write_fifo.full
+
+        // read fifo hookup
+        ui_dout = read_fifo.dout[BUS_WIDTH-1:0]
+        ui_dout_be = read_fifo.dout[-1-:BUS_WIDTH/8]
+        ui_dout_empty = read_fifo.empty
+        read_fifo.rget = ui_dout_get
+        read_fifo.din = c{ft_be, ft_data}
+
+        // default values
+        read_fifo.wput = 0
+        write_fifo.rget = 0
+        ft_oe = 1 // 1 = FPGA, 0 = FTDI drives bus
+        ft_rd = 1 // 0 = reading
+        ft_wr = 1 // 0 = writing
+
+        sig reading_bus = state.q == State.BUS_SWITCH || state.q == State.READ
+
+        // release the bus when reading
+        ft_data = reading_bus ? $width(ft_data)x{1bz} : write_fifo.dout[BUS_WIDTH-1:0]
+        ft_be = reading_bus ? $width(ft_be)x{1bz} : write_fifo.dout[-1-:BUS_WIDTH/8]
+
+        sig prefered_state[$width(State)] = State.IDLE
+
+        sig can_write = ft_txe == 0 && write_fifo.empty == 0
+        sig can_read = ft_rxf == 0 && read_fifo.full == 0
+
+        if (can_write && (PRIORITY == "TX" || !can_read)) {
+            prefered_state = State.WRITE
+        }
+
+        if (can_read && (PRIORITY == "RX" || !can_write)) {
+            prefered_state = State.BUS_SWITCH
+        }
+
+        case (state.q) {
+            State.IDLE:
+                state.d = prefered_state
+            State.BUS_SWITCH:
+                ft_oe = 0 // docs show oe going low for a single cycle when switching to a read
+                state.d = State.READ
+            State.READ:
+                ft_oe = read_fifo.full // use full flag to tell the FTDI if we accept the read
+                ft_rd = read_fifo.full
+                read_fifo.wput = !ft_rxf // rxf = 0 means valid data
+                if (ft_rxf || read_fifo.full || (PREEMPT && prefered_state == State.WRITE)) {
+                    state.d = prefered_state
+                }
+            State.WRITE:
+                ft_wr = write_fifo.empty // use empty flag to tell the FTDI if we have valid data
+                write_fifo.rget = !ft_txe // read the FIFO if the FTDI isn't full
+                if(ft_txe || write_fifo.empty || (PREEMPT && prefered_state == State.BUS_SWITCH)) {
+                    state.d = prefered_state
+                }
+        }
+    }
+}
