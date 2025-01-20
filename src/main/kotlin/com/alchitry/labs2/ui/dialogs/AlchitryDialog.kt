@@ -2,20 +2,15 @@ package com.alchitry.labs2.ui.dialogs
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.ComposeDialog
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.DialogWindowScope
 import com.alchitry.labs2.ui.components.WindowDecoration
 import com.alchitry.labs2.ui.theme.AlchitryTheme
 import com.alchitry.labs2.windows.LocalComposeWindow
-import java.awt.Color
-import java.awt.Dialog
 import java.awt.Dimension
 import java.awt.Point
 import kotlin.math.roundToInt
@@ -29,20 +24,15 @@ fun AlchitryDialog(
     content: @Composable DialogWindowScope.() -> Unit
 ) {
     val window = LocalComposeWindow.current
-    val background = MaterialTheme.colorScheme.surface
 
-    if (visible) {
-        DialogWindow(visible = true, dispose = {
-            it.dispose()
-        }, create = {
-            ComposeDialog(window, modalityType = Dialog.ModalityType.APPLICATION_MODAL).apply {
-                maximumSize = window.size
-                isResizable = resizable
-                isUndecorated = true
-                this.title = title
-                this.background = Color(background.toArgb())
-            }
-        }) {
+    if (visible) { // use if instead of built-in visible so window is placed properly
+        DialogWindow(
+            onCloseRequest = onClose,
+            visible = true,
+            title = title,
+            resizable = resizable,
+            undecorated = true
+        ) {
             val dialogWindow = this.window
             var updateMinSize by remember { mutableStateOf(true) }
 
