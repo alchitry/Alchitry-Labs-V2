@@ -7,9 +7,9 @@
 /output/
 /secrets.properties
 /conveyor-local.conf
-/tools/
 *.log
 *.bak
 *.tcl
 /.kotlin/
 !src/**/*.tcl
+/includes/**/yosyshq/
