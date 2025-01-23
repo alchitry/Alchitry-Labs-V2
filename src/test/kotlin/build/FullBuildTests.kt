@@ -17,7 +17,7 @@ class FullBuildTests {
 
     init {
         System.setProperty("app.dir", "../")
-        System.setProperty("alchitry.bin.dir", "tools/linux/x64/bin")
+        System.setProperty("alchitry.tools.dir", "includes/linux-x64/tools")
         templates = ProjectTemplate.getTemplates()
     }
 
@@ -34,8 +34,13 @@ class FullBuildTests {
     }
 
     @Test
-    fun buildAllAuProjects() = runBlocking {
+    fun buildAllAuV1Projects() = runBlocking {
         buildAllProjectsForBoard(Board.AlchitryAu)
+    }
+
+    @Test
+    fun buildAllAuV2Projects() = runBlocking {
+        buildAllProjectsForBoard(Board.AlchitryAuV2)
     }
 
     @Test

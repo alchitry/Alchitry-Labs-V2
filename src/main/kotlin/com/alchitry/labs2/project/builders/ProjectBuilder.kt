@@ -86,15 +86,17 @@ sealed class ProjectBuilder {
 
         suspend fun runProcess(
             cmd: List<String>,
+            directory: File?,
             scope: CoroutineScope,
-            directory: File? = null,
             env: Map<String, String>? = null,
+            envRemove: List<String>? = null,
             errorsRed: Boolean = true
         ): Int? {
             val builder = ProcessBuilder(cmd)
             if (env != null)
                 builder.environment().putAll(env)
-            directory?.let { builder.directory(it) }
+            envRemove?.forEach { builder.environment().remove(it) }
+            builder.directory(directory)
             val process = try {
                 withContext(Dispatchers.IO) {
                     builder.start()

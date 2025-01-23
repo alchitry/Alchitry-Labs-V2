@@ -14,9 +14,10 @@ object Locations {
     val cores: String = "$library/cores"
     val project: String = "$library/projects"
     val lucidProjects = "$project/Lucid"
-    val toolsDirectory: File =
+    val appDirectory: File =
         System.getProperty("app.dir")?.let { Paths.get(it).toFile() } ?: error("System property \"app.dir\" isn't set!")
-    val binDir = System.getProperty("alchitry.bin.dir")?.let { Paths.get(it).toFile() } ?: toolsDirectory.resolve("bin")
+    val toolsDirectory =
+        System.getProperty("alchitry.tools.dir")?.let { Paths.get(it).toFile() } ?: appDirectory.resolve("tools")
 
     val workspace: String = Settings.workspace ?: PathUtil.assemblePath(
         FileSystemView.getFileSystemView().defaultDirectory.path,
@@ -34,7 +35,7 @@ object Locations {
             Env.OS.Windows -> ".exe"
             Env.OS.Linux, Env.OS.MacOS, Env.OS.Unknown -> ""
         }
-        val file = binDir.resolve("$name$extension")
+        val file = toolsDirectory.resolve("$name$extension")
         require(file.exists()) { "Failed to locate $name: ${file.absolutePath}" }
         return file
     }

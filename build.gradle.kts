@@ -1,6 +1,8 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.FileOutputStream
+import java.net.HttpURLConnection
+import java.net.URL
 import java.util.*
 
 buildscript {
@@ -181,4 +183,95 @@ tasks.register<com.alchitry.antlrkotlin.gradleplugin.AntlrKotlinTask>("generateK
 tasks.register("publish") {
     group = "conveyor"
     dependsOn("copied-site", "ms-store-release")
+}
+
+tasks.register("download-oss-cad-suite") {
+    group = "build setup"
+    doLast {
+        val includesDirectory = project.buildFile.parentFile.resolve("includes")
+
+        val latestReleaseUrl = getRedirectedUrl("https://github.com/alchitry/oss-cad-suite-build/releases/latest")
+            ?: error("Failed to get latest release URL!")
+        val urlDate = latestReleaseUrl.split('/').last()
+        val dateStamp = urlDate.replace("-", "")
+
+        listOf("windows-x64", "linux-x64", "darwin-x64", "darwin-arm64").forEach { arch ->
+            val extension = if (arch == "windows-x64") "exe" else "tgz"
+            val archive = temporaryDir.resolve("$arch.$extension")
+
+            downloadFile(
+                "https://github.com/alchitry/oss-cad-suite-build/releases/download/$urlDate/oss-cad-suite-$arch-$dateStamp.$extension",
+                archive
+            )
+
+            val toolsDir = includesDirectory.resolve(arch).resolve("tools")
+            val target = toolsDir.resolve("oss-cad-suite")
+            if (target.exists())
+                target.deleteRecursively()
+            target.mkdirs()
+
+            if (arch == "windows-x64") {
+                project.exec { commandLine("7z", "x", archive.absolutePath, "-o${toolsDir.absolutePath}") }
+                // work around for windows not finding the .dlls
+                target.resolve("lib").apply {
+                    listFiles()?.forEach {
+                        if (it.extension == "dll") {
+                            it.copyTo(target.resolve("bin").resolve(it.name), overwrite = true)
+                        }
+                    }
+                }
+            } else {
+                project.exec { commandLine("tar", "-xzf", archive.absolutePath, "-C", toolsDir.absolutePath) }
+
+                if (arch.startsWith("darwin")) {
+                    // these files aren't needed and cause failures during signing
+                    target.resolve("lib/python3.11/config-3.11-darwin/python.o").delete()
+                }
+            }
+        }
+    }
+}
+
+fun downloadFile(url: String, destination: File) {
+    try {
+        val urlObj = URL(url)
+        val connection = urlObj.openConnection()
+        val inputStream = connection.getInputStream()
+        val buffer = ByteArray(4096)
+        var bytesRead: Int
+
+        val outputStream = FileOutputStream(destination)
+
+        while (inputStream.read(buffer).also { bytesRead = it } != -1) {
+            outputStream.write(buffer, 0, bytesRead)
+        }
+
+        outputStream.close()
+        inputStream.close()
+    } catch (e: Exception) {
+        println("Error downloading file: ${e.message}")
+    }
+}
+
+fun getRedirectedUrl(url: String): String? {
+    var currentUrl = url
+    var connection: HttpURLConnection? = null
+    try {
+        do {
+            connection = URL(currentUrl).openConnection() as HttpURLConnection
+            connection.instanceFollowRedirects = false
+            connection.connect()
+            val location = connection.getHeaderField("Location")
+            if (location != null) {
+                currentUrl = location
+            } else {
+                return currentUrl
+            }
+        } while (connection!!.responseCode in 300..399)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    } finally {
+        connection?.disconnect()
+    }
+    return null
 }

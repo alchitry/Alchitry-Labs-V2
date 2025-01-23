@@ -69,7 +69,7 @@ data object VivadoBuilder : ProjectBuilder() {
         )
 
         Log.info("Starting Vivado...")
-        runProcess(cmd, this)
+        runProcess(cmd, project.buildDirectory.toFile(), this)
         Log.info("Vivado exited.")
 
         Log.println("")

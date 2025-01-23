@@ -10,6 +10,7 @@ import kotlinx.coroutines.coroutineScope
 import java.io.File
 import kotlin.io.path.absolutePathString
 
+
 data class ClockConstraint(
     val port: String,
     val frequency: Double // in MHz
@@ -36,17 +37,37 @@ data object IceStormBuilder : ProjectBuilder() {
         sourceFiles: List<File>,
         constraintFiles: List<File>
     ) = coroutineScope {
-        val yosys = Locations.getToolNamed("yosys").absolutePath
-        val nextpnr = Locations.getToolNamed("nextpnr-ice40").absolutePath
+        val ossPrefix = "oss-cad-suite"
+        val yosys = Locations.getToolNamed("$ossPrefix/bin/yosys").absolutePath
+        val nextpnr = Locations.getToolNamed("$ossPrefix/bin/nextpnr-ice40").absolutePath
+        val icepack = Locations.getToolNamed("$ossPrefix/bin/icepack").absolutePath
         val sv2v = Locations.getToolNamed("sv2v").absolutePath
-        val nextpnrEnv = if (Env.isLinux) {
-            mapOf(
-                "LD_LIBRARY_PATH" to Locations.binDir.absolutePath,
-                "PYTHONPATH" to Locations.binDir.resolve("lib").absolutePath
-            )
-        } else null
 
-        val icepack = Locations.getToolNamed("icepack").absolutePath
+        val ossFolder = Locations.toolsDirectory.resolve(ossPrefix)
+
+        val environment: Map<String, String>? = when {
+            Env.isWindows -> {
+                val binPath = ossFolder.resolve("bin").absolutePath
+                val libPath = ossFolder.resolve("lib").absolutePath
+                mapOf(
+                    "PATH" to "$binPath;$libPath;${System.getenv("PATH")}",
+                    "PYTHON_EXECUTABLE" to ossFolder.resolve("lib/python3.exe").absolutePath
+                )
+            }
+
+            Env.isMac || Env.isLinux -> {
+                val binPath = ossFolder.resolve("bin").absolutePath
+                val pyBinPath = ossFolder.resolve("py3bin").absolutePath
+                mapOf(
+                    "VIRTUAL_ENV" to ossFolder.absolutePath,
+                    "PATH" to "$binPath:$pyBinPath:${System.getenv("PATH")}",
+                )
+            }
+
+            else -> null
+        }
+        val envUnset: List<String> = listOf("PYTHONHOME")
+        val runDirectory = project.buildDirectory.toFile()
 
         val jsonFile = project.buildDirectory.resolve("alchitry.json")
 
@@ -57,7 +78,7 @@ data object IceStormBuilder : ProjectBuilder() {
         )
         sv2vCommand.addAll(sourceFiles.map { it.absolutePath })
 
-        val sv2sStatus = runProcess(sv2vCommand, this)
+        val sv2sStatus = runProcess(sv2vCommand, runDirectory, this)
         if (sv2sStatus != 0) {
             Log.printlnError("sv2v exited with status: $sv2sStatus")
             return@coroutineScope
@@ -76,7 +97,13 @@ data object IceStormBuilder : ProjectBuilder() {
         yosysCmd.addAll(verilogSource.map { it.absolutePath })
 
         Log.println("Starting yosys...", AlchitryColors.current.Info)
-        val yosysStatus = runProcess(yosysCmd, this)
+        val yosysStatus = runProcess(
+            yosysCmd,
+            directory = runDirectory,
+            scope = this,
+            env = environment,
+            envRemove = envUnset
+        )
 
         if (yosysStatus != 0) {
             Log.printlnError("Yosys exited with status: $yosysStatus")
@@ -123,7 +150,15 @@ data object IceStormBuilder : ProjectBuilder() {
         )
 
         Log.println("Starting nextpnr...", AlchitryColors.current.Info)
-        val nextpnrStatus = runProcess(nextpnrCmd, this, env = nextpnrEnv, errorsRed = false)
+        val nextpnrStatus =
+            runProcess(
+                nextpnrCmd,
+                runDirectory,
+                this,
+                env = environment,
+                envRemove = envUnset,
+                errorsRed = false
+            )
 
         if (nextpnrStatus != 0) {
             Log.printlnError("Nextpnr exited with status: $nextpnrStatus")
@@ -137,7 +172,13 @@ data object IceStormBuilder : ProjectBuilder() {
         )
 
         Log.println("Starting icepack...", AlchitryColors.current.Info)
-        val icepackStatus = runProcess(icepackCmd, this)
+        val icepackStatus = runProcess(
+            icepackCmd,
+            runDirectory,
+            this,
+            env = environment,
+            envRemove = envUnset
+        )
 
         if (icepackStatus != 0) {
             Log.printlnError("Icepack exited with status: $icepackStatus")

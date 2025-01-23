@@ -68,8 +68,8 @@ data object IceCubeBuilder : ProjectBuilder() {
         tclCmd.add(tclScript.absolutePath)
 
         Log.println("Starting iCEcube2...", AlchitryColors.current.Info)
-        runProcess(synCmd, this, env = envVars, directory = project.buildDirectory.toFile())
-        runProcess(tclCmd, this, env = envVars, directory = project.buildDirectory.toFile())
+        runProcess(synCmd, scope = this, env = envVars, directory = project.buildDirectory.toFile())
+        runProcess(tclCmd, scope = this, env = envVars, directory = project.buildDirectory.toFile())
         Log.println("iCEcube2 exited.", AlchitryColors.current.Info)
         Log.println("")
 
