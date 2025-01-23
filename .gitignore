@@ -12,4 +12,4 @@
 *.tcl
 /.kotlin/
 !src/**/*.tcl
-/includes/**/yosyshq/
+/includes/**/oss-cad-suite/
