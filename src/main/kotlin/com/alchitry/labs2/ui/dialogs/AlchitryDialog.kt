@@ -52,7 +52,7 @@ fun AlchitryDialog(
 
                     if (updateMinSize) {
                         updateMinSize = false
-                        // some window manages seem to include the window decorations while others don't
+                        // some window managers seem to include the window decorations while others don't
                         // the offsets adjust for window decorations
                         val offsetX = dialogWindow.size.width - dialogWindow.rootPane.size.width
                         val offsetY = dialogWindow.size.height - dialogWindow.rootPane.size.height
