@@ -42,9 +42,9 @@
 
    Data to be sent out is saved during bits 2-3 of a transmission and is sent on
    the following byte. This means that this module will always send 0 for the
-   byte. It also can't use data from the first received byte during the second
-   byte. This means that a typical application would have a dummy byte between
-   the first and third bytes.
+   first byte. It also can't use data from the first received byte during the
+   second byte. This means that a typical application would have a dummy byte
+   between the first and third bytes.
 
    This module uses SPI mode 0, CPOL = 0 and CPHA = 0.
 */

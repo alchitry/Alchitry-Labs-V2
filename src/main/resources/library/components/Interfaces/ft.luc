@@ -37,7 +37,7 @@
 
         RX_BUFFER: The depth of the rx buffer. Must be a power of 2.
 
-        PRIORITY: Sets whether to prioritize receving or transmitting data.
+        PRIORITY: Sets whether to prioritize receiving or transmitting data.
             Set to "RX" to prioritize receiving data and "TX" to prioritize
             transmitting data. Caution should be taken not to starve the other
             direction.
