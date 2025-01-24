@@ -53,7 +53,7 @@ object VivadoIP {
             tclScript.absolutePathString()
         )
         Log.info(cmd.joinToString(" "))
-        ProjectBuilder.runProcess(cmd, tclScript.toFile(), this)
+        ProjectBuilder.runProcess(cmd, tclScript.parent.toFile(), this)
     }
 
     private suspend fun openCoresProject(project: Project, coresProject: Path) = coroutineScope {
