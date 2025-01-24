@@ -99,7 +99,7 @@ data object IceStormBuilder : ProjectBuilder() {
         Log.println("Starting yosys...", AlchitryColors.current.Info)
         val yosysStatus = runProcess(
             yosysCmd,
-            directory = runDirectory,
+            workingDirectory = runDirectory,
             scope = this,
             env = environment,
             envRemove = envUnset

@@ -22,34 +22,39 @@ sealed class ProjectBuilder {
         constraintFiles: List<File>
     )
 
-    fun getSanitizedPath(f: File): String {
-        return getSanitizedPath(f.absolutePath)
-    }
-
-    fun getSanitizedPath(f: Path): String {
-        return getSanitizedPath(f.absolutePathString())
-    }
-
-    fun getRelativeSanitizedPath(f: File, project: Project): String {
-        return "./${getSanitizedPath(f.relativeTo(project.buildDirectory.toFile()).path)}"
-    }
-
-    fun getRelativeSanitizedPath(f: Path, project: Project): String {
-        return "./${getSanitizedPath(f.relativeTo(project.buildDirectory).pathString)}"
-    }
-
-    fun getSanitizedPath(f: String): String {
-        return f.replace("\\", "/").replace(" ", "\\ ")
-    }
-
-    fun StringBuilder.addSpacedList(list: Collection<File>): StringBuilder {
+    fun StringBuilder.addSpacedList(list: Collection<File>, relativeTo: File? = null): StringBuilder {
         for (s in list) {
-            append("\"").append(getSanitizedPath(s.absolutePath)).append("\" ")
+            val file = if (relativeTo != null) getRelativeSanitizedPath(s, relativeTo) else getSanitizedPath(s)
+            append("\"").append(file).append("\" ")
         }
         return this
     }
 
     companion object {
+        fun getSanitizedPath(f: File, replaceSpaces: Boolean = true): String {
+            return getSanitizedPath(f.absolutePath, replaceSpaces)
+        }
+
+        fun getSanitizedPath(f: Path, replaceSpaces: Boolean = true): String {
+            return getSanitizedPath(f.absolutePathString(), replaceSpaces)
+        }
+
+        fun getRelativeSanitizedPath(f: File, relativeTo: File, replaceSpaces: Boolean = true): String {
+            return "./${getSanitizedPath(f.relativeTo(relativeTo).path, replaceSpaces)}"
+        }
+
+        fun getRelativeSanitizedPath(f: Path, relativeTo: Path, replaceSpaces: Boolean = true): String {
+            return "./${getSanitizedPath(f.relativeTo(relativeTo).pathString, replaceSpaces)}"
+        }
+
+        fun getSanitizedPath(f: String, replaceSpaces: Boolean = true): String {
+            return f.replace("\\", "/").run {
+                if (replaceSpaces)
+                    replace(" ", "\\ ")
+                else this
+            }
+        }
+
         private suspend fun startStreamPrinter(process: Process, s: InputStream, red: Boolean) =
             withContext(Dispatchers.IO) {
                 val color = if (red) AlchitryColors.current.Error else null
@@ -86,7 +91,7 @@ sealed class ProjectBuilder {
 
         suspend fun runProcess(
             cmd: List<String>,
-            directory: File?,
+            workingDirectory: File?,
             scope: CoroutineScope,
             env: Map<String, String>? = null,
             envRemove: List<String>? = null,
@@ -96,7 +101,7 @@ sealed class ProjectBuilder {
             if (env != null)
                 builder.environment().putAll(env)
             envRemove?.forEach { builder.environment().remove(it) }
-            builder.directory(directory)
+            builder.directory(workingDirectory)
             val process = try {
                 withContext(Dispatchers.IO) {
                     builder.start()

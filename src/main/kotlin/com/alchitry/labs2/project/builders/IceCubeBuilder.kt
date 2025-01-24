@@ -68,8 +68,8 @@ data object IceCubeBuilder : ProjectBuilder() {
         tclCmd.add(tclScript.absolutePath)
 
         Log.println("Starting iCEcube2...", AlchitryColors.current.Info)
-        runProcess(synCmd, scope = this, env = envVars, directory = project.buildDirectory.toFile())
-        runProcess(tclCmd, scope = this, env = envVars, directory = project.buildDirectory.toFile())
+        runProcess(synCmd, scope = this, env = envVars, workingDirectory = project.buildDirectory.toFile())
+        runProcess(tclCmd, scope = this, env = envVars, workingDirectory = project.buildDirectory.toFile())
         Log.println("iCEcube2 exited.", AlchitryColors.current.Info)
         Log.println("")
 
@@ -127,7 +127,7 @@ data object IceCubeBuilder : ProjectBuilder() {
             append("set tool_options \":edifparser -y \\\"")
             constraintFiles.forEach { file ->
                 if (file.extension == "pcf")
-                    append(getRelativeSanitizedPath(file, project)).append(" ")
+                    append(getRelativeSanitizedPath(file, project.buildDirectory.toFile())).append(" ")
             }
             appendLine("\\\"\"")
             appendLine("set sbt_root \$::env(SBT_DIR)")
@@ -147,13 +147,13 @@ data object IceCubeBuilder : ProjectBuilder() {
             appendLine("#project files")
             sourceFiles.asReversed().forEach { file -> // reversed as the tools look for the top module last...
                 append("add_file -verilog -lib work \"")
-                append(getRelativeSanitizedPath(file, project))
+                append(getRelativeSanitizedPath(file, project.buildDirectory.toFile()))
                 appendLine("\"")
             }
             constraintFiles.forEach { file ->
                 if (file.extension == "sdc") {
                     append("add_file -constraint -lib work \"")
-                    append(getRelativeSanitizedPath(file, project))
+                    append(getRelativeSanitizedPath(file, project.buildDirectory.toFile()))
                     appendLine("\"")
                 }
             }

@@ -22,21 +22,16 @@ object VivadoIP {
     private suspend fun createCoresProject(project: Project) {
         val tclScript = project.ipCoreDirectory.resolve("project.tcl")
         tclScript.writeText(buildString {
-            val coresPath = project.ipCoreDirectory.absolutePathString().replace("\\", "/")
-            append("cd \"")
-            append(coresPath)
-            append("\"")
+
             append(System.lineSeparator())
-            append("create_project managed_ip_project \"")
-            append(coresPath)
-            append("/managed_ip_project\" -part ")
+            append("create_project managed_ip_project ./managed_ip_project -part ")
             append(project.data.board.fpgaName)
             append(" -ip")
         })
-        runTclScript(tclScript)
+        runTclScript(tclScript, project.ipCoreDirectory.toFile())
     }
 
-    suspend fun runTclScript(tclScript: Path) = coroutineScope {
+    suspend fun runTclScript(tclScript: Path, workingDirectory: File = tclScript.parent.toFile()) = coroutineScope {
         val vivado = Locations.vivadoBin
         if (vivado == null) {
             Log.error("Couldn't find Vivado!")
@@ -53,7 +48,7 @@ object VivadoIP {
             tclScript.absolutePathString()
         )
         Log.info(cmd.joinToString(" "))
-        ProjectBuilder.runProcess(cmd, tclScript.parent.toFile(), this)
+        ProjectBuilder.runProcess(cmd, workingDirectory, this)
     }
 
     private suspend fun openCoresProject(project: Project, coresProject: Path) = coroutineScope {
@@ -148,7 +143,12 @@ object VivadoIP {
             tclScript.writeText(buildString {
                 val nl = System.lineSeparator()
                 val fileList = core.files.joinToString(" ", "{", "}") {
-                    "{${project.path.resolve(it.path).absolutePathString().replace("\\", "/")}}"
+                    "{${
+                        ProjectBuilder.getSanitizedPath(
+                            project.path.resolve(it.path),
+                            replaceSpaces = false
+                        )
+                    }}"
                 }
                 append("open_project {${project.coresProjectFile}}")
                 append(nl)
@@ -161,13 +161,16 @@ object VivadoIP {
                 append(nl)
                 append(
                     "file delete -force {${
-                        project.ipCoreDirectory.resolve(core.name).absolutePathString().replace("\\", "/")
+                        ProjectBuilder.getSanitizedPath(
+                            project.ipCoreDirectory.resolve(core.name),
+                            replaceSpaces = false
+                        )
                     }}"
                 )
                 append(nl)
             })
             Log.info("Deleting IP core ${core.name}...")
-            runTclScript(tclScript)
+            runTclScript(tclScript, project.ipCoreDirectory.toFile())
             tclScript.deleteIfExists()
             checkForNewCores(project)
             Log.success("Done.")
@@ -193,11 +196,12 @@ object VivadoIP {
             migProjectFile.createParentDirectories()
             migProjectFile.writeText(migProjectContents)
             val migPrjFile = "../managed_ip_project/mig.prj"
-            val coresFolder = project.ipCoreDirectory.absolutePathString().replace("\\", "/")
+            val coresFolder = ProjectBuilder.getRelativeSanitizedPath(project.ipCoreDirectory, project.ipCoreDirectory)
             val xciFile =
-                project.ipCoreDirectory.resolve("mig_7series_0").resolve("mig_7series_0.xci").absolutePathString()
-                    .replace("\\", "/")
-                    .replace(" ", "\\ ")
+                ProjectBuilder.getRelativeSanitizedPath(
+                    project.ipCoreDirectory.resolve("mig_7series_0").resolve("mig_7series_0.xci"),
+                    project.buildDirectory
+                )
 
             val tclScript = project.ipCoreDirectory.resolve("mig_ip.tcl")
 
@@ -205,7 +209,14 @@ object VivadoIP {
 
             tclScript.writeText(buildString {
                 val nl = System.lineSeparator()
-                append("open_project {${project.coresProjectFile.absolutePathString().replace("\\", "/")}}")
+                append(
+                    "open_project {${
+                        ProjectBuilder.getRelativeSanitizedPath(
+                            project.coresProjectFile,
+                            project.ipCoreDirectory
+                        )
+                    }}"
+                )
                 append(nl)
                 append("create_ip -name mig_7series -vendor xilinx.com -library ip -module_name mig_7series_0 -dir {$coresFolder}")
                 append(nl)
@@ -238,7 +249,7 @@ object VivadoIP {
             })
 
             Log.info("Running TCL script...")
-            runTclScript(tclScript)
+            runTclScript(tclScript, project.ipCoreDirectory.toFile())
             checkForNewCores(project)
             Log.success("Done.")
         } catch (e: IOException) {

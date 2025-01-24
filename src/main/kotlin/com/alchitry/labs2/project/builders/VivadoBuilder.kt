@@ -112,16 +112,18 @@ data object VivadoBuilder : ProjectBuilder() {
 
     private fun generateProjectFile(project: Project, sourceFiles: List<File>, constraintFiles: List<File>): String =
         buildString {
-            append("set projDir \"").append(getSanitizedPath(project.buildDirectory)).append("/vivado\"").appendLine()
+            append("set projDir \"").append("./vivado\"").appendLine()
             append("set projName \"").append(project.data.projectName).append("\"").appendLine()
             appendLine("set topName top")
             append("set device ").append(project.data.board.fpgaName).appendLine()
             appendLine("if {[file exists \"\$projDir\"]} { file delete -force \"\$projDir\" }")
             appendLine("create_project \$projName \"\$projDir\" -part \$device")
             appendLine("set_property design_mode RTL [get_filesets sources_1]")
-            append("set verilogSources [list ").addSpacedList(sourceFiles).appendLine("]")
+            append("set verilogSources [list ").addSpacedList(sourceFiles, relativeTo = project.buildDirectory.toFile())
+                .appendLine("]")
             appendLine("import_files -fileset [get_filesets sources_1] -force -norecurse \$verilogSources")
-            append("set xdcSources [list ").addSpacedList(constraintFiles).appendLine("]")
+            append("set xdcSources [list ").addSpacedList(constraintFiles, relativeTo = project.buildDirectory.toFile())
+                .appendLine("]")
             appendLine("read_xdc \$xdcSources")
             appendLine("set_property STEPS.WRITE_BITSTREAM.ARGS.BIN_FILE true [get_runs impl_1]")
             appendLine("update_compile_order -fileset sources_1")
