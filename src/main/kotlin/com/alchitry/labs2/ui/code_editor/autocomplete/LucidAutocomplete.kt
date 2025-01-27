@@ -152,7 +152,7 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
         val offset = lineOffset + caret.offset - 1
 
         val text = state.getText()
-        val context = context ?: withContext(Dispatchers.Default) {
+        val context = (if (active) context else null) ?: withContext(Dispatchers.Default) {
             ensureActive()
             val tokenStream = CommonTokenStream(LucidLexer(CharStreams.fromString(text)))
             val source = LucidParser(tokenStream).source()
