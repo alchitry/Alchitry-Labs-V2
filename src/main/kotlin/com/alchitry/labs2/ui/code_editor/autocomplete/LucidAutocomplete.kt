@@ -168,7 +168,11 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
             reset()
             return@coroutineScope
         }
-        val projectContext = Project.current?.getTypesForLucidFile(file)
+        val projectContext = withContext(Dispatchers.Default) {
+            ensureActive()
+            Project.current?.getTypesForLucidFile(file)
+        }
+        ensureActive()
         if (projectContext == null) {
             reset()
             return@coroutineScope

@@ -464,7 +464,9 @@ data class Project(
                     mapOf(),
                     mapOf(),
                     ExprEvalMode.Testing
-                ).apply { initialWalk() }
+                ).apply {
+                    context.walk(moduleContext)
+                }
             }
 
             return projectContext

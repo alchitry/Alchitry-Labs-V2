@@ -41,7 +41,7 @@ object ParseTreeMultiWalker {
             for (i in 0 until r.childCount) {
                 val child = r.getChild(i) ?: continue
                 if (!filter.shouldSkip(r, child))
-                    walk(listeners, child, filter, ignoreSkip)
+                    walk(listeners, child, filter, ignoreSkip, skipErrorNodes, skipTerminalNodes)
             }
             exitRule(listeners, r)
         }
@@ -75,7 +75,7 @@ object ParseTreeMultiWalker {
             for (i in 0 until r.childCount) {
                 val child = r.getChild(i) ?: continue
                 if (!filter.shouldSkip(r, child))
-                    walk(listeners, child, filter, ignoreSkip)
+                    walk(listeners, child, filter, ignoreSkip, skipErrorNodes, skipTerminalNodes)
             }
             exitRule(listeners, r)
         }
