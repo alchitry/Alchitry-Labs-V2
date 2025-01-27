@@ -1,6 +1,7 @@
 package com.alchitry.labs2.ui.code_editor.autocomplete
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -142,7 +143,17 @@ abstract class Autocomplete(protected val state: CodeEditorState) {
                                     val mod = if (idx == selection)
                                         Modifier.background(MaterialTheme.colorScheme.primary)
                                     else Modifier
-                                    Box(mod.padding(horizontal = 8.dp).fillMaxWidth()) {
+                                    Box(
+                                        mod
+                                            .clickable {
+                                                if (selection == idx) {
+                                                    state.replaceText(suggestion.nextText, suggestion.range)
+                                                    reset()
+                                                } else {
+                                                    selection = idx
+                                                }
+                                            }
+                                            .padding(horizontal = 8.dp).fillMaxWidth()) {
                                         Text(suggestion.nextText)
                                     }
                                 }
