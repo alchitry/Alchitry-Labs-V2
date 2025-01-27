@@ -83,7 +83,7 @@ class XilinxJtag private constructor(private val ftdi: Ftdi, private val board: 
     private suspend fun loadBin(binData: ByteArray) {
         for (i in binData.indices) binData[i] = reverse(binData[i])
         ftdi.usbPurgeBuffers()
-        jtag.setFreq(30000000.0)
+        jtag.setFreq(10000000.0)
         jtag.resetState()
         jtag.navigateToState(JtagState.RUN_TEST_IDLE)
         setIR(Instruction.JPROGRAM)
