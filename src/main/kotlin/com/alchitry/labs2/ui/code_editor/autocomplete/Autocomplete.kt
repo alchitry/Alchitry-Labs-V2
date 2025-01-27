@@ -13,27 +13,50 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.rememberPopupPositionProviderAtPosition
+import com.alchitry.labs2.Log
 import com.alchitry.labs2.ui.code_editor.CodeEditorState
 import com.alchitry.labs2.ui.code_editor.TextPosition
 import com.alchitry.labs2.ui.theme.AlchitryTypography
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.launch
 import org.apache.commons.lang3.StringUtils
+import kotlin.coroutines.cancellation.CancellationException
 
 data class Suggestion(val nextText: String, val quality: Int, val range: OpenEndRange<TextPosition>)
 
 abstract class Autocomplete(protected val state: CodeEditorState) {
+    private var possible: List<String>? = null
     protected var selection: Int by mutableStateOf(0)
     protected var suggestions: List<Suggestion> by mutableStateOf(emptyList())
     protected var overlayPosition: Offset? by mutableStateOf(null)
+    private var updateJob: Job? = null
     var active by mutableStateOf(false)
         protected set
 
-    abstract fun updateSuggestions()
+    protected abstract suspend fun getPossible(offset: Int): List<String>?
+
+    fun updateSuggestions() {
+        updateJob?.cancel()
+        updateJob = state.scope.launch {
+            try {
+                buildTree()
+            } catch (e: Exception) {
+                if (e is CancellationException) return@launch
+                Log.exception(e)
+            }
+        }
+    }
 
     open fun reset() {
         active = false
         selection = 0
         suggestions = emptyList()
         overlayPosition = null
+        state.scope.launch {
+            updateJob?.cancelAndJoin()
+            possible = null
+        }
     }
 
     fun selectionUp(): Boolean {
@@ -55,6 +78,48 @@ abstract class Autocomplete(protected val state: CodeEditorState) {
             return suggestions.getOrNull(selection).also { reset() }
         }
         return null
+    }
+
+    protected fun String.getRelevantText(): String {
+        for (i in length - 1 downTo 0) {
+            if (!this[i].isLetterOrDigit() && this[i] != '_' && this[i] != '.' && this[i] != '$') {
+                return substring(i + 1)
+            }
+        }
+        return this
+    }
+
+    private suspend fun buildTree() {
+        val caret = state.selectionManager.caret
+        val lineOffset = state.lines.subList(0, caret.line).sumOf { it.text.length + 1 }
+        val offset = lineOffset + caret.offset - 1
+
+        val possible = (if (active) possible else null) ?: getPossible(offset)
+        this.possible = possible
+        if (possible == null) {
+            reset()
+            return
+        }
+
+        val line = state.lines.getOrNull(caret.line)?.text?.text ?: return
+        val relevantText = line.substring(0, caret.offset).getRelevantText()
+        if (relevantText.isBlank()) {
+            reset()
+            return
+        }
+        val pieces = relevantText.split('.')
+
+        val start = caret.copy(offset = caret.offset - relevantText.length)
+        val end = caret
+
+        suggestions = possible.mapNotNull {
+            val diff = calculateEditDistance(it, pieces.last()) ?: return@mapNotNull null
+            Suggestion(it, diff, start..<end)
+        }.sortedBy { it.quality }.also {
+            active = it.isNotEmpty()
+        }
+
+        overlayPosition = state.textPositionToScreenOffset(caret.copy(offset = caret.offset - relevantText.length))
     }
 
     @OptIn(ExperimentalComposeUiApi::class)

@@ -1,7 +1,5 @@
 package com.alchitry.labs2.ui.code_editor.autocomplete
 
-import com.alchitry.labs2.Log
-import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.findFinalNode
 import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.LucidParser
@@ -14,7 +12,9 @@ import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.files.ProjectFile
 import com.alchitry.labs2.project.files.SourceFile
 import com.alchitry.labs2.ui.code_editor.CodeEditorState
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.withContext
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 import org.antlr.v4.kotlinruntime.tree.ParseTree
@@ -28,33 +28,8 @@ private enum class ContextType {
     FUNCTION
 }
 
-private data class AutocompleteContext(
-    val context: ParseTree,
-    val type: ContextType,
-    val projectContext: ProjectContext
-)
 
 class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
-    private var context: AutocompleteContext? = null
-    private var updateJob: Job? = null
-
-    override fun reset() {
-        super.reset()
-        state.scope.launch {
-            updateJob?.cancelAndJoin()
-            context = null
-        }
-    }
-
-    private fun String.getRelevantText(): String {
-        for (i in length - 1 downTo 0) {
-            if (!this[i].isLetterOrDigit() && this[i] != '_' && this[i] != '.' && this[i] != '$') {
-                return substring(i + 1)
-            }
-        }
-        return this
-    }
-
     private fun getContextType(context: ParseTree): ContextType {
         if (context is TerminalNode && context.symbol?.type == LucidLexer.Tokens.FUNCTION_ID.id) {
             return ContextType.FUNCTION
@@ -92,136 +67,91 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
         return null
     }
 
-    private fun getPossible(context: AutocompleteContext): List<String> {
-        val thisModule: TestOrModuleInstance =
-            context.projectContext.top?.firstInstanceOfFile(state.file) ?: context.projectContext.getTestBenches()
-                .firstOrNull { it.sourceFile == state.file } ?: return emptyList()
-
-        return when (context.type) {
-            ContextType.INVALID -> emptyList()
-            ContextType.READ_SIG -> {
-                val list = mutableListOf<String>()
-                list.addAll(
-                    thisModule.context.types.resolveLocalSignals(context.context).mapNotNull {
-                        if (it.direction.canRead) it.name else null
-                    }
-                )
-                list.addAll(thisModule.context.types.sigs.keys)
-                list.addAll(thisModule.context.types.dffs.keys.map { "$it.q" })
-                if (thisModule is ModuleInstance) {
-                    list.addAll(
-                        thisModule.module.ports.values.mapNotNull {
-                            if (it.direction.canRead) it.name else null
-                        }
-                    )
-                    list.addAll(
-                        thisModule.context.types.moduleInstances.flatMap { inst ->
-                            inst.value.external.values.mapNotNull {
-                                if (it.direction.canRead) "${inst.value.name}.${it.name}" else null
-                            }
-                        }
-                    )
-                }
-                list
-            }
-
-            ContextType.WRITE_SIG -> {
-                val list = mutableListOf<String>()
-                list.addAll(
-                    thisModule.context.types.resolveLocalSignals(context.context).mapNotNull {
-                        if (it.direction.canWrite) it.name else null
-                    }
-                )
-                list.addAll(thisModule.context.types.sigs.keys)
-                list.addAll(thisModule.context.types.dffs.keys.map { "$it.d" })
-                if (thisModule is ModuleInstance) {
-                    list.addAll(
-                        thisModule.module.ports.values.mapNotNull {
-                            if (it.direction.canWrite) it.name else null
-                        }
-                    )
-                    list.addAll(
-                        thisModule.context.types.moduleInstances.flatMap { inst ->
-                            inst.value.external.values.mapNotNull {
-                                if (it.direction.canWrite) "${inst.value.name}.${it.name}" else null
-                            }
-                        }
-                    )
-                }
-                list
-            }
-
-            ContextType.MODULE_INST -> {
-                context.projectContext.getModules().mapNotNull {
-                    if (thisModule !is ModuleInstance || it.name != thisModule.module.name)
-                        it.name else null
-                }
-            }
-
-            ContextType.FUNCTION -> Function.builtIn.map { "$" + it.label }
-        }
-    }
-
-    private suspend fun buildTree() = coroutineScope {
+    override suspend fun getPossible(offset: Int): List<String>? {
         val file = state.file
 
         if (file !is SourceFile || file.language != Languages.Lucid) {
             reset()
-            return@coroutineScope
+            return null
         }
 
-        val caret = state.selectionManager.caret
-        val lineOffset = state.lines.subList(0, caret.line).sumOf { it.text.length + 1 }
-        val offset = lineOffset + caret.offset - 1
-
         val text = state.getText()
-        val context = (if (active) context else null) ?: withContext(Dispatchers.Default) {
+        return withContext(Dispatchers.Default) {
             ensureActive()
             val tokenStream = CommonTokenStream(LucidLexer(CharStreams.fromString(text)))
             val tree = LucidParser(tokenStream).source()
             ensureActive()
             val node = tree.findFinalNode(tokenStream, offset)
             val project = Project.current?.getTypesForLucid(file, tree) ?: return@withContext null
-            AutocompleteContext(node, getContextType(node), project)
-        }
-        if (context == null) {
-            reset()
-            return@coroutineScope
-        }
-        ensureActive()
-        this@LucidAutocomplete.context = context
+            val type = getContextType(node)
+            ensureActive()
 
-        val line = state.lines.getOrNull(caret.line)?.text?.text ?: return@coroutineScope
-        val relevantText = line.substring(0, caret.offset).getRelevantText()
-        if (relevantText.isBlank()) {
-            reset()
-            return@coroutineScope
-        }
-        val pieces = relevantText.split('.')
+            val thisModule: TestOrModuleInstance =
+                project.top?.firstInstanceOfFile(state.file) ?: project.getTestBenches()
+                    .firstOrNull { it.sourceFile == state.file } ?: return@withContext emptyList()
 
-        val start = caret.copy(offset = caret.offset - relevantText.length)
-        val end = caret
-        val possible = getPossible(context)
+            return@withContext when (type) {
+                ContextType.INVALID -> emptyList()
+                ContextType.READ_SIG -> {
+                    val list = mutableListOf<String>()
+                    list.addAll(
+                        thisModule.context.types.resolveLocalSignals(node).mapNotNull {
+                            if (it.direction.canRead) it.name else null
+                        }
+                    )
+                    list.addAll(thisModule.context.types.sigs.keys)
+                    list.addAll(thisModule.context.types.dffs.keys.map { "$it.q" })
+                    if (thisModule is ModuleInstance) {
+                        list.addAll(
+                            thisModule.module.ports.values.mapNotNull {
+                                if (it.direction.canRead) it.name else null
+                            }
+                        )
+                        list.addAll(
+                            thisModule.context.types.moduleInstances.flatMap { inst ->
+                                inst.value.external.values.mapNotNull {
+                                    if (it.direction.canRead) "${inst.value.name}.${it.name}" else null
+                                }
+                            }
+                        )
+                    }
+                    list
+                }
 
+                ContextType.WRITE_SIG -> {
+                    val list = mutableListOf<String>()
+                    list.addAll(
+                        thisModule.context.types.resolveLocalSignals(node).mapNotNull {
+                            if (it.direction.canWrite) it.name else null
+                        }
+                    )
+                    list.addAll(thisModule.context.types.sigs.keys)
+                    list.addAll(thisModule.context.types.dffs.keys.map { "$it.d" })
+                    if (thisModule is ModuleInstance) {
+                        list.addAll(
+                            thisModule.module.ports.values.mapNotNull {
+                                if (it.direction.canWrite) it.name else null
+                            }
+                        )
+                        list.addAll(
+                            thisModule.context.types.moduleInstances.flatMap { inst ->
+                                inst.value.external.values.mapNotNull {
+                                    if (it.direction.canWrite) "${inst.value.name}.${it.name}" else null
+                                }
+                            }
+                        )
+                    }
+                    list
+                }
 
-        this@LucidAutocomplete.suggestions = possible.mapNotNull {
-            val diff = calculateEditDistance(it, pieces.last()) ?: return@mapNotNull null
-            Suggestion(it, diff, start..<end)
-        }.sortedBy { it.quality }.also {
-            active = it.isNotEmpty()
-        }
+                ContextType.MODULE_INST -> {
+                    project.getModules().mapNotNull {
+                        if (thisModule !is ModuleInstance || it.name != thisModule.module.name)
+                            it.name else null
+                    }
+                }
 
-        overlayPosition = state.textPositionToScreenOffset(caret.copy(offset = caret.offset - relevantText.length))
-    }
-
-    override fun updateSuggestions() {
-        updateJob?.cancel()
-        updateJob = state.scope.launch {
-            try {
-                buildTree()
-            } catch (e: Exception) {
-                if (e is CancellationException) return@launch
-                Log.exception(e)
+                ContextType.FUNCTION -> Function.builtIn.map { "$" + it.label }
             }
         }
     }

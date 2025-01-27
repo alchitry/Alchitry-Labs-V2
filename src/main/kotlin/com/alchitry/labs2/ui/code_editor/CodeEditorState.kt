@@ -46,6 +46,7 @@ import com.alchitry.labs2.parsers.notations.NotationType
 import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.files.ProjectFile
+import com.alchitry.labs2.ui.code_editor.autocomplete.AcfAutocomplete
 import com.alchitry.labs2.ui.code_editor.autocomplete.Autocomplete
 import com.alchitry.labs2.ui.code_editor.autocomplete.LucidAutocomplete
 import com.alchitry.labs2.ui.code_editor.styles.BasicIndenter
@@ -174,6 +175,7 @@ class CodeEditorState(
 
         autocomplete = when (file.language) {
             Languages.Lucid -> LucidAutocomplete(this)
+            Languages.ACF -> AcfAutocomplete(this)
             else -> null
         }
 
