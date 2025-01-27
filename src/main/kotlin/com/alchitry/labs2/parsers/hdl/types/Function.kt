@@ -1,13 +1,10 @@
 package com.alchitry.labs2.parsers.hdl.types
 
 import com.alchitry.labs2.allSealedObjects
-import com.alchitry.labs2.parsers.BigFunctions
 import com.alchitry.labs2.parsers.grammar.LucidParser.FunctionBlockContext
 import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.values.*
-import java.math.BigDecimal
 import java.math.BigInteger
-import java.math.RoundingMode
 
 sealed class Function(val label: String, val argCount: Int, val exprType: ExprType, val testOnly: Boolean = false) {
     data object CLOG2 : Function("clog2", 1, ExprType.Known) {
@@ -19,11 +16,7 @@ sealed class Function(val label: String, val argCount: Int, val exprType: ExprTy
             if (bigInt < BigInteger.ZERO) {
                 return null
             }
-            return BigFunctions.ln(BigDecimal(bigInt), 32)
-                .divide(BigFunctions.LOG2, RoundingMode.HALF_UP)
-                .setScale(0, RoundingMode.CEILING)
-                .toBigInteger()
-                .toBitListValue()
+            return BitListValue(bigInt.subtract(BigInteger.ONE).bitLength(), signed = false)
         }
     }
 

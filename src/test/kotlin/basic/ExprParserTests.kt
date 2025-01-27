@@ -883,6 +883,28 @@ internal class ExprParserTests {
         assertEquals(ExprType.Constant, expr.type)
         assert(test.hasNoIssues)
 
+        test = SimpleLucidTester("\$clog2(8)")
+        tree = test.parser.expr().also { test.context.walk(it) }
+        expr = test.context.expr.resolve(tree)!!
+
+        assertEquals(
+            BitListValue("3", 10, signed = false),
+            expr.value
+        )
+        assertEquals(ExprType.Constant, expr.type)
+        assert(test.hasNoIssues)
+
+        test = SimpleLucidTester("\$clog2(9)")
+        tree = test.parser.expr().also { test.context.walk(it) }
+        expr = test.context.expr.resolve(tree)!!
+
+        assertEquals(
+            BitListValue("4", 10, signed = false),
+            expr.value
+        )
+        assertEquals(ExprType.Constant, expr.type)
+        assert(test.hasNoIssues)
+
         test = SimpleLucidTester("\$clog2(0)")
         tree = test.parser.expr().also { test.context.walk(it) }
         expr = test.context.expr.resolve(tree)!!
