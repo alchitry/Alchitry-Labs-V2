@@ -16,6 +16,7 @@ import com.alchitry.labs2.parsers.parents
 import com.alchitry.labs2.project.files.FileProvider
 import com.alchitry.labs2.project.files.SourceFile
 import org.antlr.v4.kotlinruntime.ParserRuleContext
+import org.antlr.v4.kotlinruntime.tree.ParseTree
 
 fun String.toSourceFile(name: String = "alchitry_top.luc") = SourceFile(FileProvider.StringFile(name, contents = this))
 
@@ -40,7 +41,13 @@ class TypesParser(
 
     val localSignals = mutableMapOf<ParserRuleContext, MutableMap<String, LocalSignal>>()
 
-    fun resolveLocalSignal(ctx: ParserRuleContext, name: String): Signal? {
+    fun resolveLocalSignals(ctx: ParseTree): List<Signal> {
+        val parentList = ctx.parents
+        val scopes = localSignals.filterKeys { parentList.contains(it) }.values
+        return scopes.flatMap { scope -> scope.values.map { it.signal } }
+    }
+
+    fun resolveLocalSignal(ctx: ParseTree, name: String): Signal? {
         val parentList = ctx.parents
         val scopes = localSignals.filterKeys { parentList.contains(it) }.values
         return scopes.firstOrNull { it.contains(name) }?.get(name)?.signal

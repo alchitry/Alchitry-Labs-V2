@@ -1,7 +1,5 @@
 package com.alchitry.labs2.parsers
 
-import org.antlr.v4.kotlinruntime.ParserRuleContext
-import org.antlr.v4.kotlinruntime.RuleContext
 import org.antlr.v4.kotlinruntime.TokenStream
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 
@@ -30,22 +28,22 @@ fun ParseTree.findFinalNode(
     return this
 }
 
-val RuleContext.parents: List<RuleContext>
+val ParseTree.parents: List<ParseTree>
     get() {
-        val parents = mutableListOf<RuleContext>()
-        var current = this.parent
+        val parents = mutableListOf<ParseTree>()
+        var current = this.readParent()
         while (current != null) {
             parents.add(current)
-            current = current.parent
+            current = current.readParent()
         }
         return parents
     }
 
-inline fun <reified T : RuleContext> ParserRuleContext.hasParent(): Boolean {
-    var current = this.parent
+inline fun <reified T : ParseTree> ParseTree.hasParent(): Boolean {
+    var current = this.readParent()
     while (current != null) {
         if (current is T) return true
-        current = current.parent
+        current = current.readParent()
     }
     return false
 }

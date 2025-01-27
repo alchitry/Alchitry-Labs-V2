@@ -28,8 +28,14 @@ private enum class ContextType {
     FUNCTION
 }
 
+private data class AutocompleteContext(
+    val context: ParseTree,
+    val type: ContextType,
+    val projectContext: ProjectContext
+)
+
 class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
-    private var context: ContextType? = null
+    private var context: AutocompleteContext? = null
     private var updateJob: Job? = null
 
     override fun reset() {
@@ -86,15 +92,20 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
         return null
     }
 
-    private fun getPossible(contextType: ContextType, projectContext: ProjectContext): List<String> {
+    private fun getPossible(context: AutocompleteContext): List<String> {
         val thisModule: TestOrModuleInstance =
-            projectContext.top?.firstInstanceOfFile(state.file) ?: projectContext.getTestBenches()
+            context.projectContext.top?.firstInstanceOfFile(state.file) ?: context.projectContext.getTestBenches()
                 .firstOrNull { it.sourceFile == state.file } ?: return emptyList()
 
-        return when (contextType) {
+        return when (context.type) {
             ContextType.INVALID -> emptyList()
             ContextType.READ_SIG -> {
                 val list = mutableListOf<String>()
+                list.addAll(
+                    thisModule.context.types.resolveLocalSignals(context.context).mapNotNull {
+                        if (it.direction.canRead) it.name else null
+                    }
+                )
                 list.addAll(thisModule.context.types.sigs.keys)
                 list.addAll(thisModule.context.types.dffs.keys.map { "$it.q" })
                 if (thisModule is ModuleInstance) {
@@ -116,6 +127,11 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
 
             ContextType.WRITE_SIG -> {
                 val list = mutableListOf<String>()
+                list.addAll(
+                    thisModule.context.types.resolveLocalSignals(context.context).mapNotNull {
+                        if (it.direction.canWrite) it.name else null
+                    }
+                )
                 list.addAll(thisModule.context.types.sigs.keys)
                 list.addAll(thisModule.context.types.dffs.keys.map { "$it.d" })
                 if (thisModule is ModuleInstance) {
@@ -136,10 +152,10 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
             }
 
             ContextType.MODULE_INST -> {
-                projectContext.getModules().mapNotNull {
-                        if (thisModule !is ModuleInstance || it.name != thisModule.module.name)
-                            it.name else null
-                    }
+                context.projectContext.getModules().mapNotNull {
+                    if (thisModule !is ModuleInstance || it.name != thisModule.module.name)
+                        it.name else null
+                }
             }
 
             ContextType.FUNCTION -> Function.builtIn.map { "$" + it.label }
@@ -147,6 +163,13 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
     }
 
     private suspend fun buildTree() = coroutineScope {
+        val file = state.file
+
+        if (file !is SourceFile || file.language != Languages.Lucid) {
+            reset()
+            return@coroutineScope
+        }
+
         val caret = state.selectionManager.caret
         val lineOffset = state.lines.subList(0, caret.line).sumOf { it.text.length + 1 }
         val offset = lineOffset + caret.offset - 1
@@ -155,28 +178,18 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
         val context = (if (active) context else null) ?: withContext(Dispatchers.Default) {
             ensureActive()
             val tokenStream = CommonTokenStream(LucidLexer(CharStreams.fromString(text)))
-            val source = LucidParser(tokenStream).source()
+            val tree = LucidParser(tokenStream).source()
             ensureActive()
-            getContextType(source.findFinalNode(tokenStream, offset))
+            val node = tree.findFinalNode(tokenStream, offset)
+            val project = Project.current?.getTypesForLucid(file, tree) ?: return@withContext null
+            AutocompleteContext(node, getContextType(node), project)
+        }
+        if (context == null) {
+            reset()
+            return@coroutineScope
         }
         ensureActive()
         this@LucidAutocomplete.context = context
-
-        val file = state.file
-
-        if (file !is SourceFile || file.language != Languages.Lucid) {
-            reset()
-            return@coroutineScope
-        }
-        val projectContext = withContext(Dispatchers.Default) {
-            ensureActive()
-            Project.current?.getTypesForLucidFile(file)
-        }
-        ensureActive()
-        if (projectContext == null) {
-            reset()
-            return@coroutineScope
-        }
 
         val line = state.lines.getOrNull(caret.line)?.text?.text ?: return@coroutineScope
         val relevantText = line.substring(0, caret.offset).getRelevantText()
@@ -188,7 +201,7 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
 
         val start = caret.copy(offset = caret.offset - relevantText.length)
         val end = caret
-        val possible = getPossible(context, projectContext)
+        val possible = getPossible(context)
 
 
         this@LucidAutocomplete.suggestions = possible.mapNotNull {

@@ -442,7 +442,7 @@ data class Project(
         return@withContext true
     }
 
-    suspend fun getTypesForLucidFile(file: SourceFile): ProjectContext {
+    suspend fun getTypesForLucid(file: SourceFile, tree: LucidParser.SourceContext?): ProjectContext {
         val modulesMap = moduleMapFlow.value
         val globals = globalMapFlow.value
         val notationManager = NotationManager()
@@ -450,11 +450,10 @@ data class Project(
             globals.forEach { (_, global) -> projectContext.addGlobal(global) }
             modulesMap.forEach { (_, modules) -> modules.forEach { module -> projectContext.addModule(module) } }
 
-            val tree = parseLucidFile(file, notationManager.getCollector(file))
+            val tree = tree ?: parseLucidFile(file, notationManager.getCollector(file))
             LucidTestBenchContext(projectContext, file).walk(tree)
 
-            (modulesMap[file]
-                ?: LucidModuleTypeContext(projectContext, file).extract(tree)).firstOrNull()?.let { module ->
+            LucidModuleTypeContext(projectContext, file).extract(tree).firstOrNull()?.let { module ->
                 projectContext.top = ModuleInstance(
                     "testingTop",
                     projectContext,
