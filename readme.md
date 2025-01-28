@@ -53,7 +53,30 @@ The current environment is set up for Linux, and you may need to change some thi
 
 ## Building
 
-Fu
+Full builds are done using [Conveyor](https://www.hydraulic.dev/).
+You will need this installed if you plan on making an installable package.
+
+There are also two files you need to create alongside the `conveyor.conf` file.
+
+First, `secrets.properties` should look something like the following.
+
+```aiignore
+conveyorRootKey=YOUR_ROOT_KEY
+```
+
+See [the docs](https://conveyor.hydraulic.dev/16.0/configs/keys-and-certificates/#keys-in-conveyor) for more info on
+keys.
+
+Second, `conveyor-local.conf` should contain an oauth token to your GitHub repo.
+See [the docs](https://conveyor.hydraulic.dev/16.0/configs/download-pages/#publishing-through-github) for what to do.
+
+It should look something like the following.
+
+```aiignore
+app.site.github.oauth-token = YOUR_TOKEN_HERE
+```
+
+I also have the `app.windows.store` config in this file.
 
 ## Goals
 
