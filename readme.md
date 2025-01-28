@@ -22,7 +22,8 @@ Compose should let me rewrite this in a much cleaner way.
 
 ## Tools Used
 
-* Linux or Windows (macOS can be used, but the build tools rely upon Vivado/iceCube2 and do not support macOS)
+* Linux or Windows (macOS can be used, but the proprietary build tools rely upon Vivado/iceCube2 and do not support
+  macOS)
 * [Intellij](https://www.jetbrains.com/idea/)
 * Gradle
 * Kotlin
@@ -39,9 +40,20 @@ You may want to install the Antlr plugin for syntax highlighting of the Lucid.g4
 Once the gradle sync is done, you should be able to run the tests by opening the test file and clicking the green arrow
 in the code editor gutter or right-clicking on the test folder in the project tree and selecting "Run 'Tests in ...'"
 
-You can start the IDE by going to [Main.kt](src/main/kotlin/com/alchitry/labs2/Main.kt) and clicking the green arrow in
-the gutter next to `fun main()`.
+You should download the latest [oss-cad-suite build](https://github.com/alchitry/oss-cad-suite-build) by running the
+gradle task `download-oss-cad-suite` in the `build setup` group.
+
+To run the GUI, open the file `GUI.kt` file and run the main function.
+This will fail as `app.dir` isn't set, but it should create the run configuration.
+
+Edit that configuration by adding `-Dapp.dir=includes/linux-x64` to the `VM options` field.
+Replace the `linux-x64` folder with the version for your OS (look in the `includes` folder for the names).
+
 The current environment is set up for Linux, and you may need to change some things if you are on something else.
+
+## Building
+
+Fu
 
 ## Goals
 

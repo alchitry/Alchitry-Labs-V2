@@ -108,7 +108,7 @@ compose.desktop {
     }
 }
 
-val conveyorCommand = "/home/justin/.npm-global/bin/conveyor"
+val conveyorCommand = "conveyor"
 fun TaskContainer.registerConveyorTask(name: String, arg: String? = null) {
     register(name) {
         group = "conveyor"
@@ -125,6 +125,10 @@ fun TaskContainer.registerConveyorTask(name: String, arg: String? = null) {
     }
 }
 
+tasks.register("version") {
+    group = "conveyor"
+    doLast { exec { commandLine(conveyorCommand, "--version") } }
+}
 tasks.registerConveyorTask("app")
 tasks.registerConveyorTask("site") // makes the site files locally
 tasks.registerConveyorTask("windows-msix") // builds a windows msix
