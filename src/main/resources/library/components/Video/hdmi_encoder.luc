@@ -100,11 +100,17 @@ module hdmi_encoder #(
     output y[$clog2(Y_RES)], // y coordinate of frame
     input red[8],   // red pixel data
     input green[8], // green pixel data
-    input blue[8]   // blue pixel data
+    input blue[8],  // blue pixel data
+    output hsync,   // single clock pulse on hsync rising edge
+    output vsync    // single clock pulse on vsync rising edge
 ) {
-    .clk(pclk), .rst(rst) {
-        dff ctrX[$clog2(X_FRAME)]
-        dff ctrY[$clog2(Y_FRAME)]
+    .clk(pclk){
+        .rst(rst) {
+            dff ctrX[$clog2(X_FRAME)]
+            dff ctrY[$clog2(Y_FRAME)]
+        }
+        edge_detector hedge(#RISE(1), #FALL(0))
+        edge_detector vedge(#RISE(1), #FALL(0))
     }
 
     dvi_encoder dvi (
@@ -121,8 +127,15 @@ module hdmi_encoder #(
         if (ctrX.q == X_FRAME-1)
             ctrY.d = (ctrY.q == Y_FRAME-1) ? 0 : ctrY.q + 1
 
-        dvi.hsync = (ctrX.q >= X_RES + X_FRONT_PORCH) && (ctrX.q < X_RES + X_FRONT_PORCH + HSYNC_WIDTH)
-        dvi.vsync = (ctrY.q >= Y_RES + Y_FRONT_PORCH) && (ctrY.q < Y_RES + Y_FRONT_PORCH + VSYNC_WIDTH)
+        sig hsync_sig = (ctrX.q >= X_RES + X_FRONT_PORCH) && (ctrX.q < X_RES + X_FRONT_PORCH + HSYNC_WIDTH)
+        sig vsync_sig = (ctrY.q >= Y_RES + Y_FRONT_PORCH) && (ctrY.q < Y_RES + Y_FRONT_PORCH + VSYNC_WIDTH)
+        dvi.hsync = hsync_sig
+        dvi.vsync = vsync_sig
+        hedge.in = hsync_sig
+        vedge.in = vsync_sig
+        hsync = hedge.out
+        vsync = vedge.out
+
         sig drawArea = (ctrX.q < X_RES) && (ctrY.q < Y_RES)
 
         dvi.de = drawArea

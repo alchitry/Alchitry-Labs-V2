@@ -61,8 +61,8 @@ module hdmi_decoder #(
     output red[8],   // red pixel data
     output green[8], // green pixel data
     output blue[8],  // blue pixel data
-    output hsync, // single clock pulse on hsync edge
-    output vsync  // single clock pulse on vsync edge
+    output hsync, // single clock pulse on hsync rising edge
+    output vsync  // single clock pulse on vsync rising edge
 ) {
 
     dvi_decoder decoder (#MAX_CLK_FREQ(MAX_CLK_FREQ), #MIN_CLK_FREQ(MIN_CLK_FREQ), .rst(rst))

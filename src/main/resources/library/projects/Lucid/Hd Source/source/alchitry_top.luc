@@ -1,0 +1,76 @@
+module alchitry_top (
+    input clk,              // 100MHz clock
+    input rst_n,            // reset button (active low)
+    output led[8],          // 8 user controllable LEDs
+    input usb_rx,           // USB->Serial input
+    output usb_tx,          // USB->Serial output
+    inout hdmi_sda_1,
+    inout hdmi_scl_1,
+    inout hdmi_cec_1,
+    input hdmi_hp_1,
+    output hdmi_clk_1_p,
+    output hdmi_clk_1_n,
+    output hdmi_data_1_p[3],
+    output hdmi_data_1_n[3]
+) {
+    sig rst                 // reset signal
+
+    // pclk = 123.75 MHz
+    // pclkx5 = 618.75 MHz
+    clk_wiz_0 clk_wiz(.clk_in(clk))
+
+    sig arst = !rst_n || !clk_wiz.locked
+
+    // 1080p50
+    hdmi_encoder hdmi(
+        #X_RES(1920),
+        #Y_RES(1080),
+        #X_FRONT_PORCH(88),
+        #Y_FRONT_PORCH(4),
+        #HSYNC_WIDTH(44),
+        #VSYNC_WIDTH(5),
+        #X_FRAME(2200),
+        #Y_FRAME(1125),
+        .rst(rst),
+        .pclk(clk_wiz.pclk),
+        .pclkx5(clk_wiz.pclkx5)
+    )
+
+    .clk(clk_wiz.pclk) {
+        // The reset conditioner is used to synchronize the reset signal to the FPGA
+        // clock. This ensures the entire FPGA comes out of reset at the same time.
+        reset_conditioner reset_cond
+
+        .rst(rst) {
+            dff frame[8]
+        }
+    }
+
+    always {
+        reset_cond.in = ~rst_n  // input raw inverted reset signal
+        rst = reset_cond.out    // conditioned reset
+
+        led = frame.q           // frame counter
+
+        usb_tx = usb_rx         // echo the serial data
+
+        // ignore EDID
+        hdmi_sda_1 = 1bx
+        hdmi_scl_1 = 1bx
+
+        // CEC not used
+        hdmi_cec_1 = 1bx
+
+        hdmi_clk_1_p = hdmi.clock_p
+        hdmi_clk_1_n = hdmi.clock_n
+        hdmi_data_1_p = hdmi.data_p
+        hdmi_data_1_n = hdmi.data_n
+
+        if (hdmi.vsync)
+            frame.d = frame.q + 1
+
+        hdmi.red = hdmi.x[7:0] + frame.q
+        hdmi.green = hdmi.y[7:0] + (frame.q << 1)
+        hdmi.blue = hdmi.x[7:0] ^ hdmi.y[7:0]
+    }
+}
