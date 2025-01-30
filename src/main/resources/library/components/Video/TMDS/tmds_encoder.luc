@@ -1,6 +1,7 @@
 /**
     "name": "TMDS Encoder"
     "description": "Encodeds 8 bits of data into 10 bits of TMDS data."
+    "supportedBoards" : ["Au", "Au+", "AuV2"]
 **/
 /******************************************************************************
 
