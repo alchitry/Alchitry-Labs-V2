@@ -1,0 +1,146 @@
+/**
+    "name": "HDMI Passthru"
+    "description": "Decodes then re-encodes HDMI data while allowing it to be modified."
+    "supportedBoards" : ["Au", "Au+", "AuV2"]
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2025 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   ****************************************************************************
+
+   The MAX_CLK_FREQ and MIN_CLK_FREQ paramters are used to specify the expected
+   minimum and maximum pixel clocks. Timing is performed based on MAX_CLK_FREQ
+   and the MIN_CLK_FREQ is used to check if the minimum frequency will be
+   supported by the PLL used to create the x5 data clock.
+
+   These will usually be the max range of 80-125MHz.
+
+   Y_FRAME and X_FRAME are used to specify the maximum expected frame size.
+   The frame size is not just the resolution of the image but also the blank
+   portions around it. These are used to define counter sizes.
+
+   LATENCY is the number of clock cycles to delay the stream to the encoder.
+   This allows you to get some time between receiving pixel data and providing
+   the modified pixel data.
+*/
+
+module hdmi_passthru #(
+    MAX_CLK_FREQ ~ 125_000_000 : MAX_CLK_FREQ > 14_000_000 && MAX_CLK_FREQ <= 125_000_000,
+    MIN_CLK_FREQ ~ 80_000_000 : MIN_CLK_FREQ > 14_000_000 && MIN_CLK_FREQ <= MAX_CLK_FREQ &&
+    ((160000000 - 1) / MAX_CLK_FREQ + 1) * 5 * MIN_CLK_FREQ >= 800_000_000,
+    LATENCY = 1 : LATENCY > 0,
+    Y_FRAME = 1125 : Y_FRAME > 15,
+    X_FRAME = 2200 : X_FRAME > 30
+)(
+    input rst,
+    output pclk,   // pixel clock
+    output locked, // 1 = pixel clock PLL is locked
+    input clock_in_p,
+    input clock_in_n,
+    input data_in_p[3],
+    input data_in_n[3],
+    output clock_out_p,
+    output clock_out_n,
+    output data_out_p[3],
+    output data_out_n[3],
+    output active, // 1 = x, y, red_out, green_out, and blue_out are valid
+    output x[$clog2(X_FRAME)],
+    output y[$clog2(Y_FRAME)],
+    output red_out[8],
+    output green_out[8],
+    output blue_out[8],
+    input red_in[8], // read LATENCY cycles after the corresponding output
+    input green_in[8],
+    input blue_in[8],
+    output hsync, // single clock pulse on hsync rising edge
+    output vsync  // single clock pulse on vsync rising edge
+) {
+
+    dvi_decoder decoder(#MAX_CLK_FREQ(MAX_CLK_FREQ), #MIN_CLK_FREQ(MIN_CLK_FREQ))
+    dvi_encoder encoder
+
+    .clk(decoder.pclk) {
+        dff x_ctr[$clog2(X_FRAME)]
+        dff y_ctr[$clog2(Y_FRAME)]
+        edge_detector hedge (#RISE(1), #FALL(0))
+        edge_detector vedge (#RISE(1), #FALL(0))
+        #DEPTH(LATENCY) {
+            pipeline pipe[3]
+        }
+    }
+
+    always {
+        decoder.rst = rst
+        decoder.clock_p = clock_in_p
+        decoder.clock_n = clock_in_n
+        decoder.data_p = data_in_p
+        decoder.data_n = data_in_n
+
+        pipe.in = c{decoder.hsync, decoder.vsync, decoder.de}
+
+        encoder.pclk = decoder.pclk
+        encoder.pclkx5 = decoder.pclkx5
+        encoder.rst = ~decoder.pll_locked
+        encoder.blue = blue_in
+        encoder.green = green_in
+        encoder.red = red_in
+        encoder.hsync = pipe.out[2]
+        encoder.vsync = pipe.out[1]
+        encoder.de = pipe.out[0]
+
+        clock_out_p = encoder.clock_p
+        clock_out_n = encoder.clock_n
+        data_out_p = encoder.data_p
+        data_out_n = encoder.data_n
+
+        pclk = decoder.pclk
+        locked = decoder.pll_locked
+        active = decoder.de
+        x = x_ctr.q
+        y = y_ctr.q
+        red_out = decoder.red
+        green_out = decoder.green
+        blue_out = decoder.blue
+
+        vedge.in = decoder.vsync
+        hedge.in = decoder.hsync
+
+        vsync = vedge.out
+        hsync = hedge.out
+
+        if (decoder.de) {
+            x_ctr.d = x_ctr.q + 1
+        }
+
+        if (hedge.out) {
+            x_ctr.d = 0
+            y_ctr.d = y_ctr.q + 1
+        }
+
+        if (decoder.vsync) {
+            x_ctr.d = 0
+            y_ctr.d = 0
+        }
+    }
+}

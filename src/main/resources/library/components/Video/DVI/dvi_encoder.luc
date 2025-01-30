@@ -1,0 +1,97 @@
+/**
+    "name": "DVI Encoder"
+    "description": "Encodes video data into a DVI stream. Typically used by the HDMI Encoder module and not directly."
+    "supportedBoards" : ["Au", "Au+", "AuV2"]
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2025 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   *****************************************************************************/
+
+module dvi_encoder (
+    input pclk, // must be <= 125MHz
+    input pclkx5, // x5 the frequency of pclk, should be phase aligned
+    input rst,
+    input red[8],
+    input green[8],
+    input blue[8],
+    input hsync, // horizontal sync flag, 1 = active
+    input vsync, // vertical sync flag, 1 = active
+    input de, // data enabled, 1 = red, green, and blue are valid
+    output clock_p,
+    output clock_n,
+    output data_p[3],
+    output data_n[3]
+) {
+    .clk(pclk), .rst(rst) {
+        tmds_encoder enc_blue
+        tmds_encoder enc_green
+        tmds_encoder enc_red
+
+        .ioclk(pclkx5) {
+            serdes_ddr_10_to_1 clkser
+            serdes_ddr_10_to_1 redser
+            serdes_ddr_10_to_1 greenser
+            serdes_ddr_10_to_1 blueser
+        }
+    }
+
+    obufds clkbuf (.i(clkser.iob_out))
+    obufds redbuf (.i(redser.iob_out))
+    obufds greenbuf (.i(greenser.iob_out))
+    obufds bluebuf (.i(blueser.iob_out))
+
+    always {
+        clkser.data = 10b0000011111
+        clock_p = clkbuf.o
+        clock_n = clkbuf.ob
+
+        enc_red.data_in = red
+        enc_green.data_in = green
+        enc_blue.data_in = blue
+
+        enc_red.c0 = hsync
+        enc_red.c1 = vsync
+        enc_red.de = de
+
+        enc_green.c0 = hsync
+        enc_green.c1 = vsync
+        enc_green.de = de
+
+        enc_blue.c0 = hsync
+        enc_blue.c1 = vsync
+        enc_blue.de = de
+
+        redser.data = enc_red.data_out
+        greenser.data = enc_green.data_out
+        blueser.data = enc_blue.data_out
+
+        data_p[0] = bluebuf.o
+        data_n[0] = bluebuf.ob
+        data_p[1] = greenbuf.o
+        data_n[1] = greenbuf.ob
+        data_p[2] = redbuf.o
+        data_n[2] = redbuf.ob
+    }
+}

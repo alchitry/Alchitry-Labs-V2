@@ -1,0 +1,112 @@
+/**
+    "name": "TMDS Decoder"
+    "description": "Decodes 10 bit TMDS data into the original 8 bits."
+    "supportedBoards" : ["Au", "Au+", "AuV2"]
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2025 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   *****************************************************************************/
+
+module tmds_decoder #(
+    CLK_FREQ ~ 75_000_000 : CLK_FREQ > 0
+)(
+    input rst,
+    input pclk,
+    input pclkx5,
+    input data_p,
+    input data_n,
+    input others_valid,
+    input others_ready,
+    output valid,
+    output ready,
+    output c0,
+    output c1,
+    output de,
+    output data[8]
+) {
+
+    serdes_ddr_1_to_10 des (.clk(pclk), .clkx5(pclkx5), .rst(rst))
+
+    .clk(pclk){
+        .rst(rst) {
+            tmds_bit_align bit_align(#CLK_FREQ(CLK_FREQ))
+            dff c[2]
+            dff data_enabled
+            dff data_out[8]
+        }
+
+        tmds_channel_align channel_align
+    }
+
+    sig flipped_data[8]
+
+    always {
+        valid = bit_align.aligned
+        ready = channel_align.ready
+
+        des.data_n = data_n
+        des.data_p = data_p
+        des.bitslip = bit_align.bitslip
+        des.load_delay = bit_align.load_delay
+        des.delay = bit_align.delay
+
+        bit_align.data = des.data
+
+        channel_align.others_ready = others_ready
+        channel_align.data_valid = others_valid & bit_align.aligned
+        channel_align.data_in = des.data
+
+        c0 = c.q[0]
+        c1 = c.q[1]
+        de = data_enabled.q
+        data = data_out.q
+
+        flipped_data = channel_align.data_out[9] ? ~channel_align.data_out[7:0] : channel_align.data_out[7:0]
+
+        if (others_ready && channel_align.ready) {
+            case (channel_align.data_out) {
+                Dvi.CTRLTOKEN0:
+                    c.d = 2b00
+                    data_enabled.d = 0
+                Dvi.CTRLTOKEN1:
+                    c.d = 2b01
+                    data_enabled.d = 0
+                Dvi.CTRLTOKEN2:
+                    c.d = 2b10
+                    data_enabled.d = 0
+                Dvi.CTRLTOKEN3:
+                    c.d = 2b11
+                    data_enabled.d = 0
+                default:
+                    data_enabled.d = 1
+
+                    data_out.d[0] = flipped_data[0]
+                    repeat(i, 7, 1) {
+                        data_out.d[i] = channel_align.data_out[8] ? (flipped_data[i] ^ flipped_data[i-1]) : ~(flipped_data[i] ^ flipped_data[i-1])
+                    }
+            }
+        }
+    }
+}

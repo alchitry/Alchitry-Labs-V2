@@ -1,0 +1,114 @@
+/**
+    "name": "TMDS Encoder"
+    "description": "Encodeds 8 bits of data into 10 bits of TMDS data."
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2025 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   *****************************************************************************/
+
+module tmds_encoder (
+    input clk,
+    input rst,
+    input data_in[8],
+    input c0,
+    input c1,
+    input de,
+    output data_out[10]
+) {
+
+    .clk(clk) {
+        .rst(rst) {
+            dff dout[10]
+            dff count[5]
+        }
+
+        dff num_ones[4]
+        dff din[8]
+        dff num_ones9[4]
+
+        dff c0_pipe[2]
+        dff c1_pipe[2]
+        dff de_pipe[2]
+        dff data9_pipe[9]
+    }
+
+    sig xor_flag
+    sig data9[9]
+
+    sig cond_flip
+    sig flip
+
+    always {
+        data_out = dout.q
+
+        c0_pipe.d = c{c0_pipe.q[0], c0}
+        c1_pipe.d = c{c1_pipe.q[0], c1}
+        de_pipe.d = c{de_pipe.q[0], de}
+
+        num_ones.d = data_in[0] + data_in[1] + data_in[2] + data_in[3] + data_in[4] + data_in[5] + data_in[6] + data_in[7]
+        din.d = data_in
+
+        xor_flag = (num_ones.q > 4) || (num_ones.q == 4 && din.q[0] == 0)
+
+        data9[0] = din.q[0]
+        repeat(i, 7, 1) { // loop from 1 to 7
+            data9[i] = xor_flag ? ~(data9[i-1] ^ din.q[i]) : data9[i-1] ^ din.q[i]
+        }
+        data9[8] = ~xor_flag
+
+        num_ones9.d = data9[0] + data9[1] + data9[2] + data9[3] + data9[4] + data9[5] + data9[6] + data9[7]
+
+        data9_pipe.d = data9
+
+        cond_flip = count.q == 0 || num_ones9.q == 4
+        flip = ((~count.q[4]) && (num_ones9.q > 4)) || (count.q[4] && (4 > num_ones9.q))
+
+        if (de_pipe.q[1]) {
+            if (cond_flip) {
+                dout.d[9] = ~data9_pipe.q[8]
+                dout.d[8] = data9_pipe.q[8]
+                dout.d[7:0] = data9_pipe.q[8] ? data9_pipe.q[7:0] : ~data9_pipe.q[7:0]
+                count.d = (~data9_pipe.q[8]) ? (count.q + (8 - num_ones9.q) - num_ones9.q) : (count.q + num_ones9.q - (8 - num_ones9.q))
+            } else if (flip) {
+                dout.d[9] = 1
+                dout.d[8] = data9_pipe.q[8]
+                dout.d[7:0] = ~data9_pipe.q[7:0]
+                count.d = count.q + c{data9_pipe.q[8],1b0} + (8 - num_ones9.q) - num_ones9.q
+            } else {
+                dout.d[9] = 0
+                dout.d[8:0] = data9_pipe.q[8:0]
+                count.d = count.q - c{~data9_pipe.q[8],1b0} + num_ones9.q - (8 - num_ones9.q)
+            }
+        } else {
+            case (c{c1_pipe.q[1], c0_pipe.q[1]}) {
+                2b00: dout.d = Dvi.CTRLTOKEN0
+                2b01: dout.d = Dvi.CTRLTOKEN1
+                2b10: dout.d = Dvi.CTRLTOKEN2
+                default: dout.d = Dvi.CTRLTOKEN3
+            }
+            count.d = 0
+        }
+    }
+}

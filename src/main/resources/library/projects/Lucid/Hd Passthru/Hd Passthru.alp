@@ -1,0 +1,175 @@
+{
+    "template": {
+        "name": "Hd Passthru",
+        "description": "Decodes HDMI data on port 2 and re-encodes it on port 1 of the Hd.",
+        "boards": ["AuV2"],
+        "priority": 7
+    },
+    "project": {
+        "type": "V1.3",
+        "projectName": "Hd Passthru",
+        "board": "Alchitry Au V2",
+        "sourceFiles": [
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/alchitry_top.luc"
+                },
+                "top": true
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Conditioning/reset_conditioner.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Memory/simple_dual_port_ram.v"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Interfaces/i2c_peripheral.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Pulses/edge_detector.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Miscellaneous/pipeline.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Memory/fifo.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/TMDS/serdes_ddr_1_to_10.v"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/TMDS/tmds_bit_align.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/TMDS/tmds_channel_align.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Primitives/ibufds.v"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/DVI/dvi_clocks.v"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/TMDS/tmds_decoder.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/TMDS/tmds_encoder.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/TMDS/serdes_ddr_10_to_1.v"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Primitives/obufds.v"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/DVI/dvi_decoder.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/DVI/dvi_encoder.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/hdmi_passthru.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/DVI/dvi_globals.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/edid_rom.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/hdmi_encoder.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/hdmi_decoder.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Primitives/idelayctrl.v"
+                }
+            }
+        ],
+        "constraintFiles": [
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Constraints/alchitry.acf"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Constraints/hd_v2.acf"
+                }
+            }
+        ],
+        "ipCores": []
+    }
+}

@@ -1,0 +1,92 @@
+module alchitry_top (
+    input clk,              // 100MHz clock
+    input rst_n,            // reset button (active low)
+    output led[8],          // 8 user controllable LEDs
+    input usb_rx,           // USB->Serial input
+    output usb_tx,          // USB->Serial output
+    inout hdmi_sda_1,
+    inout hdmi_scl_1,
+    inout hdmi_cec_1,
+    input hdmi_hp_1,
+    output hdmi_clk_1_p,
+    output hdmi_clk_1_n,
+    output hdmi_data_1_p[3],
+    output hdmi_data_1_n[3],
+    inout hdmi_sda_2,
+    input hdmi_scl_2,
+    inout hdmi_cec_2,
+    output hdmi_hp_2,
+    input hdmi_clk_2_p,
+    input hdmi_clk_2_n,
+    input hdmi_data_2_p[3],
+    input hdmi_data_2_n[3]
+) {
+
+    sig rst // reset signal
+
+    // used to make 200MHz reference clock for the idelayctrl
+    clk_wiz_0 clk_wiz(.clk_in(clk))
+
+    sig arst = !rst_n || !clk_wiz.locked
+
+    // required as hdmi_passthru uses IDELAYE2
+    idelayctrl idelayctrl(.refclk(clk_wiz.clk_200), .rst(arst))
+
+    hdmi_passthru hdmi (#MAX_CLK_FREQ(125_000_000), #MIN_CLK_FREQ(80_000_000), .rst(arst))
+
+    .clk(clk_wiz.clk_100) {
+        reset_conditioner reset_cond
+        .rst(rst) {
+            edid_rom edid(.sda(hdmi_sda_2), .scl(hdmi_scl_2))
+        }
+    }
+
+    .clk(hdmi.pclk) {
+        .rst(!hdmi.locked) { // !locked signal should be used for reset
+            dff counter[24]
+        }
+        dff red[8]
+        dff green[8]
+        dff blue[8]
+    }
+
+    always {
+        reset_cond.in = ~rst_n  // input raw inverted reset signal
+        rst = reset_cond.out    // conditioned reset
+
+        counter.d = counter.q + 1
+        led = c{hdmi.active, counter.q[-1-:4]}
+
+        usb_tx = usb_rx // echo the serial data
+
+        // ignore EDID on output
+        hdmi_sda_1 = bz
+        hdmi_scl_1 = bz
+
+        // CEC not used
+        hdmi_cec_1 = bz
+        hdmi_cec_2 = bz
+
+        hdmi_hp_2 = 1 // enable hot-plug detection
+
+        hdmi_clk_1_p = hdmi.clock_out_p
+        hdmi_clk_1_n = hdmi.clock_out_n
+        hdmi_data_1_p = hdmi.data_out_p
+        hdmi_data_1_n = hdmi.data_out_n
+        hdmi.clock_in_p = hdmi_clk_2_p
+        hdmi.clock_in_n = hdmi_clk_2_n
+        hdmi.data_in_p = hdmi_data_2_p
+        hdmi.data_in_n = hdmi_data_2_n
+
+        // Simply pass the data through without change...
+        red.d = hdmi.red_out
+        green.d = hdmi.green_out
+        blue.d = hdmi.blue_out
+
+        // dffs are used to delay the data 1 cycle
+        // This is the default LATENCY value of hdmi_passthru
+        hdmi.red_in = red.q
+        hdmi.green_in = green.q
+        hdmi.blue_in = blue.q
+    }
+}

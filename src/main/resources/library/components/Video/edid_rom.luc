@@ -1,0 +1,198 @@
+/**
+    "name": "EDID ROM"
+    "description": "EDID ROM for use with the HDMI Decoder. It tells an HDMI source that the Hd is a monitor capable of 1080p50, 720p120, and 720p60."
+    "supportedBoards" : ["Au", "Au+", "AuV2"]
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2025 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   ****************************************************************************
+
+   EDID ROM for providing display information to a device connected over HDMI.
+
+   This ROM specifies 1080p50, 720p120, and 720p60 with pixel clocks beween
+   80-125MHz.
+
+   See: https://en.wikipedia.org/wiki/Extended_Display_Identification_Data
+*/
+
+module edid_rom (
+    input clk,
+    input rst,
+    inout sda,
+    input scl
+) {
+    .clk(clk) {
+        .rst(rst) {
+            i2c_peripheral i2c(.sda(sda), .scl(scl))
+            dff addr[8]
+            dff tx_enable
+        }
+    }
+
+    always {
+        if (i2c.start) {
+            tx_enable.d = !i2c.write
+        }
+        if (i2c.next) {
+            addr.d = addr.q + 1
+        }
+        if (i2c.rx_valid) {
+            addr.d = i2c.rx_data[6:0]
+        }
+        i2c.tx_enable = tx_enable.q
+        i2c.tx_data = 8hff
+
+        case (addr.q){
+            8d0: i2c.tx_data = 8h00
+            8d1: i2c.tx_data = 8hFF
+            8d2: i2c.tx_data = 8hFF
+            8d3: i2c.tx_data = 8hFF
+            8d4: i2c.tx_data = 8hFF
+            8d5: i2c.tx_data = 8hFF
+            8d6: i2c.tx_data = 8hFF
+            8d7: i2c.tx_data = 8h00
+            8d8: i2c.tx_data = 8h05
+            8d9: i2c.tx_data = 8h83
+            8d10: i2c.tx_data = 8h00
+            8d11: i2c.tx_data = 8h00
+            8d12: i2c.tx_data = 8h00
+            8d13: i2c.tx_data = 8h00
+            8d14: i2c.tx_data = 8h00
+            8d15: i2c.tx_data = 8h00
+            8d16: i2c.tx_data = 8hFF
+            8d17: i2c.tx_data = 8h23
+            8d18: i2c.tx_data = 8h01
+            8d19: i2c.tx_data = 8h03
+            8d20: i2c.tx_data = 8h80
+            8d21: i2c.tx_data = 8h32
+            8d22: i2c.tx_data = 8h1F
+            8d23: i2c.tx_data = 8h78
+            8d24: i2c.tx_data = 8h07
+            8d25: i2c.tx_data = 8hEE
+            8d26: i2c.tx_data = 8h95
+            8d27: i2c.tx_data = 8hA3
+            8d28: i2c.tx_data = 8h54
+            8d29: i2c.tx_data = 8h4C
+            8d30: i2c.tx_data = 8h99
+            8d31: i2c.tx_data = 8h26
+            8d32: i2c.tx_data = 8h0F
+            8d33: i2c.tx_data = 8h50
+            8d34: i2c.tx_data = 8h54
+            8d35: i2c.tx_data = 8h00
+            8d36: i2c.tx_data = 8h00
+            8d37: i2c.tx_data = 8h00
+            8d38: i2c.tx_data = 8h01
+            8d39: i2c.tx_data = 8h01
+            8d40: i2c.tx_data = 8h01
+            8d41: i2c.tx_data = 8h01
+            8d42: i2c.tx_data = 8h01
+            8d43: i2c.tx_data = 8h01
+            8d44: i2c.tx_data = 8h01
+            8d45: i2c.tx_data = 8h01
+            8d46: i2c.tx_data = 8h01
+            8d47: i2c.tx_data = 8h01
+            8d48: i2c.tx_data = 8h01
+            8d49: i2c.tx_data = 8h01
+            8d50: i2c.tx_data = 8h01
+            8d51: i2c.tx_data = 8h01
+            8d52: i2c.tx_data = 8h01
+            8d53: i2c.tx_data = 8h01
+            8d54: i2c.tx_data = 8hEE
+            8d55: i2c.tx_data = 8h2C
+            8d56: i2c.tx_data = 8h80
+            8d57: i2c.tx_data = 8hA0
+            8d58: i2c.tx_data = 8h70
+            8d59: i2c.tx_data = 8h38
+            8d60: i2c.tx_data = 8h1A
+            8d61: i2c.tx_data = 8h40
+            8d62: i2c.tx_data = 8h30
+            8d63: i2c.tx_data = 8h20
+            8d64: i2c.tx_data = 8h35
+            8d65: i2c.tx_data = 8h00
+            8d66: i2c.tx_data = 8h40
+            8d67: i2c.tx_data = 8h44
+            8d68: i2c.tx_data = 8h21
+            8d69: i2c.tx_data = 8h00
+            8d70: i2c.tx_data = 8h00
+            8d71: i2c.tx_data = 8h1E
+            8d72: i2c.tx_data = 8h95
+            8d73: i2c.tx_data = 8h1F
+            8d74: i2c.tx_data = 8h00
+            8d75: i2c.tx_data = 8hD6
+            8d76: i2c.tx_data = 8h51
+            8d77: i2c.tx_data = 8hD0
+            8d78: i2c.tx_data = 8h32
+            8d79: i2c.tx_data = 8h20
+            8d80: i2c.tx_data = 8h6E
+            8d81: i2c.tx_data = 8h28
+            8d82: i2c.tx_data = 8h55
+            8d83: i2c.tx_data = 8h00
+            8d84: i2c.tx_data = 8h80
+            8d85: i2c.tx_data = 8hD8
+            8d86: i2c.tx_data = 8h10
+            8d87: i2c.tx_data = 8h00
+            8d88: i2c.tx_data = 8h00
+            8d89: i2c.tx_data = 8h1E
+            8d90: i2c.tx_data = 8hDE
+            8d91: i2c.tx_data = 8h2F
+            8d92: i2c.tx_data = 8h00
+            8d93: i2c.tx_data = 8h64
+            8d94: i2c.tx_data = 8h50
+            8d95: i2c.tx_data = 8hD0
+            8d96: i2c.tx_data = 8h14
+            8d97: i2c.tx_data = 8h20
+            8d98: i2c.tx_data = 8h14
+            8d99: i2c.tx_data = 8h05
+            8d100: i2c.tx_data = 8h55
+            8d101: i2c.tx_data = 8h00
+            8d102: i2c.tx_data = 8h80
+            8d103: i2c.tx_data = 8hD8
+            8d104: i2c.tx_data = 8h10
+            8d105: i2c.tx_data = 8h00
+            8d106: i2c.tx_data = 8h00
+            8d107: i2c.tx_data = 8h1E
+            8d108: i2c.tx_data = 8h00
+            8d109: i2c.tx_data = 8h00
+            8d110: i2c.tx_data = 8h00
+            8d111: i2c.tx_data = 8hFC
+            8d112: i2c.tx_data = 8h00
+            8d113: i2c.tx_data = 8h41
+            8d114: i2c.tx_data = 8h6C
+            8d115: i2c.tx_data = 8h63
+            8d116: i2c.tx_data = 8h68
+            8d117: i2c.tx_data = 8h69
+            8d118: i2c.tx_data = 8h74
+            8d119: i2c.tx_data = 8h72
+            8d120: i2c.tx_data = 8h79
+            8d121: i2c.tx_data = 8h20
+            8d122: i2c.tx_data = 8h48
+            8d123: i2c.tx_data = 8h64
+            8d124: i2c.tx_data = 8h0A
+            8d125: i2c.tx_data = 8h20
+            8d126: i2c.tx_data = 8h00
+            8d127: i2c.tx_data = 8hE3
+        }
+    }
+}

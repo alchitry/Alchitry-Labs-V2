@@ -1,0 +1,138 @@
+/**
+    "name": "HDMI Encoder"
+    "description": "Encodes video data into an HDMI stream with configurable resolution."
+    "supportedBoards" : ["Au", "Au+", "AuV2"]
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2025 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   ****************************************************************************
+
+   X_RES and Y_RES define the resolution of the images to be sent. However,
+   HDMI requires that you send an image that is bigger than the acutual video
+   data. The "blank" spaces around the image are where horizontal and vertical
+   sync signals are encoded. These are here mostly for legacy reasons (CRT
+   devices) but must still be present.
+
+   The X_FRONT_PORCH and Y_FRONT_PORCH are the number of pixel clocks between
+   the edge of the image and the start of the hsync or vsync "pulse".
+
+   HSYNC_WIDTH and VSYNC_WIDTH are the number of pixel clocks used by hsync and
+   vsync.
+
+   Finally, X_FRAME and Y_FRAME define the full frame size. This should typically
+   be larger than than the three previous values added together to allow for a
+   "back porch."
+
+   A row will look something like this:
+   |========== IMAGE DATA ==========|= X_FRONT_PORCH =|= HSYNC_WIDTH =|======|
+   The total width is X_FRAME.
+
+   The same format is repeated in the Y direction.
+
+   The total number of clocks per frame is X_FRAME * Y_FRAME. The pixel clock
+   should then be set to X_FRAME * Y_FRAME * framerate. The pixel clock should
+   not exceed 125MHz. This is the limit of the SERDES on the -2 speed Artix 7.
+
+   Here are some common settings.
+   1080p50:
+     Pixel clock = 123.75 MHz
+     RES = (1920, 1080)
+     FRONT_PORCH = (88, 4)
+     SYNC_WIDTH = (44, 5)
+     FRAME = (2200, 1125)
+
+   720p120:
+     Pixel clock = 122.54 MHz
+     RES = (1280, 720)
+     FRONT_PORCH = (20, 5)
+     SYNC_WIDTH = (5, 5)
+     FRAME = (1380, 740)
+
+   720p60:
+     Pixel clock = 74.25 MHz
+     RES = (1280, 720)
+     FRONT_PORCH = (110, 5)
+     SYNC_WIDTH = (40, 5)
+     FRAME = (1650, 750)
+*/
+
+module hdmi_encoder #(
+    X_RES ~ 1920 : X_RES > 0,
+    Y_RES ~ 1080 : Y_RES > 0,
+    X_FRONT_PORCH ~ 88 : X_FRONT_PORCH >= 0,
+    Y_FRONT_PORCH ~ 4 : Y_FRONT_PORCH >= 0,
+    HSYNC_WIDTH ~ 44 : HSYNC_WIDTH > 0,
+    VSYNC_WIDTH ~ 5 : VSYNC_WIDTH > 0,
+    X_FRAME ~ 2200 : X_FRAME >= X_RES + X_FRONT_PORCH + HSYNC_WIDTH,
+    Y_FRAME ~ 1125 : Y_FRAME >= Y_RES + Y_FRONT_PORCH + VSYNC_WIDTH
+)(
+    input rst,
+    input pclk,   // pixel clock, must be <= 125MHz
+    input pclkx5, // x5 pixel clock frequency, should be phase aligned
+    output clock_p,   // hdmi clock
+    output clock_n,
+    output data_p[3], // hdmi data
+    output data_n[3],
+    output active, // 1 = x, y are valid and red, green, and blue are being read
+    output x[$clog2(X_RES)], // x coordinate of frame
+    output y[$clog2(Y_RES)], // y coordinate of frame
+    input red[8],   // red pixel data
+    input green[8], // green pixel data
+    input blue[8]   // blue pixel data
+) {
+    .clk(pclk), .rst(rst) {
+        dff ctrX[$clog2(X_FRAME)]
+        dff ctrY[$clog2(Y_FRAME)]
+    }
+
+    dvi_encoder dvi (
+        .pclk(pclk),
+        .pclkx5(pclkx5),
+        .rst(rst),
+        .blue(blue),
+        .green(green),
+        .red(red)
+    )
+
+    always {
+        ctrX.d = (ctrX.q == X_FRAME-1) ? 0 : ctrX.q + 1
+        if (ctrX.q == X_FRAME-1)
+            ctrY.d = (ctrY.q == Y_FRAME-1) ? 0 : ctrY.q + 1
+
+        dvi.hsync = (ctrX.q >= X_RES + X_FRONT_PORCH) && (ctrX.q < X_RES + X_FRONT_PORCH + HSYNC_WIDTH)
+        dvi.vsync = (ctrY.q >= Y_RES + Y_FRONT_PORCH) && (ctrY.q < Y_RES + Y_FRONT_PORCH + VSYNC_WIDTH)
+        sig drawArea = (ctrX.q < X_RES) && (ctrY.q < Y_RES)
+
+        dvi.de = drawArea
+        active = drawArea
+        x = ctrX.q[0+:$width(x)]
+        y = ctrY.q[0+:$width(y)]
+
+        clock_p = dvi.clock_p
+        clock_n = dvi.clock_n
+        data_p = dvi.data_p
+        data_n = dvi.data_n
+    }
+}

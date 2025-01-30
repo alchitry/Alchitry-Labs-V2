@@ -1,0 +1,113 @@
+/**
+    "name": "HDMI Decoder"
+    "description": "Decodes HDMI data and the associated clock."
+    "supportedBoards" : ["Au", "Au+", "AuV2"]
+**/
+/******************************************************************************
+
+   The MIT License (MIT)
+
+   Copyright (c) 2025 Alchitry
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+   ****************************************************************************
+
+   The MAX_CLK_FREQ and MIN_CLK_FREQ paramters are used to specify the expected
+   minimum and maximum pixel clocks. Timing is performed based on MAX_CLK_FREQ
+   and the MIN_CLK_FREQ is used to check if the minimum frequency will be
+   supported by the PLL used to create the x5 data clock.
+
+   These will usually be the max range of 80-125MHz.
+
+   Y_FRAME and X_FRAME are used to specify the maximum expected frame size.
+   The frame size is not just the resolution of the image but also the blank
+   portions around it. These are used to define counter sizes.
+*/
+module hdmi_decoder #(
+    MAX_CLK_FREQ ~ 125_000_000 : MAX_CLK_FREQ > 14_000_000 && MAX_CLK_FREQ <= 125_000_000,
+    MIN_CLK_FREQ ~ 80_000_000 : MIN_CLK_FREQ > 14_000_000 && MIN_CLK_FREQ <= MAX_CLK_FREQ &&
+    ((160000000 - 1) / MAX_CLK_FREQ + 1) * 5 * MIN_CLK_FREQ >= 800_000_000,
+    Y_FRAME = 1125 : Y_FRAME > 15, // Max Y dimension including blanks
+    X_FRAME = 2200 : X_FRAME > 30  // Max X dimension including blanks
+)(
+    input rst,
+    output pclk, // pixel clock, between MIN_CLK_FREQ and MAX_CLK_FREQ
+    output pclkx5, // 5x the pixel clock, can be used to drive an encoder
+    output locked, // 1 = clocks are valid
+    input clock_p, // HDMI clock input
+    input clock_n,
+    input data_p[3], // HDMI data input
+    input data_n[3],
+    output active, // 1 = x, y, red, green, and blue are valid
+    output x[$clog2(X_FRAME)], // x coordinate of the image
+    output y[$clog2(Y_FRAME)], // y coordinate of the image
+    output red[8],   // red pixel data
+    output green[8], // green pixel data
+    output blue[8],  // blue pixel data
+    output hsync, // single clock pulse on hsync edge
+    output vsync  // single clock pulse on vsync edge
+) {
+
+    dvi_decoder decoder (#MAX_CLK_FREQ(MAX_CLK_FREQ), #MIN_CLK_FREQ(MIN_CLK_FREQ), .rst(rst))
+
+    .clk(decoder.pclk) {
+        dff x_ctr[$clog2(X_FRAME)]
+        dff y_ctr[$clog2(Y_FRAME)]
+        edge_detector hedge (#RISE(1), #FALL(0))
+        edge_detector vedge (#RISE(1), #FALL(0))
+    }
+
+    always {
+        decoder.clock_p = clock_p
+        decoder.clock_n = clock_n
+        decoder.data_p = data_p
+        decoder.data_n = data_n
+
+        pclk = decoder.pclk
+        pclkx5 = decoder.pclkx5
+        locked = decoder.pll_locked
+        active = decoder.de
+        x = x_ctr.q
+        y = y_ctr.q
+        red = decoder.red
+        green = decoder.green
+        blue = decoder.blue
+
+        vedge.in = decoder.vsync
+        hedge.in = decoder.hsync
+
+        vsync = vedge.out
+        hsync = hedge.out
+
+        if (decoder.de) {
+            x_ctr.d = x_ctr.q + 1
+        }
+
+        if (hedge.out) {
+            x_ctr.d = 0
+            y_ctr.d = y_ctr.q + 1
+        }
+
+        if (decoder.vsync) {
+            x_ctr.d = 0
+            y_ctr.d = 0
+        }
+    }
+}

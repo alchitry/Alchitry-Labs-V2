@@ -1,0 +1,166 @@
+/**
+    "name": "TMDS Bit Align"
+    "description": "Aligns the TMDS bits from a deserializer."
+    "supportedBoards" : ["Au", "Au+", "AuV2"]
+**/
+/******************************************************************************
+
+    The MIT License (MIT)
+
+    Copyright (c) 2025 Alchitry
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.
+
+    *****************************************************************************
+
+    This module is responsible for triggering bitslip operations and finding an
+    optimal delay value for the ODELAYE2 of the deserializer.
+
+    This is done by looking for Dvi.CTRLTOKENx in the input stream. If they aren't
+    found after one frame then a bitslip is performed. If 10 bitslips are performed
+    and tokens still aren't seen, then the delay is increased.
+
+    After 2^TOKEN_CTR_SIZE tokens are found, the bus is considered to be aligned.
+
+    Starting with a delay of 0, the bus attempts to align with increasing delays
+    until it succeeds. This delay is saved. The delay continues to increase until
+    the bus fails to align. The average working delay is then set and the bus
+    aligns for a final time. At that point, the aligned output goes high.
+*/
+
+module tmds_bit_align #(
+    CLK_FREQ ~ 75_000_000 : CLK_FREQ > 0,
+    TOKEN_CTR_SIZE = 12 : TOKEN_CTR_SIZE > 0
+)(
+    input clk,
+    input rst,
+    input data[10],
+    output bitslip,
+    output delay[5],
+    output load_delay,
+    output aligned
+) {
+
+    sig blank
+
+    enum State {INIT, SEARCH, INC_DELAY, BITSLIP, RX_TOKEN, ALIGNED}
+
+    .clk(clk) {
+        .rst(rst) {
+            dff state[$width(State)]
+        }
+
+        dff ctrl_rx[2]
+        dff search_ctr[$clog2(CLK_FREQ/50)] // should be on the order of 1 frame
+        dff align_ctr[5]
+        dff token_ctr[TOKEN_CTR_SIZE]
+        dff first_delay[5]
+        dff current_delay[5]
+        dff final_align
+        dff first_valid
+    }
+
+    always {
+        load_delay = 0
+        delay = current_delay.q
+        bitslip = 0
+        aligned = state.q == State.ALIGNED
+
+        ctrl_rx.d[0] = (data == Dvi.CTRLTOKEN0) || (data == Dvi.CTRLTOKEN1) ||
+        (data == Dvi.CTRLTOKEN2) || (data == Dvi.CTRLTOKEN3)
+        ctrl_rx.d[1] = ctrl_rx.q[0]
+        blank = ctrl_rx.q == 2b01 // rising edge
+
+        if (!&search_ctr.q)
+            search_ctr.d = search_ctr.q + 1
+
+        token_ctr.d = 0
+
+        case (state.q) {
+            State.INIT:
+                final_align.d = 0
+                current_delay.d = 0
+                first_delay.d = 0
+                first_valid.d = 0
+                delay = 0
+                load_delay = 1
+                align_ctr.d = 0
+                if (&search_ctr.q){
+                    search_ctr.d = 0
+                    state.d = State.SEARCH
+                }
+
+            State.SEARCH:
+                if (blank) {
+                    state.d = State.RX_TOKEN
+                } else if (&search_ctr.q) {
+                    if (align_ctr.q == 9) {
+                        if (final_align.q) {
+                            state.d = State.INIT
+                        } else {
+                            state.d = State.INC_DELAY
+                        }
+                    } else {
+                        state.d = State.BITSLIP
+                    }
+                }
+
+            State.INC_DELAY:
+                if (first_valid.q && ((align_ctr.q == 9 && &search_ctr.q) || &current_delay.q)) { // saw a valid block but this wasn't valid
+                    delay = first_delay.q + ((current_delay.q - first_delay.q) / 2) // avg good delay
+                    current_delay.d = first_delay.q + ((current_delay.q - first_delay.q) / 2)
+                    load_delay = 1
+                    final_align.d = 1
+                } else {
+                    current_delay.d = current_delay.q + 1
+                    delay = current_delay.q + 1
+                    load_delay = 1
+                }
+                state.d = State.SEARCH
+                search_ctr.d = 0
+                align_ctr.d = 0
+
+            State.BITSLIP:
+                bitslip = 1
+                search_ctr.d = 0
+                align_ctr.d = align_ctr.q + 1
+                state.d = State.SEARCH
+
+
+            State.RX_TOKEN:
+                token_ctr.d = token_ctr.q + 1
+                if (ctrl_rx.q[0]) {
+                    if (&token_ctr.q) { // valid search
+                        search_ctr.d = 0
+                        if (!first_valid.q) {
+                            first_valid.d = 1
+                            first_delay.d = current_delay.q
+                        }
+                        if (final_align.q) {
+                            state.d = State.ALIGNED
+                        } else {
+                            state.d = State.INC_DELAY
+                        }
+                    }
+                } else {
+                    state.d = State.SEARCH
+                }
+        }
+    }
+}
