@@ -119,24 +119,24 @@ module edid_rom (
             8d51: i2c.tx_data = 8h01
             8d52: i2c.tx_data = 8h01
             8d53: i2c.tx_data = 8h01
-            8d54: i2c.tx_data = 8hEE
-            8d55: i2c.tx_data = 8h2C
+            8d54: i2c.tx_data = 8h57
+            8d55: i2c.tx_data = 8h30
             8d56: i2c.tx_data = 8h80
-            8d57: i2c.tx_data = 8hA0
-            8d58: i2c.tx_data = 8h70
+            8d57: i2c.tx_data = 8h18
+            8d58: i2c.tx_data = 8h71
             8d59: i2c.tx_data = 8h38
-            8d60: i2c.tx_data = 8h1A
+            8d60: i2c.tx_data = 8h2D
             8d61: i2c.tx_data = 8h40
-            8d62: i2c.tx_data = 8h30
-            8d63: i2c.tx_data = 8h20
-            8d64: i2c.tx_data = 8h35
+            8d62: i2c.tx_data = 8h58
+            8d63: i2c.tx_data = 8h2C
+            8d64: i2c.tx_data = 8h45
             8d65: i2c.tx_data = 8h00
             8d66: i2c.tx_data = 8h40
             8d67: i2c.tx_data = 8h44
             8d68: i2c.tx_data = 8h21
             8d69: i2c.tx_data = 8h00
             8d70: i2c.tx_data = 8h00
-            8d71: i2c.tx_data = 8h1E
+            8d71: i2c.tx_data = 8h06
             8d72: i2c.tx_data = 8h95
             8d73: i2c.tx_data = 8h1F
             8d74: i2c.tx_data = 8h00
@@ -192,7 +192,7 @@ module edid_rom (
             8d124: i2c.tx_data = 8h0A
             8d125: i2c.tx_data = 8h20
             8d126: i2c.tx_data = 8h00
-            8d127: i2c.tx_data = 8hE3
+            8d127: i2c.tx_data = 8hBE
         }
     }
 }
