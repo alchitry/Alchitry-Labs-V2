@@ -17,10 +17,11 @@ set_property -dict [list \
   CONFIG.PRIMARY_PORT {clk_in} \
   CONFIG.USE_RESET {false} \
 ] [get_ips clk_wiz_0]
-generate_target {instantiation_template} [get_files {{$CORE_DIR/clk_wiz_0/clk_wiz_0.xci}}]
-generate_target all [get_files  {{$CORE_DIR/clk_wiz_0/clk_wiz_0.xci}}]
+generate_target {instantiation_template} [get_files {$CORE_DIR_ESC/clk_wiz_0/clk_wiz_0.xci}]
+generate_target all [get_files  {$CORE_DIR_ESC/clk_wiz_0/clk_wiz_0.xci}]
 catch { config_ip_cache -export [get_ips -all clk_wiz_0] }
-export_ip_user_files -of_objects [get_files {{$CORE_DIR/clk_wiz_0/clk_wiz_0.xci}}] -no_script -sync -force -quiet
-create_ip_run [get_files -of_objects [get_fileset sources_1] {{$CORE_DIR/clk_wiz_0/clk_wiz_0.xci}}]
+export_ip_user_files -of_objects [get_files {$CORE_DIR_ESC/clk_wiz_0/clk_wiz_0.xci}] -no_script -sync -force -quiet
+create_ip_run [get_files -of_objects [get_fileset sources_1] {$CORE_DIR_ESC/clk_wiz_0/clk_wiz_0.xci}]
 launch_runs clk_wiz_0_synth_1 -jobs 8
-export_simulation -lib_map_path [list {modelsim=$CORE_DIR/managed_ip_project/managed_ip_project.cache/compile_simlib/modelsim} {questa=$CORE_DIR/managed_ip_project/managed_ip_project.cache/compile_simlib/questa} {xcelium=$CORE_DIR/managed_ip_project/managed_ip_project.cache/compile_simlib/xcelium} {vcs=$CORE_DIR/managed_ip_project/managed_ip_project.cache/compile_simlib/vcs} {riviera=$CORE_DIR/managed_ip_project/managed_ip_project.cache/compile_simlib/riviera}] -of_objects [get_files {{$CORE_DIR/clk_wiz_0/clk_wiz_0.xci}}] -directory {$CORE_DIR/ip_user_files/sim_scripts} -ip_user_files_dir {$CORE_DIR/ip_user_files} -ipstatic_source_dir {$CORE_DIR/ip_user_files/ipstatic} -use_ip_compiled_libs -force -quiet
+wait_on_run clk_wiz_0_synth_1
+export_simulation -lib_map_path [list {modelsim=$CORE_DIR/managed_ip_project/managed_ip_project.cache/compile_simlib/modelsim} {questa=$CORE_DIR/managed_ip_project/managed_ip_project.cache/compile_simlib/questa} {xcelium=$CORE_DIR/managed_ip_project/managed_ip_project.cache/compile_simlib/xcelium} {vcs=$CORE_DIR/managed_ip_project/managed_ip_project.cache/compile_simlib/vcs} {riviera=$CORE_DIR/managed_ip_project/managed_ip_project.cache/compile_simlib/riviera}] -of_objects [get_files {$CORE_DIR_ESC/clk_wiz_0/clk_wiz_0.xci}] -directory {$CORE_DIR/ip_user_files/sim_scripts} -ip_user_files_dir {$CORE_DIR/ip_user_files} -ipstatic_source_dir {$CORE_DIR/ip_user_files/ipstatic} -use_ip_compiled_libs -force -quiet
