@@ -1,0 +1,133 @@
+{
+    "template": {
+        "name": "Hd Sink",
+        "description": "Decodes HDMI data on port 2 of the Hd",
+        "boards": ["AuV2"],
+        "priority": 7
+    },
+    "project": {
+            "type": "V1.3",
+            "projectName": "Hd Sink",
+            "board": "Alchitry Au V2",
+            "sourceFiles": [
+                {
+                    "file": {
+                        "type": "DiskFile",
+                        "path": "source/alchitry_top.luc"
+                    },
+                    "top": true
+                },
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Conditioning/reset_conditioner.luc"
+                    }
+                },
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Video/DVI/dvi_globals.luc"
+                    }
+                },
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Memory/simple_dual_port_ram.v"
+                    }
+                },
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Memory/fifo.luc"
+                    }
+                },
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Video/TMDS/serdes_ddr_1_to_10.v"
+                    }
+                },
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Video/TMDS/tmds_bit_align.luc"
+                    }
+                },
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Video/TMDS/tmds_channel_align.luc"
+                    }
+                },
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Primitives/ibufds.v"
+                    }
+                },
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Video/DVI/dvi_clocks.v"
+                    }
+                },
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Video/TMDS/tmds_decoder.luc"
+                    }
+                },
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Video/DVI/dvi_decoder.luc"
+                    }
+                },
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Pulses/edge_detector.luc"
+                    }
+                },
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Interfaces/i2c_peripheral.luc"
+                    }
+                },
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Video/hdmi_decoder.luc"
+                    }
+                },
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Video/edid_rom.luc"
+                    }
+                },
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Primitives/idelayctrl.v"
+                    }
+                }
+            ],
+            "constraintFiles": [
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Constraints/alchitry.acf"
+                    }
+                },
+                {
+                    "file": {
+                        "type": "Component",
+                        "path": "Constraints/hd_v2.acf"
+                    }
+                }
+            ],
+            "ipCores": []
+        }
+    }

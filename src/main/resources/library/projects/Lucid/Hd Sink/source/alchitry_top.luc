@@ -1,0 +1,73 @@
+module alchitry_top (
+    input clk,              // 100MHz clock
+    input rst_n,            // reset button (active low)
+    output led[8],          // 8 user controllable LEDs
+    input usb_rx,           // USB->Serial input
+    output usb_tx,          // USB->Serial output
+    inout hdmi_sda_2,
+    input hdmi_scl_2,
+    inout hdmi_cec_2,
+    output hdmi_hp_2,
+    input hdmi_clk_2_p,
+    input hdmi_clk_2_n,
+    input hdmi_data_2_p[3],
+    input hdmi_data_2_n[3]
+) {
+
+    sig rst // reset signal
+
+    // used to make 200MHz reference clock for the idelayctrl
+    clk_wiz_0 clk_wiz(.clk_in(clk))
+
+    sig arst = !rst_n || !clk_wiz.locked
+
+    // required as hdmi_decoder uses IDELAYE2
+    idelayctrl idelayctrl(.refclk(clk_wiz.clk_200), .rst(arst))
+
+    hdmi_decoder hdmi (#MAX_CLK_FREQ(125_000_000), #MIN_CLK_FREQ(80_000_000), .rst(arst))
+
+    .clk(clk_wiz.clk_100) {
+        reset_conditioner reset_cond
+        .rst(rst) {
+            edid_rom edid(.sda(hdmi_sda_2), .scl(hdmi_scl_2))
+        }
+    }
+
+    .clk(hdmi.pclk) {
+        .rst(!hdmi.locked) { // !locked signal should be used for reset
+            dff frame[8]
+        }
+        dff red[8]
+        dff green[8]
+        dff blue[8]
+    }
+
+    always {
+        reset_cond.in = ~rst_n  // input raw inverted reset signal
+        rst = reset_cond.out    // conditioned reset
+
+        led = frame.q           // frame counter
+
+        usb_tx = usb_rx         // echo the serial data
+
+        // CEC not used
+        hdmi_cec_2 = bz
+
+        hdmi_hp_2 = 1 // signal there is a sink
+
+        hdmi.clock_p = hdmi_clk_2_p
+        hdmi.clock_n = hdmi_clk_2_n
+        hdmi.data_p = hdmi_data_2_p
+        hdmi.data_n = hdmi_data_2_n
+
+        if (hdmi.active) { // valid pixel data
+            // TODO: Do something with the data
+            red.d = hdmi.red
+            green.d = hdmi.green
+            blue.d = hdmi.blue
+        }
+
+        if (hdmi.vsync)
+            frame.d = frame.q + 1
+    }
+}
