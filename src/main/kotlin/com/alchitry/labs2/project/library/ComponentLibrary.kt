@@ -86,7 +86,8 @@ object ComponentLibrary {
                         initialWalk()
                         notationManager.assertNoErrors()
                         (module.sourceFile.file as Component).dependencies =
-                            getModuleDependents().map { it.sourceFile.file as Component }
+                            getModuleDependents().map { it.sourceFile.file as Component } +
+                                    context.signal.globalsUsed.map { it.sourceFile.file as Component }
                     }
                 }
             }
@@ -126,6 +127,7 @@ private data class MutableLibrarySection(
         val newList = list.subList(1, list.size)
         return subSections.getOrPut(key) { MutableLibrarySection(key) }.selectSubSection(newList)
     }
+
     fun sort() {
         components.sortBy { it.componentName }
         subSections.forEach { it.value.sort() }

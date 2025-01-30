@@ -1,9 +1,11 @@
 package com.alchitry.labs2.parsers.hdl.types
 
 import com.alchitry.labs2.parsers.hdl.ExprType
+import com.alchitry.labs2.project.files.SourceFile
 
 class GlobalNamespace(
     override val name: String,
+    val sourceFile: SourceFile,
     constants: Map<String, Constant>,
     val structs: Map<String, StructType>,
     enumList: List<EnumType>

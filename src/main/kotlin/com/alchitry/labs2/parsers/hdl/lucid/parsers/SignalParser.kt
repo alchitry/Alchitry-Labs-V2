@@ -21,7 +21,8 @@ fun ParserRuleContext.firstParentOrNull(condition: (ParserRuleContext) -> Boolea
 data class SignalParser(
     private val context: LucidExprContext,
     private val signals: MutableMap<SignalContext, SignalOrSubSignal> = mutableMapOf(),
-    private val signalWidths: MutableMap<SignalWidthContext, SignalWidth> = mutableMapOf()
+    private val signalWidths: MutableMap<SignalWidthContext, SignalWidth> = mutableMapOf(),
+    val globalsUsed: MutableSet<GlobalNamespace> = mutableSetOf()
 ) : LucidBaseListener() {
     fun withContext(context: LucidExprContext) = copy(context = context)
 
@@ -97,6 +98,10 @@ data class SignalParser(
 
             context.reportError(nameCtx.first(), "Failed to resolve signal \"${firstName.text}\"")
             return
+        }
+
+        if (signalOrParent is GlobalNamespace) {
+            globalsUsed.add(signalOrParent)
         }
 
         var usedChildren = 1

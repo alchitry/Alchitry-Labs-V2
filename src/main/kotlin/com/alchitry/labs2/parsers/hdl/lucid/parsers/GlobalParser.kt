@@ -46,7 +46,7 @@ class GlobalParser(
             )
 
         val global =
-            GlobalNamespace(name, constants.toMap(), structs.toMap(), enums.values.toList())
+            GlobalNamespace(name, context.sourceFile, constants.toMap(), structs.toMap(), enums.values.toList())
         if (!context.project.addGlobal(global)) {
             context.reportError(nameCtx, "The global name $name has already been used.")
             return
