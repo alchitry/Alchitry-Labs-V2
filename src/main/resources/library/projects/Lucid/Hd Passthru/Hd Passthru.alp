@@ -140,18 +140,6 @@
             {
                 "file": {
                     "type": "Component",
-                    "path": "Video/hdmi_encoder.luc"
-                }
-            },
-            {
-                "file": {
-                    "type": "Component",
-                    "path": "Video/hdmi_decoder.luc"
-                }
-            },
-            {
-                "file": {
-                    "type": "Component",
                     "path": "Primitives/idelayctrl.v"
                 }
             }
