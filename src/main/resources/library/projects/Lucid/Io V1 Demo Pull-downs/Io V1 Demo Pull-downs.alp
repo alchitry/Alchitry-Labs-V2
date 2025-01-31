@@ -1,6 +1,6 @@
 {
     "template": {
-        "name": "Io Demo V1 Pull-downs",
+        "name": "Io V1 Demo Pull-downs",
         "description": "Connects buttons/switches to LEDs and counts on the 7-segment LEDs with pull-downs",
         "boards": ["Au", "Au+"],
         "priority": 6

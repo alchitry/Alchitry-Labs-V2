@@ -3,7 +3,7 @@
         "name": "Hd Sink",
         "description": "Decodes HDMI data on port 2 of the Hd",
         "boards": ["AuV2"],
-        "priority": 7
+        "priority": 9
     },
     "project": {
             "type": "V1.3",

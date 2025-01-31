@@ -3,7 +3,7 @@
         "name": "Hd Source",
         "description": "Outputs HDMI test pattern on port 1 of the Hd at 1080p50",
         "boards": ["AuV2"],
-        "priority": 7
+        "priority": 9
     },
     "project": {
             "type": "V1.3",

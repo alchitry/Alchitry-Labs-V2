@@ -1,0 +1,61 @@
+{
+    "template": {
+        "name": "Ft Plus V2 Demo",
+        "description": "Echos data back through the Ft+ V2",
+        "boards": ["AuV2", "CuV2"],
+        "priority": 9
+    },
+    "project": {
+        "type": "V1.3",
+        "projectName": "Ft V2 Demo",
+        "board": "Alchitry Au V2",
+        "sourceFiles": [
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/alchitry_top.luc"
+                },
+                "top": true
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Conditioning/reset_conditioner.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Memory/simple_dual_port_ram.v"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Memory/async_fifo.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Interfaces/ft.luc"
+                }
+            }
+        ],
+        "constraintFiles": [
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Constraints/alchitry.acf"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Constraints/ft_plus_v2.acf"
+                }
+            }
+        ],
+        "ipCores": []
+    }
+}
