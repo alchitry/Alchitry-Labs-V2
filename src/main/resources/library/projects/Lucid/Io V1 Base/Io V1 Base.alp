@@ -1,14 +1,14 @@
 {
     "template": {
-        "name": "Io Base V1 Pull-downs",
-        "description": "Minimum boilerplate project for the Io element with pull-downs",
-        "boards": ["Au", "Au+"],
+        "name": "Io V1 Base",
+        "description": "Minimum boilerplate project for the Io element",
+        "boards": ["Au", "Au+", "Cu"],
         "priority": 5
     },
     "project": {
         "type": "V1.3",
-        "projectName": "Io Base",
-        "board": "Alchitry Au",
+        "projectName": "Io V1 Base",
+        "board": "Alchitry Cu",
         "sourceFiles": [
             {
                 "file": {
@@ -34,7 +34,7 @@
             {
                 "file": {
                     "type": "Component",
-                    "path": "Constraints/io_v1_pulldown.acf"
+                    "path": "Constraints/io_v1.acf"
                 }
             }
         ],
