@@ -20,7 +20,6 @@ enum class Artix7IoStandard(
 ) : IoStandard {
     BLVDS_25("2.5", slew = null),
     DIFF_HSTL_I("1.5", inputAnyVcco = true, directions = PinDirection.single),
-    DIFF_HSTL_I_12("1.2", inputAnyVcco = true, directions = PinDirection.single),
     DIFF_HSTL_I_18("1.8", inputAnyVcco = true, directions = PinDirection.single),
     DIFF_HSTL_II("1.5", inputAnyVcco = true),
     DIFF_HSTL_II_18("1.8", inputAnyVcco = true),
