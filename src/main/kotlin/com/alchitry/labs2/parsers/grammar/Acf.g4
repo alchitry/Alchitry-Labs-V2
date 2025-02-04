@@ -22,9 +22,6 @@ arrayIndex: '[' INT ']';
 
 number : INT | REAL;
 
-PULLUP: 'pullup';
-PULLDOWN: 'pulldown';
-
 semi: NL | (NL* SEMICOLON) | EOF;
 
 SEMICOLON : ';';
