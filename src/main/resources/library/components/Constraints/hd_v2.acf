@@ -1,35 +1,33 @@
-/**
-    "name" : "Hd V2",
-    "description" : "Pin constraints for the Hd V2 element."
-**/
-STANDARD(LVCMOS33), PINOUT(V2) { // standard 3.3V IO standard
-    pin hdmi_sda_1 A70
-    pin hdmi_scl_1 A72
-    pin hdmi_cec_1 A76
-    pin hdmi_hp_1 A78
+PINOUT(V2) {
+    STANDARD(LVCMOS33) { // standard 3.3V IO standard
+        pin hdmi_sda_1 A70
+        pin hdmi_scl_1 A72
+        pin hdmi_cec_1 A76
+        pin hdmi_hp_1 A78
 
-    pin hdmi_sda_2 A69
-    pin hdmi_scl_2 A71
-    pin hdmi_cec_2 A75
-    pin hdmi_hp_2 A77
-}
+        pin hdmi_sda_2 A69
+        pin hdmi_scl_2 A71
+        pin hdmi_cec_2 A75
+        pin hdmi_hp_2 A77
+    }
 
-STANDARD(TMDS_33) { // HDMI IO standard
-    pin hdmi_clk_1_p A48
-    pin hdmi_clk_1_n A46
-    pin hdmi_data_1_p[0] A54
-    pin hdmi_data_1_n[0] A52
-    pin hdmi_data_1_p[1] A60
-    pin hdmi_data_1_n[1] A58
-    pin hdmi_data_1_p[2] A66
-    pin hdmi_data_1_n[2] A64
+    STANDARD(TMDS_33) { // HDMI IO standard
+        pin hdmi_clk_1_p A48
+        pin hdmi_clk_1_n A46
+        pin hdmi_data_1_p[0] A54
+        pin hdmi_data_1_n[0] A52
+        pin hdmi_data_1_p[1] A60
+        pin hdmi_data_1_n[1] A58
+        pin hdmi_data_1_p[2] A66
+        pin hdmi_data_1_n[2] A64
 
-    pin hdmi_clk_2_p A47
-    pin hdmi_clk_2_n A45
-    pin hdmi_data_2_p[0] A53
-    pin hdmi_data_2_n[0] A51
-    pin hdmi_data_2_p[1] A59
-    pin hdmi_data_2_n[1] A57
-    pin hdmi_data_2_p[2] A65
-    pin hdmi_data_2_n[2] A63
+        pin hdmi_clk_2_p A47
+        pin hdmi_clk_2_n A45
+        pin hdmi_data_2_p[0] A53
+        pin hdmi_data_2_n[0] A51
+        pin hdmi_data_2_p[1] A59
+        pin hdmi_data_2_n[1] A57
+        pin hdmi_data_2_p[2] A65
+        pin hdmi_data_2_n[2] A63
+    }
 }
