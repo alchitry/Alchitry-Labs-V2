@@ -27,17 +27,19 @@ import com.alchitry.labs2.windows.LocalLabsState
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 
+class SerialState {
+    val scope: CoroutineScope = CoroutineScope(Dispatchers.Default)
+    var connected by mutableStateOf(false)
+    var selectedBoard by mutableStateOf<Pair<Board, Int>?>(null)
+    var baudRate by mutableStateOf(1000000)
+    var connectionJob by mutableStateOf<Job?>(null)
+}
+
 @Composable
 fun SerialTerminalToolbar(
-    scope: CoroutineScope,
-    onConnectionChanged: (Boolean) -> Unit,
+    state: SerialState,
     withDevice: suspend (SerialDevice) -> Unit
 ) {
-    var selectedBoard by remember { mutableStateOf<Pair<Board, Int>?>(null) }
-    var baudRate by remember { mutableStateOf(1000000) }
-    var connectionJob by remember { mutableStateOf<Job?>(null) }
-    var connected by remember { mutableStateOf(false) }
-
     val labsState = LocalLabsState.current
     val detectedBoards by labsState.detectedBoards
     var attachedToBoard by labsState.attachedToBoard
@@ -50,46 +52,44 @@ fun SerialTerminalToolbar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        var rateText by remember { mutableStateOf(baudRate.toString()) }
-        val rateCorrect = rateText == baudRate.toString()
-        DeviceSelector(detectedBoards, connected) { selectedBoard = it }
+        var rateText by remember { mutableStateOf(state.baudRate.toString()) }
+        val rateCorrect = rateText == state.baudRate.toString()
+        DeviceSelector(detectedBoards, state.connected) { state.selectedBoard = it }
         TextField(
             value = rateText,
             onValueChange = {
                 rateText = it
-                it.toIntOrNull()?.coerceAtLeast(1)?.let { d -> baudRate = d }
+                it.toIntOrNull()?.coerceAtLeast(1)?.let { d -> state.baudRate = d }
             },
             label = { Text("Baud Rate") },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            enabled = !connected,
+            enabled = !state.connected,
             isError = !rateCorrect
         )
-        if (!connected) {
+        if (!state.connected) {
             ToolbarButton(
                 painterResource("icons/link.svg"),
                 "Connect",
                 size = 52.dp,
-                enabled = selectedBoard != null && rateCorrect && !attachedToBoard,
+                enabled = state.selectedBoard != null && rateCorrect && !attachedToBoard,
             ) {
-                connectionJob = scope.launch {
-                    val selection = selectedBoard ?: return@launch
+                state.connectionJob = state.scope.launch {
+                    val selection = state.selectedBoard ?: return@launch
                     try {
                         attachedToBoard = true
-                        connected = true
-                        onConnectionChanged(true)
+                        state.connected = true
 
                         UsbUtil.openSerial(selection.first, selection.second)?.use { device ->
-                            device.setBaudrate(baudRate)
+                            device.setBaudrate(state.baudRate)
                             withDevice(device)
                         }
                     } catch (_: CancellationException) {
                     } catch (e: Exception) {
                         Log.error("Connection failed: ${e.message}")
-                        connectionJob?.cancel("Connection failed: ${e.message}")
+                        state.connectionJob?.cancel("Connection failed: ${e.message}")
                     } finally {
                         attachedToBoard = false
-                        connected = false
-                        onConnectionChanged(false)
+                        state.connected = false
                     }
                 }
 
@@ -100,7 +100,7 @@ fun SerialTerminalToolbar(
                 "Disconnect",
                 size = 52.dp,
             ) {
-                connectionJob?.cancel()
+                state.connectionJob?.cancel()
             }
         }
     }
@@ -109,9 +109,9 @@ fun SerialTerminalToolbar(
 class SerialTerminal(
     override var parent: TabPanel
 ) : Tab {
-    private val scope = CoroutineScope(Dispatchers.Default)
     private val console = Console()
     private val textFlow = MutableSharedFlow<String>(extraBufferCapacity = 8192)
+    private val state = SerialState()
 
     @Composable
     override fun label() {
@@ -120,13 +120,11 @@ class SerialTerminal(
 
     @Composable
     override fun content() {
-        var connected by remember { mutableStateOf(false) }
-
         Surface {
             Box(Modifier.fillMaxSize())
             Column {
 
-                SerialTerminalToolbar(scope, { connected = it }) { device ->
+                SerialTerminalToolbar(state) { device ->
                     val buffer = ByteArray(1024)
 
                     coroutineScope {
@@ -168,14 +166,14 @@ class SerialTerminal(
                             }
                         }
                 ) {
-                    console.show(hasFocus && connected)
+                    console.show(hasFocus && state.connected)
                 }
             }
         }
     }
 
     override fun onClose(save: Boolean): Boolean {
-        scope.cancel("Tab closed.")
+        state.scope.cancel("Tab closed.")
         return true
     }
 }

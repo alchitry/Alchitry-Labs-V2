@@ -11,8 +11,6 @@ import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.hardware.usb.SerialDevice
 import com.alchitry.labs2.ui.main.Console
 import com.alchitry.labs2.ui.theme.AlchitryColors
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 
@@ -146,8 +144,7 @@ sealed class RegisterRequest {
 class RegisterInterface(
     override var parent: TabPanel
 ) : Tab {
-    val scope = CoroutineScope(Dispatchers.Default)
-    var connected by mutableStateOf(false)
+    val state = SerialState()
     val console = Console()
     val requests = MutableSharedFlow<RegisterRequest>(extraBufferCapacity = 256)
 
@@ -181,7 +178,7 @@ class RegisterInterface(
         Surface {
             Box(Modifier.fillMaxSize())
             Column {
-                SerialTerminalToolbar(scope, { connected = it }) { device ->
+                SerialTerminalToolbar(state) { device ->
                     device.setTimeouts(1000, 1000)
                     requests.collect { request ->
                         try {
@@ -235,7 +232,7 @@ class RegisterInterface(
                         signSelector = true
                     ) { valueState = it }
 
-                    val valid = addressState.valid && valueState.valid && connected
+                    val valid = addressState.valid && valueState.valid && state.connected
                     Button(onClick = {
                         requests.tryEmit(RegisterRequest.BasicRead(addressState.value))
                     }, enabled = valid) { Text("Read") }
@@ -249,7 +246,7 @@ class RegisterInterface(
     }
 
     override fun onClose(save: Boolean): Boolean {
-        scope.cancel("Tab closed.")
+        state.scope.cancel("Tab closed.")
         return true
     }
 }
