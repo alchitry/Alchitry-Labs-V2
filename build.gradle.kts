@@ -108,7 +108,7 @@ compose.desktop {
     }
 }
 
-val conveyorCommand = "conveyor"
+val conveyorCommand = "/home/justin/.npm-global/bin/conveyor"
 fun TaskContainer.registerConveyorTask(name: String, arg: String? = null) {
     register(name) {
         group = "conveyor"
