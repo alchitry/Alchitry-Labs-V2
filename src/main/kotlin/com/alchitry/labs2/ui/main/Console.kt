@@ -30,12 +30,12 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.ui.theme.AlchitryTypography
+import com.alchitry.labs2.ui.theme.ubuntuMonoFont
 import kotlinx.coroutines.*
 import me.tongfei.progressbar.ProgressBarConsumer
 import kotlin.math.roundToInt
@@ -85,7 +85,7 @@ class Console {
                     withStyle(
                         SpanStyle(
                             color = AlchitryColors.current.ProgressBar,
-                            fontFamily = FontFamily.Monospace // Ubuntu font doesn't have the needed unicode characters
+                            fontFamily = ubuntuMonoFont
                         )
                     ) { append(it) }
                 }
@@ -378,8 +378,8 @@ fun MiniScrollBar(
         miniTextHeight = miniText.height
         actualHeight = miniText.height.coerceIn(constraints.minHeight, constraints.maxHeight)
         val actualWidth = miniText.width.coerceIn(constraints.minWidth, constraints.maxWidth)
-        val boxHeight = (miniText.height * visiblePercent).roundToInt()
-        val boxStart = (miniText.height * startPercent).roundToInt()
+        val boxHeight = (miniText.height * visiblePercent).let { if (it.isNaN()) 0f else it }.roundToInt()
+        val boxStart = (miniText.height * startPercent).let { if (it.isNaN()) 0f else it }.roundToInt()
 
         val oversizeOffset =
             ((miniText.height - actualHeight) * (startPercent / (1f - visiblePercent))).let { if (it.isNaN()) 0f else it }
