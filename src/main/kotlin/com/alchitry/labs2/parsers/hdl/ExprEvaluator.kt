@@ -617,6 +617,11 @@ data class ExprEvaluator<T : ParserRuleContext>(
             return
         }
 
+        if (shiftAmount < 0) {
+            context.reportError(children[1], "Shift amount must greater or equal to zero.")
+            return
+        }
+
         exprs[ctx] = when (operator) {
             ">>" -> value ushr shiftAmount
             ">>>" -> value shr shiftAmount

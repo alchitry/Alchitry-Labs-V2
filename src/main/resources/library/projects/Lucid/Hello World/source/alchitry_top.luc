@@ -15,8 +15,8 @@ module alchitry_top (
         
         .rst(rst) {
             greeter greeter // instance of our greeter
-            uart_rx uart_rx(#BAUD(1000000), #CLK_FREQ(100000000))
-            uart_tx uart_tx(#BAUD(1000000), #CLK_FREQ(100000000))
+            uart_rx uart_rx(#BAUD(1_000_000), #CLK_FREQ(100_000_000))
+            uart_tx uart_tx(#BAUD(1_000_000), #CLK_FREQ(100_000_000))
         }
     }
     

@@ -52,11 +52,11 @@ module uart_rx #(
         dff bit_ctr[3]       // bit counter
         dff saved_data[8]    // received data
         dff new_data_buffer  // new data flag buffer
-        dff rxd              // input buffer
+        dff rxd[3]           // input buffer
     }
 
     always {
-        rxd.d = rx    // buffer rx
+        rxd.d = c{rxd.q[-2:0], rx} // buffer rx
         new_data_buffer.d = 0 // default to 0
 
         // outputs
@@ -76,8 +76,8 @@ module uart_rx #(
             States.IDLE:
                 bit_ctr.d = 0                              // reset counter
                 ctr.d = 0                                  // reset counter
-                if (rxd.q == 0)                            // if rx line is low (start bit)
-                    state.d = States.WAIT_HALF             // switch state
+                if (rxd.q[-1] == 0)                        // if rx line is low (start bit)
+                    state.d = States.WAIT_FULL             // switch state
 
             States.WAIT_HALF:
                 ctr.d = ctr.q + 1                          // increment the counter
@@ -87,23 +87,23 @@ module uart_rx #(
                 }
 
             States.WAIT_FULL:
-                ctr.d = ctr.q + 1                              // increment counter
-                if (ctr.q == CLK_PER_BIT - 1) {                // if ctr is the max value
-                    saved_data.d = c{rxd.q, saved_data.q[7:1]} // shift in new data
-                    bit_ctr.d = bit_ctr.q + 1                  // increment bit counter
-                    ctr.d = 0                                  // reset counter
-                    if (bit_ctr.q == 7) {                      // if we have received 8 bits
-                        state.d = States.WAIT_HIGH             // switch state
-                        new_data_buffer.d = 1                  // signal new byte received
+                ctr.d = ctr.q + 1                                  // increment counter
+                if (ctr.q == CLK_PER_BIT - 1) {                    // if ctr is the max value
+                    saved_data.d = c{rxd.q[-1], saved_data.q[7:1]} // shift in new data
+                    bit_ctr.d = bit_ctr.q + 1                      // increment bit counter
+                    ctr.d = 0                                      // reset counter
+                    if (bit_ctr.q == 7) {                          // if we have received 8 bits
+                        state.d = States.WAIT_HIGH                 // switch state
+                        new_data_buffer.d = 1                      // signal new byte received
                     }
                 }
 
             States.WAIT_HIGH:
-                if (rxd.q == 1)                             // wait for input to go high (idle)
-                    state.d = States.IDLE                   // switch state
+                if (rxd.q[-1] == 1)                        // wait for input to go high (idle)
+                    state.d = States.IDLE                  // switch state
 
             default:
-                state.d = States.IDLE                       // if in an invalid state, reset to idle
+                state.d = States.IDLE                      // if in an invalid state, reset to idle
         }
     }
 }

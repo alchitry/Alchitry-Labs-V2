@@ -2,7 +2,7 @@ module hello_world_rom (
     input address[4],  // ROM address
     output letter[8]   // ROM output
 ) {
-    const TEXT = $reverse("Hello World\r\n") // text indicies are reversed so 'H' is address [0]
+    const TEXT = $reverse("Hello World!\r\n") // text indicies are reversed so 'H' is address [0]
     
     always {
         letter = TEXT[address] // address indexes 8 bit blocks of TEXT
