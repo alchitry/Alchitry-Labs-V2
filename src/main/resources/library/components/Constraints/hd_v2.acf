@@ -1,3 +1,7 @@
+/**
+    "name" : "Hd V2",
+    "description" : "Pin constraints for the Hd V2 element."
+**/
 PINOUT(V2) {
     STANDARD(LVCMOS33) { // standard 3.3V IO standard
         pin hdmi_sda_1 A70
