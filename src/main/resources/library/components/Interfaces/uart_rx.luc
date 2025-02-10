@@ -77,7 +77,7 @@ module uart_rx #(
                 bit_ctr.d = 0                              // reset counter
                 ctr.d = 0                                  // reset counter
                 if (rxd.q[-1] == 0)                        // if rx line is low (start bit)
-                    state.d = States.WAIT_FULL             // switch state
+                    state.d = States.WAIT_HALF             // switch state
 
             States.WAIT_HALF:
                 ctr.d = ctr.q + 1                          // increment the counter
