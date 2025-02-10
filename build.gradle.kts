@@ -88,7 +88,7 @@ tasks.test {
 
 tasks.withType<KotlinCompile> {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_17)
+        jvmTarget.set(JvmTarget.JVM_23)
         freeCompilerArgs.add("-opt-in=kotlin.contracts.ExperimentalContracts")
         freeCompilerArgs.add("-opt-in=kotlin.ExperimentalStdlibApi")
         freeCompilerArgs.add("-opt-in=kotlinx.serialization.ExperimentalSerializationApi")
@@ -99,7 +99,7 @@ tasks.withType<KotlinCompile> {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(23)
 }
 
 compose.desktop {
