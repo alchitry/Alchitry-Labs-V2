@@ -73,7 +73,7 @@ fun NewProjectDialog(visible: Boolean, onClose: () -> Unit) {
 
         var projectName by remember { mutableStateOf("") }
         var workspace by remember { mutableStateOf(File(Locations.workspace)) }
-        var board by remember { mutableStateOf<Board>(Board.AlchitryAuV2) }
+        var board by remember { mutableStateOf(Settings.boardType?.let { Board.fromName(it) } ?: Board.AlchitryAuV2) }
         var template by remember { mutableStateOf<ProjectTemplate?>(null) }
 
         Column(Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
@@ -128,6 +128,7 @@ fun NewProjectDialog(visible: Boolean, onClose: () -> Unit) {
                                 try {
                                     template?.instantiate(projectName, workspace, board)?.let {
                                         Settings.workspace = workspace.absolutePath
+                                        Settings.boardType = board.name
                                         onClose()
                                     }
                                 } catch (e: IllegalStateException) {

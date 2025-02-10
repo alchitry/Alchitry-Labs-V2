@@ -15,9 +15,9 @@ import kotlin.reflect.KProperty
 object Settings {
     private val pref = Preferences.userNodeForPackage(Settings::class.java)
 
-    private class StringSetting(private val key: String, default: String?) {
+    private class StringSetting(private val key: String, private val default: String?) {
         private var value by mutableStateOf(pref.get(key, default))
-        operator fun getValue(thisRef: Any?, property: KProperty<*>): String? = value
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): String? = value ?: default
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String?) {
             this.value = value
             if (value != null) pref.put(key, value) else pref.remove(key)
@@ -25,7 +25,7 @@ object Settings {
 
     }
 
-    private class BooleanSetting(private val key: String, private val default: Boolean) {
+    private class BooleanSetting(private val key: String, default: Boolean) {
         private var value by mutableStateOf(pref.getBoolean(key, default))
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Boolean = value
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Boolean) {
@@ -34,7 +34,7 @@ object Settings {
         }
     }
 
-    private class IntSetting(private val key: String, private val default: Int) {
+    private class IntSetting(private val key: String, default: Int) {
         private var value by mutableStateOf(pref.getInt(key, default))
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Int = value
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {
@@ -43,7 +43,7 @@ object Settings {
         }
     }
 
-    private class FloatSetting(private val key: String, private val default: Float) {
+    private class FloatSetting(private val key: String, default: Float) {
         private var value by mutableStateOf(pref.getFloat(key, default))
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Float = value
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Float) {
@@ -122,6 +122,7 @@ object Settings {
     var consoleHeight by IntSetting("CONSOLE_HEIGHT", 200)
     var openProject by StringSetting("OPEN_PROJECT", null)
     var workspace by StringSetting("WORKSPACE", null)
+    var boardType by StringSetting("BOARD_TYPE", null)
     var darkTheme by BooleanSetting("DARK_THEME", true)
     var wordWrap by BooleanSetting("WORD_WRAP", true)
 
