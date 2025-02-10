@@ -99,7 +99,7 @@ sealed class FileProvider {
 
             override fun serialize(encoder: Encoder, value: DiskFile) {
                 encoder.encodeStructure(descriptor) {
-                    encodeStringElement(descriptor, 0, value.path.toString())
+                    encodeStringElement(descriptor, 0, value.path.toString().replace("\\", "/"))
                 }
 
             }

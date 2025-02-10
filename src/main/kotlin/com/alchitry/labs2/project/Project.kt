@@ -113,7 +113,7 @@ data class Project(
 
     fun saveAs(file: File) {
         val alpData = AlchitryLabsProjectData(data)
-        val text = json.encodeToString(AlchitryLabsProjectData.serializer(), alpData)
+        val text = json.encodeToString(AlchitryLabsProjectData.serializer(), alpData).replace("\r\n", "\n")
         file.writeText(text)
     }
 
