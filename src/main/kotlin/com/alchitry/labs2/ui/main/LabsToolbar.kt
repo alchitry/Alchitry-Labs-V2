@@ -99,7 +99,7 @@ fun LabsToolbar() {
                 var uiScale by remember { mutableStateOf(Settings.uiScale) }
                 RadioMenuItem(
                     label = { Text("UI Scale") },
-                    items = listOf(0.75f, 1f, 1.25f, 1.5f, 2f, 2.5f, 3f),
+                    items = listOf(0.75f, 0.9f, 1f, 1.1f, 1.25f, 1.5f, 2f, 2.5f, 3f),
                     labeler = { Text("${(it * 100).roundToInt()}%") },
                     selected = uiScale
                 ) {
