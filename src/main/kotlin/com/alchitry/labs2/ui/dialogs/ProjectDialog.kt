@@ -127,6 +127,7 @@ fun NewProjectDialog(visible: Boolean, onClose: () -> Unit) {
                             scope.launch(Dispatchers.IO) {
                                 try {
                                     template?.instantiate(projectName, workspace, board)?.let {
+                                        Settings.workspace = workspace.absolutePath
                                         onClose()
                                     }
                                 } catch (e: IllegalStateException) {

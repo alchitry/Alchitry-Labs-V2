@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -49,7 +50,8 @@ fun LabsToolbar() {
     }
 
     Row {
-        IconMenu(painterResource("icons/alchitry_icon.svg"), "Menu") {
+        val icon = if (Settings.darkTheme) "icons/alchitry_icon.svg" else "icons/alchitry_icon_black.svg"
+        IconMenu(painterResource(icon), "Menu", colorFilter = null) {
             MenuItem({ Text("New Project...") }) {
                 showProjectDialog = true
             }
@@ -96,15 +98,22 @@ fun LabsToolbar() {
                     Settings.useIceCube = it == toolchains[1]
                 }
 
-                var uiScale by remember { mutableStateOf(Settings.uiScale) }
                 RadioMenuItem(
                     label = { Text("UI Scale") },
                     items = listOf(0.75f, 0.9f, 1f, 1.1f, 1.25f, 1.5f, 2f, 2.5f, 3f),
                     labeler = { Text("${(it * 100).roundToInt()}%") },
-                    selected = uiScale
+                    selected = Settings.uiScale
                 ) {
-                    uiScale = it
                     Settings.uiScale = it
+                }
+
+                RadioMenuItem(
+                    label = { Text("Theme") },
+                    items = listOf(false, true),
+                    labeler = { Text(if (it) "Dark" else "Light") },
+                    selected = Settings.darkTheme
+                ) {
+                    Settings.darkTheme = it
                 }
             }
 
@@ -317,6 +326,7 @@ fun ToolbarPreview() {
 fun IconMenu(
     iconPainter: Painter,
     description: String,
+    colorFilter: ColorFilter? = ColorFilter.tint(MaterialTheme.colorScheme.onBackground),
     enabled: Boolean = true,
     menu: @Composable MenuBarContext.() -> Unit
 ) {
@@ -344,7 +354,7 @@ fun IconMenu(
             },
             icon = iconPainter,
             description = description,
-            colorFilter = null,
+            colorFilter = colorFilter,
             enabled = enabled
         )
         with(menuBarContext) {

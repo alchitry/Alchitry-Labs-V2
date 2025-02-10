@@ -65,7 +65,7 @@ data object DarkAlchitryColors : AlchitryColors {
     override val Info = Color(0xFF29A2CC)
 
     override val scheme = darkColorScheme(
-        primary = Color(0xFFAF7D17),
+        primary = Accent,
         onPrimary = Color.White,
         secondary = Color(0xFF4B4B41),
         onSecondary = Color.White,
@@ -95,10 +95,10 @@ data object LightAlchitryColors : AlchitryColors {
     override val MenuBarBackground = Color(0xFF424242)
 
     override val GutterForeground = Color(0xFFA1A1A1)
-    override val LineHighlight = Accent.copy(alpha = 0.05f)
-    override val TokenHighlight = Accent.copy(alpha = 0.1f)
+    override val LineHighlight = Accent.copy(alpha = 0.1f)
+    override val TokenHighlight = Accent.copy(alpha = 0.2f)
 
-    override val SelectionColor = Color(0xFF6C5600)
+    override val SelectionColor = Accent.copy(alpha = 0.5f)
 
     override val Success = Color(0xFF1BC91B)
     override val Warning = Color(0xFFCBCB18)
@@ -107,8 +107,17 @@ data object LightAlchitryColors : AlchitryColors {
 
     override val scheme = lightColorScheme(
         primary = Accent,
+        secondary = Color(0xFF4B4B41),
+        onSecondary = Color.White,
         error = Error,
         onError = Color.White,
+        background = Color(0xFFCCCCCC),
+        onBackground = Color.Black,
+        surface = Color.White,
+        onSurface = Color.Black,
+        surfaceTint = Color(0xFF333333),
+        //surfaceVariant = Color(0xFF333333),
+        //onSurfaceVariant = Color(0xFFA1A1A1),
     )
 }
 

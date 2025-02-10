@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
@@ -353,7 +352,7 @@ fun MiniScrollBar(
             Box(
                 Modifier
                     .alpha(0.1f)
-                    .background(Color.White)
+                    .background(LocalContentColor.current)
                     .fillMaxSize()
                     .pointerInput(Unit) {
                         awaitEachGesture {

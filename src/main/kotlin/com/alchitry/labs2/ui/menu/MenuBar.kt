@@ -225,6 +225,7 @@ fun MenuBarContext.MenuParent(
                     Spacer(Modifier.weight(1f))
                     Image(
                         painter = painterResource("icons/arrow.svg"),
+                        colorFilter = ColorFilter.tint(LocalContentColor.current),
                         contentDescription = null,
                         contentScale = ContentScale.Fit,
                         modifier = Modifier.size(20.dp).rotate(-90f)

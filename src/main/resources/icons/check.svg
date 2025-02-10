@@ -9,9 +9,6 @@
             </cc:Work>
         </rdf:RDF>
     </metadata>
-    <g display="none">
-        <rect x="1.942" y="1.942" width="22.058" height="22.058" stroke="#000" stroke-width="2.8771"/>
-    </g>
     <g transform="translate(0 -1027.4)" display="none">
         <path transform="translate(0 1027.4)" d="m10 2h5v13h6l-8.5 7.5-8.5-7.5h6z" fill="#fff"/>
         <path transform="translate(0 1027.4)" d="m10.5 2.5h4v13h5l-7 6.5-7-6.5h5z" fill="none" stroke="#fff"/>

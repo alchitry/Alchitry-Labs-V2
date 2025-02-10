@@ -17,6 +17,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
@@ -37,7 +38,8 @@ fun <T> SelectionContext<T>.TreeItem(
     var focused by remember { mutableStateOf(false) }
     val isSelected by remember { isSelectedState(selectable) }
 
-    Row(Modifier
+    Row(
+        Modifier
         .fillMaxWidth()
         .onFocusChanged { focused = it.hasFocus }
         .focusRequester(focusRequester)
@@ -63,7 +65,12 @@ fun <T> SelectionContext<T>.TreeItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (icon != null) {
-            Image(icon, null, Modifier.padding(end = 8.dp).size(20.dp))
+            Image(
+                icon,
+                null,
+                colorFilter = ColorFilter.tint(LocalContentColor.current),
+                modifier = Modifier.padding(end = 8.dp).size(20.dp)
+            )
         }
         Text(title, color = color ?: LocalContentColor.current, modifier = Modifier.padding(bottom = 4.dp))
     }
