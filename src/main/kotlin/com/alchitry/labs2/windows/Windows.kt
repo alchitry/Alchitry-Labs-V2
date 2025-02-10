@@ -6,10 +6,12 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import com.alchitry.labs2.Env
+import com.alchitry.labs2.Settings
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import kotlinx.coroutines.delay
 import java.awt.Color
@@ -74,7 +76,17 @@ fun ApplicationScope.openWindow(
         SideEffect { mainWindow = this.window }
 
         CompositionLocalProvider(LocalComposeWindow provides this.window) {
-            Layout(content = { body(windowState) }) { measurables, constraints ->
+            Layout(content = {
+                val factor = Settings.uiScale
+                CompositionLocalProvider(
+                    LocalDensity provides Density(
+                        density.density * factor,
+                        density.fontScale * factor
+                    )
+                ) {
+                    body(windowState)
+                }
+            }) { measurables, constraints ->
                 if (packContent) {
                     val minX = measurables.maxOf { it.minIntrinsicWidth(Int.MAX_VALUE) }
                     val minY = measurables.maxOf { it.minIntrinsicHeight(minX) }
@@ -107,6 +119,7 @@ fun ApplicationScope.openWindow(
                         placeable.placeRelative(x = 0, y = 0)
                     }
                 }
+
             }
         }
     }

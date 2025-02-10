@@ -32,6 +32,7 @@ import com.alchitry.labs2.windows.LocalLabsState
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @Composable
 fun LabsToolbar() {
@@ -95,6 +96,16 @@ fun LabsToolbar() {
                     Settings.useIceCube = it == toolchains[1]
                 }
 
+                var uiScale by remember { mutableStateOf(Settings.uiScale) }
+                RadioMenuItem(
+                    label = { Text("UI Scale") },
+                    items = listOf(0.75f, 1f, 1.25f, 1.5f, 2f, 2.5f, 3f),
+                    labeler = { Text("${(it * 100).roundToInt()}%") },
+                    selected = uiScale
+                ) {
+                    uiScale = it
+                    Settings.uiScale = it
+                }
             }
 
             MenuItem({ Text("Switch to Alchitry Loader") }) {

@@ -1,5 +1,8 @@
 package com.alchitry.labs2
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
@@ -13,33 +16,54 @@ object Settings {
     private val pref = Preferences.userNodeForPackage(Settings::class.java)
 
     private class StringSetting(private val key: String, private val default: String?) {
-        operator fun getValue(thisRef: Any?, property: KProperty<*>): String? = pref.get(key, default)
-        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String?) =
+        private var value by mutableStateOf(pref.get(key, default))
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): String? = value
+        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String?) {
+            this.value = value
             if (value != null) pref.put(key, value) else pref.remove(key)
+        }
+
     }
 
     private class BooleanSetting(private val key: String, private val default: Boolean) {
-        operator fun getValue(thisRef: Any?, property: KProperty<*>): Boolean = pref.getBoolean(key, default)
-        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Boolean) = pref.putBoolean(key, value)
+        private var value by mutableStateOf(pref.getBoolean(key, default))
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): Boolean = value
+        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Boolean) {
+            this.value = value
+            pref.putBoolean(key, value)
+        }
     }
 
     private class IntSetting(private val key: String, private val default: Int) {
-        operator fun getValue(thisRef: Any?, property: KProperty<*>): Int = pref.getInt(key, default)
-        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) = pref.putInt(key, value)
+        private var value by mutableStateOf(pref.getInt(key, default))
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): Int = value
+        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {
+            this.value = value
+            pref.putInt(key, value)
+        }
     }
 
     private class FloatSetting(private val key: String, private val default: Float) {
-        operator fun getValue(thisRef: Any?, property: KProperty<*>): Float = pref.getFloat(key, default)
-        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Float) = pref.putFloat(key, value)
+        private var value by mutableStateOf(pref.getFloat(key, default))
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): Float = value
+        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Float) {
+            this.value = value
+            pref.putFloat(key, value)
+        }
     }
 
     private class EnumSetting<E : Enum<E>>(private val key: String, private val default: E) {
-        operator fun getValue(thisRef: Any?, property: KProperty<*>): E {
-            val storedName = pref.get(key, default.name)
-            return default::class.java.enumConstants.firstOrNull { it.name == storedName } ?: default
-        }
+        private var value by mutableStateOf(
+            pref.get(key, default.name).let { storedName ->
+                default::class.java.enumConstants.firstOrNull { it.name == storedName } ?: default
+            }
+        )
 
-        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: E) = pref.put(key, value.name)
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): E = value
+        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: E) {
+            this.value = value
+            pref.put(key, value.name)
+        }
     }
 
     private class WindowStateSetting(private val prefix: String, private val default: WindowState) {
@@ -106,7 +130,7 @@ object Settings {
     var iceCubeLicense by StringSetting("ICECUBE_LICENSE", null)
     var useIceCube by BooleanSetting("USE_ICECUBE", true)
 
-    var fontScale by FloatSetting("FONT_SCALE", 1.0f)
+    var uiScale by FloatSetting("UI_SCALE", 1.0f)
     var errorReporting by BooleanSetting("ERROR_REPORTING", false)
     var errorReportingPrompted by BooleanSetting("ERROR_REPORTING_PROMPTED", false)
     var loaderBinFile by StringSetting("LOADER_BIN_FILE", null)
