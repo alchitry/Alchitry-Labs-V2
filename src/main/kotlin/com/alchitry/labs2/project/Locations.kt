@@ -19,7 +19,8 @@ object Locations {
     val toolsDirectory =
         System.getProperty("alchitry.tools.dir")?.let { Paths.get(it).toFile() } ?: appDirectory.resolve("tools")
 
-    val workspace: String = Settings.workspace ?: PathUtil.assemblePath(
+    val workspace: String
+        get() = Settings.workspace ?: PathUtil.assemblePath(
         FileSystemView.getFileSystemView().defaultDirectory.path,
         "alchitry"
     )

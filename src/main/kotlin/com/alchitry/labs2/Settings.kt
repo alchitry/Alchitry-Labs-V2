@@ -15,7 +15,7 @@ import kotlin.reflect.KProperty
 object Settings {
     private val pref = Preferences.userNodeForPackage(Settings::class.java)
 
-    private class StringSetting(private val key: String, private val default: String?) {
+    private class StringSetting(private val key: String, default: String?) {
         private var value by mutableStateOf(pref.get(key, default))
         operator fun getValue(thisRef: Any?, property: KProperty<*>): String? = value
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String?) {
