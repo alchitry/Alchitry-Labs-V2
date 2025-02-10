@@ -82,7 +82,7 @@ data object VivadoBuilder : ProjectBuilder() {
         if (binFile.exists()) {
             binFile.copyTo(project.binFile)
 
-            when (didTimingPass(project)) {
+            when (didTimingPass(project, topModuleName)) {
                 true -> Log.success("Project built successfully.")
                 false -> Log.warn("Project built but failed to meet timing.")
                 null -> Log.warn("Project built but timing was unchecked.")
@@ -95,12 +95,12 @@ data object VivadoBuilder : ProjectBuilder() {
         }
     }
 
-    private suspend fun didTimingPass(project: Project): Boolean? = withContext(Dispatchers.IO) {
+    private suspend fun didTimingPass(project: Project, topModuleName: String): Boolean? = withContext(Dispatchers.IO) {
         val timingReport = project.buildDirectory
             .resolve("vivado")
             .resolve("${project.data.projectName}.runs")
             .resolve("impl_1")
-            .resolve("alchitry_top_timing_summary_routed.rpt")
+            .resolve("${topModuleName}_timing_summary_routed.rpt")
         if (!timingReport.exists()) {
             Log.warn("The timing report could not be located! Checked: $timingReport")
             return@withContext null
