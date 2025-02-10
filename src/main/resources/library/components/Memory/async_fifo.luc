@@ -36,11 +36,16 @@
    empty is 0. If you want to perform a read, simply check if empty is 0 and
    if it is read the value of dout and set rget high to advance to the next
    value.
+
+   SYNC_STAGES is used to set the number of chained dffs used when crossing
+   clock domains. 3 is usually a good default, but fewer can be used when latency
+   is a priority over reliability.
 */
 
 module async_fifo #(
-    WIDTH = 4 : WIDTH > 0, // Size of the data
-    ENTRIES = 8 : ENTRIES == $pow(2,$clog2(ENTRIES)) // ENTRIES must be a power of 2
+    WIDTH ~ 4 : WIDTH > 0, // Size of the data
+    ENTRIES ~ 8 : ENTRIES == $pow(2,$clog2(ENTRIES)), // ENTRIES must be a power of 2
+    SYNC_STAGES = 3 : SYNC_STAGES >= 2 // Number of synchronizing stages
 )(
     input wclk, // write clock
     input wrst, // write reset
@@ -60,14 +65,14 @@ module async_fifo #(
     // write clock domain
     .clk(wclk), .rst(wrst) {
         dff waddr[ADDR_SIZE] // write address
-        dff wsync[3][ADDR_SIZE] // write sync dffs
+        dff wsync[SYNC_STAGES][ADDR_SIZE] // write sync dffs
         dff gwsync[ADDR_SIZE]
     }
 
     // read clock domain
     .clk(rclk), .rst(rrst) {
         dff raddr[ADDR_SIZE] // read address
-        dff rsync[3][ADDR_SIZE] // read sync dffs
+        dff rsync[SYNC_STAGES][ADDR_SIZE] // read sync dffs
         dff grsync[ADDR_SIZE]
     }
 
@@ -91,22 +96,22 @@ module async_fifo #(
 
         // convert the various values to their gray-encoded versions
         wnext = waddr.q + 1
-        waddr_gray = waddr.q[ADDR_SIZE-1:1] ^ waddr.q
-        wnext_gray = wnext[ADDR_SIZE-1:1] ^ wnext
-        raddr_gray = raddr.q[ADDR_SIZE-1:1] ^ raddr.q
+        waddr_gray = waddr.q[-1:1] ^ waddr.q
+        wnext_gray = wnext[-1:1] ^ wnext
+        raddr_gray = raddr.q[-1:1] ^ raddr.q
 
         gwsync.d = waddr_gray
         grsync.d = raddr_gray
 
         // cross clock domains with synchronizers
-        rsync.d = {rsync.q[1], rsync.q[0], gwsync.q}
-        wsync.d = {wsync.q[1], wsync.q[0], grsync.q}
+        rsync.d = c{rsync.q[-2:0], {gwsync.q}}
+        wsync.d = c{wsync.q[-2:0], {grsync.q}}
 
         // if next write address isn't the read address we can write
-        wrdy = wnext_gray != wsync.q[2]
+        wrdy = wnext_gray != wsync.q[-1]
 
         // if the current read address isn't the write address we can read
-        rrdy = raddr_gray != rsync.q[2]
+        rrdy = raddr_gray != rsync.q[-1]
 
         // invert ready signals for full and empty
         full = !wrdy
