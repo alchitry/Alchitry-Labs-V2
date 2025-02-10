@@ -11,7 +11,7 @@ globalStat
   | enumDec
   ;
 
-module: 'module' NL* name NL* paramList? NL* portList NL* moduleBody;
+module: 'module' NL* name NL* (paramList NL*)? portList NL* moduleBody;
 testBench: 'testbench' NL* name NL* moduleBody;
 
 paramList: '#(' NL* (paramDec (NL* ',' NL* paramDec)* NL*)? ')';
