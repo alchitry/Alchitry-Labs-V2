@@ -53,6 +53,7 @@ import com.alchitry.labs2.ui.code_editor.styles.BasicIndenter
 import com.alchitry.labs2.ui.code_editor.styles.BracketIndenter
 import com.alchitry.labs2.ui.code_editor.styles.CodeFormatter
 import com.alchitry.labs2.ui.code_editor.styles.CodeStyler
+import com.alchitry.labs2.ui.code_editor.styles.acf.AcfFormatter
 import com.alchitry.labs2.ui.code_editor.styles.lucid.LucidFormatter
 import com.alchitry.labs2.ui.code_editor.tooltip.NotationTooltipProvider
 import com.alchitry.labs2.ui.gestures.detectEditorActions
@@ -181,7 +182,8 @@ class CodeEditorState(
 
         codeFormatter = when (file.language) {
             Languages.Lucid -> LucidFormatter(this)
-            Languages.ACF, Languages.Verilog -> BracketIndenter(this)
+            Languages.ACF -> AcfFormatter(this)
+            Languages.Verilog -> BracketIndenter(this)
             else -> BasicIndenter(this)
         }
     }

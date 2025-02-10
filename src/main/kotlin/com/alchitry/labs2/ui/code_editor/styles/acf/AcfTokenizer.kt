@@ -20,7 +20,6 @@ object AcfTokenizer : EditorTokenizer {
 
         return tokenStream.tokens.map { token ->
             val style = when (token.type) {
-                AcfLexer.Tokens.PULLUP.id, AcfLexer.Tokens.PULLDOWN.id -> LucidStyle.signed
                 AcfLexer.Tokens.COMMENT.id, AcfLexer.Tokens.BLOCK_COMMENT.id -> LucidStyle.comment
                 AcfLexer.Tokens.FREQ_UNIT.id, AcfLexer.Tokens.INT.id -> LucidStyle.value
                 AcfLexer.Tokens.REAL.id -> LucidStyle.realValue

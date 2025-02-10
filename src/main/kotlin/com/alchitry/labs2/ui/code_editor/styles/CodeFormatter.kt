@@ -72,7 +72,7 @@ class BasicIndenter(private val codeEditorState: CodeEditorState) : CodeFormatte
 }
 
 
-class BracketIndenter(private val codeEditorState: CodeEditorState) : CodeFormatter {
+open class BracketIndenter(private val codeEditorState: CodeEditorState) : CodeFormatter {
     private fun bracketOffsetProvider(parseTree: ParseTree, tokenStream: TokenStream): IntRange {
         val interval = parseTree.sourceInterval
         val startOffset: Int

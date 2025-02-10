@@ -34,7 +34,7 @@ INT: [0-9]+;
 
 BLOCK_COMMENT: ('/*' .*? '*/') -> channel(HIDDEN);
 COMMENT: ('//' ~[\r\n]*) -> channel(HIDDEN);
-WS: [ \t]+ -> skip;
+WS: [ \t]+ -> channel(HIDDEN);
 
 fragment A:('a'|'A');
 fragment B:('b'|'B');

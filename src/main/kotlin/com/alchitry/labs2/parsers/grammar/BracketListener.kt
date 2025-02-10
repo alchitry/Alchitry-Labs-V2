@@ -73,36 +73,36 @@ interface BracketListener : ParseTreeListener {
 	 */
 	fun exitCommentBlock(ctx: BracketParser.CommentBlockContext)
 
-    override fun asSuspend(): SuspendBracketListener = object : SuspendBracketListener {
+	override fun asSuspend(): SuspendBracketListener = object : SuspendBracketListener {
         override suspend fun enterSource(ctx: BracketParser.SourceContext) = this@BracketListener.enterSource(ctx)
         override suspend fun exitSource(ctx: BracketParser.SourceContext) = this@BracketListener.exitSource(ctx)
 
         override suspend fun enterBlock(ctx: BracketParser.BlockContext) = this@BracketListener.enterBlock(ctx)
         override suspend fun exitBlock(ctx: BracketParser.BlockContext) = this@BracketListener.exitBlock(ctx)
 
-        override suspend fun enterParenBlock(ctx: BracketParser.ParenBlockContext) =
-            this@BracketListener.enterParenBlock(ctx)
+		override suspend fun enterParenBlock(ctx: BracketParser.ParenBlockContext) =
+			this@BracketListener.enterParenBlock(ctx)
 
-        override suspend fun exitParenBlock(ctx: BracketParser.ParenBlockContext) =
-            this@BracketListener.exitParenBlock(ctx)
+		override suspend fun exitParenBlock(ctx: BracketParser.ParenBlockContext) =
+			this@BracketListener.exitParenBlock(ctx)
 
-        override suspend fun enterSquareBlock(ctx: BracketParser.SquareBlockContext) =
-            this@BracketListener.enterSquareBlock(ctx)
+		override suspend fun enterSquareBlock(ctx: BracketParser.SquareBlockContext) =
+			this@BracketListener.enterSquareBlock(ctx)
 
-        override suspend fun exitSquareBlock(ctx: BracketParser.SquareBlockContext) =
-            this@BracketListener.exitSquareBlock(ctx)
+		override suspend fun exitSquareBlock(ctx: BracketParser.SquareBlockContext) =
+			this@BracketListener.exitSquareBlock(ctx)
 
-        override suspend fun enterCurlyBlock(ctx: BracketParser.CurlyBlockContext) =
-            this@BracketListener.enterCurlyBlock(ctx)
+		override suspend fun enterCurlyBlock(ctx: BracketParser.CurlyBlockContext) =
+			this@BracketListener.enterCurlyBlock(ctx)
 
-        override suspend fun exitCurlyBlock(ctx: BracketParser.CurlyBlockContext) =
-            this@BracketListener.exitCurlyBlock(ctx)
+		override suspend fun exitCurlyBlock(ctx: BracketParser.CurlyBlockContext) =
+			this@BracketListener.exitCurlyBlock(ctx)
 
-        override suspend fun enterCommentBlock(ctx: BracketParser.CommentBlockContext) =
-            this@BracketListener.enterCommentBlock(ctx)
+		override suspend fun enterCommentBlock(ctx: BracketParser.CommentBlockContext) =
+			this@BracketListener.enterCommentBlock(ctx)
 
-        override suspend fun exitCommentBlock(ctx: BracketParser.CommentBlockContext) =
-            this@BracketListener.exitCommentBlock(ctx)
+		override suspend fun exitCommentBlock(ctx: BracketParser.CommentBlockContext) =
+			this@BracketListener.exitCommentBlock(ctx)
 
         override suspend fun enterEveryRule(ctx: ParserRuleContext) = this@BracketListener.enterEveryRule(ctx)
         override suspend fun exitEveryRule(ctx: ParserRuleContext) = this@BracketListener.exitEveryRule(ctx)
