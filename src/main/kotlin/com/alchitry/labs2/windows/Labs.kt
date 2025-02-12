@@ -33,6 +33,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
+import org.jline.utils.Log
 import java.io.File
 
 val LocalLabsState = compositionLocalOf<LabsState> { error("No LabsState provided!") }
@@ -43,7 +44,7 @@ data class LabsState(
 )
 
 @Composable
-fun ApplicationScope.labsWindow() {
+fun ApplicationScope.labsWindow(projectPath: String?) {
     openWindow(
         "Alchitry Labs",
         Settings.labsWindowState,
@@ -70,11 +71,15 @@ fun ApplicationScope.labsWindow() {
 
         LaunchedEffect(Unit) {
             Env.mode = Env.Mode.Labs
-            Settings.openProject?.let {
+            (projectPath ?: Settings.openProject)?.let {
                 if (Project.current == null) {
                     try {
                         Project.open(File(it))
-                    } catch (_: Exception) {
+                    } catch (e: Exception) {
+                        if (projectPath != null) {
+                            Log.error("Failed to open project file $it")
+                            Log.error(e.message ?: "")
+                        }
                     }
                 }
             }

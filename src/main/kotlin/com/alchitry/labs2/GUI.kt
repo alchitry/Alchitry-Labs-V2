@@ -18,11 +18,11 @@ fun main(args: Array<String>) {
         System.err.println("Warning: OS detection failed!")
     }
 
-    // TODO: open project files from command line
+    val projectPath = args.firstOrNull()
 
     application {
         when (activeWindow) {
-            Settings.WindowType.Labs -> labsWindow()
+            Settings.WindowType.Labs -> labsWindow(projectPath)
             Settings.WindowType.Loader -> loaderWindow()
         }
     }
