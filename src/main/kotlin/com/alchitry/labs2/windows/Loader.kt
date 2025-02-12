@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
@@ -21,12 +20,10 @@ import com.alchitry.labs2.Settings
 import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.hardware.usb.BoardLoader
 import com.alchitry.labs2.hardware.usb.UsbUtil
-import com.alchitry.labs2.switchActiveWindow
 import com.alchitry.labs2.ui.components.AlchitryToolTip
 import com.alchitry.labs2.ui.components.WindowDecoration
 import com.alchitry.labs2.ui.dialogs.openFileDialog
-import com.alchitry.labs2.ui.main.IconMenu
-import com.alchitry.labs2.ui.menu.MenuItem
+import com.alchitry.labs2.ui.main.LoaderToolbar
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.ui.theme.AlchitryTheme
 import kotlinx.coroutines.delay
@@ -79,11 +76,7 @@ fun ApplicationScope.loaderWindow() {
         AlchitryTheme {
             Column {
                 WindowDecoration(state) {
-                    IconMenu(painterResource("icons/alchitry_icon.svg"), "Main Menu") {
-                        MenuItem({ Text("Switch to Alchitry Labs") }) {
-                            switchActiveWindow(Settings.WindowType.Labs)
-                        }
-                    }
+                    LoaderToolbar()
                 }
 
                 val focusManger = LocalFocusManager.current
