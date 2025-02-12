@@ -21,7 +21,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose") version "2.1.0"
     kotlin("plugin.serialization") version "2.0.10"
     id("org.jetbrains.compose") version "1.7.3"
-    id("dev.hydraulic.conveyor") version "1.10"
+    id("dev.hydraulic.conveyor") version "1.12"
     id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
     id("org.openjfx.javafxplugin") version "0.1.0"
 }
@@ -88,7 +88,7 @@ tasks.test {
 
 tasks.withType<KotlinCompile> {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_23)
+        jvmTarget.set(JvmTarget.JVM_22)
         freeCompilerArgs.add("-opt-in=kotlin.contracts.ExperimentalContracts")
         freeCompilerArgs.add("-opt-in=kotlin.ExperimentalStdlibApi")
         freeCompilerArgs.add("-opt-in=kotlinx.serialization.ExperimentalSerializationApi")
@@ -99,7 +99,7 @@ tasks.withType<KotlinCompile> {
 }
 
 kotlin {
-    jvmToolchain(23)
+    jvmToolchain(22)
 }
 
 compose.desktop {
