@@ -123,6 +123,8 @@ object Settings {
     var openProject by StringSetting("OPEN_PROJECT", null)
     var workspace by StringSetting("WORKSPACE", null)
     var boardType by StringSetting("BOARD_TYPE", null)
+    var rebuildStale by BooleanSetting("REBUILD_STALE", true)
+    var askForRebuild by BooleanSetting("ASK_REBUILD", true)
     var darkTheme by BooleanSetting("DARK_THEME", true)
     var wordWrap by BooleanSetting("WORD_WRAP", true)
 

@@ -93,7 +93,8 @@ data class Project(
         }
     }
 
-    fun binFileIsUpToDate(): Boolean = binFile.lastModified() >= lastModified() && binFile.lastModified() > 0L
+    fun binFileIsUpToDate(): Boolean? =
+        if (binFile.lastModified() == 0L) null else binFile.lastModified() >= lastModified()
     fun lastModified(): Long {
         return max(
             data.sourceFiles.mapNotNull { (it.file as? FileProvider.DiskFile)?.file?.lastModified() }.maxOrNull()

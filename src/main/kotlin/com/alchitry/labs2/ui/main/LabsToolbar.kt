@@ -99,6 +99,24 @@ fun LabsToolbar() {
                 }
 
                 RadioMenuItem(
+                    label = { Text("Rebuild Stale Bin") },
+                    items = listOf(null, true, false),
+                    labeler = {
+                        Text(
+                            when (it) {
+                                true -> "Rebuild"
+                                false -> "Skip"
+                                null -> "Ask"
+                            }
+                        )
+                    },
+                    selected = if (Settings.askForRebuild) null else Settings.rebuildStale,
+                ) {
+                    Settings.askForRebuild = it == null
+                    Settings.rebuildStale = it ?: true
+                }
+
+                RadioMenuItem(
                     label = { Text("UI Scale") },
                     items = listOf(0.75f, 0.9f, 1f, 1.1f, 1.25f, 1.5f, 2f, 2.5f, 3f),
                     labeler = { Text("${(it * 100).roundToInt()}%") },
@@ -240,51 +258,73 @@ fun LabsToolbar() {
 
         val canLoad = boardDetected && project != null && !attachedToBoard
 
-        ToolbarButton(
-            icon = painterResource("icons/load.svg"),
-            description = "Load Flash",
-            enabled = !running && canLoad
-        ) {
-            runWithProject {
-                if (!it.binFileIsUpToDate()) {
-                    Log.info("Bin file is outdated. Building project...")
-                    if (!it.build()) {
-                        Log.error("Can't load the project because the build failed!")
-                        return@runWithProject
+        suspend fun loadProject(project: Project, shouldRebuild: Boolean, flash: Boolean) {
+            when (project.binFileIsUpToDate()) {
+                true -> {}
+                false -> {
+                    if (shouldRebuild) {
+                        Log.info("Bin file is outdated. Rebuilding project...")
+                        if (!project.build()) {
+                            Log.error("Can't load the project because the build failed!")
+                            return
+                        }
+                    } else {
+                        Log.warn("Bin file is outdated. Skipping rebuild...")
                     }
                 }
-                try {
-                    attachedToBoard = true
-                    BoardLoader.load(it.data.board, 0, it.binFile, true)
-                } finally {
-                    attachedToBoard = false
+
+                null -> {
+                    Log.info("Bin file does not exist. Building project...")
+                    if (!project.build()) {
+                        Log.error("Can't load the project because the build failed!")
+                        return
+                    }
+                }
+            }
+            try {
+                attachedToBoard = true
+                BoardLoader.load(project.data.board, 0, project.binFile, flash)
+            } finally {
+                attachedToBoard = false
+            }
+        }
+
+        var showRebuildDialog by remember { mutableStateOf(false) }
+        var shouldFlash by remember { mutableStateOf(false) }
+        RebuildProjectDialog(showRebuildDialog) { shouldRebuild ->
+            showRebuildDialog = false
+            if (shouldRebuild == null) return@RebuildProjectDialog
+            runWithProject { loadProject(it, shouldRebuild, shouldFlash) }
+        }
+
+        fun load(flash: Boolean) {
+            runWithProject {
+                when (it.binFileIsUpToDate()) {
+                    true -> loadProject(it, shouldRebuild = false, flash = flash)
+                    false -> if (Settings.askForRebuild) {
+                        shouldFlash = flash
+                        showRebuildDialog = true
+                    } else {
+                        loadProject(it, Settings.rebuildStale, flash)
+                    }
+
+                    null -> loadProject(it, shouldRebuild = true, flash = flash)
                 }
             }
         }
 
+        ToolbarButton(
+            icon = painterResource("icons/load.svg"),
+            description = "Load Flash",
+            enabled = !running && canLoad
+        ) { load(true) }
+
         if (project?.data?.board?.supportsRamLoading == true) {
             ToolbarButton(
-                onClick = {
-                    runWithProject {
-                        if (!it.binFileIsUpToDate()) {
-                            Log.info("Bin file is outdated. Building project...")
-                            if (!it.build()) {
-                                Log.error("Can't load the project because the build failed!")
-                                return@runWithProject
-                            }
-                        }
-                        try {
-                            attachedToBoard = true
-                            BoardLoader.load(it.data.board, 0, it.binFile, false)
-                        } finally {
-                            attachedToBoard = false
-                        }
-                    }
-                },
                 icon = painterResource("icons/load_temp.svg"),
                 description = "Load RAM",
                 enabled = !running && canLoad
-            )
+            ) { load(false) }
         }
         ToolbarButton(
             onClick = {
