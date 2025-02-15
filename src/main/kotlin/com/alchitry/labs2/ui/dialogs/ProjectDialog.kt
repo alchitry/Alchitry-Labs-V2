@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -61,7 +62,7 @@ private fun DialogButton(painter: Painter, label: String, onClick: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.clickable(onClick = onClick).padding(30.dp)
     ) {
-        Image(painter, label, Modifier.size(75.dp))
+        Image(painter, label, Modifier.size(75.dp), colorFilter = ColorFilter.tint(LocalContentColor.current))
         Text(label)
     }
 }
