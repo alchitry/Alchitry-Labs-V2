@@ -12,7 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import com.alchitry.labs2.Settings
 import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.addComponents
@@ -32,10 +35,16 @@ private val LocalSelectedComponents = compositionLocalOf<SnapshotStateList<Compo
 
 @Composable
 fun ComponentLibraryDialog(visible: Boolean, onClose: () -> Unit) {
+    val density = LocalDensity.current
+    val factor = Settings.uiScale
+
     AlchitryDialog(visible, "Component Library", resizable = true, onClose = onClose) {
         val selectedComponents = remember { mutableStateListOf<Component>() }
         val selectionContext = remember { SingleSelectionContext<Component?>() }
-        CompositionLocalProvider(LocalSelectedComponents provides selectedComponents) {
+        CompositionLocalProvider(LocalDensity provides Density(
+            density.density * factor,
+            density.fontScale * factor
+        ), LocalSelectedComponents provides selectedComponents) {
             Column(Modifier.defaultMinSize(800.dp, 500.dp).background(MaterialTheme.colorScheme.background)) {
                 val library = ComponentLibrary.library
                 Box(Modifier.weight(1f)) {
