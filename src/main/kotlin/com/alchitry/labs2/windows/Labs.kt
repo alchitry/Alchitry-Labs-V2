@@ -27,7 +27,6 @@ import com.alchitry.labs2.ui.dialogs.ProjectDialog
 import com.alchitry.labs2.ui.main.Console
 import com.alchitry.labs2.ui.main.LabsToolbar
 import com.alchitry.labs2.ui.tabs.Workspace
-import com.alchitry.labs2.ui.theme.AlchitryTheme
 import com.alchitry.labs2.ui.tree.ProjectTree
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -98,55 +97,53 @@ fun ApplicationScope.labsWindow(projectPath: String?) {
         }
 
         CompositionLocalProvider(LocalLabsState provides labsState) {
-            AlchitryTheme {
-                Column {
-                    WindowDecoration(state) {
-                        LabsToolbar()
-                    }
+            Column {
+                WindowDecoration(state) {
+                    LabsToolbar()
+                }
 
-                    ProjectDialog {
-                        val focusManger = LocalFocusManager.current
-                        Box(
-                            Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.background)
-                                .pointerInput(Unit) { detectTapGestures { focusManger.clearFocus() } }
-                        ) {
-                            Column {
-                                Sash(
-                                    first = {
-                                        Sash(
-                                            first = {
-                                                Surface(Modifier.matchParentSize()) {
-                                                    ProjectTree()
-                                                }
-                                            },
-                                            second = {
-                                                Workspace.content()
-                                            },
-                                            orientation = Orientation.Horizontal,
-                                            sashData = rememberSashData(
-                                                resizePriority = ResizePriority.SECOND,
-                                                first = Settings.fileListWidth.toFloat(),
-                                                minimumSize = 100.dp to 100.dp
-                                            ),
-                                            onResize = { Settings.fileListWidth = it.size.first.toInt() }
-                                        )
-                                    },
-                                    second = {
-                                        Surface(Modifier.matchParentSize()) {
-                                            Console.main.show()
-                                        }
-                                    },
-                                    orientation = Orientation.Vertical,
-                                    sashData = rememberSashData(
-                                        resizePriority = ResizePriority.FIRST,
-                                        second = Settings.consoleHeight.toFloat(),
-                                        minimumSize = 200.dp to 10.dp
-                                    ),
-                                    onResize = { Settings.consoleHeight = it.size.second.toInt() }
-                                )
-                            }
+                ProjectDialog {
+                    val focusManger = LocalFocusManager.current
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                            .pointerInput(Unit) { detectTapGestures { focusManger.clearFocus() } }
+                    ) {
+                        Column {
+                            Sash(
+                                first = {
+                                    Sash(
+                                        first = {
+                                            Surface(Modifier.matchParentSize()) {
+                                                ProjectTree()
+                                            }
+                                        },
+                                        second = {
+                                            Workspace.content()
+                                        },
+                                        orientation = Orientation.Horizontal,
+                                        sashData = rememberSashData(
+                                            resizePriority = ResizePriority.SECOND,
+                                            first = Settings.fileListWidth.toFloat(),
+                                            minimumSize = 100.dp to 100.dp
+                                        ),
+                                        onResize = { Settings.fileListWidth = it.size.first.toInt() }
+                                    )
+                                },
+                                second = {
+                                    Surface(Modifier.matchParentSize()) {
+                                        Console.main.show()
+                                    }
+                                },
+                                orientation = Orientation.Vertical,
+                                sashData = rememberSashData(
+                                    resizePriority = ResizePriority.FIRST,
+                                    second = Settings.consoleHeight.toFloat(),
+                                    minimumSize = 200.dp to 10.dp
+                                ),
+                                onResize = { Settings.consoleHeight = it.size.second.toInt() }
+                            )
                         }
                     }
                 }

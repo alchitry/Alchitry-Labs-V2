@@ -13,7 +13,6 @@ import com.alchitry.labs2.ui.theme.AlchitryTheme
 import com.alchitry.labs2.windows.LocalComposeWindow
 import java.awt.Dimension
 import java.awt.Point
-import kotlin.math.roundToInt
 
 @Composable
 fun AlchitryDialog(
@@ -56,10 +55,7 @@ fun AlchitryDialog(
                         // the offsets adjust for window decorations
                         val offsetX = dialogWindow.size.width - dialogWindow.rootPane.size.width
                         val offsetY = dialogWindow.size.height - dialogWindow.rootPane.size.height
-                        Dimension(
-                            (minX + offsetX).toDp().value.roundToInt(),
-                            (minY + offsetY).toDp().value.roundToInt()
-                        ).also {
+                        Dimension(minX + offsetX, minY + offsetY).also {
                             dialogWindow.minimumSize = it
                             dialogWindow.maximumSize = it
                             dialogWindow.size = it
