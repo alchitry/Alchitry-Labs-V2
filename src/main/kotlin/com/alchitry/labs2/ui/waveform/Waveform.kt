@@ -255,7 +255,7 @@ data class WaveformParent(
     override val name: String,
     val children: List<WaveformOrParent>
 ) : WaveformOrParent {
-    private var expanded by mutableStateOf(true)
+    private var expanded by mutableStateOf(false)
     private var height by mutableStateOf(0)
 
     @Composable

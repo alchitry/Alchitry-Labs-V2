@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import com.alchitry.labs2.Env
 import com.alchitry.labs2.Settings
-import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.ui.theme.AlchitryTheme
 import kotlinx.coroutines.delay
 import java.awt.Dimension
