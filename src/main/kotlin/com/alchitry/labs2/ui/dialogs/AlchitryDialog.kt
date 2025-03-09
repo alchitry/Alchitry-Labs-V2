@@ -12,6 +12,7 @@ import com.alchitry.labs2.ui.components.WindowDecoration
 import com.alchitry.labs2.ui.theme.AlchitryTheme
 import com.alchitry.labs2.windows.LocalComposeWindow
 import java.awt.Dimension
+import java.awt.GraphicsEnvironment
 import java.awt.Point
 
 @Composable
@@ -35,6 +36,7 @@ fun AlchitryDialog(
             val dialogWindow = this.window
             var updateMinSize by remember { mutableStateOf(true) }
 
+
             AlchitryTheme {
                 Layout(
                     content = {
@@ -55,7 +57,11 @@ fun AlchitryDialog(
                         // the offsets adjust for window decorations
                         val offsetX = dialogWindow.size.width - dialogWindow.rootPane.size.width
                         val offsetY = dialogWindow.size.height - dialogWindow.rootPane.size.height
-                        Dimension(minX + offsetX, minY + offsetY).also {
+                        val max = GraphicsEnvironment.getLocalGraphicsEnvironment().maximumWindowBounds
+                        Dimension(
+                            (minX + offsetX).coerceAtMost(max.width),
+                            (minY + offsetY).coerceAtMost(max.height)
+                        ).also {
                             dialogWindow.minimumSize = it
                             dialogWindow.maximumSize = it
                             dialogWindow.size = it

@@ -13,6 +13,7 @@ import com.alchitry.labs2.Settings
 import com.alchitry.labs2.ui.theme.AlchitryTheme
 import kotlinx.coroutines.delay
 import java.awt.Dimension
+import java.awt.GraphicsEnvironment
 import javax.swing.ImageIcon
 import kotlin.math.roundToInt
 
@@ -54,7 +55,11 @@ fun ApplicationScope.openWindow(
                 if (!packContent) {
                     // window sizes are in Dp even though they take Ints
                     window.minimumSize = with(density) {
-                        Dimension(minWidth.roundToPx(), minHeight.roundToPx())
+                        val max = GraphicsEnvironment.getLocalGraphicsEnvironment().maximumWindowBounds
+                        Dimension(
+                            minWidth.roundToPx().coerceAtMost(max.width),
+                            minHeight.roundToPx().coerceAtMost(max.height)
+                        )
                     }
                 }
                 delay(50) // need to wait for the window to open then resize it to the size we want
@@ -75,7 +80,11 @@ fun ApplicationScope.openWindow(
                 if (!packContent) {
                     // window sizes are in Dp even though they take Ints
                     window.minimumSize = with(density) {
-                        Dimension(minWidth.roundToPx(), minHeight.roundToPx())
+                        val max = GraphicsEnvironment.getLocalGraphicsEnvironment().maximumWindowBounds
+                        Dimension(
+                            minWidth.roundToPx().coerceAtMost(max.width),
+                            minHeight.roundToPx().coerceAtMost(max.height)
+                        )
                     }
                 }
             }
