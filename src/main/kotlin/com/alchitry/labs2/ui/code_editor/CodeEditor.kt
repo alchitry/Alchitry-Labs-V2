@@ -85,7 +85,7 @@ fun CodeEditor(
                                         textAlign = TextAlign.Right,
                                         modifier = Modifier
                                             .offset( // +1 offset to make text centered
-                                                y = state.lineTopOffset.dp * density.density + 1.dp
+                                                y = state.lineTopOffset.dp + 1.dp
                                             )
                                             .alpha(alpha)
                                     )
