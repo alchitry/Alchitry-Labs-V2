@@ -1,0 +1,44 @@
+global Geo {
+    const MAX_FP = 32h7FFFFFFF
+    const MIN_FP = 32h80000000
+    const DISP_H = 1280
+    const DISP_V = 720
+    const FP1616_1 = 32h00010000
+    
+    const ADDR_PER_FRAME = DISP_H * DISP_V * 16 / 128
+    const FRAME_BITS = $clog2(ADDR_PER_FRAME)
+    
+    const Z_BUFFER_MASK = 28h1000000
+    
+    struct dpt {
+        x[9],
+        y[9]
+    }
+    
+    struct p2d {
+        x[16],
+        y[16]
+    }
+    struct p3d {
+        signed x[32],
+        signed y[32],
+        signed z[32]
+    }
+    struct p4d {
+        signed x[35],
+        signed y[35],
+        signed z[35],
+        signed w[32]
+    }
+    
+    const LIGHT = {32d37837,$resize(-32d37837,32),$resize(-32d37837,32)}
+    
+    // Z-Clip is 100 to 1000
+    // reverse is used so that it can be typed in normal notaion and [0][0] is the top left
+    const PROJ_MAT = $reverse({
+            $reverse({32h06000000, 32d0, 32d0, 32d0}),
+            $reverse({32d0, 32h06000000, 32d0, 32d0}),
+            $reverse({32d0, 32d0, 32d80100, $resize(-32d14563556,32)}),
+            $reverse({32d0, 32d0, FP1616_1, 32d0})
+        })
+}

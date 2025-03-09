@@ -1,0 +1,49 @@
+module dot_product (
+    input clk,  // clock
+    input rst,  // reset
+    input in_valid,
+    input stall,
+    output out_valid,
+    output stalled,
+    input u<Geo.p3d>,
+    input v<Geo.p3d>,
+    output dot[48]
+) {
+    
+    .clk(clk) {
+        .rst(rst) {
+            dff valid_pipe[2]
+        }
+        
+        signed dff m[3][64]
+        signed dff sum[48]
+    }
+    
+    sig pipe_stalled
+    
+    always {
+        pipe_stalled = stall
+        dot = sum.q
+        out_valid = valid_pipe.q[1]
+        
+        /* Cycle 2 */
+        pipe_stalled = pipe_stalled && valid_pipe.q[1]
+        
+        if (!pipe_stalled) {
+            sum.d = m.q[0][16+:48] + m.q[1][16+:48] + m.q[2][16+:48]
+            valid_pipe.d[1] = valid_pipe.q[0]
+        }
+        
+        /* Cycle 1 */
+        pipe_stalled = pipe_stalled && valid_pipe.q[0]
+        
+        if (!pipe_stalled) {
+            valid_pipe.d[0] = in_valid
+            m.d[0] = $signed(u.x) * $signed(v.x)
+            m.d[1] = $signed(u.y) * $signed(v.y)
+            m.d[2] = $signed(u.z) * $signed(v.z)
+        }
+        
+        stalled = pipe_stalled
+    }
+}

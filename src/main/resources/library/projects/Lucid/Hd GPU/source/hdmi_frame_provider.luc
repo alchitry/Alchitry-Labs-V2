@@ -1,0 +1,80 @@
+module hdmi_frame_provider (
+    input mig_clk,
+    input pclk,
+    input rst, 
+    input pclk_rst,
+    input frame_id[2],
+    output request_next, // 1 = request new frame
+    output mem_in<Memory.in>,
+    input mem_out<Memory.out>,
+    input active, // 1 = x, y are valid and red, green, and blue are being read
+    input vsync,
+    output red[8],
+    output green[8],
+    output blue[8]
+) {
+    
+    enum State {WAIT, READ}
+    
+    .clk(mig_clk) {
+        .rst(rst) {
+            dff addr[Geo.FRAME_BITS]
+            dff state[$width(State)]
+        }
+    }
+    
+    .clk(pclk) {
+        .rst(pclk_rst) {
+            dff frame_stared[3]
+        }
+    }
+    
+    fifo_generator_0 fifo(.wr_clk(mig_clk), .rst(rst), .rd_clk(pclk))
+    
+    always {
+        mem_in.addr = c{frame_id, addr.q, 3b000}
+        mem_in.cmd = 1 // read
+        mem_in.enable = 0
+        mem_in.wr_data = 0
+        mem_in.wr_enable = 0
+        mem_in.wr_mask = 0
+        
+        request_next = 0
+        
+        sig r[5] = fifo.dout[11+:5]
+        sig g[6] = fifo.dout[5+:6]
+        sig b[5] = fifo.dout[0+:5]
+        red = c{r, r[4:2]}
+        green = c{g, g[5:4]}
+        blue = c{b, b[4:2]}
+        fifo.rd_en = active && &frame_stared.q
+        if (vsync && !&frame_stared.q)
+            frame_stared.d = frame_stared.q + 1
+        
+        fifo.wr_en = mem_out.rd_valid
+        repeat(i,8) {
+            fifo.din[i*16+:16] = mem_out.rd_data[(7-i)*16+:16]
+        }
+        
+        case (state.q) {
+            State.WAIT:
+                if (!fifo.prog_full || fifo.wr_rst_busy) {
+                    state.d = State.READ
+                }
+            State.READ:
+                mem_in.enable = 1
+                if (mem_out.rdy) {
+                    if (fifo.prog_full) {
+                        state.d = State.WAIT
+                    }
+                    addr.d = addr.q + 1
+                    if (addr.q == Geo.ADDR_PER_FRAME-1) {
+                        addr.d = 0
+                        request_next = 1
+                    }
+                }
+        }
+        
+        
+    }
+}

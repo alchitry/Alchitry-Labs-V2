@@ -1,0 +1,73 @@
+module model_provider (
+    input clk,  // clock
+    input rst,  // reset
+    input draw,
+    input stall,
+    output idle,
+    output valid,
+    output triangle[3]<Geo.p3d>,
+    output color[3][16]
+) {
+    enum State {IDLE, WAIT_FACE, GV1, GV2, GV3, GV4, WAIT}
+    
+    .clk(clk) {
+        suzanne_face_rom face
+        suzanne_vert_rom vert
+        
+        .rst(rst) {
+            dff state[$width(State)]
+        }
+        
+        dff face_addr[$clog2(FaceRom.FACES)]
+        dff t[3]<Geo.p3d>
+        dff c[3][16]
+    }
+    
+    always {
+        vert.addr = bx
+        face.addr = face_addr.q
+        
+        color = c.q
+        triangle = t.q
+        valid = 0   
+        
+        idle = state.q == State.IDLE
+        
+        case (state.q) {
+            State.IDLE:
+                face_addr.d = 0
+                if (draw) {
+                    state.d = State.WAIT_FACE
+                }
+            State.WAIT_FACE:
+                state.d = State.GV1
+            State.GV1:
+                vert.addr = face.face[0]
+                state.d = State.GV2
+            State.GV2:
+                vert.addr = face.face[1]
+                t.d[0] = vert.vert
+                c.d[0] = vert.color
+                state.d = State.GV3
+            State.GV3:
+                vert.addr = face.face[2]
+                t.d[1] = vert.vert
+                c.d[1] = vert.color
+                state.d = State.GV4
+            State.GV4:
+                t.d[2] = vert.vert
+                c.d[2] = vert.color
+                state.d = State.WAIT
+            State.WAIT:
+                if (!stall) {
+                    valid = 1
+                    if (face_addr.q == FaceRom.FACES-1) {
+                        state.d = State.IDLE
+                    } else {
+                        state.d = State.WAIT_FACE
+                        face_addr.d = face_addr.q + 1
+                    }
+                }
+        }
+    }
+}

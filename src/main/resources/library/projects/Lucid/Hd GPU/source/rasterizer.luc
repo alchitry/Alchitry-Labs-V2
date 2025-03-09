@@ -1,0 +1,88 @@
+module rasterizer (
+    input clk,  // clock
+    input rst,  // reset
+    input t[3]<Geo.p3d>,    // triangle points
+    input dr[32],         // 1/((y1-y2)(x0-x2) + (x2-x1)(y0-y2)) in 8.24 FP
+    input pt_min<Geo.p2d>,  // top left corner of bounding box
+    input pt_max<Geo.p2d>,  // bottom right corner of bounding box
+    input start,
+    output disp_addr[28], // address data
+    output valid,
+    output weights[3][32],
+    output z[3][32],
+    input stall,
+    output idle
+) {
+    
+    .clk(clk) {
+        .rst(rst) {
+            dff active
+            dff valid_pipe[7]
+        }
+        
+        barycentric_calc bary
+        
+        dff min<Geo.p2d>
+        dff max<Geo.p2d>
+        dff triangle[3]<Geo.p3d>
+        signed dff denom[32]
+        dff current_point<Geo.p2d>
+        dff covered_point[7]<Geo.p2d>
+    }
+    
+    sig covered
+    
+    sig invY[28]
+    sig dptx[16]
+    sig dpty[16]
+    
+    always {
+        valid = 0
+        idle = !active.q && !stall && (valid_pipe.q == 0)
+        
+        bary.t = triangle.q
+        bary.dr = denom.q
+        bary.pt = current_point.q
+        bary.stall = stall
+        
+        if (!stall) {
+            valid_pipe.d = c{valid_pipe.q[-2:0], active.q}
+            covered_point.d[0] = current_point.q
+            covered_point.d[6:1] = covered_point.q[5:0]
+            
+            if (!active.q && (valid_pipe.q == 0) && start) {
+                active.d = 1
+                max.d = pt_max
+                min.d = pt_min
+                triangle.d = t
+                denom.d = dr
+                current_point.d = pt_min
+            }
+            
+            if (active.q) {
+                current_point.d.x = current_point.q.x + 1
+                if (current_point.q.x == max.q.x) {
+                    current_point.d.x = min.q.x
+                    current_point.d.y = current_point.q.y + 1
+                    if (current_point.q.y == max.q.y) {
+                        active.d = 0
+                    }
+                }
+            }
+        }
+        
+        dptx = covered_point.q[6].x + (Geo.DISP_H/2)
+        dpty = covered_point.q[6].y + (Geo.DISP_V/2)
+        
+        invY = Geo.DISP_V - 1 - dpty // flip y so up is up
+        disp_addr = dptx + invY * Geo.DISP_H // x + y * X_RES
+        
+        repeat(i, 3)
+            z[i] = triangle.q[i].z
+        
+        covered = bary.covered
+        weights = bary.w
+        
+        valid = covered && !stall && valid_pipe.q[6]
+    }
+}

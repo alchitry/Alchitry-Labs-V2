@@ -1,0 +1,80 @@
+module bounding_box (
+    input clk,  // clock
+    input rst,  // reset
+    input stall,
+    input in_valid,
+    output stalled,
+    output out_valid,
+    input it[3]<Geo.p3d>,
+    output ot[3]<Geo.p3d>,
+    output max<Geo.p2d>,
+    output min<Geo.p2d>
+) {
+    
+    .clk(clk) {
+        .rst(rst) {
+            dff valid_pipe
+        }
+        dff t_pipe[3]<Geo.p3d>
+        dff dmax<Geo.p2d>
+        dff dmin<Geo.p2d>
+    }
+    
+    const DISP_BOUNDS_X = $fixed_point(Geo.DISP_H/2, 32, 16)
+    const DISP_BOUNDS_Y = $fixed_point(Geo.DISP_V/2, 32, 16)
+    
+    always {
+        ot = t_pipe.q
+        out_valid = valid_pipe.q
+        
+        stalled = stall && valid_pipe.q
+        
+        if (!stall || !valid_pipe.q) {
+            valid_pipe.d = in_valid
+            t_pipe.d = it
+            
+            signed sig maxy[32] = it[0].y
+            signed sig maxx[32] = it[0].x
+            signed sig miny[32] = it[0].y
+            signed sig minx[32] = it[0].x
+            
+            repeat(i, 2, 1) {
+                if ($signed(maxy) < $signed(it[i].y))
+                    maxy = it[i].y
+                if ($signed(maxx) < $signed(it[i].x))
+                    maxx = it[i].x
+                if ($signed(miny) > $signed(it[i].y))
+                    miny = it[i].y
+                if ($signed(minx) > $signed(it[i].x))
+                    minx = it[i].x
+            }
+            
+            // clamp to display edges
+            if ($signed(maxx) > $signed(DISP_BOUNDS_X))
+                maxx = DISP_BOUNDS_X
+            if ($signed(maxx) < $signed(-DISP_BOUNDS_X))
+                maxx = -DISP_BOUNDS_X
+            if ($signed(minx) > $signed(DISP_BOUNDS_X))
+                minx = DISP_BOUNDS_X
+            if ($signed(minx) < $signed(-DISP_BOUNDS_X))
+                minx = -DISP_BOUNDS_X
+            
+            if ($signed(maxy) > $signed(DISP_BOUNDS_Y))
+                maxy = DISP_BOUNDS_Y
+            if ($signed(maxy) < $signed(-DISP_BOUNDS_Y))
+                maxy = -DISP_BOUNDS_Y
+            if ($signed(miny) > $signed(DISP_BOUNDS_Y))
+                miny = DISP_BOUNDS_Y
+            if ($signed(miny) < $signed(-DISP_BOUNDS_Y))
+                miny = -DISP_BOUNDS_Y
+            
+            dmax.d.x = maxx[31:16]
+            dmax.d.y = maxy[31:16]
+            dmin.d.x = minx[31:16]
+            dmin.d.y = miny[31:16]
+        }
+        
+        max = dmax.q
+        min = dmin.q
+    }
+}

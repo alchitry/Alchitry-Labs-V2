@@ -1,0 +1,190 @@
+module shader (
+    input clk,  // clock
+    input rst,  // reset
+    input t_in[3]<Geo.p3d>,
+    input color_in[3][16],
+    input in_valid,
+    input stall,
+    output stalled,
+    output out_valid,
+    output color_out[3][16],
+    output t_out[3]<Geo.p3d>
+) {
+    
+    .clk(clk) {
+        .rst(rst) {
+            dff valid_pipe[4]
+            
+            cross_product cross
+            dot_product nn_dot
+            dot_product nl_dot
+            
+            fifo color_fifo(#ENTRIES(32), #WIDTH(16*3))
+            fifo tri_fifo(#ENTRIES(32), #WIDTH(3*3*32))
+            dff tri_reg[3*3*32]
+            dff color_reg[16*3]
+        }
+        
+        dff u<Geo.p3d>
+        dff v<Geo.p3d>
+        dff frac[2][8]
+        dff color[3][16]
+    }
+    
+    sig pipe_stalled
+    sig light<Geo.p3d>
+    
+    sqrt_calc sqrt(.aclk(clk))
+    div_gen_16_16 div(.aclk(clk))
+    
+    always {
+        light.x = Geo.LIGHT[0]
+        light.y = Geo.LIGHT[1]
+        light.z = Geo.LIGHT[2]
+    }
+    
+    always {
+        color_fifo.rget = 0
+        color_fifo.wput = 0
+        color_fifo.din = bx
+        
+        tri_fifo.wput = 0
+        tri_fifo.din = bx
+        tri_fifo.rget = 0
+        
+        repeat(i,3) {
+            t_out[i].z = tri_reg.q[32*3*i+0+:32]
+            t_out[i].y = tri_reg.q[32*3*i+32+:32]
+            t_out[i].x = tri_reg.q[32*3*i+64+:32]
+        }
+        
+        color_out = color.q
+        out_valid = valid_pipe.q[3]
+        pipe_stalled = stall
+        
+        /* Cycle 8 */
+        pipe_stalled = pipe_stalled && valid_pipe.q[3]
+        if (!pipe_stalled) {
+            tri_fifo.rget = valid_pipe.q[2]
+            valid_pipe.d[3] = valid_pipe.q[2]
+            tri_reg.d = tri_fifo.dout
+            
+            repeat(i, 3) {
+                sig r[5] = color_reg.q[i*16+11+:5]
+                sig g[6] = color_reg.q[i*16+5+:6]
+                sig b[5] = color_reg.q[i*16+0+:5]
+                
+                sig tmp[22] = r * frac.q[1]
+                r = tmp[7+:5]
+                
+                tmp = g * frac.q[1]
+                g = tmp[7+:6]
+                
+                tmp = b * frac.q[1]
+                b = tmp[7+:5]
+                
+                color.d[i] = c{r,g,b}
+            }
+        }
+        
+        /* Cycle 7 */
+        pipe_stalled = pipe_stalled && valid_pipe.q[2]
+        
+        if (!pipe_stalled) {
+            color_fifo.rget = valid_pipe.q[1]
+            color_reg.d = color_fifo.dout
+            valid_pipe.d[2] = valid_pipe.q[1]
+            frac.d[1] = frac.q[0]
+        }
+        
+        /* Cycle 6 */
+        pipe_stalled = pipe_stalled && valid_pipe.q[1]
+        
+        div.m_axis_dout_tready = !pipe_stalled
+            
+        signed sig quotient[16] = div.m_axis_dout_tdata[21:6]
+        signed sig fractinal[6] = div.m_axis_dout_tdata[5:0]
+        signed sig result[$width(quotient) + $width(fractinal) - 1]
+        if (quotient == 0)
+            result = c{16x{fractinal[-1]},fractinal[-2:0]}
+        else if (quotient[-1])
+            result = -c{-quotient, -fractinal[-2:0]}
+        else
+            result = c{quotient, fractinal[-2:0]}
+        
+        if (!pipe_stalled) {
+            valid_pipe.d[1] = div.m_axis_dout_tvalid
+            if (result[-1]) {
+                frac.d[0] = 8h40 // 0.5 minimum
+            } else {                         
+                frac.d[0] = result[0+:8] + 8h40 // 1.7 fixed point between 0.5 and 1
+            }
+        }
+        
+        /* Cycle 5 */
+        div.s_axis_dividend_tvalid = sqrt.m_axis_dout_tvalid
+        div.s_axis_divisor_tvalid = sqrt.m_axis_dout_tvalid
+        div.s_axis_dividend_tdata = sqrt.m_axis_dout_tuser   // normal and light dot product
+        div.s_axis_divisor_tdata = sqrt.m_axis_dout_tdata    // normal vector magnitued
+        sqrt.m_axis_dout_tready = div.s_axis_dividend_tready & div.s_axis_divisor_tready
+        
+        /* Cycle 4 */
+        sqrt.s_axis_cartesian_tvalid = nn_dot.out_valid
+        sqrt.s_axis_cartesian_tuser = nl_dot.dot[16+:16]
+        sqrt.s_axis_cartesian_tdata = nn_dot.dot[16+:31]
+        pipe_stalled = !sqrt.s_axis_cartesian_tready
+        
+        /* Cycle 3 */
+        nn_dot.in_valid = cross.out_valid
+        nn_dot.u = cross.ucv
+        nn_dot.v = cross.ucv
+        nn_dot.stall = pipe_stalled
+        
+        nl_dot.in_valid = cross.out_valid
+        nl_dot.u = cross.ucv
+        nl_dot.v = light
+        nl_dot.stall = pipe_stalled
+        
+        pipe_stalled = nn_dot.stalled
+        
+        /* Cycle 2 */
+        cross.in_valid = valid_pipe.q[0]
+        cross.stall = pipe_stalled
+        pipe_stalled = cross.stalled
+        
+        cross.u = u.q
+        cross.v = v.q
+        
+        /* Cycle 1 */
+        // calculate u and v
+        pipe_stalled = pipe_stalled && valid_pipe.q[0]
+        
+        if (!pipe_stalled) {
+            valid_pipe.d[0] = in_valid
+            
+            u.d.x = t_in[1].x - t_in[0].x
+            u.d.y = t_in[1].y - t_in[0].y
+            u.d.z = t_in[1].z - t_in[0].z
+            
+            v.d.x = t_in[2].x - t_in[0].x
+            v.d.y = t_in[2].y - t_in[0].y
+            v.d.z = t_in[2].z - t_in[0].z
+            
+            color_fifo.din = $flatten(color_in)
+            color_fifo.wput = in_valid
+            
+            tri_fifo.din = $flatten(t_in)
+            tri_fifo.wput = in_valid
+        }
+        
+        if (color_fifo.full || tri_fifo.full) {
+            if (!pipe_stalled)
+                valid_pipe.d[0] = 0
+            color_fifo.wput = 0
+            tri_fifo.wput = 0
+            pipe_stalled = 1
+        }
+        
+        stalled = pipe_stalled
+    }
+}

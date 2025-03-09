@@ -1,0 +1,164 @@
+module z_buffer (
+    input clk,  // clock
+    input rst,  // reset
+    input addr_in[28],
+    input in_valid,
+    input weights_in[3][32],
+    input z[3][32],
+    input color_in[3][16],
+    output stalled,
+    input stall,
+    output addr_out[28],
+    output out_valid,
+    output weights_out[3][32],
+    output color_out[3][16],
+    input mem_out<Memory.out>,
+    output mem_in<Memory.in>,
+    input flush_cache,
+    input frame[2]
+) {
+    const Z_MAX = 32d16777216  // 1
+    const Z_MIN = -32d16777216 // -1
+    
+    const PIPE_LENGTH = 5
+    
+    enum State {IDLE, WAIT_READ}
+    
+    .clk(clk) {
+        lru_cache cache(.rst(rst))
+        .rst(rst) {
+            dff valid_pipe[PIPE_LENGTH-1]
+            dff read_valid
+            dff state[$width(State)]
+        }
+        
+        dff m[3][32]
+        
+        dff weight_pipe[PIPE_LENGTH][3][32]
+        dff addr_pipe[PIPE_LENGTH][28]
+        dff color_pipe[PIPE_LENGTH][3][16]
+        
+        dff wz[4][32]
+        
+        dff read_data[16]
+    }
+    
+    always {
+        sig pipe_stalled = stall
+        
+        cache.mem_out = mem_out
+        mem_in = cache.mem_in
+        cache.flush = flush_cache
+        cache.wr_addr = addr_pipe.q[4] | Geo.Z_BUFFER_MASK | (frame << (Geo.FRAME_BITS+3))
+        cache.wr_data = bx
+        cache.wr_valid = 0
+        cache.rd_addr = addr_pipe.q[2] | Geo.Z_BUFFER_MASK | (frame << (Geo.FRAME_BITS+3))
+        cache.rd_cmd_valid = b0
+        
+        addr_out = addr_pipe.q[PIPE_LENGTH-1] | (frame << (Geo.FRAME_BITS+3))
+        out_valid = valid_pipe.q[PIPE_LENGTH-2] && cache.wr_ready
+        weights_out = weight_pipe.q[PIPE_LENGTH-1]
+        color_out = color_pipe.q[PIPE_LENGTH-1]
+        
+        /* Cycle 6 */
+        pipe_stalled = pipe_stalled || !cache.wr_ready
+        
+        if (!pipe_stalled) {
+            cache.wr_valid = valid_pipe.q[3]
+            cache.wr_data = wz.q[3][10+:16]
+        }
+        
+        /* Cycle 4 & 5 */
+        pipe_stalled = pipe_stalled && valid_pipe.q[3]
+        
+        case (state.q) {
+            State.IDLE:
+                if (!pipe_stalled)
+                    valid_pipe.d[3] = 0
+                if (valid_pipe.q[2] && cache.rd_ready) {
+                    cache.rd_cmd_valid = 1
+                    weight_pipe.d[3] = weight_pipe.q[2]
+                    addr_pipe.d[3] = addr_pipe.q[2]
+                    color_pipe.d[3] = color_pipe.q[2]
+                    wz.d[2] = wz.q[1]
+                    state.d = State.WAIT_READ
+                }
+            State.WAIT_READ:
+                if (pipe_stalled && cache.rd_data_valid) {
+                    read_data.d = cache.rd_data
+                    read_valid.d = 1
+                }
+                
+                if (!pipe_stalled) {
+                    sig active = 0
+                    signed sig comp_data[16] = bx
+                    if (cache.rd_data_valid) {
+                        active = 1
+                        comp_data = cache.rd_data
+                    } else if (read_valid.q) {
+                        active = 1
+                        comp_data = read_data.q
+                        read_valid.d = 0
+                    }
+                    
+                    valid_pipe.d[3] = 0
+                    
+                    if (active) {
+                        if ($signed(comp_data) < $signed(wz.q[2][10+:16]))
+                            valid_pipe.d[3] = 0
+                        else
+                            valid_pipe.d[3] = 1
+                        
+                        wz.d[3] = wz.q[2]
+                        weight_pipe.d[4] = weight_pipe.q[3]
+                        addr_pipe.d[4] = addr_pipe.q[3]
+                        color_pipe.d[4] = color_pipe.q[3]
+                        state.d = State.IDLE
+                    }
+                }
+        }
+        
+        pipe_stalled = (state.q != State.IDLE) || !cache.rd_ready
+        
+        /* Cycle 3 */
+        pipe_stalled = pipe_stalled && valid_pipe.q[2]
+        
+        if (!pipe_stalled) {
+            if (($signed(wz.q[0]) > $signed(Z_MAX)) || ($signed(wz.q[0]) < $signed(Z_MIN))) // only write if in bounds
+                valid_pipe.d[2] = 0
+            else
+                valid_pipe.d[2] = valid_pipe.q[1]
+            weight_pipe.d[2] = weight_pipe.q[1]
+            color_pipe.d[2] = color_pipe.q[1]
+            addr_pipe.d[2] = addr_pipe.q[1]
+            wz.d[1] = wz.q[0]
+        }
+        
+        /* Cycle 2 */
+        pipe_stalled = pipe_stalled && valid_pipe.q[1]
+        
+        if (!pipe_stalled) {
+            addr_pipe.d[1] = addr_pipe.q[0]
+            color_pipe.d[1] = color_pipe.q[0]
+            valid_pipe.d[1] = valid_pipe.q[0]
+            weight_pipe.d[1] = weight_pipe.q[0]
+            wz.d[0] = m.q[0] + m.q[1] + m.q[2]
+        }
+        
+        /* Cycle 1 */
+        pipe_stalled = pipe_stalled && valid_pipe.q[0]
+        
+        if (!pipe_stalled) {
+            addr_pipe.d[0] = addr_in
+            color_pipe.d[0] = color_in
+            valid_pipe.d[0] = in_valid
+            weight_pipe.d[0] = weights_in
+            repeat(i,3) {
+                sig tmp[64] = z[i] * weights_in[i]
+                m.d[i] = tmp[16+:32]
+            }
+        }
+        
+        stalled = pipe_stalled
+    }
+}

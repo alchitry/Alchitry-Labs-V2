@@ -1,0 +1,55 @@
+module cross_product (
+    input clk,  // clock
+    input rst,  // reset
+    input in_valid,
+    input u<Geo.p3d>,
+    input v<Geo.p3d>,
+    output ucv<Geo.p3d>,
+    output out_valid,
+    input stall,
+    output stalled
+) {
+    
+    .clk(clk) {
+        .rst(rst) {
+            dff valid_pipe[2]
+        }
+        
+        signed dff m[6][64]
+        dff sub<Geo.p3d>
+    }
+    
+    sig pipe_stalled
+    
+    always {
+        pipe_stalled = stall
+        
+        ucv = sub.q
+        out_valid = valid_pipe.q[1]
+        
+        /* Cycle 2 */
+        pipe_stalled = pipe_stalled && valid_pipe.q[1]
+        
+        if (!pipe_stalled) {
+            sub.d.x = m.q[3][16+:32] - m.q[5][16+:32]
+            sub.d.y = m.q[4][16+:32] - m.q[1][16+:32]
+            sub.d.z = m.q[0][16+:32] - m.q[2][16+:32]
+            valid_pipe.d[1] = valid_pipe.q[0]
+        }
+        
+        /* Cycle 1 */
+        pipe_stalled = pipe_stalled && valid_pipe.q[0]
+        
+        if (!pipe_stalled) {
+            m.d[0] = u.x * v.y
+            m.d[1] = u.x * v.z
+            m.d[2] = u.y * v.x
+            m.d[3] = u.y * v.z
+            m.d[4] = u.z * v.x
+            m.d[5] = u.z * v.y
+            valid_pipe.d[0] = in_valid
+        }
+        
+        stalled = pipe_stalled
+    }
+}

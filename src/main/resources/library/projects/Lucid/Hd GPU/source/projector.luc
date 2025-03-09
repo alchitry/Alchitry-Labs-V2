@@ -1,0 +1,155 @@
+module projector (
+    input clk,  // clock
+    input rst,  // reset
+    input t[3]<Geo.p3d>,
+    output p[3]<Geo.p3d>,
+    input in_valid,
+    output out_valid,
+    output dr[32], // 1/((y1-y2)(x0-x2) + (x2-x1)(y0-y2)) in 8.24 FP
+    input stall,
+    output ready
+) {
+    
+    enum State {IDLE, X, Y, Z, R1, R2, R3, R4}
+    
+    .clk(clk) {
+        .rst(rst) {
+            dff state[$width(State)]
+        }
+        signed dff a[32]
+        signed dff b[32]
+        signed dff c[32]
+        signed dff d[32]
+        signed dff mul[64]
+        
+        dff dp[3]<Geo.p4d>
+        dff pt_ct[2]
+        
+        dff op[3]<Geo.p3d>
+        dff odr[32]
+        dff out_ready
+    }
+    
+    div_gen_0 divider(.aclk(clk))
+    
+    always {
+        if (!stall)
+            out_ready.d = 0
+        out_valid = out_ready.q
+        dr = odr.q
+        p = op.q
+        
+        divider.s_axis_divisor_tvalid = 0
+        divider.s_axis_divisor_tuser = bx
+        divider.s_axis_divisor_tdata = bx
+        
+        divider.s_axis_dividend_tvalid = 0
+        divider.s_axis_dividend_tdata = bx
+        
+        signed sig quotient[32] = divider.m_axis_dout_tdata[50:19]
+        signed sig fractinal[19] = divider.m_axis_dout_tdata[18:0]
+        signed sig result[$width(quotient) + $width(fractinal) - 1]
+        
+        if (quotient == 0)
+            result = c{32x{fractinal[-1]},fractinal[-2:0]}
+        else if (quotient[-1])
+            result = -c{-quotient, -fractinal[-2:0]}
+        else
+            result = c{quotient, fractinal[-2:0]}
+        
+        if (divider.m_axis_dout_tvalid) {
+            case (divider.m_axis_dout_tuser[1:0]) {
+                2d0:
+                    op.d[divider.m_axis_dout_tuser[3:2]].x = result[0+:32]
+                2d1:
+                    op.d[divider.m_axis_dout_tuser[3:2]].y = result[0+:32]
+                2d2:
+                    op.d[divider.m_axis_dout_tuser[3:2]].z = result[2+:32]
+                2d3:
+                    odr.d = result[4+:32]
+                    out_ready.d = 1
+            }
+        }
+        
+        ready = state.q == State.IDLE
+        
+        divider.m_axis_dout_tready = !stall
+        
+        sig div_ready = divider.s_axis_dividend_tready && divider.s_axis_divisor_tready
+        
+        case (state.q) {
+            State.IDLE:
+                if (in_valid) {
+                    repeat(i,3) {
+                        signed sig tmp[64] = $signed(t[i].x) * $signed(Geo.PROJ_MAT[0][0])
+                        dp.d[i].x = tmp[18+:35]
+                        tmp = $signed(t[i].y) * $signed(Geo.PROJ_MAT[1][1])
+                        dp.d[i].y = tmp[18+:35]
+                        tmp = $signed(t[i].z) * $signed(Geo.PROJ_MAT[2][2])
+                        dp.d[i].z = tmp[16+:35] + $signed(Geo.PROJ_MAT[2][3])
+                        dp.d[i].w = t[i].z
+                    }
+                    state.d = State.X
+                }
+                pt_ct.d = 0
+            State.X:
+                divider.s_axis_divisor_tuser = c{pt_ct.q, 2d0}
+                divider.s_axis_dividend_tdata = dp.q[pt_ct.q].x // top number
+                divider.s_axis_divisor_tdata = dp.q[pt_ct.q].w  // bottom number
+                
+                if (div_ready) {
+                    state.d = State.Y
+                    divider.s_axis_dividend_tvalid = 1
+                    divider.s_axis_divisor_tvalid = 1
+                }
+            State.Y:
+                divider.s_axis_divisor_tuser = c{pt_ct.q, 2d1}
+                divider.s_axis_dividend_tdata = dp.q[pt_ct.q].y // top number
+                divider.s_axis_divisor_tdata = dp.q[pt_ct.q].w  // bottom number
+                
+                if (div_ready) {
+                    state.d = State.Z
+                    divider.s_axis_dividend_tvalid = 1
+                    divider.s_axis_divisor_tvalid = 1
+                }
+            State.Z:
+                divider.s_axis_divisor_tuser = c{pt_ct.q, 2d2}
+                divider.s_axis_dividend_tdata = dp.q[pt_ct.q].z // top number
+                divider.s_axis_divisor_tdata = dp.q[pt_ct.q].w  // bottom number
+                
+                if (div_ready) {
+                    divider.s_axis_dividend_tvalid = 1
+                    divider.s_axis_divisor_tvalid = 1
+                    
+                    pt_ct.d = pt_ct.q + 1
+                    if (pt_ct.q == 2) {
+                        state.d = State.R1
+                    } else {
+                        state.d = State.X
+                    }
+                }
+            State.R1:
+                if (divider.m_axis_dout_tvalid && (divider.m_axis_dout_tuser[3:0] == 4b1010))
+                    state.d = State.R2
+            State.R2:
+                a.d = op.q[1].y - op.q[2].y
+                b.d = op.q[0].x - op.q[2].x
+                c.d = op.q[2].x - op.q[1].x
+                d.d = op.q[0].y - op.q[2].y
+                state.d = State.R3
+            State.R3:
+                mul.d = ($signed(a.q) * $signed(b.q)) + ($signed(c.q) * $signed(d.q))
+                state.d = State.R4
+            State.R4:
+                divider.s_axis_divisor_tuser = c{2b11, 2b11}
+                divider.s_axis_dividend_tdata = 32h01000000 // 1 in 8.24
+                divider.s_axis_divisor_tdata = mul.q[18+:32]  // bottom number
+                
+                if (div_ready) {
+                    divider.s_axis_dividend_tvalid = 1
+                    divider.s_axis_divisor_tvalid = 1
+                    state.d = State.IDLE
+                }
+        }
+    }
+}

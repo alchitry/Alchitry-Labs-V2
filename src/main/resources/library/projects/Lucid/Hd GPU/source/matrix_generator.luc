@@ -1,0 +1,68 @@
+module matrix_generator (
+    input clk,  // clock
+    input rst,  // reset
+    output matrix[3][4][10], // 2.8 FP
+    input stall,
+    output valid
+) {
+    
+    const N_PI = -10d402
+    const PI = 10d402
+    
+    cordic cordic (.aclk(clk))
+    
+    .clk(clk) {
+        .rst(rst) {
+            dff angle[16] (#INIT(N_PI))
+        }
+    }
+    
+    sig cos[10]
+    sig sin[10]
+    
+    always {
+        cordic.s_axis_phase_tdata = angle.q
+        cordic.s_axis_phase_tvalid = 1
+        if (cordic.s_axis_phase_tready) {
+            angle.d = angle.q + 5
+            if ($signed(angle.q) >= $signed(PI - 5))
+                angle.d = N_PI
+        }
+        
+        cordic.m_axis_dout_tready = !stall
+        sin = cordic.m_axis_dout_tdata[25:16]
+        cos = cordic.m_axis_dout_tdata[9:0]
+        valid = cordic.m_axis_dout_tvalid
+        
+        matrix = 3x{{4x{{10b0}}}}
+        
+        /*
+        // Rotate Z
+        matrix[0][0] = cos;
+        matrix[0][1] = -sin;
+        matrix[1][0] = sin;
+        matrix[1][1] = cos;
+        matrix[2][2] = 10h100; // 1
+        */        
+        
+        
+        // Rotate Y
+        matrix[0][0] = cos
+        matrix[0][2] = sin
+        matrix[1][1] = 10h100 // 1
+        matrix[2][0] = -sin
+        matrix[2][2] = cos
+        
+        
+        /*
+        // Rotate X
+        matrix[0][0] = 10h100 // 1
+        matrix[1][1] = cos
+        matrix[1][2] = -sin
+        matrix[2][1] = sin
+        matrix[2][2] = cos
+        */        
+        
+        matrix[2][3] = 400 // 1
+    }
+}

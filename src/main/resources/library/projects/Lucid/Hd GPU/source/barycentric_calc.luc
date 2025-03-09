@@ -1,0 +1,109 @@
+/* 7-cycle latency */
+module barycentric_calc (
+    input clk,  // clock
+    input t[3]<Geo.p3d>,  // triangle points
+    input dr[32],   // 1/((y1-y2)(x0-x2) + (x2-x1)(y0-y2)) in 8.24 FP
+    input pt<Geo.p2d>,   // point to test
+    input stall,
+    output covered,
+    output w[3][32] // weights in 8.24 FP
+) {
+    
+    .clk(clk) {
+        signed dff a[32]
+        signed dff b[32]
+        signed dff c[32]
+        signed dff d[32]
+        signed dff e[32]
+        signed dff f[32]
+        signed dff ara[32]
+        signed dff arb[32]
+        signed dff arc[32]
+        signed dff ard[32]
+        signed dff mar[64]
+        signed dff mar1[2][64]
+        signed dff mar2[2][64]
+        signed dff m1[64]
+        signed dff m2[64]
+        signed dff dp[4][32]
+        signed dff wp[3][32]
+        signed dff mr1[2][64]
+        signed dff mr2[2][64]
+        signed dff mr3[2][64]
+        signed dff mr4[2][64]
+        signed dff wr1[2][32]
+        signed dff wr2[2][32]
+        signed dff wun1[64]
+        signed dff wun2[64]
+        signed dff wun3[64]
+        dff covered_pipe[2]
+    }
+    
+    always {
+        if (!stall) {
+            /* Cycle 1 */
+            a.d = t[1].y - t[2].y
+            b.d = t[2].x - t[1].x
+            c.d = t[2].y - t[0].y
+            d.d = t[0].x - t[2].x
+            e.d = c{pt.x, 16b0} - t[2].x
+            f.d = c{pt.y, 16b0} - t[2].y
+            dp.d[0] = dr
+            ara.d = t[1].y - t[2].y
+            arb.d = t[0].x - t[2].x
+            arc.d = t[2].x - t[1].x
+            ard.d = t[0].y - t[2].y
+            
+            /* Cycle 2 */
+            mr1.d[0] = $signed(a.q) * $signed(e.q)
+            mr2.d[0] = $signed(b.q) * $signed(f.q)
+            mr3.d[0] = $signed(c.q) * $signed(e.q)
+            mr4.d[0] = $signed(d.q) * $signed(f.q)
+            dp.d[1] = dp.q[0]
+            mar1.d[0] = $signed(ara.q) * $signed(arb.q)
+            mar2.d[0] = $signed(arc.q) * $signed(ard.q)
+            
+            /* Cycle 3 */
+            mr1.d[1] = mr1.q[0]
+            mr2.d[1] = mr2.q[0]
+            mr3.d[1] = mr3.q[0]
+            mr4.d[1] = mr4.q[0]
+            dp.d[2] = dp.q[1]
+            mar1.d[1] = mar1.q[0]
+            mar2.d[1] = mar2.q[0]
+            
+            /* Cycle 4 */
+            m1.d = mr1.q[1] + mr2.q[1]
+            m2.d = mr3.q[1] + mr4.q[1]
+            dp.d[3] = dp.q[2]
+            mar.d = mar1.q[1] + mar2.q[1]
+            
+            /* Cycle 5 */
+            wun1.d = m1.q
+            wun2.d = m2.q
+            wun3.d = mar.q - m1.q - m2.q
+            
+            sig tmp1[128] = $signed(m1.q[16+:32]) * $signed(dp.q[2])
+            sig tmp2[128] = $signed(m2.q[16+:32]) * $signed(dp.q[2])
+            wr1.d[0] = tmp1[16+:32] + tmp1[48]
+            wr2.d[0] = tmp2[16+:32] + tmp2[48]
+            
+            /* Cycle 6 */
+            wr1.d[1] = wr1.q[0]
+            wr2.d[1] = wr2.q[0]
+            if (wun1.q[63] || wun2.q[63] || wun3.q[63])
+                covered_pipe.d[0] = 0
+            else
+                covered_pipe.d[0] = 1
+            
+            /* Cycle 7 */
+            wp.d[0] = wr1.q[1]
+            wp.d[1] = wr2.q[1]
+            wp.d[2] = 32h01000000 - wr1.q[1] - wr2.q[1]
+            covered_pipe.d[1] = covered_pipe.q[0]
+        }
+        
+        w = wp.q
+        covered = covered_pipe.q[1]
+    }
+}

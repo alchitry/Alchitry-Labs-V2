@@ -1,0 +1,84 @@
+module model_transform (
+    input clk,  // clock
+    input rst,  // reset
+    input m[3]<Geo.p3d>,
+    input color_in[3][16],
+    input model_matrix[3][4][10],
+    output t[3]<Geo.p3d>,
+    output color_out[3][16],
+    output valid,
+    input stall,
+    input draw,
+    output busy
+) {
+    
+    enum State {IDLE, P1, P2, P3, P4, P5, P6}
+    
+    .clk(clk) {
+        .rst(rst) {
+            dff state[$width(State)] 
+        }
+        
+        dff products[3][3][32]
+        dff matrix[3][4][10]
+        dff pt<Geo.p3d>
+        dff opt<Geo.p3d>
+        dff tri[3]<Geo.p3d>
+        dff model[3]<Geo.p3d>
+        dff color[3][16]
+    }
+    
+    always {
+        t = tri.q
+        color_out = color.q
+        valid = 0
+        
+        busy = state.q != State.IDLE
+        
+        
+        repeat(i,3) {
+            signed sig tmp[48] = $signed(matrix.q[i][0]) * $signed(pt.q.x)
+            products.d[i][0] = tmp[8+:32]
+            
+            tmp = $signed(matrix.q[i][1]) * $signed(pt.q.y)
+            products.d[i][1] = tmp[8+:32]
+            
+            tmp = $signed(matrix.q[i][2]) * $signed(pt.q.z)
+            products.d[i][2] = tmp[8+:32]
+        }
+        
+        opt.d.x = products.q[0][0] + products.q[0][1] + products.q[0][2] + c{matrix.q[0][3], 16b0}
+        opt.d.y = products.q[1][0] + products.q[1][1] + products.q[1][2] + c{matrix.q[1][3], 16b0}
+        opt.d.z = products.q[2][0] + products.q[2][1] + products.q[2][2] + c{matrix.q[2][3], 16b0}
+        
+        case (state.q) {
+            State.IDLE:
+                if (draw) {
+                    state.d = State.P1
+                    matrix.d = model_matrix
+                    model.d = m
+                    pt.d = m[0]
+                    color.d = color_in
+                }
+            State.P1:
+                pt.d = model.q[1]
+                state.d = State.P2
+            State.P2:
+                pt.d = model.q[2]
+                state.d = State.P3
+            State.P3:
+                tri.d[0] = opt.q
+                state.d = State.P4
+            State.P4:
+                tri.d[1] = opt.q
+                state.d = State.P5
+            State.P5:
+                tri.d[2] = opt.q
+                state.d = State.P6
+            State.P6:
+                valid = 1
+                if (!stall)
+                    state.d = State.IDLE
+        }
+    }
+}

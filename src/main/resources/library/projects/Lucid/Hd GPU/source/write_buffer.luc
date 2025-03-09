@@ -1,0 +1,92 @@
+module write_buffer (
+    input clk,  // clock
+    input rst,  // reset
+    input addr[28],
+    input data[16],
+    input valid,
+    input flush,
+    output ready,
+    input mem_out<Memory.out>,
+    output mem_in<Memory.in>
+) {
+    
+    enum State {IDLE, WRITE_DATA, WRITE_CMD}
+    
+    .clk(clk) {
+        .rst(rst) {
+            dff dirty[8]
+            dff state[$width(State)]
+        }
+        dff buffer[8][16]
+        dff address[25]
+        dff tmp[16]
+        dff new_addr[28]
+        dff flushing
+    }
+    
+    
+    always {
+        mem_in.enable = 0
+        mem_in.wr_data = $flatten(buffer.q)
+        mem_in.cmd = 0
+        mem_in.addr = c{address.q, 3b000}
+        mem_in.wr_enable = 0
+        ready = state.q == State.IDLE
+        
+        repeat(i, 8)
+            mem_in.wr_mask[i*2+:2] = 2x{~dirty.q[i]}
+        
+        case (state.q) {
+            State.IDLE:
+                if (flush && |dirty.q) {
+                    flushing.d = 1
+                    mem_in.wr_enable = 1
+                    if (mem_out.wr_rdy) {
+                        state.d = State.WRITE_CMD
+                    } else {
+                        state.d = State.WRITE_DATA
+                    }
+                }
+                if (valid) {
+                    if (addr[27:3] == address.q) {
+                        buffer.d[addr[2:0]] = data
+                        dirty.d[addr[2:0]] = 1
+                    } else if (|dirty.q) {
+                        tmp.d = data
+                        new_addr.d = addr
+                        
+                        flushing.d = 0
+                        mem_in.wr_enable = 1
+                        if (mem_out.wr_rdy) {
+                            state.d = State.WRITE_CMD
+                        } else {
+                            state.d = State.WRITE_DATA
+                        }
+                    } else {
+                        buffer.d[addr[2:0]] = data
+                        dirty.d[addr[2:0]] = 1
+                        address.d = addr[27:3]
+                    }
+                }
+            
+            State.WRITE_DATA:
+                mem_in.wr_enable = 1
+                if (mem_out.wr_rdy) {
+                    state.d = State.WRITE_CMD
+                }
+            
+            State.WRITE_CMD:
+                mem_in.enable = 1
+                if (mem_out.rdy) {
+                    if (!flushing.q) {
+                        buffer.d[new_addr.q[2:0]] = tmp.q
+                        dirty.d = 8b1 << new_addr.q[2:0]
+                        address.d = new_addr.q[27:3]
+                    } else {
+                        dirty.d = 0
+                    }
+                    state.d = State.IDLE
+                }
+        }
+    }
+}

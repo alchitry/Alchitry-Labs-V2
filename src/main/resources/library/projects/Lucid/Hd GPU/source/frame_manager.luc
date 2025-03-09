@@ -1,0 +1,33 @@
+module frame_manager (
+    input clk,  // clock
+    input rst,  // reset
+    output write_frame[2],
+    output read_frame[2],
+    input write_next,
+    input read_next,
+    output full
+) {
+    .clk(clk), .rst(rst) {
+        dff write[2](#INIT(1))
+        dff read[2](#INIT(0))
+    }
+    
+    always {
+        write_frame = write.q
+        read_frame = read.q
+        
+        sig next_read[2] = read.q + 1
+        sig next_write[2] = write.q + 1
+        if (read_next) {
+            if (next_read != write.q) {
+                read.d = next_read
+            }
+        }
+        if (write_next) {
+            if (next_write != read.q) {
+                write.d = next_write
+            }
+        }
+        full = next_write == read.q
+    }
+}

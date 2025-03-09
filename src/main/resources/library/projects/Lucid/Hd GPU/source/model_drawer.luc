@@ -1,0 +1,57 @@
+module model_drawer (
+    input clk,  // clock
+    input rst,  // reset
+    input draw,
+    output busy,
+    output m[3]<Geo.p3d>,
+    output color[3][16],
+    output model_matrix[3][4][10],
+    output valid,
+    input stall
+) {
+    
+    enum State {IDLE, GEN_MAT, DRAW}
+    
+    .clk(clk) {
+        .rst(rst) {
+            model_provider model
+            matrix_generator mat_gen
+            
+            dff state[$width(State)]
+        }
+        
+        dff matrix[3][4][10]
+    }
+    
+    always {
+        m = model.triangle
+        color = model.color
+        model_matrix = matrix.q
+        valid = 0
+        busy = state.q != State.IDLE
+        
+        mat_gen.stall = 1
+        model.draw = 0
+        model.stall = 1
+        
+        case (state.q) {
+            State.IDLE:
+                if (draw) {
+                    state.d = State.GEN_MAT
+                    model.draw = 1
+                }
+            State.GEN_MAT:
+                mat_gen.stall = 0
+                if (mat_gen.valid) {
+                    matrix.d = mat_gen.matrix
+                    state.d = State.DRAW
+                }
+            State.DRAW:
+                model.stall = stall
+                valid = model.valid
+                if (model.idle) {
+                    state.d = State.IDLE
+                }
+        }
+    }
+}

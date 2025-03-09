@@ -1,0 +1,218 @@
+{
+    "template": {
+        "name": "Hd GPU",
+        "description": "Renders the Blender monkey id 3D and outputs it over HDMI at 720p60.",
+        "boards": ["AuV2"],
+        "priority": 10,
+        "requiresMig": true
+    },
+    "project": {
+        "type": "V1.3",
+        "projectName": "Hd GPU",
+        "board": "Alchitry Au V2",
+        "sourceFiles": [
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/alchitry_top.luc"
+                },
+                "top": true
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Memory/mig_wrapper.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/barycentric_calc.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/geometry_definitions.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/bounding_box.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/cross_product.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/dot_product.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/matrix_generator.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/model_drawer.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/model_provider.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/suzanne_face_rom.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/suzanne_vert_rom.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/model_transform.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/projector.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/rasterizer.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/shader.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Memory/simple_dual_port_ram.v"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/write_buffer.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/z_buffer.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Pulses/edge_detector.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Memory/fifo.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/DVI/dvi_globals.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/TMDS/tmds_encoder.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/TMDS/serdes_ddr_10_to_1.v"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Primitives/obufds.v"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/DVI/dvi_encoder.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Video/hdmi_encoder.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/hdmi_frame_provider.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/frame_manager.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Memory/lru_cache.luc"
+                }
+            },
+            {
+                "file": {
+                    "type": "DiskFile",
+                    "path": "source/ddr_arbiter.luc"
+                }
+            }
+        ],
+        "constraintFiles": [
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Constraints/alchitry.acf"
+                }
+            },
+            {
+                "file": {
+                    "type": "Component",
+                    "path": "Constraints/hd_v2.acf"
+                }
+            }
+        ],
+        "ipCores": []
+    }
+}

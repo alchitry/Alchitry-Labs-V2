@@ -1,0 +1,334 @@
+module alchitry_top (
+    input clk,              // 100MHz clock
+    input rst_n,            // reset button (active low)
+    output led[8],          // 8 user controllable LEDs
+    input usb_rx,           // USB->Serial input
+    output usb_tx,          // USB->Serial output
+    /* DDR3 Connections */
+    inout ddr3_dq[16],
+    inout ddr3_dqs_n[2],
+    inout ddr3_dqs_p[2],
+    output ddr3_addr[14],
+    output ddr3_ba[3],
+    output ddr3_ras_n,
+    output ddr3_cas_n,
+    output ddr3_we_n,
+    output ddr3_reset_n,
+    output ddr3_ck_p,
+    output ddr3_ck_n,
+    output ddr3_cke,
+    output ddr3_cs_n,
+    output ddr3_dm[2],
+    output ddr3_odt,
+    /* HDMI Connections */
+    inout hdmi_sda_1,
+    inout hdmi_scl_1,
+    inout hdmi_cec_1,
+    input hdmi_hp_1,
+    output hdmi_clk_1_p,
+    output hdmi_clk_1_n,
+    output hdmi_data_1_p[3],
+    output hdmi_data_1_n[3]
+) {
+    // clock generator takes 100MHz in and creates 100MHz + 200MHz
+    clk_wiz_0 clk_wiz(.resetn(rst_n), .clk_in(clk))
+    
+    // DDR3 Interface - connect inouts directly
+    mig_wrapper mig (
+        .ddr3_dq(ddr3_dq),
+        .ddr3_dqs_n(ddr3_dqs_n),
+        .ddr3_dqs_p(ddr3_dqs_p),
+        .sys_rst(!clk_wiz.locked), // reset when clk_wiz isn't locked
+        .sys_clk(clk_wiz.clk_100), // 100MHz clock
+        .clk_ref(clk_wiz.clk_200)  // 200MHz clock
+    )
+    
+    // clock generator for Hd pixel clock
+    clk_wiz_hd clk_wiz_hd(.reset(mig.sync_rst), .clk_in_100(mig.ui_clk))
+    
+    // Setup as 720p60
+    hdmi_encoder hdmi(
+        #X_RES(Geo.DISP_H), 
+        #Y_RES(Geo.DISP_V),
+        #X_FRONT_PORCH(110),
+        #Y_FRONT_PORCH(5),
+        #HSYNC_WIDTH(40),
+        #VSYNC_WIDTH(5),
+        #X_FRAME(1650),
+        #Y_FRAME(750),
+        .rst(!clk_wiz_hd.locked),
+        .pclk(clk_wiz_hd.pclk), // 74.25MHz
+        .pclkx5(clk_wiz_hd.pclkx5)
+    )
+    
+    // Reads DDR and provides pixel data to hdmi_encoder
+    hdmi_frame_provider frame_provider(
+        .mig_clk(mig.ui_clk),
+        .pclk(clk_wiz_hd.pclk),
+        .rst(mig.sync_rst),
+        .pclk_rst(!clk_wiz_hd.locked)
+    )
+    
+    enum State {WRITE1, WRITE2, CZ1, CZ2, START_RAST, WAIT_RENDER, WAIT_DISP, DONE}
+    
+    .clk(mig.ui_clk) {
+        .rst(mig.sync_rst) {
+            // controls which frame buffers are being read and written too
+            frame_manager frame_manager
+            
+            dff state[$width(State)]
+            dff addr[Geo.FRAME_BITS]
+            
+            // splits the DDR interface into 4 ports
+            ddr_arbiter ddr(#DEVICES(4))
+            
+            // checks if each pixel in the bounding box is covered or not by the triangle
+            rasterizer rast
+            
+            // buffers writes to single addresses into larger DDR line writes
+            write_buffer buff
+            
+            // projects the 3D triangles onto the 2D screen
+            projector proj
+            
+            // calculates the bounding box around a triangle to be rasterized
+            bounding_box bbox
+            
+            signed dff saved_dr[32]
+            
+            // multiplies the model triangles by the model matrix to do rotations/translations
+            model_transform model
+            
+            // provides the model's triangles and model matrix to be rendered
+            model_drawer drawer
+            
+            // calculates the color of each vertice based on the angle between the triangle and Geo.LIGHT
+            shader shader
+            
+            // checks the z-depth of each pixel being rendered to not overwrite foreground pixels
+            z_buffer z_buffer
+            
+            // keeps the vertice color in sync across the rasterizer
+            fifo color_fifo (#ENTRIES(64), #WIDTH(16*3))
+            
+            dff idle_ct[8]
+        }
+        
+        edge_detector tri_done (#RISE(1), #FALL(0))
+    }
+    
+    always {
+        /* DDR3 Connections */
+        ddr3_addr = mig.ddr3_addr
+        ddr3_ba = mig.ddr3_ba
+        ddr3_ras_n = mig.ddr3_ras_n
+        ddr3_cas_n = mig.ddr3_cas_n
+        ddr3_we_n = mig.ddr3_we_n
+        ddr3_reset_n = mig.ddr3_reset_n
+        ddr3_ck_p = mig.ddr3_ck_p
+        ddr3_ck_n = mig.ddr3_ck_n
+        ddr3_cke = mig.ddr3_cke
+        ddr3_cs_n = mig.ddr3_cs_n
+        ddr3_dm = mig.ddr3_dm
+        ddr3_odt = mig.ddr3_odt
+        
+        // basic signal for checking if the pipeline is empty, it is just a proxy and reports true when not stalled
+        sig render_idle = !z_buffer.stalled && buff.ready && rast.idle && !bbox.stalled && proj.ready && !model.busy && !drawer.busy  
+        
+        // not used, loop back data
+        usb_tx = usb_rx
+        
+        // debugging LEDs
+        led = c{model.valid, shader.stalled, !proj.ready, bbox.stalled, !rast.idle, z_buffer.stalled,  state.q == State.WAIT_RENDER, state.q == State.WAIT_DISP}
+        
+        // connect arbiter to the MIG
+        mig.mem_in = ddr.master_in
+        ddr.master_out = mig.mem_out
+        
+        // connect frame_manager
+        frame_manager.write_next = 0
+        frame_manager.read_next = frame_provider.request_next
+        
+        // connect frame_provider and HDMI signals
+        frame_provider.mem_out = ddr.device_out[0]
+        ddr.device_in[0] = frame_provider.mem_in
+        hdmi.red = frame_provider.red
+        hdmi.green = frame_provider.green
+        hdmi.blue = frame_provider.blue
+        frame_provider.frame_id = frame_manager.read_frame
+        frame_provider.active = hdmi.active
+        frame_provider.vsync = hdmi.vsync
+        hdmi_clk_1_p = hdmi.clock_p
+        hdmi_clk_1_n = hdmi.clock_n
+        hdmi_data_1_p = hdmi.data_p
+        hdmi_data_1_n = hdmi.data_n
+        
+        // ignore EDID
+        hdmi_sda_1 = 1bx
+        hdmi_scl_1 = 1bx
+        
+        // CEC not used
+        hdmi_cec_1 = 1bx 
+        
+        // this is the beginning of the pipeline
+        // default to not drawing, drawing is started by the FSM below
+        drawer.draw = 0
+        drawer.stall = model.busy
+        
+        // triangle data from the drawer is passed to the model which transforms it (rotation/translation/scale)
+        model.m = drawer.m
+        model.model_matrix = drawer.model_matrix
+        model.draw = drawer.valid
+        model.stall = shader.stalled
+        model.color_in = drawer.color
+        
+        // the triangle data is then shaded based on its angle with Geo.LIGHT
+        shader.color_in = model.color_out
+        shader.t_in = model.t
+        shader.in_valid = model.valid
+        shader.stall = !proj.ready
+        
+        // the color_fifo is used to store the color data while the triangle is being projected and rasterized
+        color_fifo.wput = shader.out_valid & proj.ready
+        color_fifo.din = $flatten(shader.color_out)
+        
+        // the 3D triangle is then projected to the 2D screen-space
+        proj.t = shader.t_out
+        proj.in_valid = shader.out_valid
+        
+        proj.stall = bbox.stalled
+        
+        // bbox calculates the bounding box around the triangle to be iterated over by the rasterizer
+        bbox.stall = !rast.idle
+        bbox.it = proj.p
+        bbox.in_valid = proj.out_valid
+        
+        if (!bbox.stalled) {
+            saved_dr.d = proj.dr
+        }
+        
+        // rast checks every pixel in the bounding box if it is covered by the triangle or not
+        rast.dr = saved_dr.q
+        rast.t = bbox.ot
+        rast.start = bbox.out_valid
+        rast.pt_max = bbox.max
+        rast.pt_min = bbox.min
+        
+        rast.stall = z_buffer.stalled
+        
+        // pixels that are covered are then checked against the z-buffer to see if they should be drawn
+        // this is needed so that pixels that are closer to the camera don't get covered by triangles
+        // that are drawn later
+        z_buffer.flush_cache = 0
+        z_buffer.color_in = {color_fifo.dout[32+:16], color_fifo.dout[16+:16], color_fifo.dout[0+:16]}
+        z_buffer.in_valid = rast.valid
+        z_buffer.addr_in = rast.disp_addr
+        z_buffer.z = rast.z
+        z_buffer.weights_in = rast.weights
+        z_buffer.frame = frame_manager.write_frame
+        
+        tri_done.in = rast.idle
+        
+        // the z_buffer gets direct access to the DDR to read/write the z-buffer
+        z_buffer.mem_out = ddr.device_out[3]
+        ddr.device_in[3] = z_buffer.mem_in
+        
+        color_fifo.rget = tri_done.out
+        
+        z_buffer.stall = !buff.ready
+        
+        // the z_buffer outputs if a pixel is valid and the associated vertice colors
+        // the color for all three vertices are calculated but only the first one is currently used
+        // future work could use the barycentric weights to shade each pixel
+        
+        // buff batches individual pixel writes into full DDR line writes
+        buff.valid = z_buffer.out_valid
+        buff.data = z_buffer.color_out[0]
+        buff.addr = z_buffer.addr_out
+        
+        buff.flush = 0
+        
+        buff.mem_out = ddr.device_out[2]
+        ddr.device_in[2] = buff.mem_in
+        
+        // device 1 is used by the FSM below
+        ddr.device_in[1].enable = 0
+        ddr.device_in[1].addr = 0
+        ddr.device_in[1].cmd = 0
+        ddr.device_in[1].wr_data = bx
+        ddr.device_in[1].wr_enable = 0
+        ddr.device_in[1].wr_mask = 0
+        
+        //led_reg.d = led_reg.q + lcd.frame_done;
+        
+        case (state.q) {
+            // Clear the frame buffer
+            State.WRITE1:
+                ddr.device_in[1].wr_enable = 1
+                ddr.device_in[1].wr_data = 8x{c{5h04, 6h08, 5h04}} // a dark gray
+                
+                if (ddr.device_out[1].wr_rdy) {
+                    state.d = State.WRITE2
+                }
+            State.WRITE2:
+                ddr.device_in[1].enable = 1
+                ddr.device_in[1].cmd = 0 // write
+                ddr.device_in[1].addr = c{frame_manager.write_frame, addr.q, 3b000}
+                
+                if ( ddr.device_out[1].rdy) {
+                    state.d = State.WRITE1
+                    addr.d = addr.q + 1
+                    if (addr.q == Geo.ADDR_PER_FRAME-1){
+                        addr.d = 0
+                        state.d = State.CZ1
+                    }
+                }
+            // Clear the Z-buffer
+            State.CZ1:
+                ddr.device_in[1].wr_enable = 1
+                ddr.device_in[1].wr_data = 8x{16d32767} // maximum distance away
+                
+                if (ddr.device_out[1].wr_rdy) {
+                    state.d = State.CZ2
+                }
+            State.CZ2:
+                ddr.device_in[1].enable = 1
+                ddr.device_in[1].cmd = 0 // write
+                ddr.device_in[1].addr = c{frame_manager.write_frame, addr.q, 3b000} | Geo.Z_BUFFER_MASK
+                
+                if ( ddr.device_out[1].rdy) {
+                    state.d = State.CZ1
+                    addr.d = addr.q + 1
+                    if (addr.q == Geo.ADDR_PER_FRAME-1){
+                        addr.d = 0
+                        state.d = State.START_RAST
+                    }
+                }
+            // Start the rendering
+            State.START_RAST:
+                if (!drawer.busy) {
+                    drawer.draw = 1
+                    state.d = State.WAIT_RENDER
+                    addr.d = 0
+                }
+            
+            State.WAIT_RENDER:
+                idle_ct.d = 0
+                if (render_idle) { // this signal is not 100% accurate so wait a bit to ensure the frame is done
+                    idle_ct.d = idle_ct.q + 1
+                    if (&idle_ct.q) {
+                        state.d = State.WAIT_DISP
+                        buff.flush = 1
+                        z_buffer.flush_cache = 1
+                    }
+                }
+            
+            // Wait for a free frame buffer to be available for the next frame
+            State.WAIT_DISP:
+                if (!frame_manager.full) {
+                    state.d = State.WRITE1
+                    frame_manager.write_next = 1
+                }
+        }
+    }
+}
