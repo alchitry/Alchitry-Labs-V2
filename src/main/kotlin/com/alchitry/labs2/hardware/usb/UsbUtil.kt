@@ -9,6 +9,7 @@ import com.alchitry.labs2.hardware.usb.ftdi.FtdiD2xx
 import com.alchitry.labs2.hardware.usb.ftdi.FtdiLibUSB
 import com.alchitry.labs2.hardware.usb.ftdi.enums.PortInterfaceType
 import com.fazecast.jSerialComm.SerialPort
+import kotlinx.coroutines.sync.Mutex
 import net.sf.yad2xx.Device
 import net.sf.yad2xx.FTDIException
 import net.sf.yad2xx.FTDIInterface
@@ -17,6 +18,8 @@ import org.usb4java.LibUsbException
 import java.io.Closeable
 
 object UsbUtil {
+    val lock = Mutex()
+
     val hasD2XX = try {
         FTDIInterface.getDeviceCount() // attempt to load class, fails if the D2XX driver isn't found
         true

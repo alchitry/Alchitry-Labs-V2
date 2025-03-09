@@ -3,6 +3,7 @@ package com.alchitry.labs2.hardware.usb
 import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.hardware.usb.ftdi.LatticeSpi
 import com.alchitry.labs2.hardware.usb.ftdi.XilinxJtag
+import kotlinx.coroutines.sync.withLock
 import java.io.File
 
 interface BoardLoader {
@@ -11,16 +12,18 @@ interface BoardLoader {
 
     companion object {
         private suspend inline fun useLoader(board: Board, boardIdx: Int, block: (BoardLoader) -> Unit): Boolean {
-            UsbUtil.openFtdiDevice(board, boardIdx).use { ftdi ->
-                if (ftdi == null)
-                    return false
-                val loader = when (board) {
-                    is Board.XilinxBoard -> XilinxJtag.init(ftdi, board)
-                    Board.AlchitryCu, Board.AlchitryCuV2 -> LatticeSpi.init(ftdi)
+            UsbUtil.lock.withLock {
+                UsbUtil.openFtdiDevice(board, boardIdx).use { ftdi ->
+                    if (ftdi == null)
+                        return false
+                    val loader = when (board) {
+                        is Board.XilinxBoard -> XilinxJtag.init(ftdi, board)
+                        Board.AlchitryCu, Board.AlchitryCuV2 -> LatticeSpi.init(ftdi)
+                    }
+                    block(loader)
                 }
-                block(loader)
+                return true
             }
-            return true
         }
 
         suspend fun erase(board: Board, boardIdx: Int): Boolean {

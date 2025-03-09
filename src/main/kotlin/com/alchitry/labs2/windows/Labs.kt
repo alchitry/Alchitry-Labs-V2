@@ -31,6 +31,7 @@ import com.alchitry.labs2.ui.tree.ProjectTree
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.jline.utils.Log
 import java.io.File
@@ -62,7 +63,9 @@ fun ApplicationScope.labsWindow(projectPath: String?) {
             }
             withContext(Dispatchers.IO) {
                 while (isActive) {
-                    labsState.detectedBoards.value = UsbUtil.detectAttachedBoards()
+                    UsbUtil.lock.withLock {
+                        labsState.detectedBoards.value = UsbUtil.detectAttachedBoards()
+                    }
                     delay(1000)
                 }
             }

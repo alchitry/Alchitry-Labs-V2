@@ -26,6 +26,7 @@ import com.alchitry.labs2.ui.main.Console
 import com.alchitry.labs2.windows.LocalLabsState
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.sync.withLock
 
 class SerialState {
     val scope: CoroutineScope = CoroutineScope(Dispatchers.Default)
@@ -79,9 +80,11 @@ fun SerialTerminalToolbar(
                         attachedToBoard = true
                         state.connected = true
 
-                        UsbUtil.openSerial(selection.first, selection.second)?.use { device ->
-                            device.setBaudrate(state.baudRate)
-                            withDevice(device)
+                        UsbUtil.lock.withLock {
+                            UsbUtil.openSerial(selection.first, selection.second)?.use { device ->
+                                device.setBaudrate(state.baudRate)
+                                withDevice(device)
+                            }
                         }
                     } catch (_: CancellationException) {
                     } catch (e: Exception) {
