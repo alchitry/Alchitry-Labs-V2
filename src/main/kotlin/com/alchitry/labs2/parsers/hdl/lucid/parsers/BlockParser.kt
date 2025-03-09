@@ -351,7 +351,8 @@ data class RepeatBlock(
     }
 
     fun createSignal(): Signal {
-        return RepeatSignal(signal, BitListValue(start, minBits, false), repeatStatCtx, this).signal
+        // TODO: Remove 32bit coercion
+        return RepeatSignal(signal, BitListValue(start, minBits.coerceAtLeast(32), false), repeatStatCtx, this).signal
     }
 
     /**

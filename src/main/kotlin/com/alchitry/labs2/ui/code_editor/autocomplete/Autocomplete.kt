@@ -103,7 +103,7 @@ abstract class Autocomplete(protected val state: CodeEditorState) {
         }
 
         val line = state.lines.getOrNull(caret.line)?.text?.text ?: return
-        val relevantText = line.substring(0, caret.offset).getRelevantText()
+        val relevantText = line.substring(0, caret.offset.coerceAtMost(line.length)).getRelevantText()
         if (relevantText.isBlank()) {
             reset()
             return

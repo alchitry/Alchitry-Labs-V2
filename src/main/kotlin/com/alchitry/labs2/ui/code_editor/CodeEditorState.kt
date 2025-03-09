@@ -285,7 +285,7 @@ class CodeEditorState(
         if (line.layoutResult == null)
             line.layout(Constraints())
         val layout = line.layoutResult ?: return null
-        val rect = layout.getCursorRect(position.offset)
+        val rect = layout.getCursorRect(position.offset.coerceIn(0, line.text.length - 1))
         return Offset(rect.left, offsetAtLineBottom(position.line).toFloat() - scrollState.value)
     }
 

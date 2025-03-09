@@ -45,7 +45,9 @@ class ExprParser(
         when (val parent = ctx.parent) {
             is RepeatBlockContext -> {
                 val exprContexts = (parent.parent as? RepeatStatContext)?.expr() ?: return
-                val expr = context.resolve(if (exprContexts.size > 1) exprContexts[1] else exprContexts[0]) ?: return
+                val expr = context.resolve(
+                    if (exprContexts.size > 1) exprContexts[1] else exprContexts.firstOrNull() ?: return
+                ) ?: return
                 if (!expr.type.known) return
                 evaluator.setDeadBlock(ctx, expr.value.isEqualTo(Bit.B0.toBitValue()).bit == Bit.B1)
             }
@@ -193,6 +195,9 @@ class ExprParser(
         }
 
         val cleanValueString = valueString.replace("_", "")
+
+        if (cleanValueString.isBlank())
+            return
 
         val unbound = BitListValue(cleanValueString, radix, signed = false)
         val value = if (width != null) {

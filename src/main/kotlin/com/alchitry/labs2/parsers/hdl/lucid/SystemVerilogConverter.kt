@@ -270,7 +270,7 @@ class SystemVerilogConverter(
             append("$type ")
             if (sig.signed)
                 append("signed ")
-            val width = BitListWidth(parent.block.minIndexBits)
+            val width = BitListWidth(parent.block.minIndexBits.coerceAtLeast(32)) // TODO: Remove 32bit coercion
             append(width.verilogArrayWidths().appendSpaceIfNotBlank())
             append("R${sig.verilogName}")
             append(";")
@@ -1344,6 +1344,7 @@ class SystemVerilogConverter(
             "casez",
             "cell",
             "config",
+            "cross",
             "deassign",
             "default",
             "defparam",
@@ -1445,27 +1446,14 @@ class SystemVerilogConverter(
                 }
                 return this
             }
-
-            fun SignalWidth.verilogArrayWidths(): List<String> {
-                var current = this
-                val widths = mutableListOf<String>()
-                while (true) {
-                    when (current) {
-                        is BitWidth -> return widths
-                        is DefinedArrayWidth -> {
-                            widths.add("[${current.size - 1}:0]")
-                            current = current.next
-                        }
-
-                        is DefinedSimpleWidth -> {
-                            widths.add("[${current.size - 1}:0]")
-                            return widths
-                        }
-
-                        is StructWidth -> return widths
-                        is ResolvableWidth<*> -> error("Resolvable widths are not allowed in globals!")
-                        is UndefinedWidth -> error("Undefined width during verilog conversion!")
-                    }
+            fun SignalWidth.verilogArrayWidths(): String {
+                return when (this) {
+                    is BitWidth -> ""
+                    is DefinedArrayWidth -> "[${size - 1}:0]${next.verilogArrayWidths()}"
+                    is DefinedSimpleWidth -> "[${size - 1}:0]"
+                    is StructWidth -> ""
+                    is ResolvableWidth<*> -> error("Resolvable widths are not allowed in globals!")
+                    is UndefinedWidth -> error("Undefined width during verilog conversion!")
                 }
             }
             append(HEADER)
@@ -1479,8 +1467,11 @@ class SystemVerilogConverter(
                 val prefix = "G_${global.name}_"
                 global.constants.values.forEach { constant ->
                     append("localparam ")
+                    if (constant.signed)
+                        append("signed ")
                     constant.width.firstStructType()?.appendSpaceIfNotBlank()?.let { append(it) }
-                    append(constant.width.verilogArrayWidths().surroundNameWithWidths("$prefix${constant.name}"))
+                    append(constant.width.verilogArrayWidths().appendSpaceIfNotBlank())
+                    append("$prefix${constant.name}")
                     append(" = ")
                     append(constant.initialValue.toVerilog())
                     append(";")
@@ -1493,8 +1484,12 @@ class SystemVerilogConverter(
                     struct.values.forEach { member ->
                         newLine()
                         append("logic ")
+                        if (member.signed) {
+                            append("signed ")
+                        }
                         member.width.firstStructType()?.appendSpaceIfNotBlank()?.let { append(it) }
-                        append(member.width.verilogArrayWidths().surroundNameWithWidths(member.name))
+                        append(member.width.verilogArrayWidths().appendSpaceIfNotBlank())
+                        append(member.name)
                         append(";")
                     }
                     tabCount--
