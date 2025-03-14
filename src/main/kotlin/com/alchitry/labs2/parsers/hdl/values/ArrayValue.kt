@@ -76,7 +76,7 @@ data class ArrayValue(
             val last = if (selection.range.last >= 0) selection.range.last else size + selection.range.last
             val first = if (selection.range.first >= 0) selection.range.first else size + selection.range.first
             val newElements = elements.subList(first, last + 1)
-            if (newElements.size == 1)
+            if (newElements.size == 1 && selection.single)
                 return newElements.first()
             return copy(elements = newElements)
         } catch (e: IndexOutOfBoundsException) {

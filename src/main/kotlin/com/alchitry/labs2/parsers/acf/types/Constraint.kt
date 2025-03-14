@@ -38,5 +38,9 @@ sealed interface PinAttribute {
     data class Frequency(val value: Int) : PinAttribute {
         override val name: String = "FREQUENCY"
     }
+
+    data class DiffTerm(val value: Boolean) : PinAttribute {
+        override val name: String = "DIFF_TERM"
+    }
 }
 

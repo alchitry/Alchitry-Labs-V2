@@ -22,12 +22,17 @@ fun SignalSelection.overlaps(other: SignalSelection): Boolean {
 sealed class SignalSelector {
     abstract fun overlaps(other: SignalSelector): Boolean
 
-    data class Bits(val range: IntRange, val context: SelectionContext, val undefined: Boolean = false) :
-        SignalSelector() {
-        constructor(bit: Int, context: SelectionContext, undefined: Boolean = false) : this(
+    data class Bits(
+        val range: IntRange,
+        val context: SelectionContext,
+        val undefined: Boolean = false,
+        val single: Boolean = context is SelectionContext.Single
+    ) : SignalSelector() {
+        constructor(bit: Int, undefined: Boolean = false) : this(
             bit..bit,
-            context,
-            undefined
+            SelectionContext.Constant,
+            undefined,
+            single = true
         )
 
         /**

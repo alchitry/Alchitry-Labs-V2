@@ -171,7 +171,7 @@ class ModuleInstanceArray(
             .mapValues { it.value.external }
 
         modules.forEachIndexed { index: List<Int>, moduleInstance: ModuleInstance ->
-            val selection = index.map { SignalSelector.Bits(it, SelectionContext.Constant) }
+            val selection = index.map { SignalSelector.Bits(it) }
             moduleInstance.external.forEach { (name, port) ->
                 val subSig = internal[name]?.select(selection) ?: error("Missing port \"$name\"!")
                 if (port.direction.canWrite)
