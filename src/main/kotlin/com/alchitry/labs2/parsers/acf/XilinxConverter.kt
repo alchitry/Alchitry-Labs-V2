@@ -53,6 +53,14 @@ data object XilinxConverter : AcfConverter {
             append(portName)
             append("}]\n")
         }
+
+        attributes.firstOfTypeOrNull<PinAttribute.DiffTerm>()?.let { diffTerm ->
+            append("set_property DIFF_TERM ")
+            append(if (diffTerm.value) "TRUE" else "FALSE")
+            append(" [get_ports {")
+            append(portName)
+            append("}]\n")
+        }
     }
 
     override suspend fun convert(

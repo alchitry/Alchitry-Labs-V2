@@ -1217,7 +1217,7 @@ class SystemVerilogConverter(
                 lastSelector.range.joinToString(separator = ", ", prefix = "{", postfix = "}") { index ->
                     val newSelector = selection.toMutableList().apply {
                         removeLast()
-                        add(SignalSelector.Bits(index, SelectionContext.Constant))
+                        add(SignalSelector.Bits(index))
                     }
                     val selectedSignal = signal.getSignal().select(newSelector)
                     selectedSignal.toVerilog(write = false)

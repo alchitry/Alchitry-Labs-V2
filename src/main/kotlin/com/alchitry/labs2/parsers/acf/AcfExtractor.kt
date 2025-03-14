@@ -116,6 +116,7 @@ class AcfExtractor(
                 )
                 return null
             }
+
             "PULL" -> return when (valueText) {
                 "UP" -> PinAttribute.Pull(PinPull.Up)
                 "DOWN" -> PinAttribute.Pull(PinPull.Down)
@@ -183,6 +184,21 @@ class AcfExtractor(
                 return PinAttribute.Frequency(frequency)
             }
 
+            "DIFF_TERM" -> {
+                val value = when (valueText) {
+                    "TRUE" -> true
+                    "FALSE" -> false
+                    else -> {
+                        notationCollector.reportError(
+                            ctx.attributeValue() ?: ctx,
+                            "Invalid DIFF_TERM value \"$valueText\". Expected TRUE or FALSE."
+                        )
+                        return null
+                    }
+                }
+                return PinAttribute.DiffTerm(value)
+            }
+
             else -> {
                 notationCollector.reportError(ctx, "Unknown attribute \"$name\".")
                 return null
@@ -213,6 +229,7 @@ class AcfExtractor(
                 pinContext,
                 "The pin \"${constraint.pin.name}\" has already been connected!"
             )
+
             ProjectContext.AddConstraintResult.PortTaken -> notationCollector.reportError(
                 portContext,
                 "The port \"${constraint.port}\" has already been connected!"
@@ -236,8 +253,7 @@ class AcfExtractor(
             when (it) {
                 is NameContext -> SignalSelector.Struct(it.text) to it
                 is ArrayIndexContext -> SignalSelector.Bits(
-                    (it.INT() ?: return).text.toInt(),
-                    SelectionContext.Constant
+                    (it.INT() ?: return).text.toInt()
                 ) to it
 
                 else -> error("Impossible as everything else should have been filtered out!")
@@ -402,6 +418,24 @@ class AcfExtractor(
                     "The STANDARD \"${ioStandard.name}\" does not support the slew value \"${slew.second.value}\". Expected ${
                         supportedSlews.joinToOrString()
                     }."
+                )
+                return
+            }
+        }
+
+        val diffTerm = attributes.firstOfType<PinAttribute.DiffTerm>()
+        if (diffTerm != null) {
+            if (!ioStandard.diffTerm) {
+                notationCollector.reportError(
+                    diffTerm.first,
+                    "The STANDARD \"${ioStandard.name}\" does not support differential termination."
+                )
+                return
+            }
+            if (ioStandard.vcco != filteredVcco) {
+                notationCollector.reportError(
+                    diffTerm.first,
+                    "Differential termination requires that VCCO be set to ${ioStandard.vcco}."
                 )
                 return
             }
