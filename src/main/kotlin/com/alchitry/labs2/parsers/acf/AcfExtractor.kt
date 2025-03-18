@@ -432,7 +432,7 @@ class AcfExtractor(
                 )
                 return
             }
-            if (ioStandard.vcco != filteredVcco) {
+            if (diffTerm.second.value && ioStandard.vcco != filteredVcco) {
                 notationCollector.reportError(
                     diffTerm.first,
                     "Differential termination requires that VCCO be set to ${ioStandard.vcco}."
