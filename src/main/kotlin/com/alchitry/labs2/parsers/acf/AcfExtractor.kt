@@ -345,7 +345,9 @@ class AcfExtractor(
                 return@firstNotNullOfOrNull null
             val pinStd =
                 it.attributes.firstOfTypeOrNull<PinAttribute.Standard>()?.value ?: return@firstNotNullOfOrNull null
-            if (it.port.direction != SignalDirection.Write && pinStd.inputAnyVcco)
+            val diffTerm =
+                it.attributes.firstOfTypeOrNull<PinAttribute.DiffTerm>()?.value ?: false
+            if (it.port.direction != SignalDirection.Write && (pinStd.inputAnyVcco && !diffTerm))
                 return@firstNotNullOfOrNull null
             pinStd.vcco
         }
@@ -432,10 +434,10 @@ class AcfExtractor(
                 )
                 return
             }
-            if (diffTerm.second.value && ioStandard.vcco != filteredVcco) {
+            if (diffTerm.second.value && filteredVcco != null && ioStandard.vcco != filteredVcco) {
                 notationCollector.reportError(
                     diffTerm.first,
-                    "Differential termination requires that VCCO be set to ${ioStandard.vcco}."
+                    "Differential termination requires that VCCO be set to ${ioStandard.vcco} but VCCO is ${filteredVcco}."
                 )
                 return
             }
