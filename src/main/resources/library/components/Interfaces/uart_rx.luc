@@ -30,7 +30,7 @@
 
 module uart_rx #(
     CLK_FREQ ~ 100_000_000 : CLK_FREQ > 0,            // clock frequency
-    BAUD = 1_000_000 : BAUD > 0 && BAUD <= CLK_FREQ/4 // desired baud rate
+    BAUD ~ 1_000_000 : BAUD > 0 && BAUD <= CLK_FREQ/4 // desired baud rate
 )(
     input clk,       // clock input
     input rst,       // reset active high
