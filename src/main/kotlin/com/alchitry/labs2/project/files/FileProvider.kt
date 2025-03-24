@@ -30,7 +30,7 @@ sealed class FileProvider {
     /**
      * True if the file can't be written.
      */
-    val readOnly: Boolean get() = this !is DiskFile || !this.file.canWrite()
+    abstract val readOnly: Boolean
 
     val extension: String get() = name.split('.').last()
 
@@ -44,8 +44,11 @@ sealed class FileProvider {
     @SerialName("DiskFile")
     data class DiskFile(
         val path: Path,
+        var forceReadOnly: Boolean = false
     ) : FileProvider() {
         constructor(path: String) : this(Paths.get(path))
+
+        override val readOnly: Boolean get() = forceReadOnly || !file.canWrite()
 
         override val name: String get() = path.name
         val file: File
@@ -112,6 +115,8 @@ sealed class FileProvider {
         override val name: String,
         val contents: String
     ) : FileProvider() {
+        override val readOnly = true
+
         override fun isValid() = true
 
         override fun readText(): String = contents

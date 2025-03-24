@@ -9,4 +9,8 @@ data class IPCore(
     val name: String,
     val stub: SourceFile?,
     val files: Set<FileProvider.DiskFile>
-)
+) {
+    init {
+        (stub?.file as? FileProvider.DiskFile)?.forceReadOnly = true
+    }
+}

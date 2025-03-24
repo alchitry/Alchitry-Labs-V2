@@ -123,7 +123,7 @@ object VivadoIP {
                 val foundStub = findPattern(dir, Regex(".*_stub\\.v"), true)
                 val stub = if (foundStub != null) {
                     Log.println("  Found stub file!")
-                    SourceFile(FileProvider.DiskFile(foundStub.toPath().relativeTo(project.path)))
+                    SourceFile(FileProvider.DiskFile(foundStub.toPath().relativeTo(project.path), forceReadOnly = true))
                 } else {
                     Log.error("  Could not find stub file! Did you let synthesis finish before closing Vivado?")
                     null

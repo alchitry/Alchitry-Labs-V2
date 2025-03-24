@@ -42,6 +42,7 @@ data class Component(
      */
     var dependencies = listOf<Component>()
 
+    override val readOnly = true
     override fun isValid(): Boolean = true
     val path: String = categories.toMutableList().apply { add(name) }.joinToString("/")
     override fun readText(): String = content
