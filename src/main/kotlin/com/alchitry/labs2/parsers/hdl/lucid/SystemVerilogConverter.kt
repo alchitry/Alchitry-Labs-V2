@@ -1343,6 +1343,7 @@ class SystemVerilogConverter(
             "casex",
             "casez",
             "cell",
+            "char",
             "config",
             "cross",
             "deassign",
