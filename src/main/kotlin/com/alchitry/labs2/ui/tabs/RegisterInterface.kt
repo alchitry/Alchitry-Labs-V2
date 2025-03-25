@@ -145,8 +145,27 @@ class RegisterInterface(
     override var parent: TabPanel
 ) : Tab {
     val state = SerialState()
-    val console = Console()
-    val requests = MutableSharedFlow<RegisterRequest>(extraBufferCapacity = 256)
+    private val console = Console()
+    private val requests = MutableSharedFlow<RegisterRequest>(extraBufferCapacity = 256)
+
+    private var addressState by mutableStateOf(
+        IntTextFieldState(
+            value = 0,
+            signed = false,
+            isHex = false,
+            valid = true
+        )
+    )
+
+    private var valueState by mutableStateOf(
+        IntTextFieldState(
+            value = 0,
+            signed = false,
+            isHex = false,
+            valid = true
+        )
+    )
+
 
     @Composable
     override fun label() {
@@ -155,26 +174,6 @@ class RegisterInterface(
 
     @Composable
     override fun content() {
-        var addressState by remember {
-            mutableStateOf(
-                IntTextFieldState(
-                    value = 0,
-                    signed = false,
-                    isHex = false,
-                    valid = true
-                )
-            )
-        }
-        var valueState by remember {
-            mutableStateOf(
-                IntTextFieldState(
-                    value = 0,
-                    signed = false,
-                    isHex = false,
-                    valid = true
-                )
-            )
-        }
         Surface {
             Box(Modifier.fillMaxSize())
             Column {
