@@ -92,9 +92,10 @@ data object XilinxConverter : AcfConverter {
                         append(" -waveform {0.000 ${nsPeriod / 2.0}} [get_ports ")
                         append(portName)
                         append("]\n")
-                        append("set_clock_groups -asynchronous -group {")
+                        append("set_clock_groups -asynchronous -group [")
+                        append("get_clocks -include_generated_clocks ")
                         append(clockName)
-                        append("}\n")
+                        append("]\n")
                     }
                     appendLine()
                 }
