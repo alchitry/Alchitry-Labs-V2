@@ -828,7 +828,7 @@ class SystemVerilogConverter(
                         val type = currentWidth.type
                         val member = type[s.member] ?: error("Struct member could not be found!")
 
-                        append(".${member.name}")
+                        append(".${member.name.sanitize()}")
 
                         signed = member.signed
                         currentWidth = member.width
@@ -1402,6 +1402,7 @@ class SystemVerilogConverter(
             "strength",
             "table",
             "task",
+            "time",
             "tri",
             "tri0",
             "tri1",
@@ -1489,7 +1490,7 @@ class SystemVerilogConverter(
                         }
                         member.width.firstStructType()?.appendSpaceIfNotBlank()?.let { append(it) }
                         append(member.width.verilogArrayWidths().appendSpaceIfNotBlank())
-                        append(member.name)
+                        append(member.name.sanitize())
                         append(";")
                     }
                     tabCount--
