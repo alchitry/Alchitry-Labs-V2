@@ -342,7 +342,8 @@ data class Project(
         try {
             sourceDir.createDirectories()
             vSourceFiles = sourceFiles.map { (name, contents) ->
-                val file = sourceDir.resolve("$name.sv").toFile()
+                val fileName = if (name.endsWith(".v")) name else "$name.sv"
+                val file = sourceDir.resolve(fileName).toFile()
                 file.outputStream().bufferedWriter().use {
                     it.write(contents ?: error("Missing contents for file $name"))
                 }
