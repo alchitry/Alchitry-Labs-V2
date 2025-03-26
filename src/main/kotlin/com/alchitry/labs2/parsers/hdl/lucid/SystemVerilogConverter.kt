@@ -506,7 +506,7 @@ class SystemVerilogConverter(
                             append(",")
                         newLine()
                         append(".")
-                        append(param.name)
+                        append(param.name.sanitize())
                         append("(")
                         append(parameterNameMap[param.name]!!)
                         if (instance.paramAssignments[param.name]?.local == true)
@@ -531,7 +531,7 @@ class SystemVerilogConverter(
                             append(",")
                         newLine()
                         append(".")
-                        append(port.name)
+                        append(port.name.sanitize())
                         append("(")
                         when (signalOrSubSignal) {
                             is Signal -> append(signalOrSubSignal.verilogName)
@@ -744,7 +744,7 @@ class SystemVerilogConverter(
                 is RepeatSignal -> "R_${parent.name}_${baseSignal.name}"
                 is LocalSignal -> "L_${parent.name}_${baseSignal.name}"
                 is DynamicExpr -> parent.expr.verilog
-            }
+            }.sanitize()
         }
 
     private data class SubSignalData(
