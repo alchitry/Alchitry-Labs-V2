@@ -799,15 +799,27 @@ class CodeEditorState(
 
                         if (selectionManager.start.line == lineIndex) {
                             selectionManager.start =
-                                selectionManager.start.copy(offset = selectionManager.start.offset - whitespace)
+                                selectionManager.start.copy(
+                                    offset = (selectionManager.start.offset - whitespace).coerceAtLeast(
+                                        0
+                                    )
+                                )
                         }
                         if (selectionManager.end.line == lineIndex) {
                             selectionManager.end =
-                                selectionManager.end.copy(offset = selectionManager.end.offset - whitespace)
+                                selectionManager.end.copy(
+                                    offset = (selectionManager.end.offset - whitespace).coerceAtLeast(
+                                        0
+                                    )
+                                )
                         }
                         if (selectionManager.caret.line == lineIndex) {
                             selectionManager.caret =
-                                selectionManager.caret.copy(offset = selectionManager.caret.offset - whitespace)
+                                selectionManager.caret.copy(
+                                    offset = (selectionManager.caret.offset - whitespace).coerceAtLeast(
+                                        0
+                                    )
+                                )
                         }
                     }
                     return true
