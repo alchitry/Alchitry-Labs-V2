@@ -54,7 +54,7 @@
    TOP value, TOP will never be reached and 2^WIDTH
    will be used instead.
 
-   The duty cycle is: TOP / value
+   The duty cycle is: value / TOP
    The period is: TOP / (CLK_FREQ / 2^DIV)
 
    For a servo, you typically want a frequency of
