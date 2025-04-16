@@ -3,6 +3,7 @@ package com.alchitry.labs2.parsers.hdl.lucid.parsers
 import com.alchitry.labs2.parsers.grammar.LucidBaseListener
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.hdl.ExprType
+import com.alchitry.labs2.parsers.hdl.lucid.context.ContextState
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidExprContext
 import com.alchitry.labs2.parsers.hdl.types.*
@@ -171,7 +172,21 @@ data class SignalParser(
             try {
                 signal.select(sigSelection)
             } catch (e: SignalSelectionException) {
-                if (!context.inDeadBlock(ctx)) {
+                if (context.getContextState(ctx) == ContextState.ACTIVE || sigSelection.any {
+                        when (it) {
+                            is SignalSelector.Bits -> when (it.context) {
+                                is SelectionContext.Constant -> true
+                                is SelectionContext.Single -> context.resolve(it.context.bit)?.type?.known == true
+                                is SelectionContext.DownTo -> context.resolve(it.context.stop)?.type?.known == true
+                                is SelectionContext.Fixed -> context.resolve(it.context.start)?.type?.known == true &&
+                                        context.resolve(it.context.stop)?.type?.known == true
+
+                                is SelectionContext.UpTo -> context.resolve(it.context.start)?.type?.known == true
+                            }
+
+                            is SignalSelector.Struct -> true
+                        }
+                    }) {
                     context.reportError(selectionMap[e.selector]!!, e.message!!)
                 }
                 return

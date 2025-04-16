@@ -272,7 +272,7 @@ class LucidBlockContext(
         return blockParser.resolveFunction(name)
     }
 
-    override fun inDeadBlock(ctx: RuleContext): Boolean = expr.inDeadBlock(ctx)
+    override fun getContextState(ctx: RuleContext): ContextState = expr.getContextState(ctx)
 
     suspend fun runFunction(function: Function.Custom, args: List<Value>) {
         if (stage != ParseStage.Evaluation)

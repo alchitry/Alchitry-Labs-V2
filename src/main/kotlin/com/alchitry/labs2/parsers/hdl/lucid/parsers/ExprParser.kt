@@ -3,6 +3,7 @@ package com.alchitry.labs2.parsers.hdl.lucid.parsers
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
 import com.alchitry.labs2.parsers.grammar.SuspendLucidBaseListener
 import com.alchitry.labs2.parsers.hdl.*
+import com.alchitry.labs2.parsers.hdl.lucid.context.ContextState
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidExprContext
 import com.alchitry.labs2.parsers.hdl.types.*
@@ -39,7 +40,7 @@ class ExprParser(
     fun resolve(ctx: ExprContext): Expr? = evaluator.resolve(ctx)
     fun resolveDependencies(ctx: ExprContext): Set<Signal>? = evaluator.resolveDependencies(ctx)
     fun setAssignWidth(ctx: ParseTree, width: SignalWidth) = evaluator.setAssignWidth(ctx, width)
-    fun inDeadBlock(ctx: RuleContext): Boolean = evaluator.inDeadBlock(ctx)
+    fun getContextState(ctx: RuleContext): ContextState = evaluator.getContextState(ctx)
 
     override suspend fun enterBlock(ctx: BlockContext) {
         when (val parent = ctx.parent) {
@@ -48,20 +49,17 @@ class ExprParser(
                 val expr = context.resolve(
                     if (exprContexts.size > 1) exprContexts[1] else exprContexts.firstOrNull() ?: return
                 ) ?: return
-                if (!expr.type.known) return
-                evaluator.setDeadBlock(ctx, expr.value.isEqualTo(Bit.B0.toBitValue()).bit == Bit.B1)
+                evaluator.setBlockState(ctx, expr.value.isEqualTo(Bit.B0.toBitValue()).bit == Bit.B1, expr.type.known)
             }
 
             is IfStatContext -> {
                 val expr = context.resolve(parent.expr() ?: return) ?: return
-                if (!expr.type.known) return
-                evaluator.setDeadBlock(ctx, expr.value.isTrue().invert().bit == Bit.B1)
+                evaluator.setBlockState(ctx, expr.value.isTrue().invert().bit == Bit.B1, expr.type.known)
             }
 
             is ElseStatContext -> {
                 val expr = context.resolve((parent.parent as? IfStatContext)?.expr() ?: return) ?: return
-                if (!expr.type.known) return
-                evaluator.setDeadBlock(ctx, expr.value.isTrue().bit == Bit.B1)
+                evaluator.setBlockState(ctx, expr.value.isTrue().bit == Bit.B1, expr.type.known)
             }
         }
     }
@@ -70,11 +68,10 @@ class ExprParser(
         val parent = ctx.parent as CaseElemContext
         val caseExprCtx = parent.expr()
         val expr = context.resolve((parent.parent as CaseStatContext).expr() ?: return) ?: return
-        if (!expr.type.known) return
 
         if (caseExprCtx != null) {
             val caseExpr = context.resolve(caseExprCtx) ?: return
-            evaluator.setDeadBlock(ctx, expr.value.isEqualTo(caseExpr.value).invert().bit == Bit.B1)
+            evaluator.setBlockState(ctx, expr.value.isEqualTo(caseExpr.value).invert().bit == Bit.B1, expr.type.known)
             return
         }
 
@@ -82,7 +79,11 @@ class ExprParser(
         val cases = (parent.parent as CaseStatContext).caseElem()
         val index = cases.indexOf(parent)
         if (index < 0) error("Case isn't inside its parent!")
-        evaluator.setDeadBlock(ctx, cases.subList(0, index).any { !evaluator.isDeadBlock(it) })
+        evaluator.setBlockState(
+            ctx,
+            cases.subList(0, index).any { evaluator.getContextState(it) == ContextState.ACTIVE },
+            expr.type.known
+        )
     }
 
     override suspend fun enterTestBlock(ctx: TestBlockContext) {
@@ -812,16 +813,16 @@ class ExprParser(
                 val valArgs = checkOnlyValues() ?: return
                 evaluator.setExpr(
                     ctx, if (valArgs[0].width.isDefined()) {
-                    if (valArgs[0] is UndefinedValue) {
-                        UndefinedValue(
-                            DefinedSimpleWidth(
-                                valArgs[0].width.bitCount ?: error("Failed to get bit count. Should be impossible.")
+                        if (valArgs[0] is UndefinedValue) {
+                            UndefinedValue(
+                                DefinedSimpleWidth(
+                                    valArgs[0].width.bitCount ?: error("Failed to get bit count. Should be impossible.")
+                                )
                             )
-                        )
+                        } else {
+                            valArgs[0].flatten()
+                        }
                     } else {
-                        valArgs[0].flatten()
-                    }
-                } else {
                         UndefinedValue(UndefinedSimpleWidth())
                     }.asExpr(type)
                 )
@@ -1043,10 +1044,10 @@ class ExprParser(
                 val d2 = BigDecimal(b2, 10)
                 evaluator.setExpr(
                     ctx, d1
-                    .divide(d2, RoundingMode.HALF_UP)
-                    .setScale(0, RoundingMode.CEILING)
-                    .toBigInteger()
-                    .toBitListValue()
+                        .divide(d2, RoundingMode.HALF_UP)
+                        .setScale(0, RoundingMode.CEILING)
+                        .toBigInteger()
+                        .toBitListValue()
                         .asExpr(type)
                 )
             }
@@ -1093,9 +1094,9 @@ class ExprParser(
                     }
                     evaluator.setExpr(
                         ctx, when (value) {
-                        is SimpleValue -> value.asBitListValue().resize(numBits)
-                        is UndefinedValue -> value.copy(width = DefinedSimpleWidth(numBits))
-                        else -> error("Previous error checks failed. This shouldn't be reached!")
+                            is SimpleValue -> value.asBitListValue().resize(numBits)
+                            is UndefinedValue -> value.copy(width = DefinedSimpleWidth(numBits))
+                            else -> error("Previous error checks failed. This shouldn't be reached!")
                         }.asExpr(type)
                     )
                 }

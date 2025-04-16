@@ -65,5 +65,5 @@ class LucidModuleTypeContext(
     override fun resolveStruct(name: String) = struct.resolveStruct(name)
 
     override fun resolveGlobal(name: String) = project.resolveGlobal(name)
-    override fun inDeadBlock(ctx: RuleContext): Boolean = expr.inDeadBlock(ctx)
+    override fun getContextState(ctx: RuleContext): ContextState = expr.getContextState(ctx)
 }

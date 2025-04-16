@@ -65,5 +65,5 @@ class LucidGlobalContext(
     override fun resolveStruct(name: String) = struct.resolveStruct(name)
 
     override fun resolveGlobal(name: String): GlobalNamespace? = global.resolveGlobal(name)
-    override fun inDeadBlock(ctx: RuleContext): Boolean = expr.inDeadBlock(ctx)
+    override fun getContextState(ctx: RuleContext): ContextState = expr.getContextState(ctx)
 }

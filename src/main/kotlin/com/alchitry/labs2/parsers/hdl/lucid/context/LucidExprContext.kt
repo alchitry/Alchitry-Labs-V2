@@ -18,6 +18,12 @@ import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.RuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 
+enum class ContextState {
+    ACTIVE,   // currently in
+    INACTIVE, // not currently in but could be reached
+    DEAD      // unreachable
+}
+
 interface LucidExprContext : ErrorListener, ExprEvaluatorContext<ExprContext> {
     fun resolve(bitSelectionContext: BitSelectionContext): List<BitSelection>
     fun resolve(signalCtx: SignalContext): SignalOrSubSignal?
@@ -30,7 +36,7 @@ interface LucidExprContext : ErrorListener, ExprEvaluatorContext<ExprContext> {
     fun resolveStruct(name: String): StructType?
     fun resolveGlobal(name: String): GlobalNamespace?
     fun resolveFunction(name: String): Function? = Function.builtIn.firstOrNull { it.label == name }
-    fun inDeadBlock(ctx: RuleContext): Boolean
+    fun getContextState(ctx: RuleContext): ContextState
     val evalContext: Evaluable?
     val project: ProjectContext
     val sourceFile: SourceFile
@@ -93,5 +99,5 @@ class LucidExprEval(
     override fun resolveStruct(name: String) = struct.resolveStruct(name)
 
     override fun resolveGlobal(name: String) = project.resolveGlobal(name)
-    override fun inDeadBlock(ctx: RuleContext): Boolean = expr.inDeadBlock(ctx)
+    override fun getContextState(ctx: RuleContext): ContextState = expr.getContextState(ctx)
 }

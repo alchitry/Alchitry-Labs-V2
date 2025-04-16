@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.hdl
 
 import com.alchitry.labs2.asSingleLine
+import com.alchitry.labs2.parsers.hdl.lucid.context.ContextState
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.checkSimpleOrCompatible
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.checkSimpleWidth
 import com.alchitry.labs2.parsers.hdl.types.Signal
@@ -38,6 +39,7 @@ data class ExprEvaluator<T : ParserRuleContext>(
     private val widthFence: MutableMap<ParseTree, Boolean> = mutableMapOf(),
     private val dependencies: MutableMap<ParseTree, Set<Signal>> = mutableMapOf(),
     private val deadBlocks: MutableMap<RuleContext, Boolean> = mutableMapOf(),
+    private val inactiveBlocks: MutableMap<RuleContext, Boolean> = mutableMapOf(),
 ) {
     fun withContext(context: ExprEvaluatorContext<T>) = copy(context = context)
 
@@ -103,8 +105,30 @@ data class ExprEvaluator<T : ParserRuleContext>(
         return false
     }
 
-    fun setDeadBlock(ctx: RuleContext, isDead: Boolean) {
-        deadBlocks[ctx] = isDead
+    fun isInactiveBlock(ctx: RuleContext): Boolean = inactiveBlocks[ctx] == true
+
+    fun inInactiveBlock(ctx: RuleContext): Boolean {
+        var current: RuleContext? = ctx
+        while (current != null) {
+            if (inactiveBlocks[current] == true)
+                return true
+            current = current.parent
+        }
+        return false
+    }
+
+    fun setBlockState(ctx: RuleContext, isInactive: Boolean, isKnown: Boolean) {
+        if (isKnown) {
+            deadBlocks[ctx] = isInactive
+        } else {
+            inactiveBlocks[ctx] = isInactive
+        }
+    }
+
+    fun getContextState(ctx: RuleContext): ContextState = when {
+        inDeadBlock(ctx) -> ContextState.DEAD
+        inInactiveBlock(ctx) -> ContextState.INACTIVE
+        else -> ContextState.ACTIVE
     }
 
     /**

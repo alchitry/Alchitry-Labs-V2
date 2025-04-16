@@ -2,6 +2,7 @@ package com.alchitry.labs2.parsers.hdl.lucid.parsers
 
 import com.alchitry.labs2.parsers.grammar.LucidBaseListener
 import com.alchitry.labs2.parsers.grammar.LucidParser.*
+import com.alchitry.labs2.parsers.hdl.lucid.context.ContextState
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.hdl.types.Function
@@ -183,7 +184,7 @@ data class SignalDriverParser(
     }
 
     override fun exitExprSignal(ctx: ExprSignalContext) {
-        if (context.inDeadBlock(ctx) || context.mode.building)
+        if (context.getContextState(ctx) == ContextState.DEAD || context.mode.building)
             return
         val sig = context.resolve(ctx.signal() ?: return) ?: return
         val fullSig = sig.getSignal()
