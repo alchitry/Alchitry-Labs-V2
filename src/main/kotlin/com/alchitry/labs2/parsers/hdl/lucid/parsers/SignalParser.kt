@@ -176,12 +176,12 @@ data class SignalParser(
                         when (it) {
                             is SignalSelector.Bits -> when (it.context) {
                                 is SelectionContext.Constant -> true
-                                is SelectionContext.Single -> context.resolve(it.context.bit)?.type?.known == true
-                                is SelectionContext.DownTo -> context.resolve(it.context.stop)?.type?.known == true
-                                is SelectionContext.Fixed -> context.resolve(it.context.start)?.type?.known == true &&
-                                        context.resolve(it.context.stop)?.type?.known == true
+                                is SelectionContext.Single -> context.resolve(it.context.bit)?.type?.fixed == true
+                                is SelectionContext.DownTo -> context.resolve(it.context.stop)?.type?.fixed == true
+                                is SelectionContext.Fixed -> context.resolve(it.context.start)?.type?.fixed == true &&
+                                        context.resolve(it.context.stop)?.type?.fixed == true
 
-                                is SelectionContext.UpTo -> context.resolve(it.context.start)?.type?.known == true
+                                is SelectionContext.UpTo -> context.resolve(it.context.start)?.type?.fixed == true
                             }
 
                             is SignalSelector.Struct -> true
