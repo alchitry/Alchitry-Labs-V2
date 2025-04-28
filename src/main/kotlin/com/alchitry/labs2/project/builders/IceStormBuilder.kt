@@ -76,7 +76,7 @@ data object IceStormBuilder : ProjectBuilder() {
             "-w",
             "adjacent"
         )
-        sv2vCommand.addAll(sourceFiles.map { it.absolutePath })
+        sv2vCommand.addAll(sourceFiles.filter { it.extension == "sv" }.map { it.absolutePath })
 
         val sv2sStatus = runProcess(sv2vCommand, runDirectory, this)
         if (sv2sStatus != 0) {
