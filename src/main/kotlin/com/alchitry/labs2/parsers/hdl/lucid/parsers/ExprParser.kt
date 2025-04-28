@@ -293,8 +293,9 @@ class ExprParser(
 
         if (!signal.direction.canRead) {
             val functionCtx = ctx.firstParentOrNull { it is FunctionContext }
+            val sigCtx = ctx.firstParentOrNull { it is SigConContext }
             // exclude reads of the WIDTH function as this doesn't read the signal
-            if (functionCtx !is FunctionContext || functionCtx.FUNCTION_ID()?.text != "$" + Function.WIDTH.label) {
+            if ((functionCtx !is FunctionContext || functionCtx.FUNCTION_ID()?.text != "$" + Function.WIDTH.label) && sigCtx !is SigConContext) {
                 context.reportError(signalCtx, "The signal \"${signalCtx.text}\" can't be read!")
                 return
             }
