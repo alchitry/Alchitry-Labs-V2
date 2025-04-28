@@ -185,17 +185,19 @@ sealed class SimpleValue(
     }
 
     infix fun shr(n: Int): BitListValue {
+        val shift = n.coerceAtMost(size)
         val newBits = mutableListOf<Bit>()
-        newBits.addAll(bits.subList(n, size))
+        newBits.addAll(bits.subList(shift, size))
         val signBit = if (signed) msb else Bit.B0
-        repeat(n) { newBits.add(signBit) }
+        repeat(shift) { newBits.add(signBit) }
         return BitListValue(newBits, signed)
     }
 
     infix fun ushr(n: Int): BitListValue {
+        val shift = n.coerceAtMost(size)
         val newBits = mutableListOf<Bit>()
-        newBits.addAll(bits.subList(n, size))
-        repeat(n) { newBits.add(Bit.B0) }
+        newBits.addAll(bits.subList(shift, size))
+        repeat(shift) { newBits.add(Bit.B0) }
         return BitListValue(newBits, false)
     }
 
