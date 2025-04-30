@@ -229,8 +229,6 @@ class ExprParser(
         ctx.skip = true
         if (evaluator.canSkip(ctx)) return
 
-        evaluator.setWidthFence(ctx)
-
         val type = ctx.structType()?.let { context.resolve(it) } ?: return
 
         val members = mutableMapOf<String, Value>()
@@ -275,12 +273,7 @@ class ExprParser(
     }
 
     override suspend fun exitBitSelection(ctx: BitSelectionContext) {
-        evaluator.setWidthFence(ctx)
         evaluator.copyDependencies(ctx, ctx.children)
-    }
-
-    override suspend fun exitRepeatStat(ctx: RepeatStatContext) {
-        evaluator.setWidthFence(ctx)
     }
 
     override suspend fun exitExprSignal(ctx: ExprSignalContext) {
@@ -288,8 +281,6 @@ class ExprParser(
         val signalCtx = ctx.signal() ?: return
 
         val signal = context.resolve(signalCtx) ?: return
-
-        val finalWidth = evaluator.getFinalWidth(ctx)
 
         if (!signal.direction.canRead) {
             val functionCtx = ctx.firstParentOrNull { it is FunctionContext }
@@ -329,9 +320,8 @@ class ExprParser(
         } else {
             signal.read(context.evalContext)
         }
-        val resizedValue = if (finalWidth != null) value.resizeToMatch(finalWidth) else value
 
-        evaluator.setExpr(ctx, Expr(resizedValue, type))
+        evaluator.setExpr(ctx, Expr(value, type))
 
         // add dependencies for all signals used in bit selection as well as this signal
         if (evaluator.resolveDependencies(ctx) == null) {
@@ -393,8 +383,6 @@ class ExprParser(
 
     override suspend fun exitFunction(ctx: FunctionContext) {
         if (evaluator.canSkip(ctx)) return
-
-        evaluator.setWidthFence(ctx)
 
         evaluator.setDependencies(ctx, mutableSetOf<Signal>().apply {
             ctx.functionExpr()

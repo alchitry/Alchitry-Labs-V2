@@ -172,6 +172,6 @@ class BoundsParserTests {
         )
 
         tester.fullParse()
-        tester.assertNoIssues()
+        assert(tester.notationManager.hasErrors)
     }
 }

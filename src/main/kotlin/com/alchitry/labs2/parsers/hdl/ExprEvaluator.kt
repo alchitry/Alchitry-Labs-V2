@@ -9,7 +9,6 @@ import com.alchitry.labs2.parsers.hdl.values.*
 import com.alchitry.labs2.parsers.notations.ErrorListener
 import com.alchitry.labs2.parsers.notations.ErrorStrings
 import com.alchitry.labs2.parsers.notations.WarningStrings
-import com.alchitry.labs2.parsers.parents
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.RuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree
@@ -32,14 +31,19 @@ enum class ExprEvalMode {
     val testing get() = this == Testing
 }
 
+data class WidthContext(
+    val width: SignalWidth,
+    val isFixed: Boolean
+)
+
 data class ExprEvaluator<T : ParserRuleContext>(
     private val context: ExprEvaluatorContext<T>,
     private val exprs: MutableMap<ParseTree, Expr> = mutableMapOf(),
     private val assignWidths: MutableMap<ParseTree, SignalWidth> = mutableMapOf(),
-    private val widthFence: MutableMap<ParseTree, Boolean> = mutableMapOf(),
     private val dependencies: MutableMap<ParseTree, Set<Signal>> = mutableMapOf(),
     private val deadBlocks: MutableMap<RuleContext, Boolean> = mutableMapOf(),
     private val inactiveBlocks: MutableMap<RuleContext, Boolean> = mutableMapOf(),
+    private val widthContext: MutableMap<ParseTree, WidthContext> = mutableMapOf()
 ) {
     fun withContext(context: ExprEvaluatorContext<T>) = copy(context = context)
 
@@ -55,42 +59,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
 
     fun setAssignWidth(ctx: ParseTree, width: SignalWidth) {
         assignWidths[ctx] = width
-    }
-
-    private val finalWidthCache: MutableMap<ParseTree, SignalWidth> = mutableMapOf()
-
-    fun getFinalWidth(ctx: RuleContext): SignalWidth? {
-        finalWidthCache[ctx]?.let { return it }
-
-        if (widthFence[ctx] == true)
-            return exprs[ctx]?.value?.width
-
-        val parents = ctx.parents
-        val fenceIdx = parents.indexOfFirst { widthFence[it] == true }
-        val trimmed = if (fenceIdx >= 0) parents.subList(0, fenceIdx) else parents
-
-        val assignWidth = trimmed.asReversed().firstNotNullOfOrNull { assignWidths[it] }
-        val exprWidth = trimmed.asReversed().firstNotNullOfOrNull { exprs[it] }?.value?.width
-
-        if (exprWidth != null) {
-            if (assignWidth != null) {
-                if (assignWidth is SimpleWidth && exprWidth is SimpleWidth) {
-                    val w = assignWidth.mergeWith(exprWidth)
-                    finalWidthCache[ctx] = w
-                    return w
-                }
-                finalWidthCache[ctx] = assignWidth
-                return assignWidth
-            }
-            finalWidthCache[ctx] = exprWidth
-            return exprWidth
-        }
-
-        exprs[ctx]?.value?.width?.let {
-            finalWidthCache[ctx] = it
-            return it
-        }
-        return null
     }
 
     fun isDeadBlock(ctx: RuleContext): Boolean = deadBlocks[ctx] == true
@@ -168,10 +136,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
         exprs[ctx] = exprs[child ?: return] ?: return
     }
 
-    fun setWidthFence(ctx: ParseTree) {
-        widthFence[ctx] = true
-    }
-
     fun passThrough(ctx: ParseTree, child: ParseTree?) {
         if (canSkip(ctx)) return
         copyExpr(ctx, child)
@@ -180,8 +144,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
 
     fun concatenate(ctx: ParserRuleContext, children: List<T>) {
         if (canSkip(ctx)) return
-
-        widthFence[ctx] = true
 
         if (children.isEmpty()) return
 
@@ -265,8 +227,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
 
     fun duplicate(ctx: ParserRuleContext, children: List<ParserRuleContext>) {
         if (canSkip(ctx)) return
-
-        widthFence[ctx] = true
 
         if (children.size != 2)
             return
@@ -359,8 +319,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
     fun buildArray(ctx: T, children: List<T>) {
         if (canSkip(ctx)) return
 
-        widthFence[ctx] = true
-
         if (children.isEmpty())
             return
 
@@ -422,12 +380,14 @@ data class ExprEvaluator<T : ParserRuleContext>(
         assert(expr.value is SimpleValue) { "Expression assumed to be SimpleValue" }
         expr.value as SimpleValue
 
+        val size = expr.value.size + 1 // TODO: Remove +1 and figure out when this should happen instead
+
         if (!expr.value.isNumber()) {
-            exprs[ctx] = BitListValue(size = expr.value.size + 1, signed = false) { Bit.Bx }.asExpr(expr.type)
+            exprs[ctx] = BitListValue(size = size, signed = false) { Bit.Bx }.asExpr(expr.type)
             return
         }
 
-        exprs[ctx] = BitListValue(expr.value.toBigInt()!!.negate(), true, expr.value.size + 1).asExpr(expr.type)
+        exprs[ctx] = BitListValue(expr.value.toBigInt()!!.negate(), true, size).asExpr(expr.type)
     }
 
     /**
@@ -539,9 +499,7 @@ data class ExprEvaluator<T : ParserRuleContext>(
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
             exprs[ctx] = when {
                 multOp && op1Width is DefinedSimpleWidth && op2Width is DefinedSimpleWidth -> {
-                    val finalWidth = getFinalWidth(ctx)
-                    val mulWidth = op1Width.size + op2Width.size
-                    val width = finalWidth?.let { it.bitCount?.coerceAtLeast(mulWidth) } ?: mulWidth
+                    val width = op1Width.size + op2Width.size
                     UndefinedValue(BitListWidth(width)).asExpr(type)
                 }
 
@@ -559,9 +517,7 @@ data class ExprEvaluator<T : ParserRuleContext>(
         op2Width as DefinedSimpleWidth
 
         exprs[ctx] = (if (multOp) {
-            val finalWidth = getFinalWidth(ctx)
-            val mulWidth = op1Width.size + op2Width.size
-            val width = finalWidth?.let { it.bitCount?.coerceAtLeast(mulWidth) } ?: mulWidth
+            val width = op1Width.size + op2Width.size
             if (!op1.isNumber() || !op2.isNumber())
                 BitListValue(size = width, signed = signed) { Bit.Bx }
             else
@@ -694,8 +650,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
     fun reduction(ctx: ParserRuleContext, child: ParserRuleContext?, operator: String) {
         if (canSkip(ctx)) return
 
-        widthFence[ctx] = true
-
         copyDependencies(ctx, child)
 
         val expr = exprs[child ?: return] ?: return
@@ -726,8 +680,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
 
     fun comparison(ctx: T, children: List<T>, operator: String) {
         if (canSkip(ctx)) return
-
-        widthFence[ctx] = true
 
         if (children.size != 2) return
 
@@ -785,8 +737,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
     fun logical(ctx: ParserRuleContext, children: List<T>, operator: String) {
         if (canSkip(ctx)) return
 
-        widthFence[ctx] = true
-
         if (children.size != 2) return
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
@@ -814,8 +764,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
         if (canSkip(ctx)) return
 
         if (children.size != 3) return
-
-        widthFence[children[0]] = true
 
         dependencies[ctx] = mutableSetOf<Signal>().apply {
             children.forEach { c -> dependencies[c]?.let { addAll(it) } }

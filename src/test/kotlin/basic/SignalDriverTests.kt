@@ -399,6 +399,6 @@ class SignalDriverTests {
             """.trimIndent().toSourceFile()
         )
         tester.fullParse()
-        assert(tester.notationManager.hasNoIssues) { tester.notationManager.getReport() }
+        assert(tester.notationManager.hasNoErrors) { tester.notationManager.getReport() }
     }
 }

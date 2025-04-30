@@ -1081,28 +1081,64 @@ class SystemVerilogConverter(
         }
     }
 
-    private fun basic2OpExpr(ctx: LucidParser.ExprContext, expr: List<LucidParser.ExprContext>) {
+    private fun basic2OpExpr(ctx: LucidParser.ExprContext, expr: List<LucidParser.ExprContext>, width: String?) {
         if (handleConstant(ctx))
             return
         ctx.verilog = buildString {
+            width?.let {
+                append(width)
+                append("'(")
+            }
             append(expr[0].verilog)
             append(" ")
             append(ExprParser.getOperator(ctx) ?: error(ctx, "Missing operator!"))
             append(" ")
             append(expr[1].verilog)
+            if (width != null)
+                append(")")
         }
     }
 
     override fun exitExprShift(ctx: LucidParser.ExprShiftContext) {
-        basic2OpExpr(ctx, ctx.expr())
+        val op = ExprParser.getOperator(ctx)
+        val expr = ctx.expr()
+        val width = if (op == "<<" || op == "<<<") {
+            buildString {
+                append("(\$bits(")
+                append(expr[0].verilog)
+                append(")+")
+                if (context.resolve(expr[1])?.type?.fixed == true) {
+                    append(expr[1].verilog)
+                } else {
+                    append("(2**\$bits(")
+                    append(expr[1].verilog)
+                    append(")-1)")
+                }
+                append(")")
+            }
+        } else null
+        basic2OpExpr(ctx, ctx.expr(), width)
     }
 
     override fun exitExprAddSub(ctx: LucidParser.ExprAddSubContext) {
-        basic2OpExpr(ctx, ctx.expr())
+        val expr = ctx.expr()
+
+        val width = buildString {
+            append("((\$bits(")
+            append(expr[0].verilog)
+            append(") > \$bits(")
+            append(expr[1].verilog)
+            append(") ? \$bits(")
+            append(expr[0].verilog)
+            append(") : \$bits(")
+            append(expr[1].verilog)
+            append(")) + 1)")
+        }
+        basic2OpExpr(ctx, ctx.expr(), width)
     }
 
     override fun exitExprLogical(ctx: LucidParser.ExprLogicalContext) {
-        basic2OpExpr(ctx, ctx.expr())
+        basic2OpExpr(ctx, ctx.expr(), null)
     }
 
     override fun exitExprNegate(ctx: LucidParser.ExprNegateContext) {
@@ -1118,7 +1154,7 @@ class SystemVerilogConverter(
     }
 
     override fun exitExprBitwise(ctx: LucidParser.ExprBitwiseContext) {
-        basic2OpExpr(ctx, ctx.expr())
+        basic2OpExpr(ctx, ctx.expr(), null)
     }
 
     override fun exitExprFunction(ctx: LucidParser.ExprFunctionContext) {
@@ -1291,7 +1327,7 @@ class SystemVerilogConverter(
     }
 
     override fun exitExprCompare(ctx: LucidParser.ExprCompareContext) {
-        basic2OpExpr(ctx, ctx.expr())
+        basic2OpExpr(ctx, ctx.expr(), null)
     }
 
     override fun exitExprDup(ctx: LucidParser.ExprDupContext) {
@@ -1309,7 +1345,18 @@ class SystemVerilogConverter(
     override fun exitExprMultDiv(ctx: LucidParser.ExprMultDivContext) {
         if (handleConstant(ctx))
             return
-        basic2OpExpr(ctx, ctx.expr())
+        val op = ExprParser.getOperator(ctx)
+        val expr = ctx.expr()
+        val width = if (op == "*") {
+            buildString {
+                append("(\$bits(")
+                append(expr[0].verilog)
+                append(")+\$bits(")
+                append(expr[1].verilog)
+                append("))")
+            }
+        } else null
+        basic2OpExpr(ctx, ctx.expr(), width)
     }
 
     override fun exitExprSignal(ctx: LucidParser.ExprSignalContext) {
@@ -1448,6 +1495,7 @@ class SystemVerilogConverter(
                 }
                 return this
             }
+
             fun SignalWidth.verilogArrayWidths(): String {
                 return when (this) {
                     is BitWidth -> ""
