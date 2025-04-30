@@ -76,6 +76,12 @@ data class BitListValue(
         try {
             val last = if (selection.range.last >= 0) selection.range.last else size + selection.range.last
             val first = if (selection.range.first >= 0) selection.range.first else size + selection.range.first
+            if (last < first) {
+                throw SignalSelectionException(
+                    selection,
+                    "Bit index ${selection.range.last} must select a bit higher than ${selection.range.first}!"
+                )
+            }
             val newBits = bits.subList(first, last + 1)
             if (newBits.size == 1)
                 return BitValue(newBits.first(), false)

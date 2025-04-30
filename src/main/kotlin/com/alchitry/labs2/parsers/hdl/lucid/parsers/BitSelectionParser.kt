@@ -84,9 +84,11 @@ data class BitSelectionParser(
         if (maxNan) context.reportBitSelectorNotANumber(expr[0])
         if (minNan) context.reportBitSelectorNotANumber(expr[1])
         if (maxNan || minNan) return
-        if (max.value.isLessThan(min.value).bit == Bit.B1) {
-            context.reportBitSelectorOutOfOrder(ctx)
-            return
+        if (max.value.isLessThan(Bit.B0.toBitValue(true)) == min.value.isLessThan(Bit.B0.toBitValue(true))) {
+            if (max.value.isLessThan(min.value).bit == Bit.B1) {
+                context.reportBitSelectorOutOfOrder(ctx)
+                return
+            }
         }
         val maxInt: Int = try {
             max.value.toBigInt()!!.intValueExact()
