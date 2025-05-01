@@ -109,10 +109,6 @@ class LucidBlockContext(
             this.signal
         )
 
-        ParseStage.ModuleExpr -> listOf(
-            this.expr,
-        )
-
         ParseStage.Drivers -> listOf(
             this.expr,
             this.bitSelection,
@@ -192,12 +188,10 @@ class LucidBlockContext(
     }
 
     suspend fun initialWalk(t: ParseTree): Boolean {
-        require(stage == ParseStage.ModuleInternals) { "initialWalk called on an already initialized context!" }
+        require(stage == ParseStage.ModuleInternals) { "initialWalk called on an already initialized context! In stage $stage" }
         walk(t)
         if (notationCollector.hasErrors)
             return false
-        stage = ParseStage.ModuleExpr
-        walk(t)
         stage = ParseStage.Drivers
         walk(t)
         stage = ParseStage.Prune
@@ -247,6 +241,8 @@ class LucidBlockContext(
     override fun resolve(enumDecContext: EnumDecContext) = enum.resolve(enumDecContext)
     override fun resolve(constDecContext: ConstDecContext) = constant.resolve(constDecContext)
     override fun resolve(bitSelectionContext: BitSelectionContext) = bitSelection.resolve(bitSelectionContext)
+
+    fun resolveWidthContext(exprCtx: ExprContext) = expr.resolveWidthContext(exprCtx)
 
     /**
      * Searches all SignalParsers to resolve a signal name.

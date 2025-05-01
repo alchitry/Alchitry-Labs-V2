@@ -18,24 +18,7 @@ import org.apache.commons.text.StringEscapeUtils
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
-import kotlin.ArithmeticException
-import kotlin.Int
-import kotlin.NumberFormatException
-import kotlin.String
-import kotlin.Suppress
-import kotlin.also
-import kotlin.apply
-import kotlin.check
-import kotlin.code
-import kotlin.error
-import kotlin.isFinite
-import kotlin.let
 import kotlin.math.*
-import kotlin.repeat
-import kotlin.run
-import kotlin.toBigDecimal
-import kotlin.toString
-
 
 /**
  * Provides values for all ExprContext and also provides bit selection ranges for BitSelectionContext through
@@ -53,8 +36,17 @@ class ExprParser(
     fun withContext(context: LucidExprContext) = ExprParser(context, evaluator)
 
     fun resolve(ctx: ExprContext): Expr? = evaluator.resolve(ctx)
+    fun resolveWidthContext(exprCtx: ExprContext): ExprWidthContext? = evaluator.resolveWidthContext(exprCtx)
     fun resolveDependencies(ctx: ExprContext): Set<Signal>? = evaluator.resolveDependencies(ctx)
     fun getContextState(ctx: RuleContext): ContextState = evaluator.getContextState(ctx)
+
+    override suspend fun exitAlwaysAssign(ctx: AlwaysAssignContext) {
+        val signalCtx = ctx.assignStat()?.signal() ?: return
+        val assigneeWidth = context.resolve(signalCtx)?.width ?: return
+        if (assigneeWidth.isSimple()) {
+            evaluator.setAssigneeWidth(ctx.assignStat()?.expr() ?: return, assigneeWidth.bitCount ?: return)
+        }
+    }
 
     override suspend fun enterBlock(ctx: BlockContext) {
         when (val parent = ctx.parent) {

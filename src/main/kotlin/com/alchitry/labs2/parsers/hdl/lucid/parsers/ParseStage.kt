@@ -4,7 +4,6 @@ import com.alchitry.labs2.parsers.WalkerFilter
 
 enum class ParseStage(val filter: WalkerFilter) {
     ModuleInternals(LucidWalkerFilters.SkipGlobals), // module internal (always blocks)
-    ModuleExpr(LucidWalkerFilters.SkipGlobals), // module internal (always blocks)
     Drivers(
         WalkerFilter.join(
             LucidWalkerFilters.SkipGlobals,
