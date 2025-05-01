@@ -13,13 +13,28 @@ import com.alchitry.labs2.parsers.notations.ErrorStrings
 import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationType
 import org.antlr.v4.kotlinruntime.RuleContext
-import org.antlr.v4.kotlinruntime.tree.ParseTree
 import org.antlr.v4.kotlinruntime.tree.TerminalNode
 import org.apache.commons.text.StringEscapeUtils
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
+import kotlin.ArithmeticException
+import kotlin.Int
+import kotlin.NumberFormatException
+import kotlin.String
+import kotlin.Suppress
+import kotlin.also
+import kotlin.apply
+import kotlin.check
+import kotlin.code
+import kotlin.error
+import kotlin.isFinite
+import kotlin.let
 import kotlin.math.*
+import kotlin.repeat
+import kotlin.run
+import kotlin.toBigDecimal
+import kotlin.toString
 
 
 /**
@@ -39,7 +54,6 @@ class ExprParser(
 
     fun resolve(ctx: ExprContext): Expr? = evaluator.resolve(ctx)
     fun resolveDependencies(ctx: ExprContext): Set<Signal>? = evaluator.resolveDependencies(ctx)
-    fun setAssignWidth(ctx: ParseTree, width: SignalWidth) = evaluator.setAssignWidth(ctx, width)
     fun getContextState(ctx: RuleContext): ContextState = evaluator.getContextState(ctx)
 
     override suspend fun enterBlock(ctx: BlockContext) {

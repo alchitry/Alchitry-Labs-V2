@@ -31,19 +31,14 @@ enum class ExprEvalMode {
     val testing get() = this == Testing
 }
 
-data class WidthContext(
-    val width: SignalWidth,
-    val isFixed: Boolean
-)
+
 
 data class ExprEvaluator<T : ParserRuleContext>(
     private val context: ExprEvaluatorContext<T>,
     private val exprs: MutableMap<ParseTree, Expr> = mutableMapOf(),
-    private val assignWidths: MutableMap<ParseTree, SignalWidth> = mutableMapOf(),
     private val dependencies: MutableMap<ParseTree, Set<Signal>> = mutableMapOf(),
     private val deadBlocks: MutableMap<RuleContext, Boolean> = mutableMapOf(),
-    private val inactiveBlocks: MutableMap<RuleContext, Boolean> = mutableMapOf(),
-    private val widthContext: MutableMap<ParseTree, WidthContext> = mutableMapOf()
+    private val inactiveBlocks: MutableMap<RuleContext, Boolean> = mutableMapOf()
 ) {
     fun withContext(context: ExprEvaluatorContext<T>) = copy(context = context)
 
@@ -55,10 +50,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
 
     fun getExprType(dependants: Collection<ExprType>): ExprType {
         return ExprType.entries[dependants.minOfOrNull { it.ordinal } ?: return ExprType.Constant]
-    }
-
-    fun setAssignWidth(ctx: ParseTree, width: SignalWidth) {
-        assignWidths[ctx] = width
     }
 
     fun isDeadBlock(ctx: RuleContext): Boolean = deadBlocks[ctx] == true
@@ -380,14 +371,19 @@ data class ExprEvaluator<T : ParserRuleContext>(
         assert(expr.value is SimpleValue) { "Expression assumed to be SimpleValue" }
         expr.value as SimpleValue
 
-        val size = expr.value.size + 1 // TODO: Remove +1 and figure out when this should happen instead
-
         if (!expr.value.isNumber()) {
-            exprs[ctx] = BitListValue(size = size, signed = false) { Bit.Bx }.asExpr(expr.type)
+            exprs[ctx] = BitListValue(size = expr.value.size + 1, signed = false) { Bit.Bx }.asExpr(expr.type)
             return
         }
 
-        exprs[ctx] = BitListValue(expr.value.toBigInt()!!.negate(), true, size).asExpr(expr.type)
+        if (expr.value.toBigInt()!!.negate().minBits(true) > expr.value.size) {
+            context.reportWarning(
+                ctx,
+                "The negated value doesn't fit in ${expr.value.size} bits and will be truncated. Consider resizing the value first."
+            )
+        }
+
+        exprs[ctx] = BitListValue(expr.value.toBigInt()!!.negate(), true, expr.value.size + 1).asExpr(expr.type)
     }
 
     /**
