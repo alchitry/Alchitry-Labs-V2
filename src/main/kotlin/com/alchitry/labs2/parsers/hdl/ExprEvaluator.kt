@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.hdl
 
 import com.alchitry.labs2.asSingleLine
+import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.hdl.lucid.context.ContextState
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.checkSimpleOrCompatible
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.checkSimpleWidth
@@ -443,7 +444,14 @@ data class ExprEvaluator<T : ParserRuleContext>(
             return
         }
 
-        exprs[ctx] = BitListValue(expr.value.toBigInt()!!.negate(), true, widthContext.width).asExpr(expr.type)
+        val negatedValue = expr.value.toBigInt()!!.negate()
+
+        val width =
+            if (child is LucidParser.ExprNumContext && expr.type.fixed && negatedValue.minBits(true) > expr.value.size) {
+                negatedValue.minBits(true)
+            } else expr.value.size
+
+        exprs[ctx] = BitListValue(negatedValue, true, width).asExpr(expr.type)
     }
 
     /**

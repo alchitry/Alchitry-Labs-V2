@@ -373,7 +373,7 @@ internal class ExprParserTests {
         val expr = test.context.expr.resolve(tree)!!
 
         assertEquals(
-            BitListValue("00110", 2, signed = false),
+            BitListValue("0010", 2, signed = false),
             expr.value
         )
         assertEquals(ExprType.Constant, expr.type)
@@ -398,7 +398,7 @@ internal class ExprParserTests {
         expr = test.context.expr.resolve(tree)!!
 
         assertEquals(
-            BitListValue("00110", 2, signed = false),
+            BitListValue("0010", 2, signed = false),
             expr.value
         )
         assertEquals(ExprType.Constant, expr.type)
@@ -409,7 +409,7 @@ internal class ExprParserTests {
         expr = test.context.expr.resolve(tree)!!
 
         assertEquals(
-            BitListValue("11110", 2, signed = true),
+            BitListValue("1110", 2, signed = true),
             expr.value
         )
         assertEquals(ExprType.Constant, expr.type)
@@ -431,7 +431,7 @@ internal class ExprParserTests {
         expr = test.context.expr.resolve(tree)!!
 
         assertEquals(
-            BitListValue("110000", 2, signed = false),
+            BitListValue("10000", 2, signed = false),
             expr.value
         )
         assertEquals(ExprType.Constant, expr.type)
@@ -453,7 +453,7 @@ internal class ExprParserTests {
         expr = test.context.expr.resolve(tree)!!
 
         assertEquals(
-            BitListValue("110000", 2, signed = true),
+            BitListValue("10000", 2, signed = true),
             expr.value
         )
         assertEquals(ExprType.Constant, expr.type)
@@ -838,7 +838,7 @@ internal class ExprParserTests {
         expr = test.context.expr.resolve(tree)!!
 
         assertEquals(
-            BitListValue("20", 10, BitUtil.minWidthNum(20) + 2, signed = true),
+            BitListValue("20", 10, BitUtil.minWidthNum(20) + 1, signed = true),
             expr.value
         )
         assertEquals(ExprType.Constant, expr.type)

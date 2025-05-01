@@ -1144,7 +1144,20 @@ class SystemVerilogConverter(
     override fun exitExprNegate(ctx: LucidParser.ExprNegateContext) {
         if (handleConstant(ctx))
             return
-        ctx.verilog = "-${ctx.expr().requireNotNull(ctx).verilog}"
+        val ctxExpr = ctx.expr().requireNotNull(ctx)
+
+        val negBits = context.resolve(ctx)?.value?.width?.bitCount
+        val exprBits = context.resolve(ctxExpr)?.value?.width?.bitCount
+        if (negBits != null &&
+            exprBits != null &&
+            ctx.expr() is LucidParser.ExprNumContext &&
+            negBits != exprBits
+        ) {
+            ctx.verilog = "-(($negBits)'(\$signed(${ctxExpr.verilog})))"
+            return
+        }
+
+        ctx.verilog = "-${ctxExpr.verilog}"
     }
 
     override fun exitExprGroup(ctx: LucidParser.ExprGroupContext) {
