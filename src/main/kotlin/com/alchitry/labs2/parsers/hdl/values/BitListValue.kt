@@ -119,7 +119,7 @@ data class BitListValue(
         }
 
         if (selection.isEmpty()) {
-            require(newValue is BitListValue && newValue.width == width) {
+            require(newValue is SimpleValue && newValue.width.bitCount == width.bitCount) {
                 "Attempted to assign an incompatible type to the BitListValue!"
             }
             return copy(bits = newValue.bits)
