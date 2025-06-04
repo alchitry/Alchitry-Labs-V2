@@ -177,6 +177,7 @@ enum class AuV2Pin(override val fpgaPin: String, override val bank: Int) : Pin {
     DDR_A13("J15", 15);
 
     companion object : PinConverter {
+        override val boardSide = BoardSide.TOP
         override val version = ConverterVersion.V2
         override val standards = Artix7IoStandard.entries
         override fun acfToPin(name: String): AuV2Pin? = entries.firstOrNull { it.name == name }
@@ -185,7 +186,7 @@ enum class AuV2Pin(override val fpgaPin: String, override val bank: Int) : Pin {
             0 -> emptyList()
             15 -> listOf("1.35")
             14, 35 -> listOf("3.3")
-            34 -> listOf("3.3", "2.5")
+            34 -> listOf("3.3", "2.5", "1.8")
             else -> error("Unknown bank: $bank")
         }
     }

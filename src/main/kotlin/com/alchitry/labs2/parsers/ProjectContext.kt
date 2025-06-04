@@ -3,6 +3,7 @@ package com.alchitry.labs2.parsers
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.firstOfTypeOrNull
 import com.alchitry.labs2.hardware.Board
+import com.alchitry.labs2.hardware.pinout.BoardSide
 import com.alchitry.labs2.hardware.pinout.ConverterVersion
 import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.acf.types.PinAttribute
@@ -162,9 +163,10 @@ class ProjectContext(val notationManager: NotationManager, val board: Board, val
     }
 
     fun getConstraints(): List<Constraint> = constraints.toImmutableList()
-    fun getConstraints(version: ConverterVersion) = constraints.filter {
-        (it.attributes.firstOfTypeOrNull<PinAttribute.Pinout>()?.value
-            ?: board.pinConverters.first()).version == version
+    fun getConstraints(version: ConverterVersion, boardSide: BoardSide) = constraints.filter {
+        val v = (it.attributes.firstOfTypeOrNull<PinAttribute.Pinout>()?.value ?: board.pinConverters.first().version)
+        val side = it.attributes.firstOfTypeOrNull<PinAttribute.Side>()?.value ?: BoardSide.TOP
+        v == version && side == boardSide
     }
 }
 

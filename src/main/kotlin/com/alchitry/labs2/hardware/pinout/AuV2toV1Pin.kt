@@ -3,6 +3,7 @@ package com.alchitry.labs2.hardware.pinout
 import com.alchitry.labs2.parsers.acf.types.Artix7IoStandard
 
 object AuV2toV1Pin : PinConverter {
+    override val boardSide = BoardSide.TOP
     override val version = ConverterVersion.V1
     override val standards = Artix7IoStandard.entries
     override fun acfToPin(name: String): AuV2Pin? =

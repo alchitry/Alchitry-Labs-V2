@@ -3,10 +3,16 @@ package com.alchitry.labs2.hardware.pinout
 import com.alchitry.labs2.parsers.acf.types.IoStandard
 
 enum class ConverterVersion {
-    V1, V2
+    V1, V2, PT_ALPHA
+}
+
+enum class BoardSide {
+    TOP,
+    BOTTOM
 }
 
 interface PinConverter {
+    val boardSide: BoardSide
     val version: ConverterVersion
     fun acfToPin(name: String): Pin?
     val standards: List<IoStandard>

@@ -2,7 +2,7 @@
     "template": {
         "name": "Blinker Demo",
         "description": "Blinks all the LEDs",
-        "boards": ["Au", "Au+", "Cu", "AuV2", "CuV2"],
+        "boards": ["Au", "Au+", "Cu", "AuV2", "CuV2", "PtV2"],
         "priority": 2
     },
     "project": {

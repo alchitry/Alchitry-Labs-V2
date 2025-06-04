@@ -25,7 +25,7 @@ data object VivadoBuilder : ProjectBuilder() {
         val propsFile = project.buildDirectory.resolve("constraint").resolve("au_props.xdc").toFile()
         val spiBusWidth = when (project.data.board) {
             Board.AlchitryAu, Board.AlchitryAuPlus -> 2
-            Board.AlchitryAuV2 -> 4
+            Board.AlchitryAuV2, Board.AlchitryPtV2 -> 4
             Board.AlchitryCu, Board.AlchitryCuV2 -> error("Cu isn't supported by the VivadoBuilder")
         }
         propsFile.writeText(

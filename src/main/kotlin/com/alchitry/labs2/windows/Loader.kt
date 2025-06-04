@@ -25,6 +25,7 @@ import com.alchitry.labs2.ui.components.WindowDecoration
 import com.alchitry.labs2.ui.dialogs.openFileDialog
 import com.alchitry.labs2.ui.main.LoaderToolbar
 import com.alchitry.labs2.ui.theme.AlchitryColors
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -121,12 +122,16 @@ fun ApplicationScope.loaderWindow() {
                             modifier = Modifier.weight(1f).horizontalScroll(rememberScrollState())
                         ) {
                             loaderStatus?.let { Text(it) }
-                            loaderProgress?.let { CircularProgressIndicator(it) }
+                            loaderProgress?.let {
+                                CircularProgressIndicator(
+                                    progress = { it },
+                                )
+                            }
                         }
                         Button(
                             onClick = {
                                 busy = true
-                                scope.launch {
+                                scope.launch(Dispatchers.IO) {
                                     try {
                                         board?.let { board ->
                                             if (!BoardLoader.erase(board.board, board.index)) {
@@ -151,7 +156,7 @@ fun ApplicationScope.loaderWindow() {
 
                         fun load(flash: Boolean) {
                             busy = true
-                            scope.launch {
+                            scope.launch(Dispatchers.IO) {
                                 try {
                                     board?.let { board ->
                                         if (!BoardLoader.load(

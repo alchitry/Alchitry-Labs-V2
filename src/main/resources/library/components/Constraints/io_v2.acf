@@ -3,7 +3,7 @@
     "description" : "Pin constraints for the Io V2 element.",
     "supportedBoards" : ["AuV2", "CuV2"]
 **/
-PINOUT(V2), STANDARD(LVCMOS33) {
+PINOUT(V2), STANDARD(LVCMOS33), SIDE(TOP) {
     pin io_led[0][0] A70
     pin io_led[0][1] A72
     pin io_led[0][2] A76

@@ -42,6 +42,7 @@ sealed class Board {
                 .firstOrNull { it.name.equals(name, ignoreCase = true) || it.alias.equals(name, ignoreCase = true) }
 
         val All: List<Board> = listOf(
+            AlchitryPtV2,
             AlchitryAuV2,
             AlchitryCuV2,
             AlchitryAu,
@@ -65,6 +66,27 @@ sealed class Board {
     sealed interface XilinxBoard {
         val bridgeFile: String
         val idCode: String
+    }
+
+    data object AlchitryPtV2 : Board(), XilinxBoard {
+        override val name = "Alchitry Pt V2"
+        override val alias = "PtV2"
+        override val fpgaName = "xc7a100tfgg484-2"
+        override val usbDescriptor =
+            UsbUtil.UsbDescriptor(
+                "Alchitry Pt V2",
+                0x0403.toShort(),
+                0x6010.toShort(),
+                "Alchitry Pt V2",
+                PortInterfaceType.INTERFACE_A
+            )
+        override val serialUsbDescriptor = usbDescriptor.copy(d2xxInterface = PortInterfaceType.INTERFACE_B)
+        override val bridgeFile = "/bridges/pt_v2.bin"
+        override val idCode = "13631093"
+        override val pinConverters = listOf(PtV2TopPin, PtV2BottomPin, PtV2AlphaTopPin)
+        override val acfConverter = XilinxConverter
+        override val projectBuilder = VivadoBuilder
+        override val supportsRamLoading = true
     }
 
     data object AlchitryAuV2 : Board(), XilinxBoard {

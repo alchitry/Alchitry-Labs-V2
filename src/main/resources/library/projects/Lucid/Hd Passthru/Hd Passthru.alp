@@ -2,7 +2,7 @@
     "template": {
         "name": "Hd Passthru",
         "description": "Decodes HDMI data on port 2 and re-encodes it on port 1 of the Hd",
-        "boards": ["AuV2"],
+        "boards": ["AuV2", "PtV2"],
         "priority": 9
     },
     "project": {

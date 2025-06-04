@@ -2,7 +2,7 @@
     "name" : "Alchitry",
     "description" : "Basic pin and clock constraints for the Alchitry boards."
 **/
-STANDARD(LVCMOS33) {
+STANDARD(LVCMOS33), SIDE(TOP) {
     pin clk CLOCK FREQUENCY(100MHz)
 
     pin rst_n RESET

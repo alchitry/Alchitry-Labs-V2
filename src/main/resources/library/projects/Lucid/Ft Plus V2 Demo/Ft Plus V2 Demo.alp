@@ -2,7 +2,7 @@
     "template": {
         "name": "Ft Plus V2 Demo",
         "description": "Echos data back through the Ft+ V2",
-        "boards": ["AuV2", "CuV2"],
+        "boards": ["AuV2", "CuV2", "PtV2"],
         "priority": 9
     },
     "project": {

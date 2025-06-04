@@ -17,10 +17,10 @@ buildscript {
 val antlrKotlinVersion = extra.get("antlrKotlinVersion") as String
 
 plugins {
-    kotlin("jvm") version "2.1.0"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.0"
+    kotlin("jvm") version "2.1.21"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.1.21"
     kotlin("plugin.serialization") version "2.0.10"
-    id("org.jetbrains.compose") version "1.7.3"
+    id("org.jetbrains.compose") version "1.8.1"
     id("dev.hydraulic.conveyor") version "1.12"
     id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
     id("org.openjfx.javafxplugin") version "0.1.0"
@@ -47,11 +47,11 @@ javafx {
 
 dependencies {
     implementation("com.github.alchitry.antlr-kotlin:antlr-kotlin-runtime:$antlrKotlinVersion")
-    implementation("org.apache.commons:commons-text:1.13.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+    implementation("org.apache.commons:commons-text:1.13.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
 
     implementation(kotlin("reflect"))
     implementation("org.jdom:jdom2:2.0.6.1")
@@ -61,8 +61,8 @@ dependencies {
     implementation("com.fazecast:jSerialComm:2.11.0")
     implementation("com.github.alchitry.yad2xx:yad2xxJava:8d48cda")
     implementation("me.tongfei:progressbar:0.10.1")
-    implementation("org.jline:jline:3.28.0")
-    implementation("org.fusesource.jansi:jansi:2.4.1")
+    implementation("org.jline:jline:3.30.4")
+    implementation("org.fusesource.jansi:jansi:2.4.2")
     implementation("li.flor:native-j-file-chooser:1.6.4")
 
     linuxAmd64(compose.desktop.linux_x64)
@@ -71,7 +71,7 @@ dependencies {
     macAarch64(compose.desktop.macos_arm64)
     windowsAmd64(compose.desktop.windows_x64)
 
-    implementation("org.jetbrains.compose.material3:material3-desktop:1.7.3")
+    implementation("org.jetbrains.compose.material3:material3-desktop:1.8.1")
 
     testImplementation(kotlin("test"))
 }

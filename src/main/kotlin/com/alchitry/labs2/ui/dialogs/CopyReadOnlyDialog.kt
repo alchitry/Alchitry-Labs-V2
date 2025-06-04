@@ -18,6 +18,7 @@ import com.alchitry.labs2.ui.tabs.Workspace
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.io.path.createParentDirectories
 import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.io.path.relativeTo
@@ -63,6 +64,7 @@ fun CopyReadOnlyDialog(
                                                 Log.error("The file ${newFullPath.name} already exists!")
                                                 return@launch
                                             }
+                                            newFullPath.createParentDirectories()
                                             newFullPath.toFile().writeText(file.readText())
                                             newFile =
                                                 ConstraintFile(FileProvider.DiskFile(newFullPath.relativeTo(project.path))).also {
@@ -77,6 +79,7 @@ fun CopyReadOnlyDialog(
                                                 Log.error("The file ${newFullPath.name} already exists!")
                                                 return@launch
                                             }
+                                            newFullPath.createParentDirectories()
                                             newFullPath.toFile().writeText(file.readText())
                                             newFile =
                                                 SourceFile(FileProvider.DiskFile(newFullPath.relativeTo(project.path))).also {

@@ -2,7 +2,7 @@
     "template": {
         "name": "Hd Sink",
         "description": "Decodes HDMI data on port 2 of the Hd",
-        "boards": ["AuV2"],
+        "boards": ["AuV2", "PtV2"],
         "priority": 9
     },
     "project": {

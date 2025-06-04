@@ -2,7 +2,7 @@
     "template": {
         "name": "Hd GPU",
         "description": "Renders the Blender monkey in 3D and outputs it over HDMI at 720p60",
-        "boards": ["AuV2"],
+        "boards": ["AuV2", "PtV2"],
         "priority": 10,
         "requiresMig": true
     },

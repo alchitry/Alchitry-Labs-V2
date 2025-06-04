@@ -2,6 +2,7 @@ package com.alchitry.labs2.parsers.acf
 
 import com.alchitry.labs2.firstOfTypeOrNull
 import com.alchitry.labs2.hardware.Board
+import com.alchitry.labs2.hardware.pinout.BoardSide
 import com.alchitry.labs2.hardware.pinout.PinConverter
 import com.alchitry.labs2.joinToOrString
 import com.alchitry.labs2.parsers.ProjectContext
@@ -97,18 +98,31 @@ class AcfExtractor(
         return hz.roundToInt()
     }
 
-    private fun currentConverter(): PinConverter {
-        blockAttributes.forEach { map -> map.values.firstOfTypeOrNull<PinAttribute.Pinout>()?.let { return it.value } }
-        return board.pinConverters.first()
+    private fun currentConverter(attributes: Collection<PinAttribute> = blockAttributes.flatMap { it.values }): PinConverter? {
+        val version = attributes.firstOfTypeOrNull<PinAttribute.Pinout>()?.value ?: board.pinConverters.first().version
+        val side = attributes.firstOfTypeOrNull<PinAttribute.Side>()?.value ?: BoardSide.TOP
+        return board.pinConverters.firstOrNull { it.version == version && it.boardSide == side }
     }
 
     private fun parseAttribute(ctx: AttributeContext): PinAttribute? {
         val name = ctx.BASIC_NAME()?.text ?: return null
         val valueText = ctx.attributeValue()?.text ?: return null
         when (name) {
+            "SIDE" -> {
+                val sides = board.pinConverters.map { it.boardSide }.distinct()
+                sides.firstOrNull { it.name == valueText }?.let {
+                    return PinAttribute.Side(it)
+                }
+                notationCollector.reportError(
+                    ctx,
+                    "Invalid SIDE value \"$valueText\". Expected ${sides.joinToOrString { "\"${it.name}\"" }}."
+                )
+                return null
+            }
+
             "PINOUT" -> {
                 board.pinConverters.firstOrNull { it.version.name == valueText }?.let {
-                    return PinAttribute.Pinout(it)
+                    return PinAttribute.Pinout(it.version)
                 }
                 notationCollector.reportError(
                     ctx,
@@ -132,7 +146,7 @@ class AcfExtractor(
 
 
             "STANDARD" -> {
-                val converter = currentConverter()
+                val converter = currentConverter() ?: board.pinConverters.first()
                 val standard = converter.standards.firstOrNull { it.name == valueText }
                 if (standard == null) {
                     notationCollector.reportError(
@@ -305,12 +319,22 @@ class AcfExtractor(
             }
         }
 
-        val converter = attributes.values.firstOfTypeOrNull<PinAttribute.Pinout>()?.value ?: board.pinConverters.first()
+        val converter = currentConverter(attributes.values)
+        if (converter == null) {
+            val version =
+                attributes.values.firstOfTypeOrNull<PinAttribute.Pinout>()?.value ?: board.pinConverters.first().version
+            val side = attributes.values.firstOfTypeOrNull<PinAttribute.Side>()?.value ?: BoardSide.TOP
+            notationCollector.reportError(
+                ctx.pinName()!!,
+                "Failed to find a compatible pin converter for pinout $version on side $side of the board ${board.name}."
+            )
+            return
+        }
         val pin = converter.acfToPin(pinName)
         if (pin == null) {
             notationCollector.reportError(
                 ctx.pinName()!!,
-                "Pin \"$pinName\" does not exist in pinout ${converter.version.name} on the ${board.name}."
+                "Pin \"$pinName\" does not exist in pinout ${converter.version.name} on side ${converter.boardSide.name} of the ${board.name}."
             )
             return
         }

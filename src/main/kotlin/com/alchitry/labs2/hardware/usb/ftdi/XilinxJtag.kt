@@ -145,8 +145,9 @@ class XilinxJtag private constructor(private val ftdi: Ftdi, private val board: 
                 }
             }
             Log.println()
-            if (bufferFull.any { it != 0x00.toByte() }) {
-                Log.error("Flash buffer overflowed!")
+            val overflowIndex = bufferFull.indexOfFirst { it != 0.toByte() }
+            if (overflowIndex != -1) {
+                Log.error("Flash buffer overflowed after $overflowIndex bytes!")
             }
             Log.println("Resetting FPGA...")
             delay(1000) // wait for flash buffer to flush

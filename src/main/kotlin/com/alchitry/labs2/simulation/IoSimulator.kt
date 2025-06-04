@@ -3,6 +3,7 @@ package com.alchitry.labs2.simulation
 import androidx.compose.runtime.*
 import com.alchitry.labs2.hardware.pinout.AuPin
 import com.alchitry.labs2.hardware.pinout.AuV2Pin
+import com.alchitry.labs2.hardware.pinout.BoardSide
 import com.alchitry.labs2.hardware.pinout.ConverterVersion
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.hdl.types.SignalOrSubSignal
@@ -128,7 +129,7 @@ data class IoSimulator private constructor(
         private enum class Version { V1, V2 }
 
         fun connectV1(projectContext: ProjectContext): IoSimulator? {
-            val constraints = projectContext.getConstraints(ConverterVersion.V1)
+            val constraints = projectContext.getConstraints(ConverterVersion.V1, BoardSide.TOP)
             val leds = listOf(
                 AuPin.B21.name,
                 AuPin.B20.name,
@@ -225,7 +226,7 @@ data class IoSimulator private constructor(
         }
 
         fun connectV2(projectContext: ProjectContext): IoSimulator? {
-            val constraints = projectContext.getConstraints(ConverterVersion.V2)
+            val constraints = projectContext.getConstraints(ConverterVersion.V2, BoardSide.TOP)
             val leds = listOf(
                 AuV2Pin.A70.name,
                 AuV2Pin.A72.name,

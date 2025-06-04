@@ -184,7 +184,8 @@ object VivadoIP {
             val migCompFile = when (project.data.board) {
                 Board.AlchitryAu -> "mig.prj"
                 Board.AlchitryAuPlus -> "mig_plus.prj"
-                Board.AlchitryAuV2 -> "mig_v2.prj"
+                Board.AlchitryAuV2 -> "mig_au_v2.prj"
+                Board.AlchitryPtV2 -> "mig_pt_v2.prj"
                 Board.AlchitryCu, Board.AlchitryCuV2 -> error("Can't generate MIG core for Cu!")
             }
             val migCompFilePath = "${Locations.cores}/${migCompFile}"
