@@ -170,7 +170,7 @@ data class SignalParser(
             signal
         } else {
             try {
-                signal.select(sigSelection)
+                signal.initialValue.select(sigSelection)
             } catch (e: SignalSelectionException) {
                 if (context.getContextState(ctx) == ContextState.ACTIVE || sigSelection.any {
                         when (it) {
@@ -189,6 +189,11 @@ data class SignalParser(
                     }) {
                     context.reportError(selectionMap[e.selector]!!, e.message!!)
                 }
+            }
+            try {
+                signal.select(sigSelection)
+            } catch (e: SignalSelectionException) {
+                context.reportError(selectionMap[e.selector]!!, e.message!!)
                 return
             }
         }

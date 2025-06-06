@@ -88,7 +88,7 @@ class UndefinedValueTests {
             )
         assertEquals(UndefinedValue(UndefinedArrayWidth(BitListWidth(8))), signal.read())
 
-        val subSignal = signal.select(listOf(SignalSelector.Bits(2..2, SelectionContext.Constant)))
+        val subSignal = signal.select(listOf(SignalSelector.Bits(2..2, SelectionContext.Constant, single = true)))
         assertEquals(UndefinedValue(DefinedSimpleWidth(8)), subSignal.read())
 
         subSignal.write(BitListValue(2, 4, signed = false))

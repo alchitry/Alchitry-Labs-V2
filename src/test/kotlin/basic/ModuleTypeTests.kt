@@ -2,6 +2,7 @@ package basic
 
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.VerilogParser
+import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.toSourceFile
 import com.alchitry.labs2.parsers.hdl.types.Module
 import com.alchitry.labs2.parsers.hdl.types.Parameter
@@ -138,5 +139,27 @@ class ModuleTypeTests {
                 test.files.first()
             ), module
         )
+    }
+
+    @Test
+    fun singlePinArrayTest() = runBlocking {
+        val test = ProjectTester(
+            """
+                module my_module (
+                    inout a
+                ) {
+                    
+                    always {
+                    sig b
+                        repeat(i, 10)
+                        if (b[i] == 1) 
+                            a = 0
+                    }
+                }
+            """.trimIndent().toSourceFile()
+        )
+
+        test.fullParse(ExprEvalMode.Testing)
+        assert(test.notationManager.hasErrors)
     }
 }

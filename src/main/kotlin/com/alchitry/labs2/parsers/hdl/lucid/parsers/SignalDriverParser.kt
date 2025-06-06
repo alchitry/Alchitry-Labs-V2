@@ -203,7 +203,11 @@ data class SignalDriverParser(
             }
             val selectedValue = when (sig) {
                 is Signal -> drivenValue
-                is SubSignal -> drivenValue.select(sig.selection)
+                is SubSignal -> try {
+                    drivenValue.select(sig.selection)
+                } catch (_: SignalSelectionException) {
+                    return // ignore out of bounds
+                }
             }
             if (selectedValue.andReduce().bit != Bit.B1) {
                 val message = when (sig) {
@@ -295,7 +299,14 @@ data class SignalDriverParser(
     }
 
     override fun exitIfStat(ctx: IfStatContext) {
-        val expr = context.resolve(ctx.expr() ?: error("Missing expr from if!")) ?: error("Failed to resolve if expr!")
+        val expr = context.resolve(ctx.expr() ?: error("Missing expr from if!"))
+        if (expr == null) {
+            context.reportError(
+                ctx.expr() ?: ctx,
+                "Failed to resolve expression in if statement."
+            )
+            return
+        }
 
         // if statements can't drive a signal if not complete
         val elseBlock = ctx.elseStat()?.block()?.let { drivenSignals[it] ?: error("Missing else block signals!") }

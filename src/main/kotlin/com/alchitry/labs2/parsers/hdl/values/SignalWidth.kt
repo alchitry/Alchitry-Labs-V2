@@ -4,6 +4,9 @@ import com.alchitry.labs2.parsers.BitUtil
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.VerilogParser
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidExprEval
+import com.alchitry.labs2.parsers.hdl.types.SignalSelection
+import com.alchitry.labs2.parsers.hdl.types.SignalSelectionException
+import com.alchitry.labs2.parsers.hdl.types.SignalSelector
 import com.alchitry.labs2.parsers.hdl.types.StructType
 import com.alchitry.labs2.parsers.hdl.verilog.context.VerilogExprEval
 import kotlinx.coroutines.runBlocking
@@ -285,6 +288,37 @@ sealed class SignalWidth {
             is UndefinedSimpleWidth -> "[x]"
         }
     }
+
+    fun select(selection: SignalSelection): SignalWidth {
+        var v = this
+        selection.forEach {
+            v = v.select(it)
+        }
+        return v
+    }
+
+    fun select(selector: SignalSelector): SignalWidth {
+        return when (selector) {
+            is SignalSelector.Bits -> when (this) {
+                is ArrayWidth -> if (selector.single) next else DefinedArrayWidth(selector.count, next)
+                BitWidth -> throw SignalSelectionException(selector, "Bit selection can't be used on a single bit.")
+                is SimpleWidth -> if (selector.single) BitWidth else BitListWidth(selector.count)
+                is StructWidth -> throw SignalSelectionException(selector, "Bit selection can't be used on a struct.")
+            }
+
+            is SignalSelector.Struct -> when (this) {
+                is ArrayWidth, is SimpleWidth -> throw SignalSelectionException(
+                    selector,
+                    "Arrays don't have struct members."
+                )
+
+                is StructWidth -> type[selector.member]?.width ?: throw SignalSelectionException(
+                    selector,
+                    "Member \"$selector\" is not part of the struct \"${type.name}\""
+                )
+            }
+        }
+    }
 }
 
 
@@ -347,6 +381,7 @@ data class StructWidth(
 
 
 sealed class UndefinedWidth : SignalWidth()
+
 /**
  * An undefined 1D width.
  */

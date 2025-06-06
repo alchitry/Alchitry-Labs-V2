@@ -10,10 +10,14 @@ data class SubSignal(
     val selection: SignalSelection
 ) : SignalOrSubSignal {
     override fun read(evalContext: Evaluable?): Value {
-        return parent.read(evalContext).select(selection)
+        return try {
+            parent.read(evalContext).select(selection)
+        } catch (e: SignalSelectionException) {
+            width.filledWith(Bit.Bx, false)
+        }
     }
 
-    override val width: SignalWidth = read().width
+    override val width: SignalWidth = parent.width.select(selection)
     override val type: ExprType = parent.type
 
     override val direction: SignalDirection
