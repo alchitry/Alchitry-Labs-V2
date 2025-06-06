@@ -115,8 +115,8 @@ enum class PtV2TopPin(override val fpgaPin: String, override val bank: Int) : Pi
     C35("U2", 34),
     C30("Y1", 34),
     C32("W1", 34),
-    C34("M5", 14),
-    C36("M6", 14),
+    C34("N14", 14),
+    C36("N13", 14),
 
     LED0("P19", 14),
     LED1("P20", 14),
