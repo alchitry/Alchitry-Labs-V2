@@ -1,7 +1,7 @@
 /**
     "name": "MIG Wrapper (DDR3)"
     "description": "This modules wraps the DDR3 MIG IP from Xilinx into a move convenient interface."
-    "supportedBoards": ["Au", "Au+", "AuV2"]
+    "supportedBoards": ["Au", "Au+", "AuV2", "PtV2"]
     "skipDependencyCheck": true
 **/
 /******************************************************************************
