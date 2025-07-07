@@ -96,6 +96,29 @@ class SystemVerilogConverter(
         }
     }
 
+    private fun SignalWidth.verilogBits(): String {
+        return when (this) {
+            is BitWidth -> "1"
+            is DefinedArrayWidth -> "(${size} * ${next.verilogBits()})"
+            is DefinedSimpleWidth -> "$size"
+            is StructWidth -> buildString {
+                var first = true
+                append("(")
+                this@verilogBits.type.values.forEach { value ->
+                    if (!first)
+                        append(" + ")
+                    append(value.width.verilogBits())
+                    first = false
+                }
+                append(")")
+            }
+
+            is ResolvableSimpleWidth<*> -> "(${context.verilog})"
+            is ResolvableArrayWidth<*> -> "(${context.verilog}) * ${next.verilogBits()}"
+            is UndefinedWidth -> error("Undefined width during verilog conversion!")
+        }
+    }
+
     private fun StringBuilder.addParams(params: Collection<Parameter>) {
         if (params.isEmpty())
             return
@@ -1280,8 +1303,8 @@ class SystemVerilogConverter(
                 }
                 val width = functionCtx.functionExpr(0)?.expr()?.let { context.resolve(it) }?.value?.width
                     ?: error("Failed to get width of value passed to \$width().")
-                val exprVerilog =
-                    functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
+                val exprCtx = functionCtx.functionExpr(0)?.expr()
+                val exprVerilog = exprCtx?.verilog ?: error(ctx, "Missing value for ${function.label}!")
                 when (width) {
                     is ArrayWidth -> {
                         buildString {
@@ -1319,7 +1342,21 @@ class SystemVerilogConverter(
                     }
 
                     is SimpleWidth -> {
-                        "\$bits($exprVerilog)"
+                        val fallbackString = "\$clog2(\$bits($exprVerilog)+1)'(\$bits($exprVerilog))"
+
+                        if (exprCtx is LucidParser.ExprSignalContext) {
+                            val signal = context.resolve(exprCtx.signal() ?: error("Missing signal context!"))
+                            val signalWidth = signal?.width
+                            if (signalWidth?.isDefined() == true) {
+                                "${signalWidth.bitCount!!}"
+                            } else if (signalWidth?.isResolvable() == true) {
+                                signalWidth.verilogBits()
+                            } else {
+                                fallbackString
+                            }
+                        } else {
+                            fallbackString
+                        }
                     }
 
                     is StructWidth -> error("\$width() used on a struct!")
