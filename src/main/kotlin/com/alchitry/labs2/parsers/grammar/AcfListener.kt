@@ -61,6 +61,18 @@ interface AcfListener : ParseTreeListener {
     fun exitAttributeBlock(ctx: AcfParser.AttributeBlockContext)
 
     /**
+     * Enter a parse tree produced by {@link AcfParser#nativeBlock}.
+     * @param ctx the parse tree
+     */
+    fun enterNativeBlock(ctx: AcfParser.NativeBlockContext)
+
+    /**
+     * Exit a parse tree produced by {@link AcfParser#nativeBlock}.
+     * @param ctx the parse tree
+     */
+    fun exitNativeBlock(ctx: AcfParser.NativeBlockContext)
+
+    /**
      * Enter a parse tree produced by {@link AcfParser#name}.
      * @param ctx the parse tree
      */
@@ -184,6 +196,11 @@ interface AcfListener : ParseTreeListener {
         override suspend fun exitAttributeBlock(ctx: AcfParser.AttributeBlockContext) =
             this@AcfListener.exitAttributeBlock(ctx)
 
+        override suspend fun enterNativeBlock(ctx: AcfParser.NativeBlockContext) =
+            this@AcfListener.enterNativeBlock(ctx)
+
+        override suspend fun exitNativeBlock(ctx: AcfParser.NativeBlockContext) = this@AcfListener.exitNativeBlock(ctx)
+
         override suspend fun enterName(ctx: AcfParser.NameContext) = this@AcfListener.enterName(ctx)
         override suspend fun exitName(ctx: AcfParser.NameContext) = this@AcfListener.exitName(ctx)
 
@@ -274,6 +291,18 @@ interface SuspendAcfListener : SuspendParseTreeListener {
      * @param ctx the parse tree
      */
     suspend fun exitAttributeBlock(ctx: AcfParser.AttributeBlockContext)
+
+    /**
+     * Enter a parse tree produced by {@link AcfParser#nativeBlock}.
+     * @param ctx the parse tree
+     */
+    suspend fun enterNativeBlock(ctx: AcfParser.NativeBlockContext)
+
+    /**
+     * Exit a parse tree produced by {@link AcfParser#nativeBlock}.
+     * @param ctx the parse tree
+     */
+    suspend fun exitNativeBlock(ctx: AcfParser.NativeBlockContext)
 
     /**
      * Enter a parse tree produced by {@link AcfParser#name}.

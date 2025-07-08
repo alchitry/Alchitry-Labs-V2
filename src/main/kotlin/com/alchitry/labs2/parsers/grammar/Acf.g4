@@ -3,11 +3,39 @@ grammar Acf;
 // starting rule
 source: line* EOF?;
 
-line: pin | attributeBlock | NL;
+line: pin | attributeBlock | nativeBlock | NL;
 
 pin: 'pin' portName pinName attribute* semi;
 
 attributeBlock: attribute (',' attribute)* '{' line* '}';
+
+nativeBlock: NATIVE_BLOCK '}';
+NATIVE_BLOCK: 'native' [ \t\n\r]+ '{'
+    {
+        var braceCount = 1
+
+        while (braceCount > 0) {
+            val nextChar = inputStream.LA(1)
+
+            if (nextChar == EOF) {
+                break
+            }
+
+            when (nextChar.toChar()) {
+                '{' -> braceCount++
+                '}' -> braceCount--
+                '\n' -> {
+                    line++
+                    charPositionInLine = -1 // set as -1 as it'll be incremented later
+                }
+            }
+
+            if (braceCount > 0) {
+                inputStream.consume()
+                charPositionInLine++
+            }
+        }
+    };
 
 name: (BASIC_NAME | FREQ_UNIT);
 

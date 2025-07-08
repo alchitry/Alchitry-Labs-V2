@@ -72,6 +72,20 @@ open class AcfBaseListener : AcfListener {
      *f
      * <p>The default implementation does nothing.</p>
      */
+    override fun enterNativeBlock(ctx: AcfParser.NativeBlockContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override fun exitNativeBlock(ctx: AcfParser.NativeBlockContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
     override fun enterName(ctx: AcfParser.NameContext) {}
 
     /**
@@ -283,6 +297,20 @@ open class SuspendAcfBaseListener : SuspendAcfListener {
      * <p>The default implementation does nothing.</p>
      */
     override suspend fun exitAttributeBlock(ctx: AcfParser.AttributeBlockContext) {}
+
+    /**
+     * {@inheritDoc}
+     *f
+     * <p>The default implementation does nothing.</p>
+     */
+    override suspend fun enterNativeBlock(ctx: AcfParser.NativeBlockContext) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override suspend fun exitNativeBlock(ctx: AcfParser.NativeBlockContext) {}
 
     /**
      * {@inheritDoc}

@@ -6,11 +6,11 @@ import java.net.URL
 import java.util.*
 
 buildscript {
-    val antlrKotlinVersion = "36deef96aa" // commit hash for custom antlr runtime
+    val antlrKotlinVersion = "0.0.1" // commit hash for custom antlr runtime
     extra.set("antlrKotlinVersion", antlrKotlinVersion)
 
     dependencies {
-        classpath("com.github.alchitry.antlr-kotlin:antlr-kotlin-gradle-plugin:$antlrKotlinVersion")
+        classpath("com.alchitry.antlr-kotlin:antlr-kotlin-gradle-plugin:$antlrKotlinVersion")
     }
 }
 
@@ -46,7 +46,7 @@ javafx {
 }
 
 dependencies {
-    implementation("com.github.alchitry.antlr-kotlin:antlr-kotlin-runtime:$antlrKotlinVersion")
+    implementation("com.alchitry.antlr-kotlin:antlr-kotlin-runtime:$antlrKotlinVersion")
     implementation("org.apache.commons:commons-text:1.13.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0")
@@ -167,7 +167,7 @@ tasks.register<com.alchitry.antlrkotlin.gradleplugin.AntlrKotlinTask>("generateK
         // project.dependencies.create("org.antlr:antlr4:$antlrVersion"),
 
         // antlr target, required to create kotlin code
-        project.dependencies.create("com.github.alchitry.antlr-kotlin:antlr-kotlin-target:$antlrKotlinVersion")
+        project.dependencies.create("com.alchitry.antlr-kotlin:antlr-kotlin-target:$antlrKotlinVersion")
     )
     maxHeapSize = "64m"
     packageName = "com.alchitry.labs2.parsers.grammar"
