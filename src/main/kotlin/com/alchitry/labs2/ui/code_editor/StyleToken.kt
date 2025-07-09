@@ -32,19 +32,31 @@ data class LineStyle(
     val style: SpanStyle
 )
 
-fun Token.toEditorToken(style: SpanStyle?): EditorToken {
+/**
+ * Returns the [TextPosition] for the given offset inside the [Token].
+ * If [offset] is null, it returns the end of the Token.
+ */
+fun Token.textPositionAtOffset(offset: Int?): TextPosition {
+    if (offset == 0) {
+        return TextPosition(line - 1, charPositionInLine)
+    }
+    val text = text
+    val subText = text?.substring(0, offset ?: text.length)
     // needed to avoid ambiguity see https://youtrack.jetbrains.com/issue/KT-46360
     val lineCounter = { c: Char -> if (c == '\n') 1 else 0 }
-    val lineCount = text?.sumOf(lineCounter) ?: 0
+    val lineCount = subText?.sumOf(lineCounter) ?: 0
 
-    val lineOffset = (text?.lastIndexOf('\n') ?: -1) + 1
+    val lineOffset = (subText?.lastIndexOf('\n') ?: -1) + 1
 
-    val textLength = text?.length ?: 0
+    val textLength = subText?.length ?: 0
     val endOffset = if (lineCount == 0) charPositionInLine + textLength else textLength - lineOffset
+    return TextPosition(line + lineCount - 1, endOffset)
+}
 
+fun Token.toEditorToken(style: SpanStyle?): EditorToken {
     return EditorToken(
-        range = TextPosition(line - 1, charPositionInLine)..
-                TextPosition(line + lineCount - 1, endOffset),
+        range = textPositionAtOffset(0)..
+                textPositionAtOffset(null),
         style = style,
         token = this
     )

@@ -9,6 +9,7 @@ import com.alchitry.labs2.hardware.Board.XilinxBoard
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.acf.AcfExtractor
 import com.alchitry.labs2.parsers.acf.NativeConstraint
+import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.VerilogLexer
@@ -670,6 +671,7 @@ data class Project(
             }
 
             projectContext.getConstraints().forEach {
+                if (it !is Constraint.PinConstraint) return@forEach
                 val port = it.port
                 val signal = ports[port.getSignal().name] ?: return@forEach // error should already be caught
 

@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.hardware.pinout.AuPin
 import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
 import com.alchitry.labs2.parsers.hdl.types.SignalOrSubSignal
 import com.alchitry.labs2.parsers.hdl.values.Bit
@@ -56,7 +57,7 @@ class ProjectSimulator(private val projectContext: ProjectContext) : Closeable {
 
     init {
         check(projectContext.simulating) { "Project context passed to ProjectSimulator wasn't marked as \"simulating\"." }
-        val constraints = projectContext.getConstraints()
+        val constraints = projectContext.getConstraints().filterIsInstance<Constraint.PinConstraint>()
         val clkConstraint = constraints.firstOrNull { it.pin.name == AuPin.CLOCK.name }
 
         if (clkConstraint == null) {

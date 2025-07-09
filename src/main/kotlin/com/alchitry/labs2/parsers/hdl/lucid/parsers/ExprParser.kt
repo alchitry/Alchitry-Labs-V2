@@ -1111,7 +1111,8 @@ class ExprParser(
                     val notation = Notation.from(
                         ctx,
                         "Assert failed: \"${ctx.functionExpr(0)?.text}\"",
-                        NotationType.Error
+                        NotationType.Error,
+                        null
                     )
                     context.reportError(ctx, "Assert failed: \"${ctx.functionExpr(0)?.text}\"")
                     context.printError(notation.toString())

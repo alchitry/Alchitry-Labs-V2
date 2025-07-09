@@ -15,31 +15,6 @@ data class NativeConstraint(
 )
 
 sealed interface AcfConverter {
-    private fun SignalSelection.toVerilogSelectors() = buildString {
-        this@toVerilogSelectors.forEach { selector ->
-            when (selector) {
-                is SignalSelector.Bits -> {
-                    check(selector.context is SelectionContext.Constant) { "Constraint selector is not constant!" }
-                    append("[${selector.range.first}]")
-                }
-
-                is SignalSelector.Struct -> append(".${selector.member}")
-            }
-        }
-    }
-
-    val SignalOrSubSignal.fullPortName: String
-        get() = when (this) {
-            is Signal -> name
-            is SubSignal -> "${parent.name}${selection.toVerilogSelectors()}"
-        }
-
-    val SignalOrSubSignal.flatFullPortName: String
-        get() = when (this) {
-            is Signal -> name
-            is SubSignal -> "${parent.name}[${flatSelectionData.offset}]"
-        }
-
     suspend fun convert(
         context: ProjectContext,
         board: Board,
@@ -58,3 +33,28 @@ sealed interface AcfConverter {
         constraints: List<Constraint>
     ): List<NativeConstraint>
 }
+
+private fun SignalSelection.toVerilogSelectors() = buildString {
+    this@toVerilogSelectors.forEach { selector ->
+        when (selector) {
+            is SignalSelector.Bits -> {
+                check(selector.context is SelectionContext.Constant) { "Constraint selector is not constant!" }
+                append("[${selector.range.first}]")
+            }
+
+            is SignalSelector.Struct -> append(".${selector.member}")
+        }
+    }
+}
+
+val SignalOrSubSignal.fullPortName: String
+    get() = when (this) {
+        is Signal -> name
+        is SubSignal -> "${parent.name}${selection.toVerilogSelectors()}"
+    }
+
+val SignalOrSubSignal.flatFullPortName: String
+    get() = when (this) {
+        is Signal -> name
+        is SubSignal -> "${parent.name}[${flatSelectionData.offset}]"
+    }

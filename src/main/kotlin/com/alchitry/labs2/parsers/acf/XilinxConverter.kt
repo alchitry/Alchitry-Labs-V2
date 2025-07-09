@@ -10,7 +10,7 @@ import com.alchitry.labs2.project.Languages
 
 data object XilinxConverter : AcfConverter {
     context (StringBuilder)
-    private fun Constraint.toXdc() {
+    private fun Constraint.PinConstraint.toXdc() {
         val portName = port.fullPortName
         append("set_property PACKAGE_PIN ")
         append(pin.fpgaPin)
@@ -73,31 +73,41 @@ data object XilinxConverter : AcfConverter {
             Languages.XDC,
             buildString {
                 constraints.forEachIndexed { index, constraint ->
-                    constraint.toXdc()
+                    when (constraint) {
+                        is Constraint.PinConstraint -> {
+                            constraint.toXdc()
 
-                    constraint.attributes.firstOfTypeOrNull<PinAttribute.Frequency>()?.let { frequency ->
-                        val portName = constraint.port.fullPortName
-                        val clockName = "${portName.replace("[", "_").replace("]", "_")}_$index"
-                        append("# ")
-                        append(portName)
-                        append(" => ")
-                        append(frequency.value)
-                        append("Hz\n")
+                            constraint.attributes.firstOfTypeOrNull<PinAttribute.Frequency>()?.let { frequency ->
+                                val portName = constraint.port.fullPortName
+                                val clockName = "${portName.replace("[", "_").replace("]", "_")}_$index"
+                                append("# ")
+                                append(portName)
+                                append(" => ")
+                                append(frequency.value)
+                                append("Hz\n")
 
-                        append("create_clock -period ")
-                        val nsPeriod = 1000000000.0 / frequency.value
-                        append(nsPeriod)
-                        append(" -name ")
-                        append(clockName)
-                        append(" -waveform {0.000 ${nsPeriod / 2.0}} [get_ports ")
-                        append(portName)
-                        append("]\n")
-                        append("set_clock_groups -asynchronous -group [")
-                        append("get_clocks -include_generated_clocks ")
-                        append(clockName)
-                        append("]\n")
+                                append("create_clock -period ")
+                                val nsPeriod = 1000000000.0 / frequency.value
+                                append(nsPeriod)
+                                append(" -name ")
+                                append(clockName)
+                                append(" -waveform {0.000 ${nsPeriod / 2.0}} [get_ports ")
+                                append(portName)
+                                append("]\n")
+                                append("set_clock_groups -asynchronous -group [")
+                                append("get_clocks -include_generated_clocks ")
+                                append(clockName)
+                                append("]\n")
+                            }
+                            appendLine()
+                        }
+
+                        is Constraint.NativeBlockConstraint -> {
+                            append(constraint.block)
+                            appendLine()
+                        }
                     }
-                    appendLine()
+
                 }
             }
         )

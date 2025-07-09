@@ -16,20 +16,40 @@ data class Notation(
     }
 
     companion object {
-        fun from(token: Token, message: String?, type: NotationType) = Notation(
-            message = message,
-            range = TextPosition(token.line - 1, token.charPositionInLine)..
-                    TextPosition(token.line - 1, token.charPositionInLine + ((token.text?.length) ?: 0)),
-            type = type
-        )
-
-        fun from(ctx: ParserRuleContext, message: String?, type: NotationType): Notation? {
-            val start = ctx.start ?: return null
-            val stop = ctx.stop ?: return null
+        fun from(token: Token, message: String?, type: NotationType, offset: TextPosition?): Notation {
+            val line = (offset?.line ?: 0) + token.line - 1
+            val lineOffset = if (token.line == 1) {
+                (offset?.offset ?: 0) + token.charPositionInLine
+            } else {
+                token.charPositionInLine
+            }
             return Notation(
                 message = message,
-                range = TextPosition(start.line - 1, start.charPositionInLine)..
-                        TextPosition(stop.line - 1, stop.charPositionInLine + (stop.text?.length ?: 0)),
+                range = TextPosition(line, lineOffset)..
+                        TextPosition(line, lineOffset + ((token.text?.length) ?: 0)),
+                type = type
+            )
+        }
+
+        fun from(ctx: ParserRuleContext, message: String?, type: NotationType, offset: TextPosition?): Notation? {
+            val start = ctx.start ?: return null
+            val stop = ctx.stop ?: return null
+            val startLine = (offset?.line ?: 0) + start.line - 1
+            val startOffset = if (start.line == 1) {
+                (offset?.offset ?: 0) + start.charPositionInLine
+            } else {
+                start.charPositionInLine
+            }
+            val stopLine = (offset?.line ?: 0) + stop.line - 1
+            val stopOffset = if (stop.line == 1) {
+                (offset?.offset ?: 0) + stop.charPositionInLine
+            } else {
+                stop.charPositionInLine
+            }
+            return Notation(
+                message = message,
+                range = TextPosition(startLine, startOffset)..
+                        TextPosition(stopLine, stopOffset + (stop.text?.length ?: 0)),
                 type = type
             )
         }

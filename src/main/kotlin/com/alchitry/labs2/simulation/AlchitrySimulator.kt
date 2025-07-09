@@ -5,6 +5,7 @@ import com.alchitry.labs2.Log
 import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.hardware.pinout.AuPin
 import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.hdl.types.SignalOrSubSignal
 import com.alchitry.labs2.parsers.hdl.values.Bit
 import com.alchitry.labs2.parsers.hdl.values.BitValue
@@ -80,7 +81,7 @@ data class AlchitrySimulator private constructor(
 
     companion object {
         fun connect(projectContext: ProjectContext): AlchitrySimulator {
-            val constraints = projectContext.getConstraints()
+            val constraints = projectContext.getConstraints().filterIsInstance<Constraint.PinConstraint>()
             val reset = constraints.firstOrNull { it.pin.name == AuPin.RESET.name }?.port
             val ledNames = listOf(
                 AuPin.LED0.name,

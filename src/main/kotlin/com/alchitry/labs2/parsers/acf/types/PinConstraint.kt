@@ -6,12 +6,19 @@ import com.alchitry.labs2.hardware.pinout.Pin
 import com.alchitry.labs2.parsers.hdl.types.SignalOrSubSignal
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 
-data class Constraint(
-    val pin: Pin,
-    val port: SignalOrSubSignal,
-    val context: ParserRuleContext,
-    val attributes: List<PinAttribute>
-)
+sealed class Constraint {
+    data class PinConstraint(
+        val pin: Pin,
+        val port: SignalOrSubSignal,
+        val context: ParserRuleContext,
+        val attributes: List<PinAttribute>
+    ) : Constraint()
+
+    data class NativeBlockConstraint(
+        val block: String,
+        val context: ParserRuleContext
+    ) : Constraint()
+}
 
 sealed interface PinAttribute {
     val name: String

@@ -31,7 +31,7 @@ class SystemVerilogConverter(
      * Throws an [IllegalStateException] with the provided message and line/offset of the provided context.
      */
     private fun error(ctx: ParserRuleContext, message: String): Nothing {
-        val notation = Notation.from(ctx, message, NotationType.Error)
+        val notation = Notation.from(ctx, message, NotationType.Error, null)
         error(notation.toString())
     }
 

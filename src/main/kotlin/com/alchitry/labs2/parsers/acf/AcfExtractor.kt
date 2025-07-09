@@ -12,8 +12,12 @@ import com.alchitry.labs2.parsers.grammar.AcfLexer
 import com.alchitry.labs2.parsers.grammar.AcfParser
 import com.alchitry.labs2.parsers.grammar.AcfParser.*
 import com.alchitry.labs2.parsers.hdl.types.*
+import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationCollector
+import com.alchitry.labs2.parsers.notations.NotationType
 import com.alchitry.labs2.project.files.ConstraintFile
+import com.alchitry.labs2.ui.code_editor.textPositionAtOffset
+import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTreeWalker
@@ -31,6 +35,8 @@ class AcfExtractor(
     private val blockAttributes = mutableListOf<Map<AttributeContext, PinAttribute>>()
 
     companion object {
+        val acfNativeRegex = Regex("""\b(?:acf_pin|acf_port)\s*\([^)]+\)""")
+
         suspend fun extract(
             context: ProjectContext,
             file: ConstraintFile,
@@ -74,11 +80,92 @@ class AcfExtractor(
     }
 
     override fun exitNativeBlock(ctx: NativeBlockContext) {
-        println(ctx)
+        val offsetIndex = ctx.text.indexOf("{")
+        if (offsetIndex == -1) {
+            return
+        }
+        val nativeText = ctx.text.substring(offsetIndex + 1, ctx.text.length - 1)
+        val convertedText = acfNativeRegex.replace(nativeText) { match ->
+            val startIdx = match.value.indexOf("(") + 1
+            val endIdx = match.value.lastIndexOf(")")
+            require(startIdx != -1 && endIdx != -1) { "Failed to find () in ACF native block match!" }
+            val body = match.value.substring(startIdx, endIdx)
+            when {
+                match.value.startsWith("acf_port") -> {
+                    val offset =
+                        ctx.NATIVE_BLOCK().symbol.textPositionAtOffset(startIdx + match.range.first + offsetIndex + 1)
+                    notationCollector.withOffset(offset) {
+                        val parser = AcfParser(
+                            CommonTokenStream(
+                                AcfLexer(
+                                    CharStreams.fromString(body, "acf_port")
+                                ).also { it.removeErrorListeners() }
+                            )
+                        ).apply {
+                            (tokenStream.tokenSource as? AcfLexer)?.addErrorListener(notationCollector)
+                                ?: error("TokenSource was not an AcfLexer!")
+                            removeErrorListeners()
+                            addErrorListener(notationCollector)
+                        }
+                        val tree = parser.portName()
+                        if (notationCollector.hasErrors) {
+                            return@withOffset ""
+                        }
+                        ParseTreeWalker.DEFAULT.walk(this, tree)
+                        val signal = signals[tree]
+                        val port = signal?.flatFullPortName
+                        if (port == null) {
+                            notationCollector.reportError(
+                                tree,
+                                "Unknown port name \"${tree.name(0)?.text}\"."
+                            )
+                            return@withOffset ""
+                        }
+                        port
+                    }
+                }
+
+                match.value.startsWith("acf_pin") -> {
+                    val bodyOffset = startIdx + match.range.first + offsetIndex + 1
+                    val startPosition = ctx.NATIVE_BLOCK().symbol.textPositionAtOffset(bodyOffset)
+                    val endPosition = ctx.NATIVE_BLOCK().symbol.textPositionAtOffset(bodyOffset + body.length)
+                    val converter = currentConverter(blockAttributes.flatMap { it.values })
+                    if (converter == null) {
+                        notationCollector.addNotation(
+                            Notation(
+                                "Failed to resolve a pin converter!",
+                                startPosition..endPosition,
+                                NotationType.Error
+                            )
+                        )
+                        return@replace ""
+                    }
+                    val pin = converter.acfToPin(body)
+                    if (pin == null) {
+                        notationCollector.addNotation(
+                            Notation(
+                                "ACF pin \"$body\" not found!",
+                                startPosition..endPosition,
+                                NotationType.Error
+                            )
+                        )
+                        ""
+                    } else {
+                        pin.fpgaPin
+                    }
+                }
+
+                else -> error("Match doesn't start with acf_port or acf_pin!")
+            }
+        }.trim()
+        Constraint.NativeBlockConstraint(convertedText, ctx).also {
+            context.addConstraint(it)
+            constraints.add(it)
+        }
     }
 
     private fun parseFrequency(ctx: FrequencyContext): Int? {
-        val frequencyUnit = ctx.FREQ_UNIT()?.text ?: return null
+        val frequencyUnit = ctx.FREQ_UNIT().text
         val frequencyScale = when (frequencyUnit.lowercase()) {
             "hz" -> 1
             "khz" -> 1000
@@ -86,13 +173,13 @@ class AcfExtractor(
             "ghz" -> 1000000000
             else -> {
                 notationCollector.reportError(
-                    ctx.FREQ_UNIT()!!,
+                    ctx.FREQ_UNIT(),
                     "Unknown frequency unit \"$frequencyUnit\"!"
                 )
                 return null
             }
         }
-        val numCtx = ctx.number() ?: return null
+        val numCtx = ctx.number()
         val freq = numCtx.text.toDoubleOrNull()
         if (freq == null) {
             notationCollector.reportError(numCtx, "Failed to parse number \"${numCtx.text}\"!")
@@ -109,8 +196,8 @@ class AcfExtractor(
     }
 
     private fun parseAttribute(ctx: AttributeContext): PinAttribute? {
-        val name = ctx.BASIC_NAME()?.text ?: return null
-        val valueText = ctx.attributeValue()?.text ?: return null
+        val name = ctx.BASIC_NAME().text
+        val valueText = ctx.attributeValue().text
         when (name) {
             "SIDE" -> {
                 val sides = board.pinConverters.map { it.boardSide }.distinct()
@@ -141,7 +228,7 @@ class AcfExtractor(
                 "KEEP" -> PinAttribute.Pull(PinPull.Keep)
                 else -> {
                     notationCollector.reportError(
-                        ctx.attributeValue() ?: ctx,
+                        ctx.attributeValue(),
                         "Invalid PULL value \"$valueText\". Expected \"UP\", \"DOWN\", or \"KEEP\"."
                     )
                     null
@@ -154,7 +241,7 @@ class AcfExtractor(
                 val standard = converter.standards.firstOrNull { it.name == valueText }
                 if (standard == null) {
                     notationCollector.reportError(
-                        ctx.attributeValue() ?: ctx,
+                        ctx.attributeValue(),
                         "Invalid STANDARD value \"$valueText\". Expected ${
                             converter.standards.map { "\"${it.name}\"" }.joinToOrString()
                         }."
@@ -168,7 +255,7 @@ class AcfExtractor(
                 val value = valueText.toIntOrNull()
                 if (value == null) {
                     notationCollector.reportError(
-                        ctx.attributeValue() ?: ctx,
+                        ctx.attributeValue(),
                         "Invalid DRIVE value \"$valueText\". Expected an integer."
                     )
                     return null
@@ -180,7 +267,7 @@ class AcfExtractor(
                 val slew = PinSlew.entries.firstOrNull { it.name == valueText }
                 if (slew == null) {
                     notationCollector.reportError(
-                        ctx.attributeValue() ?: ctx,
+                        ctx.attributeValue(),
                         "Invalid SLEW value \"$valueText\". Expected ${
                             PinSlew.entries.map { "\"${it.name}\"" }.joinToOrString()
                         }."
@@ -191,10 +278,10 @@ class AcfExtractor(
             }
 
             "FREQUENCY" -> {
-                val frequency = ctx.attributeValue()?.frequency()?.let(::parseFrequency)
+                val frequency = ctx.attributeValue().frequency()?.let(::parseFrequency)
                 if (frequency == null) {
                     notationCollector.reportError(
-                        ctx.attributeValue() ?: ctx,
+                        ctx.attributeValue(),
                         "Invalid FREQUENCY value \"$valueText\". Expected a number followed by a frequency unit (e.g. \"100MHz\")."
                     )
                     return null
@@ -208,7 +295,7 @@ class AcfExtractor(
                     "FALSE" -> false
                     else -> {
                         notationCollector.reportError(
-                            ctx.attributeValue() ?: ctx,
+                            ctx.attributeValue(),
                             "Invalid DIFF_TERM value \"$valueText\". Expected TRUE or FALSE."
                         )
                         return null
@@ -240,38 +327,35 @@ class AcfExtractor(
         blockAttributes.removeLast()
     }
 
-    private fun addConstraint(constraint: Constraint, pinContext: ParserRuleContext, portContext: ParserRuleContext) {
-        when (context.addConstraint(constraint)) {
-            ProjectContext.AddConstraintResult.Success -> constraints.add(constraint)
+    private fun addConstraint(
+        pinConstraint: Constraint.PinConstraint,
+        pinContext: ParserRuleContext,
+        portContext: ParserRuleContext
+    ) {
+        when (context.addConstraint(pinConstraint)) {
+            ProjectContext.AddConstraintResult.Success -> constraints.add(pinConstraint)
             ProjectContext.AddConstraintResult.PinTaken -> notationCollector.reportError(
                 pinContext,
-                "The pin \"${constraint.pin.name}\" has already been connected!"
+                "The pin \"${pinConstraint.pin.name}\" has already been connected!"
             )
 
             ProjectContext.AddConstraintResult.PortTaken -> notationCollector.reportError(
                 portContext,
-                "The port \"${constraint.port}\" has already been connected!"
+                "The port \"${pinConstraint.port}\" has already been connected!"
             )
         }
     }
 
     override fun exitPortName(ctx: PortNameContext) {
         val name = ctx.name(0)?.text ?: return
-        val port = topModule.ports[name]
-        if (port == null) {
-            notationCollector.reportWarning(
-                ctx.name(0)!!,
-                "Unknown port name \"$name\". This constraint will be ignored."
-            )
-            return
-        }
+        val port = topModule.ports[name] ?: return
         val children =
             ctx.children?.filter { it is NameContext || it is ArrayIndexContext } ?: emptyList()
         val selectionMap = children.subList(1, children.size).map {
             when (it) {
                 is NameContext -> SignalSelector.Struct(it.text) to it
                 is ArrayIndexContext -> SignalSelector.Bits(
-                    (it.INT() ?: return).text.toInt()
+                    it.INT().text.toInt()
                 ) to it
 
                 else -> error("Impossible as everything else should have been filtered out!")
@@ -306,8 +390,15 @@ class AcfExtractor(
     }
 
     override fun exitPin(ctx: PinContext) {
-        val signal = signals[ctx.portName() ?: return] ?: return
-        val pinName = ctx.pinName()?.text ?: return
+        val signal = signals[ctx.portName()]
+        if (signal == null) {
+            notationCollector.reportWarning(
+                ctx.portName(),
+                "Unknown port name \"${ctx.portName().name(0)?.text}\". This constraint will be ignored."
+            )
+            return
+        }
+        val pinName = ctx.pinName().text
 
         val attributes = mutableMapOf<AttributeContext, PinAttribute>()
         blockAttributes.forEach { attributes.putAll(it) }
@@ -329,7 +420,7 @@ class AcfExtractor(
                 attributes.values.firstOfTypeOrNull<PinAttribute.Pinout>()?.value ?: board.pinConverters.first().version
             val side = attributes.values.firstOfTypeOrNull<PinAttribute.Side>()?.value ?: BoardSide.TOP
             notationCollector.reportError(
-                ctx.pinName()!!,
+                ctx.pinName(),
                 "Failed to find a compatible pin converter for pinout $version on side $side of the board ${board.name}."
             )
             return
@@ -337,7 +428,7 @@ class AcfExtractor(
         val pin = converter.acfToPin(pinName)
         if (pin == null) {
             notationCollector.reportError(
-                ctx.pinName()!!,
+                ctx.pinName(),
                 "Pin \"$pinName\" does not exist in pinout ${converter.version.name} on side ${converter.boardSide.name} of the ${board.name}."
             )
             return
@@ -347,7 +438,7 @@ class AcfExtractor(
         if (standard == null) {
             notationCollector.reportError(
                 ctx,
-                "The signal \"${ctx.portName()?.text}\" is missing the STANDARD attribute."
+                "The signal \"${ctx.portName().text}\" is missing the STANDARD attribute."
             )
             return
         }
@@ -368,7 +459,7 @@ class AcfExtractor(
         }
 
         val bankVccos = converter.bankToVcco(pin.bank)
-        val filteredVcco = context.getConstraints().firstNotNullOfOrNull {
+        val filteredVcco = context.getConstraints().filterIsInstance<Constraint.PinConstraint>().firstNotNullOfOrNull {
             if (pin.bank != it.pin.bank)
                 return@firstNotNullOfOrNull null
             val pinStd =
@@ -472,9 +563,9 @@ class AcfExtractor(
         }
 
         addConstraint(
-            Constraint(pin, signal, ctx, attributes.values.toList()),
-            ctx.pinName() ?: ctx,
-            ctx.portName() ?: ctx
+            Constraint.PinConstraint(pin, signal, ctx, attributes.values.toList()),
+            ctx.pinName(),
+            ctx.portName()
         )
     }
 

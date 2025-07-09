@@ -154,20 +154,25 @@ class ProjectContext(val notationManager: NotationManager, val board: Board, val
     }
 
     fun addConstraint(constraint: Constraint): AddConstraintResult {
-        if (constraints.any { areOverlapping(it.port, constraint.port) })
-            return AddConstraintResult.PortTaken
-        if (constraints.any { it.pin == constraint.pin })
-            return AddConstraintResult.PinTaken
+        if (constraint is Constraint.PinConstraint) {
+            if (constraints.any { it is Constraint.PinConstraint && areOverlapping(it.port, constraint.port) })
+                return AddConstraintResult.PortTaken
+            if (constraints.any { it is Constraint.PinConstraint && it.pin == constraint.pin })
+                return AddConstraintResult.PinTaken
+        }
+
         constraints.add(constraint)
         return AddConstraintResult.Success
     }
 
     fun getConstraints(): List<Constraint> = constraints.toImmutableList()
-    fun getConstraints(version: ConverterVersion, boardSide: BoardSide) = constraints.filter {
-        val v = (it.attributes.firstOfTypeOrNull<PinAttribute.Pinout>()?.value ?: board.pinConverters.first().version)
-        val side = it.attributes.firstOfTypeOrNull<PinAttribute.Side>()?.value ?: BoardSide.TOP
-        v == version && side == boardSide
-    }
+    fun getPinConstraints(version: ConverterVersion, boardSide: BoardSide) =
+        constraints.filterIsInstance<Constraint.PinConstraint>().filter {
+            val v =
+                (it.attributes.firstOfTypeOrNull<PinAttribute.Pinout>()?.value ?: board.pinConverters.first().version)
+            val side = it.attributes.firstOfTypeOrNull<PinAttribute.Side>()?.value ?: BoardSide.TOP
+            v == version && side == boardSide
+        }
 }
 
 

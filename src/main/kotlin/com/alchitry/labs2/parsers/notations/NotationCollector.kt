@@ -7,6 +7,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.withStyle
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.project.files.ProjectFile
+import com.alchitry.labs2.ui.code_editor.TextPosition
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.strumenta.antlrkotlin.runtime.BitSet
 import kotlinx.collections.immutable.toImmutableMap
@@ -44,6 +45,7 @@ class NotationCollector private constructor(
     private val warnings = mutableSetOf<Notation>()
     private val infos = mutableSetOf<Notation>()
     private val lineActions = mutableMapOf<Int, MutableList<LineAction>>()
+    private var currentOffset: TextPosition? = null
 
     fun getAllErrors(): List<Notation> = (children.flatMap { it.getAllErrors() } + errors).distinct()
     fun getAllWarnings(): List<Notation> = (children.flatMap { it.getAllWarnings() } + warnings).distinct()
@@ -55,6 +57,15 @@ class NotationCollector private constructor(
 
     fun addLineAction(line: Int, content: @Composable BoxScope.() -> Unit) {
         lineActions.getOrPut(line) { mutableListOf() }.add(LineAction(line, content))
+    }
+
+    fun <T : Any> withOffset(offset: TextPosition, block: () -> T): T {
+        try {
+            currentOffset = offset
+            return block()
+        } finally {
+            currentOffset = null
+        }
     }
 
     fun getReport(
@@ -157,32 +168,32 @@ class NotationCollector private constructor(
 
     override fun reportError(node: TerminalNode, message: String) {
         node.symbol?.let {
-            errors.add(Notation.from(it, message, NotationType.Error))
+            errors.add(Notation.from(it, message, NotationType.Error, currentOffset))
         }
     }
 
     override fun reportError(ctx: ParserRuleContext, message: String) {
-        Notation.from(ctx, message, NotationType.Error)?.let { errors.add(it) }
+        Notation.from(ctx, message, NotationType.Error, currentOffset)?.let { errors.add(it) }
     }
 
     override fun reportWarning(node: TerminalNode, message: String) {
         node.symbol?.let {
-            warnings.add(Notation.from(it, message, NotationType.Warning))
+            warnings.add(Notation.from(it, message, NotationType.Warning, currentOffset))
         }
     }
 
     override fun reportWarning(ctx: ParserRuleContext, message: String) {
-        Notation.from(ctx, message, NotationType.Warning)?.let { warnings.add(it) }
+        Notation.from(ctx, message, NotationType.Warning, currentOffset)?.let { warnings.add(it) }
     }
 
     override fun reportInfo(node: TerminalNode, message: String) {
         node.symbol?.let {
-            infos.add(Notation.from(it, message, NotationType.Info))
+            infos.add(Notation.from(it, message, NotationType.Info, currentOffset))
         }
     }
 
     override fun reportInfo(ctx: ParserRuleContext, message: String) {
-        Notation.from(ctx, message, NotationType.Info)?.let { infos.add(it) }
+        Notation.from(ctx, message, NotationType.Info, currentOffset)?.let { infos.add(it) }
     }
 
     fun addNotation(notation: Notation) {
@@ -202,7 +213,7 @@ class NotationCollector private constructor(
         e: RecognitionException?
     ) {
         val token = (offendingSymbol as? Token) ?: return
-        errors.add(Notation.from(token, msg, NotationType.SyntaxError))
+        errors.add(Notation.from(token, msg, NotationType.SyntaxError, currentOffset))
     }
 
     override fun reportAmbiguity(
@@ -215,7 +226,7 @@ class NotationCollector private constructor(
         configs: ATNConfigSet
     ) {
         val token = recognizer.tokenStream?.get(startIndex) ?: return
-        errors.add(Notation.from(token, null, NotationType.SyntaxAmbiguity))
+        errors.add(Notation.from(token, null, NotationType.SyntaxAmbiguity, currentOffset))
     }
 
     override fun reportAttemptingFullContext(

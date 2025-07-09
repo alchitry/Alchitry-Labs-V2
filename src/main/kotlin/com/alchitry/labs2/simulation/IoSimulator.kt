@@ -129,7 +129,7 @@ data class IoSimulator private constructor(
         private enum class Version { V1, V2 }
 
         fun connectV1(projectContext: ProjectContext): IoSimulator? {
-            val constraints = projectContext.getConstraints(ConverterVersion.V1, BoardSide.TOP)
+            val constraints = projectContext.getPinConstraints(ConverterVersion.V1, BoardSide.TOP)
             val leds = listOf(
                 AuPin.B21.name,
                 AuPin.B20.name,
@@ -226,7 +226,7 @@ data class IoSimulator private constructor(
         }
 
         fun connectV2(projectContext: ProjectContext): IoSimulator? {
-            val constraints = projectContext.getConstraints(ConverterVersion.V2, BoardSide.TOP)
+            val constraints = projectContext.getPinConstraints(ConverterVersion.V2, BoardSide.TOP)
             val leds = listOf(
                 AuV2Pin.A70.name,
                 AuV2Pin.A72.name,

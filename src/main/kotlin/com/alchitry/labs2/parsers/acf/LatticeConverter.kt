@@ -13,8 +13,9 @@ data object LatticeConverter : AcfConverter {
         board: Board,
         constraints: List<Constraint>
     ): List<NativeConstraint> {
+        val pinConstraints = constraints.filterIsInstance<Constraint.PinConstraint>()
         val sdc = buildString {
-            constraints.filter { it.attributes.any { attr -> attr is PinAttribute.Frequency } }
+            pinConstraints.filter { it.attributes.any { attr -> attr is PinAttribute.Frequency } }
                 .forEachIndexed { index, clock ->
                     val frequency = clock.attributes.first { it is PinAttribute.Frequency } as PinAttribute.Frequency
                 val portName = clock.port.flatFullPortName
@@ -39,15 +40,25 @@ data object LatticeConverter : AcfConverter {
 
         val pcf = buildString {
             constraints.forEach { constraint ->
-                append("set_io ")
-                append(constraint.port.flatFullPortName)
-                append(" ")
-                append(constraint.pin.fpgaPin)
-                val pull = constraint.attributes.firstOfTypeOrNull<PinAttribute.Pull>()
-                if (pull != null && pull.value == PinPull.Up) {
-                    append(" -pullup yes")
+                when (constraint) {
+                    is Constraint.PinConstraint -> {
+                        append("set_io ")
+                        append(constraint.port.flatFullPortName)
+                        append(" ")
+                        append(constraint.pin.fpgaPin)
+                        val pull = constraint.attributes.firstOfTypeOrNull<PinAttribute.Pull>()
+                        if (pull != null && pull.value == PinPull.Up) {
+                            append(" -pullup yes")
+                        }
+                        appendLine()
+                    }
+
+                    is Constraint.NativeBlockConstraint -> {
+                        append(constraint.block)
+                        appendLine()
+                    }
                 }
-                appendLine()
+
             }
         }
 
