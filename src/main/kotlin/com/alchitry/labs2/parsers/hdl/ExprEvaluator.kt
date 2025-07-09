@@ -74,7 +74,7 @@ data class ExprEvaluator<T : ParserRuleContext>(
         while (current != null) {
             if (deadBlocks[current] == true)
                 return true
-            current = current.parent
+            current = current.getParent()
         }
         return false
     }
@@ -86,7 +86,7 @@ data class ExprEvaluator<T : ParserRuleContext>(
         while (current != null) {
             if (inactiveBlocks[current] == true)
                 return true
-            current = current.parent
+            current = current.getParent()
         }
         return false
     }

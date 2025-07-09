@@ -5,10 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.withStyle
-import com.alchitry.kotlinmultiplatform.BitSet
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.project.files.ProjectFile
 import com.alchitry.labs2.ui.theme.AlchitryColors
+import com.strumenta.antlrkotlin.runtime.BitSet
 import kotlinx.collections.immutable.toImmutableMap
 import org.antlr.v4.kotlinruntime.*
 import org.antlr.v4.kotlinruntime.atn.ATNConfigSet

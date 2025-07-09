@@ -18,15 +18,15 @@ object LucidTokenizer : EditorTokenizer {
 
         return tokenStream.tokens.map { token ->
             val style = when (token.type) {
-                LucidLexer.Tokens.SIGNED.id -> LucidStyle.signed
-                LucidLexer.Tokens.COMMENT.id, LucidLexer.Tokens.BLOCK_COMMENT.id -> LucidStyle.comment
-                LucidLexer.Tokens.HEX.id, LucidLexer.Tokens.BIN.id, LucidLexer.Tokens.DEC.id, LucidLexer.Tokens.INT.id -> LucidStyle.value
-                LucidLexer.Tokens.REAL.id -> LucidStyle.realValue
-                LucidLexer.Tokens.STRING.id -> LucidStyle.string
-                LucidLexer.Tokens.CONST_ID.id -> LucidStyle.constant
-                LucidLexer.Tokens.SPACE_ID.id -> LucidStyle.namespace
-                LucidLexer.Tokens.FUNCTION_ID.id -> LucidStyle.function
-                LucidLexer.Tokens.SEMICOLON.id -> LucidStyle.deadCode
+                LucidLexer.Tokens.SIGNED -> LucidStyle.signed
+                LucidLexer.Tokens.COMMENT, LucidLexer.Tokens.BLOCK_COMMENT -> LucidStyle.comment
+                LucidLexer.Tokens.HEX, LucidLexer.Tokens.BIN, LucidLexer.Tokens.DEC, LucidLexer.Tokens.INT -> LucidStyle.value
+                LucidLexer.Tokens.REAL -> LucidStyle.realValue
+                LucidLexer.Tokens.STRING -> LucidStyle.string
+                LucidLexer.Tokens.CONST_ID -> LucidStyle.constant
+                LucidLexer.Tokens.SPACE_ID -> LucidStyle.namespace
+                LucidLexer.Tokens.FUNCTION_ID -> LucidStyle.function
+                LucidLexer.Tokens.SEMICOLON -> LucidStyle.deadCode
                 else -> when (token.text) {
                     "input", "output", "inout", "dff", "sig", "const", "struct", "enum" -> LucidStyle.variable
                     "always", "if", "else", "repeat", "case", "test", "fun" -> LucidStyle.keyword

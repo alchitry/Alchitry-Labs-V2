@@ -46,7 +46,7 @@ class AcfExtractor(
                         ).also { it.removeErrorListeners() }
                     )
                 ).apply {
-                    (tokenStream?.tokenSource as? AcfLexer)?.addErrorListener(notationCollector)
+                    (tokenStream.tokenSource as? AcfLexer)?.addErrorListener(notationCollector)
                         ?: error("TokenSource was not an AcfLexer!")
                     removeErrorListeners()
                     addErrorListener(notationCollector)
@@ -59,7 +59,7 @@ class AcfExtractor(
             }
 
             val extractor = AcfExtractor(context, topModule, board, notationCollector)
-            ParseTreeWalker.walk(extractor, tree)
+            ParseTreeWalker.DEFAULT.walk(extractor, tree)
 
             if (notationCollector.hasErrors) {
                 return null
@@ -71,6 +71,10 @@ class AcfExtractor(
 
     override fun enterSource(ctx: SourceContext) {
         blockAttributes.clear()
+    }
+
+    override fun exitNativeBlock(ctx: NativeBlockContext) {
+        println(ctx)
     }
 
     private fun parseFrequency(ctx: FrequencyContext): Int? {

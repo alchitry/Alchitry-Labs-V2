@@ -594,7 +594,7 @@ class TypesParser(
         val nameCtx = ctx.name() ?: return
         val name = nameCtx.text
 
-        val isLocal = ctx.parent is AlwaysSignalContext
+        val isLocal = ctx.getParent() is AlwaysSignalContext
 
         if (nameCtx.TYPE_ID() == null)
             context.reportError(nameCtx, "Sig names must start with a lowercase letter.")
@@ -604,7 +604,7 @@ class TypesParser(
             return
         }
 
-        val width = ctx.signalWidth()?.let { context.resolve(it) }
+        val width = context.resolve(ctx.signalWidth())
 
         if (width == null) {
             if (!context.mode.building) {

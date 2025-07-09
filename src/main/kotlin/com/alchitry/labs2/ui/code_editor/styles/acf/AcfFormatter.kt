@@ -12,12 +12,12 @@ class AcfFormatter(codeEditorState: CodeEditorState) : BracketIndenter(codeEdito
         return removeSemicolons(super.formatAll())
     }
 
-    private fun List<Token>.nextFromChannel(start: Int, channel: AcfLexer.Channels): Token? {
-        return subList(start + 1, size).firstOrNull { it.channel == channel.id }
+    private fun List<Token>.nextFromChannel(start: Int, channel: Int): Token? {
+        return subList(start + 1, size).firstOrNull { it.channel == channel }
     }
 
-    private fun List<Token>.previousFromChannel(start: Int, channel: AcfLexer.Channels): Token? {
-        return subList(0, start).lastOrNull { it.channel == channel.id }
+    private fun List<Token>.previousFromChannel(start: Int, channel: Int): Token? {
+        return subList(0, start).lastOrNull { it.channel == channel }
     }
 
     private fun removeSemicolons(text: String): String {
@@ -27,21 +27,21 @@ class AcfFormatter(codeEditorState: CodeEditorState) : BracketIndenter(codeEdito
 
         tokens.forEachIndexed { idx, it ->
             when (it.type) {
-                AcfLexer.Tokens.SEMICOLON.id -> {
+                AcfLexer.Tokens.SEMICOLON -> {
                     if (tokens.previousFromChannel(
                             idx,
                             AcfLexer.Channels.DEFAULT_TOKEN_CHANNEL
-                        )?.type == AcfLexer.Tokens.NL.id ||
+                        )?.type == AcfLexer.Tokens.NL ||
                         tokens.nextFromChannel(
                             idx,
                             AcfLexer.Channels.DEFAULT_TOKEN_CHANNEL
-                        )?.type == AcfLexer.Tokens.NL.id
+                        )?.type == AcfLexer.Tokens.NL
                     ) {
                         tokenText[idx] = ""
                     }
                 }
 
-                AcfLexer.Tokens.NL.id -> {
+                AcfLexer.Tokens.NL -> {
                     tokenText[idx] = "\n"
                 }
             }

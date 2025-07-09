@@ -28,7 +28,7 @@ data class ModuleParser(
      * Build a local reference to the default value
      */
     override fun exitParamDefault(ctx: LucidParser.ParamDefaultContext) {
-        val parent = ctx.parent as? LucidParser.ParamDecContext ?: return
+        val parent = ctx.getParent() as? LucidParser.ParamDecContext ?: return
         val name = parent.name()?.text ?: return
         val defaultValue = ctx.expr()?.let { context.resolve(it)?.value } ?: UndefinedValue(UndefinedSimpleWidth())
 
@@ -79,7 +79,7 @@ data class ModuleParser(
         if (value is UndefinedValue)
             return
         if (value?.isTrue()?.bit != Bit.B1) {
-            val defaultValue = (ctx.parent as? LucidParser.ParamDecContext)?.paramDefault()?.expr()
+            val defaultValue = (ctx.getParent() as? LucidParser.ParamDecContext)?.paramDefault()?.expr()
                 ?.let { context.resolve(it) }
             context.reportError(
                 ctx,

@@ -20,10 +20,10 @@ object AcfTokenizer : EditorTokenizer {
 
         return tokenStream.tokens.map { token ->
             val style = when (token.type) {
-                AcfLexer.Tokens.COMMENT.id, AcfLexer.Tokens.BLOCK_COMMENT.id -> LucidStyle.comment
-                AcfLexer.Tokens.FREQ_UNIT.id, AcfLexer.Tokens.INT.id -> LucidStyle.value
-                AcfLexer.Tokens.REAL.id -> LucidStyle.realValue
-                AcfLexer.Tokens.BASIC_NAME.id -> if (token.text?.let { capRegex.matches(it) } == true) LucidStyle.constant else null
+                AcfLexer.Tokens.COMMENT, AcfLexer.Tokens.BLOCK_COMMENT -> LucidStyle.comment
+                AcfLexer.Tokens.FREQ_UNIT, AcfLexer.Tokens.INT -> LucidStyle.value
+                AcfLexer.Tokens.REAL -> LucidStyle.realValue
+                AcfLexer.Tokens.BASIC_NAME -> if (token.text?.let { capRegex.matches(it) } == true) LucidStyle.constant else null
                 else -> when (token.text) {
                     "pin", "clock" -> LucidStyle.variable
                     else ->

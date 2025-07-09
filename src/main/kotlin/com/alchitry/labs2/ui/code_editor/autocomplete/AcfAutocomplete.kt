@@ -24,8 +24,8 @@ class AcfAutocomplete(state: CodeEditorState) : Autocomplete(state) {
             ensureActive()
             val node = tree.findFinalNode(tokenStream, offset)
 
-            val nameContext = node.readParent() as? AcfParser.NameContext ?: return@withContext null
-            val parent = nameContext.readParent()
+            val nameContext = node.getParent() as? AcfParser.NameContext ?: return@withContext null
+            val parent = nameContext.getParent()
             if (parent is AcfParser.PortNameContext) {
                 ensureActive()
                 val topFile = Project.current?.top ?: return@withContext null

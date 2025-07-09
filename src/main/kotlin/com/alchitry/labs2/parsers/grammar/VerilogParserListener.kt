@@ -1,4 +1,4 @@
-// Generated from java-escape by ANTLR 4.13.0
+// Generated from VerilogParser.g4 by ANTLR 4.13.1
 package com.alchitry.labs2.parsers.grammar
 
 import org.antlr.v4.kotlinruntime.ParserRuleContext
@@ -8,4949 +8,5707 @@ import org.antlr.v4.kotlinruntime.tree.SuspendParseTreeListener
 import org.antlr.v4.kotlinruntime.tree.TerminalNode
 
 /**
- * This interface defines a complete listener for a parse tree produced by
- * {@link VerilogParser}.
+ * This interface defines a complete listener for a parse tree produced by [VerilogParser].
  */
-interface VerilogParserListener : ParseTreeListener {
+public interface VerilogParserListener : ParseTreeListener {
     /**
-     * Enter a parse tree produced by {@link VerilogParser#library_text}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.library_text].
+     *
+     * @param ctx The parse tree
      */
-    fun enterLibrary_text(ctx: VerilogParser.Library_textContext)
+    public fun enterLibrary_text(ctx: VerilogParser.Library_textContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#library_text}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.library_text].
+     *
+     * @param ctx The parse tree
      */
-    fun exitLibrary_text(ctx: VerilogParser.Library_textContext)
+    public fun exitLibrary_text(ctx: VerilogParser.Library_textContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#library_description}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.library_description].
+     *
+     * @param ctx The parse tree
      */
-    fun enterLibrary_description(ctx: VerilogParser.Library_descriptionContext)
+    public fun enterLibrary_description(ctx: VerilogParser.Library_descriptionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#library_description}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.library_description].
+     *
+     * @param ctx The parse tree
      */
-    fun exitLibrary_description(ctx: VerilogParser.Library_descriptionContext)
+    public fun exitLibrary_description(ctx: VerilogParser.Library_descriptionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#library_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.library_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterLibrary_declaration(ctx: VerilogParser.Library_declarationContext)
+    public fun enterLibrary_declaration(ctx: VerilogParser.Library_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#library_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.library_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitLibrary_declaration(ctx: VerilogParser.Library_declarationContext)
+    public fun exitLibrary_declaration(ctx: VerilogParser.Library_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#library_incdir}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.library_incdir].
+     *
+     * @param ctx The parse tree
      */
-    fun enterLibrary_incdir(ctx: VerilogParser.Library_incdirContext)
+    public fun enterLibrary_incdir(ctx: VerilogParser.Library_incdirContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#library_incdir}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.library_incdir].
+     *
+     * @param ctx The parse tree
      */
-    fun exitLibrary_incdir(ctx: VerilogParser.Library_incdirContext)
+    public fun exitLibrary_incdir(ctx: VerilogParser.Library_incdirContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#include_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.include_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun enterInclude_statement(ctx: VerilogParser.Include_statementContext)
+    public fun enterInclude_statement(ctx: VerilogParser.Include_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#include_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.include_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun exitInclude_statement(ctx: VerilogParser.Include_statementContext)
+    public fun exitInclude_statement(ctx: VerilogParser.Include_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#file_path_spec}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.file_path_spec].
+     *
+     * @param ctx The parse tree
      */
-    fun enterFile_path_spec(ctx: VerilogParser.File_path_specContext)
+    public fun enterFile_path_spec(ctx: VerilogParser.File_path_specContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#file_path_spec}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.file_path_spec].
+     *
+     * @param ctx The parse tree
      */
-    fun exitFile_path_spec(ctx: VerilogParser.File_path_specContext)
+    public fun exitFile_path_spec(ctx: VerilogParser.File_path_specContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#source_text}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.source_text].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSource_text(ctx: VerilogParser.Source_textContext)
+    public fun enterSource_text(ctx: VerilogParser.Source_textContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#source_text}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.source_text].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSource_text(ctx: VerilogParser.Source_textContext)
+    public fun exitSource_text(ctx: VerilogParser.Source_textContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#description}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.description].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDescription(ctx: VerilogParser.DescriptionContext)
+    public fun enterDescription(ctx: VerilogParser.DescriptionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#description}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.description].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDescription(ctx: VerilogParser.DescriptionContext)
+    public fun exitDescription(ctx: VerilogParser.DescriptionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModule_declaration(ctx: VerilogParser.Module_declarationContext)
+    public fun enterModule_declaration(ctx: VerilogParser.Module_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModule_declaration(ctx: VerilogParser.Module_declarationContext)
+    public fun exitModule_declaration(ctx: VerilogParser.Module_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_keyword}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_keyword].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModule_keyword(ctx: VerilogParser.Module_keywordContext)
+    public fun enterModule_keyword(ctx: VerilogParser.Module_keywordContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_keyword}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_keyword].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModule_keyword(ctx: VerilogParser.Module_keywordContext)
+    public fun exitModule_keyword(ctx: VerilogParser.Module_keywordContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_parameter_port_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_parameter_port_list].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModule_parameter_port_list(ctx: VerilogParser.Module_parameter_port_listContext)
+    public fun enterModule_parameter_port_list(ctx: VerilogParser.Module_parameter_port_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_parameter_port_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_parameter_port_list].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModule_parameter_port_list(ctx: VerilogParser.Module_parameter_port_listContext)
+    public fun exitModule_parameter_port_list(ctx: VerilogParser.Module_parameter_port_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_port_declarations}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_port_declarations].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_port_declarations(ctx: VerilogParser.List_of_port_declarationsContext)
+    public fun enterList_of_port_declarations(ctx: VerilogParser.List_of_port_declarationsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_port_declarations}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_port_declarations].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_port_declarations(ctx: VerilogParser.List_of_port_declarationsContext)
+    public fun exitList_of_port_declarations(ctx: VerilogParser.List_of_port_declarationsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#port}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.port].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPort(ctx: VerilogParser.PortContext)
+    public fun enterPort(ctx: VerilogParser.PortContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#port}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.port].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPort(ctx: VerilogParser.PortContext)
+    public fun exitPort(ctx: VerilogParser.PortContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#port_implicit}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.port_implicit].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPort_implicit(ctx: VerilogParser.Port_implicitContext)
+    public fun enterPort_implicit(ctx: VerilogParser.Port_implicitContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#port_implicit}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.port_implicit].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPort_implicit(ctx: VerilogParser.Port_implicitContext)
+    public fun exitPort_implicit(ctx: VerilogParser.Port_implicitContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#port_explicit}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.port_explicit].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPort_explicit(ctx: VerilogParser.Port_explicitContext)
+    public fun enterPort_explicit(ctx: VerilogParser.Port_explicitContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#port_explicit}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.port_explicit].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPort_explicit(ctx: VerilogParser.Port_explicitContext)
+    public fun exitPort_explicit(ctx: VerilogParser.Port_explicitContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#port_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.port_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPort_expression(ctx: VerilogParser.Port_expressionContext)
+    public fun enterPort_expression(ctx: VerilogParser.Port_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#port_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.port_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPort_expression(ctx: VerilogParser.Port_expressionContext)
+    public fun exitPort_expression(ctx: VerilogParser.Port_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#port_reference}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.port_reference].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPort_reference(ctx: VerilogParser.Port_referenceContext)
+    public fun enterPort_reference(ctx: VerilogParser.Port_referenceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#port_reference}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.port_reference].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPort_reference(ctx: VerilogParser.Port_referenceContext)
+    public fun exitPort_reference(ctx: VerilogParser.Port_referenceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#port_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.port_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPort_declaration(ctx: VerilogParser.Port_declarationContext)
+    public fun enterPort_declaration(ctx: VerilogParser.Port_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#port_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.port_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPort_declaration(ctx: VerilogParser.Port_declarationContext)
+    public fun exitPort_declaration(ctx: VerilogParser.Port_declarationContext)
 
     /**
-     * Enter a parse tree produced by the {@code ModulePort}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ModulePort` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModulePort(ctx: VerilogParser.ModulePortContext)
+    public fun enterModulePort(ctx: VerilogParser.ModulePortContext)
 
     /**
-     * Exit a parse tree produced by the {@code ModulePort}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ModulePort` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModulePort(ctx: VerilogParser.ModulePortContext)
+    public fun exitModulePort(ctx: VerilogParser.ModulePortContext)
 
     /**
-     * Enter a parse tree produced by the {@code ModuleInstanceOrGenerate}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ModuleInstanceOrGenerate` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext)
+    public fun enterModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext)
 
     /**
-     * Exit a parse tree produced by the {@code ModuleInstanceOrGenerate}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ModuleInstanceOrGenerate` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext)
+    public fun exitModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext)
 
     /**
-     * Enter a parse tree produced by the {@code ModuleGenerateRegion}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ModuleGenerateRegion` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext)
+    public fun enterModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext)
 
     /**
-     * Exit a parse tree produced by the {@code ModuleGenerateRegion}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ModuleGenerateRegion` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext)
+    public fun exitModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext)
 
     /**
-     * Enter a parse tree produced by the {@code ModuleSpecifyBlock}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ModuleSpecifyBlock` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext)
+    public fun enterModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext)
 
     /**
-     * Exit a parse tree produced by the {@code ModuleSpecifyBlock}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ModuleSpecifyBlock` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext)
+    public fun exitModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext)
 
     /**
-     * Enter a parse tree produced by the {@code ModuleParameter}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ModuleParameter` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModuleParameter(ctx: VerilogParser.ModuleParameterContext)
+    public fun enterModuleParameter(ctx: VerilogParser.ModuleParameterContext)
 
     /**
-     * Exit a parse tree produced by the {@code ModuleParameter}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ModuleParameter` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModuleParameter(ctx: VerilogParser.ModuleParameterContext)
+    public fun exitModuleParameter(ctx: VerilogParser.ModuleParameterContext)
 
     /**
-     * Enter a parse tree produced by the {@code ModuleSpecparam}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ModuleSpecparam` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext)
+    public fun enterModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext)
 
     /**
-     * Exit a parse tree produced by the {@code ModuleSpecparam}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ModuleSpecparam` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext)
+    public fun exitModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_or_generate_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_or_generate_item].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModule_or_generate_item(ctx: VerilogParser.Module_or_generate_itemContext)
+    public fun enterModule_or_generate_item(ctx: VerilogParser.Module_or_generate_itemContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_or_generate_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_or_generate_item].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModule_or_generate_item(ctx: VerilogParser.Module_or_generate_itemContext)
+    public fun exitModule_or_generate_item(ctx: VerilogParser.Module_or_generate_itemContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_or_generate_item_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_or_generate_item_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModule_or_generate_item_declaration(ctx: VerilogParser.Module_or_generate_item_declarationContext)
+    public fun enterModule_or_generate_item_declaration(ctx: VerilogParser.Module_or_generate_item_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_or_generate_item_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_or_generate_item_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModule_or_generate_item_declaration(ctx: VerilogParser.Module_or_generate_item_declarationContext)
+    public fun exitModule_or_generate_item_declaration(ctx: VerilogParser.Module_or_generate_item_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#parameter_override}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.parameter_override].
+     *
+     * @param ctx The parse tree
      */
-    fun enterParameter_override(ctx: VerilogParser.Parameter_overrideContext)
+    public fun enterParameter_override(ctx: VerilogParser.Parameter_overrideContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#parameter_override}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.parameter_override].
+     *
+     * @param ctx The parse tree
      */
-    fun exitParameter_override(ctx: VerilogParser.Parameter_overrideContext)
+    public fun exitParameter_override(ctx: VerilogParser.Parameter_overrideContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#config_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.config_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConfig_declaration(ctx: VerilogParser.Config_declarationContext)
+    public fun enterConfig_declaration(ctx: VerilogParser.Config_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#config_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.config_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConfig_declaration(ctx: VerilogParser.Config_declarationContext)
+    public fun exitConfig_declaration(ctx: VerilogParser.Config_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#design_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.design_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDesign_statement(ctx: VerilogParser.Design_statementContext)
+    public fun enterDesign_statement(ctx: VerilogParser.Design_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#design_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.design_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDesign_statement(ctx: VerilogParser.Design_statementContext)
+    public fun exitDesign_statement(ctx: VerilogParser.Design_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#design_statement_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.design_statement_item].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDesign_statement_item(ctx: VerilogParser.Design_statement_itemContext)
+    public fun enterDesign_statement_item(ctx: VerilogParser.Design_statement_itemContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#design_statement_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.design_statement_item].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDesign_statement_item(ctx: VerilogParser.Design_statement_itemContext)
+    public fun exitDesign_statement_item(ctx: VerilogParser.Design_statement_itemContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#config_rule_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.config_rule_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConfig_rule_statement(ctx: VerilogParser.Config_rule_statementContext)
+    public fun enterConfig_rule_statement(ctx: VerilogParser.Config_rule_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#config_rule_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.config_rule_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConfig_rule_statement(ctx: VerilogParser.Config_rule_statementContext)
+    public fun exitConfig_rule_statement(ctx: VerilogParser.Config_rule_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#default_clause}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.default_clause].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDefault_clause(ctx: VerilogParser.Default_clauseContext)
+    public fun enterDefault_clause(ctx: VerilogParser.Default_clauseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#default_clause}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.default_clause].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDefault_clause(ctx: VerilogParser.Default_clauseContext)
+    public fun exitDefault_clause(ctx: VerilogParser.Default_clauseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#inst_clause}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.inst_clause].
+     *
+     * @param ctx The parse tree
      */
-    fun enterInst_clause(ctx: VerilogParser.Inst_clauseContext)
+    public fun enterInst_clause(ctx: VerilogParser.Inst_clauseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#inst_clause}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.inst_clause].
+     *
+     * @param ctx The parse tree
      */
-    fun exitInst_clause(ctx: VerilogParser.Inst_clauseContext)
+    public fun exitInst_clause(ctx: VerilogParser.Inst_clauseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#inst_name}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.inst_name].
+     *
+     * @param ctx The parse tree
      */
-    fun enterInst_name(ctx: VerilogParser.Inst_nameContext)
+    public fun enterInst_name(ctx: VerilogParser.Inst_nameContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#inst_name}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.inst_name].
+     *
+     * @param ctx The parse tree
      */
-    fun exitInst_name(ctx: VerilogParser.Inst_nameContext)
+    public fun exitInst_name(ctx: VerilogParser.Inst_nameContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#cell_clause}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.cell_clause].
+     *
+     * @param ctx The parse tree
      */
-    fun enterCell_clause(ctx: VerilogParser.Cell_clauseContext)
+    public fun enterCell_clause(ctx: VerilogParser.Cell_clauseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#cell_clause}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.cell_clause].
+     *
+     * @param ctx The parse tree
      */
-    fun exitCell_clause(ctx: VerilogParser.Cell_clauseContext)
+    public fun exitCell_clause(ctx: VerilogParser.Cell_clauseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#liblist_clause}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.liblist_clause].
+     *
+     * @param ctx The parse tree
      */
-    fun enterLiblist_clause(ctx: VerilogParser.Liblist_clauseContext)
+    public fun enterLiblist_clause(ctx: VerilogParser.Liblist_clauseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#liblist_clause}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.liblist_clause].
+     *
+     * @param ctx The parse tree
      */
-    fun exitLiblist_clause(ctx: VerilogParser.Liblist_clauseContext)
+    public fun exitLiblist_clause(ctx: VerilogParser.Liblist_clauseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#use_clause}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.use_clause].
+     *
+     * @param ctx The parse tree
      */
-    fun enterUse_clause(ctx: VerilogParser.Use_clauseContext)
+    public fun enterUse_clause(ctx: VerilogParser.Use_clauseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#use_clause}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.use_clause].
+     *
+     * @param ctx The parse tree
      */
-    fun exitUse_clause(ctx: VerilogParser.Use_clauseContext)
+    public fun exitUse_clause(ctx: VerilogParser.Use_clauseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#local_parameter_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.local_parameter_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterLocal_parameter_declaration(ctx: VerilogParser.Local_parameter_declarationContext)
+    public fun enterLocal_parameter_declaration(ctx: VerilogParser.Local_parameter_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#local_parameter_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.local_parameter_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitLocal_parameter_declaration(ctx: VerilogParser.Local_parameter_declarationContext)
+    public fun exitLocal_parameter_declaration(ctx: VerilogParser.Local_parameter_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#parameter_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.parameter_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterParameter_declaration(ctx: VerilogParser.Parameter_declarationContext)
+    public fun enterParameter_declaration(ctx: VerilogParser.Parameter_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#parameter_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.parameter_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitParameter_declaration(ctx: VerilogParser.Parameter_declarationContext)
+    public fun exitParameter_declaration(ctx: VerilogParser.Parameter_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#specparam_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.specparam_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSpecparam_declaration(ctx: VerilogParser.Specparam_declarationContext)
+    public fun enterSpecparam_declaration(ctx: VerilogParser.Specparam_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#specparam_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.specparam_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSpecparam_declaration(ctx: VerilogParser.Specparam_declarationContext)
+    public fun exitSpecparam_declaration(ctx: VerilogParser.Specparam_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#parameter_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.parameter_type].
+     *
+     * @param ctx The parse tree
      */
-    fun enterParameter_type(ctx: VerilogParser.Parameter_typeContext)
+    public fun enterParameter_type(ctx: VerilogParser.Parameter_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#parameter_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.parameter_type].
+     *
+     * @param ctx The parse tree
      */
-    fun exitParameter_type(ctx: VerilogParser.Parameter_typeContext)
+    public fun exitParameter_type(ctx: VerilogParser.Parameter_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#inout_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.inout_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterInout_declaration(ctx: VerilogParser.Inout_declarationContext)
+    public fun enterInout_declaration(ctx: VerilogParser.Inout_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#inout_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.inout_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitInout_declaration(ctx: VerilogParser.Inout_declarationContext)
+    public fun exitInout_declaration(ctx: VerilogParser.Inout_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#input_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.input_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterInput_declaration(ctx: VerilogParser.Input_declarationContext)
+    public fun enterInput_declaration(ctx: VerilogParser.Input_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#input_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.input_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitInput_declaration(ctx: VerilogParser.Input_declarationContext)
+    public fun exitInput_declaration(ctx: VerilogParser.Input_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#output_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.output_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterOutput_declaration(ctx: VerilogParser.Output_declarationContext)
+    public fun enterOutput_declaration(ctx: VerilogParser.Output_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#output_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.output_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitOutput_declaration(ctx: VerilogParser.Output_declarationContext)
+    public fun exitOutput_declaration(ctx: VerilogParser.Output_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#event_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.event_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEvent_declaration(ctx: VerilogParser.Event_declarationContext)
+    public fun enterEvent_declaration(ctx: VerilogParser.Event_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#event_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.event_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEvent_declaration(ctx: VerilogParser.Event_declarationContext)
+    public fun exitEvent_declaration(ctx: VerilogParser.Event_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#integer_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.integer_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterInteger_declaration(ctx: VerilogParser.Integer_declarationContext)
+    public fun enterInteger_declaration(ctx: VerilogParser.Integer_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#integer_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.integer_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitInteger_declaration(ctx: VerilogParser.Integer_declarationContext)
+    public fun exitInteger_declaration(ctx: VerilogParser.Integer_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#net_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.net_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNet_declaration(ctx: VerilogParser.Net_declarationContext)
+    public fun enterNet_declaration(ctx: VerilogParser.Net_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#net_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.net_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNet_declaration(ctx: VerilogParser.Net_declarationContext)
+    public fun exitNet_declaration(ctx: VerilogParser.Net_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#real_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.real_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterReal_declaration(ctx: VerilogParser.Real_declarationContext)
+    public fun enterReal_declaration(ctx: VerilogParser.Real_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#real_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.real_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitReal_declaration(ctx: VerilogParser.Real_declarationContext)
+    public fun exitReal_declaration(ctx: VerilogParser.Real_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#realtime_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.realtime_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterRealtime_declaration(ctx: VerilogParser.Realtime_declarationContext)
+    public fun enterRealtime_declaration(ctx: VerilogParser.Realtime_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#realtime_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.realtime_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitRealtime_declaration(ctx: VerilogParser.Realtime_declarationContext)
+    public fun exitRealtime_declaration(ctx: VerilogParser.Realtime_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#reg_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.reg_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterReg_declaration(ctx: VerilogParser.Reg_declarationContext)
+    public fun enterReg_declaration(ctx: VerilogParser.Reg_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#reg_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.reg_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitReg_declaration(ctx: VerilogParser.Reg_declarationContext)
+    public fun exitReg_declaration(ctx: VerilogParser.Reg_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#time_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.time_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTime_declaration(ctx: VerilogParser.Time_declarationContext)
+    public fun enterTime_declaration(ctx: VerilogParser.Time_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#time_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.time_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTime_declaration(ctx: VerilogParser.Time_declarationContext)
+    public fun exitTime_declaration(ctx: VerilogParser.Time_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#net_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.net_type].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNet_type(ctx: VerilogParser.Net_typeContext)
+    public fun enterNet_type(ctx: VerilogParser.Net_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#net_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.net_type].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNet_type(ctx: VerilogParser.Net_typeContext)
+    public fun exitNet_type(ctx: VerilogParser.Net_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#output_variable_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.output_variable_type].
+     *
+     * @param ctx The parse tree
      */
-    fun enterOutput_variable_type(ctx: VerilogParser.Output_variable_typeContext)
+    public fun enterOutput_variable_type(ctx: VerilogParser.Output_variable_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#output_variable_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.output_variable_type].
+     *
+     * @param ctx The parse tree
      */
-    fun exitOutput_variable_type(ctx: VerilogParser.Output_variable_typeContext)
+    public fun exitOutput_variable_type(ctx: VerilogParser.Output_variable_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#real_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.real_type].
+     *
+     * @param ctx The parse tree
      */
-    fun enterReal_type(ctx: VerilogParser.Real_typeContext)
+    public fun enterReal_type(ctx: VerilogParser.Real_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#real_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.real_type].
+     *
+     * @param ctx The parse tree
      */
-    fun exitReal_type(ctx: VerilogParser.Real_typeContext)
+    public fun exitReal_type(ctx: VerilogParser.Real_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#variable_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.variable_type].
+     *
+     * @param ctx The parse tree
      */
-    fun enterVariable_type(ctx: VerilogParser.Variable_typeContext)
+    public fun enterVariable_type(ctx: VerilogParser.Variable_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#variable_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.variable_type].
+     *
+     * @param ctx The parse tree
      */
-    fun exitVariable_type(ctx: VerilogParser.Variable_typeContext)
+    public fun exitVariable_type(ctx: VerilogParser.Variable_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#drive_strength}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.drive_strength].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDrive_strength(ctx: VerilogParser.Drive_strengthContext)
+    public fun enterDrive_strength(ctx: VerilogParser.Drive_strengthContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#drive_strength}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.drive_strength].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDrive_strength(ctx: VerilogParser.Drive_strengthContext)
+    public fun exitDrive_strength(ctx: VerilogParser.Drive_strengthContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#strength0}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.strength0].
+     *
+     * @param ctx The parse tree
      */
-    fun enterStrength0(ctx: VerilogParser.Strength0Context)
+    public fun enterStrength0(ctx: VerilogParser.Strength0Context)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#strength0}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.strength0].
+     *
+     * @param ctx The parse tree
      */
-    fun exitStrength0(ctx: VerilogParser.Strength0Context)
+    public fun exitStrength0(ctx: VerilogParser.Strength0Context)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#strength1}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.strength1].
+     *
+     * @param ctx The parse tree
      */
-    fun enterStrength1(ctx: VerilogParser.Strength1Context)
+    public fun enterStrength1(ctx: VerilogParser.Strength1Context)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#strength1}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.strength1].
+     *
+     * @param ctx The parse tree
      */
-    fun exitStrength1(ctx: VerilogParser.Strength1Context)
+    public fun exitStrength1(ctx: VerilogParser.Strength1Context)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#charge_strength}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.charge_strength].
+     *
+     * @param ctx The parse tree
      */
-    fun enterCharge_strength(ctx: VerilogParser.Charge_strengthContext)
+    public fun enterCharge_strength(ctx: VerilogParser.Charge_strengthContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#charge_strength}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.charge_strength].
+     *
+     * @param ctx The parse tree
      */
-    fun exitCharge_strength(ctx: VerilogParser.Charge_strengthContext)
+    public fun exitCharge_strength(ctx: VerilogParser.Charge_strengthContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delay3}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delay3].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDelay3(ctx: VerilogParser.Delay3Context)
+    public fun enterDelay3(ctx: VerilogParser.Delay3Context)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delay3}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delay3].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDelay3(ctx: VerilogParser.Delay3Context)
+    public fun exitDelay3(ctx: VerilogParser.Delay3Context)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delay2}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delay2].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDelay2(ctx: VerilogParser.Delay2Context)
+    public fun enterDelay2(ctx: VerilogParser.Delay2Context)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delay2}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delay2].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDelay2(ctx: VerilogParser.Delay2Context)
+    public fun exitDelay2(ctx: VerilogParser.Delay2Context)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delay_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delay_value].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDelay_value(ctx: VerilogParser.Delay_valueContext)
+    public fun enterDelay_value(ctx: VerilogParser.Delay_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delay_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delay_value].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDelay_value(ctx: VerilogParser.Delay_valueContext)
+    public fun exitDelay_value(ctx: VerilogParser.Delay_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_defparam_assignments}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_defparam_assignments].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_defparam_assignments(ctx: VerilogParser.List_of_defparam_assignmentsContext)
+    public fun enterList_of_defparam_assignments(ctx: VerilogParser.List_of_defparam_assignmentsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_defparam_assignments}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_defparam_assignments].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_defparam_assignments(ctx: VerilogParser.List_of_defparam_assignmentsContext)
+    public fun exitList_of_defparam_assignments(ctx: VerilogParser.List_of_defparam_assignmentsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_event_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_event_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_event_identifiers(ctx: VerilogParser.List_of_event_identifiersContext)
+    public fun enterList_of_event_identifiers(ctx: VerilogParser.List_of_event_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_event_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_event_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_event_identifiers(ctx: VerilogParser.List_of_event_identifiersContext)
+    public fun exitList_of_event_identifiers(ctx: VerilogParser.List_of_event_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#event_id}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.event_id].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEvent_id(ctx: VerilogParser.Event_idContext)
+    public fun enterEvent_id(ctx: VerilogParser.Event_idContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#event_id}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.event_id].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEvent_id(ctx: VerilogParser.Event_idContext)
+    public fun exitEvent_id(ctx: VerilogParser.Event_idContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_net_decl_assignments}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_net_decl_assignments].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_net_decl_assignments(ctx: VerilogParser.List_of_net_decl_assignmentsContext)
+    public fun enterList_of_net_decl_assignments(ctx: VerilogParser.List_of_net_decl_assignmentsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_net_decl_assignments}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_net_decl_assignments].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_net_decl_assignments(ctx: VerilogParser.List_of_net_decl_assignmentsContext)
+    public fun exitList_of_net_decl_assignments(ctx: VerilogParser.List_of_net_decl_assignmentsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_net_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_net_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_net_identifiers(ctx: VerilogParser.List_of_net_identifiersContext)
+    public fun enterList_of_net_identifiers(ctx: VerilogParser.List_of_net_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_net_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_net_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_net_identifiers(ctx: VerilogParser.List_of_net_identifiersContext)
+    public fun exitList_of_net_identifiers(ctx: VerilogParser.List_of_net_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#net_id}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.net_id].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNet_id(ctx: VerilogParser.Net_idContext)
+    public fun enterNet_id(ctx: VerilogParser.Net_idContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#net_id}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.net_id].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNet_id(ctx: VerilogParser.Net_idContext)
+    public fun exitNet_id(ctx: VerilogParser.Net_idContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_param_assignments}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_param_assignments].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_param_assignments(ctx: VerilogParser.List_of_param_assignmentsContext)
+    public fun enterList_of_param_assignments(ctx: VerilogParser.List_of_param_assignmentsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_param_assignments}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_param_assignments].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_param_assignments(ctx: VerilogParser.List_of_param_assignmentsContext)
+    public fun exitList_of_param_assignments(ctx: VerilogParser.List_of_param_assignmentsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_port_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_port_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_port_identifiers(ctx: VerilogParser.List_of_port_identifiersContext)
+    public fun enterList_of_port_identifiers(ctx: VerilogParser.List_of_port_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_port_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_port_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_port_identifiers(ctx: VerilogParser.List_of_port_identifiersContext)
+    public fun exitList_of_port_identifiers(ctx: VerilogParser.List_of_port_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_real_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_real_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_real_identifiers(ctx: VerilogParser.List_of_real_identifiersContext)
+    public fun enterList_of_real_identifiers(ctx: VerilogParser.List_of_real_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_real_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_real_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_real_identifiers(ctx: VerilogParser.List_of_real_identifiersContext)
+    public fun exitList_of_real_identifiers(ctx: VerilogParser.List_of_real_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_specparam_assignments}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_specparam_assignments].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_specparam_assignments(ctx: VerilogParser.List_of_specparam_assignmentsContext)
+    public fun enterList_of_specparam_assignments(ctx: VerilogParser.List_of_specparam_assignmentsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_specparam_assignments}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_specparam_assignments].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_specparam_assignments(ctx: VerilogParser.List_of_specparam_assignmentsContext)
+    public fun exitList_of_specparam_assignments(ctx: VerilogParser.List_of_specparam_assignmentsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_variable_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_variable_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_variable_identifiers(ctx: VerilogParser.List_of_variable_identifiersContext)
+    public fun enterList_of_variable_identifiers(ctx: VerilogParser.List_of_variable_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_variable_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_variable_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_variable_identifiers(ctx: VerilogParser.List_of_variable_identifiersContext)
+    public fun exitList_of_variable_identifiers(ctx: VerilogParser.List_of_variable_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_variable_port_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_variable_port_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_variable_port_identifiers(ctx: VerilogParser.List_of_variable_port_identifiersContext)
+    public fun enterList_of_variable_port_identifiers(ctx: VerilogParser.List_of_variable_port_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_variable_port_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_variable_port_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_variable_port_identifiers(ctx: VerilogParser.List_of_variable_port_identifiersContext)
+    public fun exitList_of_variable_port_identifiers(ctx: VerilogParser.List_of_variable_port_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#var_port_id}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.var_port_id].
+     *
+     * @param ctx The parse tree
      */
-    fun enterVar_port_id(ctx: VerilogParser.Var_port_idContext)
+    public fun enterVar_port_id(ctx: VerilogParser.Var_port_idContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#var_port_id}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.var_port_id].
+     *
+     * @param ctx The parse tree
      */
-    fun exitVar_port_id(ctx: VerilogParser.Var_port_idContext)
+    public fun exitVar_port_id(ctx: VerilogParser.Var_port_idContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#defparam_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.defparam_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDefparam_assignment(ctx: VerilogParser.Defparam_assignmentContext)
+    public fun enterDefparam_assignment(ctx: VerilogParser.Defparam_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#defparam_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.defparam_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDefparam_assignment(ctx: VerilogParser.Defparam_assignmentContext)
+    public fun exitDefparam_assignment(ctx: VerilogParser.Defparam_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#net_decl_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.net_decl_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNet_decl_assignment(ctx: VerilogParser.Net_decl_assignmentContext)
+    public fun enterNet_decl_assignment(ctx: VerilogParser.Net_decl_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#net_decl_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.net_decl_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNet_decl_assignment(ctx: VerilogParser.Net_decl_assignmentContext)
+    public fun exitNet_decl_assignment(ctx: VerilogParser.Net_decl_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#param_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.param_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun enterParam_assignment(ctx: VerilogParser.Param_assignmentContext)
+    public fun enterParam_assignment(ctx: VerilogParser.Param_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#param_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.param_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun exitParam_assignment(ctx: VerilogParser.Param_assignmentContext)
+    public fun exitParam_assignment(ctx: VerilogParser.Param_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#specparam_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.specparam_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSpecparam_assignment(ctx: VerilogParser.Specparam_assignmentContext)
+    public fun enterSpecparam_assignment(ctx: VerilogParser.Specparam_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#specparam_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.specparam_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSpecparam_assignment(ctx: VerilogParser.Specparam_assignmentContext)
+    public fun exitSpecparam_assignment(ctx: VerilogParser.Specparam_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pulse_control_specparam}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pulse_control_specparam].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPulse_control_specparam(ctx: VerilogParser.Pulse_control_specparamContext)
+    public fun enterPulse_control_specparam(ctx: VerilogParser.Pulse_control_specparamContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pulse_control_specparam}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pulse_control_specparam].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPulse_control_specparam(ctx: VerilogParser.Pulse_control_specparamContext)
+    public fun exitPulse_control_specparam(ctx: VerilogParser.Pulse_control_specparamContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#error_limit_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.error_limit_value].
+     *
+     * @param ctx The parse tree
      */
-    fun enterError_limit_value(ctx: VerilogParser.Error_limit_valueContext)
+    public fun enterError_limit_value(ctx: VerilogParser.Error_limit_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#error_limit_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.error_limit_value].
+     *
+     * @param ctx The parse tree
      */
-    fun exitError_limit_value(ctx: VerilogParser.Error_limit_valueContext)
+    public fun exitError_limit_value(ctx: VerilogParser.Error_limit_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#reject_limit_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.reject_limit_value].
+     *
+     * @param ctx The parse tree
      */
-    fun enterReject_limit_value(ctx: VerilogParser.Reject_limit_valueContext)
+    public fun enterReject_limit_value(ctx: VerilogParser.Reject_limit_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#reject_limit_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.reject_limit_value].
+     *
+     * @param ctx The parse tree
      */
-    fun exitReject_limit_value(ctx: VerilogParser.Reject_limit_valueContext)
+    public fun exitReject_limit_value(ctx: VerilogParser.Reject_limit_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#limit_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.limit_value].
+     *
+     * @param ctx The parse tree
      */
-    fun enterLimit_value(ctx: VerilogParser.Limit_valueContext)
+    public fun enterLimit_value(ctx: VerilogParser.Limit_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#limit_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.limit_value].
+     *
+     * @param ctx The parse tree
      */
-    fun exitLimit_value(ctx: VerilogParser.Limit_valueContext)
+    public fun exitLimit_value(ctx: VerilogParser.Limit_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#dimension}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.dimension].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDimension(ctx: VerilogParser.DimensionContext)
+    public fun enterDimension(ctx: VerilogParser.DimensionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#dimension}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.dimension].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDimension(ctx: VerilogParser.DimensionContext)
+    public fun exitDimension(ctx: VerilogParser.DimensionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#range_}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.range_].
+     *
+     * @param ctx The parse tree
      */
-    fun enterRange_(ctx: VerilogParser.Range_Context)
+    public fun enterRange_(ctx: VerilogParser.Range_Context)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#range_}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.range_].
+     *
+     * @param ctx The parse tree
      */
-    fun exitRange_(ctx: VerilogParser.Range_Context)
+    public fun exitRange_(ctx: VerilogParser.Range_Context)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#function_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.function_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterFunction_declaration(ctx: VerilogParser.Function_declarationContext)
+    public fun enterFunction_declaration(ctx: VerilogParser.Function_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#function_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.function_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitFunction_declaration(ctx: VerilogParser.Function_declarationContext)
+    public fun exitFunction_declaration(ctx: VerilogParser.Function_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#function_item_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.function_item_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterFunction_item_declaration(ctx: VerilogParser.Function_item_declarationContext)
+    public fun enterFunction_item_declaration(ctx: VerilogParser.Function_item_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#function_item_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.function_item_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitFunction_item_declaration(ctx: VerilogParser.Function_item_declarationContext)
+    public fun exitFunction_item_declaration(ctx: VerilogParser.Function_item_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#function_port_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.function_port_list].
+     *
+     * @param ctx The parse tree
      */
-    fun enterFunction_port_list(ctx: VerilogParser.Function_port_listContext)
+    public fun enterFunction_port_list(ctx: VerilogParser.Function_port_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#function_port_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.function_port_list].
+     *
+     * @param ctx The parse tree
      */
-    fun exitFunction_port_list(ctx: VerilogParser.Function_port_listContext)
+    public fun exitFunction_port_list(ctx: VerilogParser.Function_port_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#func_port_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.func_port_item].
+     *
+     * @param ctx The parse tree
      */
-    fun enterFunc_port_item(ctx: VerilogParser.Func_port_itemContext)
+    public fun enterFunc_port_item(ctx: VerilogParser.Func_port_itemContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#func_port_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.func_port_item].
+     *
+     * @param ctx The parse tree
      */
-    fun exitFunc_port_item(ctx: VerilogParser.Func_port_itemContext)
+    public fun exitFunc_port_item(ctx: VerilogParser.Func_port_itemContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#function_range_or_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.function_range_or_type].
+     *
+     * @param ctx The parse tree
      */
-    fun enterFunction_range_or_type(ctx: VerilogParser.Function_range_or_typeContext)
+    public fun enterFunction_range_or_type(ctx: VerilogParser.Function_range_or_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#function_range_or_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.function_range_or_type].
+     *
+     * @param ctx The parse tree
      */
-    fun exitFunction_range_or_type(ctx: VerilogParser.Function_range_or_typeContext)
+    public fun exitFunction_range_or_type(ctx: VerilogParser.Function_range_or_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#task_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.task_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTask_declaration(ctx: VerilogParser.Task_declarationContext)
+    public fun enterTask_declaration(ctx: VerilogParser.Task_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#task_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.task_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTask_declaration(ctx: VerilogParser.Task_declarationContext)
+    public fun exitTask_declaration(ctx: VerilogParser.Task_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#task_item_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.task_item_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTask_item_declaration(ctx: VerilogParser.Task_item_declarationContext)
+    public fun enterTask_item_declaration(ctx: VerilogParser.Task_item_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#task_item_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.task_item_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTask_item_declaration(ctx: VerilogParser.Task_item_declarationContext)
+    public fun exitTask_item_declaration(ctx: VerilogParser.Task_item_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#task_port_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.task_port_list].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTask_port_list(ctx: VerilogParser.Task_port_listContext)
+    public fun enterTask_port_list(ctx: VerilogParser.Task_port_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#task_port_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.task_port_list].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTask_port_list(ctx: VerilogParser.Task_port_listContext)
+    public fun exitTask_port_list(ctx: VerilogParser.Task_port_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#task_port_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.task_port_item].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTask_port_item(ctx: VerilogParser.Task_port_itemContext)
+    public fun enterTask_port_item(ctx: VerilogParser.Task_port_itemContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#task_port_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.task_port_item].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTask_port_item(ctx: VerilogParser.Task_port_itemContext)
+    public fun exitTask_port_item(ctx: VerilogParser.Task_port_itemContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tf_input_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tf_input_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTf_input_declaration(ctx: VerilogParser.Tf_input_declarationContext)
+    public fun enterTf_input_declaration(ctx: VerilogParser.Tf_input_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tf_input_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tf_input_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTf_input_declaration(ctx: VerilogParser.Tf_input_declarationContext)
+    public fun exitTf_input_declaration(ctx: VerilogParser.Tf_input_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tf_output_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tf_output_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTf_output_declaration(ctx: VerilogParser.Tf_output_declarationContext)
+    public fun enterTf_output_declaration(ctx: VerilogParser.Tf_output_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tf_output_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tf_output_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTf_output_declaration(ctx: VerilogParser.Tf_output_declarationContext)
+    public fun exitTf_output_declaration(ctx: VerilogParser.Tf_output_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tf_inout_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tf_inout_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTf_inout_declaration(ctx: VerilogParser.Tf_inout_declarationContext)
+    public fun enterTf_inout_declaration(ctx: VerilogParser.Tf_inout_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tf_inout_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tf_inout_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTf_inout_declaration(ctx: VerilogParser.Tf_inout_declarationContext)
+    public fun exitTf_inout_declaration(ctx: VerilogParser.Tf_inout_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#task_port_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.task_port_type].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTask_port_type(ctx: VerilogParser.Task_port_typeContext)
+    public fun enterTask_port_type(ctx: VerilogParser.Task_port_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#task_port_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.task_port_type].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTask_port_type(ctx: VerilogParser.Task_port_typeContext)
+    public fun exitTask_port_type(ctx: VerilogParser.Task_port_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#block_item_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.block_item_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterBlock_item_declaration(ctx: VerilogParser.Block_item_declarationContext)
+    public fun enterBlock_item_declaration(ctx: VerilogParser.Block_item_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#block_item_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.block_item_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitBlock_item_declaration(ctx: VerilogParser.Block_item_declarationContext)
+    public fun exitBlock_item_declaration(ctx: VerilogParser.Block_item_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_block_variable_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_block_variable_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_block_variable_identifiers(ctx: VerilogParser.List_of_block_variable_identifiersContext)
+    public fun enterList_of_block_variable_identifiers(ctx: VerilogParser.List_of_block_variable_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_block_variable_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_block_variable_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_block_variable_identifiers(ctx: VerilogParser.List_of_block_variable_identifiersContext)
+    public fun exitList_of_block_variable_identifiers(ctx: VerilogParser.List_of_block_variable_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_block_real_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_block_real_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_block_real_identifiers(ctx: VerilogParser.List_of_block_real_identifiersContext)
+    public fun enterList_of_block_real_identifiers(ctx: VerilogParser.List_of_block_real_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_block_real_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_block_real_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_block_real_identifiers(ctx: VerilogParser.List_of_block_real_identifiersContext)
+    public fun exitList_of_block_real_identifiers(ctx: VerilogParser.List_of_block_real_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#block_variable_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.block_variable_type].
+     *
+     * @param ctx The parse tree
      */
-    fun enterBlock_variable_type(ctx: VerilogParser.Block_variable_typeContext)
+    public fun enterBlock_variable_type(ctx: VerilogParser.Block_variable_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#block_variable_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.block_variable_type].
+     *
+     * @param ctx The parse tree
      */
-    fun exitBlock_variable_type(ctx: VerilogParser.Block_variable_typeContext)
+    public fun exitBlock_variable_type(ctx: VerilogParser.Block_variable_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#block_real_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.block_real_type].
+     *
+     * @param ctx The parse tree
      */
-    fun enterBlock_real_type(ctx: VerilogParser.Block_real_typeContext)
+    public fun enterBlock_real_type(ctx: VerilogParser.Block_real_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#block_real_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.block_real_type].
+     *
+     * @param ctx The parse tree
      */
-    fun exitBlock_real_type(ctx: VerilogParser.Block_real_typeContext)
+    public fun exitBlock_real_type(ctx: VerilogParser.Block_real_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#gate_instantiation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.gate_instantiation].
+     *
+     * @param ctx The parse tree
      */
-    fun enterGate_instantiation(ctx: VerilogParser.Gate_instantiationContext)
+    public fun enterGate_instantiation(ctx: VerilogParser.Gate_instantiationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#gate_instantiation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.gate_instantiation].
+     *
+     * @param ctx The parse tree
      */
-    fun exitGate_instantiation(ctx: VerilogParser.Gate_instantiationContext)
+    public fun exitGate_instantiation(ctx: VerilogParser.Gate_instantiationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#cmos_switch_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.cmos_switch_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun enterCmos_switch_instance(ctx: VerilogParser.Cmos_switch_instanceContext)
+    public fun enterCmos_switch_instance(ctx: VerilogParser.Cmos_switch_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#cmos_switch_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.cmos_switch_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun exitCmos_switch_instance(ctx: VerilogParser.Cmos_switch_instanceContext)
+    public fun exitCmos_switch_instance(ctx: VerilogParser.Cmos_switch_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#enable_gate_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.enable_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEnable_gate_instance(ctx: VerilogParser.Enable_gate_instanceContext)
+    public fun enterEnable_gate_instance(ctx: VerilogParser.Enable_gate_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#enable_gate_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.enable_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEnable_gate_instance(ctx: VerilogParser.Enable_gate_instanceContext)
+    public fun exitEnable_gate_instance(ctx: VerilogParser.Enable_gate_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#mos_switch_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.mos_switch_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun enterMos_switch_instance(ctx: VerilogParser.Mos_switch_instanceContext)
+    public fun enterMos_switch_instance(ctx: VerilogParser.Mos_switch_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#mos_switch_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.mos_switch_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun exitMos_switch_instance(ctx: VerilogParser.Mos_switch_instanceContext)
+    public fun exitMos_switch_instance(ctx: VerilogParser.Mos_switch_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#n_input_gate_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.n_input_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun enterN_input_gate_instance(ctx: VerilogParser.N_input_gate_instanceContext)
+    public fun enterN_input_gate_instance(ctx: VerilogParser.N_input_gate_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#n_input_gate_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.n_input_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun exitN_input_gate_instance(ctx: VerilogParser.N_input_gate_instanceContext)
+    public fun exitN_input_gate_instance(ctx: VerilogParser.N_input_gate_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#n_output_gate_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.n_output_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun enterN_output_gate_instance(ctx: VerilogParser.N_output_gate_instanceContext)
+    public fun enterN_output_gate_instance(ctx: VerilogParser.N_output_gate_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#n_output_gate_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.n_output_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun exitN_output_gate_instance(ctx: VerilogParser.N_output_gate_instanceContext)
+    public fun exitN_output_gate_instance(ctx: VerilogParser.N_output_gate_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pass_switch_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pass_switch_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPass_switch_instance(ctx: VerilogParser.Pass_switch_instanceContext)
+    public fun enterPass_switch_instance(ctx: VerilogParser.Pass_switch_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pass_switch_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pass_switch_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPass_switch_instance(ctx: VerilogParser.Pass_switch_instanceContext)
+    public fun exitPass_switch_instance(ctx: VerilogParser.Pass_switch_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pass_enable_switch_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pass_enable_switch_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPass_enable_switch_instance(ctx: VerilogParser.Pass_enable_switch_instanceContext)
+    public fun enterPass_enable_switch_instance(ctx: VerilogParser.Pass_enable_switch_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pass_enable_switch_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pass_enable_switch_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPass_enable_switch_instance(ctx: VerilogParser.Pass_enable_switch_instanceContext)
+    public fun exitPass_enable_switch_instance(ctx: VerilogParser.Pass_enable_switch_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pull_gate_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pull_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPull_gate_instance(ctx: VerilogParser.Pull_gate_instanceContext)
+    public fun enterPull_gate_instance(ctx: VerilogParser.Pull_gate_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pull_gate_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pull_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPull_gate_instance(ctx: VerilogParser.Pull_gate_instanceContext)
+    public fun exitPull_gate_instance(ctx: VerilogParser.Pull_gate_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#name_of_gate_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.name_of_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun enterName_of_gate_instance(ctx: VerilogParser.Name_of_gate_instanceContext)
+    public fun enterName_of_gate_instance(ctx: VerilogParser.Name_of_gate_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#name_of_gate_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.name_of_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun exitName_of_gate_instance(ctx: VerilogParser.Name_of_gate_instanceContext)
+    public fun exitName_of_gate_instance(ctx: VerilogParser.Name_of_gate_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pulldown_strength}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pulldown_strength].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPulldown_strength(ctx: VerilogParser.Pulldown_strengthContext)
+    public fun enterPulldown_strength(ctx: VerilogParser.Pulldown_strengthContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pulldown_strength}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pulldown_strength].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPulldown_strength(ctx: VerilogParser.Pulldown_strengthContext)
+    public fun exitPulldown_strength(ctx: VerilogParser.Pulldown_strengthContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pullup_strength}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pullup_strength].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPullup_strength(ctx: VerilogParser.Pullup_strengthContext)
+    public fun enterPullup_strength(ctx: VerilogParser.Pullup_strengthContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pullup_strength}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pullup_strength].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPullup_strength(ctx: VerilogParser.Pullup_strengthContext)
+    public fun exitPullup_strength(ctx: VerilogParser.Pullup_strengthContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#enable_terminal}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.enable_terminal].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEnable_terminal(ctx: VerilogParser.Enable_terminalContext)
+    public fun enterEnable_terminal(ctx: VerilogParser.Enable_terminalContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#enable_terminal}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.enable_terminal].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEnable_terminal(ctx: VerilogParser.Enable_terminalContext)
+    public fun exitEnable_terminal(ctx: VerilogParser.Enable_terminalContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#inout_terminal}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.inout_terminal].
+     *
+     * @param ctx The parse tree
      */
-    fun enterInout_terminal(ctx: VerilogParser.Inout_terminalContext)
+    public fun enterInout_terminal(ctx: VerilogParser.Inout_terminalContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#inout_terminal}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.inout_terminal].
+     *
+     * @param ctx The parse tree
      */
-    fun exitInout_terminal(ctx: VerilogParser.Inout_terminalContext)
+    public fun exitInout_terminal(ctx: VerilogParser.Inout_terminalContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#input_terminal}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.input_terminal].
+     *
+     * @param ctx The parse tree
      */
-    fun enterInput_terminal(ctx: VerilogParser.Input_terminalContext)
+    public fun enterInput_terminal(ctx: VerilogParser.Input_terminalContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#input_terminal}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.input_terminal].
+     *
+     * @param ctx The parse tree
      */
-    fun exitInput_terminal(ctx: VerilogParser.Input_terminalContext)
+    public fun exitInput_terminal(ctx: VerilogParser.Input_terminalContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#ncontrol_terminal}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.ncontrol_terminal].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNcontrol_terminal(ctx: VerilogParser.Ncontrol_terminalContext)
+    public fun enterNcontrol_terminal(ctx: VerilogParser.Ncontrol_terminalContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#ncontrol_terminal}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.ncontrol_terminal].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNcontrol_terminal(ctx: VerilogParser.Ncontrol_terminalContext)
+    public fun exitNcontrol_terminal(ctx: VerilogParser.Ncontrol_terminalContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#output_terminal}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.output_terminal].
+     *
+     * @param ctx The parse tree
      */
-    fun enterOutput_terminal(ctx: VerilogParser.Output_terminalContext)
+    public fun enterOutput_terminal(ctx: VerilogParser.Output_terminalContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#output_terminal}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.output_terminal].
+     *
+     * @param ctx The parse tree
      */
-    fun exitOutput_terminal(ctx: VerilogParser.Output_terminalContext)
+    public fun exitOutput_terminal(ctx: VerilogParser.Output_terminalContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pcontrol_terminal}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pcontrol_terminal].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPcontrol_terminal(ctx: VerilogParser.Pcontrol_terminalContext)
+    public fun enterPcontrol_terminal(ctx: VerilogParser.Pcontrol_terminalContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pcontrol_terminal}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pcontrol_terminal].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPcontrol_terminal(ctx: VerilogParser.Pcontrol_terminalContext)
+    public fun exitPcontrol_terminal(ctx: VerilogParser.Pcontrol_terminalContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#cmos_switchtype}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.cmos_switchtype].
+     *
+     * @param ctx The parse tree
      */
-    fun enterCmos_switchtype(ctx: VerilogParser.Cmos_switchtypeContext)
+    public fun enterCmos_switchtype(ctx: VerilogParser.Cmos_switchtypeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#cmos_switchtype}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.cmos_switchtype].
+     *
+     * @param ctx The parse tree
      */
-    fun exitCmos_switchtype(ctx: VerilogParser.Cmos_switchtypeContext)
+    public fun exitCmos_switchtype(ctx: VerilogParser.Cmos_switchtypeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#enable_gatetype}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.enable_gatetype].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEnable_gatetype(ctx: VerilogParser.Enable_gatetypeContext)
+    public fun enterEnable_gatetype(ctx: VerilogParser.Enable_gatetypeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#enable_gatetype}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.enable_gatetype].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEnable_gatetype(ctx: VerilogParser.Enable_gatetypeContext)
+    public fun exitEnable_gatetype(ctx: VerilogParser.Enable_gatetypeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#mos_switchtype}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.mos_switchtype].
+     *
+     * @param ctx The parse tree
      */
-    fun enterMos_switchtype(ctx: VerilogParser.Mos_switchtypeContext)
+    public fun enterMos_switchtype(ctx: VerilogParser.Mos_switchtypeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#mos_switchtype}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.mos_switchtype].
+     *
+     * @param ctx The parse tree
      */
-    fun exitMos_switchtype(ctx: VerilogParser.Mos_switchtypeContext)
+    public fun exitMos_switchtype(ctx: VerilogParser.Mos_switchtypeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#n_input_gatetype}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.n_input_gatetype].
+     *
+     * @param ctx The parse tree
      */
-    fun enterN_input_gatetype(ctx: VerilogParser.N_input_gatetypeContext)
+    public fun enterN_input_gatetype(ctx: VerilogParser.N_input_gatetypeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#n_input_gatetype}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.n_input_gatetype].
+     *
+     * @param ctx The parse tree
      */
-    fun exitN_input_gatetype(ctx: VerilogParser.N_input_gatetypeContext)
+    public fun exitN_input_gatetype(ctx: VerilogParser.N_input_gatetypeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#n_output_gatetype}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.n_output_gatetype].
+     *
+     * @param ctx The parse tree
      */
-    fun enterN_output_gatetype(ctx: VerilogParser.N_output_gatetypeContext)
+    public fun enterN_output_gatetype(ctx: VerilogParser.N_output_gatetypeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#n_output_gatetype}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.n_output_gatetype].
+     *
+     * @param ctx The parse tree
      */
-    fun exitN_output_gatetype(ctx: VerilogParser.N_output_gatetypeContext)
+    public fun exitN_output_gatetype(ctx: VerilogParser.N_output_gatetypeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pass_en_switchtype}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pass_en_switchtype].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPass_en_switchtype(ctx: VerilogParser.Pass_en_switchtypeContext)
+    public fun enterPass_en_switchtype(ctx: VerilogParser.Pass_en_switchtypeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pass_en_switchtype}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pass_en_switchtype].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPass_en_switchtype(ctx: VerilogParser.Pass_en_switchtypeContext)
+    public fun exitPass_en_switchtype(ctx: VerilogParser.Pass_en_switchtypeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pass_switchtype}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pass_switchtype].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPass_switchtype(ctx: VerilogParser.Pass_switchtypeContext)
+    public fun enterPass_switchtype(ctx: VerilogParser.Pass_switchtypeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pass_switchtype}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pass_switchtype].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPass_switchtype(ctx: VerilogParser.Pass_switchtypeContext)
+    public fun exitPass_switchtype(ctx: VerilogParser.Pass_switchtypeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_instantiation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_instantiation].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModule_instantiation(ctx: VerilogParser.Module_instantiationContext)
+    public fun enterModule_instantiation(ctx: VerilogParser.Module_instantiationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_instantiation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_instantiation].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModule_instantiation(ctx: VerilogParser.Module_instantiationContext)
+    public fun exitModule_instantiation(ctx: VerilogParser.Module_instantiationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#parameter_value_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.parameter_value_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun enterParameter_value_assignment(ctx: VerilogParser.Parameter_value_assignmentContext)
+    public fun enterParameter_value_assignment(ctx: VerilogParser.Parameter_value_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#parameter_value_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.parameter_value_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun exitParameter_value_assignment(ctx: VerilogParser.Parameter_value_assignmentContext)
+    public fun exitParameter_value_assignment(ctx: VerilogParser.Parameter_value_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_parameter_assignments}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_parameter_assignments].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_parameter_assignments(ctx: VerilogParser.List_of_parameter_assignmentsContext)
+    public fun enterList_of_parameter_assignments(ctx: VerilogParser.List_of_parameter_assignmentsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_parameter_assignments}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_parameter_assignments].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_parameter_assignments(ctx: VerilogParser.List_of_parameter_assignmentsContext)
+    public fun exitList_of_parameter_assignments(ctx: VerilogParser.List_of_parameter_assignmentsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#ordered_parameter_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.ordered_parameter_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun enterOrdered_parameter_assignment(ctx: VerilogParser.Ordered_parameter_assignmentContext)
+    public fun enterOrdered_parameter_assignment(ctx: VerilogParser.Ordered_parameter_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#ordered_parameter_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.ordered_parameter_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun exitOrdered_parameter_assignment(ctx: VerilogParser.Ordered_parameter_assignmentContext)
+    public fun exitOrdered_parameter_assignment(ctx: VerilogParser.Ordered_parameter_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#named_parameter_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.named_parameter_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNamed_parameter_assignment(ctx: VerilogParser.Named_parameter_assignmentContext)
+    public fun enterNamed_parameter_assignment(ctx: VerilogParser.Named_parameter_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#named_parameter_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.named_parameter_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNamed_parameter_assignment(ctx: VerilogParser.Named_parameter_assignmentContext)
+    public fun exitNamed_parameter_assignment(ctx: VerilogParser.Named_parameter_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModule_instance(ctx: VerilogParser.Module_instanceContext)
+    public fun enterModule_instance(ctx: VerilogParser.Module_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModule_instance(ctx: VerilogParser.Module_instanceContext)
+    public fun exitModule_instance(ctx: VerilogParser.Module_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#name_of_module_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.name_of_module_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun enterName_of_module_instance(ctx: VerilogParser.Name_of_module_instanceContext)
+    public fun enterName_of_module_instance(ctx: VerilogParser.Name_of_module_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#name_of_module_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.name_of_module_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun exitName_of_module_instance(ctx: VerilogParser.Name_of_module_instanceContext)
+    public fun exitName_of_module_instance(ctx: VerilogParser.Name_of_module_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_port_connections}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_port_connections].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_port_connections(ctx: VerilogParser.List_of_port_connectionsContext)
+    public fun enterList_of_port_connections(ctx: VerilogParser.List_of_port_connectionsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_port_connections}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_port_connections].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_port_connections(ctx: VerilogParser.List_of_port_connectionsContext)
+    public fun exitList_of_port_connections(ctx: VerilogParser.List_of_port_connectionsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#ordered_port_connection}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.ordered_port_connection].
+     *
+     * @param ctx The parse tree
      */
-    fun enterOrdered_port_connection(ctx: VerilogParser.Ordered_port_connectionContext)
+    public fun enterOrdered_port_connection(ctx: VerilogParser.Ordered_port_connectionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#ordered_port_connection}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.ordered_port_connection].
+     *
+     * @param ctx The parse tree
      */
-    fun exitOrdered_port_connection(ctx: VerilogParser.Ordered_port_connectionContext)
+    public fun exitOrdered_port_connection(ctx: VerilogParser.Ordered_port_connectionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#named_port_connection}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.named_port_connection].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNamed_port_connection(ctx: VerilogParser.Named_port_connectionContext)
+    public fun enterNamed_port_connection(ctx: VerilogParser.Named_port_connectionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#named_port_connection}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.named_port_connection].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNamed_port_connection(ctx: VerilogParser.Named_port_connectionContext)
+    public fun exitNamed_port_connection(ctx: VerilogParser.Named_port_connectionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#generate_region}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.generate_region].
+     *
+     * @param ctx The parse tree
      */
-    fun enterGenerate_region(ctx: VerilogParser.Generate_regionContext)
+    public fun enterGenerate_region(ctx: VerilogParser.Generate_regionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#generate_region}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.generate_region].
+     *
+     * @param ctx The parse tree
      */
-    fun exitGenerate_region(ctx: VerilogParser.Generate_regionContext)
+    public fun exitGenerate_region(ctx: VerilogParser.Generate_regionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#genvar_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.genvar_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterGenvar_declaration(ctx: VerilogParser.Genvar_declarationContext)
+    public fun enterGenvar_declaration(ctx: VerilogParser.Genvar_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#genvar_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.genvar_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitGenvar_declaration(ctx: VerilogParser.Genvar_declarationContext)
+    public fun exitGenvar_declaration(ctx: VerilogParser.Genvar_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_genvar_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_genvar_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_genvar_identifiers(ctx: VerilogParser.List_of_genvar_identifiersContext)
+    public fun enterList_of_genvar_identifiers(ctx: VerilogParser.List_of_genvar_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_genvar_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_genvar_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_genvar_identifiers(ctx: VerilogParser.List_of_genvar_identifiersContext)
+    public fun exitList_of_genvar_identifiers(ctx: VerilogParser.List_of_genvar_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#loop_generate_construct}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.loop_generate_construct].
+     *
+     * @param ctx The parse tree
      */
-    fun enterLoop_generate_construct(ctx: VerilogParser.Loop_generate_constructContext)
+    public fun enterLoop_generate_construct(ctx: VerilogParser.Loop_generate_constructContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#loop_generate_construct}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.loop_generate_construct].
+     *
+     * @param ctx The parse tree
      */
-    fun exitLoop_generate_construct(ctx: VerilogParser.Loop_generate_constructContext)
+    public fun exitLoop_generate_construct(ctx: VerilogParser.Loop_generate_constructContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#genvar_initialization}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.genvar_initialization].
+     *
+     * @param ctx The parse tree
      */
-    fun enterGenvar_initialization(ctx: VerilogParser.Genvar_initializationContext)
+    public fun enterGenvar_initialization(ctx: VerilogParser.Genvar_initializationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#genvar_initialization}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.genvar_initialization].
+     *
+     * @param ctx The parse tree
      */
-    fun exitGenvar_initialization(ctx: VerilogParser.Genvar_initializationContext)
+    public fun exitGenvar_initialization(ctx: VerilogParser.Genvar_initializationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#genvar_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.genvar_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterGenvar_expression(ctx: VerilogParser.Genvar_expressionContext)
+    public fun enterGenvar_expression(ctx: VerilogParser.Genvar_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#genvar_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.genvar_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitGenvar_expression(ctx: VerilogParser.Genvar_expressionContext)
+    public fun exitGenvar_expression(ctx: VerilogParser.Genvar_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#genvar_iteration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.genvar_iteration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterGenvar_iteration(ctx: VerilogParser.Genvar_iterationContext)
+    public fun enterGenvar_iteration(ctx: VerilogParser.Genvar_iterationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#genvar_iteration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.genvar_iteration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitGenvar_iteration(ctx: VerilogParser.Genvar_iterationContext)
+    public fun exitGenvar_iteration(ctx: VerilogParser.Genvar_iterationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#conditional_generate_construct}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.conditional_generate_construct].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConditional_generate_construct(ctx: VerilogParser.Conditional_generate_constructContext)
+    public fun enterConditional_generate_construct(ctx: VerilogParser.Conditional_generate_constructContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#conditional_generate_construct}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.conditional_generate_construct].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConditional_generate_construct(ctx: VerilogParser.Conditional_generate_constructContext)
+    public fun exitConditional_generate_construct(ctx: VerilogParser.Conditional_generate_constructContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#if_generate_construct}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.if_generate_construct].
+     *
+     * @param ctx The parse tree
      */
-    fun enterIf_generate_construct(ctx: VerilogParser.If_generate_constructContext)
+    public fun enterIf_generate_construct(ctx: VerilogParser.If_generate_constructContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#if_generate_construct}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.if_generate_construct].
+     *
+     * @param ctx The parse tree
      */
-    fun exitIf_generate_construct(ctx: VerilogParser.If_generate_constructContext)
+    public fun exitIf_generate_construct(ctx: VerilogParser.If_generate_constructContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#case_generate_construct}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.case_generate_construct].
+     *
+     * @param ctx The parse tree
      */
-    fun enterCase_generate_construct(ctx: VerilogParser.Case_generate_constructContext)
+    public fun enterCase_generate_construct(ctx: VerilogParser.Case_generate_constructContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#case_generate_construct}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.case_generate_construct].
+     *
+     * @param ctx The parse tree
      */
-    fun exitCase_generate_construct(ctx: VerilogParser.Case_generate_constructContext)
+    public fun exitCase_generate_construct(ctx: VerilogParser.Case_generate_constructContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#case_generate_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.case_generate_item].
+     *
+     * @param ctx The parse tree
      */
-    fun enterCase_generate_item(ctx: VerilogParser.Case_generate_itemContext)
+    public fun enterCase_generate_item(ctx: VerilogParser.Case_generate_itemContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#case_generate_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.case_generate_item].
+     *
+     * @param ctx The parse tree
      */
-    fun exitCase_generate_item(ctx: VerilogParser.Case_generate_itemContext)
+    public fun exitCase_generate_item(ctx: VerilogParser.Case_generate_itemContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#generate_block}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.generate_block].
+     *
+     * @param ctx The parse tree
      */
-    fun enterGenerate_block(ctx: VerilogParser.Generate_blockContext)
+    public fun enterGenerate_block(ctx: VerilogParser.Generate_blockContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#generate_block}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.generate_block].
+     *
+     * @param ctx The parse tree
      */
-    fun exitGenerate_block(ctx: VerilogParser.Generate_blockContext)
+    public fun exitGenerate_block(ctx: VerilogParser.Generate_blockContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#generate_block_name}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.generate_block_name].
+     *
+     * @param ctx The parse tree
      */
-    fun enterGenerate_block_name(ctx: VerilogParser.Generate_block_nameContext)
+    public fun enterGenerate_block_name(ctx: VerilogParser.Generate_block_nameContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#generate_block_name}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.generate_block_name].
+     *
+     * @param ctx The parse tree
      */
-    fun exitGenerate_block_name(ctx: VerilogParser.Generate_block_nameContext)
+    public fun exitGenerate_block_name(ctx: VerilogParser.Generate_block_nameContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#generate_block_or_null}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.generate_block_or_null].
+     *
+     * @param ctx The parse tree
      */
-    fun enterGenerate_block_or_null(ctx: VerilogParser.Generate_block_or_nullContext)
+    public fun enterGenerate_block_or_null(ctx: VerilogParser.Generate_block_or_nullContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#generate_block_or_null}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.generate_block_or_null].
+     *
+     * @param ctx The parse tree
      */
-    fun exitGenerate_block_or_null(ctx: VerilogParser.Generate_block_or_nullContext)
+    public fun exitGenerate_block_or_null(ctx: VerilogParser.Generate_block_or_nullContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterUdp_declaration(ctx: VerilogParser.Udp_declarationContext)
+    public fun enterUdp_declaration(ctx: VerilogParser.Udp_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitUdp_declaration(ctx: VerilogParser.Udp_declarationContext)
+    public fun exitUdp_declaration(ctx: VerilogParser.Udp_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_port_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_port_list].
+     *
+     * @param ctx The parse tree
      */
-    fun enterUdp_port_list(ctx: VerilogParser.Udp_port_listContext)
+    public fun enterUdp_port_list(ctx: VerilogParser.Udp_port_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_port_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_port_list].
+     *
+     * @param ctx The parse tree
      */
-    fun exitUdp_port_list(ctx: VerilogParser.Udp_port_listContext)
+    public fun exitUdp_port_list(ctx: VerilogParser.Udp_port_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_declaration_port_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_declaration_port_list].
+     *
+     * @param ctx The parse tree
      */
-    fun enterUdp_declaration_port_list(ctx: VerilogParser.Udp_declaration_port_listContext)
+    public fun enterUdp_declaration_port_list(ctx: VerilogParser.Udp_declaration_port_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_declaration_port_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_declaration_port_list].
+     *
+     * @param ctx The parse tree
      */
-    fun exitUdp_declaration_port_list(ctx: VerilogParser.Udp_declaration_port_listContext)
+    public fun exitUdp_declaration_port_list(ctx: VerilogParser.Udp_declaration_port_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_port_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_port_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterUdp_port_declaration(ctx: VerilogParser.Udp_port_declarationContext)
+    public fun enterUdp_port_declaration(ctx: VerilogParser.Udp_port_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_port_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_port_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitUdp_port_declaration(ctx: VerilogParser.Udp_port_declarationContext)
+    public fun exitUdp_port_declaration(ctx: VerilogParser.Udp_port_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_output_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_output_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterUdp_output_declaration(ctx: VerilogParser.Udp_output_declarationContext)
+    public fun enterUdp_output_declaration(ctx: VerilogParser.Udp_output_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_output_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_output_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitUdp_output_declaration(ctx: VerilogParser.Udp_output_declarationContext)
+    public fun exitUdp_output_declaration(ctx: VerilogParser.Udp_output_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_input_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_input_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterUdp_input_declaration(ctx: VerilogParser.Udp_input_declarationContext)
+    public fun enterUdp_input_declaration(ctx: VerilogParser.Udp_input_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_input_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_input_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitUdp_input_declaration(ctx: VerilogParser.Udp_input_declarationContext)
+    public fun exitUdp_input_declaration(ctx: VerilogParser.Udp_input_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_reg_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_reg_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterUdp_reg_declaration(ctx: VerilogParser.Udp_reg_declarationContext)
+    public fun enterUdp_reg_declaration(ctx: VerilogParser.Udp_reg_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_reg_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_reg_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitUdp_reg_declaration(ctx: VerilogParser.Udp_reg_declarationContext)
+    public fun exitUdp_reg_declaration(ctx: VerilogParser.Udp_reg_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_body}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_body].
+     *
+     * @param ctx The parse tree
      */
-    fun enterUdp_body(ctx: VerilogParser.Udp_bodyContext)
+    public fun enterUdp_body(ctx: VerilogParser.Udp_bodyContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_body}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_body].
+     *
+     * @param ctx The parse tree
      */
-    fun exitUdp_body(ctx: VerilogParser.Udp_bodyContext)
+    public fun exitUdp_body(ctx: VerilogParser.Udp_bodyContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#combinational_body}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.combinational_body].
+     *
+     * @param ctx The parse tree
      */
-    fun enterCombinational_body(ctx: VerilogParser.Combinational_bodyContext)
+    public fun enterCombinational_body(ctx: VerilogParser.Combinational_bodyContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#combinational_body}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.combinational_body].
+     *
+     * @param ctx The parse tree
      */
-    fun exitCombinational_body(ctx: VerilogParser.Combinational_bodyContext)
+    public fun exitCombinational_body(ctx: VerilogParser.Combinational_bodyContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#combinational_entry}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.combinational_entry].
+     *
+     * @param ctx The parse tree
      */
-    fun enterCombinational_entry(ctx: VerilogParser.Combinational_entryContext)
+    public fun enterCombinational_entry(ctx: VerilogParser.Combinational_entryContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#combinational_entry}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.combinational_entry].
+     *
+     * @param ctx The parse tree
      */
-    fun exitCombinational_entry(ctx: VerilogParser.Combinational_entryContext)
+    public fun exitCombinational_entry(ctx: VerilogParser.Combinational_entryContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#sequential_body}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.sequential_body].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSequential_body(ctx: VerilogParser.Sequential_bodyContext)
+    public fun enterSequential_body(ctx: VerilogParser.Sequential_bodyContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#sequential_body}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.sequential_body].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSequential_body(ctx: VerilogParser.Sequential_bodyContext)
+    public fun exitSequential_body(ctx: VerilogParser.Sequential_bodyContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_initial_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_initial_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun enterUdp_initial_statement(ctx: VerilogParser.Udp_initial_statementContext)
+    public fun enterUdp_initial_statement(ctx: VerilogParser.Udp_initial_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_initial_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_initial_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun exitUdp_initial_statement(ctx: VerilogParser.Udp_initial_statementContext)
+    public fun exitUdp_initial_statement(ctx: VerilogParser.Udp_initial_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#init_val}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.init_val].
+     *
+     * @param ctx The parse tree
      */
-    fun enterInit_val(ctx: VerilogParser.Init_valContext)
+    public fun enterInit_val(ctx: VerilogParser.Init_valContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#init_val}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.init_val].
+     *
+     * @param ctx The parse tree
      */
-    fun exitInit_val(ctx: VerilogParser.Init_valContext)
+    public fun exitInit_val(ctx: VerilogParser.Init_valContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#sequential_entry}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.sequential_entry].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSequential_entry(ctx: VerilogParser.Sequential_entryContext)
+    public fun enterSequential_entry(ctx: VerilogParser.Sequential_entryContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#sequential_entry}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.sequential_entry].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSequential_entry(ctx: VerilogParser.Sequential_entryContext)
+    public fun exitSequential_entry(ctx: VerilogParser.Sequential_entryContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#seq_input_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.seq_input_list].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSeq_input_list(ctx: VerilogParser.Seq_input_listContext)
+    public fun enterSeq_input_list(ctx: VerilogParser.Seq_input_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#seq_input_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.seq_input_list].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSeq_input_list(ctx: VerilogParser.Seq_input_listContext)
+    public fun exitSeq_input_list(ctx: VerilogParser.Seq_input_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#level_input_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.level_input_list].
+     *
+     * @param ctx The parse tree
      */
-    fun enterLevel_input_list(ctx: VerilogParser.Level_input_listContext)
+    public fun enterLevel_input_list(ctx: VerilogParser.Level_input_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#level_input_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.level_input_list].
+     *
+     * @param ctx The parse tree
      */
-    fun exitLevel_input_list(ctx: VerilogParser.Level_input_listContext)
+    public fun exitLevel_input_list(ctx: VerilogParser.Level_input_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#edge_input_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.edge_input_list].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEdge_input_list(ctx: VerilogParser.Edge_input_listContext)
+    public fun enterEdge_input_list(ctx: VerilogParser.Edge_input_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#edge_input_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.edge_input_list].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEdge_input_list(ctx: VerilogParser.Edge_input_listContext)
+    public fun exitEdge_input_list(ctx: VerilogParser.Edge_input_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#edge_indicator}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.edge_indicator].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEdge_indicator(ctx: VerilogParser.Edge_indicatorContext)
+    public fun enterEdge_indicator(ctx: VerilogParser.Edge_indicatorContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#edge_indicator}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.edge_indicator].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEdge_indicator(ctx: VerilogParser.Edge_indicatorContext)
+    public fun exitEdge_indicator(ctx: VerilogParser.Edge_indicatorContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#current_state}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.current_state].
+     *
+     * @param ctx The parse tree
      */
-    fun enterCurrent_state(ctx: VerilogParser.Current_stateContext)
+    public fun enterCurrent_state(ctx: VerilogParser.Current_stateContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#current_state}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.current_state].
+     *
+     * @param ctx The parse tree
      */
-    fun exitCurrent_state(ctx: VerilogParser.Current_stateContext)
+    public fun exitCurrent_state(ctx: VerilogParser.Current_stateContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#next_state}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.next_state].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNext_state(ctx: VerilogParser.Next_stateContext)
+    public fun enterNext_state(ctx: VerilogParser.Next_stateContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#next_state}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.next_state].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNext_state(ctx: VerilogParser.Next_stateContext)
+    public fun exitNext_state(ctx: VerilogParser.Next_stateContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#output_symbol}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.output_symbol].
+     *
+     * @param ctx The parse tree
      */
-    fun enterOutput_symbol(ctx: VerilogParser.Output_symbolContext)
+    public fun enterOutput_symbol(ctx: VerilogParser.Output_symbolContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#output_symbol}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.output_symbol].
+     *
+     * @param ctx The parse tree
      */
-    fun exitOutput_symbol(ctx: VerilogParser.Output_symbolContext)
+    public fun exitOutput_symbol(ctx: VerilogParser.Output_symbolContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#level_symbol}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.level_symbol].
+     *
+     * @param ctx The parse tree
      */
-    fun enterLevel_symbol(ctx: VerilogParser.Level_symbolContext)
+    public fun enterLevel_symbol(ctx: VerilogParser.Level_symbolContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#level_symbol}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.level_symbol].
+     *
+     * @param ctx The parse tree
      */
-    fun exitLevel_symbol(ctx: VerilogParser.Level_symbolContext)
+    public fun exitLevel_symbol(ctx: VerilogParser.Level_symbolContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#edge_symbol}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.edge_symbol].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEdge_symbol(ctx: VerilogParser.Edge_symbolContext)
+    public fun enterEdge_symbol(ctx: VerilogParser.Edge_symbolContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#edge_symbol}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.edge_symbol].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEdge_symbol(ctx: VerilogParser.Edge_symbolContext)
+    public fun exitEdge_symbol(ctx: VerilogParser.Edge_symbolContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_instantiation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_instantiation].
+     *
+     * @param ctx The parse tree
      */
-    fun enterUdp_instantiation(ctx: VerilogParser.Udp_instantiationContext)
+    public fun enterUdp_instantiation(ctx: VerilogParser.Udp_instantiationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_instantiation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_instantiation].
+     *
+     * @param ctx The parse tree
      */
-    fun exitUdp_instantiation(ctx: VerilogParser.Udp_instantiationContext)
+    public fun exitUdp_instantiation(ctx: VerilogParser.Udp_instantiationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun enterUdp_instance(ctx: VerilogParser.Udp_instanceContext)
+    public fun enterUdp_instance(ctx: VerilogParser.Udp_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun exitUdp_instance(ctx: VerilogParser.Udp_instanceContext)
+    public fun exitUdp_instance(ctx: VerilogParser.Udp_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#name_of_udp_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.name_of_udp_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun enterName_of_udp_instance(ctx: VerilogParser.Name_of_udp_instanceContext)
+    public fun enterName_of_udp_instance(ctx: VerilogParser.Name_of_udp_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#name_of_udp_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.name_of_udp_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun exitName_of_udp_instance(ctx: VerilogParser.Name_of_udp_instanceContext)
+    public fun exitName_of_udp_instance(ctx: VerilogParser.Name_of_udp_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#continuous_assign}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.continuous_assign].
+     *
+     * @param ctx The parse tree
      */
-    fun enterContinuous_assign(ctx: VerilogParser.Continuous_assignContext)
+    public fun enterContinuous_assign(ctx: VerilogParser.Continuous_assignContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#continuous_assign}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.continuous_assign].
+     *
+     * @param ctx The parse tree
      */
-    fun exitContinuous_assign(ctx: VerilogParser.Continuous_assignContext)
+    public fun exitContinuous_assign(ctx: VerilogParser.Continuous_assignContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_net_assignments}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_net_assignments].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_net_assignments(ctx: VerilogParser.List_of_net_assignmentsContext)
+    public fun enterList_of_net_assignments(ctx: VerilogParser.List_of_net_assignmentsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_net_assignments}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_net_assignments].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_net_assignments(ctx: VerilogParser.List_of_net_assignmentsContext)
+    public fun exitList_of_net_assignments(ctx: VerilogParser.List_of_net_assignmentsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#net_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.net_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNet_assignment(ctx: VerilogParser.Net_assignmentContext)
+    public fun enterNet_assignment(ctx: VerilogParser.Net_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#net_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.net_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNet_assignment(ctx: VerilogParser.Net_assignmentContext)
+    public fun exitNet_assignment(ctx: VerilogParser.Net_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#initial_construct}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.initial_construct].
+     *
+     * @param ctx The parse tree
      */
-    fun enterInitial_construct(ctx: VerilogParser.Initial_constructContext)
+    public fun enterInitial_construct(ctx: VerilogParser.Initial_constructContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#initial_construct}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.initial_construct].
+     *
+     * @param ctx The parse tree
      */
-    fun exitInitial_construct(ctx: VerilogParser.Initial_constructContext)
+    public fun exitInitial_construct(ctx: VerilogParser.Initial_constructContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#always_construct}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.always_construct].
+     *
+     * @param ctx The parse tree
      */
-    fun enterAlways_construct(ctx: VerilogParser.Always_constructContext)
+    public fun enterAlways_construct(ctx: VerilogParser.Always_constructContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#always_construct}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.always_construct].
+     *
+     * @param ctx The parse tree
      */
-    fun exitAlways_construct(ctx: VerilogParser.Always_constructContext)
+    public fun exitAlways_construct(ctx: VerilogParser.Always_constructContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#blocking_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.blocking_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun enterBlocking_assignment(ctx: VerilogParser.Blocking_assignmentContext)
+    public fun enterBlocking_assignment(ctx: VerilogParser.Blocking_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#blocking_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.blocking_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun exitBlocking_assignment(ctx: VerilogParser.Blocking_assignmentContext)
+    public fun exitBlocking_assignment(ctx: VerilogParser.Blocking_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#nonblocking_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.nonblocking_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNonblocking_assignment(ctx: VerilogParser.Nonblocking_assignmentContext)
+    public fun enterNonblocking_assignment(ctx: VerilogParser.Nonblocking_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#nonblocking_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.nonblocking_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNonblocking_assignment(ctx: VerilogParser.Nonblocking_assignmentContext)
+    public fun exitNonblocking_assignment(ctx: VerilogParser.Nonblocking_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#procedural_continuous_assignments}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.procedural_continuous_assignments].
+     *
+     * @param ctx The parse tree
      */
-    fun enterProcedural_continuous_assignments(ctx: VerilogParser.Procedural_continuous_assignmentsContext)
+    public fun enterProcedural_continuous_assignments(ctx: VerilogParser.Procedural_continuous_assignmentsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#procedural_continuous_assignments}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.procedural_continuous_assignments].
+     *
+     * @param ctx The parse tree
      */
-    fun exitProcedural_continuous_assignments(ctx: VerilogParser.Procedural_continuous_assignmentsContext)
+    public fun exitProcedural_continuous_assignments(ctx: VerilogParser.Procedural_continuous_assignmentsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#variable_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.variable_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun enterVariable_assignment(ctx: VerilogParser.Variable_assignmentContext)
+    public fun enterVariable_assignment(ctx: VerilogParser.Variable_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#variable_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.variable_assignment].
+     *
+     * @param ctx The parse tree
      */
-    fun exitVariable_assignment(ctx: VerilogParser.Variable_assignmentContext)
+    public fun exitVariable_assignment(ctx: VerilogParser.Variable_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#par_block}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.par_block].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPar_block(ctx: VerilogParser.Par_blockContext)
+    public fun enterPar_block(ctx: VerilogParser.Par_blockContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#par_block}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.par_block].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPar_block(ctx: VerilogParser.Par_blockContext)
+    public fun exitPar_block(ctx: VerilogParser.Par_blockContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#block_name}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.block_name].
+     *
+     * @param ctx The parse tree
      */
-    fun enterBlock_name(ctx: VerilogParser.Block_nameContext)
+    public fun enterBlock_name(ctx: VerilogParser.Block_nameContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#block_name}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.block_name].
+     *
+     * @param ctx The parse tree
      */
-    fun exitBlock_name(ctx: VerilogParser.Block_nameContext)
+    public fun exitBlock_name(ctx: VerilogParser.Block_nameContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#seq_block}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.seq_block].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSeq_block(ctx: VerilogParser.Seq_blockContext)
+    public fun enterSeq_block(ctx: VerilogParser.Seq_blockContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#seq_block}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.seq_block].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSeq_block(ctx: VerilogParser.Seq_blockContext)
+    public fun exitSeq_block(ctx: VerilogParser.Seq_blockContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.statement].
+     *
+     * @param ctx The parse tree
      */
-    fun enterStatement(ctx: VerilogParser.StatementContext)
+    public fun enterStatement(ctx: VerilogParser.StatementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.statement].
+     *
+     * @param ctx The parse tree
      */
-    fun exitStatement(ctx: VerilogParser.StatementContext)
+    public fun exitStatement(ctx: VerilogParser.StatementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#statement_or_null}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.statement_or_null].
+     *
+     * @param ctx The parse tree
      */
-    fun enterStatement_or_null(ctx: VerilogParser.Statement_or_nullContext)
+    public fun enterStatement_or_null(ctx: VerilogParser.Statement_or_nullContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#statement_or_null}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.statement_or_null].
+     *
+     * @param ctx The parse tree
      */
-    fun exitStatement_or_null(ctx: VerilogParser.Statement_or_nullContext)
+    public fun exitStatement_or_null(ctx: VerilogParser.Statement_or_nullContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#function_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.function_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun enterFunction_statement(ctx: VerilogParser.Function_statementContext)
+    public fun enterFunction_statement(ctx: VerilogParser.Function_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#function_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.function_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun exitFunction_statement(ctx: VerilogParser.Function_statementContext)
+    public fun exitFunction_statement(ctx: VerilogParser.Function_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delay_control}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delay_control].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDelay_control(ctx: VerilogParser.Delay_controlContext)
+    public fun enterDelay_control(ctx: VerilogParser.Delay_controlContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delay_control}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delay_control].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDelay_control(ctx: VerilogParser.Delay_controlContext)
+    public fun exitDelay_control(ctx: VerilogParser.Delay_controlContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delay_or_event_control}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delay_or_event_control].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDelay_or_event_control(ctx: VerilogParser.Delay_or_event_controlContext)
+    public fun enterDelay_or_event_control(ctx: VerilogParser.Delay_or_event_controlContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delay_or_event_control}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delay_or_event_control].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDelay_or_event_control(ctx: VerilogParser.Delay_or_event_controlContext)
+    public fun exitDelay_or_event_control(ctx: VerilogParser.Delay_or_event_controlContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#disable_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.disable_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDisable_statement(ctx: VerilogParser.Disable_statementContext)
+    public fun enterDisable_statement(ctx: VerilogParser.Disable_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#disable_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.disable_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDisable_statement(ctx: VerilogParser.Disable_statementContext)
+    public fun exitDisable_statement(ctx: VerilogParser.Disable_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#event_control}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.event_control].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEvent_control(ctx: VerilogParser.Event_controlContext)
+    public fun enterEvent_control(ctx: VerilogParser.Event_controlContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#event_control}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.event_control].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEvent_control(ctx: VerilogParser.Event_controlContext)
+    public fun exitEvent_control(ctx: VerilogParser.Event_controlContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#event_trigger}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.event_trigger].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEvent_trigger(ctx: VerilogParser.Event_triggerContext)
+    public fun enterEvent_trigger(ctx: VerilogParser.Event_triggerContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#event_trigger}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.event_trigger].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEvent_trigger(ctx: VerilogParser.Event_triggerContext)
+    public fun exitEvent_trigger(ctx: VerilogParser.Event_triggerContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#event_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.event_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEvent_expression(ctx: VerilogParser.Event_expressionContext)
+    public fun enterEvent_expression(ctx: VerilogParser.Event_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#event_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.event_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEvent_expression(ctx: VerilogParser.Event_expressionContext)
+    public fun exitEvent_expression(ctx: VerilogParser.Event_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#procedural_timing_control}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.procedural_timing_control].
+     *
+     * @param ctx The parse tree
      */
-    fun enterProcedural_timing_control(ctx: VerilogParser.Procedural_timing_controlContext)
+    public fun enterProcedural_timing_control(ctx: VerilogParser.Procedural_timing_controlContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#procedural_timing_control}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.procedural_timing_control].
+     *
+     * @param ctx The parse tree
      */
-    fun exitProcedural_timing_control(ctx: VerilogParser.Procedural_timing_controlContext)
+    public fun exitProcedural_timing_control(ctx: VerilogParser.Procedural_timing_controlContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#procedural_timing_control_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.procedural_timing_control_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun enterProcedural_timing_control_statement(ctx: VerilogParser.Procedural_timing_control_statementContext)
+    public fun enterProcedural_timing_control_statement(ctx: VerilogParser.Procedural_timing_control_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#procedural_timing_control_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.procedural_timing_control_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun exitProcedural_timing_control_statement(ctx: VerilogParser.Procedural_timing_control_statementContext)
+    public fun exitProcedural_timing_control_statement(ctx: VerilogParser.Procedural_timing_control_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#wait_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.wait_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun enterWait_statement(ctx: VerilogParser.Wait_statementContext)
+    public fun enterWait_statement(ctx: VerilogParser.Wait_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#wait_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.wait_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun exitWait_statement(ctx: VerilogParser.Wait_statementContext)
+    public fun exitWait_statement(ctx: VerilogParser.Wait_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#conditional_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.conditional_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConditional_statement(ctx: VerilogParser.Conditional_statementContext)
+    public fun enterConditional_statement(ctx: VerilogParser.Conditional_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#conditional_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.conditional_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConditional_statement(ctx: VerilogParser.Conditional_statementContext)
+    public fun exitConditional_statement(ctx: VerilogParser.Conditional_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#case_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.case_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun enterCase_statement(ctx: VerilogParser.Case_statementContext)
+    public fun enterCase_statement(ctx: VerilogParser.Case_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#case_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.case_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun exitCase_statement(ctx: VerilogParser.Case_statementContext)
+    public fun exitCase_statement(ctx: VerilogParser.Case_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#case_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.case_item].
+     *
+     * @param ctx The parse tree
      */
-    fun enterCase_item(ctx: VerilogParser.Case_itemContext)
+    public fun enterCase_item(ctx: VerilogParser.Case_itemContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#case_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.case_item].
+     *
+     * @param ctx The parse tree
      */
-    fun exitCase_item(ctx: VerilogParser.Case_itemContext)
+    public fun exitCase_item(ctx: VerilogParser.Case_itemContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#loop_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.loop_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun enterLoop_statement(ctx: VerilogParser.Loop_statementContext)
+    public fun enterLoop_statement(ctx: VerilogParser.Loop_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#loop_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.loop_statement].
+     *
+     * @param ctx The parse tree
      */
-    fun exitLoop_statement(ctx: VerilogParser.Loop_statementContext)
+    public fun exitLoop_statement(ctx: VerilogParser.Loop_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#system_task_enable}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.system_task_enable].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSystem_task_enable(ctx: VerilogParser.System_task_enableContext)
+    public fun enterSystem_task_enable(ctx: VerilogParser.System_task_enableContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#system_task_enable}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.system_task_enable].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSystem_task_enable(ctx: VerilogParser.System_task_enableContext)
+    public fun exitSystem_task_enable(ctx: VerilogParser.System_task_enableContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#sys_task_en_port_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.sys_task_en_port_list].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSys_task_en_port_list(ctx: VerilogParser.Sys_task_en_port_listContext)
+    public fun enterSys_task_en_port_list(ctx: VerilogParser.Sys_task_en_port_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#sys_task_en_port_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.sys_task_en_port_list].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSys_task_en_port_list(ctx: VerilogParser.Sys_task_en_port_listContext)
+    public fun exitSys_task_en_port_list(ctx: VerilogParser.Sys_task_en_port_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#sys_task_en_port_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.sys_task_en_port_item].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSys_task_en_port_item(ctx: VerilogParser.Sys_task_en_port_itemContext)
+    public fun enterSys_task_en_port_item(ctx: VerilogParser.Sys_task_en_port_itemContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#sys_task_en_port_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.sys_task_en_port_item].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSys_task_en_port_item(ctx: VerilogParser.Sys_task_en_port_itemContext)
+    public fun exitSys_task_en_port_item(ctx: VerilogParser.Sys_task_en_port_itemContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#task_enable}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.task_enable].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTask_enable(ctx: VerilogParser.Task_enableContext)
+    public fun enterTask_enable(ctx: VerilogParser.Task_enableContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#task_enable}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.task_enable].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTask_enable(ctx: VerilogParser.Task_enableContext)
+    public fun exitTask_enable(ctx: VerilogParser.Task_enableContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#task_en_port_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.task_en_port_list].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTask_en_port_list(ctx: VerilogParser.Task_en_port_listContext)
+    public fun enterTask_en_port_list(ctx: VerilogParser.Task_en_port_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#task_en_port_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.task_en_port_list].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTask_en_port_list(ctx: VerilogParser.Task_en_port_listContext)
+    public fun exitTask_en_port_list(ctx: VerilogParser.Task_en_port_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#specify_block}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.specify_block].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSpecify_block(ctx: VerilogParser.Specify_blockContext)
+    public fun enterSpecify_block(ctx: VerilogParser.Specify_blockContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#specify_block}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.specify_block].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSpecify_block(ctx: VerilogParser.Specify_blockContext)
+    public fun exitSpecify_block(ctx: VerilogParser.Specify_blockContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#specify_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.specify_item].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSpecify_item(ctx: VerilogParser.Specify_itemContext)
+    public fun enterSpecify_item(ctx: VerilogParser.Specify_itemContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#specify_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.specify_item].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSpecify_item(ctx: VerilogParser.Specify_itemContext)
+    public fun exitSpecify_item(ctx: VerilogParser.Specify_itemContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pulsestyle_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pulsestyle_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPulsestyle_declaration(ctx: VerilogParser.Pulsestyle_declarationContext)
+    public fun enterPulsestyle_declaration(ctx: VerilogParser.Pulsestyle_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pulsestyle_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pulsestyle_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPulsestyle_declaration(ctx: VerilogParser.Pulsestyle_declarationContext)
+    public fun exitPulsestyle_declaration(ctx: VerilogParser.Pulsestyle_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#showcancelled_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.showcancelled_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterShowcancelled_declaration(ctx: VerilogParser.Showcancelled_declarationContext)
+    public fun enterShowcancelled_declaration(ctx: VerilogParser.Showcancelled_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#showcancelled_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.showcancelled_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitShowcancelled_declaration(ctx: VerilogParser.Showcancelled_declarationContext)
+    public fun exitShowcancelled_declaration(ctx: VerilogParser.Showcancelled_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#path_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.path_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPath_declaration(ctx: VerilogParser.Path_declarationContext)
+    public fun enterPath_declaration(ctx: VerilogParser.Path_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#path_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.path_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPath_declaration(ctx: VerilogParser.Path_declarationContext)
+    public fun exitPath_declaration(ctx: VerilogParser.Path_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#simple_path_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.simple_path_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSimple_path_declaration(ctx: VerilogParser.Simple_path_declarationContext)
+    public fun enterSimple_path_declaration(ctx: VerilogParser.Simple_path_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#simple_path_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.simple_path_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSimple_path_declaration(ctx: VerilogParser.Simple_path_declarationContext)
+    public fun exitSimple_path_declaration(ctx: VerilogParser.Simple_path_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#parallel_path_description}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.parallel_path_description].
+     *
+     * @param ctx The parse tree
      */
-    fun enterParallel_path_description(ctx: VerilogParser.Parallel_path_descriptionContext)
+    public fun enterParallel_path_description(ctx: VerilogParser.Parallel_path_descriptionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#parallel_path_description}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.parallel_path_description].
+     *
+     * @param ctx The parse tree
      */
-    fun exitParallel_path_description(ctx: VerilogParser.Parallel_path_descriptionContext)
+    public fun exitParallel_path_description(ctx: VerilogParser.Parallel_path_descriptionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#full_path_description}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.full_path_description].
+     *
+     * @param ctx The parse tree
      */
-    fun enterFull_path_description(ctx: VerilogParser.Full_path_descriptionContext)
+    public fun enterFull_path_description(ctx: VerilogParser.Full_path_descriptionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#full_path_description}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.full_path_description].
+     *
+     * @param ctx The parse tree
      */
-    fun exitFull_path_description(ctx: VerilogParser.Full_path_descriptionContext)
+    public fun exitFull_path_description(ctx: VerilogParser.Full_path_descriptionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_path_inputs}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_path_inputs].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_path_inputs(ctx: VerilogParser.List_of_path_inputsContext)
+    public fun enterList_of_path_inputs(ctx: VerilogParser.List_of_path_inputsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_path_inputs}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_path_inputs].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_path_inputs(ctx: VerilogParser.List_of_path_inputsContext)
+    public fun exitList_of_path_inputs(ctx: VerilogParser.List_of_path_inputsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_path_outputs}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_path_outputs].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_path_outputs(ctx: VerilogParser.List_of_path_outputsContext)
+    public fun enterList_of_path_outputs(ctx: VerilogParser.List_of_path_outputsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_path_outputs}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_path_outputs].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_path_outputs(ctx: VerilogParser.List_of_path_outputsContext)
+    public fun exitList_of_path_outputs(ctx: VerilogParser.List_of_path_outputsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#specify_input_terminal_descriptor}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.specify_input_terminal_descriptor].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSpecify_input_terminal_descriptor(ctx: VerilogParser.Specify_input_terminal_descriptorContext)
+    public fun enterSpecify_input_terminal_descriptor(ctx: VerilogParser.Specify_input_terminal_descriptorContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#specify_input_terminal_descriptor}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.specify_input_terminal_descriptor].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSpecify_input_terminal_descriptor(ctx: VerilogParser.Specify_input_terminal_descriptorContext)
+    public fun exitSpecify_input_terminal_descriptor(ctx: VerilogParser.Specify_input_terminal_descriptorContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#specify_output_terminal_descriptor}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.specify_output_terminal_descriptor].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSpecify_output_terminal_descriptor(ctx: VerilogParser.Specify_output_terminal_descriptorContext)
+    public fun enterSpecify_output_terminal_descriptor(ctx: VerilogParser.Specify_output_terminal_descriptorContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#specify_output_terminal_descriptor}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.specify_output_terminal_descriptor].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSpecify_output_terminal_descriptor(ctx: VerilogParser.Specify_output_terminal_descriptorContext)
+    public fun exitSpecify_output_terminal_descriptor(ctx: VerilogParser.Specify_output_terminal_descriptorContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#input_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.input_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterInput_identifier(ctx: VerilogParser.Input_identifierContext)
+    public fun enterInput_identifier(ctx: VerilogParser.Input_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#input_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.input_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitInput_identifier(ctx: VerilogParser.Input_identifierContext)
+    public fun exitInput_identifier(ctx: VerilogParser.Input_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#output_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.output_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterOutput_identifier(ctx: VerilogParser.Output_identifierContext)
+    public fun enterOutput_identifier(ctx: VerilogParser.Output_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#output_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.output_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitOutput_identifier(ctx: VerilogParser.Output_identifierContext)
+    public fun exitOutput_identifier(ctx: VerilogParser.Output_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#path_delay_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.path_delay_value].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPath_delay_value(ctx: VerilogParser.Path_delay_valueContext)
+    public fun enterPath_delay_value(ctx: VerilogParser.Path_delay_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#path_delay_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.path_delay_value].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPath_delay_value(ctx: VerilogParser.Path_delay_valueContext)
+    public fun exitPath_delay_value(ctx: VerilogParser.Path_delay_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_path_delay_expressions}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_path_delay_expressions].
+     *
+     * @param ctx The parse tree
      */
-    fun enterList_of_path_delay_expressions(ctx: VerilogParser.List_of_path_delay_expressionsContext)
+    public fun enterList_of_path_delay_expressions(ctx: VerilogParser.List_of_path_delay_expressionsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_path_delay_expressions}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_path_delay_expressions].
+     *
+     * @param ctx The parse tree
      */
-    fun exitList_of_path_delay_expressions(ctx: VerilogParser.List_of_path_delay_expressionsContext)
+    public fun exitList_of_path_delay_expressions(ctx: VerilogParser.List_of_path_delay_expressionsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#t_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.t_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterT_path_delay_expression(ctx: VerilogParser.T_path_delay_expressionContext)
+    public fun enterT_path_delay_expression(ctx: VerilogParser.T_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#t_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.t_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitT_path_delay_expression(ctx: VerilogParser.T_path_delay_expressionContext)
+    public fun exitT_path_delay_expression(ctx: VerilogParser.T_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#trise_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.trise_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTrise_path_delay_expression(ctx: VerilogParser.Trise_path_delay_expressionContext)
+    public fun enterTrise_path_delay_expression(ctx: VerilogParser.Trise_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#trise_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.trise_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTrise_path_delay_expression(ctx: VerilogParser.Trise_path_delay_expressionContext)
+    public fun exitTrise_path_delay_expression(ctx: VerilogParser.Trise_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tfall_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tfall_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTfall_path_delay_expression(ctx: VerilogParser.Tfall_path_delay_expressionContext)
+    public fun enterTfall_path_delay_expression(ctx: VerilogParser.Tfall_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tfall_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tfall_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTfall_path_delay_expression(ctx: VerilogParser.Tfall_path_delay_expressionContext)
+    public fun exitTfall_path_delay_expression(ctx: VerilogParser.Tfall_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tz_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tz_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTz_path_delay_expression(ctx: VerilogParser.Tz_path_delay_expressionContext)
+    public fun enterTz_path_delay_expression(ctx: VerilogParser.Tz_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tz_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tz_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTz_path_delay_expression(ctx: VerilogParser.Tz_path_delay_expressionContext)
+    public fun exitTz_path_delay_expression(ctx: VerilogParser.Tz_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#t01_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.t01_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterT01_path_delay_expression(ctx: VerilogParser.T01_path_delay_expressionContext)
+    public fun enterT01_path_delay_expression(ctx: VerilogParser.T01_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#t01_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.t01_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitT01_path_delay_expression(ctx: VerilogParser.T01_path_delay_expressionContext)
+    public fun exitT01_path_delay_expression(ctx: VerilogParser.T01_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#t10_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.t10_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterT10_path_delay_expression(ctx: VerilogParser.T10_path_delay_expressionContext)
+    public fun enterT10_path_delay_expression(ctx: VerilogParser.T10_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#t10_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.t10_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitT10_path_delay_expression(ctx: VerilogParser.T10_path_delay_expressionContext)
+    public fun exitT10_path_delay_expression(ctx: VerilogParser.T10_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#t0z_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.t0z_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterT0z_path_delay_expression(ctx: VerilogParser.T0z_path_delay_expressionContext)
+    public fun enterT0z_path_delay_expression(ctx: VerilogParser.T0z_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#t0z_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.t0z_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitT0z_path_delay_expression(ctx: VerilogParser.T0z_path_delay_expressionContext)
+    public fun exitT0z_path_delay_expression(ctx: VerilogParser.T0z_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tz1_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tz1_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTz1_path_delay_expression(ctx: VerilogParser.Tz1_path_delay_expressionContext)
+    public fun enterTz1_path_delay_expression(ctx: VerilogParser.Tz1_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tz1_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tz1_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTz1_path_delay_expression(ctx: VerilogParser.Tz1_path_delay_expressionContext)
+    public fun exitTz1_path_delay_expression(ctx: VerilogParser.Tz1_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#t1z_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.t1z_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterT1z_path_delay_expression(ctx: VerilogParser.T1z_path_delay_expressionContext)
+    public fun enterT1z_path_delay_expression(ctx: VerilogParser.T1z_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#t1z_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.t1z_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitT1z_path_delay_expression(ctx: VerilogParser.T1z_path_delay_expressionContext)
+    public fun exitT1z_path_delay_expression(ctx: VerilogParser.T1z_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tz0_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tz0_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTz0_path_delay_expression(ctx: VerilogParser.Tz0_path_delay_expressionContext)
+    public fun enterTz0_path_delay_expression(ctx: VerilogParser.Tz0_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tz0_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tz0_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTz0_path_delay_expression(ctx: VerilogParser.Tz0_path_delay_expressionContext)
+    public fun exitTz0_path_delay_expression(ctx: VerilogParser.Tz0_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#t0x_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.t0x_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterT0x_path_delay_expression(ctx: VerilogParser.T0x_path_delay_expressionContext)
+    public fun enterT0x_path_delay_expression(ctx: VerilogParser.T0x_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#t0x_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.t0x_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitT0x_path_delay_expression(ctx: VerilogParser.T0x_path_delay_expressionContext)
+    public fun exitT0x_path_delay_expression(ctx: VerilogParser.T0x_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tx1_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tx1_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTx1_path_delay_expression(ctx: VerilogParser.Tx1_path_delay_expressionContext)
+    public fun enterTx1_path_delay_expression(ctx: VerilogParser.Tx1_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tx1_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tx1_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTx1_path_delay_expression(ctx: VerilogParser.Tx1_path_delay_expressionContext)
+    public fun exitTx1_path_delay_expression(ctx: VerilogParser.Tx1_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#t1x_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.t1x_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterT1x_path_delay_expression(ctx: VerilogParser.T1x_path_delay_expressionContext)
+    public fun enterT1x_path_delay_expression(ctx: VerilogParser.T1x_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#t1x_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.t1x_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitT1x_path_delay_expression(ctx: VerilogParser.T1x_path_delay_expressionContext)
+    public fun exitT1x_path_delay_expression(ctx: VerilogParser.T1x_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tx0_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tx0_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTx0_path_delay_expression(ctx: VerilogParser.Tx0_path_delay_expressionContext)
+    public fun enterTx0_path_delay_expression(ctx: VerilogParser.Tx0_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tx0_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tx0_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTx0_path_delay_expression(ctx: VerilogParser.Tx0_path_delay_expressionContext)
+    public fun exitTx0_path_delay_expression(ctx: VerilogParser.Tx0_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#txz_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.txz_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTxz_path_delay_expression(ctx: VerilogParser.Txz_path_delay_expressionContext)
+    public fun enterTxz_path_delay_expression(ctx: VerilogParser.Txz_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#txz_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.txz_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTxz_path_delay_expression(ctx: VerilogParser.Txz_path_delay_expressionContext)
+    public fun exitTxz_path_delay_expression(ctx: VerilogParser.Txz_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tzx_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tzx_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTzx_path_delay_expression(ctx: VerilogParser.Tzx_path_delay_expressionContext)
+    public fun enterTzx_path_delay_expression(ctx: VerilogParser.Tzx_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tzx_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tzx_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTzx_path_delay_expression(ctx: VerilogParser.Tzx_path_delay_expressionContext)
+    public fun exitTzx_path_delay_expression(ctx: VerilogParser.Tzx_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPath_delay_expression(ctx: VerilogParser.Path_delay_expressionContext)
+    public fun enterPath_delay_expression(ctx: VerilogParser.Path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPath_delay_expression(ctx: VerilogParser.Path_delay_expressionContext)
+    public fun exitPath_delay_expression(ctx: VerilogParser.Path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#edge_sensitive_path_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.edge_sensitive_path_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEdge_sensitive_path_declaration(ctx: VerilogParser.Edge_sensitive_path_declarationContext)
+    public fun enterEdge_sensitive_path_declaration(ctx: VerilogParser.Edge_sensitive_path_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#edge_sensitive_path_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.edge_sensitive_path_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEdge_sensitive_path_declaration(ctx: VerilogParser.Edge_sensitive_path_declarationContext)
+    public fun exitEdge_sensitive_path_declaration(ctx: VerilogParser.Edge_sensitive_path_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#parallel_edge_sensitive_path_description}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.parallel_edge_sensitive_path_description].
+     *
+     * @param ctx The parse tree
      */
-    fun enterParallel_edge_sensitive_path_description(ctx: VerilogParser.Parallel_edge_sensitive_path_descriptionContext)
+    public fun enterParallel_edge_sensitive_path_description(ctx: VerilogParser.Parallel_edge_sensitive_path_descriptionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#parallel_edge_sensitive_path_description}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.parallel_edge_sensitive_path_description].
+     *
+     * @param ctx The parse tree
      */
-    fun exitParallel_edge_sensitive_path_description(ctx: VerilogParser.Parallel_edge_sensitive_path_descriptionContext)
+    public fun exitParallel_edge_sensitive_path_description(ctx: VerilogParser.Parallel_edge_sensitive_path_descriptionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#full_edge_sensitive_path_description}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.full_edge_sensitive_path_description].
+     *
+     * @param ctx The parse tree
      */
-    fun enterFull_edge_sensitive_path_description(ctx: VerilogParser.Full_edge_sensitive_path_descriptionContext)
+    public fun enterFull_edge_sensitive_path_description(ctx: VerilogParser.Full_edge_sensitive_path_descriptionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#full_edge_sensitive_path_description}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.full_edge_sensitive_path_description].
+     *
+     * @param ctx The parse tree
      */
-    fun exitFull_edge_sensitive_path_description(ctx: VerilogParser.Full_edge_sensitive_path_descriptionContext)
+    public fun exitFull_edge_sensitive_path_description(ctx: VerilogParser.Full_edge_sensitive_path_descriptionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#data_source_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.data_source_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterData_source_expression(ctx: VerilogParser.Data_source_expressionContext)
+    public fun enterData_source_expression(ctx: VerilogParser.Data_source_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#data_source_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.data_source_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitData_source_expression(ctx: VerilogParser.Data_source_expressionContext)
+    public fun exitData_source_expression(ctx: VerilogParser.Data_source_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#edge_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.edge_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEdge_identifier(ctx: VerilogParser.Edge_identifierContext)
+    public fun enterEdge_identifier(ctx: VerilogParser.Edge_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#edge_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.edge_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEdge_identifier(ctx: VerilogParser.Edge_identifierContext)
+    public fun exitEdge_identifier(ctx: VerilogParser.Edge_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#state_dependent_path_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.state_dependent_path_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun enterState_dependent_path_declaration(ctx: VerilogParser.State_dependent_path_declarationContext)
+    public fun enterState_dependent_path_declaration(ctx: VerilogParser.State_dependent_path_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#state_dependent_path_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.state_dependent_path_declaration].
+     *
+     * @param ctx The parse tree
      */
-    fun exitState_dependent_path_declaration(ctx: VerilogParser.State_dependent_path_declarationContext)
+    public fun exitState_dependent_path_declaration(ctx: VerilogParser.State_dependent_path_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#polarity_operator}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.polarity_operator].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPolarity_operator(ctx: VerilogParser.Polarity_operatorContext)
+    public fun enterPolarity_operator(ctx: VerilogParser.Polarity_operatorContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#polarity_operator}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.polarity_operator].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPolarity_operator(ctx: VerilogParser.Polarity_operatorContext)
+    public fun exitPolarity_operator(ctx: VerilogParser.Polarity_operatorContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#system_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.system_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSystem_timing_check(ctx: VerilogParser.System_timing_checkContext)
+    public fun enterSystem_timing_check(ctx: VerilogParser.System_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#system_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.system_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSystem_timing_check(ctx: VerilogParser.System_timing_checkContext)
+    public fun exitSystem_timing_check(ctx: VerilogParser.System_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#setup_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.setup_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSetup_timing_check(ctx: VerilogParser.Setup_timing_checkContext)
+    public fun enterSetup_timing_check(ctx: VerilogParser.Setup_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#setup_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.setup_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSetup_timing_check(ctx: VerilogParser.Setup_timing_checkContext)
+    public fun exitSetup_timing_check(ctx: VerilogParser.Setup_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#notifier_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.notifier_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNotifier_opt(ctx: VerilogParser.Notifier_optContext)
+    public fun enterNotifier_opt(ctx: VerilogParser.Notifier_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#notifier_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.notifier_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNotifier_opt(ctx: VerilogParser.Notifier_optContext)
+    public fun exitNotifier_opt(ctx: VerilogParser.Notifier_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#hold_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.hold_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun enterHold_timing_check(ctx: VerilogParser.Hold_timing_checkContext)
+    public fun enterHold_timing_check(ctx: VerilogParser.Hold_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#hold_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.hold_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun exitHold_timing_check(ctx: VerilogParser.Hold_timing_checkContext)
+    public fun exitHold_timing_check(ctx: VerilogParser.Hold_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#setuphold_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.setuphold_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSetuphold_timing_check(ctx: VerilogParser.Setuphold_timing_checkContext)
+    public fun enterSetuphold_timing_check(ctx: VerilogParser.Setuphold_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#setuphold_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.setuphold_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSetuphold_timing_check(ctx: VerilogParser.Setuphold_timing_checkContext)
+    public fun exitSetuphold_timing_check(ctx: VerilogParser.Setuphold_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#timing_check_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.timing_check_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTiming_check_opt(ctx: VerilogParser.Timing_check_optContext)
+    public fun enterTiming_check_opt(ctx: VerilogParser.Timing_check_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#timing_check_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.timing_check_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTiming_check_opt(ctx: VerilogParser.Timing_check_optContext)
+    public fun exitTiming_check_opt(ctx: VerilogParser.Timing_check_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#stamptime_cond_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.stamptime_cond_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun enterStamptime_cond_opt(ctx: VerilogParser.Stamptime_cond_optContext)
+    public fun enterStamptime_cond_opt(ctx: VerilogParser.Stamptime_cond_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#stamptime_cond_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.stamptime_cond_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun exitStamptime_cond_opt(ctx: VerilogParser.Stamptime_cond_optContext)
+    public fun exitStamptime_cond_opt(ctx: VerilogParser.Stamptime_cond_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#checktime_cond_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.checktime_cond_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun enterChecktime_cond_opt(ctx: VerilogParser.Checktime_cond_optContext)
+    public fun enterChecktime_cond_opt(ctx: VerilogParser.Checktime_cond_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#checktime_cond_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.checktime_cond_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun exitChecktime_cond_opt(ctx: VerilogParser.Checktime_cond_optContext)
+    public fun exitChecktime_cond_opt(ctx: VerilogParser.Checktime_cond_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delayed_ref_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delayed_ref_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDelayed_ref_opt(ctx: VerilogParser.Delayed_ref_optContext)
+    public fun enterDelayed_ref_opt(ctx: VerilogParser.Delayed_ref_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delayed_ref_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delayed_ref_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDelayed_ref_opt(ctx: VerilogParser.Delayed_ref_optContext)
+    public fun exitDelayed_ref_opt(ctx: VerilogParser.Delayed_ref_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delayed_data_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delayed_data_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDelayed_data_opt(ctx: VerilogParser.Delayed_data_optContext)
+    public fun enterDelayed_data_opt(ctx: VerilogParser.Delayed_data_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delayed_data_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delayed_data_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDelayed_data_opt(ctx: VerilogParser.Delayed_data_optContext)
+    public fun exitDelayed_data_opt(ctx: VerilogParser.Delayed_data_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#recovery_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.recovery_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun enterRecovery_timing_check(ctx: VerilogParser.Recovery_timing_checkContext)
+    public fun enterRecovery_timing_check(ctx: VerilogParser.Recovery_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#recovery_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.recovery_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun exitRecovery_timing_check(ctx: VerilogParser.Recovery_timing_checkContext)
+    public fun exitRecovery_timing_check(ctx: VerilogParser.Recovery_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#removal_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.removal_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun enterRemoval_timing_check(ctx: VerilogParser.Removal_timing_checkContext)
+    public fun enterRemoval_timing_check(ctx: VerilogParser.Removal_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#removal_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.removal_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun exitRemoval_timing_check(ctx: VerilogParser.Removal_timing_checkContext)
+    public fun exitRemoval_timing_check(ctx: VerilogParser.Removal_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#recrem_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.recrem_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun enterRecrem_timing_check(ctx: VerilogParser.Recrem_timing_checkContext)
+    public fun enterRecrem_timing_check(ctx: VerilogParser.Recrem_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#recrem_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.recrem_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun exitRecrem_timing_check(ctx: VerilogParser.Recrem_timing_checkContext)
+    public fun exitRecrem_timing_check(ctx: VerilogParser.Recrem_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#skew_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.skew_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSkew_timing_check(ctx: VerilogParser.Skew_timing_checkContext)
+    public fun enterSkew_timing_check(ctx: VerilogParser.Skew_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#skew_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.skew_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSkew_timing_check(ctx: VerilogParser.Skew_timing_checkContext)
+    public fun exitSkew_timing_check(ctx: VerilogParser.Skew_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#timeskew_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.timeskew_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTimeskew_timing_check(ctx: VerilogParser.Timeskew_timing_checkContext)
+    public fun enterTimeskew_timing_check(ctx: VerilogParser.Timeskew_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#timeskew_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.timeskew_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTimeskew_timing_check(ctx: VerilogParser.Timeskew_timing_checkContext)
+    public fun exitTimeskew_timing_check(ctx: VerilogParser.Timeskew_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#skew_timing_check_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.skew_timing_check_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSkew_timing_check_opt(ctx: VerilogParser.Skew_timing_check_optContext)
+    public fun enterSkew_timing_check_opt(ctx: VerilogParser.Skew_timing_check_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#skew_timing_check_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.skew_timing_check_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSkew_timing_check_opt(ctx: VerilogParser.Skew_timing_check_optContext)
+    public fun exitSkew_timing_check_opt(ctx: VerilogParser.Skew_timing_check_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#event_based_flag_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.event_based_flag_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEvent_based_flag_opt(ctx: VerilogParser.Event_based_flag_optContext)
+    public fun enterEvent_based_flag_opt(ctx: VerilogParser.Event_based_flag_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#event_based_flag_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.event_based_flag_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEvent_based_flag_opt(ctx: VerilogParser.Event_based_flag_optContext)
+    public fun exitEvent_based_flag_opt(ctx: VerilogParser.Event_based_flag_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#remain_active_flag_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.remain_active_flag_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun enterRemain_active_flag_opt(ctx: VerilogParser.Remain_active_flag_optContext)
+    public fun enterRemain_active_flag_opt(ctx: VerilogParser.Remain_active_flag_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#remain_active_flag_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.remain_active_flag_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun exitRemain_active_flag_opt(ctx: VerilogParser.Remain_active_flag_optContext)
+    public fun exitRemain_active_flag_opt(ctx: VerilogParser.Remain_active_flag_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#fullskew_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.fullskew_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun enterFullskew_timing_check(ctx: VerilogParser.Fullskew_timing_checkContext)
+    public fun enterFullskew_timing_check(ctx: VerilogParser.Fullskew_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#fullskew_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.fullskew_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun exitFullskew_timing_check(ctx: VerilogParser.Fullskew_timing_checkContext)
+    public fun exitFullskew_timing_check(ctx: VerilogParser.Fullskew_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#period_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.period_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPeriod_timing_check(ctx: VerilogParser.Period_timing_checkContext)
+    public fun enterPeriod_timing_check(ctx: VerilogParser.Period_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#period_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.period_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPeriod_timing_check(ctx: VerilogParser.Period_timing_checkContext)
+    public fun exitPeriod_timing_check(ctx: VerilogParser.Period_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#width_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.width_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun enterWidth_timing_check(ctx: VerilogParser.Width_timing_checkContext)
+    public fun enterWidth_timing_check(ctx: VerilogParser.Width_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#width_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.width_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun exitWidth_timing_check(ctx: VerilogParser.Width_timing_checkContext)
+    public fun exitWidth_timing_check(ctx: VerilogParser.Width_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#threshold_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.threshold_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun enterThreshold_opt(ctx: VerilogParser.Threshold_optContext)
+    public fun enterThreshold_opt(ctx: VerilogParser.Threshold_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#threshold_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.threshold_opt].
+     *
+     * @param ctx The parse tree
      */
-    fun exitThreshold_opt(ctx: VerilogParser.Threshold_optContext)
+    public fun exitThreshold_opt(ctx: VerilogParser.Threshold_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#nochange_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.nochange_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNochange_timing_check(ctx: VerilogParser.Nochange_timing_checkContext)
+    public fun enterNochange_timing_check(ctx: VerilogParser.Nochange_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#nochange_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.nochange_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNochange_timing_check(ctx: VerilogParser.Nochange_timing_checkContext)
+    public fun exitNochange_timing_check(ctx: VerilogParser.Nochange_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#checktime_condition}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.checktime_condition].
+     *
+     * @param ctx The parse tree
      */
-    fun enterChecktime_condition(ctx: VerilogParser.Checktime_conditionContext)
+    public fun enterChecktime_condition(ctx: VerilogParser.Checktime_conditionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#checktime_condition}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.checktime_condition].
+     *
+     * @param ctx The parse tree
      */
-    fun exitChecktime_condition(ctx: VerilogParser.Checktime_conditionContext)
+    public fun exitChecktime_condition(ctx: VerilogParser.Checktime_conditionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#controlled_reference_event}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.controlled_reference_event].
+     *
+     * @param ctx The parse tree
      */
-    fun enterControlled_reference_event(ctx: VerilogParser.Controlled_reference_eventContext)
+    public fun enterControlled_reference_event(ctx: VerilogParser.Controlled_reference_eventContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#controlled_reference_event}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.controlled_reference_event].
+     *
+     * @param ctx The parse tree
      */
-    fun exitControlled_reference_event(ctx: VerilogParser.Controlled_reference_eventContext)
+    public fun exitControlled_reference_event(ctx: VerilogParser.Controlled_reference_eventContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#data_event}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.data_event].
+     *
+     * @param ctx The parse tree
      */
-    fun enterData_event(ctx: VerilogParser.Data_eventContext)
+    public fun enterData_event(ctx: VerilogParser.Data_eventContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#data_event}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.data_event].
+     *
+     * @param ctx The parse tree
      */
-    fun exitData_event(ctx: VerilogParser.Data_eventContext)
+    public fun exitData_event(ctx: VerilogParser.Data_eventContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delayed_data}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delayed_data].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDelayed_data(ctx: VerilogParser.Delayed_dataContext)
+    public fun enterDelayed_data(ctx: VerilogParser.Delayed_dataContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delayed_data}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delayed_data].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDelayed_data(ctx: VerilogParser.Delayed_dataContext)
+    public fun exitDelayed_data(ctx: VerilogParser.Delayed_dataContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delayed_reference}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delayed_reference].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDelayed_reference(ctx: VerilogParser.Delayed_referenceContext)
+    public fun enterDelayed_reference(ctx: VerilogParser.Delayed_referenceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delayed_reference}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delayed_reference].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDelayed_reference(ctx: VerilogParser.Delayed_referenceContext)
+    public fun exitDelayed_reference(ctx: VerilogParser.Delayed_referenceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#end_edge_offset}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.end_edge_offset].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEnd_edge_offset(ctx: VerilogParser.End_edge_offsetContext)
+    public fun enterEnd_edge_offset(ctx: VerilogParser.End_edge_offsetContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#end_edge_offset}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.end_edge_offset].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEnd_edge_offset(ctx: VerilogParser.End_edge_offsetContext)
+    public fun exitEnd_edge_offset(ctx: VerilogParser.End_edge_offsetContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#event_based_flag}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.event_based_flag].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEvent_based_flag(ctx: VerilogParser.Event_based_flagContext)
+    public fun enterEvent_based_flag(ctx: VerilogParser.Event_based_flagContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#event_based_flag}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.event_based_flag].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEvent_based_flag(ctx: VerilogParser.Event_based_flagContext)
+    public fun exitEvent_based_flag(ctx: VerilogParser.Event_based_flagContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#notifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.notifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNotifier(ctx: VerilogParser.NotifierContext)
+    public fun enterNotifier(ctx: VerilogParser.NotifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#notifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.notifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNotifier(ctx: VerilogParser.NotifierContext)
+    public fun exitNotifier(ctx: VerilogParser.NotifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#reference_event}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.reference_event].
+     *
+     * @param ctx The parse tree
      */
-    fun enterReference_event(ctx: VerilogParser.Reference_eventContext)
+    public fun enterReference_event(ctx: VerilogParser.Reference_eventContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#reference_event}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.reference_event].
+     *
+     * @param ctx The parse tree
      */
-    fun exitReference_event(ctx: VerilogParser.Reference_eventContext)
+    public fun exitReference_event(ctx: VerilogParser.Reference_eventContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#remain_active_flag}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.remain_active_flag].
+     *
+     * @param ctx The parse tree
      */
-    fun enterRemain_active_flag(ctx: VerilogParser.Remain_active_flagContext)
+    public fun enterRemain_active_flag(ctx: VerilogParser.Remain_active_flagContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#remain_active_flag}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.remain_active_flag].
+     *
+     * @param ctx The parse tree
      */
-    fun exitRemain_active_flag(ctx: VerilogParser.Remain_active_flagContext)
+    public fun exitRemain_active_flag(ctx: VerilogParser.Remain_active_flagContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#stamptime_condition}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.stamptime_condition].
+     *
+     * @param ctx The parse tree
      */
-    fun enterStamptime_condition(ctx: VerilogParser.Stamptime_conditionContext)
+    public fun enterStamptime_condition(ctx: VerilogParser.Stamptime_conditionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#stamptime_condition}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.stamptime_condition].
+     *
+     * @param ctx The parse tree
      */
-    fun exitStamptime_condition(ctx: VerilogParser.Stamptime_conditionContext)
+    public fun exitStamptime_condition(ctx: VerilogParser.Stamptime_conditionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#start_edge_offset}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.start_edge_offset].
+     *
+     * @param ctx The parse tree
      */
-    fun enterStart_edge_offset(ctx: VerilogParser.Start_edge_offsetContext)
+    public fun enterStart_edge_offset(ctx: VerilogParser.Start_edge_offsetContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#start_edge_offset}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.start_edge_offset].
+     *
+     * @param ctx The parse tree
      */
-    fun exitStart_edge_offset(ctx: VerilogParser.Start_edge_offsetContext)
+    public fun exitStart_edge_offset(ctx: VerilogParser.Start_edge_offsetContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#threshold}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.threshold].
+     *
+     * @param ctx The parse tree
      */
-    fun enterThreshold(ctx: VerilogParser.ThresholdContext)
+    public fun enterThreshold(ctx: VerilogParser.ThresholdContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#threshold}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.threshold].
+     *
+     * @param ctx The parse tree
      */
-    fun exitThreshold(ctx: VerilogParser.ThresholdContext)
+    public fun exitThreshold(ctx: VerilogParser.ThresholdContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#timing_check_limit}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.timing_check_limit].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTiming_check_limit(ctx: VerilogParser.Timing_check_limitContext)
+    public fun enterTiming_check_limit(ctx: VerilogParser.Timing_check_limitContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#timing_check_limit}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.timing_check_limit].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTiming_check_limit(ctx: VerilogParser.Timing_check_limitContext)
+    public fun exitTiming_check_limit(ctx: VerilogParser.Timing_check_limitContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#timing_check_event}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.timing_check_event].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTiming_check_event(ctx: VerilogParser.Timing_check_eventContext)
+    public fun enterTiming_check_event(ctx: VerilogParser.Timing_check_eventContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#timing_check_event}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.timing_check_event].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTiming_check_event(ctx: VerilogParser.Timing_check_eventContext)
+    public fun exitTiming_check_event(ctx: VerilogParser.Timing_check_eventContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#controlled_timing_check_event}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.controlled_timing_check_event].
+     *
+     * @param ctx The parse tree
      */
-    fun enterControlled_timing_check_event(ctx: VerilogParser.Controlled_timing_check_eventContext)
+    public fun enterControlled_timing_check_event(ctx: VerilogParser.Controlled_timing_check_eventContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#controlled_timing_check_event}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.controlled_timing_check_event].
+     *
+     * @param ctx The parse tree
      */
-    fun exitControlled_timing_check_event(ctx: VerilogParser.Controlled_timing_check_eventContext)
+    public fun exitControlled_timing_check_event(ctx: VerilogParser.Controlled_timing_check_eventContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#timing_check_event_control}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.timing_check_event_control].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTiming_check_event_control(ctx: VerilogParser.Timing_check_event_controlContext)
+    public fun enterTiming_check_event_control(ctx: VerilogParser.Timing_check_event_controlContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#timing_check_event_control}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.timing_check_event_control].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTiming_check_event_control(ctx: VerilogParser.Timing_check_event_controlContext)
+    public fun exitTiming_check_event_control(ctx: VerilogParser.Timing_check_event_controlContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#specify_terminal_descriptor}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.specify_terminal_descriptor].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSpecify_terminal_descriptor(ctx: VerilogParser.Specify_terminal_descriptorContext)
+    public fun enterSpecify_terminal_descriptor(ctx: VerilogParser.Specify_terminal_descriptorContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#specify_terminal_descriptor}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.specify_terminal_descriptor].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSpecify_terminal_descriptor(ctx: VerilogParser.Specify_terminal_descriptorContext)
+    public fun exitSpecify_terminal_descriptor(ctx: VerilogParser.Specify_terminal_descriptorContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#edge_control_specifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.edge_control_specifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEdge_control_specifier(ctx: VerilogParser.Edge_control_specifierContext)
+    public fun enterEdge_control_specifier(ctx: VerilogParser.Edge_control_specifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#edge_control_specifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.edge_control_specifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEdge_control_specifier(ctx: VerilogParser.Edge_control_specifierContext)
+    public fun exitEdge_control_specifier(ctx: VerilogParser.Edge_control_specifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#edge_descriptor}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.edge_descriptor].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEdge_descriptor(ctx: VerilogParser.Edge_descriptorContext)
+    public fun enterEdge_descriptor(ctx: VerilogParser.Edge_descriptorContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#edge_descriptor}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.edge_descriptor].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEdge_descriptor(ctx: VerilogParser.Edge_descriptorContext)
+    public fun exitEdge_descriptor(ctx: VerilogParser.Edge_descriptorContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#timing_check_condition}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.timing_check_condition].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTiming_check_condition(ctx: VerilogParser.Timing_check_conditionContext)
+    public fun enterTiming_check_condition(ctx: VerilogParser.Timing_check_conditionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#timing_check_condition}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.timing_check_condition].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTiming_check_condition(ctx: VerilogParser.Timing_check_conditionContext)
+    public fun exitTiming_check_condition(ctx: VerilogParser.Timing_check_conditionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#scalar_timing_check_condition}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.scalar_timing_check_condition].
+     *
+     * @param ctx The parse tree
      */
-    fun enterScalar_timing_check_condition(ctx: VerilogParser.Scalar_timing_check_conditionContext)
+    public fun enterScalar_timing_check_condition(ctx: VerilogParser.Scalar_timing_check_conditionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#scalar_timing_check_condition}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.scalar_timing_check_condition].
+     *
+     * @param ctx The parse tree
      */
-    fun exitScalar_timing_check_condition(ctx: VerilogParser.Scalar_timing_check_conditionContext)
+    public fun exitScalar_timing_check_condition(ctx: VerilogParser.Scalar_timing_check_conditionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#scalar_constant}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.scalar_constant].
+     *
+     * @param ctx The parse tree
      */
-    fun enterScalar_constant(ctx: VerilogParser.Scalar_constantContext)
+    public fun enterScalar_constant(ctx: VerilogParser.Scalar_constantContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#scalar_constant}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.scalar_constant].
+     *
+     * @param ctx The parse tree
      */
-    fun exitScalar_constant(ctx: VerilogParser.Scalar_constantContext)
+    public fun exitScalar_constant(ctx: VerilogParser.Scalar_constantContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#concatenation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.concatenation].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConcatenation(ctx: VerilogParser.ConcatenationContext)
+    public fun enterConcatenation(ctx: VerilogParser.ConcatenationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#concatenation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.concatenation].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConcatenation(ctx: VerilogParser.ConcatenationContext)
+    public fun exitConcatenation(ctx: VerilogParser.ConcatenationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_concatenation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.constant_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstant_concatenation(ctx: VerilogParser.Constant_concatenationContext)
+    public fun enterConstant_concatenation(ctx: VerilogParser.Constant_concatenationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_concatenation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.constant_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstant_concatenation(ctx: VerilogParser.Constant_concatenationContext)
+    public fun exitConstant_concatenation(ctx: VerilogParser.Constant_concatenationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_multiple_concatenation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.constant_multiple_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstant_multiple_concatenation(ctx: VerilogParser.Constant_multiple_concatenationContext)
+    public fun enterConstant_multiple_concatenation(ctx: VerilogParser.Constant_multiple_concatenationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_multiple_concatenation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.constant_multiple_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstant_multiple_concatenation(ctx: VerilogParser.Constant_multiple_concatenationContext)
+    public fun exitConstant_multiple_concatenation(ctx: VerilogParser.Constant_multiple_concatenationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_path_concatenation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_path_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModule_path_concatenation(ctx: VerilogParser.Module_path_concatenationContext)
+    public fun enterModule_path_concatenation(ctx: VerilogParser.Module_path_concatenationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_path_concatenation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_path_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModule_path_concatenation(ctx: VerilogParser.Module_path_concatenationContext)
+    public fun exitModule_path_concatenation(ctx: VerilogParser.Module_path_concatenationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_path_multiple_concatenation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_path_multiple_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModule_path_multiple_concatenation(ctx: VerilogParser.Module_path_multiple_concatenationContext)
+    public fun enterModule_path_multiple_concatenation(ctx: VerilogParser.Module_path_multiple_concatenationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_path_multiple_concatenation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_path_multiple_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModule_path_multiple_concatenation(ctx: VerilogParser.Module_path_multiple_concatenationContext)
+    public fun exitModule_path_multiple_concatenation(ctx: VerilogParser.Module_path_multiple_concatenationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#multiple_concatenation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.multiple_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    fun enterMultiple_concatenation(ctx: VerilogParser.Multiple_concatenationContext)
+    public fun enterMultiple_concatenation(ctx: VerilogParser.Multiple_concatenationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#multiple_concatenation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.multiple_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    fun exitMultiple_concatenation(ctx: VerilogParser.Multiple_concatenationContext)
+    public fun exitMultiple_concatenation(ctx: VerilogParser.Multiple_concatenationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_function_call}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.constant_function_call].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstant_function_call(ctx: VerilogParser.Constant_function_callContext)
+    public fun enterConstant_function_call(ctx: VerilogParser.Constant_function_callContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_function_call}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.constant_function_call].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstant_function_call(ctx: VerilogParser.Constant_function_callContext)
+    public fun exitConstant_function_call(ctx: VerilogParser.Constant_function_callContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_system_function_call}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.constant_system_function_call].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstant_system_function_call(ctx: VerilogParser.Constant_system_function_callContext)
+    public fun enterConstant_system_function_call(ctx: VerilogParser.Constant_system_function_callContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_system_function_call}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.constant_system_function_call].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstant_system_function_call(ctx: VerilogParser.Constant_system_function_callContext)
+    public fun exitConstant_system_function_call(ctx: VerilogParser.Constant_system_function_callContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#function_call}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.function_call].
+     *
+     * @param ctx The parse tree
      */
-    fun enterFunction_call(ctx: VerilogParser.Function_callContext)
+    public fun enterFunction_call(ctx: VerilogParser.Function_callContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#function_call}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.function_call].
+     *
+     * @param ctx The parse tree
      */
-    fun exitFunction_call(ctx: VerilogParser.Function_callContext)
+    public fun exitFunction_call(ctx: VerilogParser.Function_callContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#system_function_call}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.system_function_call].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSystem_function_call(ctx: VerilogParser.System_function_callContext)
+    public fun enterSystem_function_call(ctx: VerilogParser.System_function_callContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#system_function_call}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.system_function_call].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSystem_function_call(ctx: VerilogParser.System_function_callContext)
+    public fun exitSystem_function_call(ctx: VerilogParser.System_function_callContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#sys_func_call_port_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.sys_func_call_port_list].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSys_func_call_port_list(ctx: VerilogParser.Sys_func_call_port_listContext)
+    public fun enterSys_func_call_port_list(ctx: VerilogParser.Sys_func_call_port_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#sys_func_call_port_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.sys_func_call_port_list].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSys_func_call_port_list(ctx: VerilogParser.Sys_func_call_port_listContext)
+    public fun exitSys_func_call_port_list(ctx: VerilogParser.Sys_func_call_port_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#base_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.base_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterBase_expression(ctx: VerilogParser.Base_expressionContext)
+    public fun enterBase_expression(ctx: VerilogParser.Base_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#base_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.base_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitBase_expression(ctx: VerilogParser.Base_expressionContext)
+    public fun exitBase_expression(ctx: VerilogParser.Base_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_base_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.constant_base_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstant_base_expression(ctx: VerilogParser.Constant_base_expressionContext)
+    public fun enterConstant_base_expression(ctx: VerilogParser.Constant_base_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_base_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.constant_base_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstant_base_expression(ctx: VerilogParser.Constant_base_expressionContext)
+    public fun exitConstant_base_expression(ctx: VerilogParser.Constant_base_expressionContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprUnary}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprUnary` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstExprUnary(ctx: VerilogParser.ConstExprUnaryContext)
+    public fun enterConstExprUnary(ctx: VerilogParser.ConstExprUnaryContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprUnary}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprUnary` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstExprUnary(ctx: VerilogParser.ConstExprUnaryContext)
+    public fun exitConstExprUnary(ctx: VerilogParser.ConstExprUnaryContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprAddSub}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprAddSub` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstExprAddSub(ctx: VerilogParser.ConstExprAddSubContext)
+    public fun enterConstExprAddSub(ctx: VerilogParser.ConstExprAddSubContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprAddSub}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprAddSub` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstExprAddSub(ctx: VerilogParser.ConstExprAddSubContext)
+    public fun exitConstExprAddSub(ctx: VerilogParser.ConstExprAddSubContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprLogicalAnd}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprLogicalAnd` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstExprLogicalAnd(ctx: VerilogParser.ConstExprLogicalAndContext)
+    public fun enterConstExprLogicalAnd(ctx: VerilogParser.ConstExprLogicalAndContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprLogicalAnd}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprLogicalAnd` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstExprLogicalAnd(ctx: VerilogParser.ConstExprLogicalAndContext)
+    public fun exitConstExprLogicalAnd(ctx: VerilogParser.ConstExprLogicalAndContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprMulDivRem}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprMulDivRem` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstExprMulDivRem(ctx: VerilogParser.ConstExprMulDivRemContext)
+    public fun enterConstExprMulDivRem(ctx: VerilogParser.ConstExprMulDivRemContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprMulDivRem}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprMulDivRem` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstExprMulDivRem(ctx: VerilogParser.ConstExprMulDivRemContext)
+    public fun exitConstExprMulDivRem(ctx: VerilogParser.ConstExprMulDivRemContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprXor}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprXor` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstExprXor(ctx: VerilogParser.ConstExprXorContext)
+    public fun enterConstExprXor(ctx: VerilogParser.ConstExprXorContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprXor}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprXor` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstExprXor(ctx: VerilogParser.ConstExprXorContext)
+    public fun exitConstExprXor(ctx: VerilogParser.ConstExprXorContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprAnd}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprAnd` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstExprAnd(ctx: VerilogParser.ConstExprAndContext)
+    public fun enterConstExprAnd(ctx: VerilogParser.ConstExprAndContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprAnd}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprAnd` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstExprAnd(ctx: VerilogParser.ConstExprAndContext)
+    public fun exitConstExprAnd(ctx: VerilogParser.ConstExprAndContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprShift}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprShift` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstExprShift(ctx: VerilogParser.ConstExprShiftContext)
+    public fun enterConstExprShift(ctx: VerilogParser.ConstExprShiftContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprShift}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprShift` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstExprShift(ctx: VerilogParser.ConstExprShiftContext)
+    public fun exitConstExprShift(ctx: VerilogParser.ConstExprShiftContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprCompare}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprCompare` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstExprCompare(ctx: VerilogParser.ConstExprCompareContext)
+    public fun enterConstExprCompare(ctx: VerilogParser.ConstExprCompareContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprCompare}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprCompare` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstExprCompare(ctx: VerilogParser.ConstExprCompareContext)
+    public fun exitConstExprCompare(ctx: VerilogParser.ConstExprCompareContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprExpo}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprExpo` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstExprExpo(ctx: VerilogParser.ConstExprExpoContext)
+    public fun enterConstExprExpo(ctx: VerilogParser.ConstExprExpoContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprExpo}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprExpo` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstExprExpo(ctx: VerilogParser.ConstExprExpoContext)
+    public fun exitConstExprExpo(ctx: VerilogParser.ConstExprExpoContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprOr}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprOr` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstExprOr(ctx: VerilogParser.ConstExprOrContext)
+    public fun enterConstExprOr(ctx: VerilogParser.ConstExprOrContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprOr}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprOr` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstExprOr(ctx: VerilogParser.ConstExprOrContext)
+    public fun exitConstExprOr(ctx: VerilogParser.ConstExprOrContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprLogicalOr}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprLogicalOr` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstExprLogicalOr(ctx: VerilogParser.ConstExprLogicalOrContext)
+    public fun enterConstExprLogicalOr(ctx: VerilogParser.ConstExprLogicalOrContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprLogicalOr}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprLogicalOr` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstExprLogicalOr(ctx: VerilogParser.ConstExprLogicalOrContext)
+    public fun exitConstExprLogicalOr(ctx: VerilogParser.ConstExprLogicalOrContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprEquality}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprEquality` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstExprEquality(ctx: VerilogParser.ConstExprEqualityContext)
+    public fun enterConstExprEquality(ctx: VerilogParser.ConstExprEqualityContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprEquality}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprEquality` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstExprEquality(ctx: VerilogParser.ConstExprEqualityContext)
+    public fun exitConstExprEquality(ctx: VerilogParser.ConstExprEqualityContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprTernary}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprTernary` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstExprTernary(ctx: VerilogParser.ConstExprTernaryContext)
+    public fun enterConstExprTernary(ctx: VerilogParser.ConstExprTernaryContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprTernary}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprTernary` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstExprTernary(ctx: VerilogParser.ConstExprTernaryContext)
+    public fun exitConstExprTernary(ctx: VerilogParser.ConstExprTernaryContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprPrimary}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprPrimary` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstExprPrimary(ctx: VerilogParser.ConstExprPrimaryContext)
+    public fun enterConstExprPrimary(ctx: VerilogParser.ConstExprPrimaryContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprPrimary}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprPrimary` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstExprPrimary(ctx: VerilogParser.ConstExprPrimaryContext)
+    public fun exitConstExprPrimary(ctx: VerilogParser.ConstExprPrimaryContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_mintypmax_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.constant_mintypmax_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstant_mintypmax_expression(ctx: VerilogParser.Constant_mintypmax_expressionContext)
+    public fun enterConstant_mintypmax_expression(ctx: VerilogParser.Constant_mintypmax_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_mintypmax_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.constant_mintypmax_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstant_mintypmax_expression(ctx: VerilogParser.Constant_mintypmax_expressionContext)
+    public fun exitConstant_mintypmax_expression(ctx: VerilogParser.Constant_mintypmax_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_range_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.constant_range_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstant_range_expression(ctx: VerilogParser.Constant_range_expressionContext)
+    public fun enterConstant_range_expression(ctx: VerilogParser.Constant_range_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_range_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.constant_range_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstant_range_expression(ctx: VerilogParser.Constant_range_expressionContext)
+    public fun exitConstant_range_expression(ctx: VerilogParser.Constant_range_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#dimension_constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.dimension_constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDimension_constant_expression(ctx: VerilogParser.Dimension_constant_expressionContext)
+    public fun enterDimension_constant_expression(ctx: VerilogParser.Dimension_constant_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#dimension_constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.dimension_constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDimension_constant_expression(ctx: VerilogParser.Dimension_constant_expressionContext)
+    public fun exitDimension_constant_expression(ctx: VerilogParser.Dimension_constant_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterExpression(ctx: VerilogParser.ExpressionContext)
+    public fun enterExpression(ctx: VerilogParser.ExpressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitExpression(ctx: VerilogParser.ExpressionContext)
+    public fun exitExpression(ctx: VerilogParser.ExpressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#lsb_constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.lsb_constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterLsb_constant_expression(ctx: VerilogParser.Lsb_constant_expressionContext)
+    public fun enterLsb_constant_expression(ctx: VerilogParser.Lsb_constant_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#lsb_constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.lsb_constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitLsb_constant_expression(ctx: VerilogParser.Lsb_constant_expressionContext)
+    public fun exitLsb_constant_expression(ctx: VerilogParser.Lsb_constant_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#mintypmax_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.mintypmax_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterMintypmax_expression(ctx: VerilogParser.Mintypmax_expressionContext)
+    public fun enterMintypmax_expression(ctx: VerilogParser.Mintypmax_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#mintypmax_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.mintypmax_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitMintypmax_expression(ctx: VerilogParser.Mintypmax_expressionContext)
+    public fun exitMintypmax_expression(ctx: VerilogParser.Mintypmax_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_path_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_path_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModule_path_expression(ctx: VerilogParser.Module_path_expressionContext)
+    public fun enterModule_path_expression(ctx: VerilogParser.Module_path_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_path_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_path_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModule_path_expression(ctx: VerilogParser.Module_path_expressionContext)
+    public fun exitModule_path_expression(ctx: VerilogParser.Module_path_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_path_mintypmax_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_path_mintypmax_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModule_path_mintypmax_expression(ctx: VerilogParser.Module_path_mintypmax_expressionContext)
+    public fun enterModule_path_mintypmax_expression(ctx: VerilogParser.Module_path_mintypmax_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_path_mintypmax_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_path_mintypmax_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModule_path_mintypmax_expression(ctx: VerilogParser.Module_path_mintypmax_expressionContext)
+    public fun exitModule_path_mintypmax_expression(ctx: VerilogParser.Module_path_mintypmax_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#msb_constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.msb_constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterMsb_constant_expression(ctx: VerilogParser.Msb_constant_expressionContext)
+    public fun enterMsb_constant_expression(ctx: VerilogParser.Msb_constant_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#msb_constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.msb_constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitMsb_constant_expression(ctx: VerilogParser.Msb_constant_expressionContext)
+    public fun exitMsb_constant_expression(ctx: VerilogParser.Msb_constant_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#range_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.range_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterRange_expression(ctx: VerilogParser.Range_expressionContext)
+    public fun enterRange_expression(ctx: VerilogParser.Range_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#range_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.range_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitRange_expression(ctx: VerilogParser.Range_expressionContext)
+    public fun exitRange_expression(ctx: VerilogParser.Range_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#width_constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.width_constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun enterWidth_constant_expression(ctx: VerilogParser.Width_constant_expressionContext)
+    public fun enterWidth_constant_expression(ctx: VerilogParser.Width_constant_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#width_constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.width_constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    fun exitWidth_constant_expression(ctx: VerilogParser.Width_constant_expressionContext)
+    public fun exitWidth_constant_expression(ctx: VerilogParser.Width_constant_expressionContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstPrimaryNumber}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstPrimaryNumber` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstPrimaryNumber(ctx: VerilogParser.ConstPrimaryNumberContext)
+    public fun enterConstPrimaryNumber(ctx: VerilogParser.ConstPrimaryNumberContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstPrimaryNumber}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstPrimaryNumber` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstPrimaryNumber(ctx: VerilogParser.ConstPrimaryNumberContext)
+    public fun exitConstPrimaryNumber(ctx: VerilogParser.ConstPrimaryNumberContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstPrimaryIdentifier}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstPrimaryIdentifier` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstPrimaryIdentifier(ctx: VerilogParser.ConstPrimaryIdentifierContext)
+    public fun enterConstPrimaryIdentifier(ctx: VerilogParser.ConstPrimaryIdentifierContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstPrimaryIdentifier}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstPrimaryIdentifier` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstPrimaryIdentifier(ctx: VerilogParser.ConstPrimaryIdentifierContext)
+    public fun exitConstPrimaryIdentifier(ctx: VerilogParser.ConstPrimaryIdentifierContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstPrimaryConcatenation}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstPrimaryConcatenation` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstPrimaryConcatenation(ctx: VerilogParser.ConstPrimaryConcatenationContext)
+    public fun enterConstPrimaryConcatenation(ctx: VerilogParser.ConstPrimaryConcatenationContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstPrimaryConcatenation}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstPrimaryConcatenation` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstPrimaryConcatenation(ctx: VerilogParser.ConstPrimaryConcatenationContext)
+    public fun exitConstPrimaryConcatenation(ctx: VerilogParser.ConstPrimaryConcatenationContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstPrimaryMultipleConcatenation}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstPrimaryMultipleConcatenation` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstPrimaryMultipleConcatenation(ctx: VerilogParser.ConstPrimaryMultipleConcatenationContext)
+    public fun enterConstPrimaryMultipleConcatenation(ctx: VerilogParser.ConstPrimaryMultipleConcatenationContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstPrimaryMultipleConcatenation}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstPrimaryMultipleConcatenation` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstPrimaryMultipleConcatenation(ctx: VerilogParser.ConstPrimaryMultipleConcatenationContext)
+    public fun exitConstPrimaryMultipleConcatenation(ctx: VerilogParser.ConstPrimaryMultipleConcatenationContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstPrimaryFunctionCall}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstPrimaryFunctionCall` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstPrimaryFunctionCall(ctx: VerilogParser.ConstPrimaryFunctionCallContext)
+    public fun enterConstPrimaryFunctionCall(ctx: VerilogParser.ConstPrimaryFunctionCallContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstPrimaryFunctionCall}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstPrimaryFunctionCall` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstPrimaryFunctionCall(ctx: VerilogParser.ConstPrimaryFunctionCallContext)
+    public fun exitConstPrimaryFunctionCall(ctx: VerilogParser.ConstPrimaryFunctionCallContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstPrimarySystemFunctionCall}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstPrimarySystemFunctionCall` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstPrimarySystemFunctionCall(ctx: VerilogParser.ConstPrimarySystemFunctionCallContext)
+    public fun enterConstPrimarySystemFunctionCall(ctx: VerilogParser.ConstPrimarySystemFunctionCallContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstPrimarySystemFunctionCall}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstPrimarySystemFunctionCall` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstPrimarySystemFunctionCall(ctx: VerilogParser.ConstPrimarySystemFunctionCallContext)
+    public fun exitConstPrimarySystemFunctionCall(ctx: VerilogParser.ConstPrimarySystemFunctionCallContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstPrimaryGroup}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstPrimaryGroup` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstPrimaryGroup(ctx: VerilogParser.ConstPrimaryGroupContext)
+    public fun enterConstPrimaryGroup(ctx: VerilogParser.ConstPrimaryGroupContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstPrimaryGroup}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstPrimaryGroup` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstPrimaryGroup(ctx: VerilogParser.ConstPrimaryGroupContext)
+    public fun exitConstPrimaryGroup(ctx: VerilogParser.ConstPrimaryGroupContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstPrimaryString}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstPrimaryString` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConstPrimaryString(ctx: VerilogParser.ConstPrimaryStringContext)
+    public fun enterConstPrimaryString(ctx: VerilogParser.ConstPrimaryStringContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstPrimaryString}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstPrimaryString` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConstPrimaryString(ctx: VerilogParser.ConstPrimaryStringContext)
+    public fun exitConstPrimaryString(ctx: VerilogParser.ConstPrimaryStringContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_path_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_path_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModule_path_primary(ctx: VerilogParser.Module_path_primaryContext)
+    public fun enterModule_path_primary(ctx: VerilogParser.Module_path_primaryContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_path_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_path_primary].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModule_path_primary(ctx: VerilogParser.Module_path_primaryContext)
+    public fun exitModule_path_primary(ctx: VerilogParser.Module_path_primaryContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.primary].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPrimary(ctx: VerilogParser.PrimaryContext)
+    public fun enterPrimary(ctx: VerilogParser.PrimaryContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.primary].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPrimary(ctx: VerilogParser.PrimaryContext)
+    public fun exitPrimary(ctx: VerilogParser.PrimaryContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#select_}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.select_].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSelect_(ctx: VerilogParser.Select_Context)
+    public fun enterSelect_(ctx: VerilogParser.Select_Context)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#select_}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.select_].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSelect_(ctx: VerilogParser.Select_Context)
+    public fun exitSelect_(ctx: VerilogParser.Select_Context)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#bit_select}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.bit_select].
+     *
+     * @param ctx The parse tree
      */
-    fun enterBit_select(ctx: VerilogParser.Bit_selectContext)
+    public fun enterBit_select(ctx: VerilogParser.Bit_selectContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#bit_select}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.bit_select].
+     *
+     * @param ctx The parse tree
      */
-    fun exitBit_select(ctx: VerilogParser.Bit_selectContext)
+    public fun exitBit_select(ctx: VerilogParser.Bit_selectContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#net_lvalue}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.net_lvalue].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNet_lvalue(ctx: VerilogParser.Net_lvalueContext)
+    public fun enterNet_lvalue(ctx: VerilogParser.Net_lvalueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#net_lvalue}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.net_lvalue].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNet_lvalue(ctx: VerilogParser.Net_lvalueContext)
+    public fun exitNet_lvalue(ctx: VerilogParser.Net_lvalueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#const_select}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.const_select].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConst_select(ctx: VerilogParser.Const_selectContext)
+    public fun enterConst_select(ctx: VerilogParser.Const_selectContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#const_select}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.const_select].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConst_select(ctx: VerilogParser.Const_selectContext)
+    public fun exitConst_select(ctx: VerilogParser.Const_selectContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#const_bit_select}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.const_bit_select].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConst_bit_select(ctx: VerilogParser.Const_bit_selectContext)
+    public fun enterConst_bit_select(ctx: VerilogParser.Const_bit_selectContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#const_bit_select}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.const_bit_select].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConst_bit_select(ctx: VerilogParser.Const_bit_selectContext)
+    public fun exitConst_bit_select(ctx: VerilogParser.Const_bit_selectContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#variable_lvalue}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.variable_lvalue].
+     *
+     * @param ctx The parse tree
      */
-    fun enterVariable_lvalue(ctx: VerilogParser.Variable_lvalueContext)
+    public fun enterVariable_lvalue(ctx: VerilogParser.Variable_lvalueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#variable_lvalue}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.variable_lvalue].
+     *
+     * @param ctx The parse tree
      */
-    fun exitVariable_lvalue(ctx: VerilogParser.Variable_lvalueContext)
+    public fun exitVariable_lvalue(ctx: VerilogParser.Variable_lvalueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#unary_operator}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.unary_operator].
+     *
+     * @param ctx The parse tree
      */
-    fun enterUnary_operator(ctx: VerilogParser.Unary_operatorContext)
+    public fun enterUnary_operator(ctx: VerilogParser.Unary_operatorContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#unary_operator}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.unary_operator].
+     *
+     * @param ctx The parse tree
      */
-    fun exitUnary_operator(ctx: VerilogParser.Unary_operatorContext)
+    public fun exitUnary_operator(ctx: VerilogParser.Unary_operatorContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#unary_module_path_operator}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.unary_module_path_operator].
+     *
+     * @param ctx The parse tree
      */
-    fun enterUnary_module_path_operator(ctx: VerilogParser.Unary_module_path_operatorContext)
+    public fun enterUnary_module_path_operator(ctx: VerilogParser.Unary_module_path_operatorContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#unary_module_path_operator}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.unary_module_path_operator].
+     *
+     * @param ctx The parse tree
      */
-    fun exitUnary_module_path_operator(ctx: VerilogParser.Unary_module_path_operatorContext)
+    public fun exitUnary_module_path_operator(ctx: VerilogParser.Unary_module_path_operatorContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.number].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNumber(ctx: VerilogParser.NumberContext)
+    public fun enterNumber(ctx: VerilogParser.NumberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.number].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNumber(ctx: VerilogParser.NumberContext)
+    public fun exitNumber(ctx: VerilogParser.NumberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#real_number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.real_number].
+     *
+     * @param ctx The parse tree
      */
-    fun enterReal_number(ctx: VerilogParser.Real_numberContext)
+    public fun enterReal_number(ctx: VerilogParser.Real_numberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#real_number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.real_number].
+     *
+     * @param ctx The parse tree
      */
-    fun exitReal_number(ctx: VerilogParser.Real_numberContext)
+    public fun exitReal_number(ctx: VerilogParser.Real_numberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#decimal_number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.decimal_number].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDecimal_number(ctx: VerilogParser.Decimal_numberContext)
+    public fun enterDecimal_number(ctx: VerilogParser.Decimal_numberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#decimal_number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.decimal_number].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDecimal_number(ctx: VerilogParser.Decimal_numberContext)
+    public fun exitDecimal_number(ctx: VerilogParser.Decimal_numberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#binary_number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.binary_number].
+     *
+     * @param ctx The parse tree
      */
-    fun enterBinary_number(ctx: VerilogParser.Binary_numberContext)
+    public fun enterBinary_number(ctx: VerilogParser.Binary_numberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#binary_number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.binary_number].
+     *
+     * @param ctx The parse tree
      */
-    fun exitBinary_number(ctx: VerilogParser.Binary_numberContext)
+    public fun exitBinary_number(ctx: VerilogParser.Binary_numberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#octal_number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.octal_number].
+     *
+     * @param ctx The parse tree
      */
-    fun enterOctal_number(ctx: VerilogParser.Octal_numberContext)
+    public fun enterOctal_number(ctx: VerilogParser.Octal_numberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#octal_number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.octal_number].
+     *
+     * @param ctx The parse tree
      */
-    fun exitOctal_number(ctx: VerilogParser.Octal_numberContext)
+    public fun exitOctal_number(ctx: VerilogParser.Octal_numberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#hex_number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.hex_number].
+     *
+     * @param ctx The parse tree
      */
-    fun enterHex_number(ctx: VerilogParser.Hex_numberContext)
+    public fun enterHex_number(ctx: VerilogParser.Hex_numberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#hex_number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.hex_number].
+     *
+     * @param ctx The parse tree
      */
-    fun exitHex_number(ctx: VerilogParser.Hex_numberContext)
+    public fun exitHex_number(ctx: VerilogParser.Hex_numberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#size}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.size].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSize(ctx: VerilogParser.SizeContext)
+    public fun enterSize(ctx: VerilogParser.SizeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#size}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.size].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSize(ctx: VerilogParser.SizeContext)
+    public fun exitSize(ctx: VerilogParser.SizeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#fixed_point_number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.fixed_point_number].
+     *
+     * @param ctx The parse tree
      */
-    fun enterFixed_point_number(ctx: VerilogParser.Fixed_point_numberContext)
+    public fun enterFixed_point_number(ctx: VerilogParser.Fixed_point_numberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#fixed_point_number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.fixed_point_number].
+     *
+     * @param ctx The parse tree
      */
-    fun exitFixed_point_number(ctx: VerilogParser.Fixed_point_numberContext)
+    public fun exitFixed_point_number(ctx: VerilogParser.Fixed_point_numberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#exponential_number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.exponential_number].
+     *
+     * @param ctx The parse tree
      */
-    fun enterExponential_number(ctx: VerilogParser.Exponential_numberContext)
+    public fun enterExponential_number(ctx: VerilogParser.Exponential_numberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#exponential_number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.exponential_number].
+     *
+     * @param ctx The parse tree
      */
-    fun exitExponential_number(ctx: VerilogParser.Exponential_numberContext)
+    public fun exitExponential_number(ctx: VerilogParser.Exponential_numberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#unsigned_number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.unsigned_number].
+     *
+     * @param ctx The parse tree
      */
-    fun enterUnsigned_number(ctx: VerilogParser.Unsigned_numberContext)
+    public fun enterUnsigned_number(ctx: VerilogParser.Unsigned_numberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#unsigned_number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.unsigned_number].
+     *
+     * @param ctx The parse tree
      */
-    fun exitUnsigned_number(ctx: VerilogParser.Unsigned_numberContext)
+    public fun exitUnsigned_number(ctx: VerilogParser.Unsigned_numberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#decimal_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.decimal_value].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDecimal_value(ctx: VerilogParser.Decimal_valueContext)
+    public fun enterDecimal_value(ctx: VerilogParser.Decimal_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#decimal_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.decimal_value].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDecimal_value(ctx: VerilogParser.Decimal_valueContext)
+    public fun exitDecimal_value(ctx: VerilogParser.Decimal_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#binary_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.binary_value].
+     *
+     * @param ctx The parse tree
      */
-    fun enterBinary_value(ctx: VerilogParser.Binary_valueContext)
+    public fun enterBinary_value(ctx: VerilogParser.Binary_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#binary_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.binary_value].
+     *
+     * @param ctx The parse tree
      */
-    fun exitBinary_value(ctx: VerilogParser.Binary_valueContext)
+    public fun exitBinary_value(ctx: VerilogParser.Binary_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#octal_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.octal_value].
+     *
+     * @param ctx The parse tree
      */
-    fun enterOctal_value(ctx: VerilogParser.Octal_valueContext)
+    public fun enterOctal_value(ctx: VerilogParser.Octal_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#octal_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.octal_value].
+     *
+     * @param ctx The parse tree
      */
-    fun exitOctal_value(ctx: VerilogParser.Octal_valueContext)
+    public fun exitOctal_value(ctx: VerilogParser.Octal_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#hex_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.hex_value].
+     *
+     * @param ctx The parse tree
      */
-    fun enterHex_value(ctx: VerilogParser.Hex_valueContext)
+    public fun enterHex_value(ctx: VerilogParser.Hex_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#hex_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.hex_value].
+     *
+     * @param ctx The parse tree
      */
-    fun exitHex_value(ctx: VerilogParser.Hex_valueContext)
+    public fun exitHex_value(ctx: VerilogParser.Hex_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#decimal_base}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.decimal_base].
+     *
+     * @param ctx The parse tree
      */
-    fun enterDecimal_base(ctx: VerilogParser.Decimal_baseContext)
+    public fun enterDecimal_base(ctx: VerilogParser.Decimal_baseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#decimal_base}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.decimal_base].
+     *
+     * @param ctx The parse tree
      */
-    fun exitDecimal_base(ctx: VerilogParser.Decimal_baseContext)
+    public fun exitDecimal_base(ctx: VerilogParser.Decimal_baseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#binary_base}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.binary_base].
+     *
+     * @param ctx The parse tree
      */
-    fun enterBinary_base(ctx: VerilogParser.Binary_baseContext)
+    public fun enterBinary_base(ctx: VerilogParser.Binary_baseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#binary_base}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.binary_base].
+     *
+     * @param ctx The parse tree
      */
-    fun exitBinary_base(ctx: VerilogParser.Binary_baseContext)
+    public fun exitBinary_base(ctx: VerilogParser.Binary_baseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#octal_base}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.octal_base].
+     *
+     * @param ctx The parse tree
      */
-    fun enterOctal_base(ctx: VerilogParser.Octal_baseContext)
+    public fun enterOctal_base(ctx: VerilogParser.Octal_baseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#octal_base}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.octal_base].
+     *
+     * @param ctx The parse tree
      */
-    fun exitOctal_base(ctx: VerilogParser.Octal_baseContext)
+    public fun exitOctal_base(ctx: VerilogParser.Octal_baseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#hex_base}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.hex_base].
+     *
+     * @param ctx The parse tree
      */
-    fun enterHex_base(ctx: VerilogParser.Hex_baseContext)
+    public fun enterHex_base(ctx: VerilogParser.Hex_baseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#hex_base}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.hex_base].
+     *
+     * @param ctx The parse tree
      */
-    fun exitHex_base(ctx: VerilogParser.Hex_baseContext)
+    public fun exitHex_base(ctx: VerilogParser.Hex_baseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#string_}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.string_].
+     *
+     * @param ctx The parse tree
      */
-    fun enterString_(ctx: VerilogParser.String_Context)
+    public fun enterString_(ctx: VerilogParser.String_Context)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#string_}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.string_].
+     *
+     * @param ctx The parse tree
      */
-    fun exitString_(ctx: VerilogParser.String_Context)
+    public fun exitString_(ctx: VerilogParser.String_Context)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#attribute_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.attribute_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun enterAttribute_instance(ctx: VerilogParser.Attribute_instanceContext)
+    public fun enterAttribute_instance(ctx: VerilogParser.Attribute_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#attribute_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.attribute_instance].
+     *
+     * @param ctx The parse tree
      */
-    fun exitAttribute_instance(ctx: VerilogParser.Attribute_instanceContext)
+    public fun exitAttribute_instance(ctx: VerilogParser.Attribute_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#attr_spec}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.attr_spec].
+     *
+     * @param ctx The parse tree
      */
-    fun enterAttr_spec(ctx: VerilogParser.Attr_specContext)
+    public fun enterAttr_spec(ctx: VerilogParser.Attr_specContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#attr_spec}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.attr_spec].
+     *
+     * @param ctx The parse tree
      */
-    fun exitAttr_spec(ctx: VerilogParser.Attr_specContext)
+    public fun exitAttr_spec(ctx: VerilogParser.Attr_specContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#attr_name}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.attr_name].
+     *
+     * @param ctx The parse tree
      */
-    fun enterAttr_name(ctx: VerilogParser.Attr_nameContext)
+    public fun enterAttr_name(ctx: VerilogParser.Attr_nameContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#attr_name}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.attr_name].
+     *
+     * @param ctx The parse tree
      */
-    fun exitAttr_name(ctx: VerilogParser.Attr_nameContext)
+    public fun exitAttr_name(ctx: VerilogParser.Attr_nameContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#block_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.block_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterBlock_identifier(ctx: VerilogParser.Block_identifierContext)
+    public fun enterBlock_identifier(ctx: VerilogParser.Block_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#block_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.block_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitBlock_identifier(ctx: VerilogParser.Block_identifierContext)
+    public fun exitBlock_identifier(ctx: VerilogParser.Block_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#cell_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.cell_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterCell_identifier(ctx: VerilogParser.Cell_identifierContext)
+    public fun enterCell_identifier(ctx: VerilogParser.Cell_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#cell_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.cell_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitCell_identifier(ctx: VerilogParser.Cell_identifierContext)
+    public fun exitCell_identifier(ctx: VerilogParser.Cell_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#config_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.config_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterConfig_identifier(ctx: VerilogParser.Config_identifierContext)
+    public fun enterConfig_identifier(ctx: VerilogParser.Config_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#config_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.config_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitConfig_identifier(ctx: VerilogParser.Config_identifierContext)
+    public fun exitConfig_identifier(ctx: VerilogParser.Config_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#escaped_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.escaped_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEscaped_identifier(ctx: VerilogParser.Escaped_identifierContext)
+    public fun enterEscaped_identifier(ctx: VerilogParser.Escaped_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#escaped_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.escaped_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEscaped_identifier(ctx: VerilogParser.Escaped_identifierContext)
+    public fun exitEscaped_identifier(ctx: VerilogParser.Escaped_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#event_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.event_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterEvent_identifier(ctx: VerilogParser.Event_identifierContext)
+    public fun enterEvent_identifier(ctx: VerilogParser.Event_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#event_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.event_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitEvent_identifier(ctx: VerilogParser.Event_identifierContext)
+    public fun exitEvent_identifier(ctx: VerilogParser.Event_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#function_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.function_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterFunction_identifier(ctx: VerilogParser.Function_identifierContext)
+    public fun enterFunction_identifier(ctx: VerilogParser.Function_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#function_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.function_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitFunction_identifier(ctx: VerilogParser.Function_identifierContext)
+    public fun exitFunction_identifier(ctx: VerilogParser.Function_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#gate_instance_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.gate_instance_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterGate_instance_identifier(ctx: VerilogParser.Gate_instance_identifierContext)
+    public fun enterGate_instance_identifier(ctx: VerilogParser.Gate_instance_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#gate_instance_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.gate_instance_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitGate_instance_identifier(ctx: VerilogParser.Gate_instance_identifierContext)
+    public fun exitGate_instance_identifier(ctx: VerilogParser.Gate_instance_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#generate_block_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.generate_block_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterGenerate_block_identifier(ctx: VerilogParser.Generate_block_identifierContext)
+    public fun enterGenerate_block_identifier(ctx: VerilogParser.Generate_block_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#generate_block_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.generate_block_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitGenerate_block_identifier(ctx: VerilogParser.Generate_block_identifierContext)
+    public fun exitGenerate_block_identifier(ctx: VerilogParser.Generate_block_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#genvar_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.genvar_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterGenvar_identifier(ctx: VerilogParser.Genvar_identifierContext)
+    public fun enterGenvar_identifier(ctx: VerilogParser.Genvar_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#genvar_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.genvar_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitGenvar_identifier(ctx: VerilogParser.Genvar_identifierContext)
+    public fun exitGenvar_identifier(ctx: VerilogParser.Genvar_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#hierarchical_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.hierarchical_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterHierarchical_identifier(ctx: VerilogParser.Hierarchical_identifierContext)
+    public fun enterHierarchical_identifier(ctx: VerilogParser.Hierarchical_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#hierarchical_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.hierarchical_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitHierarchical_identifier(ctx: VerilogParser.Hierarchical_identifierContext)
+    public fun exitHierarchical_identifier(ctx: VerilogParser.Hierarchical_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#hier_ref}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.hier_ref].
+     *
+     * @param ctx The parse tree
      */
-    fun enterHier_ref(ctx: VerilogParser.Hier_refContext)
+    public fun enterHier_ref(ctx: VerilogParser.Hier_refContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#hier_ref}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.hier_ref].
+     *
+     * @param ctx The parse tree
      */
-    fun exitHier_ref(ctx: VerilogParser.Hier_refContext)
+    public fun exitHier_ref(ctx: VerilogParser.Hier_refContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterIdentifier(ctx: VerilogParser.IdentifierContext)
+    public fun enterIdentifier(ctx: VerilogParser.IdentifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitIdentifier(ctx: VerilogParser.IdentifierContext)
+    public fun exitIdentifier(ctx: VerilogParser.IdentifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#input_port_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.input_port_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterInput_port_identifier(ctx: VerilogParser.Input_port_identifierContext)
+    public fun enterInput_port_identifier(ctx: VerilogParser.Input_port_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#input_port_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.input_port_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitInput_port_identifier(ctx: VerilogParser.Input_port_identifierContext)
+    public fun exitInput_port_identifier(ctx: VerilogParser.Input_port_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#instance_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.instance_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterInstance_identifier(ctx: VerilogParser.Instance_identifierContext)
+    public fun enterInstance_identifier(ctx: VerilogParser.Instance_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#instance_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.instance_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitInstance_identifier(ctx: VerilogParser.Instance_identifierContext)
+    public fun exitInstance_identifier(ctx: VerilogParser.Instance_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#library_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.library_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterLibrary_identifier(ctx: VerilogParser.Library_identifierContext)
+    public fun enterLibrary_identifier(ctx: VerilogParser.Library_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#library_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.library_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitLibrary_identifier(ctx: VerilogParser.Library_identifierContext)
+    public fun exitLibrary_identifier(ctx: VerilogParser.Library_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModule_identifier(ctx: VerilogParser.Module_identifierContext)
+    public fun enterModule_identifier(ctx: VerilogParser.Module_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModule_identifier(ctx: VerilogParser.Module_identifierContext)
+    public fun exitModule_identifier(ctx: VerilogParser.Module_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_instance_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_instance_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterModule_instance_identifier(ctx: VerilogParser.Module_instance_identifierContext)
+    public fun enterModule_instance_identifier(ctx: VerilogParser.Module_instance_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_instance_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_instance_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitModule_instance_identifier(ctx: VerilogParser.Module_instance_identifierContext)
+    public fun exitModule_instance_identifier(ctx: VerilogParser.Module_instance_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#net_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.net_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNet_identifier(ctx: VerilogParser.Net_identifierContext)
+    public fun enterNet_identifier(ctx: VerilogParser.Net_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#net_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.net_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNet_identifier(ctx: VerilogParser.Net_identifierContext)
+    public fun exitNet_identifier(ctx: VerilogParser.Net_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#output_port_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.output_port_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterOutput_port_identifier(ctx: VerilogParser.Output_port_identifierContext)
+    public fun enterOutput_port_identifier(ctx: VerilogParser.Output_port_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#output_port_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.output_port_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitOutput_port_identifier(ctx: VerilogParser.Output_port_identifierContext)
+    public fun exitOutput_port_identifier(ctx: VerilogParser.Output_port_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#parameter_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.parameter_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterParameter_identifier(ctx: VerilogParser.Parameter_identifierContext)
+    public fun enterParameter_identifier(ctx: VerilogParser.Parameter_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#parameter_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.parameter_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitParameter_identifier(ctx: VerilogParser.Parameter_identifierContext)
+    public fun exitParameter_identifier(ctx: VerilogParser.Parameter_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#port_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.port_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPort_identifier(ctx: VerilogParser.Port_identifierContext)
+    public fun enterPort_identifier(ctx: VerilogParser.Port_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#port_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.port_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPort_identifier(ctx: VerilogParser.Port_identifierContext)
+    public fun exitPort_identifier(ctx: VerilogParser.Port_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#real_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.real_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterReal_identifier(ctx: VerilogParser.Real_identifierContext)
+    public fun enterReal_identifier(ctx: VerilogParser.Real_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#real_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.real_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitReal_identifier(ctx: VerilogParser.Real_identifierContext)
+    public fun exitReal_identifier(ctx: VerilogParser.Real_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#simple_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.simple_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSimple_identifier(ctx: VerilogParser.Simple_identifierContext)
+    public fun enterSimple_identifier(ctx: VerilogParser.Simple_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#simple_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.simple_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSimple_identifier(ctx: VerilogParser.Simple_identifierContext)
+    public fun exitSimple_identifier(ctx: VerilogParser.Simple_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#specparam_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.specparam_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSpecparam_identifier(ctx: VerilogParser.Specparam_identifierContext)
+    public fun enterSpecparam_identifier(ctx: VerilogParser.Specparam_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#specparam_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.specparam_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSpecparam_identifier(ctx: VerilogParser.Specparam_identifierContext)
+    public fun exitSpecparam_identifier(ctx: VerilogParser.Specparam_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#system_function_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.system_function_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSystem_function_identifier(ctx: VerilogParser.System_function_identifierContext)
+    public fun enterSystem_function_identifier(ctx: VerilogParser.System_function_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#system_function_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.system_function_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSystem_function_identifier(ctx: VerilogParser.System_function_identifierContext)
+    public fun exitSystem_function_identifier(ctx: VerilogParser.System_function_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#system_task_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.system_task_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSystem_task_identifier(ctx: VerilogParser.System_task_identifierContext)
+    public fun enterSystem_task_identifier(ctx: VerilogParser.System_task_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#system_task_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.system_task_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSystem_task_identifier(ctx: VerilogParser.System_task_identifierContext)
+    public fun exitSystem_task_identifier(ctx: VerilogParser.System_task_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#task_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.task_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTask_identifier(ctx: VerilogParser.Task_identifierContext)
+    public fun enterTask_identifier(ctx: VerilogParser.Task_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#task_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.task_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTask_identifier(ctx: VerilogParser.Task_identifierContext)
+    public fun exitTask_identifier(ctx: VerilogParser.Task_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#terminal_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.terminal_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTerminal_identifier(ctx: VerilogParser.Terminal_identifierContext)
+    public fun enterTerminal_identifier(ctx: VerilogParser.Terminal_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#terminal_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.terminal_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTerminal_identifier(ctx: VerilogParser.Terminal_identifierContext)
+    public fun exitTerminal_identifier(ctx: VerilogParser.Terminal_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#topmodule_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.topmodule_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterTopmodule_identifier(ctx: VerilogParser.Topmodule_identifierContext)
+    public fun enterTopmodule_identifier(ctx: VerilogParser.Topmodule_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#topmodule_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.topmodule_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitTopmodule_identifier(ctx: VerilogParser.Topmodule_identifierContext)
+    public fun exitTopmodule_identifier(ctx: VerilogParser.Topmodule_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterUdp_identifier(ctx: VerilogParser.Udp_identifierContext)
+    public fun enterUdp_identifier(ctx: VerilogParser.Udp_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitUdp_identifier(ctx: VerilogParser.Udp_identifierContext)
+    public fun exitUdp_identifier(ctx: VerilogParser.Udp_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_instance_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_instance_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterUdp_instance_identifier(ctx: VerilogParser.Udp_instance_identifierContext)
+    public fun enterUdp_instance_identifier(ctx: VerilogParser.Udp_instance_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_instance_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_instance_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitUdp_instance_identifier(ctx: VerilogParser.Udp_instance_identifierContext)
+    public fun exitUdp_instance_identifier(ctx: VerilogParser.Udp_instance_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#variable_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.variable_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun enterVariable_identifier(ctx: VerilogParser.Variable_identifierContext)
+    public fun enterVariable_identifier(ctx: VerilogParser.Variable_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#variable_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.variable_identifier].
+     *
+     * @param ctx The parse tree
      */
-    fun exitVariable_identifier(ctx: VerilogParser.Variable_identifierContext)
+    public fun exitVariable_identifier(ctx: VerilogParser.Variable_identifierContext)
+
 
     override fun asSuspend(): SuspendVerilogParserListener = object : SuspendVerilogParserListener {
         override suspend fun enterLibrary_text(ctx: VerilogParser.Library_textContext) =
@@ -7383,4947 +8141,5705 @@ interface VerilogParserListener : ParseTreeListener {
 }
 
 /**
- * This interface defines a complete listener for a parse tree produced by
- * {@link VerilogParser}.
+ * This interface defines a complete suspend listener for a parse tree produced by [VerilogParser].
  */
-interface SuspendVerilogParserListener : SuspendParseTreeListener {
+public interface SuspendVerilogParserListener : SuspendParseTreeListener {
     /**
-     * Enter a parse tree produced by {@link VerilogParser#library_text}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.library_text].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterLibrary_text(ctx: VerilogParser.Library_textContext)
+    public suspend fun enterLibrary_text(ctx: VerilogParser.Library_textContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#library_text}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.library_text].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitLibrary_text(ctx: VerilogParser.Library_textContext)
+    public suspend fun exitLibrary_text(ctx: VerilogParser.Library_textContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#library_description}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.library_description].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterLibrary_description(ctx: VerilogParser.Library_descriptionContext)
+    public suspend fun enterLibrary_description(ctx: VerilogParser.Library_descriptionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#library_description}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.library_description].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitLibrary_description(ctx: VerilogParser.Library_descriptionContext)
+    public suspend fun exitLibrary_description(ctx: VerilogParser.Library_descriptionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#library_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.library_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterLibrary_declaration(ctx: VerilogParser.Library_declarationContext)
+    public suspend fun enterLibrary_declaration(ctx: VerilogParser.Library_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#library_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.library_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitLibrary_declaration(ctx: VerilogParser.Library_declarationContext)
+    public suspend fun exitLibrary_declaration(ctx: VerilogParser.Library_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#library_incdir}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.library_incdir].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterLibrary_incdir(ctx: VerilogParser.Library_incdirContext)
+    public suspend fun enterLibrary_incdir(ctx: VerilogParser.Library_incdirContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#library_incdir}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.library_incdir].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitLibrary_incdir(ctx: VerilogParser.Library_incdirContext)
+    public suspend fun exitLibrary_incdir(ctx: VerilogParser.Library_incdirContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#include_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.include_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterInclude_statement(ctx: VerilogParser.Include_statementContext)
+    public suspend fun enterInclude_statement(ctx: VerilogParser.Include_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#include_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.include_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitInclude_statement(ctx: VerilogParser.Include_statementContext)
+    public suspend fun exitInclude_statement(ctx: VerilogParser.Include_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#file_path_spec}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.file_path_spec].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterFile_path_spec(ctx: VerilogParser.File_path_specContext)
+    public suspend fun enterFile_path_spec(ctx: VerilogParser.File_path_specContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#file_path_spec}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.file_path_spec].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitFile_path_spec(ctx: VerilogParser.File_path_specContext)
+    public suspend fun exitFile_path_spec(ctx: VerilogParser.File_path_specContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#source_text}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.source_text].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSource_text(ctx: VerilogParser.Source_textContext)
+    public suspend fun enterSource_text(ctx: VerilogParser.Source_textContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#source_text}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.source_text].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSource_text(ctx: VerilogParser.Source_textContext)
+    public suspend fun exitSource_text(ctx: VerilogParser.Source_textContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#description}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.description].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDescription(ctx: VerilogParser.DescriptionContext)
+    public suspend fun enterDescription(ctx: VerilogParser.DescriptionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#description}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.description].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDescription(ctx: VerilogParser.DescriptionContext)
+    public suspend fun exitDescription(ctx: VerilogParser.DescriptionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModule_declaration(ctx: VerilogParser.Module_declarationContext)
+    public suspend fun enterModule_declaration(ctx: VerilogParser.Module_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModule_declaration(ctx: VerilogParser.Module_declarationContext)
+    public suspend fun exitModule_declaration(ctx: VerilogParser.Module_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_keyword}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_keyword].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModule_keyword(ctx: VerilogParser.Module_keywordContext)
+    public suspend fun enterModule_keyword(ctx: VerilogParser.Module_keywordContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_keyword}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_keyword].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModule_keyword(ctx: VerilogParser.Module_keywordContext)
+    public suspend fun exitModule_keyword(ctx: VerilogParser.Module_keywordContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_parameter_port_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_parameter_port_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModule_parameter_port_list(ctx: VerilogParser.Module_parameter_port_listContext)
+    public suspend fun enterModule_parameter_port_list(ctx: VerilogParser.Module_parameter_port_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_parameter_port_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_parameter_port_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModule_parameter_port_list(ctx: VerilogParser.Module_parameter_port_listContext)
+    public suspend fun exitModule_parameter_port_list(ctx: VerilogParser.Module_parameter_port_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_port_declarations}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_port_declarations].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_port_declarations(ctx: VerilogParser.List_of_port_declarationsContext)
+    public suspend fun enterList_of_port_declarations(ctx: VerilogParser.List_of_port_declarationsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_port_declarations}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_port_declarations].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_port_declarations(ctx: VerilogParser.List_of_port_declarationsContext)
+    public suspend fun exitList_of_port_declarations(ctx: VerilogParser.List_of_port_declarationsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#port}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.port].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPort(ctx: VerilogParser.PortContext)
+    public suspend fun enterPort(ctx: VerilogParser.PortContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#port}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.port].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPort(ctx: VerilogParser.PortContext)
+    public suspend fun exitPort(ctx: VerilogParser.PortContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#port_implicit}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.port_implicit].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPort_implicit(ctx: VerilogParser.Port_implicitContext)
+    public suspend fun enterPort_implicit(ctx: VerilogParser.Port_implicitContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#port_implicit}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.port_implicit].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPort_implicit(ctx: VerilogParser.Port_implicitContext)
+    public suspend fun exitPort_implicit(ctx: VerilogParser.Port_implicitContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#port_explicit}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.port_explicit].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPort_explicit(ctx: VerilogParser.Port_explicitContext)
+    public suspend fun enterPort_explicit(ctx: VerilogParser.Port_explicitContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#port_explicit}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.port_explicit].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPort_explicit(ctx: VerilogParser.Port_explicitContext)
+    public suspend fun exitPort_explicit(ctx: VerilogParser.Port_explicitContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#port_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.port_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPort_expression(ctx: VerilogParser.Port_expressionContext)
+    public suspend fun enterPort_expression(ctx: VerilogParser.Port_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#port_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.port_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPort_expression(ctx: VerilogParser.Port_expressionContext)
+    public suspend fun exitPort_expression(ctx: VerilogParser.Port_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#port_reference}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.port_reference].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPort_reference(ctx: VerilogParser.Port_referenceContext)
+    public suspend fun enterPort_reference(ctx: VerilogParser.Port_referenceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#port_reference}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.port_reference].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPort_reference(ctx: VerilogParser.Port_referenceContext)
+    public suspend fun exitPort_reference(ctx: VerilogParser.Port_referenceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#port_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.port_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPort_declaration(ctx: VerilogParser.Port_declarationContext)
+    public suspend fun enterPort_declaration(ctx: VerilogParser.Port_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#port_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.port_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPort_declaration(ctx: VerilogParser.Port_declarationContext)
+    public suspend fun exitPort_declaration(ctx: VerilogParser.Port_declarationContext)
 
     /**
-     * Enter a parse tree produced by the {@code ModulePort}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ModulePort` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModulePort(ctx: VerilogParser.ModulePortContext)
+    public suspend fun enterModulePort(ctx: VerilogParser.ModulePortContext)
 
     /**
-     * Exit a parse tree produced by the {@code ModulePort}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ModulePort` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModulePort(ctx: VerilogParser.ModulePortContext)
+    public suspend fun exitModulePort(ctx: VerilogParser.ModulePortContext)
 
     /**
-     * Enter a parse tree produced by the {@code ModuleInstanceOrGenerate}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ModuleInstanceOrGenerate` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext)
+    public suspend fun enterModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext)
 
     /**
-     * Exit a parse tree produced by the {@code ModuleInstanceOrGenerate}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ModuleInstanceOrGenerate` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext)
+    public suspend fun exitModuleInstanceOrGenerate(ctx: VerilogParser.ModuleInstanceOrGenerateContext)
 
     /**
-     * Enter a parse tree produced by the {@code ModuleGenerateRegion}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ModuleGenerateRegion` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext)
+    public suspend fun enterModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext)
 
     /**
-     * Exit a parse tree produced by the {@code ModuleGenerateRegion}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ModuleGenerateRegion` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext)
+    public suspend fun exitModuleGenerateRegion(ctx: VerilogParser.ModuleGenerateRegionContext)
 
     /**
-     * Enter a parse tree produced by the {@code ModuleSpecifyBlock}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ModuleSpecifyBlock` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext)
+    public suspend fun enterModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext)
 
     /**
-     * Exit a parse tree produced by the {@code ModuleSpecifyBlock}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ModuleSpecifyBlock` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext)
+    public suspend fun exitModuleSpecifyBlock(ctx: VerilogParser.ModuleSpecifyBlockContext)
 
     /**
-     * Enter a parse tree produced by the {@code ModuleParameter}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ModuleParameter` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModuleParameter(ctx: VerilogParser.ModuleParameterContext)
+    public suspend fun enterModuleParameter(ctx: VerilogParser.ModuleParameterContext)
 
     /**
-     * Exit a parse tree produced by the {@code ModuleParameter}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ModuleParameter` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModuleParameter(ctx: VerilogParser.ModuleParameterContext)
+    public suspend fun exitModuleParameter(ctx: VerilogParser.ModuleParameterContext)
 
     /**
-     * Enter a parse tree produced by the {@code ModuleSpecparam}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ModuleSpecparam` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext)
+    public suspend fun enterModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext)
 
     /**
-     * Exit a parse tree produced by the {@code ModuleSpecparam}
-     * labeled alternative in {@link VerilogParser#module_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ModuleSpecparam` labeled alternative in [VerilogParser.module_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext)
+    public suspend fun exitModuleSpecparam(ctx: VerilogParser.ModuleSpecparamContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_or_generate_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_or_generate_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModule_or_generate_item(ctx: VerilogParser.Module_or_generate_itemContext)
+    public suspend fun enterModule_or_generate_item(ctx: VerilogParser.Module_or_generate_itemContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_or_generate_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_or_generate_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModule_or_generate_item(ctx: VerilogParser.Module_or_generate_itemContext)
+    public suspend fun exitModule_or_generate_item(ctx: VerilogParser.Module_or_generate_itemContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_or_generate_item_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_or_generate_item_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModule_or_generate_item_declaration(ctx: VerilogParser.Module_or_generate_item_declarationContext)
+    public suspend fun enterModule_or_generate_item_declaration(ctx: VerilogParser.Module_or_generate_item_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_or_generate_item_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_or_generate_item_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModule_or_generate_item_declaration(ctx: VerilogParser.Module_or_generate_item_declarationContext)
+    public suspend fun exitModule_or_generate_item_declaration(ctx: VerilogParser.Module_or_generate_item_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#parameter_override}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.parameter_override].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterParameter_override(ctx: VerilogParser.Parameter_overrideContext)
+    public suspend fun enterParameter_override(ctx: VerilogParser.Parameter_overrideContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#parameter_override}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.parameter_override].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitParameter_override(ctx: VerilogParser.Parameter_overrideContext)
+    public suspend fun exitParameter_override(ctx: VerilogParser.Parameter_overrideContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#config_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.config_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConfig_declaration(ctx: VerilogParser.Config_declarationContext)
+    public suspend fun enterConfig_declaration(ctx: VerilogParser.Config_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#config_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.config_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConfig_declaration(ctx: VerilogParser.Config_declarationContext)
+    public suspend fun exitConfig_declaration(ctx: VerilogParser.Config_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#design_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.design_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDesign_statement(ctx: VerilogParser.Design_statementContext)
+    public suspend fun enterDesign_statement(ctx: VerilogParser.Design_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#design_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.design_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDesign_statement(ctx: VerilogParser.Design_statementContext)
+    public suspend fun exitDesign_statement(ctx: VerilogParser.Design_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#design_statement_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.design_statement_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDesign_statement_item(ctx: VerilogParser.Design_statement_itemContext)
+    public suspend fun enterDesign_statement_item(ctx: VerilogParser.Design_statement_itemContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#design_statement_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.design_statement_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDesign_statement_item(ctx: VerilogParser.Design_statement_itemContext)
+    public suspend fun exitDesign_statement_item(ctx: VerilogParser.Design_statement_itemContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#config_rule_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.config_rule_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConfig_rule_statement(ctx: VerilogParser.Config_rule_statementContext)
+    public suspend fun enterConfig_rule_statement(ctx: VerilogParser.Config_rule_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#config_rule_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.config_rule_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConfig_rule_statement(ctx: VerilogParser.Config_rule_statementContext)
+    public suspend fun exitConfig_rule_statement(ctx: VerilogParser.Config_rule_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#default_clause}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.default_clause].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDefault_clause(ctx: VerilogParser.Default_clauseContext)
+    public suspend fun enterDefault_clause(ctx: VerilogParser.Default_clauseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#default_clause}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.default_clause].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDefault_clause(ctx: VerilogParser.Default_clauseContext)
+    public suspend fun exitDefault_clause(ctx: VerilogParser.Default_clauseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#inst_clause}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.inst_clause].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterInst_clause(ctx: VerilogParser.Inst_clauseContext)
+    public suspend fun enterInst_clause(ctx: VerilogParser.Inst_clauseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#inst_clause}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.inst_clause].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitInst_clause(ctx: VerilogParser.Inst_clauseContext)
+    public suspend fun exitInst_clause(ctx: VerilogParser.Inst_clauseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#inst_name}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.inst_name].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterInst_name(ctx: VerilogParser.Inst_nameContext)
+    public suspend fun enterInst_name(ctx: VerilogParser.Inst_nameContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#inst_name}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.inst_name].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitInst_name(ctx: VerilogParser.Inst_nameContext)
+    public suspend fun exitInst_name(ctx: VerilogParser.Inst_nameContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#cell_clause}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.cell_clause].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterCell_clause(ctx: VerilogParser.Cell_clauseContext)
+    public suspend fun enterCell_clause(ctx: VerilogParser.Cell_clauseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#cell_clause}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.cell_clause].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitCell_clause(ctx: VerilogParser.Cell_clauseContext)
+    public suspend fun exitCell_clause(ctx: VerilogParser.Cell_clauseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#liblist_clause}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.liblist_clause].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterLiblist_clause(ctx: VerilogParser.Liblist_clauseContext)
+    public suspend fun enterLiblist_clause(ctx: VerilogParser.Liblist_clauseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#liblist_clause}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.liblist_clause].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitLiblist_clause(ctx: VerilogParser.Liblist_clauseContext)
+    public suspend fun exitLiblist_clause(ctx: VerilogParser.Liblist_clauseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#use_clause}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.use_clause].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterUse_clause(ctx: VerilogParser.Use_clauseContext)
+    public suspend fun enterUse_clause(ctx: VerilogParser.Use_clauseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#use_clause}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.use_clause].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitUse_clause(ctx: VerilogParser.Use_clauseContext)
+    public suspend fun exitUse_clause(ctx: VerilogParser.Use_clauseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#local_parameter_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.local_parameter_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterLocal_parameter_declaration(ctx: VerilogParser.Local_parameter_declarationContext)
+    public suspend fun enterLocal_parameter_declaration(ctx: VerilogParser.Local_parameter_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#local_parameter_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.local_parameter_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitLocal_parameter_declaration(ctx: VerilogParser.Local_parameter_declarationContext)
+    public suspend fun exitLocal_parameter_declaration(ctx: VerilogParser.Local_parameter_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#parameter_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.parameter_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterParameter_declaration(ctx: VerilogParser.Parameter_declarationContext)
+    public suspend fun enterParameter_declaration(ctx: VerilogParser.Parameter_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#parameter_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.parameter_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitParameter_declaration(ctx: VerilogParser.Parameter_declarationContext)
+    public suspend fun exitParameter_declaration(ctx: VerilogParser.Parameter_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#specparam_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.specparam_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSpecparam_declaration(ctx: VerilogParser.Specparam_declarationContext)
+    public suspend fun enterSpecparam_declaration(ctx: VerilogParser.Specparam_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#specparam_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.specparam_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSpecparam_declaration(ctx: VerilogParser.Specparam_declarationContext)
+    public suspend fun exitSpecparam_declaration(ctx: VerilogParser.Specparam_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#parameter_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.parameter_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterParameter_type(ctx: VerilogParser.Parameter_typeContext)
+    public suspend fun enterParameter_type(ctx: VerilogParser.Parameter_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#parameter_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.parameter_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitParameter_type(ctx: VerilogParser.Parameter_typeContext)
+    public suspend fun exitParameter_type(ctx: VerilogParser.Parameter_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#inout_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.inout_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterInout_declaration(ctx: VerilogParser.Inout_declarationContext)
+    public suspend fun enterInout_declaration(ctx: VerilogParser.Inout_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#inout_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.inout_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitInout_declaration(ctx: VerilogParser.Inout_declarationContext)
+    public suspend fun exitInout_declaration(ctx: VerilogParser.Inout_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#input_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.input_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterInput_declaration(ctx: VerilogParser.Input_declarationContext)
+    public suspend fun enterInput_declaration(ctx: VerilogParser.Input_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#input_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.input_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitInput_declaration(ctx: VerilogParser.Input_declarationContext)
+    public suspend fun exitInput_declaration(ctx: VerilogParser.Input_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#output_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.output_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterOutput_declaration(ctx: VerilogParser.Output_declarationContext)
+    public suspend fun enterOutput_declaration(ctx: VerilogParser.Output_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#output_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.output_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitOutput_declaration(ctx: VerilogParser.Output_declarationContext)
+    public suspend fun exitOutput_declaration(ctx: VerilogParser.Output_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#event_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.event_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEvent_declaration(ctx: VerilogParser.Event_declarationContext)
+    public suspend fun enterEvent_declaration(ctx: VerilogParser.Event_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#event_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.event_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEvent_declaration(ctx: VerilogParser.Event_declarationContext)
+    public suspend fun exitEvent_declaration(ctx: VerilogParser.Event_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#integer_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.integer_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterInteger_declaration(ctx: VerilogParser.Integer_declarationContext)
+    public suspend fun enterInteger_declaration(ctx: VerilogParser.Integer_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#integer_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.integer_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitInteger_declaration(ctx: VerilogParser.Integer_declarationContext)
+    public suspend fun exitInteger_declaration(ctx: VerilogParser.Integer_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#net_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.net_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNet_declaration(ctx: VerilogParser.Net_declarationContext)
+    public suspend fun enterNet_declaration(ctx: VerilogParser.Net_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#net_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.net_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNet_declaration(ctx: VerilogParser.Net_declarationContext)
+    public suspend fun exitNet_declaration(ctx: VerilogParser.Net_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#real_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.real_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterReal_declaration(ctx: VerilogParser.Real_declarationContext)
+    public suspend fun enterReal_declaration(ctx: VerilogParser.Real_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#real_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.real_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitReal_declaration(ctx: VerilogParser.Real_declarationContext)
+    public suspend fun exitReal_declaration(ctx: VerilogParser.Real_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#realtime_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.realtime_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterRealtime_declaration(ctx: VerilogParser.Realtime_declarationContext)
+    public suspend fun enterRealtime_declaration(ctx: VerilogParser.Realtime_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#realtime_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.realtime_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitRealtime_declaration(ctx: VerilogParser.Realtime_declarationContext)
+    public suspend fun exitRealtime_declaration(ctx: VerilogParser.Realtime_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#reg_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.reg_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterReg_declaration(ctx: VerilogParser.Reg_declarationContext)
+    public suspend fun enterReg_declaration(ctx: VerilogParser.Reg_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#reg_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.reg_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitReg_declaration(ctx: VerilogParser.Reg_declarationContext)
+    public suspend fun exitReg_declaration(ctx: VerilogParser.Reg_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#time_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.time_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTime_declaration(ctx: VerilogParser.Time_declarationContext)
+    public suspend fun enterTime_declaration(ctx: VerilogParser.Time_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#time_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.time_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTime_declaration(ctx: VerilogParser.Time_declarationContext)
+    public suspend fun exitTime_declaration(ctx: VerilogParser.Time_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#net_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.net_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNet_type(ctx: VerilogParser.Net_typeContext)
+    public suspend fun enterNet_type(ctx: VerilogParser.Net_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#net_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.net_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNet_type(ctx: VerilogParser.Net_typeContext)
+    public suspend fun exitNet_type(ctx: VerilogParser.Net_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#output_variable_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.output_variable_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterOutput_variable_type(ctx: VerilogParser.Output_variable_typeContext)
+    public suspend fun enterOutput_variable_type(ctx: VerilogParser.Output_variable_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#output_variable_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.output_variable_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitOutput_variable_type(ctx: VerilogParser.Output_variable_typeContext)
+    public suspend fun exitOutput_variable_type(ctx: VerilogParser.Output_variable_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#real_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.real_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterReal_type(ctx: VerilogParser.Real_typeContext)
+    public suspend fun enterReal_type(ctx: VerilogParser.Real_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#real_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.real_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitReal_type(ctx: VerilogParser.Real_typeContext)
+    public suspend fun exitReal_type(ctx: VerilogParser.Real_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#variable_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.variable_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterVariable_type(ctx: VerilogParser.Variable_typeContext)
+    public suspend fun enterVariable_type(ctx: VerilogParser.Variable_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#variable_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.variable_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitVariable_type(ctx: VerilogParser.Variable_typeContext)
+    public suspend fun exitVariable_type(ctx: VerilogParser.Variable_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#drive_strength}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.drive_strength].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDrive_strength(ctx: VerilogParser.Drive_strengthContext)
+    public suspend fun enterDrive_strength(ctx: VerilogParser.Drive_strengthContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#drive_strength}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.drive_strength].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDrive_strength(ctx: VerilogParser.Drive_strengthContext)
+    public suspend fun exitDrive_strength(ctx: VerilogParser.Drive_strengthContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#strength0}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.strength0].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterStrength0(ctx: VerilogParser.Strength0Context)
+    public suspend fun enterStrength0(ctx: VerilogParser.Strength0Context)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#strength0}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.strength0].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitStrength0(ctx: VerilogParser.Strength0Context)
+    public suspend fun exitStrength0(ctx: VerilogParser.Strength0Context)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#strength1}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.strength1].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterStrength1(ctx: VerilogParser.Strength1Context)
+    public suspend fun enterStrength1(ctx: VerilogParser.Strength1Context)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#strength1}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.strength1].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitStrength1(ctx: VerilogParser.Strength1Context)
+    public suspend fun exitStrength1(ctx: VerilogParser.Strength1Context)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#charge_strength}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.charge_strength].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterCharge_strength(ctx: VerilogParser.Charge_strengthContext)
+    public suspend fun enterCharge_strength(ctx: VerilogParser.Charge_strengthContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#charge_strength}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.charge_strength].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitCharge_strength(ctx: VerilogParser.Charge_strengthContext)
+    public suspend fun exitCharge_strength(ctx: VerilogParser.Charge_strengthContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delay3}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delay3].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDelay3(ctx: VerilogParser.Delay3Context)
+    public suspend fun enterDelay3(ctx: VerilogParser.Delay3Context)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delay3}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delay3].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDelay3(ctx: VerilogParser.Delay3Context)
+    public suspend fun exitDelay3(ctx: VerilogParser.Delay3Context)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delay2}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delay2].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDelay2(ctx: VerilogParser.Delay2Context)
+    public suspend fun enterDelay2(ctx: VerilogParser.Delay2Context)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delay2}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delay2].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDelay2(ctx: VerilogParser.Delay2Context)
+    public suspend fun exitDelay2(ctx: VerilogParser.Delay2Context)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delay_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delay_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDelay_value(ctx: VerilogParser.Delay_valueContext)
+    public suspend fun enterDelay_value(ctx: VerilogParser.Delay_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delay_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delay_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDelay_value(ctx: VerilogParser.Delay_valueContext)
+    public suspend fun exitDelay_value(ctx: VerilogParser.Delay_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_defparam_assignments}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_defparam_assignments].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_defparam_assignments(ctx: VerilogParser.List_of_defparam_assignmentsContext)
+    public suspend fun enterList_of_defparam_assignments(ctx: VerilogParser.List_of_defparam_assignmentsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_defparam_assignments}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_defparam_assignments].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_defparam_assignments(ctx: VerilogParser.List_of_defparam_assignmentsContext)
+    public suspend fun exitList_of_defparam_assignments(ctx: VerilogParser.List_of_defparam_assignmentsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_event_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_event_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_event_identifiers(ctx: VerilogParser.List_of_event_identifiersContext)
+    public suspend fun enterList_of_event_identifiers(ctx: VerilogParser.List_of_event_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_event_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_event_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_event_identifiers(ctx: VerilogParser.List_of_event_identifiersContext)
+    public suspend fun exitList_of_event_identifiers(ctx: VerilogParser.List_of_event_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#event_id}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.event_id].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEvent_id(ctx: VerilogParser.Event_idContext)
+    public suspend fun enterEvent_id(ctx: VerilogParser.Event_idContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#event_id}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.event_id].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEvent_id(ctx: VerilogParser.Event_idContext)
+    public suspend fun exitEvent_id(ctx: VerilogParser.Event_idContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_net_decl_assignments}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_net_decl_assignments].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_net_decl_assignments(ctx: VerilogParser.List_of_net_decl_assignmentsContext)
+    public suspend fun enterList_of_net_decl_assignments(ctx: VerilogParser.List_of_net_decl_assignmentsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_net_decl_assignments}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_net_decl_assignments].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_net_decl_assignments(ctx: VerilogParser.List_of_net_decl_assignmentsContext)
+    public suspend fun exitList_of_net_decl_assignments(ctx: VerilogParser.List_of_net_decl_assignmentsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_net_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_net_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_net_identifiers(ctx: VerilogParser.List_of_net_identifiersContext)
+    public suspend fun enterList_of_net_identifiers(ctx: VerilogParser.List_of_net_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_net_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_net_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_net_identifiers(ctx: VerilogParser.List_of_net_identifiersContext)
+    public suspend fun exitList_of_net_identifiers(ctx: VerilogParser.List_of_net_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#net_id}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.net_id].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNet_id(ctx: VerilogParser.Net_idContext)
+    public suspend fun enterNet_id(ctx: VerilogParser.Net_idContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#net_id}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.net_id].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNet_id(ctx: VerilogParser.Net_idContext)
+    public suspend fun exitNet_id(ctx: VerilogParser.Net_idContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_param_assignments}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_param_assignments].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_param_assignments(ctx: VerilogParser.List_of_param_assignmentsContext)
+    public suspend fun enterList_of_param_assignments(ctx: VerilogParser.List_of_param_assignmentsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_param_assignments}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_param_assignments].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_param_assignments(ctx: VerilogParser.List_of_param_assignmentsContext)
+    public suspend fun exitList_of_param_assignments(ctx: VerilogParser.List_of_param_assignmentsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_port_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_port_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_port_identifiers(ctx: VerilogParser.List_of_port_identifiersContext)
+    public suspend fun enterList_of_port_identifiers(ctx: VerilogParser.List_of_port_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_port_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_port_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_port_identifiers(ctx: VerilogParser.List_of_port_identifiersContext)
+    public suspend fun exitList_of_port_identifiers(ctx: VerilogParser.List_of_port_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_real_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_real_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_real_identifiers(ctx: VerilogParser.List_of_real_identifiersContext)
+    public suspend fun enterList_of_real_identifiers(ctx: VerilogParser.List_of_real_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_real_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_real_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_real_identifiers(ctx: VerilogParser.List_of_real_identifiersContext)
+    public suspend fun exitList_of_real_identifiers(ctx: VerilogParser.List_of_real_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_specparam_assignments}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_specparam_assignments].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_specparam_assignments(ctx: VerilogParser.List_of_specparam_assignmentsContext)
+    public suspend fun enterList_of_specparam_assignments(ctx: VerilogParser.List_of_specparam_assignmentsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_specparam_assignments}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_specparam_assignments].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_specparam_assignments(ctx: VerilogParser.List_of_specparam_assignmentsContext)
+    public suspend fun exitList_of_specparam_assignments(ctx: VerilogParser.List_of_specparam_assignmentsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_variable_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_variable_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_variable_identifiers(ctx: VerilogParser.List_of_variable_identifiersContext)
+    public suspend fun enterList_of_variable_identifiers(ctx: VerilogParser.List_of_variable_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_variable_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_variable_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_variable_identifiers(ctx: VerilogParser.List_of_variable_identifiersContext)
+    public suspend fun exitList_of_variable_identifiers(ctx: VerilogParser.List_of_variable_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_variable_port_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_variable_port_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_variable_port_identifiers(ctx: VerilogParser.List_of_variable_port_identifiersContext)
+    public suspend fun enterList_of_variable_port_identifiers(ctx: VerilogParser.List_of_variable_port_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_variable_port_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_variable_port_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_variable_port_identifiers(ctx: VerilogParser.List_of_variable_port_identifiersContext)
+    public suspend fun exitList_of_variable_port_identifiers(ctx: VerilogParser.List_of_variable_port_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#var_port_id}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.var_port_id].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterVar_port_id(ctx: VerilogParser.Var_port_idContext)
+    public suspend fun enterVar_port_id(ctx: VerilogParser.Var_port_idContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#var_port_id}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.var_port_id].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitVar_port_id(ctx: VerilogParser.Var_port_idContext)
+    public suspend fun exitVar_port_id(ctx: VerilogParser.Var_port_idContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#defparam_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.defparam_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDefparam_assignment(ctx: VerilogParser.Defparam_assignmentContext)
+    public suspend fun enterDefparam_assignment(ctx: VerilogParser.Defparam_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#defparam_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.defparam_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDefparam_assignment(ctx: VerilogParser.Defparam_assignmentContext)
+    public suspend fun exitDefparam_assignment(ctx: VerilogParser.Defparam_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#net_decl_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.net_decl_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNet_decl_assignment(ctx: VerilogParser.Net_decl_assignmentContext)
+    public suspend fun enterNet_decl_assignment(ctx: VerilogParser.Net_decl_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#net_decl_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.net_decl_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNet_decl_assignment(ctx: VerilogParser.Net_decl_assignmentContext)
+    public suspend fun exitNet_decl_assignment(ctx: VerilogParser.Net_decl_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#param_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.param_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterParam_assignment(ctx: VerilogParser.Param_assignmentContext)
+    public suspend fun enterParam_assignment(ctx: VerilogParser.Param_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#param_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.param_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitParam_assignment(ctx: VerilogParser.Param_assignmentContext)
+    public suspend fun exitParam_assignment(ctx: VerilogParser.Param_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#specparam_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.specparam_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSpecparam_assignment(ctx: VerilogParser.Specparam_assignmentContext)
+    public suspend fun enterSpecparam_assignment(ctx: VerilogParser.Specparam_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#specparam_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.specparam_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSpecparam_assignment(ctx: VerilogParser.Specparam_assignmentContext)
+    public suspend fun exitSpecparam_assignment(ctx: VerilogParser.Specparam_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pulse_control_specparam}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pulse_control_specparam].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPulse_control_specparam(ctx: VerilogParser.Pulse_control_specparamContext)
+    public suspend fun enterPulse_control_specparam(ctx: VerilogParser.Pulse_control_specparamContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pulse_control_specparam}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pulse_control_specparam].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPulse_control_specparam(ctx: VerilogParser.Pulse_control_specparamContext)
+    public suspend fun exitPulse_control_specparam(ctx: VerilogParser.Pulse_control_specparamContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#error_limit_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.error_limit_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterError_limit_value(ctx: VerilogParser.Error_limit_valueContext)
+    public suspend fun enterError_limit_value(ctx: VerilogParser.Error_limit_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#error_limit_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.error_limit_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitError_limit_value(ctx: VerilogParser.Error_limit_valueContext)
+    public suspend fun exitError_limit_value(ctx: VerilogParser.Error_limit_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#reject_limit_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.reject_limit_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterReject_limit_value(ctx: VerilogParser.Reject_limit_valueContext)
+    public suspend fun enterReject_limit_value(ctx: VerilogParser.Reject_limit_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#reject_limit_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.reject_limit_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitReject_limit_value(ctx: VerilogParser.Reject_limit_valueContext)
+    public suspend fun exitReject_limit_value(ctx: VerilogParser.Reject_limit_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#limit_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.limit_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterLimit_value(ctx: VerilogParser.Limit_valueContext)
+    public suspend fun enterLimit_value(ctx: VerilogParser.Limit_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#limit_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.limit_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitLimit_value(ctx: VerilogParser.Limit_valueContext)
+    public suspend fun exitLimit_value(ctx: VerilogParser.Limit_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#dimension}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.dimension].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDimension(ctx: VerilogParser.DimensionContext)
+    public suspend fun enterDimension(ctx: VerilogParser.DimensionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#dimension}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.dimension].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDimension(ctx: VerilogParser.DimensionContext)
+    public suspend fun exitDimension(ctx: VerilogParser.DimensionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#range_}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.range_].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterRange_(ctx: VerilogParser.Range_Context)
+    public suspend fun enterRange_(ctx: VerilogParser.Range_Context)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#range_}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.range_].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitRange_(ctx: VerilogParser.Range_Context)
+    public suspend fun exitRange_(ctx: VerilogParser.Range_Context)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#function_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.function_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterFunction_declaration(ctx: VerilogParser.Function_declarationContext)
+    public suspend fun enterFunction_declaration(ctx: VerilogParser.Function_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#function_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.function_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitFunction_declaration(ctx: VerilogParser.Function_declarationContext)
+    public suspend fun exitFunction_declaration(ctx: VerilogParser.Function_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#function_item_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.function_item_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterFunction_item_declaration(ctx: VerilogParser.Function_item_declarationContext)
+    public suspend fun enterFunction_item_declaration(ctx: VerilogParser.Function_item_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#function_item_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.function_item_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitFunction_item_declaration(ctx: VerilogParser.Function_item_declarationContext)
+    public suspend fun exitFunction_item_declaration(ctx: VerilogParser.Function_item_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#function_port_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.function_port_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterFunction_port_list(ctx: VerilogParser.Function_port_listContext)
+    public suspend fun enterFunction_port_list(ctx: VerilogParser.Function_port_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#function_port_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.function_port_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitFunction_port_list(ctx: VerilogParser.Function_port_listContext)
+    public suspend fun exitFunction_port_list(ctx: VerilogParser.Function_port_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#func_port_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.func_port_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterFunc_port_item(ctx: VerilogParser.Func_port_itemContext)
+    public suspend fun enterFunc_port_item(ctx: VerilogParser.Func_port_itemContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#func_port_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.func_port_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitFunc_port_item(ctx: VerilogParser.Func_port_itemContext)
+    public suspend fun exitFunc_port_item(ctx: VerilogParser.Func_port_itemContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#function_range_or_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.function_range_or_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterFunction_range_or_type(ctx: VerilogParser.Function_range_or_typeContext)
+    public suspend fun enterFunction_range_or_type(ctx: VerilogParser.Function_range_or_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#function_range_or_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.function_range_or_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitFunction_range_or_type(ctx: VerilogParser.Function_range_or_typeContext)
+    public suspend fun exitFunction_range_or_type(ctx: VerilogParser.Function_range_or_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#task_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.task_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTask_declaration(ctx: VerilogParser.Task_declarationContext)
+    public suspend fun enterTask_declaration(ctx: VerilogParser.Task_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#task_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.task_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTask_declaration(ctx: VerilogParser.Task_declarationContext)
+    public suspend fun exitTask_declaration(ctx: VerilogParser.Task_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#task_item_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.task_item_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTask_item_declaration(ctx: VerilogParser.Task_item_declarationContext)
+    public suspend fun enterTask_item_declaration(ctx: VerilogParser.Task_item_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#task_item_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.task_item_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTask_item_declaration(ctx: VerilogParser.Task_item_declarationContext)
+    public suspend fun exitTask_item_declaration(ctx: VerilogParser.Task_item_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#task_port_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.task_port_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTask_port_list(ctx: VerilogParser.Task_port_listContext)
+    public suspend fun enterTask_port_list(ctx: VerilogParser.Task_port_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#task_port_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.task_port_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTask_port_list(ctx: VerilogParser.Task_port_listContext)
+    public suspend fun exitTask_port_list(ctx: VerilogParser.Task_port_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#task_port_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.task_port_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTask_port_item(ctx: VerilogParser.Task_port_itemContext)
+    public suspend fun enterTask_port_item(ctx: VerilogParser.Task_port_itemContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#task_port_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.task_port_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTask_port_item(ctx: VerilogParser.Task_port_itemContext)
+    public suspend fun exitTask_port_item(ctx: VerilogParser.Task_port_itemContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tf_input_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tf_input_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTf_input_declaration(ctx: VerilogParser.Tf_input_declarationContext)
+    public suspend fun enterTf_input_declaration(ctx: VerilogParser.Tf_input_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tf_input_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tf_input_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTf_input_declaration(ctx: VerilogParser.Tf_input_declarationContext)
+    public suspend fun exitTf_input_declaration(ctx: VerilogParser.Tf_input_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tf_output_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tf_output_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTf_output_declaration(ctx: VerilogParser.Tf_output_declarationContext)
+    public suspend fun enterTf_output_declaration(ctx: VerilogParser.Tf_output_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tf_output_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tf_output_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTf_output_declaration(ctx: VerilogParser.Tf_output_declarationContext)
+    public suspend fun exitTf_output_declaration(ctx: VerilogParser.Tf_output_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tf_inout_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tf_inout_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTf_inout_declaration(ctx: VerilogParser.Tf_inout_declarationContext)
+    public suspend fun enterTf_inout_declaration(ctx: VerilogParser.Tf_inout_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tf_inout_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tf_inout_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTf_inout_declaration(ctx: VerilogParser.Tf_inout_declarationContext)
+    public suspend fun exitTf_inout_declaration(ctx: VerilogParser.Tf_inout_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#task_port_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.task_port_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTask_port_type(ctx: VerilogParser.Task_port_typeContext)
+    public suspend fun enterTask_port_type(ctx: VerilogParser.Task_port_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#task_port_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.task_port_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTask_port_type(ctx: VerilogParser.Task_port_typeContext)
+    public suspend fun exitTask_port_type(ctx: VerilogParser.Task_port_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#block_item_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.block_item_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterBlock_item_declaration(ctx: VerilogParser.Block_item_declarationContext)
+    public suspend fun enterBlock_item_declaration(ctx: VerilogParser.Block_item_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#block_item_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.block_item_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitBlock_item_declaration(ctx: VerilogParser.Block_item_declarationContext)
+    public suspend fun exitBlock_item_declaration(ctx: VerilogParser.Block_item_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_block_variable_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_block_variable_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_block_variable_identifiers(ctx: VerilogParser.List_of_block_variable_identifiersContext)
+    public suspend fun enterList_of_block_variable_identifiers(ctx: VerilogParser.List_of_block_variable_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_block_variable_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_block_variable_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_block_variable_identifiers(ctx: VerilogParser.List_of_block_variable_identifiersContext)
+    public suspend fun exitList_of_block_variable_identifiers(ctx: VerilogParser.List_of_block_variable_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_block_real_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_block_real_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_block_real_identifiers(ctx: VerilogParser.List_of_block_real_identifiersContext)
+    public suspend fun enterList_of_block_real_identifiers(ctx: VerilogParser.List_of_block_real_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_block_real_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_block_real_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_block_real_identifiers(ctx: VerilogParser.List_of_block_real_identifiersContext)
+    public suspend fun exitList_of_block_real_identifiers(ctx: VerilogParser.List_of_block_real_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#block_variable_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.block_variable_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterBlock_variable_type(ctx: VerilogParser.Block_variable_typeContext)
+    public suspend fun enterBlock_variable_type(ctx: VerilogParser.Block_variable_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#block_variable_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.block_variable_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitBlock_variable_type(ctx: VerilogParser.Block_variable_typeContext)
+    public suspend fun exitBlock_variable_type(ctx: VerilogParser.Block_variable_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#block_real_type}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.block_real_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterBlock_real_type(ctx: VerilogParser.Block_real_typeContext)
+    public suspend fun enterBlock_real_type(ctx: VerilogParser.Block_real_typeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#block_real_type}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.block_real_type].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitBlock_real_type(ctx: VerilogParser.Block_real_typeContext)
+    public suspend fun exitBlock_real_type(ctx: VerilogParser.Block_real_typeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#gate_instantiation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.gate_instantiation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterGate_instantiation(ctx: VerilogParser.Gate_instantiationContext)
+    public suspend fun enterGate_instantiation(ctx: VerilogParser.Gate_instantiationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#gate_instantiation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.gate_instantiation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitGate_instantiation(ctx: VerilogParser.Gate_instantiationContext)
+    public suspend fun exitGate_instantiation(ctx: VerilogParser.Gate_instantiationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#cmos_switch_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.cmos_switch_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterCmos_switch_instance(ctx: VerilogParser.Cmos_switch_instanceContext)
+    public suspend fun enterCmos_switch_instance(ctx: VerilogParser.Cmos_switch_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#cmos_switch_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.cmos_switch_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitCmos_switch_instance(ctx: VerilogParser.Cmos_switch_instanceContext)
+    public suspend fun exitCmos_switch_instance(ctx: VerilogParser.Cmos_switch_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#enable_gate_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.enable_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEnable_gate_instance(ctx: VerilogParser.Enable_gate_instanceContext)
+    public suspend fun enterEnable_gate_instance(ctx: VerilogParser.Enable_gate_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#enable_gate_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.enable_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEnable_gate_instance(ctx: VerilogParser.Enable_gate_instanceContext)
+    public suspend fun exitEnable_gate_instance(ctx: VerilogParser.Enable_gate_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#mos_switch_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.mos_switch_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterMos_switch_instance(ctx: VerilogParser.Mos_switch_instanceContext)
+    public suspend fun enterMos_switch_instance(ctx: VerilogParser.Mos_switch_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#mos_switch_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.mos_switch_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitMos_switch_instance(ctx: VerilogParser.Mos_switch_instanceContext)
+    public suspend fun exitMos_switch_instance(ctx: VerilogParser.Mos_switch_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#n_input_gate_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.n_input_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterN_input_gate_instance(ctx: VerilogParser.N_input_gate_instanceContext)
+    public suspend fun enterN_input_gate_instance(ctx: VerilogParser.N_input_gate_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#n_input_gate_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.n_input_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitN_input_gate_instance(ctx: VerilogParser.N_input_gate_instanceContext)
+    public suspend fun exitN_input_gate_instance(ctx: VerilogParser.N_input_gate_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#n_output_gate_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.n_output_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterN_output_gate_instance(ctx: VerilogParser.N_output_gate_instanceContext)
+    public suspend fun enterN_output_gate_instance(ctx: VerilogParser.N_output_gate_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#n_output_gate_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.n_output_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitN_output_gate_instance(ctx: VerilogParser.N_output_gate_instanceContext)
+    public suspend fun exitN_output_gate_instance(ctx: VerilogParser.N_output_gate_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pass_switch_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pass_switch_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPass_switch_instance(ctx: VerilogParser.Pass_switch_instanceContext)
+    public suspend fun enterPass_switch_instance(ctx: VerilogParser.Pass_switch_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pass_switch_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pass_switch_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPass_switch_instance(ctx: VerilogParser.Pass_switch_instanceContext)
+    public suspend fun exitPass_switch_instance(ctx: VerilogParser.Pass_switch_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pass_enable_switch_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pass_enable_switch_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPass_enable_switch_instance(ctx: VerilogParser.Pass_enable_switch_instanceContext)
+    public suspend fun enterPass_enable_switch_instance(ctx: VerilogParser.Pass_enable_switch_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pass_enable_switch_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pass_enable_switch_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPass_enable_switch_instance(ctx: VerilogParser.Pass_enable_switch_instanceContext)
+    public suspend fun exitPass_enable_switch_instance(ctx: VerilogParser.Pass_enable_switch_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pull_gate_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pull_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPull_gate_instance(ctx: VerilogParser.Pull_gate_instanceContext)
+    public suspend fun enterPull_gate_instance(ctx: VerilogParser.Pull_gate_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pull_gate_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pull_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPull_gate_instance(ctx: VerilogParser.Pull_gate_instanceContext)
+    public suspend fun exitPull_gate_instance(ctx: VerilogParser.Pull_gate_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#name_of_gate_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.name_of_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterName_of_gate_instance(ctx: VerilogParser.Name_of_gate_instanceContext)
+    public suspend fun enterName_of_gate_instance(ctx: VerilogParser.Name_of_gate_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#name_of_gate_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.name_of_gate_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitName_of_gate_instance(ctx: VerilogParser.Name_of_gate_instanceContext)
+    public suspend fun exitName_of_gate_instance(ctx: VerilogParser.Name_of_gate_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pulldown_strength}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pulldown_strength].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPulldown_strength(ctx: VerilogParser.Pulldown_strengthContext)
+    public suspend fun enterPulldown_strength(ctx: VerilogParser.Pulldown_strengthContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pulldown_strength}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pulldown_strength].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPulldown_strength(ctx: VerilogParser.Pulldown_strengthContext)
+    public suspend fun exitPulldown_strength(ctx: VerilogParser.Pulldown_strengthContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pullup_strength}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pullup_strength].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPullup_strength(ctx: VerilogParser.Pullup_strengthContext)
+    public suspend fun enterPullup_strength(ctx: VerilogParser.Pullup_strengthContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pullup_strength}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pullup_strength].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPullup_strength(ctx: VerilogParser.Pullup_strengthContext)
+    public suspend fun exitPullup_strength(ctx: VerilogParser.Pullup_strengthContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#enable_terminal}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.enable_terminal].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEnable_terminal(ctx: VerilogParser.Enable_terminalContext)
+    public suspend fun enterEnable_terminal(ctx: VerilogParser.Enable_terminalContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#enable_terminal}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.enable_terminal].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEnable_terminal(ctx: VerilogParser.Enable_terminalContext)
+    public suspend fun exitEnable_terminal(ctx: VerilogParser.Enable_terminalContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#inout_terminal}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.inout_terminal].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterInout_terminal(ctx: VerilogParser.Inout_terminalContext)
+    public suspend fun enterInout_terminal(ctx: VerilogParser.Inout_terminalContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#inout_terminal}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.inout_terminal].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitInout_terminal(ctx: VerilogParser.Inout_terminalContext)
+    public suspend fun exitInout_terminal(ctx: VerilogParser.Inout_terminalContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#input_terminal}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.input_terminal].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterInput_terminal(ctx: VerilogParser.Input_terminalContext)
+    public suspend fun enterInput_terminal(ctx: VerilogParser.Input_terminalContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#input_terminal}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.input_terminal].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitInput_terminal(ctx: VerilogParser.Input_terminalContext)
+    public suspend fun exitInput_terminal(ctx: VerilogParser.Input_terminalContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#ncontrol_terminal}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.ncontrol_terminal].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNcontrol_terminal(ctx: VerilogParser.Ncontrol_terminalContext)
+    public suspend fun enterNcontrol_terminal(ctx: VerilogParser.Ncontrol_terminalContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#ncontrol_terminal}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.ncontrol_terminal].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNcontrol_terminal(ctx: VerilogParser.Ncontrol_terminalContext)
+    public suspend fun exitNcontrol_terminal(ctx: VerilogParser.Ncontrol_terminalContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#output_terminal}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.output_terminal].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterOutput_terminal(ctx: VerilogParser.Output_terminalContext)
+    public suspend fun enterOutput_terminal(ctx: VerilogParser.Output_terminalContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#output_terminal}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.output_terminal].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitOutput_terminal(ctx: VerilogParser.Output_terminalContext)
+    public suspend fun exitOutput_terminal(ctx: VerilogParser.Output_terminalContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pcontrol_terminal}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pcontrol_terminal].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPcontrol_terminal(ctx: VerilogParser.Pcontrol_terminalContext)
+    public suspend fun enterPcontrol_terminal(ctx: VerilogParser.Pcontrol_terminalContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pcontrol_terminal}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pcontrol_terminal].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPcontrol_terminal(ctx: VerilogParser.Pcontrol_terminalContext)
+    public suspend fun exitPcontrol_terminal(ctx: VerilogParser.Pcontrol_terminalContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#cmos_switchtype}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.cmos_switchtype].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterCmos_switchtype(ctx: VerilogParser.Cmos_switchtypeContext)
+    public suspend fun enterCmos_switchtype(ctx: VerilogParser.Cmos_switchtypeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#cmos_switchtype}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.cmos_switchtype].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitCmos_switchtype(ctx: VerilogParser.Cmos_switchtypeContext)
+    public suspend fun exitCmos_switchtype(ctx: VerilogParser.Cmos_switchtypeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#enable_gatetype}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.enable_gatetype].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEnable_gatetype(ctx: VerilogParser.Enable_gatetypeContext)
+    public suspend fun enterEnable_gatetype(ctx: VerilogParser.Enable_gatetypeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#enable_gatetype}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.enable_gatetype].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEnable_gatetype(ctx: VerilogParser.Enable_gatetypeContext)
+    public suspend fun exitEnable_gatetype(ctx: VerilogParser.Enable_gatetypeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#mos_switchtype}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.mos_switchtype].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterMos_switchtype(ctx: VerilogParser.Mos_switchtypeContext)
+    public suspend fun enterMos_switchtype(ctx: VerilogParser.Mos_switchtypeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#mos_switchtype}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.mos_switchtype].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitMos_switchtype(ctx: VerilogParser.Mos_switchtypeContext)
+    public suspend fun exitMos_switchtype(ctx: VerilogParser.Mos_switchtypeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#n_input_gatetype}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.n_input_gatetype].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterN_input_gatetype(ctx: VerilogParser.N_input_gatetypeContext)
+    public suspend fun enterN_input_gatetype(ctx: VerilogParser.N_input_gatetypeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#n_input_gatetype}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.n_input_gatetype].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitN_input_gatetype(ctx: VerilogParser.N_input_gatetypeContext)
+    public suspend fun exitN_input_gatetype(ctx: VerilogParser.N_input_gatetypeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#n_output_gatetype}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.n_output_gatetype].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterN_output_gatetype(ctx: VerilogParser.N_output_gatetypeContext)
+    public suspend fun enterN_output_gatetype(ctx: VerilogParser.N_output_gatetypeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#n_output_gatetype}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.n_output_gatetype].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitN_output_gatetype(ctx: VerilogParser.N_output_gatetypeContext)
+    public suspend fun exitN_output_gatetype(ctx: VerilogParser.N_output_gatetypeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pass_en_switchtype}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pass_en_switchtype].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPass_en_switchtype(ctx: VerilogParser.Pass_en_switchtypeContext)
+    public suspend fun enterPass_en_switchtype(ctx: VerilogParser.Pass_en_switchtypeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pass_en_switchtype}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pass_en_switchtype].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPass_en_switchtype(ctx: VerilogParser.Pass_en_switchtypeContext)
+    public suspend fun exitPass_en_switchtype(ctx: VerilogParser.Pass_en_switchtypeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pass_switchtype}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pass_switchtype].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPass_switchtype(ctx: VerilogParser.Pass_switchtypeContext)
+    public suspend fun enterPass_switchtype(ctx: VerilogParser.Pass_switchtypeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pass_switchtype}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pass_switchtype].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPass_switchtype(ctx: VerilogParser.Pass_switchtypeContext)
+    public suspend fun exitPass_switchtype(ctx: VerilogParser.Pass_switchtypeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_instantiation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_instantiation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModule_instantiation(ctx: VerilogParser.Module_instantiationContext)
+    public suspend fun enterModule_instantiation(ctx: VerilogParser.Module_instantiationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_instantiation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_instantiation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModule_instantiation(ctx: VerilogParser.Module_instantiationContext)
+    public suspend fun exitModule_instantiation(ctx: VerilogParser.Module_instantiationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#parameter_value_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.parameter_value_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterParameter_value_assignment(ctx: VerilogParser.Parameter_value_assignmentContext)
+    public suspend fun enterParameter_value_assignment(ctx: VerilogParser.Parameter_value_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#parameter_value_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.parameter_value_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitParameter_value_assignment(ctx: VerilogParser.Parameter_value_assignmentContext)
+    public suspend fun exitParameter_value_assignment(ctx: VerilogParser.Parameter_value_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_parameter_assignments}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_parameter_assignments].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_parameter_assignments(ctx: VerilogParser.List_of_parameter_assignmentsContext)
+    public suspend fun enterList_of_parameter_assignments(ctx: VerilogParser.List_of_parameter_assignmentsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_parameter_assignments}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_parameter_assignments].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_parameter_assignments(ctx: VerilogParser.List_of_parameter_assignmentsContext)
+    public suspend fun exitList_of_parameter_assignments(ctx: VerilogParser.List_of_parameter_assignmentsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#ordered_parameter_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.ordered_parameter_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterOrdered_parameter_assignment(ctx: VerilogParser.Ordered_parameter_assignmentContext)
+    public suspend fun enterOrdered_parameter_assignment(ctx: VerilogParser.Ordered_parameter_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#ordered_parameter_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.ordered_parameter_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitOrdered_parameter_assignment(ctx: VerilogParser.Ordered_parameter_assignmentContext)
+    public suspend fun exitOrdered_parameter_assignment(ctx: VerilogParser.Ordered_parameter_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#named_parameter_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.named_parameter_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNamed_parameter_assignment(ctx: VerilogParser.Named_parameter_assignmentContext)
+    public suspend fun enterNamed_parameter_assignment(ctx: VerilogParser.Named_parameter_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#named_parameter_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.named_parameter_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNamed_parameter_assignment(ctx: VerilogParser.Named_parameter_assignmentContext)
+    public suspend fun exitNamed_parameter_assignment(ctx: VerilogParser.Named_parameter_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModule_instance(ctx: VerilogParser.Module_instanceContext)
+    public suspend fun enterModule_instance(ctx: VerilogParser.Module_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModule_instance(ctx: VerilogParser.Module_instanceContext)
+    public suspend fun exitModule_instance(ctx: VerilogParser.Module_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#name_of_module_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.name_of_module_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterName_of_module_instance(ctx: VerilogParser.Name_of_module_instanceContext)
+    public suspend fun enterName_of_module_instance(ctx: VerilogParser.Name_of_module_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#name_of_module_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.name_of_module_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitName_of_module_instance(ctx: VerilogParser.Name_of_module_instanceContext)
+    public suspend fun exitName_of_module_instance(ctx: VerilogParser.Name_of_module_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_port_connections}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_port_connections].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_port_connections(ctx: VerilogParser.List_of_port_connectionsContext)
+    public suspend fun enterList_of_port_connections(ctx: VerilogParser.List_of_port_connectionsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_port_connections}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_port_connections].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_port_connections(ctx: VerilogParser.List_of_port_connectionsContext)
+    public suspend fun exitList_of_port_connections(ctx: VerilogParser.List_of_port_connectionsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#ordered_port_connection}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.ordered_port_connection].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterOrdered_port_connection(ctx: VerilogParser.Ordered_port_connectionContext)
+    public suspend fun enterOrdered_port_connection(ctx: VerilogParser.Ordered_port_connectionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#ordered_port_connection}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.ordered_port_connection].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitOrdered_port_connection(ctx: VerilogParser.Ordered_port_connectionContext)
+    public suspend fun exitOrdered_port_connection(ctx: VerilogParser.Ordered_port_connectionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#named_port_connection}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.named_port_connection].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNamed_port_connection(ctx: VerilogParser.Named_port_connectionContext)
+    public suspend fun enterNamed_port_connection(ctx: VerilogParser.Named_port_connectionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#named_port_connection}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.named_port_connection].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNamed_port_connection(ctx: VerilogParser.Named_port_connectionContext)
+    public suspend fun exitNamed_port_connection(ctx: VerilogParser.Named_port_connectionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#generate_region}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.generate_region].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterGenerate_region(ctx: VerilogParser.Generate_regionContext)
+    public suspend fun enterGenerate_region(ctx: VerilogParser.Generate_regionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#generate_region}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.generate_region].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitGenerate_region(ctx: VerilogParser.Generate_regionContext)
+    public suspend fun exitGenerate_region(ctx: VerilogParser.Generate_regionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#genvar_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.genvar_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterGenvar_declaration(ctx: VerilogParser.Genvar_declarationContext)
+    public suspend fun enterGenvar_declaration(ctx: VerilogParser.Genvar_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#genvar_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.genvar_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitGenvar_declaration(ctx: VerilogParser.Genvar_declarationContext)
+    public suspend fun exitGenvar_declaration(ctx: VerilogParser.Genvar_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_genvar_identifiers}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_genvar_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_genvar_identifiers(ctx: VerilogParser.List_of_genvar_identifiersContext)
+    public suspend fun enterList_of_genvar_identifiers(ctx: VerilogParser.List_of_genvar_identifiersContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_genvar_identifiers}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_genvar_identifiers].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_genvar_identifiers(ctx: VerilogParser.List_of_genvar_identifiersContext)
+    public suspend fun exitList_of_genvar_identifiers(ctx: VerilogParser.List_of_genvar_identifiersContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#loop_generate_construct}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.loop_generate_construct].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterLoop_generate_construct(ctx: VerilogParser.Loop_generate_constructContext)
+    public suspend fun enterLoop_generate_construct(ctx: VerilogParser.Loop_generate_constructContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#loop_generate_construct}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.loop_generate_construct].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitLoop_generate_construct(ctx: VerilogParser.Loop_generate_constructContext)
+    public suspend fun exitLoop_generate_construct(ctx: VerilogParser.Loop_generate_constructContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#genvar_initialization}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.genvar_initialization].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterGenvar_initialization(ctx: VerilogParser.Genvar_initializationContext)
+    public suspend fun enterGenvar_initialization(ctx: VerilogParser.Genvar_initializationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#genvar_initialization}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.genvar_initialization].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitGenvar_initialization(ctx: VerilogParser.Genvar_initializationContext)
+    public suspend fun exitGenvar_initialization(ctx: VerilogParser.Genvar_initializationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#genvar_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.genvar_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterGenvar_expression(ctx: VerilogParser.Genvar_expressionContext)
+    public suspend fun enterGenvar_expression(ctx: VerilogParser.Genvar_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#genvar_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.genvar_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitGenvar_expression(ctx: VerilogParser.Genvar_expressionContext)
+    public suspend fun exitGenvar_expression(ctx: VerilogParser.Genvar_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#genvar_iteration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.genvar_iteration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterGenvar_iteration(ctx: VerilogParser.Genvar_iterationContext)
+    public suspend fun enterGenvar_iteration(ctx: VerilogParser.Genvar_iterationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#genvar_iteration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.genvar_iteration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitGenvar_iteration(ctx: VerilogParser.Genvar_iterationContext)
+    public suspend fun exitGenvar_iteration(ctx: VerilogParser.Genvar_iterationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#conditional_generate_construct}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.conditional_generate_construct].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConditional_generate_construct(ctx: VerilogParser.Conditional_generate_constructContext)
+    public suspend fun enterConditional_generate_construct(ctx: VerilogParser.Conditional_generate_constructContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#conditional_generate_construct}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.conditional_generate_construct].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConditional_generate_construct(ctx: VerilogParser.Conditional_generate_constructContext)
+    public suspend fun exitConditional_generate_construct(ctx: VerilogParser.Conditional_generate_constructContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#if_generate_construct}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.if_generate_construct].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterIf_generate_construct(ctx: VerilogParser.If_generate_constructContext)
+    public suspend fun enterIf_generate_construct(ctx: VerilogParser.If_generate_constructContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#if_generate_construct}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.if_generate_construct].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitIf_generate_construct(ctx: VerilogParser.If_generate_constructContext)
+    public suspend fun exitIf_generate_construct(ctx: VerilogParser.If_generate_constructContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#case_generate_construct}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.case_generate_construct].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterCase_generate_construct(ctx: VerilogParser.Case_generate_constructContext)
+    public suspend fun enterCase_generate_construct(ctx: VerilogParser.Case_generate_constructContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#case_generate_construct}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.case_generate_construct].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitCase_generate_construct(ctx: VerilogParser.Case_generate_constructContext)
+    public suspend fun exitCase_generate_construct(ctx: VerilogParser.Case_generate_constructContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#case_generate_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.case_generate_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterCase_generate_item(ctx: VerilogParser.Case_generate_itemContext)
+    public suspend fun enterCase_generate_item(ctx: VerilogParser.Case_generate_itemContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#case_generate_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.case_generate_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitCase_generate_item(ctx: VerilogParser.Case_generate_itemContext)
+    public suspend fun exitCase_generate_item(ctx: VerilogParser.Case_generate_itemContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#generate_block}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.generate_block].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterGenerate_block(ctx: VerilogParser.Generate_blockContext)
+    public suspend fun enterGenerate_block(ctx: VerilogParser.Generate_blockContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#generate_block}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.generate_block].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitGenerate_block(ctx: VerilogParser.Generate_blockContext)
+    public suspend fun exitGenerate_block(ctx: VerilogParser.Generate_blockContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#generate_block_name}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.generate_block_name].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterGenerate_block_name(ctx: VerilogParser.Generate_block_nameContext)
+    public suspend fun enterGenerate_block_name(ctx: VerilogParser.Generate_block_nameContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#generate_block_name}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.generate_block_name].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitGenerate_block_name(ctx: VerilogParser.Generate_block_nameContext)
+    public suspend fun exitGenerate_block_name(ctx: VerilogParser.Generate_block_nameContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#generate_block_or_null}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.generate_block_or_null].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterGenerate_block_or_null(ctx: VerilogParser.Generate_block_or_nullContext)
+    public suspend fun enterGenerate_block_or_null(ctx: VerilogParser.Generate_block_or_nullContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#generate_block_or_null}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.generate_block_or_null].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitGenerate_block_or_null(ctx: VerilogParser.Generate_block_or_nullContext)
+    public suspend fun exitGenerate_block_or_null(ctx: VerilogParser.Generate_block_or_nullContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterUdp_declaration(ctx: VerilogParser.Udp_declarationContext)
+    public suspend fun enterUdp_declaration(ctx: VerilogParser.Udp_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitUdp_declaration(ctx: VerilogParser.Udp_declarationContext)
+    public suspend fun exitUdp_declaration(ctx: VerilogParser.Udp_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_port_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_port_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterUdp_port_list(ctx: VerilogParser.Udp_port_listContext)
+    public suspend fun enterUdp_port_list(ctx: VerilogParser.Udp_port_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_port_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_port_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitUdp_port_list(ctx: VerilogParser.Udp_port_listContext)
+    public suspend fun exitUdp_port_list(ctx: VerilogParser.Udp_port_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_declaration_port_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_declaration_port_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterUdp_declaration_port_list(ctx: VerilogParser.Udp_declaration_port_listContext)
+    public suspend fun enterUdp_declaration_port_list(ctx: VerilogParser.Udp_declaration_port_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_declaration_port_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_declaration_port_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitUdp_declaration_port_list(ctx: VerilogParser.Udp_declaration_port_listContext)
+    public suspend fun exitUdp_declaration_port_list(ctx: VerilogParser.Udp_declaration_port_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_port_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_port_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterUdp_port_declaration(ctx: VerilogParser.Udp_port_declarationContext)
+    public suspend fun enterUdp_port_declaration(ctx: VerilogParser.Udp_port_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_port_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_port_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitUdp_port_declaration(ctx: VerilogParser.Udp_port_declarationContext)
+    public suspend fun exitUdp_port_declaration(ctx: VerilogParser.Udp_port_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_output_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_output_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterUdp_output_declaration(ctx: VerilogParser.Udp_output_declarationContext)
+    public suspend fun enterUdp_output_declaration(ctx: VerilogParser.Udp_output_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_output_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_output_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitUdp_output_declaration(ctx: VerilogParser.Udp_output_declarationContext)
+    public suspend fun exitUdp_output_declaration(ctx: VerilogParser.Udp_output_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_input_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_input_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterUdp_input_declaration(ctx: VerilogParser.Udp_input_declarationContext)
+    public suspend fun enterUdp_input_declaration(ctx: VerilogParser.Udp_input_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_input_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_input_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitUdp_input_declaration(ctx: VerilogParser.Udp_input_declarationContext)
+    public suspend fun exitUdp_input_declaration(ctx: VerilogParser.Udp_input_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_reg_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_reg_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterUdp_reg_declaration(ctx: VerilogParser.Udp_reg_declarationContext)
+    public suspend fun enterUdp_reg_declaration(ctx: VerilogParser.Udp_reg_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_reg_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_reg_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitUdp_reg_declaration(ctx: VerilogParser.Udp_reg_declarationContext)
+    public suspend fun exitUdp_reg_declaration(ctx: VerilogParser.Udp_reg_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_body}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_body].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterUdp_body(ctx: VerilogParser.Udp_bodyContext)
+    public suspend fun enterUdp_body(ctx: VerilogParser.Udp_bodyContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_body}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_body].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitUdp_body(ctx: VerilogParser.Udp_bodyContext)
+    public suspend fun exitUdp_body(ctx: VerilogParser.Udp_bodyContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#combinational_body}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.combinational_body].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterCombinational_body(ctx: VerilogParser.Combinational_bodyContext)
+    public suspend fun enterCombinational_body(ctx: VerilogParser.Combinational_bodyContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#combinational_body}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.combinational_body].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitCombinational_body(ctx: VerilogParser.Combinational_bodyContext)
+    public suspend fun exitCombinational_body(ctx: VerilogParser.Combinational_bodyContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#combinational_entry}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.combinational_entry].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterCombinational_entry(ctx: VerilogParser.Combinational_entryContext)
+    public suspend fun enterCombinational_entry(ctx: VerilogParser.Combinational_entryContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#combinational_entry}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.combinational_entry].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitCombinational_entry(ctx: VerilogParser.Combinational_entryContext)
+    public suspend fun exitCombinational_entry(ctx: VerilogParser.Combinational_entryContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#sequential_body}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.sequential_body].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSequential_body(ctx: VerilogParser.Sequential_bodyContext)
+    public suspend fun enterSequential_body(ctx: VerilogParser.Sequential_bodyContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#sequential_body}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.sequential_body].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSequential_body(ctx: VerilogParser.Sequential_bodyContext)
+    public suspend fun exitSequential_body(ctx: VerilogParser.Sequential_bodyContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_initial_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_initial_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterUdp_initial_statement(ctx: VerilogParser.Udp_initial_statementContext)
+    public suspend fun enterUdp_initial_statement(ctx: VerilogParser.Udp_initial_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_initial_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_initial_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitUdp_initial_statement(ctx: VerilogParser.Udp_initial_statementContext)
+    public suspend fun exitUdp_initial_statement(ctx: VerilogParser.Udp_initial_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#init_val}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.init_val].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterInit_val(ctx: VerilogParser.Init_valContext)
+    public suspend fun enterInit_val(ctx: VerilogParser.Init_valContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#init_val}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.init_val].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitInit_val(ctx: VerilogParser.Init_valContext)
+    public suspend fun exitInit_val(ctx: VerilogParser.Init_valContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#sequential_entry}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.sequential_entry].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSequential_entry(ctx: VerilogParser.Sequential_entryContext)
+    public suspend fun enterSequential_entry(ctx: VerilogParser.Sequential_entryContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#sequential_entry}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.sequential_entry].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSequential_entry(ctx: VerilogParser.Sequential_entryContext)
+    public suspend fun exitSequential_entry(ctx: VerilogParser.Sequential_entryContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#seq_input_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.seq_input_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSeq_input_list(ctx: VerilogParser.Seq_input_listContext)
+    public suspend fun enterSeq_input_list(ctx: VerilogParser.Seq_input_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#seq_input_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.seq_input_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSeq_input_list(ctx: VerilogParser.Seq_input_listContext)
+    public suspend fun exitSeq_input_list(ctx: VerilogParser.Seq_input_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#level_input_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.level_input_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterLevel_input_list(ctx: VerilogParser.Level_input_listContext)
+    public suspend fun enterLevel_input_list(ctx: VerilogParser.Level_input_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#level_input_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.level_input_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitLevel_input_list(ctx: VerilogParser.Level_input_listContext)
+    public suspend fun exitLevel_input_list(ctx: VerilogParser.Level_input_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#edge_input_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.edge_input_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEdge_input_list(ctx: VerilogParser.Edge_input_listContext)
+    public suspend fun enterEdge_input_list(ctx: VerilogParser.Edge_input_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#edge_input_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.edge_input_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEdge_input_list(ctx: VerilogParser.Edge_input_listContext)
+    public suspend fun exitEdge_input_list(ctx: VerilogParser.Edge_input_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#edge_indicator}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.edge_indicator].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEdge_indicator(ctx: VerilogParser.Edge_indicatorContext)
+    public suspend fun enterEdge_indicator(ctx: VerilogParser.Edge_indicatorContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#edge_indicator}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.edge_indicator].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEdge_indicator(ctx: VerilogParser.Edge_indicatorContext)
+    public suspend fun exitEdge_indicator(ctx: VerilogParser.Edge_indicatorContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#current_state}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.current_state].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterCurrent_state(ctx: VerilogParser.Current_stateContext)
+    public suspend fun enterCurrent_state(ctx: VerilogParser.Current_stateContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#current_state}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.current_state].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitCurrent_state(ctx: VerilogParser.Current_stateContext)
+    public suspend fun exitCurrent_state(ctx: VerilogParser.Current_stateContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#next_state}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.next_state].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNext_state(ctx: VerilogParser.Next_stateContext)
+    public suspend fun enterNext_state(ctx: VerilogParser.Next_stateContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#next_state}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.next_state].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNext_state(ctx: VerilogParser.Next_stateContext)
+    public suspend fun exitNext_state(ctx: VerilogParser.Next_stateContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#output_symbol}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.output_symbol].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterOutput_symbol(ctx: VerilogParser.Output_symbolContext)
+    public suspend fun enterOutput_symbol(ctx: VerilogParser.Output_symbolContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#output_symbol}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.output_symbol].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitOutput_symbol(ctx: VerilogParser.Output_symbolContext)
+    public suspend fun exitOutput_symbol(ctx: VerilogParser.Output_symbolContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#level_symbol}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.level_symbol].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterLevel_symbol(ctx: VerilogParser.Level_symbolContext)
+    public suspend fun enterLevel_symbol(ctx: VerilogParser.Level_symbolContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#level_symbol}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.level_symbol].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitLevel_symbol(ctx: VerilogParser.Level_symbolContext)
+    public suspend fun exitLevel_symbol(ctx: VerilogParser.Level_symbolContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#edge_symbol}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.edge_symbol].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEdge_symbol(ctx: VerilogParser.Edge_symbolContext)
+    public suspend fun enterEdge_symbol(ctx: VerilogParser.Edge_symbolContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#edge_symbol}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.edge_symbol].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEdge_symbol(ctx: VerilogParser.Edge_symbolContext)
+    public suspend fun exitEdge_symbol(ctx: VerilogParser.Edge_symbolContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_instantiation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_instantiation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterUdp_instantiation(ctx: VerilogParser.Udp_instantiationContext)
+    public suspend fun enterUdp_instantiation(ctx: VerilogParser.Udp_instantiationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_instantiation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_instantiation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitUdp_instantiation(ctx: VerilogParser.Udp_instantiationContext)
+    public suspend fun exitUdp_instantiation(ctx: VerilogParser.Udp_instantiationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterUdp_instance(ctx: VerilogParser.Udp_instanceContext)
+    public suspend fun enterUdp_instance(ctx: VerilogParser.Udp_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitUdp_instance(ctx: VerilogParser.Udp_instanceContext)
+    public suspend fun exitUdp_instance(ctx: VerilogParser.Udp_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#name_of_udp_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.name_of_udp_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterName_of_udp_instance(ctx: VerilogParser.Name_of_udp_instanceContext)
+    public suspend fun enterName_of_udp_instance(ctx: VerilogParser.Name_of_udp_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#name_of_udp_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.name_of_udp_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitName_of_udp_instance(ctx: VerilogParser.Name_of_udp_instanceContext)
+    public suspend fun exitName_of_udp_instance(ctx: VerilogParser.Name_of_udp_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#continuous_assign}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.continuous_assign].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterContinuous_assign(ctx: VerilogParser.Continuous_assignContext)
+    public suspend fun enterContinuous_assign(ctx: VerilogParser.Continuous_assignContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#continuous_assign}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.continuous_assign].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitContinuous_assign(ctx: VerilogParser.Continuous_assignContext)
+    public suspend fun exitContinuous_assign(ctx: VerilogParser.Continuous_assignContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_net_assignments}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_net_assignments].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_net_assignments(ctx: VerilogParser.List_of_net_assignmentsContext)
+    public suspend fun enterList_of_net_assignments(ctx: VerilogParser.List_of_net_assignmentsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_net_assignments}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_net_assignments].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_net_assignments(ctx: VerilogParser.List_of_net_assignmentsContext)
+    public suspend fun exitList_of_net_assignments(ctx: VerilogParser.List_of_net_assignmentsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#net_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.net_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNet_assignment(ctx: VerilogParser.Net_assignmentContext)
+    public suspend fun enterNet_assignment(ctx: VerilogParser.Net_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#net_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.net_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNet_assignment(ctx: VerilogParser.Net_assignmentContext)
+    public suspend fun exitNet_assignment(ctx: VerilogParser.Net_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#initial_construct}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.initial_construct].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterInitial_construct(ctx: VerilogParser.Initial_constructContext)
+    public suspend fun enterInitial_construct(ctx: VerilogParser.Initial_constructContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#initial_construct}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.initial_construct].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitInitial_construct(ctx: VerilogParser.Initial_constructContext)
+    public suspend fun exitInitial_construct(ctx: VerilogParser.Initial_constructContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#always_construct}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.always_construct].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterAlways_construct(ctx: VerilogParser.Always_constructContext)
+    public suspend fun enterAlways_construct(ctx: VerilogParser.Always_constructContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#always_construct}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.always_construct].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitAlways_construct(ctx: VerilogParser.Always_constructContext)
+    public suspend fun exitAlways_construct(ctx: VerilogParser.Always_constructContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#blocking_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.blocking_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterBlocking_assignment(ctx: VerilogParser.Blocking_assignmentContext)
+    public suspend fun enterBlocking_assignment(ctx: VerilogParser.Blocking_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#blocking_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.blocking_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitBlocking_assignment(ctx: VerilogParser.Blocking_assignmentContext)
+    public suspend fun exitBlocking_assignment(ctx: VerilogParser.Blocking_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#nonblocking_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.nonblocking_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNonblocking_assignment(ctx: VerilogParser.Nonblocking_assignmentContext)
+    public suspend fun enterNonblocking_assignment(ctx: VerilogParser.Nonblocking_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#nonblocking_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.nonblocking_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNonblocking_assignment(ctx: VerilogParser.Nonblocking_assignmentContext)
+    public suspend fun exitNonblocking_assignment(ctx: VerilogParser.Nonblocking_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#procedural_continuous_assignments}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.procedural_continuous_assignments].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterProcedural_continuous_assignments(ctx: VerilogParser.Procedural_continuous_assignmentsContext)
+    public suspend fun enterProcedural_continuous_assignments(ctx: VerilogParser.Procedural_continuous_assignmentsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#procedural_continuous_assignments}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.procedural_continuous_assignments].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitProcedural_continuous_assignments(ctx: VerilogParser.Procedural_continuous_assignmentsContext)
+    public suspend fun exitProcedural_continuous_assignments(ctx: VerilogParser.Procedural_continuous_assignmentsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#variable_assignment}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.variable_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterVariable_assignment(ctx: VerilogParser.Variable_assignmentContext)
+    public suspend fun enterVariable_assignment(ctx: VerilogParser.Variable_assignmentContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#variable_assignment}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.variable_assignment].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitVariable_assignment(ctx: VerilogParser.Variable_assignmentContext)
+    public suspend fun exitVariable_assignment(ctx: VerilogParser.Variable_assignmentContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#par_block}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.par_block].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPar_block(ctx: VerilogParser.Par_blockContext)
+    public suspend fun enterPar_block(ctx: VerilogParser.Par_blockContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#par_block}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.par_block].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPar_block(ctx: VerilogParser.Par_blockContext)
+    public suspend fun exitPar_block(ctx: VerilogParser.Par_blockContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#block_name}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.block_name].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterBlock_name(ctx: VerilogParser.Block_nameContext)
+    public suspend fun enterBlock_name(ctx: VerilogParser.Block_nameContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#block_name}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.block_name].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitBlock_name(ctx: VerilogParser.Block_nameContext)
+    public suspend fun exitBlock_name(ctx: VerilogParser.Block_nameContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#seq_block}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.seq_block].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSeq_block(ctx: VerilogParser.Seq_blockContext)
+    public suspend fun enterSeq_block(ctx: VerilogParser.Seq_blockContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#seq_block}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.seq_block].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSeq_block(ctx: VerilogParser.Seq_blockContext)
+    public suspend fun exitSeq_block(ctx: VerilogParser.Seq_blockContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterStatement(ctx: VerilogParser.StatementContext)
+    public suspend fun enterStatement(ctx: VerilogParser.StatementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitStatement(ctx: VerilogParser.StatementContext)
+    public suspend fun exitStatement(ctx: VerilogParser.StatementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#statement_or_null}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.statement_or_null].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterStatement_or_null(ctx: VerilogParser.Statement_or_nullContext)
+    public suspend fun enterStatement_or_null(ctx: VerilogParser.Statement_or_nullContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#statement_or_null}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.statement_or_null].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitStatement_or_null(ctx: VerilogParser.Statement_or_nullContext)
+    public suspend fun exitStatement_or_null(ctx: VerilogParser.Statement_or_nullContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#function_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.function_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterFunction_statement(ctx: VerilogParser.Function_statementContext)
+    public suspend fun enterFunction_statement(ctx: VerilogParser.Function_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#function_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.function_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitFunction_statement(ctx: VerilogParser.Function_statementContext)
+    public suspend fun exitFunction_statement(ctx: VerilogParser.Function_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delay_control}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delay_control].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDelay_control(ctx: VerilogParser.Delay_controlContext)
+    public suspend fun enterDelay_control(ctx: VerilogParser.Delay_controlContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delay_control}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delay_control].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDelay_control(ctx: VerilogParser.Delay_controlContext)
+    public suspend fun exitDelay_control(ctx: VerilogParser.Delay_controlContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delay_or_event_control}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delay_or_event_control].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDelay_or_event_control(ctx: VerilogParser.Delay_or_event_controlContext)
+    public suspend fun enterDelay_or_event_control(ctx: VerilogParser.Delay_or_event_controlContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delay_or_event_control}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delay_or_event_control].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDelay_or_event_control(ctx: VerilogParser.Delay_or_event_controlContext)
+    public suspend fun exitDelay_or_event_control(ctx: VerilogParser.Delay_or_event_controlContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#disable_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.disable_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDisable_statement(ctx: VerilogParser.Disable_statementContext)
+    public suspend fun enterDisable_statement(ctx: VerilogParser.Disable_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#disable_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.disable_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDisable_statement(ctx: VerilogParser.Disable_statementContext)
+    public suspend fun exitDisable_statement(ctx: VerilogParser.Disable_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#event_control}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.event_control].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEvent_control(ctx: VerilogParser.Event_controlContext)
+    public suspend fun enterEvent_control(ctx: VerilogParser.Event_controlContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#event_control}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.event_control].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEvent_control(ctx: VerilogParser.Event_controlContext)
+    public suspend fun exitEvent_control(ctx: VerilogParser.Event_controlContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#event_trigger}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.event_trigger].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEvent_trigger(ctx: VerilogParser.Event_triggerContext)
+    public suspend fun enterEvent_trigger(ctx: VerilogParser.Event_triggerContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#event_trigger}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.event_trigger].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEvent_trigger(ctx: VerilogParser.Event_triggerContext)
+    public suspend fun exitEvent_trigger(ctx: VerilogParser.Event_triggerContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#event_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.event_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEvent_expression(ctx: VerilogParser.Event_expressionContext)
+    public suspend fun enterEvent_expression(ctx: VerilogParser.Event_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#event_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.event_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEvent_expression(ctx: VerilogParser.Event_expressionContext)
+    public suspend fun exitEvent_expression(ctx: VerilogParser.Event_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#procedural_timing_control}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.procedural_timing_control].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterProcedural_timing_control(ctx: VerilogParser.Procedural_timing_controlContext)
+    public suspend fun enterProcedural_timing_control(ctx: VerilogParser.Procedural_timing_controlContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#procedural_timing_control}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.procedural_timing_control].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitProcedural_timing_control(ctx: VerilogParser.Procedural_timing_controlContext)
+    public suspend fun exitProcedural_timing_control(ctx: VerilogParser.Procedural_timing_controlContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#procedural_timing_control_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.procedural_timing_control_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterProcedural_timing_control_statement(ctx: VerilogParser.Procedural_timing_control_statementContext)
+    public suspend fun enterProcedural_timing_control_statement(ctx: VerilogParser.Procedural_timing_control_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#procedural_timing_control_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.procedural_timing_control_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitProcedural_timing_control_statement(ctx: VerilogParser.Procedural_timing_control_statementContext)
+    public suspend fun exitProcedural_timing_control_statement(ctx: VerilogParser.Procedural_timing_control_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#wait_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.wait_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterWait_statement(ctx: VerilogParser.Wait_statementContext)
+    public suspend fun enterWait_statement(ctx: VerilogParser.Wait_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#wait_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.wait_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitWait_statement(ctx: VerilogParser.Wait_statementContext)
+    public suspend fun exitWait_statement(ctx: VerilogParser.Wait_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#conditional_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.conditional_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConditional_statement(ctx: VerilogParser.Conditional_statementContext)
+    public suspend fun enterConditional_statement(ctx: VerilogParser.Conditional_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#conditional_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.conditional_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConditional_statement(ctx: VerilogParser.Conditional_statementContext)
+    public suspend fun exitConditional_statement(ctx: VerilogParser.Conditional_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#case_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.case_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterCase_statement(ctx: VerilogParser.Case_statementContext)
+    public suspend fun enterCase_statement(ctx: VerilogParser.Case_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#case_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.case_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitCase_statement(ctx: VerilogParser.Case_statementContext)
+    public suspend fun exitCase_statement(ctx: VerilogParser.Case_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#case_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.case_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterCase_item(ctx: VerilogParser.Case_itemContext)
+    public suspend fun enterCase_item(ctx: VerilogParser.Case_itemContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#case_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.case_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitCase_item(ctx: VerilogParser.Case_itemContext)
+    public suspend fun exitCase_item(ctx: VerilogParser.Case_itemContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#loop_statement}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.loop_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterLoop_statement(ctx: VerilogParser.Loop_statementContext)
+    public suspend fun enterLoop_statement(ctx: VerilogParser.Loop_statementContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#loop_statement}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.loop_statement].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitLoop_statement(ctx: VerilogParser.Loop_statementContext)
+    public suspend fun exitLoop_statement(ctx: VerilogParser.Loop_statementContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#system_task_enable}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.system_task_enable].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSystem_task_enable(ctx: VerilogParser.System_task_enableContext)
+    public suspend fun enterSystem_task_enable(ctx: VerilogParser.System_task_enableContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#system_task_enable}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.system_task_enable].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSystem_task_enable(ctx: VerilogParser.System_task_enableContext)
+    public suspend fun exitSystem_task_enable(ctx: VerilogParser.System_task_enableContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#sys_task_en_port_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.sys_task_en_port_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSys_task_en_port_list(ctx: VerilogParser.Sys_task_en_port_listContext)
+    public suspend fun enterSys_task_en_port_list(ctx: VerilogParser.Sys_task_en_port_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#sys_task_en_port_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.sys_task_en_port_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSys_task_en_port_list(ctx: VerilogParser.Sys_task_en_port_listContext)
+    public suspend fun exitSys_task_en_port_list(ctx: VerilogParser.Sys_task_en_port_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#sys_task_en_port_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.sys_task_en_port_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSys_task_en_port_item(ctx: VerilogParser.Sys_task_en_port_itemContext)
+    public suspend fun enterSys_task_en_port_item(ctx: VerilogParser.Sys_task_en_port_itemContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#sys_task_en_port_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.sys_task_en_port_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSys_task_en_port_item(ctx: VerilogParser.Sys_task_en_port_itemContext)
+    public suspend fun exitSys_task_en_port_item(ctx: VerilogParser.Sys_task_en_port_itemContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#task_enable}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.task_enable].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTask_enable(ctx: VerilogParser.Task_enableContext)
+    public suspend fun enterTask_enable(ctx: VerilogParser.Task_enableContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#task_enable}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.task_enable].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTask_enable(ctx: VerilogParser.Task_enableContext)
+    public suspend fun exitTask_enable(ctx: VerilogParser.Task_enableContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#task_en_port_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.task_en_port_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTask_en_port_list(ctx: VerilogParser.Task_en_port_listContext)
+    public suspend fun enterTask_en_port_list(ctx: VerilogParser.Task_en_port_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#task_en_port_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.task_en_port_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTask_en_port_list(ctx: VerilogParser.Task_en_port_listContext)
+    public suspend fun exitTask_en_port_list(ctx: VerilogParser.Task_en_port_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#specify_block}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.specify_block].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSpecify_block(ctx: VerilogParser.Specify_blockContext)
+    public suspend fun enterSpecify_block(ctx: VerilogParser.Specify_blockContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#specify_block}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.specify_block].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSpecify_block(ctx: VerilogParser.Specify_blockContext)
+    public suspend fun exitSpecify_block(ctx: VerilogParser.Specify_blockContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#specify_item}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.specify_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSpecify_item(ctx: VerilogParser.Specify_itemContext)
+    public suspend fun enterSpecify_item(ctx: VerilogParser.Specify_itemContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#specify_item}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.specify_item].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSpecify_item(ctx: VerilogParser.Specify_itemContext)
+    public suspend fun exitSpecify_item(ctx: VerilogParser.Specify_itemContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#pulsestyle_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.pulsestyle_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPulsestyle_declaration(ctx: VerilogParser.Pulsestyle_declarationContext)
+    public suspend fun enterPulsestyle_declaration(ctx: VerilogParser.Pulsestyle_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#pulsestyle_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.pulsestyle_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPulsestyle_declaration(ctx: VerilogParser.Pulsestyle_declarationContext)
+    public suspend fun exitPulsestyle_declaration(ctx: VerilogParser.Pulsestyle_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#showcancelled_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.showcancelled_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterShowcancelled_declaration(ctx: VerilogParser.Showcancelled_declarationContext)
+    public suspend fun enterShowcancelled_declaration(ctx: VerilogParser.Showcancelled_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#showcancelled_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.showcancelled_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitShowcancelled_declaration(ctx: VerilogParser.Showcancelled_declarationContext)
+    public suspend fun exitShowcancelled_declaration(ctx: VerilogParser.Showcancelled_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#path_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.path_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPath_declaration(ctx: VerilogParser.Path_declarationContext)
+    public suspend fun enterPath_declaration(ctx: VerilogParser.Path_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#path_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.path_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPath_declaration(ctx: VerilogParser.Path_declarationContext)
+    public suspend fun exitPath_declaration(ctx: VerilogParser.Path_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#simple_path_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.simple_path_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSimple_path_declaration(ctx: VerilogParser.Simple_path_declarationContext)
+    public suspend fun enterSimple_path_declaration(ctx: VerilogParser.Simple_path_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#simple_path_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.simple_path_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSimple_path_declaration(ctx: VerilogParser.Simple_path_declarationContext)
+    public suspend fun exitSimple_path_declaration(ctx: VerilogParser.Simple_path_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#parallel_path_description}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.parallel_path_description].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterParallel_path_description(ctx: VerilogParser.Parallel_path_descriptionContext)
+    public suspend fun enterParallel_path_description(ctx: VerilogParser.Parallel_path_descriptionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#parallel_path_description}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.parallel_path_description].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitParallel_path_description(ctx: VerilogParser.Parallel_path_descriptionContext)
+    public suspend fun exitParallel_path_description(ctx: VerilogParser.Parallel_path_descriptionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#full_path_description}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.full_path_description].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterFull_path_description(ctx: VerilogParser.Full_path_descriptionContext)
+    public suspend fun enterFull_path_description(ctx: VerilogParser.Full_path_descriptionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#full_path_description}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.full_path_description].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitFull_path_description(ctx: VerilogParser.Full_path_descriptionContext)
+    public suspend fun exitFull_path_description(ctx: VerilogParser.Full_path_descriptionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_path_inputs}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_path_inputs].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_path_inputs(ctx: VerilogParser.List_of_path_inputsContext)
+    public suspend fun enterList_of_path_inputs(ctx: VerilogParser.List_of_path_inputsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_path_inputs}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_path_inputs].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_path_inputs(ctx: VerilogParser.List_of_path_inputsContext)
+    public suspend fun exitList_of_path_inputs(ctx: VerilogParser.List_of_path_inputsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_path_outputs}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_path_outputs].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_path_outputs(ctx: VerilogParser.List_of_path_outputsContext)
+    public suspend fun enterList_of_path_outputs(ctx: VerilogParser.List_of_path_outputsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_path_outputs}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_path_outputs].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_path_outputs(ctx: VerilogParser.List_of_path_outputsContext)
+    public suspend fun exitList_of_path_outputs(ctx: VerilogParser.List_of_path_outputsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#specify_input_terminal_descriptor}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.specify_input_terminal_descriptor].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSpecify_input_terminal_descriptor(ctx: VerilogParser.Specify_input_terminal_descriptorContext)
+    public suspend fun enterSpecify_input_terminal_descriptor(ctx: VerilogParser.Specify_input_terminal_descriptorContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#specify_input_terminal_descriptor}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.specify_input_terminal_descriptor].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSpecify_input_terminal_descriptor(ctx: VerilogParser.Specify_input_terminal_descriptorContext)
+    public suspend fun exitSpecify_input_terminal_descriptor(ctx: VerilogParser.Specify_input_terminal_descriptorContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#specify_output_terminal_descriptor}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.specify_output_terminal_descriptor].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSpecify_output_terminal_descriptor(ctx: VerilogParser.Specify_output_terminal_descriptorContext)
+    public suspend fun enterSpecify_output_terminal_descriptor(ctx: VerilogParser.Specify_output_terminal_descriptorContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#specify_output_terminal_descriptor}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.specify_output_terminal_descriptor].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSpecify_output_terminal_descriptor(ctx: VerilogParser.Specify_output_terminal_descriptorContext)
+    public suspend fun exitSpecify_output_terminal_descriptor(ctx: VerilogParser.Specify_output_terminal_descriptorContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#input_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.input_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterInput_identifier(ctx: VerilogParser.Input_identifierContext)
+    public suspend fun enterInput_identifier(ctx: VerilogParser.Input_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#input_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.input_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitInput_identifier(ctx: VerilogParser.Input_identifierContext)
+    public suspend fun exitInput_identifier(ctx: VerilogParser.Input_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#output_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.output_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterOutput_identifier(ctx: VerilogParser.Output_identifierContext)
+    public suspend fun enterOutput_identifier(ctx: VerilogParser.Output_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#output_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.output_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitOutput_identifier(ctx: VerilogParser.Output_identifierContext)
+    public suspend fun exitOutput_identifier(ctx: VerilogParser.Output_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#path_delay_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.path_delay_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPath_delay_value(ctx: VerilogParser.Path_delay_valueContext)
+    public suspend fun enterPath_delay_value(ctx: VerilogParser.Path_delay_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#path_delay_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.path_delay_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPath_delay_value(ctx: VerilogParser.Path_delay_valueContext)
+    public suspend fun exitPath_delay_value(ctx: VerilogParser.Path_delay_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#list_of_path_delay_expressions}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.list_of_path_delay_expressions].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterList_of_path_delay_expressions(ctx: VerilogParser.List_of_path_delay_expressionsContext)
+    public suspend fun enterList_of_path_delay_expressions(ctx: VerilogParser.List_of_path_delay_expressionsContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#list_of_path_delay_expressions}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.list_of_path_delay_expressions].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitList_of_path_delay_expressions(ctx: VerilogParser.List_of_path_delay_expressionsContext)
+    public suspend fun exitList_of_path_delay_expressions(ctx: VerilogParser.List_of_path_delay_expressionsContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#t_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.t_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterT_path_delay_expression(ctx: VerilogParser.T_path_delay_expressionContext)
+    public suspend fun enterT_path_delay_expression(ctx: VerilogParser.T_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#t_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.t_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitT_path_delay_expression(ctx: VerilogParser.T_path_delay_expressionContext)
+    public suspend fun exitT_path_delay_expression(ctx: VerilogParser.T_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#trise_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.trise_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTrise_path_delay_expression(ctx: VerilogParser.Trise_path_delay_expressionContext)
+    public suspend fun enterTrise_path_delay_expression(ctx: VerilogParser.Trise_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#trise_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.trise_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTrise_path_delay_expression(ctx: VerilogParser.Trise_path_delay_expressionContext)
+    public suspend fun exitTrise_path_delay_expression(ctx: VerilogParser.Trise_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tfall_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tfall_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTfall_path_delay_expression(ctx: VerilogParser.Tfall_path_delay_expressionContext)
+    public suspend fun enterTfall_path_delay_expression(ctx: VerilogParser.Tfall_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tfall_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tfall_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTfall_path_delay_expression(ctx: VerilogParser.Tfall_path_delay_expressionContext)
+    public suspend fun exitTfall_path_delay_expression(ctx: VerilogParser.Tfall_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tz_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tz_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTz_path_delay_expression(ctx: VerilogParser.Tz_path_delay_expressionContext)
+    public suspend fun enterTz_path_delay_expression(ctx: VerilogParser.Tz_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tz_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tz_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTz_path_delay_expression(ctx: VerilogParser.Tz_path_delay_expressionContext)
+    public suspend fun exitTz_path_delay_expression(ctx: VerilogParser.Tz_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#t01_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.t01_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterT01_path_delay_expression(ctx: VerilogParser.T01_path_delay_expressionContext)
+    public suspend fun enterT01_path_delay_expression(ctx: VerilogParser.T01_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#t01_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.t01_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitT01_path_delay_expression(ctx: VerilogParser.T01_path_delay_expressionContext)
+    public suspend fun exitT01_path_delay_expression(ctx: VerilogParser.T01_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#t10_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.t10_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterT10_path_delay_expression(ctx: VerilogParser.T10_path_delay_expressionContext)
+    public suspend fun enterT10_path_delay_expression(ctx: VerilogParser.T10_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#t10_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.t10_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitT10_path_delay_expression(ctx: VerilogParser.T10_path_delay_expressionContext)
+    public suspend fun exitT10_path_delay_expression(ctx: VerilogParser.T10_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#t0z_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.t0z_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterT0z_path_delay_expression(ctx: VerilogParser.T0z_path_delay_expressionContext)
+    public suspend fun enterT0z_path_delay_expression(ctx: VerilogParser.T0z_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#t0z_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.t0z_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitT0z_path_delay_expression(ctx: VerilogParser.T0z_path_delay_expressionContext)
+    public suspend fun exitT0z_path_delay_expression(ctx: VerilogParser.T0z_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tz1_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tz1_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTz1_path_delay_expression(ctx: VerilogParser.Tz1_path_delay_expressionContext)
+    public suspend fun enterTz1_path_delay_expression(ctx: VerilogParser.Tz1_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tz1_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tz1_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTz1_path_delay_expression(ctx: VerilogParser.Tz1_path_delay_expressionContext)
+    public suspend fun exitTz1_path_delay_expression(ctx: VerilogParser.Tz1_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#t1z_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.t1z_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterT1z_path_delay_expression(ctx: VerilogParser.T1z_path_delay_expressionContext)
+    public suspend fun enterT1z_path_delay_expression(ctx: VerilogParser.T1z_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#t1z_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.t1z_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitT1z_path_delay_expression(ctx: VerilogParser.T1z_path_delay_expressionContext)
+    public suspend fun exitT1z_path_delay_expression(ctx: VerilogParser.T1z_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tz0_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tz0_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTz0_path_delay_expression(ctx: VerilogParser.Tz0_path_delay_expressionContext)
+    public suspend fun enterTz0_path_delay_expression(ctx: VerilogParser.Tz0_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tz0_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tz0_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTz0_path_delay_expression(ctx: VerilogParser.Tz0_path_delay_expressionContext)
+    public suspend fun exitTz0_path_delay_expression(ctx: VerilogParser.Tz0_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#t0x_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.t0x_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterT0x_path_delay_expression(ctx: VerilogParser.T0x_path_delay_expressionContext)
+    public suspend fun enterT0x_path_delay_expression(ctx: VerilogParser.T0x_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#t0x_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.t0x_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitT0x_path_delay_expression(ctx: VerilogParser.T0x_path_delay_expressionContext)
+    public suspend fun exitT0x_path_delay_expression(ctx: VerilogParser.T0x_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tx1_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tx1_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTx1_path_delay_expression(ctx: VerilogParser.Tx1_path_delay_expressionContext)
+    public suspend fun enterTx1_path_delay_expression(ctx: VerilogParser.Tx1_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tx1_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tx1_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTx1_path_delay_expression(ctx: VerilogParser.Tx1_path_delay_expressionContext)
+    public suspend fun exitTx1_path_delay_expression(ctx: VerilogParser.Tx1_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#t1x_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.t1x_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterT1x_path_delay_expression(ctx: VerilogParser.T1x_path_delay_expressionContext)
+    public suspend fun enterT1x_path_delay_expression(ctx: VerilogParser.T1x_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#t1x_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.t1x_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitT1x_path_delay_expression(ctx: VerilogParser.T1x_path_delay_expressionContext)
+    public suspend fun exitT1x_path_delay_expression(ctx: VerilogParser.T1x_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tx0_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tx0_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTx0_path_delay_expression(ctx: VerilogParser.Tx0_path_delay_expressionContext)
+    public suspend fun enterTx0_path_delay_expression(ctx: VerilogParser.Tx0_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tx0_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tx0_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTx0_path_delay_expression(ctx: VerilogParser.Tx0_path_delay_expressionContext)
+    public suspend fun exitTx0_path_delay_expression(ctx: VerilogParser.Tx0_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#txz_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.txz_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTxz_path_delay_expression(ctx: VerilogParser.Txz_path_delay_expressionContext)
+    public suspend fun enterTxz_path_delay_expression(ctx: VerilogParser.Txz_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#txz_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.txz_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTxz_path_delay_expression(ctx: VerilogParser.Txz_path_delay_expressionContext)
+    public suspend fun exitTxz_path_delay_expression(ctx: VerilogParser.Txz_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#tzx_path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.tzx_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTzx_path_delay_expression(ctx: VerilogParser.Tzx_path_delay_expressionContext)
+    public suspend fun enterTzx_path_delay_expression(ctx: VerilogParser.Tzx_path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#tzx_path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.tzx_path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTzx_path_delay_expression(ctx: VerilogParser.Tzx_path_delay_expressionContext)
+    public suspend fun exitTzx_path_delay_expression(ctx: VerilogParser.Tzx_path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#path_delay_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPath_delay_expression(ctx: VerilogParser.Path_delay_expressionContext)
+    public suspend fun enterPath_delay_expression(ctx: VerilogParser.Path_delay_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#path_delay_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.path_delay_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPath_delay_expression(ctx: VerilogParser.Path_delay_expressionContext)
+    public suspend fun exitPath_delay_expression(ctx: VerilogParser.Path_delay_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#edge_sensitive_path_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.edge_sensitive_path_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEdge_sensitive_path_declaration(ctx: VerilogParser.Edge_sensitive_path_declarationContext)
+    public suspend fun enterEdge_sensitive_path_declaration(ctx: VerilogParser.Edge_sensitive_path_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#edge_sensitive_path_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.edge_sensitive_path_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEdge_sensitive_path_declaration(ctx: VerilogParser.Edge_sensitive_path_declarationContext)
+    public suspend fun exitEdge_sensitive_path_declaration(ctx: VerilogParser.Edge_sensitive_path_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#parallel_edge_sensitive_path_description}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.parallel_edge_sensitive_path_description].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterParallel_edge_sensitive_path_description(ctx: VerilogParser.Parallel_edge_sensitive_path_descriptionContext)
+    public suspend fun enterParallel_edge_sensitive_path_description(ctx: VerilogParser.Parallel_edge_sensitive_path_descriptionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#parallel_edge_sensitive_path_description}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.parallel_edge_sensitive_path_description].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitParallel_edge_sensitive_path_description(ctx: VerilogParser.Parallel_edge_sensitive_path_descriptionContext)
+    public suspend fun exitParallel_edge_sensitive_path_description(ctx: VerilogParser.Parallel_edge_sensitive_path_descriptionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#full_edge_sensitive_path_description}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.full_edge_sensitive_path_description].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterFull_edge_sensitive_path_description(ctx: VerilogParser.Full_edge_sensitive_path_descriptionContext)
+    public suspend fun enterFull_edge_sensitive_path_description(ctx: VerilogParser.Full_edge_sensitive_path_descriptionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#full_edge_sensitive_path_description}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.full_edge_sensitive_path_description].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitFull_edge_sensitive_path_description(ctx: VerilogParser.Full_edge_sensitive_path_descriptionContext)
+    public suspend fun exitFull_edge_sensitive_path_description(ctx: VerilogParser.Full_edge_sensitive_path_descriptionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#data_source_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.data_source_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterData_source_expression(ctx: VerilogParser.Data_source_expressionContext)
+    public suspend fun enterData_source_expression(ctx: VerilogParser.Data_source_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#data_source_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.data_source_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitData_source_expression(ctx: VerilogParser.Data_source_expressionContext)
+    public suspend fun exitData_source_expression(ctx: VerilogParser.Data_source_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#edge_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.edge_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEdge_identifier(ctx: VerilogParser.Edge_identifierContext)
+    public suspend fun enterEdge_identifier(ctx: VerilogParser.Edge_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#edge_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.edge_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEdge_identifier(ctx: VerilogParser.Edge_identifierContext)
+    public suspend fun exitEdge_identifier(ctx: VerilogParser.Edge_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#state_dependent_path_declaration}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.state_dependent_path_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterState_dependent_path_declaration(ctx: VerilogParser.State_dependent_path_declarationContext)
+    public suspend fun enterState_dependent_path_declaration(ctx: VerilogParser.State_dependent_path_declarationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#state_dependent_path_declaration}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.state_dependent_path_declaration].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitState_dependent_path_declaration(ctx: VerilogParser.State_dependent_path_declarationContext)
+    public suspend fun exitState_dependent_path_declaration(ctx: VerilogParser.State_dependent_path_declarationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#polarity_operator}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.polarity_operator].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPolarity_operator(ctx: VerilogParser.Polarity_operatorContext)
+    public suspend fun enterPolarity_operator(ctx: VerilogParser.Polarity_operatorContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#polarity_operator}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.polarity_operator].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPolarity_operator(ctx: VerilogParser.Polarity_operatorContext)
+    public suspend fun exitPolarity_operator(ctx: VerilogParser.Polarity_operatorContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#system_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.system_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSystem_timing_check(ctx: VerilogParser.System_timing_checkContext)
+    public suspend fun enterSystem_timing_check(ctx: VerilogParser.System_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#system_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.system_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSystem_timing_check(ctx: VerilogParser.System_timing_checkContext)
+    public suspend fun exitSystem_timing_check(ctx: VerilogParser.System_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#setup_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.setup_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSetup_timing_check(ctx: VerilogParser.Setup_timing_checkContext)
+    public suspend fun enterSetup_timing_check(ctx: VerilogParser.Setup_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#setup_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.setup_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSetup_timing_check(ctx: VerilogParser.Setup_timing_checkContext)
+    public suspend fun exitSetup_timing_check(ctx: VerilogParser.Setup_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#notifier_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.notifier_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNotifier_opt(ctx: VerilogParser.Notifier_optContext)
+    public suspend fun enterNotifier_opt(ctx: VerilogParser.Notifier_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#notifier_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.notifier_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNotifier_opt(ctx: VerilogParser.Notifier_optContext)
+    public suspend fun exitNotifier_opt(ctx: VerilogParser.Notifier_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#hold_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.hold_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterHold_timing_check(ctx: VerilogParser.Hold_timing_checkContext)
+    public suspend fun enterHold_timing_check(ctx: VerilogParser.Hold_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#hold_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.hold_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitHold_timing_check(ctx: VerilogParser.Hold_timing_checkContext)
+    public suspend fun exitHold_timing_check(ctx: VerilogParser.Hold_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#setuphold_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.setuphold_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSetuphold_timing_check(ctx: VerilogParser.Setuphold_timing_checkContext)
+    public suspend fun enterSetuphold_timing_check(ctx: VerilogParser.Setuphold_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#setuphold_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.setuphold_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSetuphold_timing_check(ctx: VerilogParser.Setuphold_timing_checkContext)
+    public suspend fun exitSetuphold_timing_check(ctx: VerilogParser.Setuphold_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#timing_check_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.timing_check_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTiming_check_opt(ctx: VerilogParser.Timing_check_optContext)
+    public suspend fun enterTiming_check_opt(ctx: VerilogParser.Timing_check_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#timing_check_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.timing_check_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTiming_check_opt(ctx: VerilogParser.Timing_check_optContext)
+    public suspend fun exitTiming_check_opt(ctx: VerilogParser.Timing_check_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#stamptime_cond_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.stamptime_cond_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterStamptime_cond_opt(ctx: VerilogParser.Stamptime_cond_optContext)
+    public suspend fun enterStamptime_cond_opt(ctx: VerilogParser.Stamptime_cond_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#stamptime_cond_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.stamptime_cond_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitStamptime_cond_opt(ctx: VerilogParser.Stamptime_cond_optContext)
+    public suspend fun exitStamptime_cond_opt(ctx: VerilogParser.Stamptime_cond_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#checktime_cond_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.checktime_cond_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterChecktime_cond_opt(ctx: VerilogParser.Checktime_cond_optContext)
+    public suspend fun enterChecktime_cond_opt(ctx: VerilogParser.Checktime_cond_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#checktime_cond_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.checktime_cond_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitChecktime_cond_opt(ctx: VerilogParser.Checktime_cond_optContext)
+    public suspend fun exitChecktime_cond_opt(ctx: VerilogParser.Checktime_cond_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delayed_ref_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delayed_ref_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDelayed_ref_opt(ctx: VerilogParser.Delayed_ref_optContext)
+    public suspend fun enterDelayed_ref_opt(ctx: VerilogParser.Delayed_ref_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delayed_ref_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delayed_ref_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDelayed_ref_opt(ctx: VerilogParser.Delayed_ref_optContext)
+    public suspend fun exitDelayed_ref_opt(ctx: VerilogParser.Delayed_ref_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delayed_data_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delayed_data_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDelayed_data_opt(ctx: VerilogParser.Delayed_data_optContext)
+    public suspend fun enterDelayed_data_opt(ctx: VerilogParser.Delayed_data_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delayed_data_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delayed_data_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDelayed_data_opt(ctx: VerilogParser.Delayed_data_optContext)
+    public suspend fun exitDelayed_data_opt(ctx: VerilogParser.Delayed_data_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#recovery_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.recovery_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterRecovery_timing_check(ctx: VerilogParser.Recovery_timing_checkContext)
+    public suspend fun enterRecovery_timing_check(ctx: VerilogParser.Recovery_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#recovery_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.recovery_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitRecovery_timing_check(ctx: VerilogParser.Recovery_timing_checkContext)
+    public suspend fun exitRecovery_timing_check(ctx: VerilogParser.Recovery_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#removal_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.removal_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterRemoval_timing_check(ctx: VerilogParser.Removal_timing_checkContext)
+    public suspend fun enterRemoval_timing_check(ctx: VerilogParser.Removal_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#removal_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.removal_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitRemoval_timing_check(ctx: VerilogParser.Removal_timing_checkContext)
+    public suspend fun exitRemoval_timing_check(ctx: VerilogParser.Removal_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#recrem_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.recrem_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterRecrem_timing_check(ctx: VerilogParser.Recrem_timing_checkContext)
+    public suspend fun enterRecrem_timing_check(ctx: VerilogParser.Recrem_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#recrem_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.recrem_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitRecrem_timing_check(ctx: VerilogParser.Recrem_timing_checkContext)
+    public suspend fun exitRecrem_timing_check(ctx: VerilogParser.Recrem_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#skew_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.skew_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSkew_timing_check(ctx: VerilogParser.Skew_timing_checkContext)
+    public suspend fun enterSkew_timing_check(ctx: VerilogParser.Skew_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#skew_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.skew_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSkew_timing_check(ctx: VerilogParser.Skew_timing_checkContext)
+    public suspend fun exitSkew_timing_check(ctx: VerilogParser.Skew_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#timeskew_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.timeskew_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTimeskew_timing_check(ctx: VerilogParser.Timeskew_timing_checkContext)
+    public suspend fun enterTimeskew_timing_check(ctx: VerilogParser.Timeskew_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#timeskew_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.timeskew_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTimeskew_timing_check(ctx: VerilogParser.Timeskew_timing_checkContext)
+    public suspend fun exitTimeskew_timing_check(ctx: VerilogParser.Timeskew_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#skew_timing_check_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.skew_timing_check_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSkew_timing_check_opt(ctx: VerilogParser.Skew_timing_check_optContext)
+    public suspend fun enterSkew_timing_check_opt(ctx: VerilogParser.Skew_timing_check_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#skew_timing_check_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.skew_timing_check_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSkew_timing_check_opt(ctx: VerilogParser.Skew_timing_check_optContext)
+    public suspend fun exitSkew_timing_check_opt(ctx: VerilogParser.Skew_timing_check_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#event_based_flag_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.event_based_flag_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEvent_based_flag_opt(ctx: VerilogParser.Event_based_flag_optContext)
+    public suspend fun enterEvent_based_flag_opt(ctx: VerilogParser.Event_based_flag_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#event_based_flag_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.event_based_flag_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEvent_based_flag_opt(ctx: VerilogParser.Event_based_flag_optContext)
+    public suspend fun exitEvent_based_flag_opt(ctx: VerilogParser.Event_based_flag_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#remain_active_flag_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.remain_active_flag_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterRemain_active_flag_opt(ctx: VerilogParser.Remain_active_flag_optContext)
+    public suspend fun enterRemain_active_flag_opt(ctx: VerilogParser.Remain_active_flag_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#remain_active_flag_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.remain_active_flag_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitRemain_active_flag_opt(ctx: VerilogParser.Remain_active_flag_optContext)
+    public suspend fun exitRemain_active_flag_opt(ctx: VerilogParser.Remain_active_flag_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#fullskew_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.fullskew_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterFullskew_timing_check(ctx: VerilogParser.Fullskew_timing_checkContext)
+    public suspend fun enterFullskew_timing_check(ctx: VerilogParser.Fullskew_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#fullskew_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.fullskew_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitFullskew_timing_check(ctx: VerilogParser.Fullskew_timing_checkContext)
+    public suspend fun exitFullskew_timing_check(ctx: VerilogParser.Fullskew_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#period_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.period_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPeriod_timing_check(ctx: VerilogParser.Period_timing_checkContext)
+    public suspend fun enterPeriod_timing_check(ctx: VerilogParser.Period_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#period_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.period_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPeriod_timing_check(ctx: VerilogParser.Period_timing_checkContext)
+    public suspend fun exitPeriod_timing_check(ctx: VerilogParser.Period_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#width_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.width_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterWidth_timing_check(ctx: VerilogParser.Width_timing_checkContext)
+    public suspend fun enterWidth_timing_check(ctx: VerilogParser.Width_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#width_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.width_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitWidth_timing_check(ctx: VerilogParser.Width_timing_checkContext)
+    public suspend fun exitWidth_timing_check(ctx: VerilogParser.Width_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#threshold_opt}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.threshold_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterThreshold_opt(ctx: VerilogParser.Threshold_optContext)
+    public suspend fun enterThreshold_opt(ctx: VerilogParser.Threshold_optContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#threshold_opt}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.threshold_opt].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitThreshold_opt(ctx: VerilogParser.Threshold_optContext)
+    public suspend fun exitThreshold_opt(ctx: VerilogParser.Threshold_optContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#nochange_timing_check}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.nochange_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNochange_timing_check(ctx: VerilogParser.Nochange_timing_checkContext)
+    public suspend fun enterNochange_timing_check(ctx: VerilogParser.Nochange_timing_checkContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#nochange_timing_check}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.nochange_timing_check].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNochange_timing_check(ctx: VerilogParser.Nochange_timing_checkContext)
+    public suspend fun exitNochange_timing_check(ctx: VerilogParser.Nochange_timing_checkContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#checktime_condition}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.checktime_condition].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterChecktime_condition(ctx: VerilogParser.Checktime_conditionContext)
+    public suspend fun enterChecktime_condition(ctx: VerilogParser.Checktime_conditionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#checktime_condition}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.checktime_condition].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitChecktime_condition(ctx: VerilogParser.Checktime_conditionContext)
+    public suspend fun exitChecktime_condition(ctx: VerilogParser.Checktime_conditionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#controlled_reference_event}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.controlled_reference_event].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterControlled_reference_event(ctx: VerilogParser.Controlled_reference_eventContext)
+    public suspend fun enterControlled_reference_event(ctx: VerilogParser.Controlled_reference_eventContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#controlled_reference_event}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.controlled_reference_event].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitControlled_reference_event(ctx: VerilogParser.Controlled_reference_eventContext)
+    public suspend fun exitControlled_reference_event(ctx: VerilogParser.Controlled_reference_eventContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#data_event}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.data_event].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterData_event(ctx: VerilogParser.Data_eventContext)
+    public suspend fun enterData_event(ctx: VerilogParser.Data_eventContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#data_event}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.data_event].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitData_event(ctx: VerilogParser.Data_eventContext)
+    public suspend fun exitData_event(ctx: VerilogParser.Data_eventContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delayed_data}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delayed_data].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDelayed_data(ctx: VerilogParser.Delayed_dataContext)
+    public suspend fun enterDelayed_data(ctx: VerilogParser.Delayed_dataContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delayed_data}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delayed_data].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDelayed_data(ctx: VerilogParser.Delayed_dataContext)
+    public suspend fun exitDelayed_data(ctx: VerilogParser.Delayed_dataContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#delayed_reference}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.delayed_reference].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDelayed_reference(ctx: VerilogParser.Delayed_referenceContext)
+    public suspend fun enterDelayed_reference(ctx: VerilogParser.Delayed_referenceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#delayed_reference}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.delayed_reference].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDelayed_reference(ctx: VerilogParser.Delayed_referenceContext)
+    public suspend fun exitDelayed_reference(ctx: VerilogParser.Delayed_referenceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#end_edge_offset}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.end_edge_offset].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEnd_edge_offset(ctx: VerilogParser.End_edge_offsetContext)
+    public suspend fun enterEnd_edge_offset(ctx: VerilogParser.End_edge_offsetContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#end_edge_offset}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.end_edge_offset].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEnd_edge_offset(ctx: VerilogParser.End_edge_offsetContext)
+    public suspend fun exitEnd_edge_offset(ctx: VerilogParser.End_edge_offsetContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#event_based_flag}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.event_based_flag].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEvent_based_flag(ctx: VerilogParser.Event_based_flagContext)
+    public suspend fun enterEvent_based_flag(ctx: VerilogParser.Event_based_flagContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#event_based_flag}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.event_based_flag].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEvent_based_flag(ctx: VerilogParser.Event_based_flagContext)
+    public suspend fun exitEvent_based_flag(ctx: VerilogParser.Event_based_flagContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#notifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.notifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNotifier(ctx: VerilogParser.NotifierContext)
+    public suspend fun enterNotifier(ctx: VerilogParser.NotifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#notifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.notifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNotifier(ctx: VerilogParser.NotifierContext)
+    public suspend fun exitNotifier(ctx: VerilogParser.NotifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#reference_event}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.reference_event].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterReference_event(ctx: VerilogParser.Reference_eventContext)
+    public suspend fun enterReference_event(ctx: VerilogParser.Reference_eventContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#reference_event}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.reference_event].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitReference_event(ctx: VerilogParser.Reference_eventContext)
+    public suspend fun exitReference_event(ctx: VerilogParser.Reference_eventContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#remain_active_flag}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.remain_active_flag].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterRemain_active_flag(ctx: VerilogParser.Remain_active_flagContext)
+    public suspend fun enterRemain_active_flag(ctx: VerilogParser.Remain_active_flagContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#remain_active_flag}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.remain_active_flag].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitRemain_active_flag(ctx: VerilogParser.Remain_active_flagContext)
+    public suspend fun exitRemain_active_flag(ctx: VerilogParser.Remain_active_flagContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#stamptime_condition}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.stamptime_condition].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterStamptime_condition(ctx: VerilogParser.Stamptime_conditionContext)
+    public suspend fun enterStamptime_condition(ctx: VerilogParser.Stamptime_conditionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#stamptime_condition}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.stamptime_condition].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitStamptime_condition(ctx: VerilogParser.Stamptime_conditionContext)
+    public suspend fun exitStamptime_condition(ctx: VerilogParser.Stamptime_conditionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#start_edge_offset}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.start_edge_offset].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterStart_edge_offset(ctx: VerilogParser.Start_edge_offsetContext)
+    public suspend fun enterStart_edge_offset(ctx: VerilogParser.Start_edge_offsetContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#start_edge_offset}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.start_edge_offset].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitStart_edge_offset(ctx: VerilogParser.Start_edge_offsetContext)
+    public suspend fun exitStart_edge_offset(ctx: VerilogParser.Start_edge_offsetContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#threshold}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.threshold].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterThreshold(ctx: VerilogParser.ThresholdContext)
+    public suspend fun enterThreshold(ctx: VerilogParser.ThresholdContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#threshold}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.threshold].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitThreshold(ctx: VerilogParser.ThresholdContext)
+    public suspend fun exitThreshold(ctx: VerilogParser.ThresholdContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#timing_check_limit}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.timing_check_limit].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTiming_check_limit(ctx: VerilogParser.Timing_check_limitContext)
+    public suspend fun enterTiming_check_limit(ctx: VerilogParser.Timing_check_limitContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#timing_check_limit}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.timing_check_limit].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTiming_check_limit(ctx: VerilogParser.Timing_check_limitContext)
+    public suspend fun exitTiming_check_limit(ctx: VerilogParser.Timing_check_limitContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#timing_check_event}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.timing_check_event].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTiming_check_event(ctx: VerilogParser.Timing_check_eventContext)
+    public suspend fun enterTiming_check_event(ctx: VerilogParser.Timing_check_eventContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#timing_check_event}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.timing_check_event].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTiming_check_event(ctx: VerilogParser.Timing_check_eventContext)
+    public suspend fun exitTiming_check_event(ctx: VerilogParser.Timing_check_eventContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#controlled_timing_check_event}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.controlled_timing_check_event].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterControlled_timing_check_event(ctx: VerilogParser.Controlled_timing_check_eventContext)
+    public suspend fun enterControlled_timing_check_event(ctx: VerilogParser.Controlled_timing_check_eventContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#controlled_timing_check_event}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.controlled_timing_check_event].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitControlled_timing_check_event(ctx: VerilogParser.Controlled_timing_check_eventContext)
+    public suspend fun exitControlled_timing_check_event(ctx: VerilogParser.Controlled_timing_check_eventContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#timing_check_event_control}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.timing_check_event_control].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTiming_check_event_control(ctx: VerilogParser.Timing_check_event_controlContext)
+    public suspend fun enterTiming_check_event_control(ctx: VerilogParser.Timing_check_event_controlContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#timing_check_event_control}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.timing_check_event_control].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTiming_check_event_control(ctx: VerilogParser.Timing_check_event_controlContext)
+    public suspend fun exitTiming_check_event_control(ctx: VerilogParser.Timing_check_event_controlContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#specify_terminal_descriptor}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.specify_terminal_descriptor].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSpecify_terminal_descriptor(ctx: VerilogParser.Specify_terminal_descriptorContext)
+    public suspend fun enterSpecify_terminal_descriptor(ctx: VerilogParser.Specify_terminal_descriptorContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#specify_terminal_descriptor}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.specify_terminal_descriptor].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSpecify_terminal_descriptor(ctx: VerilogParser.Specify_terminal_descriptorContext)
+    public suspend fun exitSpecify_terminal_descriptor(ctx: VerilogParser.Specify_terminal_descriptorContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#edge_control_specifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.edge_control_specifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEdge_control_specifier(ctx: VerilogParser.Edge_control_specifierContext)
+    public suspend fun enterEdge_control_specifier(ctx: VerilogParser.Edge_control_specifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#edge_control_specifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.edge_control_specifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEdge_control_specifier(ctx: VerilogParser.Edge_control_specifierContext)
+    public suspend fun exitEdge_control_specifier(ctx: VerilogParser.Edge_control_specifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#edge_descriptor}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.edge_descriptor].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEdge_descriptor(ctx: VerilogParser.Edge_descriptorContext)
+    public suspend fun enterEdge_descriptor(ctx: VerilogParser.Edge_descriptorContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#edge_descriptor}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.edge_descriptor].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEdge_descriptor(ctx: VerilogParser.Edge_descriptorContext)
+    public suspend fun exitEdge_descriptor(ctx: VerilogParser.Edge_descriptorContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#timing_check_condition}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.timing_check_condition].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTiming_check_condition(ctx: VerilogParser.Timing_check_conditionContext)
+    public suspend fun enterTiming_check_condition(ctx: VerilogParser.Timing_check_conditionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#timing_check_condition}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.timing_check_condition].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTiming_check_condition(ctx: VerilogParser.Timing_check_conditionContext)
+    public suspend fun exitTiming_check_condition(ctx: VerilogParser.Timing_check_conditionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#scalar_timing_check_condition}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.scalar_timing_check_condition].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterScalar_timing_check_condition(ctx: VerilogParser.Scalar_timing_check_conditionContext)
+    public suspend fun enterScalar_timing_check_condition(ctx: VerilogParser.Scalar_timing_check_conditionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#scalar_timing_check_condition}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.scalar_timing_check_condition].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitScalar_timing_check_condition(ctx: VerilogParser.Scalar_timing_check_conditionContext)
+    public suspend fun exitScalar_timing_check_condition(ctx: VerilogParser.Scalar_timing_check_conditionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#scalar_constant}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.scalar_constant].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterScalar_constant(ctx: VerilogParser.Scalar_constantContext)
+    public suspend fun enterScalar_constant(ctx: VerilogParser.Scalar_constantContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#scalar_constant}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.scalar_constant].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitScalar_constant(ctx: VerilogParser.Scalar_constantContext)
+    public suspend fun exitScalar_constant(ctx: VerilogParser.Scalar_constantContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#concatenation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.concatenation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConcatenation(ctx: VerilogParser.ConcatenationContext)
+    public suspend fun enterConcatenation(ctx: VerilogParser.ConcatenationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#concatenation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.concatenation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConcatenation(ctx: VerilogParser.ConcatenationContext)
+    public suspend fun exitConcatenation(ctx: VerilogParser.ConcatenationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_concatenation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.constant_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstant_concatenation(ctx: VerilogParser.Constant_concatenationContext)
+    public suspend fun enterConstant_concatenation(ctx: VerilogParser.Constant_concatenationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_concatenation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.constant_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstant_concatenation(ctx: VerilogParser.Constant_concatenationContext)
+    public suspend fun exitConstant_concatenation(ctx: VerilogParser.Constant_concatenationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_multiple_concatenation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.constant_multiple_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstant_multiple_concatenation(ctx: VerilogParser.Constant_multiple_concatenationContext)
+    public suspend fun enterConstant_multiple_concatenation(ctx: VerilogParser.Constant_multiple_concatenationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_multiple_concatenation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.constant_multiple_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstant_multiple_concatenation(ctx: VerilogParser.Constant_multiple_concatenationContext)
+    public suspend fun exitConstant_multiple_concatenation(ctx: VerilogParser.Constant_multiple_concatenationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_path_concatenation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_path_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModule_path_concatenation(ctx: VerilogParser.Module_path_concatenationContext)
+    public suspend fun enterModule_path_concatenation(ctx: VerilogParser.Module_path_concatenationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_path_concatenation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_path_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModule_path_concatenation(ctx: VerilogParser.Module_path_concatenationContext)
+    public suspend fun exitModule_path_concatenation(ctx: VerilogParser.Module_path_concatenationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_path_multiple_concatenation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_path_multiple_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModule_path_multiple_concatenation(ctx: VerilogParser.Module_path_multiple_concatenationContext)
+    public suspend fun enterModule_path_multiple_concatenation(ctx: VerilogParser.Module_path_multiple_concatenationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_path_multiple_concatenation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_path_multiple_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModule_path_multiple_concatenation(ctx: VerilogParser.Module_path_multiple_concatenationContext)
+    public suspend fun exitModule_path_multiple_concatenation(ctx: VerilogParser.Module_path_multiple_concatenationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#multiple_concatenation}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.multiple_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterMultiple_concatenation(ctx: VerilogParser.Multiple_concatenationContext)
+    public suspend fun enterMultiple_concatenation(ctx: VerilogParser.Multiple_concatenationContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#multiple_concatenation}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.multiple_concatenation].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitMultiple_concatenation(ctx: VerilogParser.Multiple_concatenationContext)
+    public suspend fun exitMultiple_concatenation(ctx: VerilogParser.Multiple_concatenationContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_function_call}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.constant_function_call].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstant_function_call(ctx: VerilogParser.Constant_function_callContext)
+    public suspend fun enterConstant_function_call(ctx: VerilogParser.Constant_function_callContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_function_call}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.constant_function_call].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstant_function_call(ctx: VerilogParser.Constant_function_callContext)
+    public suspend fun exitConstant_function_call(ctx: VerilogParser.Constant_function_callContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_system_function_call}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.constant_system_function_call].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstant_system_function_call(ctx: VerilogParser.Constant_system_function_callContext)
+    public suspend fun enterConstant_system_function_call(ctx: VerilogParser.Constant_system_function_callContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_system_function_call}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.constant_system_function_call].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstant_system_function_call(ctx: VerilogParser.Constant_system_function_callContext)
+    public suspend fun exitConstant_system_function_call(ctx: VerilogParser.Constant_system_function_callContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#function_call}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.function_call].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterFunction_call(ctx: VerilogParser.Function_callContext)
+    public suspend fun enterFunction_call(ctx: VerilogParser.Function_callContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#function_call}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.function_call].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitFunction_call(ctx: VerilogParser.Function_callContext)
+    public suspend fun exitFunction_call(ctx: VerilogParser.Function_callContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#system_function_call}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.system_function_call].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSystem_function_call(ctx: VerilogParser.System_function_callContext)
+    public suspend fun enterSystem_function_call(ctx: VerilogParser.System_function_callContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#system_function_call}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.system_function_call].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSystem_function_call(ctx: VerilogParser.System_function_callContext)
+    public suspend fun exitSystem_function_call(ctx: VerilogParser.System_function_callContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#sys_func_call_port_list}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.sys_func_call_port_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSys_func_call_port_list(ctx: VerilogParser.Sys_func_call_port_listContext)
+    public suspend fun enterSys_func_call_port_list(ctx: VerilogParser.Sys_func_call_port_listContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#sys_func_call_port_list}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.sys_func_call_port_list].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSys_func_call_port_list(ctx: VerilogParser.Sys_func_call_port_listContext)
+    public suspend fun exitSys_func_call_port_list(ctx: VerilogParser.Sys_func_call_port_listContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#base_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.base_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterBase_expression(ctx: VerilogParser.Base_expressionContext)
+    public suspend fun enterBase_expression(ctx: VerilogParser.Base_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#base_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.base_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitBase_expression(ctx: VerilogParser.Base_expressionContext)
+    public suspend fun exitBase_expression(ctx: VerilogParser.Base_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_base_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.constant_base_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstant_base_expression(ctx: VerilogParser.Constant_base_expressionContext)
+    public suspend fun enterConstant_base_expression(ctx: VerilogParser.Constant_base_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_base_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.constant_base_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstant_base_expression(ctx: VerilogParser.Constant_base_expressionContext)
+    public suspend fun exitConstant_base_expression(ctx: VerilogParser.Constant_base_expressionContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprUnary}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprUnary` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstExprUnary(ctx: VerilogParser.ConstExprUnaryContext)
+    public suspend fun enterConstExprUnary(ctx: VerilogParser.ConstExprUnaryContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprUnary}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprUnary` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstExprUnary(ctx: VerilogParser.ConstExprUnaryContext)
+    public suspend fun exitConstExprUnary(ctx: VerilogParser.ConstExprUnaryContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprAddSub}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprAddSub` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstExprAddSub(ctx: VerilogParser.ConstExprAddSubContext)
+    public suspend fun enterConstExprAddSub(ctx: VerilogParser.ConstExprAddSubContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprAddSub}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprAddSub` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstExprAddSub(ctx: VerilogParser.ConstExprAddSubContext)
+    public suspend fun exitConstExprAddSub(ctx: VerilogParser.ConstExprAddSubContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprLogicalAnd}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprLogicalAnd` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstExprLogicalAnd(ctx: VerilogParser.ConstExprLogicalAndContext)
+    public suspend fun enterConstExprLogicalAnd(ctx: VerilogParser.ConstExprLogicalAndContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprLogicalAnd}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprLogicalAnd` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstExprLogicalAnd(ctx: VerilogParser.ConstExprLogicalAndContext)
+    public suspend fun exitConstExprLogicalAnd(ctx: VerilogParser.ConstExprLogicalAndContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprMulDivRem}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprMulDivRem` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstExprMulDivRem(ctx: VerilogParser.ConstExprMulDivRemContext)
+    public suspend fun enterConstExprMulDivRem(ctx: VerilogParser.ConstExprMulDivRemContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprMulDivRem}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprMulDivRem` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstExprMulDivRem(ctx: VerilogParser.ConstExprMulDivRemContext)
+    public suspend fun exitConstExprMulDivRem(ctx: VerilogParser.ConstExprMulDivRemContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprXor}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprXor` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstExprXor(ctx: VerilogParser.ConstExprXorContext)
+    public suspend fun enterConstExprXor(ctx: VerilogParser.ConstExprXorContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprXor}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprXor` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstExprXor(ctx: VerilogParser.ConstExprXorContext)
+    public suspend fun exitConstExprXor(ctx: VerilogParser.ConstExprXorContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprAnd}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprAnd` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstExprAnd(ctx: VerilogParser.ConstExprAndContext)
+    public suspend fun enterConstExprAnd(ctx: VerilogParser.ConstExprAndContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprAnd}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprAnd` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstExprAnd(ctx: VerilogParser.ConstExprAndContext)
+    public suspend fun exitConstExprAnd(ctx: VerilogParser.ConstExprAndContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprShift}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprShift` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstExprShift(ctx: VerilogParser.ConstExprShiftContext)
+    public suspend fun enterConstExprShift(ctx: VerilogParser.ConstExprShiftContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprShift}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprShift` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstExprShift(ctx: VerilogParser.ConstExprShiftContext)
+    public suspend fun exitConstExprShift(ctx: VerilogParser.ConstExprShiftContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprCompare}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprCompare` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstExprCompare(ctx: VerilogParser.ConstExprCompareContext)
+    public suspend fun enterConstExprCompare(ctx: VerilogParser.ConstExprCompareContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprCompare}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprCompare` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstExprCompare(ctx: VerilogParser.ConstExprCompareContext)
+    public suspend fun exitConstExprCompare(ctx: VerilogParser.ConstExprCompareContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprExpo}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprExpo` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstExprExpo(ctx: VerilogParser.ConstExprExpoContext)
+    public suspend fun enterConstExprExpo(ctx: VerilogParser.ConstExprExpoContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprExpo}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprExpo` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstExprExpo(ctx: VerilogParser.ConstExprExpoContext)
+    public suspend fun exitConstExprExpo(ctx: VerilogParser.ConstExprExpoContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprOr}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprOr` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstExprOr(ctx: VerilogParser.ConstExprOrContext)
+    public suspend fun enterConstExprOr(ctx: VerilogParser.ConstExprOrContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprOr}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprOr` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstExprOr(ctx: VerilogParser.ConstExprOrContext)
+    public suspend fun exitConstExprOr(ctx: VerilogParser.ConstExprOrContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprLogicalOr}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprLogicalOr` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstExprLogicalOr(ctx: VerilogParser.ConstExprLogicalOrContext)
+    public suspend fun enterConstExprLogicalOr(ctx: VerilogParser.ConstExprLogicalOrContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprLogicalOr}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprLogicalOr` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstExprLogicalOr(ctx: VerilogParser.ConstExprLogicalOrContext)
+    public suspend fun exitConstExprLogicalOr(ctx: VerilogParser.ConstExprLogicalOrContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprEquality}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprEquality` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstExprEquality(ctx: VerilogParser.ConstExprEqualityContext)
+    public suspend fun enterConstExprEquality(ctx: VerilogParser.ConstExprEqualityContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprEquality}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprEquality` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstExprEquality(ctx: VerilogParser.ConstExprEqualityContext)
+    public suspend fun exitConstExprEquality(ctx: VerilogParser.ConstExprEqualityContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprTernary}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprTernary` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstExprTernary(ctx: VerilogParser.ConstExprTernaryContext)
+    public suspend fun enterConstExprTernary(ctx: VerilogParser.ConstExprTernaryContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprTernary}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprTernary` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstExprTernary(ctx: VerilogParser.ConstExprTernaryContext)
+    public suspend fun exitConstExprTernary(ctx: VerilogParser.ConstExprTernaryContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstExprPrimary}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstExprPrimary` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstExprPrimary(ctx: VerilogParser.ConstExprPrimaryContext)
+    public suspend fun enterConstExprPrimary(ctx: VerilogParser.ConstExprPrimaryContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstExprPrimary}
-     * labeled alternative in {@link VerilogParser#constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstExprPrimary` labeled alternative in [VerilogParser.constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstExprPrimary(ctx: VerilogParser.ConstExprPrimaryContext)
+    public suspend fun exitConstExprPrimary(ctx: VerilogParser.ConstExprPrimaryContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_mintypmax_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.constant_mintypmax_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstant_mintypmax_expression(ctx: VerilogParser.Constant_mintypmax_expressionContext)
+    public suspend fun enterConstant_mintypmax_expression(ctx: VerilogParser.Constant_mintypmax_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_mintypmax_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.constant_mintypmax_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstant_mintypmax_expression(ctx: VerilogParser.Constant_mintypmax_expressionContext)
+    public suspend fun exitConstant_mintypmax_expression(ctx: VerilogParser.Constant_mintypmax_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#constant_range_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.constant_range_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstant_range_expression(ctx: VerilogParser.Constant_range_expressionContext)
+    public suspend fun enterConstant_range_expression(ctx: VerilogParser.Constant_range_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#constant_range_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.constant_range_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstant_range_expression(ctx: VerilogParser.Constant_range_expressionContext)
+    public suspend fun exitConstant_range_expression(ctx: VerilogParser.Constant_range_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#dimension_constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.dimension_constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDimension_constant_expression(ctx: VerilogParser.Dimension_constant_expressionContext)
+    public suspend fun enterDimension_constant_expression(ctx: VerilogParser.Dimension_constant_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#dimension_constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.dimension_constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDimension_constant_expression(ctx: VerilogParser.Dimension_constant_expressionContext)
+    public suspend fun exitDimension_constant_expression(ctx: VerilogParser.Dimension_constant_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterExpression(ctx: VerilogParser.ExpressionContext)
+    public suspend fun enterExpression(ctx: VerilogParser.ExpressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitExpression(ctx: VerilogParser.ExpressionContext)
+    public suspend fun exitExpression(ctx: VerilogParser.ExpressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#lsb_constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.lsb_constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterLsb_constant_expression(ctx: VerilogParser.Lsb_constant_expressionContext)
+    public suspend fun enterLsb_constant_expression(ctx: VerilogParser.Lsb_constant_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#lsb_constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.lsb_constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitLsb_constant_expression(ctx: VerilogParser.Lsb_constant_expressionContext)
+    public suspend fun exitLsb_constant_expression(ctx: VerilogParser.Lsb_constant_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#mintypmax_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.mintypmax_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterMintypmax_expression(ctx: VerilogParser.Mintypmax_expressionContext)
+    public suspend fun enterMintypmax_expression(ctx: VerilogParser.Mintypmax_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#mintypmax_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.mintypmax_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitMintypmax_expression(ctx: VerilogParser.Mintypmax_expressionContext)
+    public suspend fun exitMintypmax_expression(ctx: VerilogParser.Mintypmax_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_path_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_path_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModule_path_expression(ctx: VerilogParser.Module_path_expressionContext)
+    public suspend fun enterModule_path_expression(ctx: VerilogParser.Module_path_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_path_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_path_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModule_path_expression(ctx: VerilogParser.Module_path_expressionContext)
+    public suspend fun exitModule_path_expression(ctx: VerilogParser.Module_path_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_path_mintypmax_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_path_mintypmax_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModule_path_mintypmax_expression(ctx: VerilogParser.Module_path_mintypmax_expressionContext)
+    public suspend fun enterModule_path_mintypmax_expression(ctx: VerilogParser.Module_path_mintypmax_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_path_mintypmax_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_path_mintypmax_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModule_path_mintypmax_expression(ctx: VerilogParser.Module_path_mintypmax_expressionContext)
+    public suspend fun exitModule_path_mintypmax_expression(ctx: VerilogParser.Module_path_mintypmax_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#msb_constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.msb_constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterMsb_constant_expression(ctx: VerilogParser.Msb_constant_expressionContext)
+    public suspend fun enterMsb_constant_expression(ctx: VerilogParser.Msb_constant_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#msb_constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.msb_constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitMsb_constant_expression(ctx: VerilogParser.Msb_constant_expressionContext)
+    public suspend fun exitMsb_constant_expression(ctx: VerilogParser.Msb_constant_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#range_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.range_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterRange_expression(ctx: VerilogParser.Range_expressionContext)
+    public suspend fun enterRange_expression(ctx: VerilogParser.Range_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#range_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.range_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitRange_expression(ctx: VerilogParser.Range_expressionContext)
+    public suspend fun exitRange_expression(ctx: VerilogParser.Range_expressionContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#width_constant_expression}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.width_constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterWidth_constant_expression(ctx: VerilogParser.Width_constant_expressionContext)
+    public suspend fun enterWidth_constant_expression(ctx: VerilogParser.Width_constant_expressionContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#width_constant_expression}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.width_constant_expression].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitWidth_constant_expression(ctx: VerilogParser.Width_constant_expressionContext)
+    public suspend fun exitWidth_constant_expression(ctx: VerilogParser.Width_constant_expressionContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstPrimaryNumber}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstPrimaryNumber` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstPrimaryNumber(ctx: VerilogParser.ConstPrimaryNumberContext)
+    public suspend fun enterConstPrimaryNumber(ctx: VerilogParser.ConstPrimaryNumberContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstPrimaryNumber}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstPrimaryNumber` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstPrimaryNumber(ctx: VerilogParser.ConstPrimaryNumberContext)
+    public suspend fun exitConstPrimaryNumber(ctx: VerilogParser.ConstPrimaryNumberContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstPrimaryIdentifier}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstPrimaryIdentifier` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstPrimaryIdentifier(ctx: VerilogParser.ConstPrimaryIdentifierContext)
+    public suspend fun enterConstPrimaryIdentifier(ctx: VerilogParser.ConstPrimaryIdentifierContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstPrimaryIdentifier}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstPrimaryIdentifier` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstPrimaryIdentifier(ctx: VerilogParser.ConstPrimaryIdentifierContext)
+    public suspend fun exitConstPrimaryIdentifier(ctx: VerilogParser.ConstPrimaryIdentifierContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstPrimaryConcatenation}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstPrimaryConcatenation` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstPrimaryConcatenation(ctx: VerilogParser.ConstPrimaryConcatenationContext)
+    public suspend fun enterConstPrimaryConcatenation(ctx: VerilogParser.ConstPrimaryConcatenationContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstPrimaryConcatenation}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstPrimaryConcatenation` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstPrimaryConcatenation(ctx: VerilogParser.ConstPrimaryConcatenationContext)
+    public suspend fun exitConstPrimaryConcatenation(ctx: VerilogParser.ConstPrimaryConcatenationContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstPrimaryMultipleConcatenation}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstPrimaryMultipleConcatenation` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstPrimaryMultipleConcatenation(ctx: VerilogParser.ConstPrimaryMultipleConcatenationContext)
+    public suspend fun enterConstPrimaryMultipleConcatenation(ctx: VerilogParser.ConstPrimaryMultipleConcatenationContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstPrimaryMultipleConcatenation}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstPrimaryMultipleConcatenation` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstPrimaryMultipleConcatenation(ctx: VerilogParser.ConstPrimaryMultipleConcatenationContext)
+    public suspend fun exitConstPrimaryMultipleConcatenation(ctx: VerilogParser.ConstPrimaryMultipleConcatenationContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstPrimaryFunctionCall}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstPrimaryFunctionCall` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstPrimaryFunctionCall(ctx: VerilogParser.ConstPrimaryFunctionCallContext)
+    public suspend fun enterConstPrimaryFunctionCall(ctx: VerilogParser.ConstPrimaryFunctionCallContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstPrimaryFunctionCall}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstPrimaryFunctionCall` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstPrimaryFunctionCall(ctx: VerilogParser.ConstPrimaryFunctionCallContext)
+    public suspend fun exitConstPrimaryFunctionCall(ctx: VerilogParser.ConstPrimaryFunctionCallContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstPrimarySystemFunctionCall}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstPrimarySystemFunctionCall` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstPrimarySystemFunctionCall(ctx: VerilogParser.ConstPrimarySystemFunctionCallContext)
+    public suspend fun enterConstPrimarySystemFunctionCall(ctx: VerilogParser.ConstPrimarySystemFunctionCallContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstPrimarySystemFunctionCall}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstPrimarySystemFunctionCall` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstPrimarySystemFunctionCall(ctx: VerilogParser.ConstPrimarySystemFunctionCallContext)
+    public suspend fun exitConstPrimarySystemFunctionCall(ctx: VerilogParser.ConstPrimarySystemFunctionCallContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstPrimaryGroup}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstPrimaryGroup` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstPrimaryGroup(ctx: VerilogParser.ConstPrimaryGroupContext)
+    public suspend fun enterConstPrimaryGroup(ctx: VerilogParser.ConstPrimaryGroupContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstPrimaryGroup}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstPrimaryGroup` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstPrimaryGroup(ctx: VerilogParser.ConstPrimaryGroupContext)
+    public suspend fun exitConstPrimaryGroup(ctx: VerilogParser.ConstPrimaryGroupContext)
 
     /**
-     * Enter a parse tree produced by the {@code ConstPrimaryString}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by the `ConstPrimaryString` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConstPrimaryString(ctx: VerilogParser.ConstPrimaryStringContext)
+    public suspend fun enterConstPrimaryString(ctx: VerilogParser.ConstPrimaryStringContext)
 
     /**
-     * Exit a parse tree produced by the {@code ConstPrimaryString}
-     * labeled alternative in {@link VerilogParser#constant_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by the `ConstPrimaryString` labeled alternative in [VerilogParser.constant_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConstPrimaryString(ctx: VerilogParser.ConstPrimaryStringContext)
+    public suspend fun exitConstPrimaryString(ctx: VerilogParser.ConstPrimaryStringContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_path_primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_path_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModule_path_primary(ctx: VerilogParser.Module_path_primaryContext)
+    public suspend fun enterModule_path_primary(ctx: VerilogParser.Module_path_primaryContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_path_primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_path_primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModule_path_primary(ctx: VerilogParser.Module_path_primaryContext)
+    public suspend fun exitModule_path_primary(ctx: VerilogParser.Module_path_primaryContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#primary}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPrimary(ctx: VerilogParser.PrimaryContext)
+    public suspend fun enterPrimary(ctx: VerilogParser.PrimaryContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#primary}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.primary].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPrimary(ctx: VerilogParser.PrimaryContext)
+    public suspend fun exitPrimary(ctx: VerilogParser.PrimaryContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#select_}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.select_].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSelect_(ctx: VerilogParser.Select_Context)
+    public suspend fun enterSelect_(ctx: VerilogParser.Select_Context)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#select_}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.select_].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSelect_(ctx: VerilogParser.Select_Context)
+    public suspend fun exitSelect_(ctx: VerilogParser.Select_Context)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#bit_select}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.bit_select].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterBit_select(ctx: VerilogParser.Bit_selectContext)
+    public suspend fun enterBit_select(ctx: VerilogParser.Bit_selectContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#bit_select}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.bit_select].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitBit_select(ctx: VerilogParser.Bit_selectContext)
+    public suspend fun exitBit_select(ctx: VerilogParser.Bit_selectContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#net_lvalue}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.net_lvalue].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNet_lvalue(ctx: VerilogParser.Net_lvalueContext)
+    public suspend fun enterNet_lvalue(ctx: VerilogParser.Net_lvalueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#net_lvalue}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.net_lvalue].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNet_lvalue(ctx: VerilogParser.Net_lvalueContext)
+    public suspend fun exitNet_lvalue(ctx: VerilogParser.Net_lvalueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#const_select}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.const_select].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConst_select(ctx: VerilogParser.Const_selectContext)
+    public suspend fun enterConst_select(ctx: VerilogParser.Const_selectContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#const_select}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.const_select].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConst_select(ctx: VerilogParser.Const_selectContext)
+    public suspend fun exitConst_select(ctx: VerilogParser.Const_selectContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#const_bit_select}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.const_bit_select].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConst_bit_select(ctx: VerilogParser.Const_bit_selectContext)
+    public suspend fun enterConst_bit_select(ctx: VerilogParser.Const_bit_selectContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#const_bit_select}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.const_bit_select].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConst_bit_select(ctx: VerilogParser.Const_bit_selectContext)
+    public suspend fun exitConst_bit_select(ctx: VerilogParser.Const_bit_selectContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#variable_lvalue}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.variable_lvalue].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterVariable_lvalue(ctx: VerilogParser.Variable_lvalueContext)
+    public suspend fun enterVariable_lvalue(ctx: VerilogParser.Variable_lvalueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#variable_lvalue}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.variable_lvalue].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitVariable_lvalue(ctx: VerilogParser.Variable_lvalueContext)
+    public suspend fun exitVariable_lvalue(ctx: VerilogParser.Variable_lvalueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#unary_operator}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.unary_operator].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterUnary_operator(ctx: VerilogParser.Unary_operatorContext)
+    public suspend fun enterUnary_operator(ctx: VerilogParser.Unary_operatorContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#unary_operator}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.unary_operator].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitUnary_operator(ctx: VerilogParser.Unary_operatorContext)
+    public suspend fun exitUnary_operator(ctx: VerilogParser.Unary_operatorContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#unary_module_path_operator}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.unary_module_path_operator].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterUnary_module_path_operator(ctx: VerilogParser.Unary_module_path_operatorContext)
+    public suspend fun enterUnary_module_path_operator(ctx: VerilogParser.Unary_module_path_operatorContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#unary_module_path_operator}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.unary_module_path_operator].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitUnary_module_path_operator(ctx: VerilogParser.Unary_module_path_operatorContext)
+    public suspend fun exitUnary_module_path_operator(ctx: VerilogParser.Unary_module_path_operatorContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNumber(ctx: VerilogParser.NumberContext)
+    public suspend fun enterNumber(ctx: VerilogParser.NumberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNumber(ctx: VerilogParser.NumberContext)
+    public suspend fun exitNumber(ctx: VerilogParser.NumberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#real_number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.real_number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterReal_number(ctx: VerilogParser.Real_numberContext)
+    public suspend fun enterReal_number(ctx: VerilogParser.Real_numberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#real_number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.real_number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitReal_number(ctx: VerilogParser.Real_numberContext)
+    public suspend fun exitReal_number(ctx: VerilogParser.Real_numberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#decimal_number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.decimal_number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDecimal_number(ctx: VerilogParser.Decimal_numberContext)
+    public suspend fun enterDecimal_number(ctx: VerilogParser.Decimal_numberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#decimal_number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.decimal_number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDecimal_number(ctx: VerilogParser.Decimal_numberContext)
+    public suspend fun exitDecimal_number(ctx: VerilogParser.Decimal_numberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#binary_number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.binary_number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterBinary_number(ctx: VerilogParser.Binary_numberContext)
+    public suspend fun enterBinary_number(ctx: VerilogParser.Binary_numberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#binary_number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.binary_number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitBinary_number(ctx: VerilogParser.Binary_numberContext)
+    public suspend fun exitBinary_number(ctx: VerilogParser.Binary_numberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#octal_number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.octal_number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterOctal_number(ctx: VerilogParser.Octal_numberContext)
+    public suspend fun enterOctal_number(ctx: VerilogParser.Octal_numberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#octal_number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.octal_number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitOctal_number(ctx: VerilogParser.Octal_numberContext)
+    public suspend fun exitOctal_number(ctx: VerilogParser.Octal_numberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#hex_number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.hex_number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterHex_number(ctx: VerilogParser.Hex_numberContext)
+    public suspend fun enterHex_number(ctx: VerilogParser.Hex_numberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#hex_number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.hex_number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitHex_number(ctx: VerilogParser.Hex_numberContext)
+    public suspend fun exitHex_number(ctx: VerilogParser.Hex_numberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#size}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.size].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSize(ctx: VerilogParser.SizeContext)
+    public suspend fun enterSize(ctx: VerilogParser.SizeContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#size}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.size].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSize(ctx: VerilogParser.SizeContext)
+    public suspend fun exitSize(ctx: VerilogParser.SizeContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#fixed_point_number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.fixed_point_number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterFixed_point_number(ctx: VerilogParser.Fixed_point_numberContext)
+    public suspend fun enterFixed_point_number(ctx: VerilogParser.Fixed_point_numberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#fixed_point_number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.fixed_point_number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitFixed_point_number(ctx: VerilogParser.Fixed_point_numberContext)
+    public suspend fun exitFixed_point_number(ctx: VerilogParser.Fixed_point_numberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#exponential_number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.exponential_number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterExponential_number(ctx: VerilogParser.Exponential_numberContext)
+    public suspend fun enterExponential_number(ctx: VerilogParser.Exponential_numberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#exponential_number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.exponential_number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitExponential_number(ctx: VerilogParser.Exponential_numberContext)
+    public suspend fun exitExponential_number(ctx: VerilogParser.Exponential_numberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#unsigned_number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.unsigned_number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterUnsigned_number(ctx: VerilogParser.Unsigned_numberContext)
+    public suspend fun enterUnsigned_number(ctx: VerilogParser.Unsigned_numberContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#unsigned_number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.unsigned_number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitUnsigned_number(ctx: VerilogParser.Unsigned_numberContext)
+    public suspend fun exitUnsigned_number(ctx: VerilogParser.Unsigned_numberContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#decimal_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.decimal_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDecimal_value(ctx: VerilogParser.Decimal_valueContext)
+    public suspend fun enterDecimal_value(ctx: VerilogParser.Decimal_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#decimal_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.decimal_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDecimal_value(ctx: VerilogParser.Decimal_valueContext)
+    public suspend fun exitDecimal_value(ctx: VerilogParser.Decimal_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#binary_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.binary_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterBinary_value(ctx: VerilogParser.Binary_valueContext)
+    public suspend fun enterBinary_value(ctx: VerilogParser.Binary_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#binary_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.binary_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitBinary_value(ctx: VerilogParser.Binary_valueContext)
+    public suspend fun exitBinary_value(ctx: VerilogParser.Binary_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#octal_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.octal_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterOctal_value(ctx: VerilogParser.Octal_valueContext)
+    public suspend fun enterOctal_value(ctx: VerilogParser.Octal_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#octal_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.octal_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitOctal_value(ctx: VerilogParser.Octal_valueContext)
+    public suspend fun exitOctal_value(ctx: VerilogParser.Octal_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#hex_value}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.hex_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterHex_value(ctx: VerilogParser.Hex_valueContext)
+    public suspend fun enterHex_value(ctx: VerilogParser.Hex_valueContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#hex_value}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.hex_value].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitHex_value(ctx: VerilogParser.Hex_valueContext)
+    public suspend fun exitHex_value(ctx: VerilogParser.Hex_valueContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#decimal_base}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.decimal_base].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterDecimal_base(ctx: VerilogParser.Decimal_baseContext)
+    public suspend fun enterDecimal_base(ctx: VerilogParser.Decimal_baseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#decimal_base}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.decimal_base].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitDecimal_base(ctx: VerilogParser.Decimal_baseContext)
+    public suspend fun exitDecimal_base(ctx: VerilogParser.Decimal_baseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#binary_base}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.binary_base].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterBinary_base(ctx: VerilogParser.Binary_baseContext)
+    public suspend fun enterBinary_base(ctx: VerilogParser.Binary_baseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#binary_base}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.binary_base].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitBinary_base(ctx: VerilogParser.Binary_baseContext)
+    public suspend fun exitBinary_base(ctx: VerilogParser.Binary_baseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#octal_base}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.octal_base].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterOctal_base(ctx: VerilogParser.Octal_baseContext)
+    public suspend fun enterOctal_base(ctx: VerilogParser.Octal_baseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#octal_base}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.octal_base].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitOctal_base(ctx: VerilogParser.Octal_baseContext)
+    public suspend fun exitOctal_base(ctx: VerilogParser.Octal_baseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#hex_base}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.hex_base].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterHex_base(ctx: VerilogParser.Hex_baseContext)
+    public suspend fun enterHex_base(ctx: VerilogParser.Hex_baseContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#hex_base}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.hex_base].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitHex_base(ctx: VerilogParser.Hex_baseContext)
+    public suspend fun exitHex_base(ctx: VerilogParser.Hex_baseContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#string_}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.string_].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterString_(ctx: VerilogParser.String_Context)
+    public suspend fun enterString_(ctx: VerilogParser.String_Context)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#string_}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.string_].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitString_(ctx: VerilogParser.String_Context)
+    public suspend fun exitString_(ctx: VerilogParser.String_Context)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#attribute_instance}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.attribute_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterAttribute_instance(ctx: VerilogParser.Attribute_instanceContext)
+    public suspend fun enterAttribute_instance(ctx: VerilogParser.Attribute_instanceContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#attribute_instance}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.attribute_instance].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitAttribute_instance(ctx: VerilogParser.Attribute_instanceContext)
+    public suspend fun exitAttribute_instance(ctx: VerilogParser.Attribute_instanceContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#attr_spec}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.attr_spec].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterAttr_spec(ctx: VerilogParser.Attr_specContext)
+    public suspend fun enterAttr_spec(ctx: VerilogParser.Attr_specContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#attr_spec}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.attr_spec].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitAttr_spec(ctx: VerilogParser.Attr_specContext)
+    public suspend fun exitAttr_spec(ctx: VerilogParser.Attr_specContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#attr_name}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.attr_name].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterAttr_name(ctx: VerilogParser.Attr_nameContext)
+    public suspend fun enterAttr_name(ctx: VerilogParser.Attr_nameContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#attr_name}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.attr_name].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitAttr_name(ctx: VerilogParser.Attr_nameContext)
+    public suspend fun exitAttr_name(ctx: VerilogParser.Attr_nameContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#block_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.block_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterBlock_identifier(ctx: VerilogParser.Block_identifierContext)
+    public suspend fun enterBlock_identifier(ctx: VerilogParser.Block_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#block_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.block_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitBlock_identifier(ctx: VerilogParser.Block_identifierContext)
+    public suspend fun exitBlock_identifier(ctx: VerilogParser.Block_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#cell_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.cell_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterCell_identifier(ctx: VerilogParser.Cell_identifierContext)
+    public suspend fun enterCell_identifier(ctx: VerilogParser.Cell_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#cell_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.cell_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitCell_identifier(ctx: VerilogParser.Cell_identifierContext)
+    public suspend fun exitCell_identifier(ctx: VerilogParser.Cell_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#config_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.config_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterConfig_identifier(ctx: VerilogParser.Config_identifierContext)
+    public suspend fun enterConfig_identifier(ctx: VerilogParser.Config_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#config_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.config_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitConfig_identifier(ctx: VerilogParser.Config_identifierContext)
+    public suspend fun exitConfig_identifier(ctx: VerilogParser.Config_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#escaped_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.escaped_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEscaped_identifier(ctx: VerilogParser.Escaped_identifierContext)
+    public suspend fun enterEscaped_identifier(ctx: VerilogParser.Escaped_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#escaped_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.escaped_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEscaped_identifier(ctx: VerilogParser.Escaped_identifierContext)
+    public suspend fun exitEscaped_identifier(ctx: VerilogParser.Escaped_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#event_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.event_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterEvent_identifier(ctx: VerilogParser.Event_identifierContext)
+    public suspend fun enterEvent_identifier(ctx: VerilogParser.Event_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#event_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.event_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitEvent_identifier(ctx: VerilogParser.Event_identifierContext)
+    public suspend fun exitEvent_identifier(ctx: VerilogParser.Event_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#function_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.function_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterFunction_identifier(ctx: VerilogParser.Function_identifierContext)
+    public suspend fun enterFunction_identifier(ctx: VerilogParser.Function_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#function_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.function_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitFunction_identifier(ctx: VerilogParser.Function_identifierContext)
+    public suspend fun exitFunction_identifier(ctx: VerilogParser.Function_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#gate_instance_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.gate_instance_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterGate_instance_identifier(ctx: VerilogParser.Gate_instance_identifierContext)
+    public suspend fun enterGate_instance_identifier(ctx: VerilogParser.Gate_instance_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#gate_instance_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.gate_instance_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitGate_instance_identifier(ctx: VerilogParser.Gate_instance_identifierContext)
+    public suspend fun exitGate_instance_identifier(ctx: VerilogParser.Gate_instance_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#generate_block_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.generate_block_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterGenerate_block_identifier(ctx: VerilogParser.Generate_block_identifierContext)
+    public suspend fun enterGenerate_block_identifier(ctx: VerilogParser.Generate_block_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#generate_block_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.generate_block_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitGenerate_block_identifier(ctx: VerilogParser.Generate_block_identifierContext)
+    public suspend fun exitGenerate_block_identifier(ctx: VerilogParser.Generate_block_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#genvar_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.genvar_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterGenvar_identifier(ctx: VerilogParser.Genvar_identifierContext)
+    public suspend fun enterGenvar_identifier(ctx: VerilogParser.Genvar_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#genvar_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.genvar_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitGenvar_identifier(ctx: VerilogParser.Genvar_identifierContext)
+    public suspend fun exitGenvar_identifier(ctx: VerilogParser.Genvar_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#hierarchical_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.hierarchical_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterHierarchical_identifier(ctx: VerilogParser.Hierarchical_identifierContext)
+    public suspend fun enterHierarchical_identifier(ctx: VerilogParser.Hierarchical_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#hierarchical_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.hierarchical_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitHierarchical_identifier(ctx: VerilogParser.Hierarchical_identifierContext)
+    public suspend fun exitHierarchical_identifier(ctx: VerilogParser.Hierarchical_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#hier_ref}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.hier_ref].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterHier_ref(ctx: VerilogParser.Hier_refContext)
+    public suspend fun enterHier_ref(ctx: VerilogParser.Hier_refContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#hier_ref}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.hier_ref].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitHier_ref(ctx: VerilogParser.Hier_refContext)
+    public suspend fun exitHier_ref(ctx: VerilogParser.Hier_refContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterIdentifier(ctx: VerilogParser.IdentifierContext)
+    public suspend fun enterIdentifier(ctx: VerilogParser.IdentifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitIdentifier(ctx: VerilogParser.IdentifierContext)
+    public suspend fun exitIdentifier(ctx: VerilogParser.IdentifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#input_port_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.input_port_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterInput_port_identifier(ctx: VerilogParser.Input_port_identifierContext)
+    public suspend fun enterInput_port_identifier(ctx: VerilogParser.Input_port_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#input_port_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.input_port_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitInput_port_identifier(ctx: VerilogParser.Input_port_identifierContext)
+    public suspend fun exitInput_port_identifier(ctx: VerilogParser.Input_port_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#instance_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.instance_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterInstance_identifier(ctx: VerilogParser.Instance_identifierContext)
+    public suspend fun enterInstance_identifier(ctx: VerilogParser.Instance_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#instance_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.instance_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitInstance_identifier(ctx: VerilogParser.Instance_identifierContext)
+    public suspend fun exitInstance_identifier(ctx: VerilogParser.Instance_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#library_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.library_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterLibrary_identifier(ctx: VerilogParser.Library_identifierContext)
+    public suspend fun enterLibrary_identifier(ctx: VerilogParser.Library_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#library_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.library_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitLibrary_identifier(ctx: VerilogParser.Library_identifierContext)
+    public suspend fun exitLibrary_identifier(ctx: VerilogParser.Library_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModule_identifier(ctx: VerilogParser.Module_identifierContext)
+    public suspend fun enterModule_identifier(ctx: VerilogParser.Module_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModule_identifier(ctx: VerilogParser.Module_identifierContext)
+    public suspend fun exitModule_identifier(ctx: VerilogParser.Module_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#module_instance_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.module_instance_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterModule_instance_identifier(ctx: VerilogParser.Module_instance_identifierContext)
+    public suspend fun enterModule_instance_identifier(ctx: VerilogParser.Module_instance_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#module_instance_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.module_instance_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitModule_instance_identifier(ctx: VerilogParser.Module_instance_identifierContext)
+    public suspend fun exitModule_instance_identifier(ctx: VerilogParser.Module_instance_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#net_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.net_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNet_identifier(ctx: VerilogParser.Net_identifierContext)
+    public suspend fun enterNet_identifier(ctx: VerilogParser.Net_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#net_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.net_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNet_identifier(ctx: VerilogParser.Net_identifierContext)
+    public suspend fun exitNet_identifier(ctx: VerilogParser.Net_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#output_port_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.output_port_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterOutput_port_identifier(ctx: VerilogParser.Output_port_identifierContext)
+    public suspend fun enterOutput_port_identifier(ctx: VerilogParser.Output_port_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#output_port_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.output_port_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitOutput_port_identifier(ctx: VerilogParser.Output_port_identifierContext)
+    public suspend fun exitOutput_port_identifier(ctx: VerilogParser.Output_port_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#parameter_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.parameter_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterParameter_identifier(ctx: VerilogParser.Parameter_identifierContext)
+    public suspend fun enterParameter_identifier(ctx: VerilogParser.Parameter_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#parameter_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.parameter_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitParameter_identifier(ctx: VerilogParser.Parameter_identifierContext)
+    public suspend fun exitParameter_identifier(ctx: VerilogParser.Parameter_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#port_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.port_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPort_identifier(ctx: VerilogParser.Port_identifierContext)
+    public suspend fun enterPort_identifier(ctx: VerilogParser.Port_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#port_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.port_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPort_identifier(ctx: VerilogParser.Port_identifierContext)
+    public suspend fun exitPort_identifier(ctx: VerilogParser.Port_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#real_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.real_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterReal_identifier(ctx: VerilogParser.Real_identifierContext)
+    public suspend fun enterReal_identifier(ctx: VerilogParser.Real_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#real_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.real_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitReal_identifier(ctx: VerilogParser.Real_identifierContext)
+    public suspend fun exitReal_identifier(ctx: VerilogParser.Real_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#simple_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.simple_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSimple_identifier(ctx: VerilogParser.Simple_identifierContext)
+    public suspend fun enterSimple_identifier(ctx: VerilogParser.Simple_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#simple_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.simple_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSimple_identifier(ctx: VerilogParser.Simple_identifierContext)
+    public suspend fun exitSimple_identifier(ctx: VerilogParser.Simple_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#specparam_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.specparam_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSpecparam_identifier(ctx: VerilogParser.Specparam_identifierContext)
+    public suspend fun enterSpecparam_identifier(ctx: VerilogParser.Specparam_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#specparam_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.specparam_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSpecparam_identifier(ctx: VerilogParser.Specparam_identifierContext)
+    public suspend fun exitSpecparam_identifier(ctx: VerilogParser.Specparam_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#system_function_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.system_function_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSystem_function_identifier(ctx: VerilogParser.System_function_identifierContext)
+    public suspend fun enterSystem_function_identifier(ctx: VerilogParser.System_function_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#system_function_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.system_function_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSystem_function_identifier(ctx: VerilogParser.System_function_identifierContext)
+    public suspend fun exitSystem_function_identifier(ctx: VerilogParser.System_function_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#system_task_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.system_task_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSystem_task_identifier(ctx: VerilogParser.System_task_identifierContext)
+    public suspend fun enterSystem_task_identifier(ctx: VerilogParser.System_task_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#system_task_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.system_task_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSystem_task_identifier(ctx: VerilogParser.System_task_identifierContext)
+    public suspend fun exitSystem_task_identifier(ctx: VerilogParser.System_task_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#task_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.task_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTask_identifier(ctx: VerilogParser.Task_identifierContext)
+    public suspend fun enterTask_identifier(ctx: VerilogParser.Task_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#task_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.task_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTask_identifier(ctx: VerilogParser.Task_identifierContext)
+    public suspend fun exitTask_identifier(ctx: VerilogParser.Task_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#terminal_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.terminal_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTerminal_identifier(ctx: VerilogParser.Terminal_identifierContext)
+    public suspend fun enterTerminal_identifier(ctx: VerilogParser.Terminal_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#terminal_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.terminal_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTerminal_identifier(ctx: VerilogParser.Terminal_identifierContext)
+    public suspend fun exitTerminal_identifier(ctx: VerilogParser.Terminal_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#topmodule_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.topmodule_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterTopmodule_identifier(ctx: VerilogParser.Topmodule_identifierContext)
+    public suspend fun enterTopmodule_identifier(ctx: VerilogParser.Topmodule_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#topmodule_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.topmodule_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitTopmodule_identifier(ctx: VerilogParser.Topmodule_identifierContext)
+    public suspend fun exitTopmodule_identifier(ctx: VerilogParser.Topmodule_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterUdp_identifier(ctx: VerilogParser.Udp_identifierContext)
+    public suspend fun enterUdp_identifier(ctx: VerilogParser.Udp_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitUdp_identifier(ctx: VerilogParser.Udp_identifierContext)
+    public suspend fun exitUdp_identifier(ctx: VerilogParser.Udp_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#udp_instance_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.udp_instance_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterUdp_instance_identifier(ctx: VerilogParser.Udp_instance_identifierContext)
+    public suspend fun enterUdp_instance_identifier(ctx: VerilogParser.Udp_instance_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#udp_instance_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.udp_instance_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitUdp_instance_identifier(ctx: VerilogParser.Udp_instance_identifierContext)
+    public suspend fun exitUdp_instance_identifier(ctx: VerilogParser.Udp_instance_identifierContext)
 
     /**
-     * Enter a parse tree produced by {@link VerilogParser#variable_identifier}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [VerilogParser.variable_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterVariable_identifier(ctx: VerilogParser.Variable_identifierContext)
+    public suspend fun enterVariable_identifier(ctx: VerilogParser.Variable_identifierContext)
 
     /**
-     * Exit a parse tree produced by {@link VerilogParser#variable_identifier}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [VerilogParser.variable_identifier].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitVariable_identifier(ctx: VerilogParser.Variable_identifierContext)
+    public suspend fun exitVariable_identifier(ctx: VerilogParser.Variable_identifierContext)
+
 }

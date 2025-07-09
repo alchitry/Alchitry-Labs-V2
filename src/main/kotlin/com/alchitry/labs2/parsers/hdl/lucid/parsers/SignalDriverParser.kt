@@ -68,7 +68,7 @@ data class SignalDriverParser(
         val sig =
             context.resolveSignal(ctx, nameCtx.text) as? Signal ?: error("Unresolved sig of name ${nameCtx.text}")
 
-        if (ctx.parent is AlwaysSignalContext) {
+        if (ctx.getParent() is AlwaysSignalContext) {
             if (ctx.expr() != null) {
                 signals[sig] = sig.width.filledWith(Bit.B1, signed = false)
             }
@@ -229,12 +229,12 @@ data class SignalDriverParser(
     }
 
     override fun enterBlock(ctx: BlockContext) {
-        if (ctx.parent !is RepeatBlockContext)
+        if (ctx.getParent() !is RepeatBlockContext)
             startBlock()
     }
 
     override fun exitBlock(ctx: BlockContext) {
-        if (ctx.parent !is RepeatBlockContext)
+        if (ctx.getParent() !is RepeatBlockContext)
             stopBlock(ctx)
     }
 

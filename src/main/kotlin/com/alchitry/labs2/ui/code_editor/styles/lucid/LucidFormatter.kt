@@ -24,7 +24,7 @@ class LucidFormatter(private val codeEditorState: CodeEditorState) : CodeFormatt
         val indents = buildIndentList(tokens, tree)
 
         val firstDefaultTokenIdx =
-            tokens.indexOfFirst { it.channel == LucidLexer.Channels.DEFAULT_TOKEN_CHANNEL.id && it.line == line + 1 }
+            tokens.indexOfFirst { it.channel == LucidLexer.Channels.DEFAULT_TOKEN_CHANNEL && it.line == line + 1 }
         if (firstDefaultTokenIdx == -1) {
             val previousLine = codeEditorState.lines.getOrNull(line - 1)?.text?.text ?: return ""
             return " ".repeat(CodeFormatter.countStartingWhitespace(previousLine))
@@ -47,11 +47,11 @@ class LucidFormatter(private val codeEditorState: CodeEditorState) : CodeFormatt
         codeEditorState.lines.indices.forEach { idx ->
             val firstTokenIdx = tokens.indexOfFirst { it.line == idx + 1 }
             val firstDefaultTokenIdx =
-                tokens.indexOfFirst { it.channel == LucidLexer.Channels.DEFAULT_TOKEN_CHANNEL.id && it.line == idx + 1 }
+                tokens.indexOfFirst { it.channel == LucidLexer.Channels.DEFAULT_TOKEN_CHANNEL && it.line == idx + 1 }
             if (firstTokenIdx == -1 || firstDefaultTokenIdx == -1)
                 return@forEach
             val firstToken = tokens[firstTokenIdx]
-            if (firstToken.type == LucidLexer.Tokens.WS.id) {
+            if (firstToken.type == LucidLexer.Tokens.WS) {
                 tokenText[firstTokenIdx] = CodeFormatter.indentString(indents[firstDefaultTokenIdx])
             } else {
                 tokenText[firstTokenIdx] =
@@ -62,12 +62,12 @@ class LucidFormatter(private val codeEditorState: CodeEditorState) : CodeFormatt
         return tokenText.joinToString(separator = "")
     }
 
-    private fun List<Token>.nextFromChannel(start: Int, channel: LucidLexer.Channels): Token? {
-        return subList(start + 1, size).firstOrNull { it.channel == channel.id }
+    private fun List<Token>.nextFromChannel(start: Int, channel: Int): Token? {
+        return subList(start + 1, size).firstOrNull { it.channel == channel }
     }
 
-    private fun List<Token>.previousFromChannel(start: Int, channel: LucidLexer.Channels): Token? {
-        return subList(0, start).lastOrNull { it.channel == channel.id }
+    private fun List<Token>.previousFromChannel(start: Int, channel: Int): Token? {
+        return subList(0, start).lastOrNull { it.channel == channel }
     }
 
     private fun removeSemicolons(text: String): String {
@@ -77,21 +77,21 @@ class LucidFormatter(private val codeEditorState: CodeEditorState) : CodeFormatt
 
         tokens.forEachIndexed { idx, it ->
             when (it.type) {
-                LucidLexer.Tokens.SEMICOLON.id -> {
+                LucidLexer.Tokens.SEMICOLON -> {
                     if (tokens.previousFromChannel(
                             idx,
                             LucidLexer.Channels.DEFAULT_TOKEN_CHANNEL
-                        )?.type == LucidLexer.Tokens.NL.id ||
+                        )?.type == LucidLexer.Tokens.NL ||
                         tokens.nextFromChannel(
                             idx,
                             LucidLexer.Channels.DEFAULT_TOKEN_CHANNEL
-                        )?.type == LucidLexer.Tokens.NL.id
+                        )?.type == LucidLexer.Tokens.NL
                     ) {
                         tokenText[idx] = ""
                     }
                 }
 
-                LucidLexer.Tokens.NL.id -> {
+                LucidLexer.Tokens.NL -> {
                     tokenText[idx] = "\n"
                 }
             }
@@ -104,7 +104,7 @@ class LucidFormatter(private val codeEditorState: CodeEditorState) : CodeFormatt
     private fun buildIndentList(tokens: List<Token>, tree: ParseTree): List<Int> {
         val indents = MutableList(tokens.size) { 0 }
 
-        ParseTreeWalker.walk(object : LucidBaseListener() {
+        ParseTreeWalker.DEFAULT.walk(object : LucidBaseListener() {
             private fun indent(from: Int, to: Int) {
                 for (i in from..to) {
                     indents[i] += 1
@@ -139,7 +139,7 @@ class LucidFormatter(private val codeEditorState: CodeEditorState) : CodeFormatt
                 } else {
                     val stats = ctx.alwaysStat()
                     if (stats.size == 1 && stats.first() is LucidParser.AlwaysIfContext) {
-                        val parent = ctx.parent
+                        val parent = ctx.getParent()
                         if (parent is LucidParser.ElseStatContext) {
                             if (parent.start?.line == start.line) // don't indent "else if"
                                 return

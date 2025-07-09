@@ -99,7 +99,7 @@ open class BracketIndenter(private val codeEditorState: CodeEditorState) : CodeF
     private fun findFinalNode(parseTree: ParseTree, tokenStream: TokenStream, location: Int): ParseTree {
         val tree = parseTree.findFinalNode(tokenStream, location, ::bracketOffsetProvider)
         if (tree.childCount > 0 && tree is BracketParser.BlockContext) {
-            return tree.readParent() ?: tree
+            return tree.getParent() ?: tree
         }
         return tree
     }
@@ -111,7 +111,7 @@ open class BracketIndenter(private val codeEditorState: CodeEditorState) : CodeF
             if (current is T) {
                 count += 1
             }
-            current = current.readParent()
+            current = current.getParent()
         }
         return count
     }

@@ -49,9 +49,9 @@ class ExprParser(
     }
 
     override suspend fun enterBlock(ctx: BlockContext) {
-        when (val parent = ctx.parent) {
+        when (val parent = ctx.getParent()) {
             is RepeatBlockContext -> {
-                val exprContexts = (parent.parent as? RepeatStatContext)?.expr() ?: return
+                val exprContexts = (parent.getParent() as? RepeatStatContext)?.expr() ?: return
                 val expr = context.resolve(
                     if (exprContexts.size > 1) exprContexts[1] else exprContexts.firstOrNull() ?: return
                 ) ?: return
@@ -64,16 +64,16 @@ class ExprParser(
             }
 
             is ElseStatContext -> {
-                val expr = context.resolve((parent.parent as? IfStatContext)?.expr() ?: return) ?: return
+                val expr = context.resolve((parent.getParent() as? IfStatContext)?.expr() ?: return) ?: return
                 evaluator.setBlockState(ctx, expr.value.isTrue().bit == Bit.B1, expr.type.known)
             }
         }
     }
 
     override suspend fun enterCaseBlock(ctx: CaseBlockContext) {
-        val parent = ctx.parent as CaseElemContext
+        val parent = ctx.getParent() as CaseElemContext
         val caseExprCtx = parent.expr()
-        val expr = context.resolve((parent.parent as CaseStatContext).expr() ?: return) ?: return
+        val expr = context.resolve((parent.getParent() as CaseStatContext).expr() ?: return) ?: return
 
         if (caseExprCtx != null) {
             val caseExpr = context.resolve(caseExprCtx) ?: return
@@ -82,7 +82,7 @@ class ExprParser(
         }
 
         // default case
-        val cases = (parent.parent as CaseStatContext).caseElem()
+        val cases = (parent.getParent() as CaseStatContext).caseElem()
         val index = cases.indexOf(parent)
         if (index < 0) error("Case isn't inside its parent!")
         evaluator.setBlockState(
@@ -1234,7 +1234,7 @@ class ExprParser(
 
     companion object {
         fun getOperator(ctx: ExprContext): String? {
-            return ctx.children?.firstOrNull { it is TerminalNode && it.symbol?.type != Tokens.NL.id }?.text
+            return ctx.children?.firstOrNull { it is TerminalNode && it.symbol.type != Tokens.NL }?.text
         }
     }
 }

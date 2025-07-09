@@ -264,7 +264,7 @@ class SystemVerilogConverter(
     }
 
     override fun exitSigDec(ctx: LucidParser.SigDecContext) {
-        if (ctx.parent is LucidParser.AlwaysSignalContext)
+        if (ctx.getParent() is LucidParser.AlwaysSignalContext)
             return
         val name = ctx.name()?.text ?: error("Failed to get name for sig!")
         val sig = context.types.sigs.values.firstOrNull { it.name == name }
@@ -891,7 +891,9 @@ class SystemVerilogConverter(
     override fun exitSignal(ctx: LucidParser.SignalContext) {
         val signal = context.resolve(ctx)
         if (signal == null) {
-            if (ctx.parent is LucidParser.ExprSignalContext && ctx.parent?.parent is LucidParser.RepeatStatContext)
+            if (ctx.getParent() is LucidParser.ExprSignalContext && ctx.getParent()
+                    ?.getParent() is LucidParser.RepeatStatContext
+            )
                 return
 
             val functionCtx = ctx.firstParentOrNull { it is FunctionContext }
@@ -900,7 +902,7 @@ class SystemVerilogConverter(
             error(ctx, "Failed to resolve signal for \"${ctx.text}\"")
         }
 
-        ctx.verilog = signal.toVerilog(write = ctx.parent is LucidParser.AssignStatContext)
+        ctx.verilog = signal.toVerilog(write = ctx.getParent() is LucidParser.AssignStatContext)
     }
 
     override fun enterBlock(ctx: LucidParser.BlockContext) {
@@ -913,7 +915,7 @@ class SystemVerilogConverter(
             newLine()
 
             // add default assignments for all driven DFFs if this is an always block
-            if (ctx.parent is LucidParser.AlwaysBlockContext) {
+            if (ctx.getParent() is LucidParser.AlwaysBlockContext) {
                 val drivenSignals =
                     context.signalDriver.getDrivenSignals(ctx) ?: error(ctx, "Missing driven signals for block!")
                 val dffs = drivenSignals.mapNotNull { it.parent as? Dff }
@@ -1415,7 +1417,7 @@ class SystemVerilogConverter(
 
         val v = verilog[ctx.signal().requireNotNull(ctx)]
         if (v == null) {
-            if (ctx.parent is LucidParser.RepeatStatContext)
+            if (ctx.getParent() is LucidParser.RepeatStatContext)
                 return
 
             val functionCtx = ctx.firstParentOrNull { it is FunctionContext }

@@ -31,14 +31,14 @@ private enum class ContextType {
 
 class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
     private fun getContextType(context: ParseTree): ContextType {
-        if (context is TerminalNode && context.symbol?.type == LucidLexer.Tokens.FUNCTION_ID.id) {
+        if (context is TerminalNode && context.symbol.type == LucidLexer.Tokens.FUNCTION_ID) {
             return ContextType.FUNCTION
         }
 
-        val nameContext = context.readParent() as? LucidParser.NameContext ?: return ContextType.INVALID
-        val parent = nameContext.readParent()
+        val nameContext = context.getParent() as? LucidParser.NameContext ?: return ContextType.INVALID
+        val parent = nameContext.getParent()
         if (parent is LucidParser.SignalContext) {
-            return when (parent.readParent()) {
+            return when (parent.getParent()) {
                 is LucidParser.AssignStatContext -> ContextType.WRITE_SIG
                 is LucidParser.ExprContext -> ContextType.READ_SIG
                 else -> ContextType.INVALID

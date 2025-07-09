@@ -1,4 +1,4 @@
-// Generated from java-escape by ANTLR 4.13.0
+// Generated from Acf.g4 by ANTLR 4.13.1
 package com.alchitry.labs2.parsers.grammar
 
 import org.antlr.v4.kotlinruntime.ParserRuleContext
@@ -8,177 +8,205 @@ import org.antlr.v4.kotlinruntime.tree.SuspendParseTreeListener
 import org.antlr.v4.kotlinruntime.tree.TerminalNode
 
 /**
- * This interface defines a complete listener for a parse tree produced by
- * {@link AcfParser}.
+ * This interface defines a complete listener for a parse tree produced by [AcfParser].
  */
-interface AcfListener : ParseTreeListener {
+public interface AcfListener : ParseTreeListener {
     /**
-     * Enter a parse tree produced by {@link AcfParser#source}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.source].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSource(ctx: AcfParser.SourceContext)
+    public fun enterSource(ctx: AcfParser.SourceContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#source}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.source].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSource(ctx: AcfParser.SourceContext)
+    public fun exitSource(ctx: AcfParser.SourceContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#line}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.line].
+     *
+     * @param ctx The parse tree
      */
-    fun enterLine(ctx: AcfParser.LineContext)
+    public fun enterLine(ctx: AcfParser.LineContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#line}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.line].
+     *
+     * @param ctx The parse tree
      */
-    fun exitLine(ctx: AcfParser.LineContext)
+    public fun exitLine(ctx: AcfParser.LineContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#pin}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.pin].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPin(ctx: AcfParser.PinContext)
+    public fun enterPin(ctx: AcfParser.PinContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#pin}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.pin].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPin(ctx: AcfParser.PinContext)
+    public fun exitPin(ctx: AcfParser.PinContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#attributeBlock}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.attributeBlock].
+     *
+     * @param ctx The parse tree
      */
-    fun enterAttributeBlock(ctx: AcfParser.AttributeBlockContext)
+    public fun enterAttributeBlock(ctx: AcfParser.AttributeBlockContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#attributeBlock}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.attributeBlock].
+     *
+     * @param ctx The parse tree
      */
-    fun exitAttributeBlock(ctx: AcfParser.AttributeBlockContext)
+    public fun exitAttributeBlock(ctx: AcfParser.AttributeBlockContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#nativeBlock}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.nativeBlock].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNativeBlock(ctx: AcfParser.NativeBlockContext)
+    public fun enterNativeBlock(ctx: AcfParser.NativeBlockContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#nativeBlock}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.nativeBlock].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNativeBlock(ctx: AcfParser.NativeBlockContext)
+    public fun exitNativeBlock(ctx: AcfParser.NativeBlockContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#name}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.name].
+     *
+     * @param ctx The parse tree
      */
-    fun enterName(ctx: AcfParser.NameContext)
+    public fun enterName(ctx: AcfParser.NameContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#name}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.name].
+     *
+     * @param ctx The parse tree
      */
-    fun exitName(ctx: AcfParser.NameContext)
+    public fun exitName(ctx: AcfParser.NameContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#attribute}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.attribute].
+     *
+     * @param ctx The parse tree
      */
-    fun enterAttribute(ctx: AcfParser.AttributeContext)
+    public fun enterAttribute(ctx: AcfParser.AttributeContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#attribute}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.attribute].
+     *
+     * @param ctx The parse tree
      */
-    fun exitAttribute(ctx: AcfParser.AttributeContext)
+    public fun exitAttribute(ctx: AcfParser.AttributeContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#attributeValue}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.attributeValue].
+     *
+     * @param ctx The parse tree
      */
-    fun enterAttributeValue(ctx: AcfParser.AttributeValueContext)
+    public fun enterAttributeValue(ctx: AcfParser.AttributeValueContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#attributeValue}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.attributeValue].
+     *
+     * @param ctx The parse tree
      */
-    fun exitAttributeValue(ctx: AcfParser.AttributeValueContext)
+    public fun exitAttributeValue(ctx: AcfParser.AttributeValueContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#portName}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.portName].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPortName(ctx: AcfParser.PortNameContext)
+    public fun enterPortName(ctx: AcfParser.PortNameContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#portName}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.portName].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPortName(ctx: AcfParser.PortNameContext)
+    public fun exitPortName(ctx: AcfParser.PortNameContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#pinName}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.pinName].
+     *
+     * @param ctx The parse tree
      */
-    fun enterPinName(ctx: AcfParser.PinNameContext)
+    public fun enterPinName(ctx: AcfParser.PinNameContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#pinName}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.pinName].
+     *
+     * @param ctx The parse tree
      */
-    fun exitPinName(ctx: AcfParser.PinNameContext)
+    public fun exitPinName(ctx: AcfParser.PinNameContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#frequency}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.frequency].
+     *
+     * @param ctx The parse tree
      */
-    fun enterFrequency(ctx: AcfParser.FrequencyContext)
+    public fun enterFrequency(ctx: AcfParser.FrequencyContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#frequency}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.frequency].
+     *
+     * @param ctx The parse tree
      */
-    fun exitFrequency(ctx: AcfParser.FrequencyContext)
+    public fun exitFrequency(ctx: AcfParser.FrequencyContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#arrayIndex}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.arrayIndex].
+     *
+     * @param ctx The parse tree
      */
-    fun enterArrayIndex(ctx: AcfParser.ArrayIndexContext)
+    public fun enterArrayIndex(ctx: AcfParser.ArrayIndexContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#arrayIndex}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.arrayIndex].
+     *
+     * @param ctx The parse tree
      */
-    fun exitArrayIndex(ctx: AcfParser.ArrayIndexContext)
+    public fun exitArrayIndex(ctx: AcfParser.ArrayIndexContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.number].
+     *
+     * @param ctx The parse tree
      */
-    fun enterNumber(ctx: AcfParser.NumberContext)
+    public fun enterNumber(ctx: AcfParser.NumberContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.number].
+     *
+     * @param ctx The parse tree
      */
-    fun exitNumber(ctx: AcfParser.NumberContext)
+    public fun exitNumber(ctx: AcfParser.NumberContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#semi}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.semi].
+     *
+     * @param ctx The parse tree
      */
-    fun enterSemi(ctx: AcfParser.SemiContext)
+    public fun enterSemi(ctx: AcfParser.SemiContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#semi}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.semi].
+     *
+     * @param ctx The parse tree
      */
-    fun exitSemi(ctx: AcfParser.SemiContext)
+    public fun exitSemi(ctx: AcfParser.SemiContext)
+
 
     override fun asSuspend(): SuspendAcfListener = object : SuspendAcfListener {
         override suspend fun enterSource(ctx: AcfParser.SourceContext) = this@AcfListener.enterSource(ctx)
@@ -198,7 +226,6 @@ interface AcfListener : ParseTreeListener {
 
         override suspend fun enterNativeBlock(ctx: AcfParser.NativeBlockContext) =
             this@AcfListener.enterNativeBlock(ctx)
-
         override suspend fun exitNativeBlock(ctx: AcfParser.NativeBlockContext) = this@AcfListener.exitNativeBlock(ctx)
 
         override suspend fun enterName(ctx: AcfParser.NameContext) = this@AcfListener.enterName(ctx)
@@ -240,175 +267,203 @@ interface AcfListener : ParseTreeListener {
 }
 
 /**
- * This interface defines a complete listener for a parse tree produced by
- * {@link AcfParser}.
+ * This interface defines a complete suspend listener for a parse tree produced by [AcfParser].
  */
-interface SuspendAcfListener : SuspendParseTreeListener {
+public interface SuspendAcfListener : SuspendParseTreeListener {
     /**
-     * Enter a parse tree produced by {@link AcfParser#source}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.source].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSource(ctx: AcfParser.SourceContext)
+    public suspend fun enterSource(ctx: AcfParser.SourceContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#source}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.source].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSource(ctx: AcfParser.SourceContext)
+    public suspend fun exitSource(ctx: AcfParser.SourceContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#line}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.line].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterLine(ctx: AcfParser.LineContext)
+    public suspend fun enterLine(ctx: AcfParser.LineContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#line}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.line].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitLine(ctx: AcfParser.LineContext)
+    public suspend fun exitLine(ctx: AcfParser.LineContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#pin}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.pin].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPin(ctx: AcfParser.PinContext)
+    public suspend fun enterPin(ctx: AcfParser.PinContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#pin}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.pin].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPin(ctx: AcfParser.PinContext)
+    public suspend fun exitPin(ctx: AcfParser.PinContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#attributeBlock}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.attributeBlock].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterAttributeBlock(ctx: AcfParser.AttributeBlockContext)
+    public suspend fun enterAttributeBlock(ctx: AcfParser.AttributeBlockContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#attributeBlock}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.attributeBlock].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitAttributeBlock(ctx: AcfParser.AttributeBlockContext)
+    public suspend fun exitAttributeBlock(ctx: AcfParser.AttributeBlockContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#nativeBlock}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.nativeBlock].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNativeBlock(ctx: AcfParser.NativeBlockContext)
+    public suspend fun enterNativeBlock(ctx: AcfParser.NativeBlockContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#nativeBlock}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.nativeBlock].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNativeBlock(ctx: AcfParser.NativeBlockContext)
+    public suspend fun exitNativeBlock(ctx: AcfParser.NativeBlockContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#name}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.name].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterName(ctx: AcfParser.NameContext)
+    public suspend fun enterName(ctx: AcfParser.NameContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#name}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.name].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitName(ctx: AcfParser.NameContext)
+    public suspend fun exitName(ctx: AcfParser.NameContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#attribute}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.attribute].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterAttribute(ctx: AcfParser.AttributeContext)
+    public suspend fun enterAttribute(ctx: AcfParser.AttributeContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#attribute}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.attribute].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitAttribute(ctx: AcfParser.AttributeContext)
+    public suspend fun exitAttribute(ctx: AcfParser.AttributeContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#attributeValue}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.attributeValue].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterAttributeValue(ctx: AcfParser.AttributeValueContext)
+    public suspend fun enterAttributeValue(ctx: AcfParser.AttributeValueContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#attributeValue}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.attributeValue].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitAttributeValue(ctx: AcfParser.AttributeValueContext)
+    public suspend fun exitAttributeValue(ctx: AcfParser.AttributeValueContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#portName}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.portName].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPortName(ctx: AcfParser.PortNameContext)
+    public suspend fun enterPortName(ctx: AcfParser.PortNameContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#portName}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.portName].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPortName(ctx: AcfParser.PortNameContext)
+    public suspend fun exitPortName(ctx: AcfParser.PortNameContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#pinName}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.pinName].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterPinName(ctx: AcfParser.PinNameContext)
+    public suspend fun enterPinName(ctx: AcfParser.PinNameContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#pinName}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.pinName].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitPinName(ctx: AcfParser.PinNameContext)
+    public suspend fun exitPinName(ctx: AcfParser.PinNameContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#frequency}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.frequency].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterFrequency(ctx: AcfParser.FrequencyContext)
+    public suspend fun enterFrequency(ctx: AcfParser.FrequencyContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#frequency}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.frequency].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitFrequency(ctx: AcfParser.FrequencyContext)
+    public suspend fun exitFrequency(ctx: AcfParser.FrequencyContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#arrayIndex}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.arrayIndex].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterArrayIndex(ctx: AcfParser.ArrayIndexContext)
+    public suspend fun enterArrayIndex(ctx: AcfParser.ArrayIndexContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#arrayIndex}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.arrayIndex].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitArrayIndex(ctx: AcfParser.ArrayIndexContext)
+    public suspend fun exitArrayIndex(ctx: AcfParser.ArrayIndexContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#number}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterNumber(ctx: AcfParser.NumberContext)
+    public suspend fun enterNumber(ctx: AcfParser.NumberContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#number}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.number].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitNumber(ctx: AcfParser.NumberContext)
+    public suspend fun exitNumber(ctx: AcfParser.NumberContext)
 
     /**
-     * Enter a parse tree produced by {@link AcfParser#semi}.
-     * @param ctx the parse tree
+     * Enter a parse tree produced by [AcfParser.semi].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun enterSemi(ctx: AcfParser.SemiContext)
+    public suspend fun enterSemi(ctx: AcfParser.SemiContext)
 
     /**
-     * Exit a parse tree produced by {@link AcfParser#semi}.
-     * @param ctx the parse tree
+     * Exit a parse tree produced by [AcfParser.semi].
+     *
+     * @param ctx The parse tree
      */
-    suspend fun exitSemi(ctx: AcfParser.SemiContext)
+    public suspend fun exitSemi(ctx: AcfParser.SemiContext)
+
 }

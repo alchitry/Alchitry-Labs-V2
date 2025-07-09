@@ -93,7 +93,7 @@ data class BlockParser(
     }
 
     override suspend fun enterFunctionBody(ctx: FunctionBodyContext) {
-        val functionCtx = ctx.parent as FunctionBlockContext
+        val functionCtx = ctx.getParent() as FunctionBlockContext
         val nameCtx = functionCtx.name() ?: return
         if (nameCtx.TYPE_ID() == null) {
             context.reportError(nameCtx, "Function names must start with a lowercase letter.")
@@ -223,7 +223,7 @@ data class BlockParser(
     }
 
     override suspend fun enterRepeatBlock(ctx: RepeatBlockContext) {
-        val repCtx = ctx.parent as RepeatStatContext
+        val repCtx = ctx.getParent() as RepeatStatContext
 
         val allExprCtx = repCtx.expr()
 

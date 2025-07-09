@@ -31,19 +31,19 @@ fun ParseTree.findFinalNode(
 val ParseTree.parents: List<ParseTree>
     get() {
         val parents = mutableListOf<ParseTree>()
-        var current = this.readParent()
+        var current = this.getParent()
         while (current != null) {
             parents.add(current)
-            current = current.readParent()
+            current = current.getParent()
         }
         return parents
     }
 
 inline fun <reified T : ParseTree> ParseTree.hasParent(): Boolean {
-    var current = this.readParent()
+    var current = this.getParent()
     while (current != null) {
         if (current is T) return true
-        current = current.readParent()
+        current = current.getParent()
     }
     return false
 }

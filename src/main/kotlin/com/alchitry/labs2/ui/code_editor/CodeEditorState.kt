@@ -224,7 +224,7 @@ class CodeEditorState(
         val token = textPositionToToken(selectionManager.caret) ?: return
 
         val tokens = when (token.token.type) {
-            LucidLexer.Tokens.TYPE_ID.id, LucidLexer.Tokens.CONST_ID.id, LucidLexer.Tokens.SPACE_ID.id, LucidLexer.Tokens.FUNCTION_ID.id -> {
+            LucidLexer.Tokens.TYPE_ID, LucidLexer.Tokens.CONST_ID, LucidLexer.Tokens.SPACE_ID, LucidLexer.Tokens.FUNCTION_ID -> {
                 tokens.mapNotNull { t ->
                     if (t.token.type == token.token.type && t.token.text == token.token.text) {
                         HighlightAnnotation(t.range, AlchitryColors.current.TokenHighlight)
@@ -260,7 +260,7 @@ class CodeEditorState(
             val offset = lines.subList(0, selectionManager.caret.line).sumOf { it.text.length + 1 } + caretOffset
             var node = bracketParser.findFinalNode(stream, offset)
             if (node is TerminalNode)
-                node = node.readParent()!!
+                node = node.getParent()!!
             (node.getChild(0) as? TerminalNode)?.symbol?.let {
                 lines[it.line - 1].highlights.add(
                     HighlightAnnotation(
@@ -662,26 +662,26 @@ class CodeEditorState(
 
                     when (file.language) {
                         Languages.ACF -> when (token.token.type) {
-                            AcfLexer.Tokens.BLOCK_COMMENT.id,
-                            AcfLexer.Tokens.COMMENT.id -> {
+                            AcfLexer.Tokens.BLOCK_COMMENT,
+                            AcfLexer.Tokens.COMMENT -> {
                                 selectWordAt(screenOffsetToTextPosition(offset))
                                 return@detectEditorActions
                             }
                         }
 
                         Languages.Lucid -> when (token.token.type) {
-                            LucidLexer.Tokens.BLOCK_COMMENT.id,
-                            LucidLexer.Tokens.COMMENT.id,
-                            LucidLexer.Tokens.STRING.id -> {
+                            LucidLexer.Tokens.BLOCK_COMMENT,
+                            LucidLexer.Tokens.COMMENT,
+                            LucidLexer.Tokens.STRING -> {
                                 selectWordAt(screenOffsetToTextPosition(offset))
                                 return@detectEditorActions
                             }
                         }
 
                         Languages.Verilog -> when (token.token.type) {
-                            VerilogLexer.Tokens.BLOCK_COMMENT.id,
-                            VerilogLexer.Tokens.LINE_COMMENT.id,
-                            VerilogLexer.Tokens.STRING.id -> {
+                            VerilogLexer.Tokens.BLOCK_COMMENT,
+                            VerilogLexer.Tokens.LINE_COMMENT,
+                            VerilogLexer.Tokens.STRING -> {
                                 selectWordAt(screenOffsetToTextPosition(offset))
                                 return@detectEditorActions
                             }

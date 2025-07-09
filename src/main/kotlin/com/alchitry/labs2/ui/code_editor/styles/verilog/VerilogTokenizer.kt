@@ -20,28 +20,28 @@ object VerilogTokenizer : EditorTokenizer {
 
         return tokenStream.tokens.map { token ->
             val style = when (token.type) {
-                Tokens.SIGNED.id -> LucidStyle.signed
-                Tokens.BLOCK_COMMENT.id, Tokens.LINE_COMMENT.id -> LucidStyle.comment
+                Tokens.SIGNED -> LucidStyle.signed
+                Tokens.BLOCK_COMMENT, Tokens.LINE_COMMENT -> LucidStyle.comment
 
-                Tokens.HEX_VALUE.id, Tokens.BINARY_VALUE.id, Tokens.OCTAL_VALUE.id,
-                Tokens.DECIMAL_BASE.id, Tokens.HEX_BASE.id, Tokens.BINARY_BASE.id,
-                Tokens.OCTAL_BASE.id, Tokens.UNSIGNED_NUMBER.id -> LucidStyle.value
+                Tokens.HEX_VALUE, Tokens.BINARY_VALUE, Tokens.OCTAL_VALUE,
+                Tokens.DECIMAL_BASE, Tokens.HEX_BASE, Tokens.BINARY_BASE,
+                Tokens.OCTAL_BASE, Tokens.UNSIGNED_NUMBER -> LucidStyle.value
 
-                Tokens.REAL.id -> LucidStyle.realValue
-                Tokens.STRING.id -> LucidStyle.string
-                Tokens.MODULE.id, Tokens.ENDMODULE.id -> LucidStyle.module
-                Tokens.FUNCTION.id, Tokens.ENDFUNCTION.id -> LucidStyle.function
+                Tokens.REAL -> LucidStyle.realValue
+                Tokens.STRING -> LucidStyle.string
+                Tokens.MODULE, Tokens.ENDMODULE -> LucidStyle.module
+                Tokens.FUNCTION, Tokens.ENDFUNCTION -> LucidStyle.function
 
-                Tokens.ALWAYS.id, Tokens.BEGIN.id, Tokens.END.id,
-                Tokens.ENDCASE.id, Tokens.ASSIGN.id, Tokens.IF.id,
-                Tokens.IFNONE.id, Tokens.FOR.id, Tokens.FOREVER.id,
-                Tokens.CASE.id, Tokens.CASEX.id, Tokens.CASEZ.id,
-                Tokens.POSEDGE.id, Tokens.NEGEDGE.id, Tokens.GENERATE.id,
-                Tokens.ENDGENERATE.id, Tokens.WHILE.id -> LucidStyle.defaultKeyword
+                Tokens.ALWAYS, Tokens.BEGIN, Tokens.END,
+                Tokens.ENDCASE, Tokens.ASSIGN, Tokens.IF,
+                Tokens.IFNONE, Tokens.FOR, Tokens.FOREVER,
+                Tokens.CASE, Tokens.CASEX, Tokens.CASEZ,
+                Tokens.POSEDGE, Tokens.NEGEDGE, Tokens.GENERATE,
+                Tokens.ENDGENERATE, Tokens.WHILE -> LucidStyle.defaultKeyword
 
-                Tokens.INPUT.id, Tokens.OUTPUT.id, Tokens.INOUT.id,
-                Tokens.WIRE.id, Tokens.UWIRE.id, Tokens.REG.id,
-                Tokens.TRIREG.id, Tokens.PARAMETER.id, Tokens.LOCALPARAM.id -> LucidStyle.variable
+                Tokens.INPUT, Tokens.OUTPUT, Tokens.INOUT,
+                Tokens.WIRE, Tokens.UWIRE, Tokens.REG,
+                Tokens.TRIREG, Tokens.PARAMETER, Tokens.LOCALPARAM -> LucidStyle.variable
 
                 else ->
                     if (token.text?.let { operatorRegex.matches(it) } == true) LucidStyle.operator else null

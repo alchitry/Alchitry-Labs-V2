@@ -12,9 +12,9 @@ import com.alchitry.labs2.parsers.hdl.values.*
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 fun ParserRuleContext.firstParentOrNull(condition: (ParserRuleContext) -> Boolean): ParserRuleContext? {
-    var context = this.parent as? ParserRuleContext ?: return null
+    var context = this.getParent() as? ParserRuleContext ?: return null
     while (!condition(context)) {
-        context = context.parent as? ParserRuleContext ?: return null
+        context = context.getParent() as? ParserRuleContext ?: return null
     }
     return context
 }
@@ -34,7 +34,8 @@ data class SignalParser(
         if (context !is LucidBlockContext || context.stage == ParseStage.Evaluation)
             return
 
-        val repCtx = ctx.parent as? RepeatStatContext ?: error("RepeatBlockContext parent wasn't a RepeatStatContext!")
+        val repCtx =
+            ctx.getParent() as? RepeatStatContext ?: error("RepeatBlockContext parent wasn't a RepeatStatContext!")
 
         val repeatSignals = context.blockParser.repeatSignals
         val newSig = repeatSignals[repCtx] ?: return
@@ -45,7 +46,8 @@ data class SignalParser(
         if (context !is LucidBlockContext || context.stage == ParseStage.Evaluation)
             return
 
-        val repCtx = ctx.parent as? RepeatStatContext ?: error("RepeatBlockContext parent wasn't a RepeatStatContext!")
+        val repCtx =
+            ctx.getParent() as? RepeatStatContext ?: error("RepeatBlockContext parent wasn't a RepeatStatContext!")
         val repeatBlock = context.blockParser.resolveRepeatBlock(repCtx) ?: return
         context.localSignals.remove(repeatBlock.signal)
     }
@@ -55,7 +57,8 @@ data class SignalParser(
             return
 
         val funcCtx =
-            ctx.parent as? FunctionBlockContext ?: error("FunctionBodyContext parent wasn't a FunctionBlockContext!")
+            ctx.getParent() as? FunctionBlockContext
+                ?: error("FunctionBodyContext parent wasn't a FunctionBlockContext!")
 
         val function = context.resolveFunction(funcCtx.name()?.text ?: return) as? Function.Custom ?: return
         function.args.forEach {
@@ -69,7 +72,8 @@ data class SignalParser(
             return
 
         val funcCtx =
-            ctx.parent as? FunctionBlockContext ?: error("FunctionBodyContext parent wasn't a FunctionBlockContext!")
+            ctx.getParent() as? FunctionBlockContext
+                ?: error("FunctionBodyContext parent wasn't a FunctionBlockContext!")
 
         val function = context.resolveFunction(funcCtx.name()?.text ?: return) as? Function.Custom ?: return
         function.args.forEach {
@@ -88,9 +92,9 @@ data class SignalParser(
         if (signalOrParent == null) {
             // check if the signal is the first argument in a repeat block
             if (ctx.name().size == 1 && ctx.bitSelection().isEmpty()) {
-                val parent = ctx.parent
+                val parent = ctx.getParent()
                 if (parent is ExprSignalContext) {
-                    val pp = parent.parent
+                    val pp = parent.getParent()
                     if (pp is RepeatStatContext && pp.expr(0) == parent) {
                         return
                     }
@@ -112,7 +116,9 @@ data class SignalParser(
             if (children.size < usedChildren + 1) {
                 if (currentSignalOrParent is EnumType) {
                     val functionName =
-                        (ctx.parent?.parent?.parent as? FunctionContext)?.FUNCTION_ID()?.text?.substring(1)
+                        (ctx.getParent()?.getParent()?.getParent() as? FunctionContext)?.FUNCTION_ID()?.text?.substring(
+                            1
+                        )
                     if (functionName != null && context.resolveFunction(functionName) == Function.WIDTH)
                         return
                 }

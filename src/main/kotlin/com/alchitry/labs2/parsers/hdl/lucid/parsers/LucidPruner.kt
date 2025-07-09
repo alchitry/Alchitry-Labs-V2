@@ -15,7 +15,7 @@ data class LucidPruner(
         val ifCtx = ctx.ifStat() ?: return
         val expr = context.expr.resolve(ifCtx.expr() ?: return) ?: return
         if (expr.type == ExprType.Constant || (!context.mode.building && expr.type.fixed)) {
-            val parent = ctx.parent as? ParserRuleContext ?: return
+            val parent = ctx.getParent() as? ParserRuleContext ?: return
             val children = parent.children ?: return
             val index = children.indexOf(ctx)
             children.removeAt(index)
