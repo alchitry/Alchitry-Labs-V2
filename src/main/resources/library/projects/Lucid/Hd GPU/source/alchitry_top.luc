@@ -102,13 +102,13 @@ module alchitry_top (
             // provides the model's triangles and model matrix to be rendered
             model_drawer drawer
             
-            // calculates the color of each vertice based on the angle between the triangle and Geo.LIGHT
+            // calculates the color of each vertex based on the angle between the triangle and Geo.LIGHT
             shader shader
             
             // checks the z-depth of each pixel being rendered to not overwrite foreground pixels
             z_buffer z_buffer
             
-            // keeps the vertice color in sync across the rasterizer
+            // keeps the vertex color in sync across the rasterizer
             fifo color_fifo (#ENTRIES(64), #WIDTH(16*3))
             
             dff idle_ct[8]
