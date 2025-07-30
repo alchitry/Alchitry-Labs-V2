@@ -237,7 +237,7 @@ module alchitry_top (
         
         z_buffer.stall = !buff.ready
         
-        // the z_buffer outputs if a pixel is valid and the associated vertice colors
+        // the z_buffer outputs if a pixel is valid and the associated vertex colors
         // the color for all three vertices are calculated but only the first one is currently used
         // future work could use the barycentric weights to shade each pixel
         
