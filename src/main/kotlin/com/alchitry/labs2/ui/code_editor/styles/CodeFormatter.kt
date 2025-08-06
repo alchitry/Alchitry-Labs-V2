@@ -120,8 +120,8 @@ open class BracketIndenter(private val codeEditorState: CodeEditorState) : CodeF
         val text = codeEditorState.getText()
         val lineOffset = codeEditorState.lines.subList(0, line).sumOf { it.text.length + 1 }
         val lineText = codeEditorState.lines[line].text.text
-        val tokenStream = CommonTokenStream(BracketLexer(CharStreams.fromString(text)))
-        val source = BracketParser(tokenStream).source()
+        val tokenStream = CommonTokenStream(BracketLexer(CharStreams.fromString(text)).apply { removeErrorListeners() })
+        val source = BracketParser(tokenStream).apply { removeErrorListeners() }.source()
         val node = findFinalNode(source, tokenStream, lineOffset + CodeFormatter.countStartingWhitespace(lineText))
         val indents = countTypeInHierarchy<BracketParser.BlockContext>(node)
         return CodeFormatter.indentString(indents)
@@ -129,8 +129,8 @@ open class BracketIndenter(private val codeEditorState: CodeEditorState) : CodeF
 
     override fun formatAll(): String {
         val text = codeEditorState.getText()
-        val tokenStream = CommonTokenStream(BracketLexer(CharStreams.fromString(text)))
-        val source = BracketParser(tokenStream).source()
+        val tokenStream = CommonTokenStream(BracketLexer(CharStreams.fromString(text)).apply { removeErrorListeners() })
+        val source = BracketParser(tokenStream).apply { removeErrorListeners() }.source()
         var lineOffset = 0
         return buildString {
             codeEditorState.lines.forEachIndexed { idx, line ->

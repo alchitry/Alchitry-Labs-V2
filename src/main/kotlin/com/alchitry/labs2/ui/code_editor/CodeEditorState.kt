@@ -255,8 +255,9 @@ class CodeEditorState(
                 else -> selectionManager.caret.offset
             }
 
-            val stream = CommonTokenStream(BracketLexer(CharStreams.fromString(getText())))
-            val bracketParser = BracketParser(stream).source()
+            val stream =
+                CommonTokenStream(BracketLexer(CharStreams.fromString(getText())).apply { removeErrorListeners() })
+            val bracketParser = BracketParser(stream).apply { removeErrorListeners() }.source()
             val offset = lines.subList(0, selectionManager.caret.line).sumOf { it.text.length + 1 } + caretOffset
             var node = bracketParser.findFinalNode(stream, offset)
             if (node is TerminalNode)

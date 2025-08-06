@@ -50,7 +50,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
             "functionArg", "functionBlock", "functionBody", "testBlock",
             "alwaysBlock", "alwaysStat", "block", "assignStat", "arrayIndex",
             "bitSelector", "bitSelection", "signal", "caseStat", "caseElem",
-            "caseBlock", "ifStat", "elseStat", "repeatStat", "repeatBlock",
+            "caseBlock", "ifStat", "elseStat", "repeatStat", "repeatBlock", 
             "function", "functionExpr", "number", "expr", "name", "semi"
         )
 
@@ -62,7 +62,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
             "'+'", "'-'", "'case'", "'default'", "'if'", "'else'", "'repeat'",
             "'c{'", "'x{'", "'!'", "'*'", "'/'", "'>>'", "'<<'", "'<<<'",
             "'>>>'", "'|'", "'&'", "'^'", "'=='", "'!='", "'>='", "'<='",
-            "'||'", "'&&'", "'?'", null, null, null, null, null, null, "';'",
+            "'||'", "'&&'", "'?'", null, null, null, null, null, null, "';'", 
             null, "'signed'"
         )
 
@@ -73,7 +73,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
             null, null, null, null, null, null, null, null, null, null,
             null, null, null, null, null, null, null, null, null, null,
             null, null, null, null, null, null, "HEX", "BIN", "DEC", "REAL",
-            "INT", "STRING", "SEMICOLON", "NL", "SIGNED", "TYPE_ID", "CONST_ID",
+            "INT", "STRING", "SEMICOLON", "NL", "SIGNED", "TYPE_ID", "CONST_ID", 
             "SPACE_ID", "FUNCTION_ID", "BLOCK_COMMENT", "COMMENT", "WS"
         )
 
@@ -250,7 +250,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class SourceContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Source
 
-        public fun EOF(): TerminalNode = getToken(Tokens.EOF, 0)!!
+        public fun EOF(): TerminalNode? = getToken(Tokens.EOF, 0)
         public fun global(): List<GlobalContext> = getRuleContexts(GlobalContext::class)
         public fun global(i: Int): GlobalContext? = getRuleContext(GlobalContext::class, i)
         public fun module(): List<ModuleContext> = getRuleContexts(ModuleContext::class)
@@ -268,13 +268,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): SourceContext {
             return SourceContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterSource(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterSource(this)
@@ -286,7 +284,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitSource(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitSource(this)
@@ -337,7 +334,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                         match(Tokens.NL)
 
                     }
-
                     else -> throw NoViableAltException(this)
                 }
                 this.state = 122
@@ -361,7 +357,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class GlobalContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Global
 
-        public fun name(): NameContext = getRuleContext(NameContext::class, 0)!!
+        public fun name(): NameContext? = getRuleContext(NameContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
         public fun globalStat(): List<GlobalStatContext> = getRuleContexts(GlobalStatContext::class)
@@ -375,13 +371,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): GlobalContext {
             return GlobalContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterGlobal(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterGlobal(this)
@@ -393,7 +387,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitGlobal(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitGlobal(this)
@@ -465,7 +458,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                         match(Tokens.NL)
 
                     }
-
                     else -> throw NoViableAltException(this)
                 }
                 this.state = 146
@@ -501,13 +493,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): GlobalStatContext {
             return GlobalStatContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterGlobalStat(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterGlobalStat(this)
@@ -519,7 +509,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitGlobalStat(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitGlobalStat(this)
@@ -560,7 +549,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                     enumDec()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -577,9 +565,9 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class ModuleContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Module
 
-        public fun name(): NameContext = getRuleContext(NameContext::class, 0)!!
-        public fun portList(): PortListContext = getRuleContext(PortListContext::class, 0)!!
-        public fun moduleBody(): ModuleBodyContext = getRuleContext(ModuleBodyContext::class, 0)!!
+        public fun name(): NameContext? = getRuleContext(NameContext::class, 0)
+        public fun portList(): PortListContext? = getRuleContext(PortListContext::class, 0)
+        public fun moduleBody(): ModuleBodyContext? = getRuleContext(ModuleBodyContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
         public fun paramList(): ParamListContext? = getRuleContext(ParamListContext::class, 0)
@@ -592,13 +580,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ModuleContext {
             return ModuleContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterModule(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterModule(this)
@@ -610,7 +596,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitModule(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitModule(this)
@@ -712,8 +697,8 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class TestBenchContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.TestBench
 
-        public fun name(): NameContext = getRuleContext(NameContext::class, 0)!!
-        public fun moduleBody(): ModuleBodyContext = getRuleContext(ModuleBodyContext::class, 0)!!
+        public fun name(): NameContext? = getRuleContext(NameContext::class, 0)
+        public fun moduleBody(): ModuleBodyContext? = getRuleContext(ModuleBodyContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
 
@@ -725,13 +710,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): TestBenchContext {
             return TestBenchContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterTestBench(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterTestBench(this)
@@ -743,7 +726,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitTestBench(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitTestBench(this)
@@ -822,13 +804,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ParamListContext {
             return ParamListContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterParamList(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterParamList(this)
@@ -840,7 +820,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitParamList(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitParamList(this)
@@ -968,13 +947,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): PortListContext {
             return PortListContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterPortList(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterPortList(this)
@@ -986,7 +963,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitPortList(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitPortList(this)
@@ -1101,7 +1077,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class ParamDecContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.ParamDec
 
-        public fun name(): NameContext = getRuleContext(NameContext::class, 0)!!
+        public fun name(): NameContext? = getRuleContext(NameContext::class, 0)
         public fun paramDefault(): ParamDefaultContext? = getRuleContext(ParamDefaultContext::class, 0)
         public fun paramConstraint(): ParamConstraintContext? = getRuleContext(ParamConstraintContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
@@ -1115,13 +1091,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ParamDecContext {
             return ParamDecContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterParamDec(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterParamDec(this)
@@ -1133,7 +1107,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitParamDec(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitParamDec(this)
@@ -1228,7 +1201,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class ParamDefaultContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.ParamDefault
 
-        public fun expr(): ExprContext = getRuleContext(ExprContext::class, 0)!!
+        public fun expr(): ExprContext? = getRuleContext(ExprContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
 
@@ -1240,13 +1213,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ParamDefaultContext {
             return ParamDefaultContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterParamDefault(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterParamDefault(this)
@@ -1258,7 +1229,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitParamDefault(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitParamDefault(this)
@@ -1319,7 +1289,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class ParamConstraintContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.ParamConstraint
 
-        public fun expr(): ExprContext = getRuleContext(ExprContext::class, 0)!!
+        public fun expr(): ExprContext? = getRuleContext(ExprContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -1329,13 +1299,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ParamConstraintContext {
             return ParamConstraintContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterParamConstraint(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterParamConstraint(this)
@@ -1347,7 +1315,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitParamConstraint(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitParamConstraint(this)
@@ -1382,9 +1349,9 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class PortDecContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.PortDec
 
-        public fun portDirection(): PortDirectionContext = getRuleContext(PortDirectionContext::class, 0)!!
-        public fun name(): NameContext = getRuleContext(NameContext::class, 0)!!
-        public fun signalWidth(): SignalWidthContext = getRuleContext(SignalWidthContext::class, 0)!!
+        public fun portDirection(): PortDirectionContext? = getRuleContext(PortDirectionContext::class, 0)
+        public fun name(): NameContext? = getRuleContext(NameContext::class, 0)
+        public fun signalWidth(): SignalWidthContext? = getRuleContext(SignalWidthContext::class, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
@@ -1397,13 +1364,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): PortDecContext {
             return PortDecContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterPortDec(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterPortDec(this)
@@ -1415,7 +1380,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitPortDec(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitPortDec(this)
@@ -1499,13 +1463,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): PortDirectionContext {
             return PortDirectionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterPortDirection(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterPortDirection(this)
@@ -1517,7 +1479,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitPortDirection(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitPortDirection(this)
@@ -1575,13 +1536,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): SignalWidthContext {
             return SignalWidthContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterSignalWidth(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterSignalWidth(this)
@@ -1593,7 +1552,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitSignalWidth(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitSignalWidth(this)
@@ -1647,7 +1605,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class ArraySizeContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.ArraySize
 
-        public fun expr(): ExprContext = getRuleContext(ExprContext::class, 0)!!
+        public fun expr(): ExprContext? = getRuleContext(ExprContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
 
@@ -1659,13 +1617,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ArraySizeContext {
             return ArraySizeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterArraySize(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterArraySize(this)
@@ -1677,7 +1633,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitArraySize(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitArraySize(this)
@@ -1756,13 +1711,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): StructTypeContext {
             return StructTypeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterStructType(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterStructType(this)
@@ -1774,7 +1727,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitStructType(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitStructType(this)
@@ -1876,8 +1828,8 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class StructMemberConstContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.StructMemberConst
 
-        public fun name(): NameContext = getRuleContext(NameContext::class, 0)!!
-        public fun expr(): ExprContext = getRuleContext(ExprContext::class, 0)!!
+        public fun name(): NameContext? = getRuleContext(NameContext::class, 0)
+        public fun expr(): ExprContext? = getRuleContext(ExprContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
 
@@ -1889,13 +1841,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): StructMemberConstContext {
             return StructMemberConstContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterStructMemberConst(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterStructMemberConst(this)
@@ -1907,7 +1857,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitStructMemberConst(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitStructMemberConst(this)
@@ -1991,7 +1940,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class StructConstContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.StructConst
 
-        public fun structType(): StructTypeContext = getRuleContext(StructTypeContext::class, 0)!!
+        public fun structType(): StructTypeContext? = getRuleContext(StructTypeContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
         public fun structMemberConst(): List<StructMemberConstContext> =
@@ -2008,13 +1957,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): StructConstContext {
             return StructConstContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterStructConst(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterStructConst(this)
@@ -2026,7 +1973,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitStructConst(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitStructConst(this)
@@ -2169,13 +2115,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ModuleBodyContext {
             return ModuleBodyContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterModuleBody(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterModuleBody(this)
@@ -2187,7 +2131,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitModuleBody(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitModuleBody(this)
@@ -2229,7 +2172,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                         match(Tokens.NL)
 
                     }
-
                     else -> throw NoViableAltException(this)
                 }
                 this.state = 466
@@ -2269,7 +2211,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class StatModuleInstContext : StatContext {
-        public fun moduleInst(): ModuleInstContext = getRuleContext(ModuleInstContext::class, 0)!!
+        public fun moduleInst(): ModuleInstContext? = getRuleContext(ModuleInstContext::class, 0)
 
         public constructor(ctx: StatContext) {
             copyFrom(ctx)
@@ -2284,7 +2226,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterStatModuleInst(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterStatModuleInst(this)
@@ -2296,7 +2237,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitStatModuleInst(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitStatModuleInst(this)
@@ -2305,7 +2245,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class StatTestContext : StatContext {
-        public fun testBlock(): TestBlockContext = getRuleContext(TestBlockContext::class, 0)!!
+        public fun testBlock(): TestBlockContext? = getRuleContext(TestBlockContext::class, 0)
 
         public constructor(ctx: StatContext) {
             copyFrom(ctx)
@@ -2320,7 +2260,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterStatTest(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterStatTest(this)
@@ -2332,7 +2271,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitStatTest(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitStatTest(this)
@@ -2341,7 +2279,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class StatConstContext : StatContext {
-        public fun constDec(): ConstDecContext = getRuleContext(ConstDecContext::class, 0)!!
+        public fun constDec(): ConstDecContext? = getRuleContext(ConstDecContext::class, 0)
 
         public constructor(ctx: StatContext) {
             copyFrom(ctx)
@@ -2356,7 +2294,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterStatConst(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterStatConst(this)
@@ -2368,7 +2305,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitStatConst(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitStatConst(this)
@@ -2377,7 +2313,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class StatDFFContext : StatContext {
-        public fun dffDec(): DffDecContext = getRuleContext(DffDecContext::class, 0)!!
+        public fun dffDec(): DffDecContext? = getRuleContext(DffDecContext::class, 0)
 
         public constructor(ctx: StatContext) {
             copyFrom(ctx)
@@ -2392,7 +2328,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterStatDFF(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterStatDFF(this)
@@ -2404,7 +2339,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitStatDFF(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitStatDFF(this)
@@ -2413,7 +2347,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class StatFunctionContext : StatContext {
-        public fun functionBlock(): FunctionBlockContext = getRuleContext(FunctionBlockContext::class, 0)!!
+        public fun functionBlock(): FunctionBlockContext? = getRuleContext(FunctionBlockContext::class, 0)
 
         public constructor(ctx: StatContext) {
             copyFrom(ctx)
@@ -2428,7 +2362,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterStatFunction(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterStatFunction(this)
@@ -2440,7 +2373,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitStatFunction(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitStatFunction(this)
@@ -2449,7 +2381,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class StatAlwaysContext : StatContext {
-        public fun alwaysBlock(): AlwaysBlockContext = getRuleContext(AlwaysBlockContext::class, 0)!!
+        public fun alwaysBlock(): AlwaysBlockContext? = getRuleContext(AlwaysBlockContext::class, 0)
 
         public constructor(ctx: StatContext) {
             copyFrom(ctx)
@@ -2464,7 +2396,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterStatAlways(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterStatAlways(this)
@@ -2476,7 +2407,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitStatAlways(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitStatAlways(this)
@@ -2485,7 +2415,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class StatStructContext : StatContext {
-        public fun structDec(): StructDecContext = getRuleContext(StructDecContext::class, 0)!!
+        public fun structDec(): StructDecContext? = getRuleContext(StructDecContext::class, 0)
 
         public constructor(ctx: StatContext) {
             copyFrom(ctx)
@@ -2500,7 +2430,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterStatStruct(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterStatStruct(this)
@@ -2512,7 +2441,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitStatStruct(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitStatStruct(this)
@@ -2521,7 +2449,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class StatSigContext : StatContext {
-        public fun sigDec(): SigDecContext = getRuleContext(SigDecContext::class, 0)!!
+        public fun sigDec(): SigDecContext? = getRuleContext(SigDecContext::class, 0)
 
         public constructor(ctx: StatContext) {
             copyFrom(ctx)
@@ -2536,7 +2464,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterStatSig(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterStatSig(this)
@@ -2548,7 +2475,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitStatSig(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitStatSig(this)
@@ -2557,7 +2483,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class StatEnumContext : StatContext {
-        public fun enumDec(): EnumDecContext = getRuleContext(EnumDecContext::class, 0)!!
+        public fun enumDec(): EnumDecContext? = getRuleContext(EnumDecContext::class, 0)
 
         public constructor(ctx: StatContext) {
             copyFrom(ctx)
@@ -2572,7 +2498,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterStatEnum(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterStatEnum(this)
@@ -2584,7 +2509,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitStatEnum(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitStatEnum(this)
@@ -2593,7 +2517,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class StatAssignContext : StatContext {
-        public fun assignBlock(): AssignBlockContext = getRuleContext(AssignBlockContext::class, 0)!!
+        public fun assignBlock(): AssignBlockContext? = getRuleContext(AssignBlockContext::class, 0)
 
         public constructor(ctx: StatContext) {
             copyFrom(ctx)
@@ -2608,7 +2532,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterStatAssign(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterStatAssign(this)
@@ -2620,7 +2543,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitStatAssign(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitStatAssign(this)
@@ -2735,9 +2657,9 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class ConstDecContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.ConstDec
 
-        public fun name(): NameContext = getRuleContext(NameContext::class, 0)!!
-        public fun expr(): ExprContext = getRuleContext(ExprContext::class, 0)!!
-        public fun semi(): SemiContext = getRuleContext(SemiContext::class, 0)!!
+        public fun name(): NameContext? = getRuleContext(NameContext::class, 0)
+        public fun expr(): ExprContext? = getRuleContext(ExprContext::class, 0)
+        public fun semi(): SemiContext? = getRuleContext(SemiContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
 
@@ -2749,13 +2671,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ConstDecContext {
             return ConstDecContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterConstDec(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterConstDec(this)
@@ -2767,7 +2687,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitConstDec(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitConstDec(this)
@@ -2851,7 +2770,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class AssignBlockContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.AssignBlock
 
-        public fun conList(): ConListContext = getRuleContext(ConListContext::class, 0)!!
+        public fun conList(): ConListContext? = getRuleContext(ConListContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
         public fun dffDec(): List<DffDecContext> = getRuleContexts(DffDecContext::class)
@@ -2869,13 +2788,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): AssignBlockContext {
             return AssignBlockContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterAssignBlock(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterAssignBlock(this)
@@ -2887,7 +2804,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitAssignBlock(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitAssignBlock(this)
@@ -2956,7 +2872,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                         match(Tokens.NL)
 
                     }
-
                     else -> throw NoViableAltException(this)
                 }
                 this.state = 521
@@ -2980,8 +2895,8 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class SigConContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.SigCon
 
-        public fun name(): NameContext = getRuleContext(NameContext::class, 0)!!
-        public fun expr(): ExprContext = getRuleContext(ExprContext::class, 0)!!
+        public fun name(): NameContext? = getRuleContext(NameContext::class, 0)
+        public fun expr(): ExprContext? = getRuleContext(ExprContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
 
@@ -2993,13 +2908,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): SigConContext {
             return SigConContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterSigCon(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterSigCon(this)
@@ -3011,7 +2924,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitSigCon(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitSigCon(this)
@@ -3095,8 +3007,8 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class ParamConContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.ParamCon
 
-        public fun name(): NameContext = getRuleContext(NameContext::class, 0)!!
-        public fun expr(): ExprContext = getRuleContext(ExprContext::class, 0)!!
+        public fun name(): NameContext? = getRuleContext(NameContext::class, 0)
+        public fun expr(): ExprContext? = getRuleContext(ExprContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
 
@@ -3108,13 +3020,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ParamConContext {
             return ParamConContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterParamCon(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterParamCon(this)
@@ -3126,7 +3036,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitParamCon(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitParamCon(this)
@@ -3210,9 +3119,9 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class SigDecContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.SigDec
 
-        public fun name(): NameContext = getRuleContext(NameContext::class, 0)!!
-        public fun signalWidth(): SignalWidthContext = getRuleContext(SignalWidthContext::class, 0)!!
-        public fun semi(): SemiContext = getRuleContext(SemiContext::class, 0)!!
+        public fun name(): NameContext? = getRuleContext(NameContext::class, 0)
+        public fun signalWidth(): SignalWidthContext? = getRuleContext(SignalWidthContext::class, 0)
+        public fun semi(): SemiContext? = getRuleContext(SemiContext::class, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
@@ -3226,13 +3135,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): SigDecContext {
             return SigDecContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterSigDec(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterSigDec(this)
@@ -3244,7 +3151,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitSigDec(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitSigDec(this)
@@ -3359,9 +3265,9 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class DffDecContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.DffDec
 
-        public fun name(): NameContext = getRuleContext(NameContext::class, 0)!!
-        public fun signalWidth(): SignalWidthContext = getRuleContext(SignalWidthContext::class, 0)!!
-        public fun semi(): SemiContext = getRuleContext(SemiContext::class, 0)!!
+        public fun name(): NameContext? = getRuleContext(NameContext::class, 0)
+        public fun signalWidth(): SignalWidthContext? = getRuleContext(SignalWidthContext::class, 0)
+        public fun semi(): SemiContext? = getRuleContext(SemiContext::class, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
@@ -3375,13 +3281,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): DffDecContext {
             return DffDecContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterDffDec(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterDffDec(this)
@@ -3393,7 +3297,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitDffDec(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitDffDec(this)
@@ -3495,7 +3398,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
 
         public fun name(): List<NameContext> = getRuleContexts(NameContext::class)
         public fun name(i: Int): NameContext? = getRuleContext(NameContext::class, i)
-        public fun semi(): SemiContext = getRuleContext(SemiContext::class, 0)!!
+        public fun semi(): SemiContext? = getRuleContext(SemiContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
 
@@ -3507,13 +3410,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): EnumDecContext {
             return EnumDecContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterEnumDec(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterEnumDec(this)
@@ -3525,7 +3426,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitEnumDec(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitEnumDec(this)
@@ -3675,7 +3575,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
 
         public fun name(): List<NameContext> = getRuleContexts(NameContext::class)
         public fun name(i: Int): NameContext? = getRuleContext(NameContext::class, i)
-        public fun semi(): SemiContext = getRuleContext(SemiContext::class, 0)!!
+        public fun semi(): SemiContext? = getRuleContext(SemiContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
         public fun arraySize(): List<ArraySizeContext> = getRuleContexts(ArraySizeContext::class)
@@ -3690,13 +3590,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ModuleInstContext {
             return ModuleInstContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterModuleInst(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterModuleInst(this)
@@ -3708,7 +3606,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitModuleInst(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitModuleInst(this)
@@ -3825,13 +3722,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): InstConsContext {
             return InstConsContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterInstCons(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterInstCons(this)
@@ -3843,7 +3738,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitInstCons(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitInstCons(this)
@@ -3971,13 +3865,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ConListContext {
             return ConListContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterConList(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterConList(this)
@@ -3989,7 +3881,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitConList(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitConList(this)
@@ -4079,13 +3970,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ConnectionContext {
             return ConnectionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterConnection(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterConnection(this)
@@ -4097,7 +3986,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitConnection(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitConnection(this)
@@ -4131,7 +4019,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                     sigCon()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -4148,8 +4035,8 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class StructMemberContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.StructMember
 
-        public fun name(): NameContext = getRuleContext(NameContext::class, 0)!!
-        public fun signalWidth(): SignalWidthContext = getRuleContext(SignalWidthContext::class, 0)!!
+        public fun name(): NameContext? = getRuleContext(NameContext::class, 0)
+        public fun signalWidth(): SignalWidthContext? = getRuleContext(SignalWidthContext::class, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
@@ -4162,13 +4049,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): StructMemberContext {
             return StructMemberContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterStructMember(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterStructMember(this)
@@ -4180,7 +4065,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitStructMember(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitStructMember(this)
@@ -4240,8 +4124,8 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class StructDecContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.StructDec
 
-        public fun name(): NameContext = getRuleContext(NameContext::class, 0)!!
-        public fun semi(): SemiContext = getRuleContext(SemiContext::class, 0)!!
+        public fun name(): NameContext? = getRuleContext(NameContext::class, 0)
+        public fun semi(): SemiContext? = getRuleContext(SemiContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
         public fun structMember(): List<StructMemberContext> = getRuleContexts(StructMemberContext::class)
@@ -4255,13 +4139,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): StructDecContext {
             return StructDecContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterStructDec(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterStructDec(this)
@@ -4273,7 +4155,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitStructDec(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitStructDec(this)
@@ -4421,8 +4302,8 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class FunctionArgContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.FunctionArg
 
-        public fun name(): NameContext = getRuleContext(NameContext::class, 0)!!
-        public fun signalWidth(): SignalWidthContext = getRuleContext(SignalWidthContext::class, 0)!!
+        public fun name(): NameContext? = getRuleContext(NameContext::class, 0)
+        public fun signalWidth(): SignalWidthContext? = getRuleContext(SignalWidthContext::class, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -4433,13 +4314,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): FunctionArgContext {
             return FunctionArgContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterFunctionArg(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterFunctionArg(this)
@@ -4451,7 +4330,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitFunctionArg(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitFunctionArg(this)
@@ -4499,8 +4377,8 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class FunctionBlockContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.FunctionBlock
 
-        public fun name(): NameContext = getRuleContext(NameContext::class, 0)!!
-        public fun functionBody(): FunctionBodyContext = getRuleContext(FunctionBodyContext::class, 0)!!
+        public fun name(): NameContext? = getRuleContext(NameContext::class, 0)
+        public fun functionBody(): FunctionBodyContext? = getRuleContext(FunctionBodyContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
         public fun functionArg(): List<FunctionArgContext> = getRuleContexts(FunctionArgContext::class)
@@ -4514,13 +4392,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): FunctionBlockContext {
             return FunctionBlockContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterFunctionBlock(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterFunctionBlock(this)
@@ -4532,7 +4408,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitFunctionBlock(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitFunctionBlock(this)
@@ -4680,7 +4555,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class FunctionBodyContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.FunctionBody
 
-        public fun block(): BlockContext = getRuleContext(BlockContext::class, 0)!!
+        public fun block(): BlockContext? = getRuleContext(BlockContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -4690,13 +4565,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): FunctionBodyContext {
             return FunctionBodyContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterFunctionBody(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterFunctionBody(this)
@@ -4708,7 +4581,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitFunctionBody(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitFunctionBody(this)
@@ -4743,8 +4615,8 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class TestBlockContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.TestBlock
 
-        public fun name(): NameContext = getRuleContext(NameContext::class, 0)!!
-        public fun block(): BlockContext = getRuleContext(BlockContext::class, 0)!!
+        public fun name(): NameContext? = getRuleContext(NameContext::class, 0)
+        public fun block(): BlockContext? = getRuleContext(BlockContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
 
@@ -4756,13 +4628,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): TestBlockContext {
             return TestBlockContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterTestBlock(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterTestBlock(this)
@@ -4774,7 +4644,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitTestBlock(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitTestBlock(this)
@@ -4840,7 +4709,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class AlwaysBlockContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.AlwaysBlock
 
-        public fun block(): BlockContext = getRuleContext(BlockContext::class, 0)!!
+        public fun block(): BlockContext? = getRuleContext(BlockContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
 
@@ -4852,13 +4721,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): AlwaysBlockContext {
             return AlwaysBlockContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterAlwaysBlock(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterAlwaysBlock(this)
@@ -4870,7 +4737,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitAlwaysBlock(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitAlwaysBlock(this)
@@ -4937,7 +4803,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class AlwaysIfContext : AlwaysStatContext {
-        public fun ifStat(): IfStatContext = getRuleContext(IfStatContext::class, 0)!!
+        public fun ifStat(): IfStatContext? = getRuleContext(IfStatContext::class, 0)
 
         public constructor(ctx: AlwaysStatContext) {
             copyFrom(ctx)
@@ -4952,7 +4818,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterAlwaysIf(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterAlwaysIf(this)
@@ -4964,7 +4829,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitAlwaysIf(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitAlwaysIf(this)
@@ -4973,7 +4837,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class AlwaysCaseContext : AlwaysStatContext {
-        public fun caseStat(): CaseStatContext = getRuleContext(CaseStatContext::class, 0)!!
+        public fun caseStat(): CaseStatContext? = getRuleContext(CaseStatContext::class, 0)
 
         public constructor(ctx: AlwaysStatContext) {
             copyFrom(ctx)
@@ -4988,7 +4852,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterAlwaysCase(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterAlwaysCase(this)
@@ -5000,7 +4863,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitAlwaysCase(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitAlwaysCase(this)
@@ -5009,7 +4871,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class AlwaysAssignContext : AlwaysStatContext {
-        public fun assignStat(): AssignStatContext = getRuleContext(AssignStatContext::class, 0)!!
+        public fun assignStat(): AssignStatContext? = getRuleContext(AssignStatContext::class, 0)
 
         public constructor(ctx: AlwaysStatContext) {
             copyFrom(ctx)
@@ -5024,7 +4886,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterAlwaysAssign(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterAlwaysAssign(this)
@@ -5036,7 +4897,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitAlwaysAssign(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitAlwaysAssign(this)
@@ -5045,8 +4905,8 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class AlwaysFunctionContext : AlwaysStatContext {
-        public fun function(): FunctionContext = getRuleContext(FunctionContext::class, 0)!!
-        public fun semi(): SemiContext = getRuleContext(SemiContext::class, 0)!!
+        public fun function(): FunctionContext? = getRuleContext(FunctionContext::class, 0)
+        public fun semi(): SemiContext? = getRuleContext(SemiContext::class, 0)
 
         public constructor(ctx: AlwaysStatContext) {
             copyFrom(ctx)
@@ -5061,7 +4921,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterAlwaysFunction(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterAlwaysFunction(this)
@@ -5073,7 +4932,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitAlwaysFunction(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitAlwaysFunction(this)
@@ -5082,7 +4940,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class AlwaysRepeatContext : AlwaysStatContext {
-        public fun repeatStat(): RepeatStatContext = getRuleContext(RepeatStatContext::class, 0)!!
+        public fun repeatStat(): RepeatStatContext? = getRuleContext(RepeatStatContext::class, 0)
 
         public constructor(ctx: AlwaysStatContext) {
             copyFrom(ctx)
@@ -5097,7 +4955,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterAlwaysRepeat(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterAlwaysRepeat(this)
@@ -5109,7 +4966,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitAlwaysRepeat(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitAlwaysRepeat(this)
@@ -5118,7 +4974,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class AlwaysSignalContext : AlwaysStatContext {
-        public fun sigDec(): SigDecContext = getRuleContext(SigDecContext::class, 0)!!
+        public fun sigDec(): SigDecContext? = getRuleContext(SigDecContext::class, 0)
 
         public constructor(ctx: AlwaysStatContext) {
             copyFrom(ctx)
@@ -5133,7 +4989,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterAlwaysSignal(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterAlwaysSignal(this)
@@ -5145,7 +5000,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitAlwaysSignal(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitAlwaysSignal(this)
@@ -5216,7 +5070,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                     sigDec()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -5246,13 +5099,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): BlockContext {
             return BlockContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterBlock(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterBlock(this)
@@ -5264,7 +5115,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitBlock(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitBlock(this)
@@ -5311,7 +5161,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                                 alwaysStat()
 
                             }
-
                             else -> throw NoViableAltException(this)
                         }
                         this.state = 947
@@ -5329,7 +5178,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                     alwaysStat()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -5346,9 +5194,9 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class AssignStatContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.AssignStat
 
-        public fun signal(): SignalContext = getRuleContext(SignalContext::class, 0)!!
-        public fun expr(): ExprContext = getRuleContext(ExprContext::class, 0)!!
-        public fun semi(): SemiContext = getRuleContext(SemiContext::class, 0)!!
+        public fun signal(): SignalContext? = getRuleContext(SignalContext::class, 0)
+        public fun expr(): ExprContext? = getRuleContext(ExprContext::class, 0)
+        public fun semi(): SemiContext? = getRuleContext(SemiContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
 
@@ -5360,13 +5208,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): AssignStatContext {
             return AssignStatContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterAssignStat(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterAssignStat(this)
@@ -5378,7 +5224,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitAssignStat(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitAssignStat(this)
@@ -5447,7 +5292,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class ArrayIndexContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.ArrayIndex
 
-        public fun expr(): ExprContext = getRuleContext(ExprContext::class, 0)!!
+        public fun expr(): ExprContext? = getRuleContext(ExprContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
 
@@ -5459,13 +5304,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ArrayIndexContext {
             return ArrayIndexContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterArrayIndex(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterArrayIndex(this)
@@ -5477,7 +5320,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitArrayIndex(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitArrayIndex(this)
@@ -5577,7 +5419,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterBitSelectorConst(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterBitSelectorConst(this)
@@ -5589,7 +5430,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitBitSelectorConst(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitBitSelectorConst(this)
@@ -5616,7 +5456,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterBitSelectorFixWidth(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterBitSelectorFixWidth(this)
@@ -5628,7 +5467,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitBitSelectorFixWidth(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitBitSelectorFixWidth(this)
@@ -5839,13 +5677,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): BitSelectionContext {
             return BitSelectionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterBitSelection(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterBitSelection(this)
@@ -5857,7 +5693,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitBitSelection(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitBitSelection(this)
@@ -5897,9 +5732,8 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                             match(Tokens.NL)
 
                         }
-
                         else -> throw NoViableAltException(this)
-                    }
+                    } 
                 }
 
                 this.state = 1060
@@ -5951,13 +5785,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): SignalContext {
             return SignalContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterSignal(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterSignal(this)
@@ -5969,7 +5801,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitSignal(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitSignal(this)
@@ -6077,7 +5908,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                             bitSelection()
 
                         }
-                    }
+                    } 
                 }
 
                 this.state = 1102
@@ -6098,7 +5929,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class CaseStatContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.CaseStat
 
-        public fun expr(): ExprContext = getRuleContext(ExprContext::class, 0)!!
+        public fun expr(): ExprContext? = getRuleContext(ExprContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
         public fun caseElem(): List<CaseElemContext> = getRuleContexts(CaseElemContext::class)
@@ -6112,13 +5943,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): CaseStatContext {
             return CaseStatContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterCaseStat(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterCaseStat(this)
@@ -6130,7 +5959,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitCaseStat(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitCaseStat(this)
@@ -6232,7 +6060,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                         match(Tokens.NL)
 
                     }
-
                     else -> throw NoViableAltException(this)
                 }
                 this.state = 1138
@@ -6256,7 +6083,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class CaseElemContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.CaseElem
 
-        public fun caseBlock(): CaseBlockContext = getRuleContext(CaseBlockContext::class, 0)!!
+        public fun caseBlock(): CaseBlockContext? = getRuleContext(CaseBlockContext::class, 0)
         public fun expr(): ExprContext? = getRuleContext(ExprContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
@@ -6269,13 +6096,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): CaseElemContext {
             return CaseElemContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterCaseElem(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterCaseElem(this)
@@ -6287,7 +6112,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitCaseElem(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitCaseElem(this)
@@ -6321,7 +6145,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                     match(Tokens.T__32)
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
             this.state = 1148
@@ -6369,13 +6192,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): CaseBlockContext {
             return CaseBlockContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterCaseBlock(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterCaseBlock(this)
@@ -6387,7 +6208,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitCaseBlock(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitCaseBlock(this)
@@ -6427,9 +6247,8 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                             match(Tokens.NL)
 
                         }
-
                         else -> throw NoViableAltException(this)
-                    }
+                    } 
                 }
 
                 this.state = 1160
@@ -6453,8 +6272,8 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class IfStatContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.IfStat
 
-        public fun expr(): ExprContext = getRuleContext(ExprContext::class, 0)!!
-        public fun block(): BlockContext = getRuleContext(BlockContext::class, 0)!!
+        public fun expr(): ExprContext? = getRuleContext(ExprContext::class, 0)
+        public fun block(): BlockContext? = getRuleContext(BlockContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
         public fun elseStat(): ElseStatContext? = getRuleContext(ElseStatContext::class, 0)
@@ -6467,13 +6286,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): IfStatContext {
             return IfStatContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterIfStat(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterIfStat(this)
@@ -6485,7 +6302,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitIfStat(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitIfStat(this)
@@ -6603,7 +6419,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class ElseStatContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.ElseStat
 
-        public fun block(): BlockContext = getRuleContext(BlockContext::class, 0)!!
+        public fun block(): BlockContext? = getRuleContext(BlockContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
 
@@ -6615,13 +6431,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ElseStatContext {
             return ElseStatContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterElseStat(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterElseStat(this)
@@ -6633,7 +6447,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitElseStat(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitElseStat(this)
@@ -6684,7 +6497,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class RepeatStatContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.RepeatStat
 
-        public fun repeatBlock(): RepeatBlockContext = getRuleContext(RepeatBlockContext::class, 0)!!
+        public fun repeatBlock(): RepeatBlockContext? = getRuleContext(RepeatBlockContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
         public fun expr(): List<ExprContext> = getRuleContexts(ExprContext::class)
@@ -6698,13 +6511,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): RepeatStatContext {
             return RepeatStatContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterRepeatStat(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterRepeatStat(this)
@@ -6716,7 +6527,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitRepeatStat(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitRepeatStat(this)
@@ -6861,7 +6671,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class RepeatBlockContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.RepeatBlock
 
-        public fun block(): BlockContext = getRuleContext(BlockContext::class, 0)!!
+        public fun block(): BlockContext? = getRuleContext(BlockContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -6871,13 +6681,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): RepeatBlockContext {
             return RepeatBlockContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterRepeatBlock(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterRepeatBlock(this)
@@ -6889,7 +6697,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitRepeatBlock(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitRepeatBlock(this)
@@ -6924,7 +6731,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     public open class FunctionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Function
 
-        public fun FUNCTION_ID(): TerminalNode = getToken(Tokens.FUNCTION_ID, 0)!!
+        public fun FUNCTION_ID(): TerminalNode? = getToken(Tokens.FUNCTION_ID, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
         public fun functionExpr(): List<FunctionExprContext> = getRuleContexts(FunctionExprContext::class)
@@ -6938,13 +6745,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): FunctionContext {
             return FunctionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterFunction(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterFunction(this)
@@ -6956,7 +6761,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitFunction(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitFunction(this)
@@ -7097,13 +6901,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): FunctionExprContext {
             return FunctionExprContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterFunctionExpr(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterFunctionExpr(this)
@@ -7115,7 +6917,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitFunctionExpr(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitFunctionExpr(this)
@@ -7149,7 +6950,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                     match(Tokens.REAL)
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -7180,13 +6980,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): NumberContext {
             return NumberContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterNumber(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterNumber(this)
@@ -7198,7 +6996,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitNumber(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitNumber(this)
@@ -7278,7 +7075,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprTernary(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprTernary(this)
@@ -7290,7 +7086,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprTernary(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprTernary(this)
@@ -7299,7 +7094,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ExprNumContext : ExprContext {
-        public fun number(): NumberContext = getRuleContext(NumberContext::class, 0)!!
+        public fun number(): NumberContext? = getRuleContext(NumberContext::class, 0)
 
         public constructor(ctx: ExprContext) {
             copyFrom(ctx)
@@ -7314,7 +7109,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprNum(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprNum(this)
@@ -7326,7 +7120,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprNum(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprNum(this)
@@ -7353,7 +7146,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprConcat(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprConcat(this)
@@ -7365,7 +7157,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprConcat(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprConcat(this)
@@ -7374,7 +7165,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ExprReductionContext : ExprContext {
-        public fun expr(): ExprContext = getRuleContext(ExprContext::class, 0)!!
+        public fun expr(): ExprContext? = getRuleContext(ExprContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
 
@@ -7391,7 +7182,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprReduction(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprReduction(this)
@@ -7403,7 +7193,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprReduction(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprReduction(this)
@@ -7412,7 +7201,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ExprInvertContext : ExprContext {
-        public fun expr(): ExprContext = getRuleContext(ExprContext::class, 0)!!
+        public fun expr(): ExprContext? = getRuleContext(ExprContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
 
@@ -7429,7 +7218,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprInvert(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprInvert(this)
@@ -7441,7 +7229,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprInvert(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprInvert(this)
@@ -7450,7 +7237,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ExprStructContext : ExprContext {
-        public fun structConst(): StructConstContext = getRuleContext(StructConstContext::class, 0)!!
+        public fun structConst(): StructConstContext? = getRuleContext(StructConstContext::class, 0)
 
         public constructor(ctx: ExprContext) {
             copyFrom(ctx)
@@ -7465,7 +7252,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprStruct(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprStruct(this)
@@ -7477,7 +7263,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprStruct(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprStruct(this)
@@ -7504,7 +7289,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprArray(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprArray(this)
@@ -7516,7 +7300,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprArray(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprArray(this)
@@ -7543,7 +7326,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprShift(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprShift(this)
@@ -7555,7 +7337,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprShift(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprShift(this)
@@ -7582,7 +7363,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprAddSub(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprAddSub(this)
@@ -7594,7 +7374,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprAddSub(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprAddSub(this)
@@ -7621,7 +7400,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprLogical(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprLogical(this)
@@ -7633,7 +7411,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprLogical(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprLogical(this)
@@ -7642,7 +7419,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ExprNegateContext : ExprContext {
-        public fun expr(): ExprContext = getRuleContext(ExprContext::class, 0)!!
+        public fun expr(): ExprContext? = getRuleContext(ExprContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
 
@@ -7659,7 +7436,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprNegate(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprNegate(this)
@@ -7671,7 +7447,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprNegate(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprNegate(this)
@@ -7680,7 +7455,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ExprGroupContext : ExprContext {
-        public fun expr(): ExprContext = getRuleContext(ExprContext::class, 0)!!
+        public fun expr(): ExprContext? = getRuleContext(ExprContext::class, 0)
         public fun NL(): List<TerminalNode> = getTokens(Tokens.NL)
         public fun NL(i: Int): TerminalNode? = getToken(Tokens.NL, i)
 
@@ -7697,7 +7472,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprGroup(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprGroup(this)
@@ -7709,7 +7483,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprGroup(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprGroup(this)
@@ -7736,7 +7509,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprBitwise(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprBitwise(this)
@@ -7748,7 +7520,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprBitwise(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprBitwise(this)
@@ -7757,7 +7528,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ExprFunctionContext : ExprContext {
-        public fun function(): FunctionContext = getRuleContext(FunctionContext::class, 0)!!
+        public fun function(): FunctionContext? = getRuleContext(FunctionContext::class, 0)
 
         public constructor(ctx: ExprContext) {
             copyFrom(ctx)
@@ -7772,7 +7543,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprFunction(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprFunction(this)
@@ -7784,7 +7554,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprFunction(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprFunction(this)
@@ -7811,7 +7580,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprCompare(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprCompare(this)
@@ -7823,7 +7591,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprCompare(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprCompare(this)
@@ -7850,7 +7617,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprDup(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprDup(this)
@@ -7862,7 +7628,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprDup(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprDup(this)
@@ -7889,7 +7654,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprMultDiv(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprMultDiv(this)
@@ -7901,7 +7665,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprMultDiv(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprMultDiv(this)
@@ -7910,7 +7673,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ExprSignalContext : ExprContext {
-        public fun signal(): SignalContext = getRuleContext(SignalContext::class, 0)!!
+        public fun signal(): SignalContext? = getRuleContext(SignalContext::class, 0)
 
         public constructor(ctx: ExprContext) {
             copyFrom(ctx)
@@ -7925,7 +7688,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprSignal(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprSignal(this)
@@ -7937,7 +7699,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprSignal(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprSignal(this)
@@ -8298,7 +8059,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                     expr(4)
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
             context!!.stop = _input.LT(-1)
@@ -8741,7 +8501,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                             match(Tokens.T__2)
 
                         }
-                    }
+                    } 
                 }
 
                 this.state = 1577
@@ -8774,13 +8534,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): NameContext {
             return NameContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterName(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterName(this)
@@ -8792,7 +8550,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitName(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitName(this)
@@ -8850,13 +8607,11 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): SemiContext {
             return SemiContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is LucidListener) {
                 listener.enterSemi(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterSemi(this)
@@ -8868,7 +8623,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitSemi(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitSemi(this)

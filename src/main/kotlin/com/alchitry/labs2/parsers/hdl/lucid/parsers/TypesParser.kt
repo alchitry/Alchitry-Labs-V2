@@ -604,7 +604,7 @@ class TypesParser(
             return
         }
 
-        val width = context.resolve(ctx.signalWidth())
+        val width = context.resolve(ctx.signalWidth() ?: return)
 
         if (width == null) {
             if (!context.mode.building) {

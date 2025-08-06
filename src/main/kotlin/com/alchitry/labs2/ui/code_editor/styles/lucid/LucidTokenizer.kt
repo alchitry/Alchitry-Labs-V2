@@ -11,7 +11,7 @@ object LucidTokenizer : EditorTokenizer {
     private val operatorRegex = Regex("([*!~+#\\-/:@|&{}?^=><\\]\\[,()]+)|(c\\{|x\\{)")
 
     override fun getTokens(stream: CharStream): List<EditorToken> {
-        val lexer = LucidLexer(stream)
+        val lexer = LucidLexer(stream).apply { removeErrorListeners() }
         lexer.removeErrorListeners()
         val tokenStream = CommonTokenStream(lexer)
         tokenStream.fill()

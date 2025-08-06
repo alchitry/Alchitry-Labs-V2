@@ -168,7 +168,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
             "module_instance_identifier", "net_identifier", "output_port_identifier",
             "parameter_identifier", "port_identifier", "real_identifier",
             "simple_identifier", "specparam_identifier", "system_function_identifier",
-            "system_task_identifier", "task_identifier", "terminal_identifier",
+            "system_task_identifier", "task_identifier", "terminal_identifier", 
             "topmodule_identifier", "udp_identifier", "udp_instance_identifier", 
             "variable_identifier"
         )
@@ -210,7 +210,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
             null, null, null, null, null, null, null, "'celldefine'", null,
             null, null, null, "'end_keywords'", "'endcelldefine'", null,
             null, null, null, null, "'nounconnected_drive'", null, "'resetall'",
-            null, null, null, null, null, null, null, null, "'``'", null,
+            null, null, null, null, null, null, null, null, "'``'", null, 
             "'`\\`\"'", "'`\"'"
         )
 
@@ -257,7 +257,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
             "UNCONNECTED_DRIVE_DIRECTIVE", "UNDEF_DIRECTIVE", "MACRO_USAGE",
             "VERSION_SPECIFIER", "DEFAULT_NETTYPE_VALUE", "MACRO_NAME",
             "FILENAME", "MACRO_DELIMITER", "MACRO_ESC_NEWLINE", "MACRO_ESC_QUOTE",
-            "MACRO_QUOTE", "MACRO_TEXT", "SOURCE_TEXT", "TIME_UNIT", "TIME_VALUE",
+            "MACRO_QUOTE", "MACRO_TEXT", "SOURCE_TEXT", "TIME_UNIT", "TIME_VALUE", 
             "UNCONNECTED_DRIVE_VALUE", "MACRO_IDENTIFIER"
         )
 
@@ -933,7 +933,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Library_textContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Library_text
 
-        public fun EOF(): TerminalNode = getToken(Tokens.EOF, 0)!!
+        public fun EOF(): TerminalNode? = getToken(Tokens.EOF, 0)
         public fun library_description(): List<Library_descriptionContext> =
             getRuleContexts(Library_descriptionContext::class)
 
@@ -1013,7 +1013,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun library_declaration(): Library_declarationContext? =
             getRuleContext(Library_declarationContext::class, 0)
-
         public fun include_statement(): Include_statementContext? = getRuleContext(Include_statementContext::class, 0)
         public fun config_declaration(): Config_declarationContext? =
             getRuleContext(Config_declarationContext::class, 0)
@@ -1098,13 +1097,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Library_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Library_declaration
 
-        public fun LIBRARY(): TerminalNode = getToken(Tokens.LIBRARY, 0)!!
-        public fun library_identifier(): Library_identifierContext =
-            getRuleContext(Library_identifierContext::class, 0)!!
-
+        public fun LIBRARY(): TerminalNode? = getToken(Tokens.LIBRARY, 0)
+        public fun library_identifier(): Library_identifierContext? =
+            getRuleContext(Library_identifierContext::class, 0)
         public fun file_path_spec(): List<File_path_specContext> = getRuleContexts(File_path_specContext::class)
         public fun file_path_spec(i: Int): File_path_specContext? = getRuleContext(File_path_specContext::class, i)
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
         public fun library_incdir(): Library_incdirContext? = getRuleContext(Library_incdirContext::class, 0)
@@ -1201,7 +1199,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Library_incdirContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Library_incdir
 
-        public fun MIINCDIR(): TerminalNode = getToken(Tokens.MIINCDIR, 0)!!
+        public fun MIINCDIR(): TerminalNode? = getToken(Tokens.MIINCDIR, 0)
         public fun file_path_spec(): List<File_path_specContext> = getRuleContexts(File_path_specContext::class)
         public fun file_path_spec(i: Int): File_path_specContext? = getRuleContext(File_path_specContext::class, i)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
@@ -1284,9 +1282,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Include_statementContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Include_statement
 
-        public fun INCLUDE(): TerminalNode = getToken(Tokens.INCLUDE, 0)!!
-        public fun file_path_spec(): File_path_specContext = getRuleContext(File_path_specContext::class, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun INCLUDE(): TerminalNode? = getToken(Tokens.INCLUDE, 0)
+        public fun file_path_spec(): File_path_specContext? = getRuleContext(File_path_specContext::class, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -1352,7 +1350,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class File_path_specContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.File_path_spec
 
-        public fun FILE_PATH_SPEC(): TerminalNode = getToken(Tokens.FILE_PATH_SPEC, 0)!!
+        public fun FILE_PATH_SPEC(): TerminalNode? = getToken(Tokens.FILE_PATH_SPEC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -1412,7 +1410,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Source_textContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Source_text
 
-        public fun EOF(): TerminalNode = getToken(Tokens.EOF, 0)!!
+        public fun EOF(): TerminalNode? = getToken(Tokens.EOF, 0)
         public fun description(): List<DescriptionContext> = getRuleContexts(DescriptionContext::class)
         public fun description(i: Int): DescriptionContext? = getRuleContext(DescriptionContext::class, i)
 
@@ -1489,7 +1487,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun module_declaration(): Module_declarationContext? =
             getRuleContext(Module_declarationContext::class, 0)
-
         public fun udp_declaration(): Udp_declarationContext? = getRuleContext(Udp_declarationContext::class, 0)
         public fun config_declaration(): Config_declarationContext? =
             getRuleContext(Config_declarationContext::class, 0)
@@ -1573,10 +1570,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Module_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Module_declaration
 
-        public fun module_keyword(): Module_keywordContext = getRuleContext(Module_keywordContext::class, 0)!!
-        public fun module_identifier(): Module_identifierContext = getRuleContext(Module_identifierContext::class, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
-        public fun ENDMODULE(): TerminalNode = getToken(Tokens.ENDMODULE, 0)!!
+        public fun module_keyword(): Module_keywordContext? = getRuleContext(Module_keywordContext::class, 0)
+        public fun module_identifier(): Module_identifierContext? = getRuleContext(Module_identifierContext::class, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
+        public fun ENDMODULE(): TerminalNode? = getToken(Tokens.ENDMODULE, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
@@ -1588,7 +1585,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun list_of_port_declarations(): List_of_port_declarationsContext? =
             getRuleContext(List_of_port_declarationsContext::class, 0)
-
         public fun module_item(): List<Module_itemContext> = getRuleContexts(Module_itemContext::class)
         public fun module_item(i: Int): Module_itemContext? = getRuleContext(Module_itemContext::class, i)
 
@@ -1774,15 +1770,15 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Module_parameter_port_listContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Module_parameter_port_list
 
-        public fun HA(): TerminalNode = getToken(Tokens.HA, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
+        public fun HA(): TerminalNode? = getToken(Tokens.HA, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun parameter_declaration(): List<Parameter_declarationContext> =
             getRuleContexts(Parameter_declarationContext::class)
 
         public fun parameter_declaration(i: Int): Parameter_declarationContext? =
             getRuleContext(Parameter_declarationContext::class, i)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -1869,12 +1865,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class List_of_port_declarationsContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.List_of_port_declarations
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun port_declaration(): List<Port_declarationContext> = getRuleContexts(Port_declarationContext::class)
         public fun port_declaration(i: Int): Port_declarationContext? =
             getRuleContext(Port_declarationContext::class, i)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
         public fun port(): List<PortContext> = getRuleContexts(PortContext::class)
@@ -1963,7 +1959,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     this.state = 869
                     port()
 
-                    this.state = 872
+                    this.state = 872 
                     errorHandler.sync(this)
                     _la = _input.LA(1)
 
@@ -1974,7 +1970,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                         this.state = 871
                         port()
 
-                        this.state = 874
+                        this.state = 874 
                         errorHandler.sync(this)
                         _la = _input.LA(1)
                     } while (_la == Tokens.CO)
@@ -2116,7 +2112,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Port_implicitContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Port_implicit
 
-        public fun port_expression(): Port_expressionContext = getRuleContext(Port_expressionContext::class, 0)!!
+        public fun port_expression(): Port_expressionContext? = getRuleContext(Port_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -2176,10 +2172,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Port_explicitContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Port_explicit
 
-        public fun DT(): TerminalNode = getToken(Tokens.DT, 0)!!
-        public fun port_identifier(): Port_identifierContext = getRuleContext(Port_identifierContext::class, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun DT(): TerminalNode? = getToken(Tokens.DT, 0)
+        public fun port_identifier(): Port_identifierContext? = getRuleContext(Port_identifierContext::class, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun port_expression(): Port_expressionContext? = getRuleContext(Port_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -2361,11 +2357,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Port_referenceContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Port_reference
 
-        public fun port_identifier(): Port_identifierContext = getRuleContext(Port_identifierContext::class, 0)!!
+        public fun port_identifier(): Port_identifierContext? = getRuleContext(Port_identifierContext::class, 0)
         public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
         public fun constant_range_expression(): Constant_range_expressionContext? =
             getRuleContext(Constant_range_expressionContext::class, 0)
-
         public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -2448,7 +2443,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun input_declaration(): Input_declarationContext? = getRuleContext(Input_declarationContext::class, 0)
         public fun output_declaration(): Output_declarationContext? =
             getRuleContext(Output_declarationContext::class, 0)
@@ -2585,7 +2579,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ModuleSpecifyBlockContext : Module_itemContext {
-        public fun specify_block(): Specify_blockContext = getRuleContext(Specify_blockContext::class, 0)!!
+        public fun specify_block(): Specify_blockContext? = getRuleContext(Specify_blockContext::class, 0)
 
         public constructor(ctx: Module_itemContext) {
             copyFrom(ctx)
@@ -2619,10 +2613,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ModuleParameterContext : Module_itemContext {
-        public fun parameter_declaration(): Parameter_declarationContext =
-            getRuleContext(Parameter_declarationContext::class, 0)!!
+        public fun parameter_declaration(): Parameter_declarationContext? =
+            getRuleContext(Parameter_declarationContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
@@ -2661,8 +2655,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ModuleSpecparamContext : Module_itemContext {
-        public fun specparam_declaration(): Specparam_declarationContext =
-            getRuleContext(Specparam_declarationContext::class, 0)!!
+        public fun specparam_declaration(): Specparam_declarationContext? =
+            getRuleContext(Specparam_declarationContext::class, 0)
 
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
@@ -2702,8 +2696,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ModuleInstanceOrGenerateContext : Module_itemContext {
-        public fun module_or_generate_item(): Module_or_generate_itemContext =
-            getRuleContext(Module_or_generate_itemContext::class, 0)!!
+        public fun module_or_generate_item(): Module_or_generate_itemContext? =
+            getRuleContext(Module_or_generate_itemContext::class, 0)
 
         public constructor(ctx: Module_itemContext) {
             copyFrom(ctx)
@@ -2737,7 +2731,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ModuleGenerateRegionContext : Module_itemContext {
-        public fun generate_region(): Generate_regionContext = getRuleContext(Generate_regionContext::class, 0)!!
+        public fun generate_region(): Generate_regionContext? = getRuleContext(Generate_regionContext::class, 0)
 
         public constructor(ctx: Module_itemContext) {
             copyFrom(ctx)
@@ -2771,8 +2765,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ModulePortContext : Module_itemContext {
-        public fun port_declaration(): Port_declarationContext = getRuleContext(Port_declarationContext::class, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun port_declaration(): Port_declarationContext? = getRuleContext(Port_declarationContext::class, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(ctx: Module_itemContext) {
             copyFrom(ctx)
@@ -2922,18 +2916,15 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun local_parameter_declaration(): Local_parameter_declarationContext? =
             getRuleContext(Local_parameter_declarationContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun parameter_override(): Parameter_overrideContext? =
             getRuleContext(Parameter_overrideContext::class, 0)
-
         public fun continuous_assign(): Continuous_assignContext? = getRuleContext(Continuous_assignContext::class, 0)
         public fun gate_instantiation(): Gate_instantiationContext? =
             getRuleContext(Gate_instantiationContext::class, 0)
 
         public fun module_instantiation(): Module_instantiationContext? =
             getRuleContext(Module_instantiationContext::class, 0)
-
         public fun udp_instantiation(): Udp_instantiationContext? = getRuleContext(Udp_instantiationContext::class, 0)
         public fun initial_construct(): Initial_constructContext? = getRuleContext(Initial_constructContext::class, 0)
         public fun always_construct(): Always_constructContext? = getRuleContext(Always_constructContext::class, 0)
@@ -3218,16 +3209,13 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun reg_declaration(): Reg_declarationContext? = getRuleContext(Reg_declarationContext::class, 0)
         public fun integer_declaration(): Integer_declarationContext? =
             getRuleContext(Integer_declarationContext::class, 0)
-
         public fun real_declaration(): Real_declarationContext? = getRuleContext(Real_declarationContext::class, 0)
         public fun time_declaration(): Time_declarationContext? = getRuleContext(Time_declarationContext::class, 0)
         public fun realtime_declaration(): Realtime_declarationContext? =
             getRuleContext(Realtime_declarationContext::class, 0)
-
         public fun event_declaration(): Event_declarationContext? = getRuleContext(Event_declarationContext::class, 0)
         public fun genvar_declaration(): Genvar_declarationContext? =
             getRuleContext(Genvar_declarationContext::class, 0)
-
         public fun task_declaration(): Task_declarationContext? = getRuleContext(Task_declarationContext::class, 0)
         public fun function_declaration(): Function_declarationContext? =
             getRuleContext(Function_declarationContext::class, 0)
@@ -3361,11 +3349,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Parameter_overrideContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Parameter_override
 
-        public fun DEFPARAM(): TerminalNode = getToken(Tokens.DEFPARAM, 0)!!
-        public fun list_of_defparam_assignments(): List_of_defparam_assignmentsContext =
-            getRuleContext(List_of_defparam_assignmentsContext::class, 0)!!
+        public fun DEFPARAM(): TerminalNode? = getToken(Tokens.DEFPARAM, 0)
+        public fun list_of_defparam_assignments(): List_of_defparam_assignmentsContext? =
+            getRuleContext(List_of_defparam_assignmentsContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -3431,11 +3419,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Config_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Config_declaration
 
-        public fun CONFIG(): TerminalNode = getToken(Tokens.CONFIG, 0)!!
-        public fun config_identifier(): Config_identifierContext = getRuleContext(Config_identifierContext::class, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
-        public fun design_statement(): Design_statementContext = getRuleContext(Design_statementContext::class, 0)!!
-        public fun ENDCONFIG(): TerminalNode = getToken(Tokens.ENDCONFIG, 0)!!
+        public fun CONFIG(): TerminalNode? = getToken(Tokens.CONFIG, 0)
+        public fun config_identifier(): Config_identifierContext? = getRuleContext(Config_identifierContext::class, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
+        public fun design_statement(): Design_statementContext? = getRuleContext(Design_statementContext::class, 0)
+        public fun ENDCONFIG(): TerminalNode? = getToken(Tokens.ENDCONFIG, 0)
         public fun config_rule_statement(): List<Config_rule_statementContext> =
             getRuleContexts(Config_rule_statementContext::class)
 
@@ -3525,8 +3513,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Design_statementContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Design_statement
 
-        public fun DESIGN(): TerminalNode = getToken(Tokens.DESIGN, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun DESIGN(): TerminalNode? = getToken(Tokens.DESIGN, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun design_statement_item(): List<Design_statement_itemContext> =
             getRuleContexts(Design_statement_itemContext::class)
 
@@ -3607,10 +3595,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Design_statement_itemContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Design_statement_item
 
-        public fun cell_identifier(): Cell_identifierContext = getRuleContext(Cell_identifierContext::class, 0)!!
+        public fun cell_identifier(): Cell_identifierContext? = getRuleContext(Cell_identifierContext::class, 0)
         public fun library_identifier(): Library_identifierContext? =
             getRuleContext(Library_identifierContext::class, 0)
-
         public fun DT(): TerminalNode? = getToken(Tokens.DT, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -3686,7 +3673,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun default_clause(): Default_clauseContext? = getRuleContext(Default_clauseContext::class, 0)
         public fun liblist_clause(): Liblist_clauseContext? = getRuleContext(Liblist_clauseContext::class, 0)
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun inst_clause(): Inst_clauseContext? = getRuleContext(Inst_clauseContext::class, 0)
         public fun use_clause(): Use_clauseContext? = getRuleContext(Use_clauseContext::class, 0)
         public fun cell_clause(): Cell_clauseContext? = getRuleContext(Cell_clauseContext::class, 0)
@@ -3814,7 +3801,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Default_clauseContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Default_clause
 
-        public fun DEFAULT(): TerminalNode = getToken(Tokens.DEFAULT, 0)!!
+        public fun DEFAULT(): TerminalNode? = getToken(Tokens.DEFAULT, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -3874,8 +3861,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Inst_clauseContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Inst_clause
 
-        public fun INSTANCE(): TerminalNode = getToken(Tokens.INSTANCE, 0)!!
-        public fun inst_name(): Inst_nameContext = getRuleContext(Inst_nameContext::class, 0)!!
+        public fun INSTANCE(): TerminalNode? = getToken(Tokens.INSTANCE, 0)
+        public fun inst_name(): Inst_nameContext? = getRuleContext(Inst_nameContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -3938,9 +3925,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Inst_nameContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Inst_name
 
-        public fun topmodule_identifier(): Topmodule_identifierContext =
-            getRuleContext(Topmodule_identifierContext::class, 0)!!
-
+        public fun topmodule_identifier(): Topmodule_identifierContext? =
+            getRuleContext(Topmodule_identifierContext::class, 0)
         public fun DT(): List<TerminalNode> = getTokens(Tokens.DT)
         public fun DT(i: Int): TerminalNode? = getToken(Tokens.DT, i)
         public fun instance_identifier(): List<Instance_identifierContext> =
@@ -4023,11 +4009,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Cell_clauseContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Cell_clause
 
-        public fun CELL(): TerminalNode = getToken(Tokens.CELL, 0)!!
-        public fun cell_identifier(): Cell_identifierContext = getRuleContext(Cell_identifierContext::class, 0)!!
+        public fun CELL(): TerminalNode? = getToken(Tokens.CELL, 0)
+        public fun cell_identifier(): Cell_identifierContext? = getRuleContext(Cell_identifierContext::class, 0)
         public fun library_identifier(): Library_identifierContext? =
             getRuleContext(Library_identifierContext::class, 0)
-
         public fun DT(): TerminalNode? = getToken(Tokens.DT, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -4104,7 +4089,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Liblist_clauseContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Liblist_clause
 
-        public fun LIBLIST(): TerminalNode = getToken(Tokens.LIBLIST, 0)!!
+        public fun LIBLIST(): TerminalNode? = getToken(Tokens.LIBLIST, 0)
         public fun library_identifier(): List<Library_identifierContext> =
             getRuleContexts(Library_identifierContext::class)
 
@@ -4182,11 +4167,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Use_clauseContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Use_clause
 
-        public fun USE(): TerminalNode = getToken(Tokens.USE, 0)!!
-        public fun cell_identifier(): Cell_identifierContext = getRuleContext(Cell_identifierContext::class, 0)!!
+        public fun USE(): TerminalNode? = getToken(Tokens.USE, 0)
+        public fun cell_identifier(): Cell_identifierContext? = getRuleContext(Cell_identifierContext::class, 0)
         public fun library_identifier(): Library_identifierContext? =
             getRuleContext(Library_identifierContext::class, 0)
-
         public fun DT(): TerminalNode? = getToken(Tokens.DT, 0)
         public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
         public fun CONFIG(): TerminalNode? = getToken(Tokens.CONFIG, 0)
@@ -4278,10 +4262,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Local_parameter_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Local_parameter_declaration
 
-        public fun LOCALPARAM(): TerminalNode = getToken(Tokens.LOCALPARAM, 0)!!
-        public fun list_of_param_assignments(): List_of_param_assignmentsContext =
-            getRuleContext(List_of_param_assignmentsContext::class, 0)!!
-
+        public fun LOCALPARAM(): TerminalNode? = getToken(Tokens.LOCALPARAM, 0)
+        public fun list_of_param_assignments(): List_of_param_assignmentsContext? =
+            getRuleContext(List_of_param_assignmentsContext::class, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
         public fun parameter_type(): Parameter_typeContext? = getRuleContext(Parameter_typeContext::class, 0)
@@ -4386,10 +4369,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Parameter_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Parameter_declaration
 
-        public fun PARAMETER(): TerminalNode = getToken(Tokens.PARAMETER, 0)!!
-        public fun list_of_param_assignments(): List_of_param_assignmentsContext =
-            getRuleContext(List_of_param_assignmentsContext::class, 0)!!
-
+        public fun PARAMETER(): TerminalNode? = getToken(Tokens.PARAMETER, 0)
+        public fun list_of_param_assignments(): List_of_param_assignmentsContext? =
+            getRuleContext(List_of_param_assignmentsContext::class, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
         public fun parameter_type(): Parameter_typeContext? = getRuleContext(Parameter_typeContext::class, 0)
@@ -4494,11 +4476,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Specparam_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Specparam_declaration
 
-        public fun SPECPARAM(): TerminalNode = getToken(Tokens.SPECPARAM, 0)!!
-        public fun list_of_specparam_assignments(): List_of_specparam_assignmentsContext =
-            getRuleContext(List_of_specparam_assignmentsContext::class, 0)!!
+        public fun SPECPARAM(): TerminalNode? = getToken(Tokens.SPECPARAM, 0)
+        public fun list_of_specparam_assignments(): List_of_specparam_assignmentsContext? =
+            getRuleContext(List_of_specparam_assignmentsContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -4649,10 +4631,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Inout_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Inout_declaration
 
-        public fun INOUT(): TerminalNode = getToken(Tokens.INOUT, 0)!!
-        public fun list_of_port_identifiers(): List_of_port_identifiersContext =
-            getRuleContext(List_of_port_identifiersContext::class, 0)!!
-
+        public fun INOUT(): TerminalNode? = getToken(Tokens.INOUT, 0)
+        public fun list_of_port_identifiers(): List_of_port_identifiersContext? =
+            getRuleContext(List_of_port_identifiersContext::class, 0)
         public fun net_type(): Net_typeContext? = getRuleContext(Net_typeContext::class, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
@@ -4746,10 +4727,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Input_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Input_declaration
 
-        public fun INPUT(): TerminalNode = getToken(Tokens.INPUT, 0)!!
-        public fun list_of_port_identifiers(): List_of_port_identifiersContext =
-            getRuleContext(List_of_port_identifiersContext::class, 0)!!
-
+        public fun INPUT(): TerminalNode? = getToken(Tokens.INPUT, 0)
+        public fun list_of_port_identifiers(): List_of_port_identifiersContext? =
+            getRuleContext(List_of_port_identifiersContext::class, 0)
         public fun net_type(): Net_typeContext? = getRuleContext(Net_typeContext::class, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
@@ -4843,10 +4823,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Output_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Output_declaration
 
-        public fun OUTPUT(): TerminalNode = getToken(Tokens.OUTPUT, 0)!!
+        public fun OUTPUT(): TerminalNode? = getToken(Tokens.OUTPUT, 0)
         public fun list_of_port_identifiers(): List_of_port_identifiersContext? =
             getRuleContext(List_of_port_identifiersContext::class, 0)
-
         public fun net_type(): Net_typeContext? = getRuleContext(Net_typeContext::class, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
@@ -4997,11 +4976,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Event_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Event_declaration
 
-        public fun EVENT(): TerminalNode = getToken(Tokens.EVENT, 0)!!
-        public fun list_of_event_identifiers(): List_of_event_identifiersContext =
-            getRuleContext(List_of_event_identifiersContext::class, 0)!!
+        public fun EVENT(): TerminalNode? = getToken(Tokens.EVENT, 0)
+        public fun list_of_event_identifiers(): List_of_event_identifiersContext? =
+            getRuleContext(List_of_event_identifiersContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -5067,11 +5046,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Integer_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Integer_declaration
 
-        public fun INTEGER(): TerminalNode = getToken(Tokens.INTEGER, 0)!!
-        public fun list_of_variable_identifiers(): List_of_variable_identifiersContext =
-            getRuleContext(List_of_variable_identifiersContext::class, 0)!!
+        public fun INTEGER(): TerminalNode? = getToken(Tokens.INTEGER, 0)
+        public fun list_of_variable_identifiers(): List_of_variable_identifiersContext? =
+            getRuleContext(List_of_variable_identifiersContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -5141,12 +5120,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun list_of_net_identifiers(): List_of_net_identifiersContext? =
             getRuleContext(List_of_net_identifiersContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun delay3(): Delay3Context? = getRuleContext(Delay3Context::class, 0)
         public fun list_of_net_decl_assignments(): List_of_net_decl_assignmentsContext? =
             getRuleContext(List_of_net_decl_assignmentsContext::class, 0)
-
         public fun drive_strength(): Drive_strengthContext? = getRuleContext(Drive_strengthContext::class, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
         public fun VECTORED(): TerminalNode? = getToken(Tokens.VECTORED, 0)
@@ -5603,11 +5581,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Real_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Real_declaration
 
-        public fun REAL(): TerminalNode = getToken(Tokens.REAL, 0)!!
-        public fun list_of_real_identifiers(): List_of_real_identifiersContext =
-            getRuleContext(List_of_real_identifiersContext::class, 0)!!
+        public fun REAL(): TerminalNode? = getToken(Tokens.REAL, 0)
+        public fun list_of_real_identifiers(): List_of_real_identifiersContext? =
+            getRuleContext(List_of_real_identifiersContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -5673,11 +5651,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Realtime_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Realtime_declaration
 
-        public fun REALTIME(): TerminalNode = getToken(Tokens.REALTIME, 0)!!
-        public fun list_of_real_identifiers(): List_of_real_identifiersContext =
-            getRuleContext(List_of_real_identifiersContext::class, 0)!!
+        public fun REALTIME(): TerminalNode? = getToken(Tokens.REALTIME, 0)
+        public fun list_of_real_identifiers(): List_of_real_identifiersContext? =
+            getRuleContext(List_of_real_identifiersContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -5743,11 +5721,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Reg_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Reg_declaration
 
-        public fun REG(): TerminalNode = getToken(Tokens.REG, 0)!!
-        public fun list_of_variable_identifiers(): List_of_variable_identifiersContext =
-            getRuleContext(List_of_variable_identifiersContext::class, 0)!!
+        public fun REG(): TerminalNode? = getToken(Tokens.REG, 0)
+        public fun list_of_variable_identifiers(): List_of_variable_identifiersContext? =
+            getRuleContext(List_of_variable_identifiersContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
 
@@ -5834,11 +5812,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Time_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Time_declaration
 
-        public fun TIME(): TerminalNode = getToken(Tokens.TIME, 0)!!
-        public fun list_of_variable_identifiers(): List_of_variable_identifiersContext =
-            getRuleContext(List_of_variable_identifiersContext::class, 0)!!
+        public fun TIME(): TerminalNode? = getToken(Tokens.TIME, 0)
+        public fun list_of_variable_identifiers(): List_of_variable_identifiersContext? =
+            getRuleContext(List_of_variable_identifiersContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -6057,7 +6035,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Real_typeContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Real_type
 
-        public fun real_identifier(): Real_identifierContext = getRuleContext(Real_identifierContext::class, 0)!!
+        public fun real_identifier(): Real_identifierContext? = getRuleContext(Real_identifierContext::class, 0)
         public fun dimension(): List<DimensionContext> = getRuleContexts(DimensionContext::class)
         public fun dimension(i: Int): DimensionContext? = getRuleContext(DimensionContext::class, i)
         public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
@@ -6155,9 +6133,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Variable_typeContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Variable_type
 
-        public fun variable_identifier(): Variable_identifierContext =
-            getRuleContext(Variable_identifierContext::class, 0)!!
-
+        public fun variable_identifier(): Variable_identifierContext? =
+            getRuleContext(Variable_identifierContext::class, 0)
         public fun dimension(): List<DimensionContext> = getRuleContexts(DimensionContext::class)
         public fun dimension(i: Int): DimensionContext? = getRuleContext(DimensionContext::class, i)
         public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
@@ -6255,11 +6232,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Drive_strengthContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Drive_strength
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun strength0(): Strength0Context? = getRuleContext(Strength0Context::class, 0)
-        public fun CO(): TerminalNode = getToken(Tokens.CO, 0)!!
+        public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
         public fun strength1(): Strength1Context? = getRuleContext(Strength1Context::class, 0)
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun HIGHZONE(): TerminalNode? = getToken(Tokens.HIGHZONE, 0)
         public fun HIGHZZERO(): TerminalNode? = getToken(Tokens.HIGHZZERO, 0)
 
@@ -6583,9 +6560,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Charge_strengthContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Charge_strength
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun SMALL(): TerminalNode? = getToken(Tokens.SMALL, 0)
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun MEDIUM(): TerminalNode? = getToken(Tokens.MEDIUM, 0)
         public fun LARGE(): TerminalNode? = getToken(Tokens.LARGE, 0)
 
@@ -6686,7 +6663,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Delay3Context : ParserRuleContext {
         override val ruleIndex: Int = Rules.Delay3
 
-        public fun HA(): TerminalNode = getToken(Tokens.HA, 0)!!
+        public fun HA(): TerminalNode? = getToken(Tokens.HA, 0)
         public fun delay_value(): Delay_valueContext? = getRuleContext(Delay_valueContext::class, 0)
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun mintypmax_expression(): List<Mintypmax_expressionContext> =
@@ -6694,7 +6671,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun mintypmax_expression(i: Int): Mintypmax_expressionContext? =
             getRuleContext(Mintypmax_expressionContext::class, i)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
@@ -6808,7 +6784,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Delay2Context : ParserRuleContext {
         override val ruleIndex: Int = Rules.Delay2
 
-        public fun HA(): TerminalNode = getToken(Tokens.HA, 0)!!
+        public fun HA(): TerminalNode? = getToken(Tokens.HA, 0)
         public fun delay_value(): Delay_valueContext? = getRuleContext(Delay_valueContext::class, 0)
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun mintypmax_expression(): List<Mintypmax_expressionContext> =
@@ -6816,7 +6792,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun mintypmax_expression(i: Int): Mintypmax_expressionContext? =
             getRuleContext(Mintypmax_expressionContext::class, i)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
 
@@ -7006,7 +6981,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun defparam_assignment(i: Int): Defparam_assignmentContext? =
             getRuleContext(Defparam_assignmentContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -7163,7 +7137,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Event_idContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Event_id
 
-        public fun event_identifier(): Event_identifierContext = getRuleContext(Event_identifierContext::class, 0)!!
+        public fun event_identifier(): Event_identifierContext? = getRuleContext(Event_identifierContext::class, 0)
         public fun dimension(): List<DimensionContext> = getRuleContexts(DimensionContext::class)
         public fun dimension(i: Int): DimensionContext? = getRuleContext(DimensionContext::class, i)
 
@@ -7243,7 +7217,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun net_decl_assignment(i: Int): Net_decl_assignmentContext? =
             getRuleContext(Net_decl_assignmentContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -7400,7 +7373,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Net_idContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Net_id
 
-        public fun net_identifier(): Net_identifierContext = getRuleContext(Net_identifierContext::class, 0)!!
+        public fun net_identifier(): Net_identifierContext? = getRuleContext(Net_identifierContext::class, 0)
         public fun dimension(): List<DimensionContext> = getRuleContexts(DimensionContext::class)
         public fun dimension(i: Int): DimensionContext? = getRuleContext(DimensionContext::class, i)
 
@@ -7478,7 +7451,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun param_assignment(): List<Param_assignmentContext> = getRuleContexts(Param_assignmentContext::class)
         public fun param_assignment(i: Int): Param_assignmentContext? =
             getRuleContext(Param_assignmentContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -7725,7 +7697,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun specparam_assignment(i: Int): Specparam_assignmentContext? =
             getRuleContext(Specparam_assignmentContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -7964,7 +7935,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Var_port_idContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Var_port_id
 
-        public fun port_identifier(): Port_identifierContext = getRuleContext(Port_identifierContext::class, 0)!!
+        public fun port_identifier(): Port_identifierContext? = getRuleContext(Port_identifierContext::class, 0)
         public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
         public fun constant_expression(): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, 0)
@@ -8040,12 +8011,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Defparam_assignmentContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Defparam_assignment
 
-        public fun hierarchical_identifier(): Hierarchical_identifierContext =
-            getRuleContext(Hierarchical_identifierContext::class, 0)!!
+        public fun hierarchical_identifier(): Hierarchical_identifierContext? =
+            getRuleContext(Hierarchical_identifierContext::class, 0)
 
-        public fun EQ(): TerminalNode = getToken(Tokens.EQ, 0)!!
-        public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext =
-            getRuleContext(Constant_mintypmax_expressionContext::class, 0)!!
+        public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
+        public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext? =
+            getRuleContext(Constant_mintypmax_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -8111,9 +8082,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Net_decl_assignmentContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Net_decl_assignment
 
-        public fun net_identifier(): Net_identifierContext = getRuleContext(Net_identifierContext::class, 0)!!
-        public fun EQ(): TerminalNode = getToken(Tokens.EQ, 0)!!
-        public fun expression(): ExpressionContext = getRuleContext(ExpressionContext::class, 0)!!
+        public fun net_identifier(): Net_identifierContext? = getRuleContext(Net_identifierContext::class, 0)
+        public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
+        public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -8179,12 +8150,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Param_assignmentContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Param_assignment
 
-        public fun parameter_identifier(): Parameter_identifierContext =
-            getRuleContext(Parameter_identifierContext::class, 0)!!
+        public fun parameter_identifier(): Parameter_identifierContext? =
+            getRuleContext(Parameter_identifierContext::class, 0)
 
-        public fun EQ(): TerminalNode = getToken(Tokens.EQ, 0)!!
-        public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext =
-            getRuleContext(Constant_mintypmax_expressionContext::class, 0)!!
+        public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
+        public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext? =
+            getRuleContext(Constant_mintypmax_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -8252,7 +8223,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun specparam_identifier(): Specparam_identifierContext? =
             getRuleContext(Specparam_identifierContext::class, 0)
-
         public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
         public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext? =
             getRuleContext(Constant_mintypmax_expressionContext::class, 0)
@@ -8339,18 +8309,17 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Pulse_control_specparamContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Pulse_control_specparam
 
-        public fun PATHPULSEDL(): TerminalNode = getToken(Tokens.PATHPULSEDL, 0)!!
-        public fun EQ(): TerminalNode = getToken(Tokens.EQ, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun reject_limit_value(): Reject_limit_valueContext =
-            getRuleContext(Reject_limit_valueContext::class, 0)!!
+        public fun PATHPULSEDL(): TerminalNode? = getToken(Tokens.PATHPULSEDL, 0)
+        public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun reject_limit_value(): Reject_limit_valueContext? =
+            getRuleContext(Reject_limit_valueContext::class, 0)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
         public fun error_limit_value(): Error_limit_valueContext? = getRuleContext(Error_limit_valueContext::class, 0)
         public fun specify_input_terminal_descriptor(): Specify_input_terminal_descriptorContext? =
             getRuleContext(Specify_input_terminal_descriptorContext::class, 0)
-
         public fun DL(): TerminalNode? = getToken(Tokens.DL, 0)
         public fun specify_output_terminal_descriptor(): Specify_output_terminal_descriptorContext? =
             getRuleContext(Specify_output_terminal_descriptorContext::class, 0)
@@ -8485,7 +8454,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Error_limit_valueContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Error_limit_value
 
-        public fun limit_value(): Limit_valueContext = getRuleContext(Limit_valueContext::class, 0)!!
+        public fun limit_value(): Limit_valueContext? = getRuleContext(Limit_valueContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -8545,7 +8514,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Reject_limit_valueContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Reject_limit_value
 
-        public fun limit_value(): Limit_valueContext = getRuleContext(Limit_valueContext::class, 0)!!
+        public fun limit_value(): Limit_valueContext? = getRuleContext(Limit_valueContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -8605,8 +8574,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Limit_valueContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Limit_value
 
-        public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext =
-            getRuleContext(Constant_mintypmax_expressionContext::class, 0)!!
+        public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext? =
+            getRuleContext(Constant_mintypmax_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -8666,15 +8635,15 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class DimensionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Dimension
 
-        public fun LB(): TerminalNode = getToken(Tokens.LB, 0)!!
+        public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
         public fun dimension_constant_expression(): List<Dimension_constant_expressionContext> =
             getRuleContexts(Dimension_constant_expressionContext::class)
 
         public fun dimension_constant_expression(i: Int): Dimension_constant_expressionContext? =
             getRuleContext(Dimension_constant_expressionContext::class, i)
 
-        public fun CL(): TerminalNode = getToken(Tokens.CL, 0)!!
-        public fun RB(): TerminalNode = getToken(Tokens.RB, 0)!!
+        public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
+        public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -8746,15 +8715,15 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Range_Context : ParserRuleContext {
         override val ruleIndex: Int = Rules.Range_
 
-        public fun LB(): TerminalNode = getToken(Tokens.LB, 0)!!
-        public fun msb_constant_expression(): Msb_constant_expressionContext =
-            getRuleContext(Msb_constant_expressionContext::class, 0)!!
+        public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
+        public fun msb_constant_expression(): Msb_constant_expressionContext? =
+            getRuleContext(Msb_constant_expressionContext::class, 0)
 
-        public fun CL(): TerminalNode = getToken(Tokens.CL, 0)!!
-        public fun lsb_constant_expression(): Lsb_constant_expressionContext =
-            getRuleContext(Lsb_constant_expressionContext::class, 0)!!
+        public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
+        public fun lsb_constant_expression(): Lsb_constant_expressionContext? =
+            getRuleContext(Lsb_constant_expressionContext::class, 0)
 
-        public fun RB(): TerminalNode = getToken(Tokens.RB, 0)!!
+        public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -8826,15 +8795,15 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Function_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Function_declaration
 
-        public fun FUNCTION(): TerminalNode = getToken(Tokens.FUNCTION, 0)!!
-        public fun function_identifier(): Function_identifierContext =
-            getRuleContext(Function_identifierContext::class, 0)!!
+        public fun FUNCTION(): TerminalNode? = getToken(Tokens.FUNCTION, 0)
+        public fun function_identifier(): Function_identifierContext? =
+            getRuleContext(Function_identifierContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
-        public fun function_statement(): Function_statementContext =
-            getRuleContext(Function_statementContext::class, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
+        public fun function_statement(): Function_statementContext? =
+            getRuleContext(Function_statementContext::class, 0)
 
-        public fun ENDFUNCTION(): TerminalNode = getToken(Tokens.ENDFUNCTION, 0)!!
+        public fun ENDFUNCTION(): TerminalNode? = getToken(Tokens.ENDFUNCTION, 0)
         public fun AUTOMATIC(): TerminalNode? = getToken(Tokens.AUTOMATIC, 0)
         public fun function_range_or_type(): Function_range_or_typeContext? =
             getRuleContext(Function_range_or_typeContext::class, 0)
@@ -8844,11 +8813,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun function_item_declaration(i: Int): Function_item_declarationContext? =
             getRuleContext(Function_item_declarationContext::class, i)
-
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun function_port_list(): Function_port_listContext? =
             getRuleContext(Function_port_listContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun block_item_declaration(): List<Block_item_declarationContext> =
             getRuleContexts(Block_item_declarationContext::class)
@@ -8931,7 +8898,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     this.state = 1680
                     match(Tokens.SC)
 
-                    this.state = 1682
+                    this.state = 1682 
                     errorHandler.sync(this)
                     _alt = 1
 
@@ -8942,11 +8909,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                                 function_item_declaration()
 
                             }
-
                             else -> throw NoViableAltException(this)
                         }
 
-                        this.state = 1684
+                        this.state = 1684 
                         errorHandler.sync(this)
                         _alt = interpreter.adaptivePredict(_input, 129, context)
                     } while (_alt != 2 && _alt != INVALID_ALT_NUMBER)
@@ -9038,7 +9004,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun tf_input_declaration(): Tf_input_declarationContext? =
             getRuleContext(Tf_input_declarationContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
@@ -9213,8 +9178,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Func_port_itemContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Func_port_item
 
-        public fun tf_input_declaration(): Tf_input_declarationContext =
-            getRuleContext(Tf_input_declarationContext::class, 0)!!
+        public fun tf_input_declaration(): Tf_input_declarationContext? =
+            getRuleContext(Tf_input_declarationContext::class, 0)
 
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
@@ -9411,18 +9376,17 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Task_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Task_declaration
 
-        public fun TASK(): TerminalNode = getToken(Tokens.TASK, 0)!!
-        public fun task_identifier(): Task_identifierContext = getRuleContext(Task_identifierContext::class, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
-        public fun statement_or_null(): Statement_or_nullContext = getRuleContext(Statement_or_nullContext::class, 0)!!
-        public fun ENDTASK(): TerminalNode = getToken(Tokens.ENDTASK, 0)!!
+        public fun TASK(): TerminalNode? = getToken(Tokens.TASK, 0)
+        public fun task_identifier(): Task_identifierContext? = getRuleContext(Task_identifierContext::class, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
+        public fun statement_or_null(): Statement_or_nullContext? = getRuleContext(Statement_or_nullContext::class, 0)
+        public fun ENDTASK(): TerminalNode? = getToken(Tokens.ENDTASK, 0)
         public fun AUTOMATIC(): TerminalNode? = getToken(Tokens.AUTOMATIC, 0)
         public fun task_item_declaration(): List<Task_item_declarationContext> =
             getRuleContexts(Task_item_declarationContext::class)
 
         public fun task_item_declaration(i: Int): Task_item_declarationContext? =
             getRuleContext(Task_item_declarationContext::class, i)
-
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun task_port_list(): Task_port_listContext? = getRuleContext(Task_port_listContext::class, 0)
@@ -9598,7 +9562,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun tf_input_declaration(): Tf_input_declarationContext? =
             getRuleContext(Tf_input_declarationContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
@@ -9954,10 +9917,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Tf_input_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Tf_input_declaration
 
-        public fun INPUT(): TerminalNode = getToken(Tokens.INPUT, 0)!!
-        public fun list_of_port_identifiers(): List_of_port_identifiersContext =
-            getRuleContext(List_of_port_identifiersContext::class, 0)!!
-
+        public fun INPUT(): TerminalNode? = getToken(Tokens.INPUT, 0)
+        public fun list_of_port_identifiers(): List_of_port_identifiersContext? =
+            getRuleContext(List_of_port_identifiersContext::class, 0)
         public fun REG(): TerminalNode? = getToken(Tokens.REG, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
@@ -10072,10 +10034,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Tf_output_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Tf_output_declaration
 
-        public fun OUTPUT(): TerminalNode = getToken(Tokens.OUTPUT, 0)!!
-        public fun list_of_port_identifiers(): List_of_port_identifiersContext =
-            getRuleContext(List_of_port_identifiersContext::class, 0)!!
-
+        public fun OUTPUT(): TerminalNode? = getToken(Tokens.OUTPUT, 0)
+        public fun list_of_port_identifiers(): List_of_port_identifiersContext? =
+            getRuleContext(List_of_port_identifiersContext::class, 0)
         public fun REG(): TerminalNode? = getToken(Tokens.REG, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
@@ -10190,10 +10151,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Tf_inout_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Tf_inout_declaration
 
-        public fun INOUT(): TerminalNode = getToken(Tokens.INOUT, 0)!!
-        public fun list_of_port_identifiers(): List_of_port_identifiersContext =
-            getRuleContext(List_of_port_identifiersContext::class, 0)!!
-
+        public fun INOUT(): TerminalNode? = getToken(Tokens.INOUT, 0)
+        public fun list_of_port_identifiers(): List_of_port_identifiersContext? =
+            getRuleContext(List_of_port_identifiersContext::class, 0)
         public fun REG(): TerminalNode? = getToken(Tokens.REG, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
@@ -10385,14 +10345,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun REG(): TerminalNode? = getToken(Tokens.REG, 0)
         public fun list_of_block_variable_identifiers(): List_of_block_variable_identifiersContext? =
             getRuleContext(List_of_block_variable_identifiersContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
         public fun INTEGER(): TerminalNode? = getToken(Tokens.INTEGER, 0)
@@ -10400,7 +10358,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun REAL(): TerminalNode? = getToken(Tokens.REAL, 0)
         public fun list_of_block_real_identifiers(): List_of_block_real_identifiersContext? =
             getRuleContext(List_of_block_real_identifiersContext::class, 0)
-
         public fun REALTIME(): TerminalNode? = getToken(Tokens.REALTIME, 0)
         public fun event_declaration(): Event_declarationContext? = getRuleContext(Event_declarationContext::class, 0)
         public fun local_parameter_declaration(): Local_parameter_declarationContext? =
@@ -10679,7 +10636,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun block_variable_type(i: Int): Block_variable_typeContext? =
             getRuleContext(Block_variable_typeContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -10836,9 +10792,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Block_variable_typeContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Block_variable_type
 
-        public fun variable_identifier(): Variable_identifierContext =
-            getRuleContext(Variable_identifierContext::class, 0)!!
-
+        public fun variable_identifier(): Variable_identifierContext? =
+            getRuleContext(Variable_identifierContext::class, 0)
         public fun dimension(): List<DimensionContext> = getRuleContexts(DimensionContext::class)
         public fun dimension(i: Int): DimensionContext? = getRuleContext(DimensionContext::class, i)
 
@@ -10913,7 +10868,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Block_real_typeContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Block_real_type
 
-        public fun real_identifier(): Real_identifierContext = getRuleContext(Real_identifierContext::class, 0)!!
+        public fun real_identifier(): Real_identifierContext? = getRuleContext(Real_identifierContext::class, 0)
         public fun dimension(): List<DimensionContext> = getRuleContexts(DimensionContext::class)
         public fun dimension(i: Int): DimensionContext? = getRuleContext(DimensionContext::class, i)
 
@@ -10995,7 +10950,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun cmos_switch_instance(i: Int): Cmos_switch_instanceContext? =
             getRuleContext(Cmos_switch_instanceContext::class, i)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun delay3(): Delay3Context? = getRuleContext(Delay3Context::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
@@ -11005,7 +10960,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun enable_gate_instance(i: Int): Enable_gate_instanceContext? =
             getRuleContext(Enable_gate_instanceContext::class, i)
-
         public fun drive_strength(): Drive_strengthContext? = getRuleContext(Drive_strengthContext::class, 0)
         public fun mos_switchtype(): Mos_switchtypeContext? = getRuleContext(Mos_switchtypeContext::class, 0)
         public fun mos_switch_instance(): List<Mos_switch_instanceContext> =
@@ -11013,14 +10967,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun mos_switch_instance(i: Int): Mos_switch_instanceContext? =
             getRuleContext(Mos_switch_instanceContext::class, i)
-
         public fun n_input_gatetype(): N_input_gatetypeContext? = getRuleContext(N_input_gatetypeContext::class, 0)
         public fun n_input_gate_instance(): List<N_input_gate_instanceContext> =
             getRuleContexts(N_input_gate_instanceContext::class)
 
         public fun n_input_gate_instance(i: Int): N_input_gate_instanceContext? =
             getRuleContext(N_input_gate_instanceContext::class, i)
-
         public fun delay2(): Delay2Context? = getRuleContext(Delay2Context::class, 0)
         public fun n_output_gatetype(): N_output_gatetypeContext? = getRuleContext(N_output_gatetypeContext::class, 0)
         public fun n_output_gate_instance(): List<N_output_gate_instanceContext> =
@@ -11037,21 +10989,18 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun pass_enable_switch_instance(i: Int): Pass_enable_switch_instanceContext? =
             getRuleContext(Pass_enable_switch_instanceContext::class, i)
-
         public fun pass_switchtype(): Pass_switchtypeContext? = getRuleContext(Pass_switchtypeContext::class, 0)
         public fun pass_switch_instance(): List<Pass_switch_instanceContext> =
             getRuleContexts(Pass_switch_instanceContext::class)
 
         public fun pass_switch_instance(i: Int): Pass_switch_instanceContext? =
             getRuleContext(Pass_switch_instanceContext::class, i)
-
         public fun PULLDOWN(): TerminalNode? = getToken(Tokens.PULLDOWN, 0)
         public fun pull_gate_instance(): List<Pull_gate_instanceContext> =
             getRuleContexts(Pull_gate_instanceContext::class)
 
         public fun pull_gate_instance(i: Int): Pull_gate_instanceContext? =
             getRuleContext(Pull_gate_instanceContext::class, i)
-
         public fun pulldown_strength(): Pulldown_strengthContext? = getRuleContext(Pulldown_strengthContext::class, 0)
         public fun PULLUP(): TerminalNode? = getToken(Tokens.PULLUP, 0)
         public fun pullup_strength(): Pullup_strengthContext? = getRuleContext(Pullup_strengthContext::class, 0)
@@ -11472,14 +11421,14 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Cmos_switch_instanceContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Cmos_switch_instance
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun output_terminal(): Output_terminalContext = getRuleContext(Output_terminalContext::class, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun output_terminal(): Output_terminalContext? = getRuleContext(Output_terminalContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
-        public fun input_terminal(): Input_terminalContext = getRuleContext(Input_terminalContext::class, 0)!!
-        public fun ncontrol_terminal(): Ncontrol_terminalContext = getRuleContext(Ncontrol_terminalContext::class, 0)!!
-        public fun pcontrol_terminal(): Pcontrol_terminalContext = getRuleContext(Pcontrol_terminalContext::class, 0)!!
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun input_terminal(): Input_terminalContext? = getRuleContext(Input_terminalContext::class, 0)
+        public fun ncontrol_terminal(): Ncontrol_terminalContext? = getRuleContext(Ncontrol_terminalContext::class, 0)
+        public fun pcontrol_terminal(): Pcontrol_terminalContext? = getRuleContext(Pcontrol_terminalContext::class, 0)
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun name_of_gate_instance(): Name_of_gate_instanceContext? =
             getRuleContext(Name_of_gate_instanceContext::class, 0)
 
@@ -11575,13 +11524,13 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Enable_gate_instanceContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Enable_gate_instance
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun output_terminal(): Output_terminalContext = getRuleContext(Output_terminalContext::class, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun output_terminal(): Output_terminalContext? = getRuleContext(Output_terminalContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
-        public fun input_terminal(): Input_terminalContext = getRuleContext(Input_terminalContext::class, 0)!!
-        public fun enable_terminal(): Enable_terminalContext = getRuleContext(Enable_terminalContext::class, 0)!!
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun input_terminal(): Input_terminalContext? = getRuleContext(Input_terminalContext::class, 0)
+        public fun enable_terminal(): Enable_terminalContext? = getRuleContext(Enable_terminalContext::class, 0)
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun name_of_gate_instance(): Name_of_gate_instanceContext? =
             getRuleContext(Name_of_gate_instanceContext::class, 0)
 
@@ -11671,13 +11620,13 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Mos_switch_instanceContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Mos_switch_instance
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun output_terminal(): Output_terminalContext = getRuleContext(Output_terminalContext::class, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun output_terminal(): Output_terminalContext? = getRuleContext(Output_terminalContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
-        public fun input_terminal(): Input_terminalContext = getRuleContext(Input_terminalContext::class, 0)!!
-        public fun enable_terminal(): Enable_terminalContext = getRuleContext(Enable_terminalContext::class, 0)!!
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun input_terminal(): Input_terminalContext? = getRuleContext(Input_terminalContext::class, 0)
+        public fun enable_terminal(): Enable_terminalContext? = getRuleContext(Enable_terminalContext::class, 0)
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun name_of_gate_instance(): Name_of_gate_instanceContext? =
             getRuleContext(Name_of_gate_instanceContext::class, 0)
 
@@ -11767,13 +11716,13 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class N_input_gate_instanceContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.N_input_gate_instance
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun output_terminal(): Output_terminalContext = getRuleContext(Output_terminalContext::class, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun output_terminal(): Output_terminalContext? = getRuleContext(Output_terminalContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
         public fun input_terminal(): List<Input_terminalContext> = getRuleContexts(Input_terminalContext::class)
         public fun input_terminal(i: Int): Input_terminalContext? = getRuleContext(Input_terminalContext::class, i)
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun name_of_gate_instance(): Name_of_gate_instanceContext? =
             getRuleContext(Name_of_gate_instanceContext::class, 0)
 
@@ -11872,13 +11821,13 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class N_output_gate_instanceContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.N_output_gate_instance
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun output_terminal(): List<Output_terminalContext> = getRuleContexts(Output_terminalContext::class)
         public fun output_terminal(i: Int): Output_terminalContext? = getRuleContext(Output_terminalContext::class, i)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
-        public fun input_terminal(): Input_terminalContext = getRuleContext(Input_terminalContext::class, 0)!!
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun input_terminal(): Input_terminalContext? = getRuleContext(Input_terminalContext::class, 0)
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun name_of_gate_instance(): Name_of_gate_instanceContext? =
             getRuleContext(Name_of_gate_instanceContext::class, 0)
 
@@ -11981,11 +11930,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Pass_switch_instanceContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Pass_switch_instance
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun inout_terminal(): List<Inout_terminalContext> = getRuleContexts(Inout_terminalContext::class)
         public fun inout_terminal(i: Int): Inout_terminalContext? = getRuleContext(Inout_terminalContext::class, i)
-        public fun CO(): TerminalNode = getToken(Tokens.CO, 0)!!
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun name_of_gate_instance(): Name_of_gate_instanceContext? =
             getRuleContext(Name_of_gate_instanceContext::class, 0)
 
@@ -12069,13 +12018,13 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Pass_enable_switch_instanceContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Pass_enable_switch_instance
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun inout_terminal(): List<Inout_terminalContext> = getRuleContexts(Inout_terminalContext::class)
         public fun inout_terminal(i: Int): Inout_terminalContext? = getRuleContext(Inout_terminalContext::class, i)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
-        public fun enable_terminal(): Enable_terminalContext = getRuleContext(Enable_terminalContext::class, 0)!!
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun enable_terminal(): Enable_terminalContext? = getRuleContext(Enable_terminalContext::class, 0)
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun name_of_gate_instance(): Name_of_gate_instanceContext? =
             getRuleContext(Name_of_gate_instanceContext::class, 0)
 
@@ -12165,9 +12114,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Pull_gate_instanceContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Pull_gate_instance
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun output_terminal(): Output_terminalContext = getRuleContext(Output_terminalContext::class, 0)!!
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun output_terminal(): Output_terminalContext? = getRuleContext(Output_terminalContext::class, 0)
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun name_of_gate_instance(): Name_of_gate_instanceContext? =
             getRuleContext(Name_of_gate_instanceContext::class, 0)
 
@@ -12245,9 +12194,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Name_of_gate_instanceContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Name_of_gate_instance
 
-        public fun gate_instance_identifier(): Gate_instance_identifierContext =
-            getRuleContext(Gate_instance_identifierContext::class, 0)!!
-
+        public fun gate_instance_identifier(): Gate_instance_identifierContext? =
+            getRuleContext(Gate_instance_identifierContext::class, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -12318,11 +12266,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Pulldown_strengthContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Pulldown_strength
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun strength0(): Strength0Context = getRuleContext(Strength0Context::class, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun strength0(): Strength0Context? = getRuleContext(Strength0Context::class, 0)
         public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
         public fun strength1(): Strength1Context? = getRuleContext(Strength1Context::class, 0)
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -12433,11 +12381,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Pullup_strengthContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Pullup_strength
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun strength0(): Strength0Context? = getRuleContext(Strength0Context::class, 0)
         public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
-        public fun strength1(): Strength1Context = getRuleContext(Strength1Context::class, 0)!!
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun strength1(): Strength1Context? = getRuleContext(Strength1Context::class, 0)
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -12548,7 +12496,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Enable_terminalContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Enable_terminal
 
-        public fun expression(): ExpressionContext = getRuleContext(ExpressionContext::class, 0)!!
+        public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -12608,7 +12556,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Inout_terminalContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Inout_terminal
 
-        public fun net_lvalue(): Net_lvalueContext = getRuleContext(Net_lvalueContext::class, 0)!!
+        public fun net_lvalue(): Net_lvalueContext? = getRuleContext(Net_lvalueContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -12668,7 +12616,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Input_terminalContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Input_terminal
 
-        public fun expression(): ExpressionContext = getRuleContext(ExpressionContext::class, 0)!!
+        public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -12728,7 +12676,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Ncontrol_terminalContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Ncontrol_terminal
 
-        public fun expression(): ExpressionContext = getRuleContext(ExpressionContext::class, 0)!!
+        public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -12788,7 +12736,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Output_terminalContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Output_terminal
 
-        public fun net_lvalue(): Net_lvalueContext = getRuleContext(Net_lvalueContext::class, 0)!!
+        public fun net_lvalue(): Net_lvalueContext? = getRuleContext(Net_lvalueContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -12848,7 +12796,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Pcontrol_terminalContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Pcontrol_terminal
 
-        public fun expression(): ExpressionContext = getRuleContext(ExpressionContext::class, 0)!!
+        public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -13422,13 +13370,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Module_instantiationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Module_instantiation
 
-        public fun module_identifier(): Module_identifierContext = getRuleContext(Module_identifierContext::class, 0)!!
+        public fun module_identifier(): Module_identifierContext? = getRuleContext(Module_identifierContext::class, 0)
         public fun module_instance(): List<Module_instanceContext> = getRuleContexts(Module_instanceContext::class)
         public fun module_instance(i: Int): Module_instanceContext? = getRuleContext(Module_instanceContext::class, i)
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun parameter_value_assignment(): Parameter_value_assignmentContext? =
             getRuleContext(Parameter_value_assignmentContext::class, 0)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -13521,12 +13468,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Parameter_value_assignmentContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Parameter_value_assignment
 
-        public fun HA(): TerminalNode = getToken(Tokens.HA, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun list_of_parameter_assignments(): List_of_parameter_assignmentsContext =
-            getRuleContext(List_of_parameter_assignmentsContext::class, 0)!!
+        public fun HA(): TerminalNode? = getToken(Tokens.HA, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun list_of_parameter_assignments(): List_of_parameter_assignmentsContext? =
+            getRuleContext(List_of_parameter_assignmentsContext::class, 0)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -13600,7 +13547,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun ordered_parameter_assignment(i: Int): Ordered_parameter_assignmentContext? =
             getRuleContext(Ordered_parameter_assignmentContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
         public fun named_parameter_assignment(): List<Named_parameter_assignmentContext> =
@@ -13713,7 +13659,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Ordered_parameter_assignmentContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Ordered_parameter_assignment
 
-        public fun expression(): ExpressionContext = getRuleContext(ExpressionContext::class, 0)!!
+        public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -13773,12 +13719,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Named_parameter_assignmentContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Named_parameter_assignment
 
-        public fun DT(): TerminalNode = getToken(Tokens.DT, 0)!!
-        public fun parameter_identifier(): Parameter_identifierContext =
-            getRuleContext(Parameter_identifierContext::class, 0)!!
+        public fun DT(): TerminalNode? = getToken(Tokens.DT, 0)
+        public fun parameter_identifier(): Parameter_identifierContext? =
+            getRuleContext(Parameter_identifierContext::class, 0)
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun mintypmax_expression(): Mintypmax_expressionContext? =
             getRuleContext(Mintypmax_expressionContext::class, 0)
 
@@ -13859,14 +13805,14 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Module_instanceContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Module_instance
 
-        public fun name_of_module_instance(): Name_of_module_instanceContext =
-            getRuleContext(Name_of_module_instanceContext::class, 0)!!
+        public fun name_of_module_instance(): Name_of_module_instanceContext? =
+            getRuleContext(Name_of_module_instanceContext::class, 0)
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun list_of_port_connections(): List_of_port_connectionsContext =
-            getRuleContext(List_of_port_connectionsContext::class, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun list_of_port_connections(): List_of_port_connectionsContext? =
+            getRuleContext(List_of_port_connectionsContext::class, 0)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -13935,9 +13881,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Name_of_module_instanceContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Name_of_module_instance
 
-        public fun module_instance_identifier(): Module_instance_identifierContext =
-            getRuleContext(Module_instance_identifierContext::class, 0)!!
-
+        public fun module_instance_identifier(): Module_instance_identifierContext? =
+            getRuleContext(Module_instance_identifierContext::class, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -14013,7 +13958,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun ordered_port_connection(i: Int): Ordered_port_connectionContext? =
             getRuleContext(Ordered_port_connectionContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
         public fun named_port_connection(): List<Named_port_connectionContext> =
@@ -14130,7 +14074,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -14214,16 +14157,15 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Named_port_connectionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Named_port_connection
 
-        public fun DT(): TerminalNode = getToken(Tokens.DT, 0)!!
-        public fun port_identifier(): Port_identifierContext = getRuleContext(Port_identifierContext::class, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun DT(): TerminalNode? = getToken(Tokens.DT, 0)
+        public fun port_identifier(): Port_identifierContext? = getRuleContext(Port_identifierContext::class, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -14315,8 +14257,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Generate_regionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Generate_region
 
-        public fun GENERATE(): TerminalNode = getToken(Tokens.GENERATE, 0)!!
-        public fun ENDGENERATE(): TerminalNode = getToken(Tokens.ENDGENERATE, 0)!!
+        public fun GENERATE(): TerminalNode? = getToken(Tokens.GENERATE, 0)
+        public fun ENDGENERATE(): TerminalNode? = getToken(Tokens.ENDGENERATE, 0)
         public fun module_or_generate_item(): List<Module_or_generate_itemContext> =
             getRuleContexts(Module_or_generate_itemContext::class)
 
@@ -14397,11 +14339,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Genvar_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Genvar_declaration
 
-        public fun GENVAR(): TerminalNode = getToken(Tokens.GENVAR, 0)!!
-        public fun list_of_genvar_identifiers(): List_of_genvar_identifiersContext =
-            getRuleContext(List_of_genvar_identifiersContext::class, 0)!!
+        public fun GENVAR(): TerminalNode? = getToken(Tokens.GENVAR, 0)
+        public fun list_of_genvar_identifiers(): List_of_genvar_identifiersContext? =
+            getRuleContext(List_of_genvar_identifiersContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -14472,7 +14414,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun genvar_identifier(i: Int): Genvar_identifierContext? =
             getRuleContext(Genvar_identifierContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -14550,17 +14491,16 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Loop_generate_constructContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Loop_generate_construct
 
-        public fun FOR(): TerminalNode = getToken(Tokens.FOR, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun genvar_initialization(): Genvar_initializationContext =
-            getRuleContext(Genvar_initializationContext::class, 0)!!
-
+        public fun FOR(): TerminalNode? = getToken(Tokens.FOR, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun genvar_initialization(): Genvar_initializationContext? =
+            getRuleContext(Genvar_initializationContext::class, 0)
         public fun SC(): List<TerminalNode> = getTokens(Tokens.SC)
         public fun SC(i: Int): TerminalNode? = getToken(Tokens.SC, i)
-        public fun genvar_expression(): Genvar_expressionContext = getRuleContext(Genvar_expressionContext::class, 0)!!
-        public fun genvar_iteration(): Genvar_iterationContext = getRuleContext(Genvar_iterationContext::class, 0)!!
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
-        public fun generate_block(): Generate_blockContext = getRuleContext(Generate_blockContext::class, 0)!!
+        public fun genvar_expression(): Genvar_expressionContext? = getRuleContext(Genvar_expressionContext::class, 0)
+        public fun genvar_iteration(): Genvar_iterationContext? = getRuleContext(Genvar_iterationContext::class, 0)
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
+        public fun generate_block(): Generate_blockContext? = getRuleContext(Generate_blockContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -14644,10 +14584,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Genvar_initializationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Genvar_initialization
 
-        public fun genvar_identifier(): Genvar_identifierContext = getRuleContext(Genvar_identifierContext::class, 0)!!
-        public fun EQ(): TerminalNode = getToken(Tokens.EQ, 0)!!
-        public fun constant_expression(): Constant_expressionContext =
-            getRuleContext(Constant_expressionContext::class, 0)!!
+        public fun genvar_identifier(): Genvar_identifierContext? = getRuleContext(Genvar_identifierContext::class, 0)
+        public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
+        public fun constant_expression(): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -14713,8 +14653,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Genvar_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Genvar_expression
 
-        public fun constant_expression(): Constant_expressionContext =
-            getRuleContext(Constant_expressionContext::class, 0)!!
+        public fun constant_expression(): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -14774,9 +14714,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Genvar_iterationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Genvar_iteration
 
-        public fun genvar_identifier(): Genvar_identifierContext = getRuleContext(Genvar_identifierContext::class, 0)!!
-        public fun EQ(): TerminalNode = getToken(Tokens.EQ, 0)!!
-        public fun genvar_expression(): Genvar_expressionContext = getRuleContext(Genvar_expressionContext::class, 0)!!
+        public fun genvar_identifier(): Genvar_identifierContext? = getRuleContext(Genvar_identifierContext::class, 0)
+        public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
+        public fun genvar_expression(): Genvar_expressionContext? = getRuleContext(Genvar_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -14921,18 +14861,17 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class If_generate_constructContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.If_generate_construct
 
-        public fun IF(): TerminalNode = getToken(Tokens.IF, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun constant_expression(): Constant_expressionContext =
-            getRuleContext(Constant_expressionContext::class, 0)!!
+        public fun IF(): TerminalNode? = getToken(Tokens.IF, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun constant_expression(): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, 0)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun generate_block_or_null(): List<Generate_block_or_nullContext> =
             getRuleContexts(Generate_block_or_nullContext::class)
 
         public fun generate_block_or_null(i: Int): Generate_block_or_nullContext? =
             getRuleContext(Generate_block_or_nullContext::class, i)
-
         public fun ELSE(): TerminalNode? = getToken(Tokens.ELSE, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -15018,13 +14957,13 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Case_generate_constructContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Case_generate_construct
 
-        public fun CASE(): TerminalNode = getToken(Tokens.CASE, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun constant_expression(): Constant_expressionContext =
-            getRuleContext(Constant_expressionContext::class, 0)!!
+        public fun CASE(): TerminalNode? = getToken(Tokens.CASE, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun constant_expression(): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, 0)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
-        public fun ENDCASE(): TerminalNode = getToken(Tokens.ENDCASE, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
+        public fun ENDCASE(): TerminalNode? = getToken(Tokens.ENDCASE, 0)
         public fun case_generate_item(): List<Case_generate_itemContext> =
             getRuleContexts(Case_generate_itemContext::class)
 
@@ -15085,7 +15024,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
             this.state = 2463
             match(Tokens.RP)
 
-            this.state = 2465
+            this.state = 2465 
             errorHandler.sync(this)
             _la = _input.LA(1)
 
@@ -15093,7 +15032,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 this.state = 2464
                 case_generate_item()
 
-                this.state = 2467
+                this.state = 2467 
                 errorHandler.sync(this)
                 _la = _input.LA(1)
             } while (_la == Tokens.DEFAULT || ((((_la - 137)) and 0x3f.inv()) == 0 && ((1L shl (_la - 137)) and -587789827252928127L) != 0L) || _la == Tokens.UNSIGNED_NUMBER)
@@ -15119,11 +15058,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
-        public fun generate_block_or_null(): Generate_block_or_nullContext =
-            getRuleContext(Generate_block_or_nullContext::class, 0)!!
-
+        public fun generate_block_or_null(): Generate_block_or_nullContext? =
+            getRuleContext(Generate_block_or_nullContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
         public fun DEFAULT(): TerminalNode? = getToken(Tokens.DEFAULT, 0)
@@ -15240,7 +15177,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun module_or_generate_item(i: Int): Module_or_generate_itemContext? =
             getRuleContext(Module_or_generate_itemContext::class, i)
-
         public fun BEGIN(): TerminalNode? = getToken(Tokens.BEGIN, 0)
         public fun END(): TerminalNode? = getToken(Tokens.END, 0)
         public fun generate_block_name(): Generate_block_nameContext? =
@@ -15344,9 +15280,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Generate_block_nameContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Generate_block_name
 
-        public fun CL(): TerminalNode = getToken(Tokens.CL, 0)!!
-        public fun generate_block_identifier(): Generate_block_identifierContext =
-            getRuleContext(Generate_block_identifierContext::class, 0)!!
+        public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
+        public fun generate_block_identifier(): Generate_block_identifierContext? =
+            getRuleContext(Generate_block_identifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -15485,14 +15421,14 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Udp_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Udp_declaration
 
-        public fun PRIMITIVE(): TerminalNode = getToken(Tokens.PRIMITIVE, 0)!!
-        public fun udp_identifier(): Udp_identifierContext = getRuleContext(Udp_identifierContext::class, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
+        public fun PRIMITIVE(): TerminalNode? = getToken(Tokens.PRIMITIVE, 0)
+        public fun udp_identifier(): Udp_identifierContext? = getRuleContext(Udp_identifierContext::class, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun udp_port_list(): Udp_port_listContext? = getRuleContext(Udp_port_listContext::class, 0)
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
-        public fun udp_body(): Udp_bodyContext = getRuleContext(Udp_bodyContext::class, 0)!!
-        public fun ENDPRIMITIVE(): TerminalNode = getToken(Tokens.ENDPRIMITIVE, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
+        public fun udp_body(): Udp_bodyContext? = getRuleContext(Udp_bodyContext::class, 0)
+        public fun ENDPRIMITIVE(): TerminalNode? = getToken(Tokens.ENDPRIMITIVE, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
@@ -15585,7 +15521,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     this.state = 2521
                     match(Tokens.SC)
 
-                    this.state = 2523
+                    this.state = 2523 
                     errorHandler.sync(this)
                     _la = _input.LA(1)
 
@@ -15593,7 +15529,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                         this.state = 2522
                         udp_port_declaration()
 
-                        this.state = 2525
+                        this.state = 2525 
                         errorHandler.sync(this)
                         _la = _input.LA(1)
                     } while (((((_la - 59)) and 0x3f.inv()) == 0 && ((1L shl (_la - 59)) and 68721573889L) != 0L) || _la == Tokens.LP)
@@ -15659,9 +15595,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Udp_port_listContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Udp_port_list
 
-        public fun output_port_identifier(): Output_port_identifierContext =
-            getRuleContext(Output_port_identifierContext::class, 0)!!
-
+        public fun output_port_identifier(): Output_port_identifierContext? =
+            getRuleContext(Output_port_identifierContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
         public fun input_port_identifier(): List<Input_port_identifierContext> =
@@ -15750,9 +15685,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Udp_declaration_port_listContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Udp_declaration_port_list
 
-        public fun udp_output_declaration(): Udp_output_declarationContext =
-            getRuleContext(Udp_output_declarationContext::class, 0)!!
-
+        public fun udp_output_declaration(): Udp_output_declarationContext? =
+            getRuleContext(Udp_output_declarationContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
         public fun udp_input_declaration(): List<Udp_input_declarationContext> =
@@ -15844,7 +15778,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun udp_output_declaration(): Udp_output_declarationContext? =
             getRuleContext(Udp_output_declarationContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun udp_input_declaration(): Udp_input_declarationContext? =
             getRuleContext(Udp_input_declarationContext::class, 0)
 
@@ -15939,14 +15873,13 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Udp_output_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Udp_output_declaration
 
-        public fun OUTPUT(): TerminalNode = getToken(Tokens.OUTPUT, 0)!!
-        public fun port_identifier(): Port_identifierContext = getRuleContext(Port_identifierContext::class, 0)!!
+        public fun OUTPUT(): TerminalNode? = getToken(Tokens.OUTPUT, 0)
+        public fun port_identifier(): Port_identifierContext? = getRuleContext(Port_identifierContext::class, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun REG(): TerminalNode? = getToken(Tokens.REG, 0)
         public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
         public fun constant_expression(): Constant_expressionContext? =
@@ -16070,9 +16003,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Udp_input_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Udp_input_declaration
 
-        public fun INPUT(): TerminalNode = getToken(Tokens.INPUT, 0)!!
-        public fun list_of_port_identifiers(): List_of_port_identifiersContext =
-            getRuleContext(List_of_port_identifiersContext::class, 0)!!
+        public fun INPUT(): TerminalNode? = getToken(Tokens.INPUT, 0)
+        public fun list_of_port_identifiers(): List_of_port_identifiersContext? =
+            getRuleContext(List_of_port_identifiersContext::class, 0)
 
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
@@ -16154,9 +16087,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Udp_reg_declarationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Udp_reg_declaration
 
-        public fun REG(): TerminalNode = getToken(Tokens.REG, 0)!!
-        public fun variable_identifier(): Variable_identifierContext =
-            getRuleContext(Variable_identifierContext::class, 0)!!
+        public fun REG(): TerminalNode? = getToken(Tokens.REG, 0)
+        public fun variable_identifier(): Variable_identifierContext? =
+            getRuleContext(Variable_identifierContext::class, 0)
 
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
@@ -16240,7 +16173,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun combinational_body(): Combinational_bodyContext? =
             getRuleContext(Combinational_bodyContext::class, 0)
-
         public fun sequential_body(): Sequential_bodyContext? = getRuleContext(Sequential_bodyContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -16315,8 +16247,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Combinational_bodyContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Combinational_body
 
-        public fun TABLE(): TerminalNode = getToken(Tokens.TABLE, 0)!!
-        public fun ENDTABLE(): TerminalNode = getToken(Tokens.ENDTABLE, 0)!!
+        public fun TABLE(): TerminalNode? = getToken(Tokens.TABLE, 0)
+        public fun ENDTABLE(): TerminalNode? = getToken(Tokens.ENDTABLE, 0)
         public fun combinational_entry(): List<Combinational_entryContext> =
             getRuleContexts(Combinational_entryContext::class)
 
@@ -16368,7 +16300,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
             this.state = 2623
             match(Tokens.TABLE)
 
-            this.state = 2625
+            this.state = 2625 
             errorHandler.sync(this)
             _la = _input.LA(1)
 
@@ -16376,7 +16308,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 this.state = 2624
                 combinational_entry()
 
-                this.state = 2627
+                this.state = 2627 
                 errorHandler.sync(this)
                 _la = _input.LA(1)
             } while (_la == Tokens.LEVEL_ONLY_SYMBOL || _la == Tokens.OUTPUT_OR_LEVEL_SYMBOL)
@@ -16397,10 +16329,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Combinational_entryContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Combinational_entry
 
-        public fun level_input_list(): Level_input_listContext = getRuleContext(Level_input_listContext::class, 0)!!
-        public fun CL(): TerminalNode = getToken(Tokens.CL, 0)!!
-        public fun output_symbol(): Output_symbolContext = getRuleContext(Output_symbolContext::class, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun level_input_list(): Level_input_listContext? = getRuleContext(Level_input_listContext::class, 0)
+        public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
+        public fun output_symbol(): Output_symbolContext? = getRuleContext(Output_symbolContext::class, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -16469,11 +16401,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Sequential_bodyContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Sequential_body
 
-        public fun TABLE(): TerminalNode = getToken(Tokens.TABLE, 0)!!
-        public fun ENDTABLE(): TerminalNode = getToken(Tokens.ENDTABLE, 0)!!
+        public fun TABLE(): TerminalNode? = getToken(Tokens.TABLE, 0)
+        public fun ENDTABLE(): TerminalNode? = getToken(Tokens.ENDTABLE, 0)
         public fun udp_initial_statement(): Udp_initial_statementContext? =
             getRuleContext(Udp_initial_statementContext::class, 0)
-
         public fun sequential_entry(): List<Sequential_entryContext> = getRuleContexts(Sequential_entryContext::class)
         public fun sequential_entry(i: Int): Sequential_entryContext? =
             getRuleContext(Sequential_entryContext::class, i)
@@ -16532,7 +16463,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
             this.state = 2639
             match(Tokens.TABLE)
 
-            this.state = 2641
+            this.state = 2641 
             errorHandler.sync(this)
             _la = _input.LA(1)
 
@@ -16540,7 +16471,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 this.state = 2640
                 sequential_entry()
 
-                this.state = 2643
+                this.state = 2643 
                 errorHandler.sync(this)
                 _la = _input.LA(1)
             } while (((((_la - 166)) and 0x3f.inv()) == 0 && ((1L shl (_la - 166)) and 61572651155457L) != 0L))
@@ -16561,13 +16492,13 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Udp_initial_statementContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Udp_initial_statement
 
-        public fun INITIAL(): TerminalNode = getToken(Tokens.INITIAL, 0)!!
-        public fun output_port_identifier(): Output_port_identifierContext =
-            getRuleContext(Output_port_identifierContext::class, 0)!!
+        public fun INITIAL(): TerminalNode? = getToken(Tokens.INITIAL, 0)
+        public fun output_port_identifier(): Output_port_identifierContext? =
+            getRuleContext(Output_port_identifierContext::class, 0)
 
-        public fun EQ(): TerminalNode = getToken(Tokens.EQ, 0)!!
-        public fun init_val(): Init_valContext = getRuleContext(Init_valContext::class, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
+        public fun init_val(): Init_valContext? = getRuleContext(Init_valContext::class, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -16714,12 +16645,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Sequential_entryContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Sequential_entry
 
-        public fun seq_input_list(): Seq_input_listContext = getRuleContext(Seq_input_listContext::class, 0)!!
+        public fun seq_input_list(): Seq_input_listContext? = getRuleContext(Seq_input_listContext::class, 0)
         public fun CL(): List<TerminalNode> = getTokens(Tokens.CL)
         public fun CL(i: Int): TerminalNode? = getToken(Tokens.CL, i)
-        public fun current_state(): Current_stateContext = getRuleContext(Current_stateContext::class, 0)!!
-        public fun next_state(): Next_stateContext = getRuleContext(Next_stateContext::class, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun current_state(): Current_stateContext? = getRuleContext(Current_stateContext::class, 0)
+        public fun next_state(): Next_stateContext? = getRuleContext(Next_stateContext::class, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -16914,7 +16845,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         try {
             enterOuterAlt(_localctx, 1)
-            this.state = 2669
+            this.state = 2669 
             errorHandler.sync(this)
             _la = _input.LA(1)
 
@@ -16922,7 +16853,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 this.state = 2668
                 level_symbol()
 
-                this.state = 2671
+                this.state = 2671 
                 errorHandler.sync(this)
                 _la = _input.LA(1)
             } while (_la == Tokens.LEVEL_ONLY_SYMBOL || _la == Tokens.OUTPUT_OR_LEVEL_SYMBOL)
@@ -16940,7 +16871,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Edge_input_listContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Edge_input_list
 
-        public fun edge_indicator(): Edge_indicatorContext = getRuleContext(Edge_indicatorContext::class, 0)!!
+        public fun edge_indicator(): Edge_indicatorContext? = getRuleContext(Edge_indicatorContext::class, 0)
         public fun level_symbol(): List<Level_symbolContext> = getRuleContexts(Level_symbolContext::class)
         public fun level_symbol(i: Int): Level_symbolContext? = getRuleContext(Level_symbolContext::class, i)
 
@@ -17115,7 +17046,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Current_stateContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Current_state
 
-        public fun level_symbol(): Level_symbolContext = getRuleContext(Level_symbolContext::class, 0)!!
+        public fun level_symbol(): Level_symbolContext? = getRuleContext(Level_symbolContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -17251,7 +17182,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Output_symbolContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Output_symbol
 
-        public fun OUTPUT_OR_LEVEL_SYMBOL(): TerminalNode = getToken(Tokens.OUTPUT_OR_LEVEL_SYMBOL, 0)!!
+        public fun OUTPUT_OR_LEVEL_SYMBOL(): TerminalNode? = getToken(Tokens.OUTPUT_OR_LEVEL_SYMBOL, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -17383,7 +17314,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Edge_symbolContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Edge_symbol
 
-        public fun EDGE_SYMBOL(): TerminalNode = getToken(Tokens.EDGE_SYMBOL, 0)!!
+        public fun EDGE_SYMBOL(): TerminalNode? = getToken(Tokens.EDGE_SYMBOL, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -17443,10 +17374,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Udp_instantiationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Udp_instantiation
 
-        public fun udp_identifier(): Udp_identifierContext = getRuleContext(Udp_identifierContext::class, 0)!!
+        public fun udp_identifier(): Udp_identifierContext? = getRuleContext(Udp_identifierContext::class, 0)
         public fun udp_instance(): List<Udp_instanceContext> = getRuleContexts(Udp_instanceContext::class)
         public fun udp_instance(i: Int): Udp_instanceContext? = getRuleContext(Udp_instanceContext::class, i)
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun drive_strength(): Drive_strengthContext? = getRuleContext(Drive_strengthContext::class, 0)
         public fun delay2(): Delay2Context? = getRuleContext(Delay2Context::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
@@ -17551,13 +17482,13 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Udp_instanceContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Udp_instance
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun output_terminal(): Output_terminalContext = getRuleContext(Output_terminalContext::class, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun output_terminal(): Output_terminalContext? = getRuleContext(Output_terminalContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
         public fun input_terminal(): List<Input_terminalContext> = getRuleContexts(Input_terminalContext::class)
         public fun input_terminal(i: Int): Input_terminalContext? = getRuleContext(Input_terminalContext::class, i)
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun name_of_udp_instance(): Name_of_udp_instanceContext? =
             getRuleContext(Name_of_udp_instanceContext::class, 0)
 
@@ -17656,9 +17587,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Name_of_udp_instanceContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Name_of_udp_instance
 
-        public fun udp_instance_identifier(): Udp_instance_identifierContext =
-            getRuleContext(Udp_instance_identifierContext::class, 0)!!
-
+        public fun udp_instance_identifier(): Udp_instance_identifierContext? =
+            getRuleContext(Udp_instance_identifierContext::class, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -17729,11 +17659,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Continuous_assignContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Continuous_assign
 
-        public fun ASSIGN(): TerminalNode = getToken(Tokens.ASSIGN, 0)!!
-        public fun list_of_net_assignments(): List_of_net_assignmentsContext =
-            getRuleContext(List_of_net_assignmentsContext::class, 0)!!
+        public fun ASSIGN(): TerminalNode? = getToken(Tokens.ASSIGN, 0)
+        public fun list_of_net_assignments(): List_of_net_assignmentsContext? =
+            getRuleContext(List_of_net_assignmentsContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun drive_strength(): Drive_strengthContext? = getRuleContext(Drive_strengthContext::class, 0)
         public fun delay3(): Delay3Context? = getRuleContext(Delay3Context::class, 0)
 
@@ -17899,9 +17829,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Net_assignmentContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Net_assignment
 
-        public fun net_lvalue(): Net_lvalueContext = getRuleContext(Net_lvalueContext::class, 0)!!
-        public fun EQ(): TerminalNode = getToken(Tokens.EQ, 0)!!
-        public fun expression(): ExpressionContext = getRuleContext(ExpressionContext::class, 0)!!
+        public fun net_lvalue(): Net_lvalueContext? = getRuleContext(Net_lvalueContext::class, 0)
+        public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
+        public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -17967,8 +17897,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Initial_constructContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Initial_construct
 
-        public fun INITIAL(): TerminalNode = getToken(Tokens.INITIAL, 0)!!
-        public fun statement(): StatementContext = getRuleContext(StatementContext::class, 0)!!
+        public fun INITIAL(): TerminalNode? = getToken(Tokens.INITIAL, 0)
+        public fun statement(): StatementContext? = getRuleContext(StatementContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -18031,8 +17961,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Always_constructContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Always_construct
 
-        public fun ALWAYS(): TerminalNode = getToken(Tokens.ALWAYS, 0)!!
-        public fun statement(): StatementContext = getRuleContext(StatementContext::class, 0)!!
+        public fun ALWAYS(): TerminalNode? = getToken(Tokens.ALWAYS, 0)
+        public fun statement(): StatementContext? = getRuleContext(StatementContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -18095,9 +18025,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Blocking_assignmentContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Blocking_assignment
 
-        public fun variable_lvalue(): Variable_lvalueContext = getRuleContext(Variable_lvalueContext::class, 0)!!
-        public fun EQ(): TerminalNode = getToken(Tokens.EQ, 0)!!
-        public fun expression(): ExpressionContext = getRuleContext(ExpressionContext::class, 0)!!
+        public fun variable_lvalue(): Variable_lvalueContext? = getRuleContext(Variable_lvalueContext::class, 0)
+        public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
+        public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
         public fun delay_or_event_control(): Delay_or_event_controlContext? =
             getRuleContext(Delay_or_event_controlContext::class, 0)
 
@@ -18175,9 +18105,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Nonblocking_assignmentContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Nonblocking_assignment
 
-        public fun variable_lvalue(): Variable_lvalueContext = getRuleContext(Variable_lvalueContext::class, 0)!!
-        public fun LTEQ(): TerminalNode = getToken(Tokens.LTEQ, 0)!!
-        public fun expression(): ExpressionContext = getRuleContext(ExpressionContext::class, 0)!!
+        public fun variable_lvalue(): Variable_lvalueContext? = getRuleContext(Variable_lvalueContext::class, 0)
+        public fun LTEQ(): TerminalNode? = getToken(Tokens.LTEQ, 0)
+        public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
         public fun delay_or_event_control(): Delay_or_event_controlContext? =
             getRuleContext(Delay_or_event_controlContext::class, 0)
 
@@ -18258,7 +18188,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun ASSIGN(): TerminalNode? = getToken(Tokens.ASSIGN, 0)
         public fun variable_assignment(): Variable_assignmentContext? =
             getRuleContext(Variable_assignmentContext::class, 0)
-
         public fun DEASSIGN(): TerminalNode? = getToken(Tokens.DEASSIGN, 0)
         public fun variable_lvalue(): Variable_lvalueContext? = getRuleContext(Variable_lvalueContext::class, 0)
         public fun FORCE(): TerminalNode? = getToken(Tokens.FORCE, 0)
@@ -18363,9 +18292,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Variable_assignmentContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Variable_assignment
 
-        public fun variable_lvalue(): Variable_lvalueContext = getRuleContext(Variable_lvalueContext::class, 0)!!
-        public fun EQ(): TerminalNode = getToken(Tokens.EQ, 0)!!
-        public fun expression(): ExpressionContext = getRuleContext(ExpressionContext::class, 0)!!
+        public fun variable_lvalue(): Variable_lvalueContext? = getRuleContext(Variable_lvalueContext::class, 0)
+        public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
+        public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -18431,8 +18360,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Par_blockContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Par_block
 
-        public fun FORK(): TerminalNode = getToken(Tokens.FORK, 0)!!
-        public fun JOIN(): TerminalNode = getToken(Tokens.JOIN, 0)!!
+        public fun FORK(): TerminalNode? = getToken(Tokens.FORK, 0)
+        public fun JOIN(): TerminalNode? = getToken(Tokens.JOIN, 0)
         public fun block_name(): Block_nameContext? = getRuleContext(Block_nameContext::class, 0)
         public fun statement(): List<StatementContext> = getRuleContexts(StatementContext::class)
         public fun statement(i: Int): StatementContext? = getRuleContext(StatementContext::class, i)
@@ -18541,8 +18470,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Block_nameContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Block_name
 
-        public fun CL(): TerminalNode = getToken(Tokens.CL, 0)!!
-        public fun block_identifier(): Block_identifierContext = getRuleContext(Block_identifierContext::class, 0)!!
+        public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
+        public fun block_identifier(): Block_identifierContext? = getRuleContext(Block_identifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -18605,8 +18534,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Seq_blockContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Seq_block
 
-        public fun BEGIN(): TerminalNode = getToken(Tokens.BEGIN, 0)!!
-        public fun END(): TerminalNode = getToken(Tokens.END, 0)!!
+        public fun BEGIN(): TerminalNode? = getToken(Tokens.BEGIN, 0)
+        public fun END(): TerminalNode? = getToken(Tokens.END, 0)
         public fun block_name(): Block_nameContext? = getRuleContext(Block_nameContext::class, 0)
         public fun statement(): List<StatementContext> = getRuleContexts(StatementContext::class)
         public fun statement(i: Int): StatementContext? = getRuleContext(StatementContext::class, i)
@@ -18717,35 +18646,29 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun blocking_assignment(): Blocking_assignmentContext? =
             getRuleContext(Blocking_assignmentContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun case_statement(): Case_statementContext? = getRuleContext(Case_statementContext::class, 0)
         public fun conditional_statement(): Conditional_statementContext? =
             getRuleContext(Conditional_statementContext::class, 0)
-
         public fun disable_statement(): Disable_statementContext? = getRuleContext(Disable_statementContext::class, 0)
         public fun event_trigger(): Event_triggerContext? = getRuleContext(Event_triggerContext::class, 0)
         public fun loop_statement(): Loop_statementContext? = getRuleContext(Loop_statementContext::class, 0)
         public fun nonblocking_assignment(): Nonblocking_assignmentContext? =
             getRuleContext(Nonblocking_assignmentContext::class, 0)
-
         public fun par_block(): Par_blockContext? = getRuleContext(Par_blockContext::class, 0)
         public fun procedural_continuous_assignments(): Procedural_continuous_assignmentsContext? =
             getRuleContext(Procedural_continuous_assignmentsContext::class, 0)
 
         public fun procedural_timing_control_statement(): Procedural_timing_control_statementContext? =
             getRuleContext(Procedural_timing_control_statementContext::class, 0)
-
         public fun seq_block(): Seq_blockContext? = getRuleContext(Seq_blockContext::class, 0)
         public fun system_task_enable(): System_task_enableContext? =
             getRuleContext(System_task_enableContext::class, 0)
-
         public fun task_enable(): Task_enableContext? = getRuleContext(Task_enableContext::class, 0)
         public fun wait_statement(): Wait_statementContext? = getRuleContext(Wait_statementContext::class, 0)
 
@@ -19176,7 +19099,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Function_statementContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Function_statement
 
-        public fun statement(): StatementContext = getRuleContext(StatementContext::class, 0)!!
+        public fun statement(): StatementContext? = getRuleContext(StatementContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -19236,12 +19159,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Delay_controlContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Delay_control
 
-        public fun HA(): TerminalNode = getToken(Tokens.HA, 0)!!
+        public fun HA(): TerminalNode? = getToken(Tokens.HA, 0)
         public fun delay_value(): Delay_valueContext? = getRuleContext(Delay_valueContext::class, 0)
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun mintypmax_expression(): Mintypmax_expressionContext? =
             getRuleContext(Mintypmax_expressionContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -19427,11 +19349,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Disable_statementContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Disable_statement
 
-        public fun DISABLE(): TerminalNode = getToken(Tokens.DISABLE, 0)!!
-        public fun hierarchical_identifier(): Hierarchical_identifierContext =
-            getRuleContext(Hierarchical_identifierContext::class, 0)!!
+        public fun DISABLE(): TerminalNode? = getToken(Tokens.DISABLE, 0)
+        public fun hierarchical_identifier(): Hierarchical_identifierContext? =
+            getRuleContext(Hierarchical_identifierContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -19497,10 +19419,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Event_controlContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Event_control
 
-        public fun AT(): TerminalNode = getToken(Tokens.AT, 0)!!
+        public fun AT(): TerminalNode? = getToken(Tokens.AT, 0)
         public fun hierarchical_identifier(): Hierarchical_identifierContext? =
             getRuleContext(Hierarchical_identifierContext::class, 0)
-
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun event_expression(): Event_expressionContext? = getRuleContext(Event_expressionContext::class, 0)
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
@@ -19616,11 +19537,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Event_triggerContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Event_trigger
 
-        public fun MIGT(): TerminalNode = getToken(Tokens.MIGT, 0)!!
-        public fun hierarchical_identifier(): Hierarchical_identifierContext =
-            getRuleContext(Hierarchical_identifierContext::class, 0)!!
+        public fun MIGT(): TerminalNode? = getToken(Tokens.MIGT, 0)
+        public fun hierarchical_identifier(): Hierarchical_identifierContext? =
+            getRuleContext(Hierarchical_identifierContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun bit_select(): Bit_selectContext? = getRuleContext(Bit_selectContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -19703,7 +19624,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun event_expression(): List<Event_expressionContext> = getRuleContexts(Event_expressionContext::class)
         public fun event_expression(i: Int): Event_expressionContext? =
             getRuleContext(Event_expressionContext::class, i)
-
         public fun OR(): TerminalNode? = getToken(Tokens.OR, 0)
         public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
 
@@ -19784,7 +19704,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     expression(0)
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
             context!!.stop = _input.LT(-1)
@@ -19834,7 +19753,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                             event_expression(2)
 
                         }
-                    }
+                    } 
                 }
 
                 this.state = 3019
@@ -19931,10 +19850,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Procedural_timing_control_statementContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Procedural_timing_control_statement
 
-        public fun procedural_timing_control(): Procedural_timing_controlContext =
-            getRuleContext(Procedural_timing_controlContext::class, 0)!!
+        public fun procedural_timing_control(): Procedural_timing_controlContext? =
+            getRuleContext(Procedural_timing_controlContext::class, 0)
 
-        public fun statement_or_null(): Statement_or_nullContext = getRuleContext(Statement_or_nullContext::class, 0)!!
+        public fun statement_or_null(): Statement_or_nullContext? = getRuleContext(Statement_or_nullContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -19997,11 +19916,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Wait_statementContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Wait_statement
 
-        public fun WAIT(): TerminalNode = getToken(Tokens.WAIT, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun expression(): ExpressionContext = getRuleContext(ExpressionContext::class, 0)!!
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
-        public fun statement_or_null(): Statement_or_nullContext = getRuleContext(Statement_or_nullContext::class, 0)!!
+        public fun WAIT(): TerminalNode? = getToken(Tokens.WAIT, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
+        public fun statement_or_null(): Statement_or_nullContext? = getRuleContext(Statement_or_nullContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -20073,16 +19992,15 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Conditional_statementContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Conditional_statement
 
-        public fun IF(): TerminalNode = getToken(Tokens.IF, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun expression(): ExpressionContext = getRuleContext(ExpressionContext::class, 0)!!
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun IF(): TerminalNode? = getToken(Tokens.IF, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun statement_or_null(): List<Statement_or_nullContext> =
             getRuleContexts(Statement_or_nullContext::class)
 
         public fun statement_or_null(i: Int): Statement_or_nullContext? =
             getRuleContext(Statement_or_nullContext::class, i)
-
         public fun ELSE(): TerminalNode? = getToken(Tokens.ELSE, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -20169,10 +20087,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override val ruleIndex: Int = Rules.Case_statement
 
         public fun CASE(): TerminalNode? = getToken(Tokens.CASE, 0)
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun expression(): ExpressionContext = getRuleContext(ExpressionContext::class, 0)!!
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
-        public fun ENDCASE(): TerminalNode = getToken(Tokens.ENDCASE, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
+        public fun ENDCASE(): TerminalNode? = getToken(Tokens.ENDCASE, 0)
         public fun case_item(): List<Case_itemContext> = getRuleContexts(Case_itemContext::class)
         public fun case_item(i: Int): Case_itemContext? = getRuleContext(Case_itemContext::class, i)
         public fun CASEZ(): TerminalNode? = getToken(Tokens.CASEZ, 0)
@@ -20237,7 +20155,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     this.state = 3045
                     match(Tokens.RP)
 
-                    this.state = 3047
+                    this.state = 3047 
                     errorHandler.sync(this)
                     _la = _input.LA(1)
 
@@ -20245,7 +20163,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                         this.state = 3046
                         case_item()
 
-                        this.state = 3049
+                        this.state = 3049 
                         errorHandler.sync(this)
                         _la = _input.LA(1)
                     } while (_la == Tokens.DEFAULT || ((((_la - 137)) and 0x3f.inv()) == 0 && ((1L shl (_la - 137)) and -587789827252928127L) != 0L) || _la == Tokens.UNSIGNED_NUMBER)
@@ -20268,7 +20186,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     this.state = 3056
                     match(Tokens.RP)
 
-                    this.state = 3058
+                    this.state = 3058 
                     errorHandler.sync(this)
                     _la = _input.LA(1)
 
@@ -20276,7 +20194,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                         this.state = 3057
                         case_item()
 
-                        this.state = 3060
+                        this.state = 3060 
                         errorHandler.sync(this)
                         _la = _input.LA(1)
                     } while (_la == Tokens.DEFAULT || ((((_la - 137)) and 0x3f.inv()) == 0 && ((1L shl (_la - 137)) and -587789827252928127L) != 0L) || _la == Tokens.UNSIGNED_NUMBER)
@@ -20299,7 +20217,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     this.state = 3067
                     match(Tokens.RP)
 
-                    this.state = 3069
+                    this.state = 3069 
                     errorHandler.sync(this)
                     _la = _input.LA(1)
 
@@ -20307,7 +20225,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                         this.state = 3068
                         case_item()
 
-                        this.state = 3071
+                        this.state = 3071 
                         errorHandler.sync(this)
                         _la = _input.LA(1)
                     } while (_la == Tokens.DEFAULT || ((((_la - 137)) and 0x3f.inv()) == 0 && ((1L shl (_la - 137)) and -587789827252928127L) != 0L) || _la == Tokens.UNSIGNED_NUMBER)
@@ -20334,7 +20252,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun expression(): List<ExpressionContext> = getRuleContexts(ExpressionContext::class)
         public fun expression(i: Int): ExpressionContext? = getRuleContext(ExpressionContext::class, i)
         public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
-        public fun statement_or_null(): Statement_or_nullContext = getRuleContext(Statement_or_nullContext::class, 0)!!
+        public fun statement_or_null(): Statement_or_nullContext? = getRuleContext(Statement_or_nullContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
         public fun DEFAULT(): TerminalNode? = getToken(Tokens.DEFAULT, 0)
@@ -20447,7 +20365,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override val ruleIndex: Int = Rules.Loop_statement
 
         public fun FOREVER(): TerminalNode? = getToken(Tokens.FOREVER, 0)
-        public fun statement(): StatementContext = getRuleContext(StatementContext::class, 0)!!
+        public fun statement(): StatementContext? = getRuleContext(StatementContext::class, 0)
         public fun REPEAT(): TerminalNode? = getToken(Tokens.REPEAT, 0)
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
@@ -20459,7 +20377,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun variable_assignment(i: Int): Variable_assignmentContext? =
             getRuleContext(Variable_assignmentContext::class, i)
-
         public fun SC(): List<TerminalNode> = getTokens(Tokens.SC)
         public fun SC(i: Int): TerminalNode? = getToken(Tokens.SC, i)
 
@@ -20601,10 +20518,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class System_task_enableContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.System_task_enable
 
-        public fun system_task_identifier(): System_task_identifierContext =
-            getRuleContext(System_task_identifierContext::class, 0)!!
+        public fun system_task_identifier(): System_task_identifierContext? =
+            getRuleContext(System_task_identifierContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun sys_task_en_port_list(): Sys_task_en_port_listContext? =
             getRuleContext(Sys_task_en_port_listContext::class, 0)
 
@@ -20679,14 +20596,14 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Sys_task_en_port_listContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Sys_task_en_port_list
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun sys_task_en_port_item(): List<Sys_task_en_port_itemContext> =
             getRuleContexts(Sys_task_en_port_itemContext::class)
 
         public fun sys_task_en_port_item(i: Int): Sys_task_en_port_itemContext? =
             getRuleContext(Sys_task_en_port_itemContext::class, i)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -20837,10 +20754,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Task_enableContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Task_enable
 
-        public fun hierarchical_identifier(): Hierarchical_identifierContext =
-            getRuleContext(Hierarchical_identifierContext::class, 0)!!
+        public fun hierarchical_identifier(): Hierarchical_identifierContext? =
+            getRuleContext(Hierarchical_identifierContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun task_en_port_list(): Task_en_port_listContext? = getRuleContext(Task_en_port_listContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -20914,10 +20831,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Task_en_port_listContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Task_en_port_list
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun expression(): List<ExpressionContext> = getRuleContexts(ExpressionContext::class)
         public fun expression(i: Int): ExpressionContext? = getRuleContext(ExpressionContext::class, i)
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -21001,8 +20918,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Specify_blockContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Specify_block
 
-        public fun SPECIFY(): TerminalNode = getToken(Tokens.SPECIFY, 0)!!
-        public fun ENDSPECIFY(): TerminalNode = getToken(Tokens.ENDSPECIFY, 0)!!
+        public fun SPECIFY(): TerminalNode? = getToken(Tokens.SPECIFY, 0)
+        public fun ENDSPECIFY(): TerminalNode? = getToken(Tokens.ENDSPECIFY, 0)
         public fun specify_item(): List<Specify_itemContext> = getRuleContexts(Specify_itemContext::class)
         public fun specify_item(i: Int): Specify_itemContext? = getRuleContext(Specify_itemContext::class, i)
 
@@ -21088,7 +21005,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun showcancelled_declaration(): Showcancelled_declarationContext? =
             getRuleContext(Showcancelled_declarationContext::class, 0)
-
         public fun path_declaration(): Path_declarationContext? = getRuleContext(Path_declarationContext::class, 0)
         public fun system_timing_check(): System_timing_checkContext? =
             getRuleContext(System_timing_checkContext::class, 0)
@@ -21188,10 +21104,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override val ruleIndex: Int = Rules.Pulsestyle_declaration
 
         public fun PULSESTYLE_ONEVENT(): TerminalNode? = getToken(Tokens.PULSESTYLE_ONEVENT, 0)
-        public fun list_of_path_outputs(): List_of_path_outputsContext =
-            getRuleContext(List_of_path_outputsContext::class, 0)!!
+        public fun list_of_path_outputs(): List_of_path_outputsContext? =
+            getRuleContext(List_of_path_outputsContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun PULSESTYLE_ONDETECT(): TerminalNode? = getToken(Tokens.PULSESTYLE_ONDETECT, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -21280,10 +21196,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override val ruleIndex: Int = Rules.Showcancelled_declaration
 
         public fun SHOWCANCELLED(): TerminalNode? = getToken(Tokens.SHOWCANCELLED, 0)
-        public fun list_of_path_outputs(): List_of_path_outputsContext =
-            getRuleContext(List_of_path_outputsContext::class, 0)!!
+        public fun list_of_path_outputs(): List_of_path_outputsContext? =
+            getRuleContext(List_of_path_outputsContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun NOSHOWCANCELLED(): TerminalNode? = getToken(Tokens.NOSHOWCANCELLED, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -21374,7 +21290,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun simple_path_declaration(): Simple_path_declarationContext? =
             getRuleContext(Simple_path_declarationContext::class, 0)
 
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun edge_sensitive_path_declaration(): Edge_sensitive_path_declarationContext? =
             getRuleContext(Edge_sensitive_path_declarationContext::class, 0)
 
@@ -21472,8 +21388,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun parallel_path_description(): Parallel_path_descriptionContext? =
             getRuleContext(Parallel_path_descriptionContext::class, 0)
 
-        public fun EQ(): TerminalNode = getToken(Tokens.EQ, 0)!!
-        public fun path_delay_value(): Path_delay_valueContext = getRuleContext(Path_delay_valueContext::class, 0)!!
+        public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
+        public fun path_delay_value(): Path_delay_valueContext? = getRuleContext(Path_delay_valueContext::class, 0)
         public fun full_path_description(): Full_path_descriptionContext? =
             getRuleContext(Full_path_descriptionContext::class, 0)
 
@@ -21561,15 +21477,15 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Parallel_path_descriptionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Parallel_path_description
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun specify_input_terminal_descriptor(): Specify_input_terminal_descriptorContext =
-            getRuleContext(Specify_input_terminal_descriptorContext::class, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun specify_input_terminal_descriptor(): Specify_input_terminal_descriptorContext? =
+            getRuleContext(Specify_input_terminal_descriptorContext::class, 0)
 
-        public fun EQGT(): TerminalNode = getToken(Tokens.EQGT, 0)!!
-        public fun specify_output_terminal_descriptor(): Specify_output_terminal_descriptorContext =
-            getRuleContext(Specify_output_terminal_descriptorContext::class, 0)!!
+        public fun EQGT(): TerminalNode? = getToken(Tokens.EQGT, 0)
+        public fun specify_output_terminal_descriptor(): Specify_output_terminal_descriptorContext? =
+            getRuleContext(Specify_output_terminal_descriptorContext::class, 0)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun polarity_operator(): Polarity_operatorContext? = getRuleContext(Polarity_operatorContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -21652,15 +21568,15 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Full_path_descriptionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Full_path_description
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun list_of_path_inputs(): List_of_path_inputsContext =
-            getRuleContext(List_of_path_inputsContext::class, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun list_of_path_inputs(): List_of_path_inputsContext? =
+            getRuleContext(List_of_path_inputsContext::class, 0)
 
-        public fun ASGT(): TerminalNode = getToken(Tokens.ASGT, 0)!!
-        public fun list_of_path_outputs(): List_of_path_outputsContext =
-            getRuleContext(List_of_path_outputsContext::class, 0)!!
+        public fun ASGT(): TerminalNode? = getToken(Tokens.ASGT, 0)
+        public fun list_of_path_outputs(): List_of_path_outputsContext? =
+            getRuleContext(List_of_path_outputsContext::class, 0)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun polarity_operator(): Polarity_operatorContext? = getRuleContext(Polarity_operatorContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -21748,7 +21664,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun specify_input_terminal_descriptor(i: Int): Specify_input_terminal_descriptorContext? =
             getRuleContext(Specify_input_terminal_descriptorContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -21831,7 +21746,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun specify_output_terminal_descriptor(i: Int): Specify_output_terminal_descriptorContext? =
             getRuleContext(Specify_output_terminal_descriptorContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -21909,11 +21823,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Specify_input_terminal_descriptorContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Specify_input_terminal_descriptor
 
-        public fun input_identifier(): Input_identifierContext = getRuleContext(Input_identifierContext::class, 0)!!
+        public fun input_identifier(): Input_identifierContext? = getRuleContext(Input_identifierContext::class, 0)
         public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
         public fun constant_range_expression(): Constant_range_expressionContext? =
             getRuleContext(Constant_range_expressionContext::class, 0)
-
         public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -21990,11 +21903,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Specify_output_terminal_descriptorContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Specify_output_terminal_descriptor
 
-        public fun output_identifier(): Output_identifierContext = getRuleContext(Output_identifierContext::class, 0)!!
+        public fun output_identifier(): Output_identifierContext? = getRuleContext(Output_identifierContext::class, 0)
         public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
         public fun constant_range_expression(): Constant_range_expressionContext? =
             getRuleContext(Constant_range_expressionContext::class, 0)
-
         public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -22071,7 +21983,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Input_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Input_identifier
 
-        public fun port_identifier(): Port_identifierContext = getRuleContext(Port_identifierContext::class, 0)!!
+        public fun port_identifier(): Port_identifierContext? = getRuleContext(Port_identifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -22131,7 +22043,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Output_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Output_identifier
 
-        public fun port_identifier(): Port_identifierContext = getRuleContext(Port_identifierContext::class, 0)!!
+        public fun port_identifier(): Port_identifierContext? = getRuleContext(Port_identifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -22191,9 +22103,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Path_delay_valueContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Path_delay_value
 
-        public fun list_of_path_delay_expressions(): List_of_path_delay_expressionsContext =
-            getRuleContext(List_of_path_delay_expressionsContext::class, 0)!!
-
+        public fun list_of_path_delay_expressions(): List_of_path_delay_expressionsContext? =
+            getRuleContext(List_of_path_delay_expressionsContext::class, 0)
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
 
@@ -22280,7 +22191,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun trise_path_delay_expression(): Trise_path_delay_expressionContext? =
             getRuleContext(Trise_path_delay_expressionContext::class, 0)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
         public fun tfall_path_delay_expression(): Tfall_path_delay_expressionContext? =
@@ -22495,8 +22405,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class T_path_delay_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.T_path_delay_expression
 
-        public fun path_delay_expression(): Path_delay_expressionContext =
-            getRuleContext(Path_delay_expressionContext::class, 0)!!
+        public fun path_delay_expression(): Path_delay_expressionContext? =
+            getRuleContext(Path_delay_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -22556,8 +22466,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Trise_path_delay_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Trise_path_delay_expression
 
-        public fun path_delay_expression(): Path_delay_expressionContext =
-            getRuleContext(Path_delay_expressionContext::class, 0)!!
+        public fun path_delay_expression(): Path_delay_expressionContext? =
+            getRuleContext(Path_delay_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -22617,8 +22527,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Tfall_path_delay_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Tfall_path_delay_expression
 
-        public fun path_delay_expression(): Path_delay_expressionContext =
-            getRuleContext(Path_delay_expressionContext::class, 0)!!
+        public fun path_delay_expression(): Path_delay_expressionContext? =
+            getRuleContext(Path_delay_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -22678,8 +22588,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Tz_path_delay_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Tz_path_delay_expression
 
-        public fun path_delay_expression(): Path_delay_expressionContext =
-            getRuleContext(Path_delay_expressionContext::class, 0)!!
+        public fun path_delay_expression(): Path_delay_expressionContext? =
+            getRuleContext(Path_delay_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -22739,8 +22649,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class T01_path_delay_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.T01_path_delay_expression
 
-        public fun path_delay_expression(): Path_delay_expressionContext =
-            getRuleContext(Path_delay_expressionContext::class, 0)!!
+        public fun path_delay_expression(): Path_delay_expressionContext? =
+            getRuleContext(Path_delay_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -22800,8 +22710,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class T10_path_delay_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.T10_path_delay_expression
 
-        public fun path_delay_expression(): Path_delay_expressionContext =
-            getRuleContext(Path_delay_expressionContext::class, 0)!!
+        public fun path_delay_expression(): Path_delay_expressionContext? =
+            getRuleContext(Path_delay_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -22861,8 +22771,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class T0z_path_delay_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.T0z_path_delay_expression
 
-        public fun path_delay_expression(): Path_delay_expressionContext =
-            getRuleContext(Path_delay_expressionContext::class, 0)!!
+        public fun path_delay_expression(): Path_delay_expressionContext? =
+            getRuleContext(Path_delay_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -22922,8 +22832,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Tz1_path_delay_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Tz1_path_delay_expression
 
-        public fun path_delay_expression(): Path_delay_expressionContext =
-            getRuleContext(Path_delay_expressionContext::class, 0)!!
+        public fun path_delay_expression(): Path_delay_expressionContext? =
+            getRuleContext(Path_delay_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -22983,8 +22893,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class T1z_path_delay_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.T1z_path_delay_expression
 
-        public fun path_delay_expression(): Path_delay_expressionContext =
-            getRuleContext(Path_delay_expressionContext::class, 0)!!
+        public fun path_delay_expression(): Path_delay_expressionContext? =
+            getRuleContext(Path_delay_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -23044,8 +22954,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Tz0_path_delay_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Tz0_path_delay_expression
 
-        public fun path_delay_expression(): Path_delay_expressionContext =
-            getRuleContext(Path_delay_expressionContext::class, 0)!!
+        public fun path_delay_expression(): Path_delay_expressionContext? =
+            getRuleContext(Path_delay_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -23105,8 +23015,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class T0x_path_delay_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.T0x_path_delay_expression
 
-        public fun path_delay_expression(): Path_delay_expressionContext =
-            getRuleContext(Path_delay_expressionContext::class, 0)!!
+        public fun path_delay_expression(): Path_delay_expressionContext? =
+            getRuleContext(Path_delay_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -23166,8 +23076,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Tx1_path_delay_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Tx1_path_delay_expression
 
-        public fun path_delay_expression(): Path_delay_expressionContext =
-            getRuleContext(Path_delay_expressionContext::class, 0)!!
+        public fun path_delay_expression(): Path_delay_expressionContext? =
+            getRuleContext(Path_delay_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -23227,8 +23137,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class T1x_path_delay_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.T1x_path_delay_expression
 
-        public fun path_delay_expression(): Path_delay_expressionContext =
-            getRuleContext(Path_delay_expressionContext::class, 0)!!
+        public fun path_delay_expression(): Path_delay_expressionContext? =
+            getRuleContext(Path_delay_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -23288,8 +23198,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Tx0_path_delay_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Tx0_path_delay_expression
 
-        public fun path_delay_expression(): Path_delay_expressionContext =
-            getRuleContext(Path_delay_expressionContext::class, 0)!!
+        public fun path_delay_expression(): Path_delay_expressionContext? =
+            getRuleContext(Path_delay_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -23349,8 +23259,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Txz_path_delay_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Txz_path_delay_expression
 
-        public fun path_delay_expression(): Path_delay_expressionContext =
-            getRuleContext(Path_delay_expressionContext::class, 0)!!
+        public fun path_delay_expression(): Path_delay_expressionContext? =
+            getRuleContext(Path_delay_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -23410,8 +23320,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Tzx_path_delay_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Tzx_path_delay_expression
 
-        public fun path_delay_expression(): Path_delay_expressionContext =
-            getRuleContext(Path_delay_expressionContext::class, 0)!!
+        public fun path_delay_expression(): Path_delay_expressionContext? =
+            getRuleContext(Path_delay_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -23471,8 +23381,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Path_delay_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Path_delay_expression
 
-        public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext =
-            getRuleContext(Constant_mintypmax_expressionContext::class, 0)!!
+        public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext? =
+            getRuleContext(Constant_mintypmax_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -23535,8 +23445,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun parallel_edge_sensitive_path_description(): Parallel_edge_sensitive_path_descriptionContext? =
             getRuleContext(Parallel_edge_sensitive_path_descriptionContext::class, 0)
 
-        public fun EQ(): TerminalNode = getToken(Tokens.EQ, 0)!!
-        public fun path_delay_value(): Path_delay_valueContext = getRuleContext(Path_delay_valueContext::class, 0)!!
+        public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
+        public fun path_delay_value(): Path_delay_valueContext? = getRuleContext(Path_delay_valueContext::class, 0)
         public fun full_edge_sensitive_path_description(): Full_edge_sensitive_path_descriptionContext? =
             getRuleContext(Full_edge_sensitive_path_descriptionContext::class, 0)
 
@@ -23626,17 +23536,16 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun LP(): List<TerminalNode> = getTokens(Tokens.LP)
         public fun LP(i: Int): TerminalNode? = getToken(Tokens.LP, i)
-        public fun specify_input_terminal_descriptor(): Specify_input_terminal_descriptorContext =
-            getRuleContext(Specify_input_terminal_descriptorContext::class, 0)!!
+        public fun specify_input_terminal_descriptor(): Specify_input_terminal_descriptorContext? =
+            getRuleContext(Specify_input_terminal_descriptorContext::class, 0)
 
-        public fun EQGT(): TerminalNode = getToken(Tokens.EQGT, 0)!!
-        public fun specify_output_terminal_descriptor(): Specify_output_terminal_descriptorContext =
-            getRuleContext(Specify_output_terminal_descriptorContext::class, 0)!!
+        public fun EQGT(): TerminalNode? = getToken(Tokens.EQGT, 0)
+        public fun specify_output_terminal_descriptor(): Specify_output_terminal_descriptorContext? =
+            getRuleContext(Specify_output_terminal_descriptorContext::class, 0)
 
-        public fun CL(): TerminalNode = getToken(Tokens.CL, 0)!!
-        public fun data_source_expression(): Data_source_expressionContext =
-            getRuleContext(Data_source_expressionContext::class, 0)!!
-
+        public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
+        public fun data_source_expression(): Data_source_expressionContext? =
+            getRuleContext(Data_source_expressionContext::class, 0)
         public fun RP(): List<TerminalNode> = getTokens(Tokens.RP)
         public fun RP(i: Int): TerminalNode? = getToken(Tokens.RP, i)
         public fun edge_identifier(): Edge_identifierContext? = getRuleContext(Edge_identifierContext::class, 0)
@@ -23745,17 +23654,16 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun LP(): List<TerminalNode> = getTokens(Tokens.LP)
         public fun LP(i: Int): TerminalNode? = getToken(Tokens.LP, i)
-        public fun list_of_path_inputs(): List_of_path_inputsContext =
-            getRuleContext(List_of_path_inputsContext::class, 0)!!
+        public fun list_of_path_inputs(): List_of_path_inputsContext? =
+            getRuleContext(List_of_path_inputsContext::class, 0)
 
-        public fun ASGT(): TerminalNode = getToken(Tokens.ASGT, 0)!!
-        public fun list_of_path_outputs(): List_of_path_outputsContext =
-            getRuleContext(List_of_path_outputsContext::class, 0)!!
+        public fun ASGT(): TerminalNode? = getToken(Tokens.ASGT, 0)
+        public fun list_of_path_outputs(): List_of_path_outputsContext? =
+            getRuleContext(List_of_path_outputsContext::class, 0)
 
-        public fun CL(): TerminalNode = getToken(Tokens.CL, 0)!!
-        public fun data_source_expression(): Data_source_expressionContext =
-            getRuleContext(Data_source_expressionContext::class, 0)!!
-
+        public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
+        public fun data_source_expression(): Data_source_expressionContext? =
+            getRuleContext(Data_source_expressionContext::class, 0)
         public fun RP(): List<TerminalNode> = getTokens(Tokens.RP)
         public fun RP(i: Int): TerminalNode? = getToken(Tokens.RP, i)
         public fun edge_identifier(): Edge_identifierContext? = getRuleContext(Edge_identifierContext::class, 0)
@@ -23862,7 +23770,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Data_source_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Data_source_expression
 
-        public fun expression(): ExpressionContext = getRuleContext(ExpressionContext::class, 0)!!
+        public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -23998,14 +23906,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun module_path_expression(): Module_path_expressionContext? =
             getRuleContext(Module_path_expressionContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun simple_path_declaration(): Simple_path_declarationContext? =
             getRuleContext(Simple_path_declarationContext::class, 0)
 
         public fun edge_sensitive_path_declaration(): Edge_sensitive_path_declarationContext? =
             getRuleContext(Edge_sensitive_path_declarationContext::class, 0)
-
         public fun IFNONE(): TerminalNode? = getToken(Tokens.IFNONE, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -24188,7 +24094,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun setup_timing_check(): Setup_timing_checkContext? =
             getRuleContext(Setup_timing_checkContext::class, 0)
-
         public fun hold_timing_check(): Hold_timing_checkContext? = getRuleContext(Hold_timing_checkContext::class, 0)
         public fun setuphold_timing_check(): Setuphold_timing_checkContext? =
             getRuleContext(Setuphold_timing_checkContext::class, 0)
@@ -24201,7 +24106,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun recrem_timing_check(): Recrem_timing_checkContext? =
             getRuleContext(Recrem_timing_checkContext::class, 0)
-
         public fun skew_timing_check(): Skew_timing_checkContext? = getRuleContext(Skew_timing_checkContext::class, 0)
         public fun timeskew_timing_check(): Timeskew_timing_checkContext? =
             getRuleContext(Timeskew_timing_checkContext::class, 0)
@@ -24361,17 +24265,17 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Setup_timing_checkContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Setup_timing_check
 
-        public fun DLSETUP(): TerminalNode = getToken(Tokens.DLSETUP, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun data_event(): Data_eventContext = getRuleContext(Data_eventContext::class, 0)!!
+        public fun DLSETUP(): TerminalNode? = getToken(Tokens.DLSETUP, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun data_event(): Data_eventContext? = getRuleContext(Data_eventContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
-        public fun reference_event(): Reference_eventContext = getRuleContext(Reference_eventContext::class, 0)!!
-        public fun timing_check_limit(): Timing_check_limitContext =
-            getRuleContext(Timing_check_limitContext::class, 0)!!
+        public fun reference_event(): Reference_eventContext? = getRuleContext(Reference_eventContext::class, 0)
+        public fun timing_check_limit(): Timing_check_limitContext? =
+            getRuleContext(Timing_check_limitContext::class, 0)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun notifier_opt(): Notifier_optContext? = getRuleContext(Notifier_optContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -24466,7 +24370,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Notifier_optContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Notifier_opt
 
-        public fun CO(): TerminalNode = getToken(Tokens.CO, 0)!!
+        public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
         public fun notifier(): NotifierContext? = getRuleContext(NotifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -24537,17 +24441,17 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Hold_timing_checkContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Hold_timing_check
 
-        public fun DLHOLD(): TerminalNode = getToken(Tokens.DLHOLD, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun reference_event(): Reference_eventContext = getRuleContext(Reference_eventContext::class, 0)!!
+        public fun DLHOLD(): TerminalNode? = getToken(Tokens.DLHOLD, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun reference_event(): Reference_eventContext? = getRuleContext(Reference_eventContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
-        public fun data_event(): Data_eventContext = getRuleContext(Data_eventContext::class, 0)!!
-        public fun timing_check_limit(): Timing_check_limitContext =
-            getRuleContext(Timing_check_limitContext::class, 0)!!
+        public fun data_event(): Data_eventContext? = getRuleContext(Data_eventContext::class, 0)
+        public fun timing_check_limit(): Timing_check_limitContext? =
+            getRuleContext(Timing_check_limitContext::class, 0)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun notifier_opt(): Notifier_optContext? = getRuleContext(Notifier_optContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -24642,20 +24546,20 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Setuphold_timing_checkContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Setuphold_timing_check
 
-        public fun DLSETUPHOLD(): TerminalNode = getToken(Tokens.DLSETUPHOLD, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun reference_event(): Reference_eventContext = getRuleContext(Reference_eventContext::class, 0)!!
+        public fun DLSETUPHOLD(): TerminalNode? = getToken(Tokens.DLSETUPHOLD, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun reference_event(): Reference_eventContext? = getRuleContext(Reference_eventContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
-        public fun data_event(): Data_eventContext = getRuleContext(Data_eventContext::class, 0)!!
+        public fun data_event(): Data_eventContext? = getRuleContext(Data_eventContext::class, 0)
         public fun timing_check_limit(): List<Timing_check_limitContext> =
             getRuleContexts(Timing_check_limitContext::class)
 
         public fun timing_check_limit(i: Int): Timing_check_limitContext? =
             getRuleContext(Timing_check_limitContext::class, i)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun timing_check_opt(): Timing_check_optContext? = getRuleContext(Timing_check_optContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -24756,7 +24660,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Timing_check_optContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Timing_check_opt
 
-        public fun CO(): TerminalNode = getToken(Tokens.CO, 0)!!
+        public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
         public fun notifier(): NotifierContext? = getRuleContext(NotifierContext::class, 0)
         public fun stamptime_cond_opt(): Stamptime_cond_optContext? =
             getRuleContext(Stamptime_cond_optContext::class, 0)
@@ -24838,7 +24742,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Stamptime_cond_optContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Stamptime_cond_opt
 
-        public fun CO(): TerminalNode = getToken(Tokens.CO, 0)!!
+        public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
         public fun stamptime_condition(): Stamptime_conditionContext? =
             getRuleContext(Stamptime_conditionContext::class, 0)
 
@@ -24922,10 +24826,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Checktime_cond_optContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Checktime_cond_opt
 
-        public fun CO(): TerminalNode = getToken(Tokens.CO, 0)!!
+        public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
         public fun checktime_condition(): Checktime_conditionContext? =
             getRuleContext(Checktime_conditionContext::class, 0)
-
         public fun delayed_ref_opt(): Delayed_ref_optContext? = getRuleContext(Delayed_ref_optContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -25005,7 +24908,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Delayed_ref_optContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Delayed_ref_opt
 
-        public fun CO(): TerminalNode = getToken(Tokens.CO, 0)!!
+        public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
         public fun delayed_reference(): Delayed_referenceContext? = getRuleContext(Delayed_referenceContext::class, 0)
         public fun delayed_data_opt(): Delayed_data_optContext? = getRuleContext(Delayed_data_optContext::class, 0)
 
@@ -25086,7 +24989,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Delayed_data_optContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Delayed_data_opt
 
-        public fun CO(): TerminalNode = getToken(Tokens.CO, 0)!!
+        public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
         public fun delayed_data(): Delayed_dataContext? = getRuleContext(Delayed_dataContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -25157,17 +25060,17 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Recovery_timing_checkContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Recovery_timing_check
 
-        public fun DLRECOVERY(): TerminalNode = getToken(Tokens.DLRECOVERY, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun reference_event(): Reference_eventContext = getRuleContext(Reference_eventContext::class, 0)!!
+        public fun DLRECOVERY(): TerminalNode? = getToken(Tokens.DLRECOVERY, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun reference_event(): Reference_eventContext? = getRuleContext(Reference_eventContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
-        public fun data_event(): Data_eventContext = getRuleContext(Data_eventContext::class, 0)!!
-        public fun timing_check_limit(): Timing_check_limitContext =
-            getRuleContext(Timing_check_limitContext::class, 0)!!
+        public fun data_event(): Data_eventContext? = getRuleContext(Data_eventContext::class, 0)
+        public fun timing_check_limit(): Timing_check_limitContext? =
+            getRuleContext(Timing_check_limitContext::class, 0)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun notifier_opt(): Notifier_optContext? = getRuleContext(Notifier_optContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -25262,17 +25165,17 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Removal_timing_checkContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Removal_timing_check
 
-        public fun DLREMOVAL(): TerminalNode = getToken(Tokens.DLREMOVAL, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun reference_event(): Reference_eventContext = getRuleContext(Reference_eventContext::class, 0)!!
+        public fun DLREMOVAL(): TerminalNode? = getToken(Tokens.DLREMOVAL, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun reference_event(): Reference_eventContext? = getRuleContext(Reference_eventContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
-        public fun data_event(): Data_eventContext = getRuleContext(Data_eventContext::class, 0)!!
-        public fun timing_check_limit(): Timing_check_limitContext =
-            getRuleContext(Timing_check_limitContext::class, 0)!!
+        public fun data_event(): Data_eventContext? = getRuleContext(Data_eventContext::class, 0)
+        public fun timing_check_limit(): Timing_check_limitContext? =
+            getRuleContext(Timing_check_limitContext::class, 0)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun notifier_opt(): Notifier_optContext? = getRuleContext(Notifier_optContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -25367,20 +25270,20 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Recrem_timing_checkContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Recrem_timing_check
 
-        public fun DLRECREM(): TerminalNode = getToken(Tokens.DLRECREM, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun reference_event(): Reference_eventContext = getRuleContext(Reference_eventContext::class, 0)!!
+        public fun DLRECREM(): TerminalNode? = getToken(Tokens.DLRECREM, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun reference_event(): Reference_eventContext? = getRuleContext(Reference_eventContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
-        public fun data_event(): Data_eventContext = getRuleContext(Data_eventContext::class, 0)!!
+        public fun data_event(): Data_eventContext? = getRuleContext(Data_eventContext::class, 0)
         public fun timing_check_limit(): List<Timing_check_limitContext> =
             getRuleContexts(Timing_check_limitContext::class)
 
         public fun timing_check_limit(i: Int): Timing_check_limitContext? =
             getRuleContext(Timing_check_limitContext::class, i)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun timing_check_opt(): Timing_check_optContext? = getRuleContext(Timing_check_optContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -25481,17 +25384,17 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Skew_timing_checkContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Skew_timing_check
 
-        public fun DLSKEW(): TerminalNode = getToken(Tokens.DLSKEW, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun reference_event(): Reference_eventContext = getRuleContext(Reference_eventContext::class, 0)!!
+        public fun DLSKEW(): TerminalNode? = getToken(Tokens.DLSKEW, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun reference_event(): Reference_eventContext? = getRuleContext(Reference_eventContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
-        public fun data_event(): Data_eventContext = getRuleContext(Data_eventContext::class, 0)!!
-        public fun timing_check_limit(): Timing_check_limitContext =
-            getRuleContext(Timing_check_limitContext::class, 0)!!
+        public fun data_event(): Data_eventContext? = getRuleContext(Data_eventContext::class, 0)
+        public fun timing_check_limit(): Timing_check_limitContext? =
+            getRuleContext(Timing_check_limitContext::class, 0)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun notifier_opt(): Notifier_optContext? = getRuleContext(Notifier_optContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -25586,17 +25489,17 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Timeskew_timing_checkContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Timeskew_timing_check
 
-        public fun DLTIMESKEW(): TerminalNode = getToken(Tokens.DLTIMESKEW, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun reference_event(): Reference_eventContext = getRuleContext(Reference_eventContext::class, 0)!!
+        public fun DLTIMESKEW(): TerminalNode? = getToken(Tokens.DLTIMESKEW, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun reference_event(): Reference_eventContext? = getRuleContext(Reference_eventContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
-        public fun data_event(): Data_eventContext = getRuleContext(Data_eventContext::class, 0)!!
-        public fun timing_check_limit(): Timing_check_limitContext =
-            getRuleContext(Timing_check_limitContext::class, 0)!!
+        public fun data_event(): Data_eventContext? = getRuleContext(Data_eventContext::class, 0)
+        public fun timing_check_limit(): Timing_check_limitContext? =
+            getRuleContext(Timing_check_limitContext::class, 0)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun skew_timing_check_opt(): Skew_timing_check_optContext? =
             getRuleContext(Skew_timing_check_optContext::class, 0)
 
@@ -25692,7 +25595,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Skew_timing_check_optContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Skew_timing_check_opt
 
-        public fun CO(): TerminalNode = getToken(Tokens.CO, 0)!!
+        public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
         public fun notifier(): NotifierContext? = getRuleContext(NotifierContext::class, 0)
         public fun event_based_flag_opt(): Event_based_flag_optContext? =
             getRuleContext(Event_based_flag_optContext::class, 0)
@@ -25774,7 +25677,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Event_based_flag_optContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Event_based_flag_opt
 
-        public fun CO(): TerminalNode = getToken(Tokens.CO, 0)!!
+        public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
         public fun event_based_flag(): Event_based_flagContext? = getRuleContext(Event_based_flagContext::class, 0)
         public fun remain_active_flag_opt(): Remain_active_flag_optContext? =
             getRuleContext(Remain_active_flag_optContext::class, 0)
@@ -25856,7 +25759,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Remain_active_flag_optContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Remain_active_flag_opt
 
-        public fun CO(): TerminalNode = getToken(Tokens.CO, 0)!!
+        public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
         public fun remain_active_flag(): Remain_active_flagContext? =
             getRuleContext(Remain_active_flagContext::class, 0)
 
@@ -25928,20 +25831,20 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Fullskew_timing_checkContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Fullskew_timing_check
 
-        public fun DLFULLSKEW(): TerminalNode = getToken(Tokens.DLFULLSKEW, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun reference_event(): Reference_eventContext = getRuleContext(Reference_eventContext::class, 0)!!
+        public fun DLFULLSKEW(): TerminalNode? = getToken(Tokens.DLFULLSKEW, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun reference_event(): Reference_eventContext? = getRuleContext(Reference_eventContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
-        public fun data_event(): Data_eventContext = getRuleContext(Data_eventContext::class, 0)!!
+        public fun data_event(): Data_eventContext? = getRuleContext(Data_eventContext::class, 0)
         public fun timing_check_limit(): List<Timing_check_limitContext> =
             getRuleContexts(Timing_check_limitContext::class)
 
         public fun timing_check_limit(i: Int): Timing_check_limitContext? =
             getRuleContext(Timing_check_limitContext::class, i)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun skew_timing_check_opt(): Skew_timing_check_optContext? =
             getRuleContext(Skew_timing_check_optContext::class, 0)
 
@@ -26043,17 +25946,17 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Period_timing_checkContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Period_timing_check
 
-        public fun DLPERIOD(): TerminalNode = getToken(Tokens.DLPERIOD, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun controlled_reference_event(): Controlled_reference_eventContext =
-            getRuleContext(Controlled_reference_eventContext::class, 0)!!
+        public fun DLPERIOD(): TerminalNode? = getToken(Tokens.DLPERIOD, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun controlled_reference_event(): Controlled_reference_eventContext? =
+            getRuleContext(Controlled_reference_eventContext::class, 0)
 
-        public fun CO(): TerminalNode = getToken(Tokens.CO, 0)!!
-        public fun timing_check_limit(): Timing_check_limitContext =
-            getRuleContext(Timing_check_limitContext::class, 0)!!
+        public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
+        public fun timing_check_limit(): Timing_check_limitContext? =
+            getRuleContext(Timing_check_limitContext::class, 0)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun notifier_opt(): Notifier_optContext? = getRuleContext(Notifier_optContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -26142,17 +26045,17 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Width_timing_checkContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Width_timing_check
 
-        public fun DLWIDTH(): TerminalNode = getToken(Tokens.DLWIDTH, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun controlled_reference_event(): Controlled_reference_eventContext =
-            getRuleContext(Controlled_reference_eventContext::class, 0)!!
+        public fun DLWIDTH(): TerminalNode? = getToken(Tokens.DLWIDTH, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun controlled_reference_event(): Controlled_reference_eventContext? =
+            getRuleContext(Controlled_reference_eventContext::class, 0)
 
-        public fun CO(): TerminalNode = getToken(Tokens.CO, 0)!!
-        public fun timing_check_limit(): Timing_check_limitContext =
-            getRuleContext(Timing_check_limitContext::class, 0)!!
+        public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
+        public fun timing_check_limit(): Timing_check_limitContext? =
+            getRuleContext(Timing_check_limitContext::class, 0)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun threshold_opt(): Threshold_optContext? = getRuleContext(Threshold_optContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -26243,7 +26146,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
-        public fun threshold(): ThresholdContext = getRuleContext(ThresholdContext::class, 0)!!
+        public fun threshold(): ThresholdContext? = getRuleContext(ThresholdContext::class, 0)
         public fun notifier(): NotifierContext? = getRuleContext(NotifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -26320,16 +26223,16 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Nochange_timing_checkContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Nochange_timing_check
 
-        public fun DLNOCHANGE(): TerminalNode = getToken(Tokens.DLNOCHANGE, 0)!!
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun reference_event(): Reference_eventContext = getRuleContext(Reference_eventContext::class, 0)!!
+        public fun DLNOCHANGE(): TerminalNode? = getToken(Tokens.DLNOCHANGE, 0)
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun reference_event(): Reference_eventContext? = getRuleContext(Reference_eventContext::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
-        public fun data_event(): Data_eventContext = getRuleContext(Data_eventContext::class, 0)!!
-        public fun start_edge_offset(): Start_edge_offsetContext = getRuleContext(Start_edge_offsetContext::class, 0)!!
-        public fun end_edge_offset(): End_edge_offsetContext = getRuleContext(End_edge_offsetContext::class, 0)!!
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
-        public fun SC(): TerminalNode = getToken(Tokens.SC, 0)!!
+        public fun data_event(): Data_eventContext? = getRuleContext(Data_eventContext::class, 0)
+        public fun start_edge_offset(): Start_edge_offsetContext? = getRuleContext(Start_edge_offsetContext::class, 0)
+        public fun end_edge_offset(): End_edge_offsetContext? = getRuleContext(End_edge_offsetContext::class, 0)
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
+        public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun notifier_opt(): Notifier_optContext? = getRuleContext(Notifier_optContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -26430,8 +26333,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Checktime_conditionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Checktime_condition
 
-        public fun mintypmax_expression(): Mintypmax_expressionContext =
-            getRuleContext(Mintypmax_expressionContext::class, 0)!!
+        public fun mintypmax_expression(): Mintypmax_expressionContext? =
+            getRuleContext(Mintypmax_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -26491,8 +26394,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Controlled_reference_eventContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Controlled_reference_event
 
-        public fun controlled_timing_check_event(): Controlled_timing_check_eventContext =
-            getRuleContext(Controlled_timing_check_eventContext::class, 0)!!
+        public fun controlled_timing_check_event(): Controlled_timing_check_eventContext? =
+            getRuleContext(Controlled_timing_check_eventContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -26552,8 +26455,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Data_eventContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Data_event
 
-        public fun timing_check_event(): Timing_check_eventContext =
-            getRuleContext(Timing_check_eventContext::class, 0)!!
+        public fun timing_check_event(): Timing_check_eventContext? =
+            getRuleContext(Timing_check_eventContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -26613,13 +26516,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Delayed_dataContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Delayed_data
 
-        public fun terminal_identifier(): Terminal_identifierContext =
-            getRuleContext(Terminal_identifierContext::class, 0)!!
-
+        public fun terminal_identifier(): Terminal_identifierContext? =
+            getRuleContext(Terminal_identifierContext::class, 0)
         public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
         public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext? =
             getRuleContext(Constant_mintypmax_expressionContext::class, 0)
-
         public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -26696,13 +26597,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Delayed_referenceContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Delayed_reference
 
-        public fun terminal_identifier(): Terminal_identifierContext =
-            getRuleContext(Terminal_identifierContext::class, 0)!!
-
+        public fun terminal_identifier(): Terminal_identifierContext? =
+            getRuleContext(Terminal_identifierContext::class, 0)
         public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
         public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext? =
             getRuleContext(Constant_mintypmax_expressionContext::class, 0)
-
         public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -26779,8 +26678,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class End_edge_offsetContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.End_edge_offset
 
-        public fun mintypmax_expression(): Mintypmax_expressionContext =
-            getRuleContext(Mintypmax_expressionContext::class, 0)!!
+        public fun mintypmax_expression(): Mintypmax_expressionContext? =
+            getRuleContext(Mintypmax_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -26840,8 +26739,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Event_based_flagContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Event_based_flag
 
-        public fun constant_expression(): Constant_expressionContext =
-            getRuleContext(Constant_expressionContext::class, 0)!!
+        public fun constant_expression(): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -26901,8 +26800,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class NotifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Notifier
 
-        public fun variable_identifier(): Variable_identifierContext =
-            getRuleContext(Variable_identifierContext::class, 0)!!
+        public fun variable_identifier(): Variable_identifierContext? =
+            getRuleContext(Variable_identifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -26962,8 +26861,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Reference_eventContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Reference_event
 
-        public fun timing_check_event(): Timing_check_eventContext =
-            getRuleContext(Timing_check_eventContext::class, 0)!!
+        public fun timing_check_event(): Timing_check_eventContext? =
+            getRuleContext(Timing_check_eventContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -27023,8 +26922,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Remain_active_flagContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Remain_active_flag
 
-        public fun constant_expression(): Constant_expressionContext =
-            getRuleContext(Constant_expressionContext::class, 0)!!
+        public fun constant_expression(): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -27084,8 +26983,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Stamptime_conditionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Stamptime_condition
 
-        public fun mintypmax_expression(): Mintypmax_expressionContext =
-            getRuleContext(Mintypmax_expressionContext::class, 0)!!
+        public fun mintypmax_expression(): Mintypmax_expressionContext? =
+            getRuleContext(Mintypmax_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -27145,8 +27044,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Start_edge_offsetContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Start_edge_offset
 
-        public fun mintypmax_expression(): Mintypmax_expressionContext =
-            getRuleContext(Mintypmax_expressionContext::class, 0)!!
+        public fun mintypmax_expression(): Mintypmax_expressionContext? =
+            getRuleContext(Mintypmax_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -27206,8 +27105,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class ThresholdContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Threshold
 
-        public fun constant_expression(): Constant_expressionContext =
-            getRuleContext(Constant_expressionContext::class, 0)!!
+        public fun constant_expression(): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -27267,7 +27166,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Timing_check_limitContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Timing_check_limit
 
-        public fun expression(): ExpressionContext = getRuleContext(ExpressionContext::class, 0)!!
+        public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -27327,12 +27226,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Timing_check_eventContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Timing_check_event
 
-        public fun specify_terminal_descriptor(): Specify_terminal_descriptorContext =
-            getRuleContext(Specify_terminal_descriptorContext::class, 0)!!
+        public fun specify_terminal_descriptor(): Specify_terminal_descriptorContext? =
+            getRuleContext(Specify_terminal_descriptorContext::class, 0)
 
         public fun timing_check_event_control(): Timing_check_event_controlContext? =
             getRuleContext(Timing_check_event_controlContext::class, 0)
-
         public fun AMAMAM(): TerminalNode? = getToken(Tokens.AMAMAM, 0)
         public fun timing_check_condition(): Timing_check_conditionContext? =
             getRuleContext(Timing_check_conditionContext::class, 0)
@@ -27417,12 +27315,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Controlled_timing_check_eventContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Controlled_timing_check_event
 
-        public fun timing_check_event_control(): Timing_check_event_controlContext =
-            getRuleContext(Timing_check_event_controlContext::class, 0)!!
+        public fun timing_check_event_control(): Timing_check_event_controlContext? =
+            getRuleContext(Timing_check_event_controlContext::class, 0)
 
-        public fun specify_terminal_descriptor(): Specify_terminal_descriptorContext =
-            getRuleContext(Specify_terminal_descriptorContext::class, 0)!!
-
+        public fun specify_terminal_descriptor(): Specify_terminal_descriptorContext? =
+            getRuleContext(Specify_terminal_descriptorContext::class, 0)
         public fun AMAMAM(): TerminalNode? = getToken(Tokens.AMAMAM, 0)
         public fun timing_check_condition(): Timing_check_conditionContext? =
             getRuleContext(Timing_check_conditionContext::class, 0)
@@ -27664,11 +27561,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Edge_control_specifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Edge_control_specifier
 
-        public fun EDGE(): TerminalNode = getToken(Tokens.EDGE, 0)!!
-        public fun LB(): TerminalNode = getToken(Tokens.LB, 0)!!
+        public fun EDGE(): TerminalNode? = getToken(Tokens.EDGE, 0)
+        public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
         public fun edge_descriptor(): List<Edge_descriptorContext> = getRuleContexts(Edge_descriptorContext::class)
         public fun edge_descriptor(i: Int): Edge_descriptorContext? = getRuleContext(Edge_descriptorContext::class, i)
-        public fun RB(): TerminalNode = getToken(Tokens.RB, 0)!!
+        public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -27755,7 +27652,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Edge_descriptorContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Edge_descriptor
 
-        public fun EDGE_DESCRIPTOR(): TerminalNode = getToken(Tokens.EDGE_DESCRIPTOR, 0)!!
+        public fun EDGE_DESCRIPTOR(): TerminalNode? = getToken(Tokens.EDGE_DESCRIPTOR, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -27815,9 +27712,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Timing_check_conditionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Timing_check_condition
 
-        public fun scalar_timing_check_condition(): Scalar_timing_check_conditionContext =
-            getRuleContext(Scalar_timing_check_conditionContext::class, 0)!!
-
+        public fun scalar_timing_check_condition(): Scalar_timing_check_conditionContext? =
+            getRuleContext(Scalar_timing_check_conditionContext::class, 0)
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
 
@@ -27899,7 +27795,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Scalar_timing_check_conditionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Scalar_timing_check_condition
 
-        public fun expression(): ExpressionContext = getRuleContext(ExpressionContext::class, 0)!!
+        public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
         public fun TI(): TerminalNode? = getToken(Tokens.TI, 0)
         public fun EQEQ(): TerminalNode? = getToken(Tokens.EQEQ, 0)
         public fun scalar_constant(): Scalar_constantContext? = getRuleContext(Scalar_constantContext::class, 0)
@@ -28109,10 +28005,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class ConcatenationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Concatenation
 
-        public fun LC(): TerminalNode = getToken(Tokens.LC, 0)!!
+        public fun LC(): TerminalNode? = getToken(Tokens.LC, 0)
         public fun expression(): List<ExpressionContext> = getRuleContexts(ExpressionContext::class)
         public fun expression(i: Int): ExpressionContext? = getRuleContext(ExpressionContext::class, i)
-        public fun RC(): TerminalNode = getToken(Tokens.RC, 0)!!
+        public fun RC(): TerminalNode? = getToken(Tokens.RC, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -28196,14 +28092,14 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Constant_concatenationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Constant_concatenation
 
-        public fun LC(): TerminalNode = getToken(Tokens.LC, 0)!!
+        public fun LC(): TerminalNode? = getToken(Tokens.LC, 0)
         public fun constant_expression(): List<Constant_expressionContext> =
             getRuleContexts(Constant_expressionContext::class)
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
 
-        public fun RC(): TerminalNode = getToken(Tokens.RC, 0)!!
+        public fun RC(): TerminalNode? = getToken(Tokens.RC, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -28287,14 +28183,14 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Constant_multiple_concatenationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Constant_multiple_concatenation
 
-        public fun LC(): TerminalNode = getToken(Tokens.LC, 0)!!
-        public fun constant_expression(): Constant_expressionContext =
-            getRuleContext(Constant_expressionContext::class, 0)!!
+        public fun LC(): TerminalNode? = getToken(Tokens.LC, 0)
+        public fun constant_expression(): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, 0)
 
-        public fun constant_concatenation(): Constant_concatenationContext =
-            getRuleContext(Constant_concatenationContext::class, 0)!!
+        public fun constant_concatenation(): Constant_concatenationContext? =
+            getRuleContext(Constant_concatenationContext::class, 0)
 
-        public fun RC(): TerminalNode = getToken(Tokens.RC, 0)!!
+        public fun RC(): TerminalNode? = getToken(Tokens.RC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -28363,14 +28259,14 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Module_path_concatenationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Module_path_concatenation
 
-        public fun LC(): TerminalNode = getToken(Tokens.LC, 0)!!
+        public fun LC(): TerminalNode? = getToken(Tokens.LC, 0)
         public fun module_path_expression(): List<Module_path_expressionContext> =
             getRuleContexts(Module_path_expressionContext::class)
 
         public fun module_path_expression(i: Int): Module_path_expressionContext? =
             getRuleContext(Module_path_expressionContext::class, i)
 
-        public fun RC(): TerminalNode = getToken(Tokens.RC, 0)!!
+        public fun RC(): TerminalNode? = getToken(Tokens.RC, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -28454,14 +28350,14 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Module_path_multiple_concatenationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Module_path_multiple_concatenation
 
-        public fun LC(): TerminalNode = getToken(Tokens.LC, 0)!!
-        public fun constant_expression(): Constant_expressionContext =
-            getRuleContext(Constant_expressionContext::class, 0)!!
+        public fun LC(): TerminalNode? = getToken(Tokens.LC, 0)
+        public fun constant_expression(): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, 0)
 
-        public fun module_path_concatenation(): Module_path_concatenationContext =
-            getRuleContext(Module_path_concatenationContext::class, 0)!!
+        public fun module_path_concatenation(): Module_path_concatenationContext? =
+            getRuleContext(Module_path_concatenationContext::class, 0)
 
-        public fun RC(): TerminalNode = getToken(Tokens.RC, 0)!!
+        public fun RC(): TerminalNode? = getToken(Tokens.RC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -28530,12 +28426,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Multiple_concatenationContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Multiple_concatenation
 
-        public fun LC(): TerminalNode = getToken(Tokens.LC, 0)!!
-        public fun constant_expression(): Constant_expressionContext =
-            getRuleContext(Constant_expressionContext::class, 0)!!
+        public fun LC(): TerminalNode? = getToken(Tokens.LC, 0)
+        public fun constant_expression(): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, 0)
 
-        public fun concatenation(): ConcatenationContext = getRuleContext(ConcatenationContext::class, 0)!!
-        public fun RC(): TerminalNode = getToken(Tokens.RC, 0)!!
+        public fun concatenation(): ConcatenationContext? = getRuleContext(ConcatenationContext::class, 0)
+        public fun RC(): TerminalNode? = getToken(Tokens.RC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -28604,23 +28500,22 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Constant_function_callContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Constant_function_call
 
-        public fun function_identifier(): Function_identifierContext =
-            getRuleContext(Function_identifierContext::class, 0)!!
+        public fun function_identifier(): Function_identifierContext? =
+            getRuleContext(Function_identifierContext::class, 0)
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun constant_expression(): List<Constant_expressionContext> =
             getRuleContexts(Constant_expressionContext::class)
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -28723,17 +28618,17 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Constant_system_function_callContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Constant_system_function_call
 
-        public fun system_function_identifier(): System_function_identifierContext =
-            getRuleContext(System_function_identifierContext::class, 0)!!
+        public fun system_function_identifier(): System_function_identifierContext? =
+            getRuleContext(System_function_identifierContext::class, 0)
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun constant_expression(): List<Constant_expressionContext> =
             getRuleContexts(Constant_expressionContext::class)
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -28820,19 +28715,18 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Function_callContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Function_call
 
-        public fun hierarchical_identifier(): Hierarchical_identifierContext =
-            getRuleContext(Hierarchical_identifierContext::class, 0)!!
+        public fun hierarchical_identifier(): Hierarchical_identifierContext? =
+            getRuleContext(Hierarchical_identifierContext::class, 0)
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun expression(): List<ExpressionContext> = getRuleContexts(ExpressionContext::class)
         public fun expression(i: Int): ExpressionContext? = getRuleContext(ExpressionContext::class, i)
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -28935,8 +28829,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class System_function_callContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.System_function_call
 
-        public fun system_function_identifier(): System_function_identifierContext =
-            getRuleContext(System_function_identifierContext::class, 0)!!
+        public fun system_function_identifier(): System_function_identifierContext? =
+            getRuleContext(System_function_identifierContext::class, 0)
 
         public fun sys_func_call_port_list(): Sys_func_call_port_listContext? =
             getRuleContext(Sys_func_call_port_listContext::class, 0)
@@ -29009,10 +28903,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Sys_func_call_port_listContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Sys_func_call_port_list
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun expression(): List<ExpressionContext> = getRuleContexts(ExpressionContext::class)
         public fun expression(i: Int): ExpressionContext? = getRuleContext(ExpressionContext::class, i)
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -29096,7 +28990,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Base_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Base_expression
 
-        public fun expression(): ExpressionContext = getRuleContext(ExpressionContext::class, 0)!!
+        public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -29156,8 +29050,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Constant_base_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Constant_base_expression
 
-        public fun constant_expression(): Constant_expressionContext =
-            getRuleContext(Constant_expressionContext::class, 0)!!
+        public fun constant_expression(): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -29233,8 +29127,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ConstExprUnaryContext : Constant_expressionContext {
-        public fun unary_operator(): Unary_operatorContext = getRuleContext(Unary_operatorContext::class, 0)!!
-        public fun constant_primary(): Constant_primaryContext = getRuleContext(Constant_primaryContext::class, 0)!!
+        public fun unary_operator(): Unary_operatorContext? = getRuleContext(Unary_operatorContext::class, 0)
+        public fun constant_primary(): Constant_primaryContext? = getRuleContext(Constant_primaryContext::class, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
@@ -29278,7 +29172,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun PL(): TerminalNode? = getToken(Tokens.PL, 0)
         public fun MI(): TerminalNode? = getToken(Tokens.MI, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
@@ -29325,7 +29218,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
 
-        public fun AMAM(): TerminalNode = getToken(Tokens.AMAM, 0)!!
+        public fun AMAM(): TerminalNode? = getToken(Tokens.AMAM, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
@@ -29369,7 +29262,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun AS(): TerminalNode? = getToken(Tokens.AS, 0)
         public fun SL(): TerminalNode? = getToken(Tokens.SL, 0)
         public fun MO(): TerminalNode? = getToken(Tokens.MO, 0)
@@ -29416,7 +29308,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun CA(): TerminalNode? = getToken(Tokens.CA, 0)
         public fun CATI(): TerminalNode? = getToken(Tokens.CATI, 0)
         public fun TICA(): TerminalNode? = getToken(Tokens.TICA, 0)
@@ -29464,7 +29355,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
 
-        public fun AM(): TerminalNode = getToken(Tokens.AM, 0)!!
+        public fun AM(): TerminalNode? = getToken(Tokens.AM, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
@@ -29508,7 +29399,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun GTGT(): TerminalNode? = getToken(Tokens.GTGT, 0)
         public fun LTLT(): TerminalNode? = getToken(Tokens.LTLT, 0)
         public fun GTGTGT(): TerminalNode? = getToken(Tokens.GTGTGT, 0)
@@ -29556,7 +29446,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun LT(): TerminalNode? = getToken(Tokens.LT, 0)
         public fun LTEQ(): TerminalNode? = getToken(Tokens.LTEQ, 0)
         public fun GT(): TerminalNode? = getToken(Tokens.GT, 0)
@@ -29605,7 +29494,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
 
-        public fun ASAS(): TerminalNode = getToken(Tokens.ASAS, 0)!!
+        public fun ASAS(): TerminalNode? = getToken(Tokens.ASAS, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
@@ -29650,7 +29539,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
 
-        public fun VL(): TerminalNode = getToken(Tokens.VL, 0)!!
+        public fun VL(): TerminalNode? = getToken(Tokens.VL, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
@@ -29695,7 +29584,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
 
-        public fun VLVL(): TerminalNode = getToken(Tokens.VLVL, 0)!!
+        public fun VLVL(): TerminalNode? = getToken(Tokens.VLVL, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
@@ -29739,7 +29628,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun EQEQ(): TerminalNode? = getToken(Tokens.EQEQ, 0)
         public fun EMEQ(): TerminalNode? = getToken(Tokens.EMEQ, 0)
         public fun EQEQEQ(): TerminalNode? = getToken(Tokens.EQEQEQ, 0)
@@ -29788,8 +29676,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
 
-        public fun QM(): TerminalNode = getToken(Tokens.QM, 0)!!
-        public fun CL(): TerminalNode = getToken(Tokens.CL, 0)!!
+        public fun QM(): TerminalNode? = getToken(Tokens.QM, 0)
+        public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
@@ -29828,7 +29716,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ConstExprPrimaryContext : Constant_expressionContext {
-        public fun constant_primary(): Constant_primaryContext = getRuleContext(Constant_primaryContext::class, 0)!!
+        public fun constant_primary(): Constant_primaryContext? = getRuleContext(Constant_primaryContext::class, 0)
 
         public constructor(ctx: Constant_expressionContext) {
             copyFrom(ctx)
@@ -29921,7 +29809,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     constant_primary()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
             context!!.stop = _input.LT(-1)
@@ -30377,7 +30264,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                             constant_expression(1)
 
                         }
-                    }
+                    } 
                 }
 
                 this.state = 3992
@@ -30403,7 +30290,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun CL(): List<TerminalNode> = getTokens(Tokens.CL)
         public fun CL(i: Int): TerminalNode? = getToken(Tokens.CL, i)
 
@@ -30489,18 +30375,15 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun msb_constant_expression(): Msb_constant_expressionContext? =
             getRuleContext(Msb_constant_expressionContext::class, 0)
-
         public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
         public fun lsb_constant_expression(): Lsb_constant_expressionContext? =
             getRuleContext(Lsb_constant_expressionContext::class, 0)
 
         public fun constant_base_expression(): Constant_base_expressionContext? =
             getRuleContext(Constant_base_expressionContext::class, 0)
-
         public fun PLCL(): TerminalNode? = getToken(Tokens.PLCL, 0)
         public fun width_constant_expression(): Width_constant_expressionContext? =
             getRuleContext(Width_constant_expressionContext::class, 0)
-
         public fun MICL(): TerminalNode? = getToken(Tokens.MICL, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -30607,8 +30490,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Dimension_constant_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Dimension_constant_expression
 
-        public fun constant_expression(): Constant_expressionContext =
-            getRuleContext(Constant_expressionContext::class, 0)!!
+        public fun constant_expression(): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -30675,7 +30558,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun expression(): List<ExpressionContext> = getRuleContexts(ExpressionContext::class)
         public fun expression(i: Int): ExpressionContext? = getRuleContext(ExpressionContext::class, i)
         public fun ASAS(): TerminalNode? = getToken(Tokens.ASAS, 0)
@@ -30790,7 +30672,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     primary()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
             context!!.stop = _input.LT(-1)
@@ -31246,7 +31127,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                             expression(1)
 
                         }
-                    }
+                    } 
                 }
 
                 this.state = 4146
@@ -31267,8 +31148,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Lsb_constant_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Lsb_constant_expression
 
-        public fun constant_expression(): Constant_expressionContext =
-            getRuleContext(Constant_expressionContext::class, 0)!!
+        public fun constant_expression(): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -31427,7 +31308,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun module_path_expression(i: Int): Module_path_expressionContext? =
             getRuleContext(Module_path_expressionContext::class, i)
-
         public fun EQEQ(): TerminalNode? = getToken(Tokens.EQEQ, 0)
         public fun EMEQ(): TerminalNode? = getToken(Tokens.EMEQ, 0)
         public fun AM(): TerminalNode? = getToken(Tokens.AM, 0)
@@ -31524,7 +31404,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     module_path_primary()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
             context!!.stop = _input.LT(-1)
@@ -31785,7 +31664,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                             module_path_expression(1)
 
                         }
-                    }
+                    } 
                 }
 
                 this.state = 4240
@@ -31811,7 +31690,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun module_path_expression(i: Int): Module_path_expressionContext? =
             getRuleContext(Module_path_expressionContext::class, i)
-
         public fun CL(): List<TerminalNode> = getTokens(Tokens.CL)
         public fun CL(i: Int): TerminalNode? = getToken(Tokens.CL, i)
 
@@ -31892,8 +31770,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Msb_constant_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Msb_constant_expression
 
-        public fun constant_expression(): Constant_expressionContext =
-            getRuleContext(Constant_expressionContext::class, 0)!!
+        public fun constant_expression(): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -31956,16 +31834,13 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
         public fun msb_constant_expression(): Msb_constant_expressionContext? =
             getRuleContext(Msb_constant_expressionContext::class, 0)
-
         public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
         public fun lsb_constant_expression(): Lsb_constant_expressionContext? =
             getRuleContext(Lsb_constant_expressionContext::class, 0)
-
         public fun base_expression(): Base_expressionContext? = getRuleContext(Base_expressionContext::class, 0)
         public fun PLCL(): TerminalNode? = getToken(Tokens.PLCL, 0)
         public fun width_constant_expression(): Width_constant_expressionContext? =
             getRuleContext(Width_constant_expressionContext::class, 0)
-
         public fun MICL(): TerminalNode? = getToken(Tokens.MICL, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -32072,8 +31947,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Width_constant_expressionContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Width_constant_expression
 
-        public fun constant_expression(): Constant_expressionContext =
-            getRuleContext(Constant_expressionContext::class, 0)!!
+        public fun constant_expression(): Constant_expressionContext? =
+            getRuleContext(Constant_expressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -32149,8 +32024,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ConstPrimaryConcatenationContext : Constant_primaryContext {
-        public fun constant_concatenation(): Constant_concatenationContext =
-            getRuleContext(Constant_concatenationContext::class, 0)!!
+        public fun constant_concatenation(): Constant_concatenationContext? =
+            getRuleContext(Constant_concatenationContext::class, 0)
 
         public constructor(ctx: Constant_primaryContext) {
             copyFrom(ctx)
@@ -32184,7 +32059,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ConstPrimaryStringContext : Constant_primaryContext {
-        public fun string_(): String_Context = getRuleContext(String_Context::class, 0)!!
+        public fun string_(): String_Context? = getRuleContext(String_Context::class, 0)
 
         public constructor(ctx: Constant_primaryContext) {
             copyFrom(ctx)
@@ -32218,11 +32093,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ConstPrimaryIdentifierContext : Constant_primaryContext {
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
         public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
         public fun constant_range_expression(): Constant_range_expressionContext? =
             getRuleContext(Constant_range_expressionContext::class, 0)
-
         public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
 
         public constructor(ctx: Constant_primaryContext) {
@@ -32257,8 +32131,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ConstPrimaryMultipleConcatenationContext : Constant_primaryContext {
-        public fun constant_multiple_concatenation(): Constant_multiple_concatenationContext =
-            getRuleContext(Constant_multiple_concatenationContext::class, 0)!!
+        public fun constant_multiple_concatenation(): Constant_multiple_concatenationContext? =
+            getRuleContext(Constant_multiple_concatenationContext::class, 0)
 
         public constructor(ctx: Constant_primaryContext) {
             copyFrom(ctx)
@@ -32292,11 +32166,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ConstPrimaryGroupContext : Constant_primaryContext {
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
-        public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext =
-            getRuleContext(Constant_mintypmax_expressionContext::class, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
+        public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext? =
+            getRuleContext(Constant_mintypmax_expressionContext::class, 0)
 
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
 
         public constructor(ctx: Constant_primaryContext) {
             copyFrom(ctx)
@@ -32330,7 +32204,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ConstPrimaryNumberContext : Constant_primaryContext {
-        public fun number(): NumberContext = getRuleContext(NumberContext::class, 0)!!
+        public fun number(): NumberContext? = getRuleContext(NumberContext::class, 0)
 
         public constructor(ctx: Constant_primaryContext) {
             copyFrom(ctx)
@@ -32364,8 +32238,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ConstPrimaryFunctionCallContext : Constant_primaryContext {
-        public fun constant_function_call(): Constant_function_callContext =
-            getRuleContext(Constant_function_callContext::class, 0)!!
+        public fun constant_function_call(): Constant_function_callContext? =
+            getRuleContext(Constant_function_callContext::class, 0)
 
         public constructor(ctx: Constant_primaryContext) {
             copyFrom(ctx)
@@ -32399,8 +32273,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     }
 
     public open class ConstPrimarySystemFunctionCallContext : Constant_primaryContext {
-        public fun constant_system_function_call(): Constant_system_function_callContext =
-            getRuleContext(Constant_system_function_callContext::class, 0)!!
+        public fun constant_system_function_call(): Constant_system_function_callContext? =
+            getRuleContext(Constant_system_function_callContext::class, 0)
 
         public constructor(ctx: Constant_primaryContext) {
             copyFrom(ctx)
@@ -32553,15 +32427,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun module_path_multiple_concatenation(): Module_path_multiple_concatenationContext? =
             getRuleContext(Module_path_multiple_concatenationContext::class, 0)
-
         public fun function_call(): Function_callContext? = getRuleContext(Function_callContext::class, 0)
         public fun system_function_call(): System_function_callContext? =
             getRuleContext(System_function_callContext::class, 0)
-
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun module_path_mintypmax_expression(): Module_path_mintypmax_expressionContext? =
             getRuleContext(Module_path_mintypmax_expressionContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -32680,20 +32551,16 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun number(): NumberContext? = getRuleContext(NumberContext::class, 0)
         public fun hierarchical_identifier(): Hierarchical_identifierContext? =
             getRuleContext(Hierarchical_identifierContext::class, 0)
-
         public fun select_(): Select_Context? = getRuleContext(Select_Context::class, 0)
         public fun concatenation(): ConcatenationContext? = getRuleContext(ConcatenationContext::class, 0)
         public fun multiple_concatenation(): Multiple_concatenationContext? =
             getRuleContext(Multiple_concatenationContext::class, 0)
-
         public fun function_call(): Function_callContext? = getRuleContext(Function_callContext::class, 0)
         public fun system_function_call(): System_function_callContext? =
             getRuleContext(System_function_callContext::class, 0)
-
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun mintypmax_expression(): Mintypmax_expressionContext? =
             getRuleContext(Mintypmax_expressionContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun string_(): String_Context? = getRuleContext(String_Context::class, 0)
 
@@ -32827,9 +32694,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Select_Context : ParserRuleContext {
         override val ruleIndex: Int = Rules.Select_
 
-        public fun LB(): TerminalNode = getToken(Tokens.LB, 0)!!
-        public fun range_expression(): Range_expressionContext = getRuleContext(Range_expressionContext::class, 0)!!
-        public fun RB(): TerminalNode = getToken(Tokens.RB, 0)!!
+        public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
+        public fun range_expression(): Range_expressionContext? = getRuleContext(Range_expressionContext::class, 0)
+        public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
         public fun bit_select(): Bit_selectContext? = getRuleContext(Bit_selectContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -32955,7 +32822,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         try {
             var _alt: Int
             enterOuterAlt(_localctx, 1)
-            this.state = 4326
+            this.state = 4326 
             errorHandler.sync(this)
             _alt = 1
 
@@ -32972,11 +32839,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                         match(Tokens.RB)
 
                     }
-
                     else -> throw NoViableAltException(this)
                 }
 
-                this.state = 4328
+                this.state = 4328 
                 errorHandler.sync(this)
                 _alt = interpreter.adaptivePredict(_input, 449, context)
             } while (_alt != 2 && _alt != INVALID_ALT_NUMBER)
@@ -32996,7 +32862,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun hierarchical_identifier(): Hierarchical_identifierContext? =
             getRuleContext(Hierarchical_identifierContext::class, 0)
-
         public fun const_select(): Const_selectContext? = getRuleContext(Const_selectContext::class, 0)
         public fun LC(): TerminalNode? = getToken(Tokens.LC, 0)
         public fun net_lvalue(): List<Net_lvalueContext> = getRuleContexts(Net_lvalueContext::class)
@@ -33109,11 +32974,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Const_selectContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Const_select
 
-        public fun LB(): TerminalNode = getToken(Tokens.LB, 0)!!
-        public fun constant_range_expression(): Constant_range_expressionContext =
-            getRuleContext(Constant_range_expressionContext::class, 0)!!
+        public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
+        public fun constant_range_expression(): Constant_range_expressionContext? =
+            getRuleContext(Constant_range_expressionContext::class, 0)
 
-        public fun RB(): TerminalNode = getToken(Tokens.RB, 0)!!
+        public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
         public fun const_bit_select(): Const_bit_selectContext? = getRuleContext(Const_bit_selectContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -33197,7 +33062,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun RB(): List<TerminalNode> = getTokens(Tokens.RB)
         public fun RB(i: Int): TerminalNode? = getToken(Tokens.RB, i)
 
@@ -33243,7 +33107,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         try {
             var _alt: Int
             enterOuterAlt(_localctx, 1)
-            this.state = 4358
+            this.state = 4358 
             errorHandler.sync(this)
             _alt = 1
 
@@ -33260,11 +33124,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                         match(Tokens.RB)
 
                     }
-
                     else -> throw NoViableAltException(this)
                 }
 
-                this.state = 4360
+                this.state = 4360 
                 errorHandler.sync(this)
                 _alt = interpreter.adaptivePredict(_input, 454, context)
             } while (_alt != 2 && _alt != INVALID_ALT_NUMBER)
@@ -33284,7 +33147,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun hierarchical_identifier(): Hierarchical_identifierContext? =
             getRuleContext(Hierarchical_identifierContext::class, 0)
-
         public fun select_(): Select_Context? = getRuleContext(Select_Context::class, 0)
         public fun LC(): TerminalNode? = getToken(Tokens.LC, 0)
         public fun variable_lvalue(): List<Variable_lvalueContext> = getRuleContexts(Variable_lvalueContext::class)
@@ -33825,8 +33687,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Binary_numberContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Binary_number
 
-        public fun binary_base(): Binary_baseContext = getRuleContext(Binary_baseContext::class, 0)!!
-        public fun binary_value(): Binary_valueContext = getRuleContext(Binary_valueContext::class, 0)!!
+        public fun binary_base(): Binary_baseContext? = getRuleContext(Binary_baseContext::class, 0)
+        public fun binary_value(): Binary_valueContext? = getRuleContext(Binary_valueContext::class, 0)
         public fun size(): SizeContext? = getRuleContext(SizeContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -33900,8 +33762,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Octal_numberContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Octal_number
 
-        public fun octal_base(): Octal_baseContext = getRuleContext(Octal_baseContext::class, 0)!!
-        public fun octal_value(): Octal_valueContext = getRuleContext(Octal_valueContext::class, 0)!!
+        public fun octal_base(): Octal_baseContext? = getRuleContext(Octal_baseContext::class, 0)
+        public fun octal_value(): Octal_valueContext? = getRuleContext(Octal_valueContext::class, 0)
         public fun size(): SizeContext? = getRuleContext(SizeContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -33975,8 +33837,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Hex_numberContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Hex_number
 
-        public fun hex_base(): Hex_baseContext = getRuleContext(Hex_baseContext::class, 0)!!
-        public fun hex_value(): Hex_valueContext = getRuleContext(Hex_valueContext::class, 0)!!
+        public fun hex_base(): Hex_baseContext? = getRuleContext(Hex_baseContext::class, 0)
+        public fun hex_value(): Hex_valueContext? = getRuleContext(Hex_valueContext::class, 0)
         public fun size(): SizeContext? = getRuleContext(SizeContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -34050,7 +33912,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class SizeContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Size
 
-        public fun UNSIGNED_NUMBER(): TerminalNode = getToken(Tokens.UNSIGNED_NUMBER, 0)!!
+        public fun UNSIGNED_NUMBER(): TerminalNode? = getToken(Tokens.UNSIGNED_NUMBER, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -34110,7 +33972,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Fixed_point_numberContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Fixed_point_number
 
-        public fun FIXED_POINT_NUMBER(): TerminalNode = getToken(Tokens.FIXED_POINT_NUMBER, 0)!!
+        public fun FIXED_POINT_NUMBER(): TerminalNode? = getToken(Tokens.FIXED_POINT_NUMBER, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -34170,7 +34032,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Exponential_numberContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Exponential_number
 
-        public fun EXPONENTIAL_NUMBER(): TerminalNode = getToken(Tokens.EXPONENTIAL_NUMBER, 0)!!
+        public fun EXPONENTIAL_NUMBER(): TerminalNode? = getToken(Tokens.EXPONENTIAL_NUMBER, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -34230,7 +34092,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Unsigned_numberContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Unsigned_number
 
-        public fun UNSIGNED_NUMBER(): TerminalNode = getToken(Tokens.UNSIGNED_NUMBER, 0)!!
+        public fun UNSIGNED_NUMBER(): TerminalNode? = getToken(Tokens.UNSIGNED_NUMBER, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -34362,7 +34224,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Binary_valueContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Binary_value
 
-        public fun BINARY_VALUE(): TerminalNode = getToken(Tokens.BINARY_VALUE, 0)!!
+        public fun BINARY_VALUE(): TerminalNode? = getToken(Tokens.BINARY_VALUE, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -34422,7 +34284,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Octal_valueContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Octal_value
 
-        public fun OCTAL_VALUE(): TerminalNode = getToken(Tokens.OCTAL_VALUE, 0)!!
+        public fun OCTAL_VALUE(): TerminalNode? = getToken(Tokens.OCTAL_VALUE, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -34482,7 +34344,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Hex_valueContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Hex_value
 
-        public fun HEX_VALUE(): TerminalNode = getToken(Tokens.HEX_VALUE, 0)!!
+        public fun HEX_VALUE(): TerminalNode? = getToken(Tokens.HEX_VALUE, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -34542,7 +34404,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Decimal_baseContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Decimal_base
 
-        public fun DECIMAL_BASE(): TerminalNode = getToken(Tokens.DECIMAL_BASE, 0)!!
+        public fun DECIMAL_BASE(): TerminalNode? = getToken(Tokens.DECIMAL_BASE, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -34602,7 +34464,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Binary_baseContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Binary_base
 
-        public fun BINARY_BASE(): TerminalNode = getToken(Tokens.BINARY_BASE, 0)!!
+        public fun BINARY_BASE(): TerminalNode? = getToken(Tokens.BINARY_BASE, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -34662,7 +34524,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Octal_baseContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Octal_base
 
-        public fun OCTAL_BASE(): TerminalNode = getToken(Tokens.OCTAL_BASE, 0)!!
+        public fun OCTAL_BASE(): TerminalNode? = getToken(Tokens.OCTAL_BASE, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -34722,7 +34584,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Hex_baseContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Hex_base
 
-        public fun HEX_BASE(): TerminalNode = getToken(Tokens.HEX_BASE, 0)!!
+        public fun HEX_BASE(): TerminalNode? = getToken(Tokens.HEX_BASE, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -34782,7 +34644,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class String_Context : ParserRuleContext {
         override val ruleIndex: Int = Rules.String_
 
-        public fun STRING(): TerminalNode = getToken(Tokens.STRING, 0)!!
+        public fun STRING(): TerminalNode? = getToken(Tokens.STRING, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -34842,12 +34704,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Attribute_instanceContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Attribute_instance
 
-        public fun LP(): TerminalNode = getToken(Tokens.LP, 0)!!
+        public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun AS(): List<TerminalNode> = getTokens(Tokens.AS)
         public fun AS(i: Int): TerminalNode? = getToken(Tokens.AS, i)
         public fun attr_spec(): List<Attr_specContext> = getRuleContexts(Attr_specContext::class)
         public fun attr_spec(i: Int): Attr_specContext? = getRuleContext(Attr_specContext::class, i)
-        public fun RP(): TerminalNode = getToken(Tokens.RP, 0)!!
+        public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -34937,7 +34799,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Attr_specContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Attr_spec
 
-        public fun attr_name(): Attr_nameContext = getRuleContext(Attr_nameContext::class, 0)!!
+        public fun attr_name(): Attr_nameContext? = getRuleContext(Attr_nameContext::class, 0)
         public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
         public fun constant_expression(): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, 0)
@@ -35013,7 +34875,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Attr_nameContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Attr_name
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -35073,7 +34935,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Block_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Block_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -35133,7 +34995,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Cell_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Cell_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -35193,7 +35055,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Config_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Config_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -35253,7 +35115,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Escaped_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Escaped_identifier
 
-        public fun ESCAPED_IDENTIFIER(): TerminalNode = getToken(Tokens.ESCAPED_IDENTIFIER, 0)!!
+        public fun ESCAPED_IDENTIFIER(): TerminalNode? = getToken(Tokens.ESCAPED_IDENTIFIER, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -35313,7 +35175,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Event_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Event_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -35373,7 +35235,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Function_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Function_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -35433,7 +35295,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Gate_instance_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Gate_instance_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -35493,7 +35355,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Generate_block_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Generate_block_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -35553,7 +35415,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Genvar_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Genvar_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -35613,7 +35475,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Hierarchical_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Hierarchical_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
         public fun hier_ref(): List<Hier_refContext> = getRuleContexts(Hier_refContext::class)
         public fun hier_ref(i: Int): Hier_refContext? = getRuleContext(Hier_refContext::class, i)
 
@@ -35691,8 +35553,8 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Hier_refContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Hier_ref
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
-        public fun DT(): TerminalNode = getToken(Tokens.DT, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
+        public fun DT(): TerminalNode? = getToken(Tokens.DT, 0)
         public fun const_bit_select(): Const_bit_selectContext? = getRuleContext(Const_bit_selectContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -35768,7 +35630,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun escaped_identifier(): Escaped_identifierContext? =
             getRuleContext(Escaped_identifierContext::class, 0)
-
         public fun simple_identifier(): Simple_identifierContext? = getRuleContext(Simple_identifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -35844,7 +35705,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Input_port_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Input_port_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -35904,7 +35765,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Instance_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Instance_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -35964,7 +35825,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Library_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Library_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -36024,7 +35885,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Module_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Module_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -36084,7 +35945,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Module_instance_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Module_instance_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -36144,7 +36005,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Net_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Net_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -36204,7 +36065,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Output_port_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Output_port_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -36264,7 +36125,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Parameter_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Parameter_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -36324,7 +36185,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Port_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Port_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -36384,7 +36245,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Real_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Real_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -36444,7 +36305,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Simple_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Simple_identifier
 
-        public fun SIMPLE_IDENTIFIER(): TerminalNode = getToken(Tokens.SIMPLE_IDENTIFIER, 0)!!
+        public fun SIMPLE_IDENTIFIER(): TerminalNode? = getToken(Tokens.SIMPLE_IDENTIFIER, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -36504,7 +36365,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Specparam_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Specparam_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -36564,7 +36425,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class System_function_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.System_function_identifier
 
-        public fun SYSTEM_TF_IDENTIFIER(): TerminalNode = getToken(Tokens.SYSTEM_TF_IDENTIFIER, 0)!!
+        public fun SYSTEM_TF_IDENTIFIER(): TerminalNode? = getToken(Tokens.SYSTEM_TF_IDENTIFIER, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -36624,7 +36485,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class System_task_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.System_task_identifier
 
-        public fun SYSTEM_TF_IDENTIFIER(): TerminalNode = getToken(Tokens.SYSTEM_TF_IDENTIFIER, 0)!!
+        public fun SYSTEM_TF_IDENTIFIER(): TerminalNode? = getToken(Tokens.SYSTEM_TF_IDENTIFIER, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -36684,7 +36545,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Task_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Task_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -36744,7 +36605,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Terminal_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Terminal_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -36804,7 +36665,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Topmodule_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Topmodule_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -36864,7 +36725,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Udp_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Udp_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -36924,7 +36785,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Udp_instance_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Udp_instance_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }
@@ -36984,7 +36845,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class Variable_identifierContext : ParserRuleContext {
         override val ruleIndex: Int = Rules.Variable_identifier
 
-        public fun identifier(): IdentifierContext = getRuleContext(IdentifierContext::class, 0)!!
+        public fun identifier(): IdentifierContext? = getRuleContext(IdentifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
         }

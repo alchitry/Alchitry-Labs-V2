@@ -13,7 +13,7 @@ object VerilogTokenizer : EditorTokenizer {
     private val operatorRegex = Regex("[*!~+#\\-/:@|&{}?^=><\\]\\[,();]+")
 
     override fun getTokens(stream: CharStream): List<EditorToken> {
-        val lexer = VerilogLexer(stream)
+        val lexer = VerilogLexer(stream).apply { removeErrorListeners() }
         lexer.removeErrorListeners()
         val tokenStream = CommonTokenStream(lexer)
         tokenStream.fill()

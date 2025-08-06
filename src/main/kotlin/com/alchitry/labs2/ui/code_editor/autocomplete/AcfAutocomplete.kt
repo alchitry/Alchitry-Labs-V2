@@ -19,8 +19,8 @@ class AcfAutocomplete(state: CodeEditorState) : Autocomplete(state) {
         val text = state.getText()
         return withContext(Dispatchers.Default) {
             ensureActive()
-            val tokenStream = CommonTokenStream(AcfLexer(CharStreams.fromString(text)))
-            val tree = AcfParser(tokenStream).source()
+            val tokenStream = CommonTokenStream(AcfLexer(CharStreams.fromString(text)).apply { removeErrorListeners() })
+            val tree = AcfParser(tokenStream).apply { removeErrorListeners() }.source()
             ensureActive()
             val node = tree.findFinalNode(tokenStream, offset)
 
@@ -29,8 +29,9 @@ class AcfAutocomplete(state: CodeEditorState) : Autocomplete(state) {
             if (parent is AcfParser.PortNameContext) {
                 ensureActive()
                 val topFile = Project.current?.top ?: return@withContext null
-                val lucidStream = CommonTokenStream(LucidLexer(CharStreams.fromString(topFile.readText())))
-                val lucidTree = LucidParser(lucidStream).source()
+                val lucidStream =
+                    CommonTokenStream(LucidLexer(CharStreams.fromString(topFile.readText())).apply { removeErrorListeners() })
+                val lucidTree = LucidParser(lucidStream).apply { removeErrorListeners() }.source()
                 ensureActive()
                 val project = Project.current?.getTypesForLucid(topFile, lucidTree) ?: return@withContext null
 

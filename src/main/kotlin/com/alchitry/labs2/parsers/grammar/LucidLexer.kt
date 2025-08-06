@@ -39,7 +39,7 @@ public open class LucidLexer(input: CharStream) : Lexer(input) {
             "'+'", "'-'", "'case'", "'default'", "'if'", "'else'", "'repeat'",
             "'c{'", "'x{'", "'!'", "'*'", "'/'", "'>>'", "'<<'", "'<<<'",
             "'>>>'", "'|'", "'&'", "'^'", "'=='", "'!='", "'>='", "'<='",
-            "'||'", "'&&'", "'?'", null, null, null, null, null, null, "';'",
+            "'||'", "'&&'", "'?'", null, null, null, null, null, null, "';'", 
             null, "'signed'"
         )
 
@@ -50,7 +50,7 @@ public open class LucidLexer(input: CharStream) : Lexer(input) {
             null, null, null, null, null, null, null, null, null, null,
             null, null, null, null, null, null, null, null, null, null,
             null, null, null, null, null, null, "HEX", "BIN", "DEC", "REAL",
-            "INT", "STRING", "SEMICOLON", "NL", "SIGNED", "TYPE_ID", "CONST_ID",
+            "INT", "STRING", "SEMICOLON", "NL", "SIGNED", "TYPE_ID", "CONST_ID", 
             "SPACE_ID", "FUNCTION_ID", "BLOCK_COMMENT", "COMMENT", "WS"
         )
 
@@ -165,7 +165,7 @@ public open class LucidLexer(input: CharStream) : Lexer(input) {
         "T__40", "T__41", "T__42", "T__43", "T__44", "T__45", "T__46", "T__47",
         "T__48", "T__49", "T__50", "T__51", "T__52", "T__53", "T__54", "HEX",
         "BIN", "DEC", "REAL", "INT", "STRING", "SEMICOLON", "NL", "SIGNED",
-        "TYPE_ID", "CONST_ID", "SPACE_ID", "FUNCTION_ID", "BLOCK_COMMENT",
+        "TYPE_ID", "CONST_ID", "SPACE_ID", "FUNCTION_ID", "BLOCK_COMMENT", 
         "COMMENT", "WS"
     )
 

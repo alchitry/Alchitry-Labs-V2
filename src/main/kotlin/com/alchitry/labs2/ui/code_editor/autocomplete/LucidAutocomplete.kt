@@ -78,8 +78,9 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
         val text = state.getText()
         return withContext(Dispatchers.Default) {
             ensureActive()
-            val tokenStream = CommonTokenStream(LucidLexer(CharStreams.fromString(text)))
-            val tree = LucidParser(tokenStream).source()
+            val tokenStream =
+                CommonTokenStream(LucidLexer(CharStreams.fromString(text)).apply { removeErrorListeners() })
+            val tree = LucidParser(tokenStream).apply { removeErrorListeners() }.source()
             ensureActive()
             val node = tree.findFinalNode(tokenStream, offset)
             val project = Project.current?.getTypesForLucid(file, tree) ?: return@withContext null

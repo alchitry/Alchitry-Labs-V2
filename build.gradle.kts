@@ -6,7 +6,7 @@ import java.net.URL
 import java.util.*
 
 buildscript {
-    val antlrKotlinVersion = "ea38f5df0b" // commit hash for custom antlr runtime
+    val antlrKotlinVersion = "a2cf9c3064" // commit hash for custom antlr runtime
     extra.set("antlrKotlinVersion", antlrKotlinVersion)
 
     dependencies {

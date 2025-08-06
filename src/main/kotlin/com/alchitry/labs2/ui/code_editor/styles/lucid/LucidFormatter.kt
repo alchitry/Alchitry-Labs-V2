@@ -5,20 +5,18 @@ import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.ui.code_editor.CodeEditorState
 import com.alchitry.labs2.ui.code_editor.styles.CodeFormatter
-import org.antlr.v4.kotlinruntime.CharStreams
-import org.antlr.v4.kotlinruntime.CommonTokenStream
-import org.antlr.v4.kotlinruntime.ParserRuleContext
-import org.antlr.v4.kotlinruntime.Token
+import org.antlr.v4.kotlinruntime.*
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 import org.antlr.v4.kotlinruntime.tree.ParseTreeWalker
 import org.antlr.v4.kotlinruntime.tree.TerminalNode
 
 class LucidFormatter(private val codeEditorState: CodeEditorState) : CodeFormatter {
     override fun getIndentFor(line: Int): String {
-        val lexer = LucidLexer(CharStreams.fromString(codeEditorState.getText()))
+        val listener = ConsoleErrorListener.INSTANCE
+        val lexer = LucidLexer(CharStreams.fromString(codeEditorState.getText())).apply { removeErrorListeners() }
         val tokens = lexer.allTokens
         lexer.reset()
-        val parser = LucidParser(CommonTokenStream(lexer))
+        val parser = LucidParser(CommonTokenStream(lexer)).apply { removeErrorListeners() }
         val tree = parser.source()
 
         val indents = buildIndentList(tokens, tree)
@@ -35,10 +33,10 @@ class LucidFormatter(private val codeEditorState: CodeEditorState) : CodeFormatt
     override fun formatAll(): String {
         val cleanedText = removeSemicolons(codeEditorState.getText())
 
-        val lexer = LucidLexer(CharStreams.fromString(cleanedText))
+        val lexer = LucidLexer(CharStreams.fromString(cleanedText)).apply { removeErrorListeners() }
         val tokens = lexer.allTokens
         lexer.reset()
-        val parser = LucidParser(CommonTokenStream(lexer))
+        val parser = LucidParser(CommonTokenStream(lexer)).apply { removeErrorListeners() }
         val tree = parser.source()
 
         val indents = buildIndentList(tokens, tree)
@@ -71,7 +69,7 @@ class LucidFormatter(private val codeEditorState: CodeEditorState) : CodeFormatt
     }
 
     private fun removeSemicolons(text: String): String {
-        val lexer = LucidLexer(CharStreams.fromString(text))
+        val lexer = LucidLexer(CharStreams.fromString(text)).apply { removeErrorListeners() }
         val tokens = lexer.allTokens
         val tokenText = tokens.map { it.text }.toMutableList()
 
