@@ -138,7 +138,7 @@ class SelectionManager(
     }
 
     fun showCaret() {
-        editorState.showLine(caret.line)
+        editorState.showOffset(caret)
     }
 
     fun moveCaret(position: TextPosition): CaretMovement {
@@ -199,8 +199,8 @@ class SelectionManager(
     }
 
     private fun Offset.toTextPosition(): TextPosition {
-        val y = y + editorState.scrollState.value
-        val x = x
+        val y = y + editorState.verticalScrollState.value
+        val x = x + editorState.horizontalScrollState.value
         var yPos = 0
         val line = editorState.lines.indexOfFirst {
             val bottomY = yPos + (it.lineHeight ?: 0)
@@ -259,7 +259,7 @@ class SelectionManager(
             bottomRight = Offset(size.width, lineBottom)
         )
 
-        translate(top = -editorState.scrollState.value.toFloat()) {
+        translate(top = -editorState.verticalScrollState.value.toFloat()) {
             drawRect(
                 AlchitryColors.current.LineHighlight,
                 lineBounds.topLeft,
@@ -280,7 +280,10 @@ class SelectionManager(
 
         val margin = editorState.lineTopOffset
 
-        translate(top = -editorState.scrollState.value.toFloat() + 2) { // +2 to get caret centered in the line
+        translate(
+            top = -editorState.verticalScrollState.value.toFloat() + 2,
+            left = -editorState.horizontalScrollState.value.toFloat()
+        ) { // +2 to get caret centered in the line
             drawRect(
                 editorState.style?.cursorColor ?: Color.Transparent,
                 topLeft = cursorRect.topLeft

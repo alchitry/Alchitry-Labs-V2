@@ -31,10 +31,7 @@ import androidx.compose.ui.text.TextPainter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.LineHeightStyle
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.*
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.noNulls
 import com.alchitry.labs2.parsers.findFinalNode
@@ -66,6 +63,7 @@ import org.antlr.v4.kotlinruntime.CommonTokenStream
 import org.antlr.v4.kotlinruntime.tree.TerminalNode
 import kotlin.math.abs
 import kotlin.math.log10
+import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
 @Composable
@@ -136,7 +134,8 @@ class CodeEditorState(
     val focusRequester = FocusRequester()
     val lines = ArrayList<CodeLineState>()
     private var gutterDigits = 0
-    val scrollState = ScrollState(0)
+    val verticalScrollState = ScrollState(0)
+    val horizontalScrollState = ScrollState(0)
     var gutterWidth = 0
         private set
     var softWrap by Delegates.observable(false) { _, _, _ -> invalidate() }
@@ -145,7 +144,9 @@ class CodeEditorState(
     private var layoutConstraints: Constraints = Constraints()
     var size: IntSize = IntSize.Zero
         private set
-    private var scrollTarget: Int? = null
+    var longestLine: Int = 0
+        private set
+    private var scrollTarget: TextPosition? = null
 
     var tokens: List<EditorToken> = emptyList()
         private set
@@ -200,10 +201,10 @@ class CodeEditorState(
     }
 
     fun getWindow() = Rect(
-        0f,
-        scrollState.value.toFloat(),
-        size.width.toFloat(),
-        (scrollState.value + size.height).toFloat()
+        horizontalScrollState.value.toFloat(),
+        verticalScrollState.value.toFloat(),
+        (horizontalScrollState.value + size.width).toFloat(),
+        (verticalScrollState.value + size.height).toFloat()
     )
 
     fun onCaretChanged() {
@@ -287,10 +288,14 @@ class CodeEditorState(
             line.layout(Constraints())
         val layout = line.layoutResult ?: return null
         val rect = layout.getCursorRect(position.offset.coerceIn(0, line.text.length - 1))
-        return Offset(rect.left, offsetAtLineBottom(position.line).toFloat() - scrollState.value)
+        return Offset(
+            rect.left - horizontalScrollState.value,
+            offsetAtLineBottom(position.line).toFloat() - verticalScrollState.value
+        )
     }
 
-    private fun screenToTextOffset(offset: Offset) = Offset(offset.x, offset.y + scrollState.value)
+    private fun screenToTextOffset(offset: Offset) =
+        Offset(offset.x + horizontalScrollState.value, offset.y + verticalScrollState.value)
 
     fun screenOffsetToTextPosition(offset: Offset): TextPosition {
         val textOffset = screenToTextOffset(offset)
@@ -350,7 +355,7 @@ class CodeEditorState(
             ).layout(Constraints(), LayoutDirection.Ltr, null).size.height * -0.07f
         }
 
-        LaunchedEffect(scrollState.value) {
+        LaunchedEffect(verticalScrollState.value, horizontalScrollState.value) {
             tooltipState.hide()
             autocomplete?.reset()
         }
@@ -521,25 +526,46 @@ class CodeEditorState(
     fun offsetAtLineBottom(line: Int): Int =
         offsetAtLineTop(line + 1)
 
-    fun showLine(line: Int) {
-        scrollTarget = line
+    fun showOffset(offset: TextPosition) {
+        scrollTarget = offset
     }
 
-    private fun startScrollToLine(line: Int) {
-        val top = offsetAtLineTop(line)
-        val bottom = top + (lineHeight(line) ?: 0)
+    private fun startScrollToLine(textPosition: TextPosition) {
+        val line = lines.getOrNull(textPosition.line) ?: return
+        val layout = line.layoutResult ?: return
 
-        val viewTop = scrollState.value
+        val left = layout.getHorizontalPosition(textPosition.offset, true).roundToInt()
+        val right =
+            layout.getHorizontalPosition((textPosition.offset + 1).coerceAtMost(line.text.length), true).roundToInt()
+        val top = offsetAtLineTop(textPosition.line)
+        val bottom = top + (lineHeight(textPosition.line) ?: 0)
+
+        val viewTop = verticalScrollState.value
         val viewBottom = viewTop + size.height
+        val viewLeft = horizontalScrollState.value
+        val viewRight = viewLeft + (size.width - gutterWidth)
 
-        val destination = when {
+        val verticalDestination = when {
             top < viewTop -> top
             bottom > viewBottom -> bottom - size.height
-            else -> return
+            else -> null
         }
 
-        uiScope?.launch {
-            scrollState.animateScrollTo(destination)
+        val horizontalDestination = when {
+            left < viewLeft -> left
+            right > viewRight -> right - (size.width - gutterWidth)
+            else -> null
+        }
+
+        if (verticalDestination != null) {
+            uiScope?.launch {
+                verticalScrollState.animateScrollTo(verticalDestination)
+            }
+        }
+        if (horizontalDestination != null) {
+            uiScope?.launch {
+                horizontalScrollState.animateScrollTo(horizontalDestination)
+            }
         }
     }
 
@@ -548,7 +574,7 @@ class CodeEditorState(
             return false
         val top = offsetAtLineTop(line)
         val bottom = top + (lines[line].lineHeight ?: 0)
-        return bottom > scrollState.value || top < scrollState.value + size.height
+        return bottom > verticalScrollState.value || top < verticalScrollState.value + size.height
     }
 
     fun DrawScope.draw() {
@@ -558,8 +584,9 @@ class CodeEditorState(
         }
         drawIntoCanvas { canvas ->
             canvas.save()
-            var currentY = -scrollState.value
-            canvas.translate(dx = 0f, dy = currentY.toFloat())
+            var currentY = -verticalScrollState.value
+            val currentX = -horizontalScrollState.value
+            canvas.translate(dx = currentX.toFloat(), dy = currentY.toFloat())
             var wasVisible = false
             for (line in lines) {
                 val layout = line.layoutResult ?: continue
@@ -608,9 +635,12 @@ class CodeEditorState(
         gutterWidth = placeables.maxOf { it.width }
         gutterDigits = maxDigits
 
+        val editorHeight = (constraints.maxHeight - 20.dp.roundToPx()).coerceAtLeast(0)
+        val editorWidth = (constraints.maxWidth - gutterWidth).coerceAtLeast(0)
+
         val lineConstraints =
             if (softWrap)
-                Constraints.fixedWidth((constraints.maxWidth - gutterWidth).coerceAtLeast(0))
+                Constraints.fixedWidth(editorWidth)
             else
                 Constraints()
 
@@ -621,9 +651,16 @@ class CodeEditorState(
         }
 
         val totalHeight = lines.sumOf { it.lineHeight ?: 0 }
+        longestLine = lines.maxOf { it.layoutResult?.size?.width ?: 0 } + 20.dp.roundToPx()
 
         @Suppress("INVISIBLE_SETTER")
-        scrollState.maxValue = (totalHeight - constraints.maxHeight).coerceAtLeast(0)
+        verticalScrollState.maxValue = (totalHeight - editorHeight).coerceAtLeast(0)
+        @Suppress("INVISIBLE_SETTER")
+        verticalScrollState.viewportSize = editorHeight
+        @Suppress("INVISIBLE_SETTER")
+        horizontalScrollState.maxValue = (longestLine - editorWidth).coerceAtLeast(0)
+        @Suppress("INVISIBLE_SETTER")
+        horizontalScrollState.viewportSize = editorWidth
 
         scrollTarget?.let { startScrollToLine(it) }
         scrollTarget = null

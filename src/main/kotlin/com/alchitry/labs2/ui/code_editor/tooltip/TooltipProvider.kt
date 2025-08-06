@@ -70,6 +70,6 @@ class NotationTooltipProvider(
         val token = activeToken ?: return cursorPosition
         val line = token.range.start.line
         val yOffset = codeEditor.offsetAtLineBottom(line)
-        return cursorPosition.copy(y = yOffset.toFloat() - codeEditor.scrollState.value)
+        return cursorPosition.copy(y = yOffset.toFloat() - codeEditor.verticalScrollState.value)
     }
 }

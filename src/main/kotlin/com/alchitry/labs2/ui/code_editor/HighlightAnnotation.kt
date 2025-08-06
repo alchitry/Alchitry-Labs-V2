@@ -58,13 +58,19 @@ data class HighlightAnnotation(
             return
         }
 
-        translate(top = -editorState.scrollState.value.toFloat()) {
+        translate(
+            top = -editorState.verticalScrollState.value.toFloat(),
+            left = -editorState.horizontalScrollState.value.toFloat()
+        ) {
             // first line (might be partial)
             val start = with(editorState) { firstPos.getTopOffset() }
             val end = if (secondPos.line == firstPos.line) {
                 with(editorState) { secondPos.getBottomOffset() }
             } else {
-                Offset(size.width, start.y + (editorState.lineHeight(firstPos.line) ?: 0).toFloat())
+                Offset(
+                    editorState.longestLine.toFloat().coerceAtLeast(size.width),
+                    start.y + (editorState.lineHeight(firstPos.line) ?: 0).toFloat()
+                )
             }
 
             val firstRect = Rect(topLeft = start, bottomRight = end)
@@ -81,7 +87,12 @@ data class HighlightAnnotation(
                 val top = editorState.offsetAtLineTop(firstPos.line + 1)
                 val bottom = editorState.offsetAtLineBottom(secondPos.line - 1)
 
-                val bulkRect = Rect(0f, top.toFloat(), size.width, bottom.toFloat())
+                val bulkRect = Rect(
+                    0f,
+                    top.toFloat(),
+                    size.width.coerceAtLeast(editorState.longestLine.toFloat()),
+                    bottom.toFloat()
+                )
                 drawRect(
                     color,
                     topLeft = bulkRect.topLeft,

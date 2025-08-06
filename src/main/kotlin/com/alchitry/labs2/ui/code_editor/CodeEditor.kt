@@ -16,6 +16,7 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.MeasureResult
@@ -111,7 +112,7 @@ fun CodeEditor(
                     }
                 },
                 modifier = Modifier
-                    .scrollable(state.scrollState, Orientation.Vertical, reverseDirection = true),
+                    .scrollable(state.verticalScrollState, Orientation.Vertical, reverseDirection = true),
                 prefetchState = null,
                 measurePolicy = fun LazyLayoutMeasureScope.(constraints: Constraints): MeasureResult {
                     with(state) {
@@ -121,7 +122,7 @@ fun CodeEditor(
                     // subscribe to editor changes
                     state.redrawTriggerStates.value
 
-                    var y = -state.scrollState.value
+                    var y = -state.verticalScrollState.value
 
                     val placeables =
                         state.lines.mapIndexedNotNull { lineNum, lineState ->
@@ -152,11 +153,7 @@ fun CodeEditor(
                 }
             )
 
-            val horizontalScroll = rememberScrollState()
-            Box(
-                Modifier
-                    .scrollable(horizontalScroll, Orientation.Horizontal)
-            ) {
+            Box {
                 ContextMenuArea(
                     items = {
                         listOf(
@@ -176,7 +173,13 @@ fun CodeEditor(
                     ) {
                         Canvas(
                             modifier = Modifier
-                                .scrollable(state.scrollState, Orientation.Vertical, reverseDirection = true)
+                                .clipToBounds()
+                                .scrollable(state.verticalScrollState, Orientation.Vertical, reverseDirection = true)
+                                .scrollable(
+                                    state.horizontalScrollState,
+                                    Orientation.Horizontal,
+                                    reverseDirection = true
+                                )
                                 .fillMaxSize()
                                 .pointerHoverIcon(textCursor)
                                 .then(state.keyModifier())
@@ -190,6 +193,15 @@ fun CodeEditor(
                         state.autocomplete?.suggestionOverlay()
                     }
                 }
+                VerticalScrollbar(
+                    rememberScrollbarAdapter(state.verticalScrollState),
+                    Modifier.align(Alignment.CenterEnd).fillMaxHeight().padding(end = 8.dp, top = 8.dp, bottom = 8.dp)
+                )
+                HorizontalScrollbar(
+                    rememberScrollbarAdapter(state.horizontalScrollState),
+                    Modifier.align(Alignment.BottomStart).fillMaxWidth()
+                        .padding(bottom = 8.dp, start = 8.dp, end = 20.dp),
+                )
             }
         }
     }
