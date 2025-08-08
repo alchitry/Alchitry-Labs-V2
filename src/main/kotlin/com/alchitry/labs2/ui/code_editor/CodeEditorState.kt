@@ -651,7 +651,7 @@ class CodeEditorState(
         }
 
         val totalHeight = lines.sumOf { it.lineHeight ?: 0 }
-        longestLine = lines.maxOf { it.layoutResult?.size?.width ?: 0 } + 20.dp.roundToPx()
+        longestLine = (lines.maxOfOrNull { it.layoutResult?.size?.width ?: 0 } ?: 0) + 20.dp.roundToPx()
 
         @Suppress("INVISIBLE_SETTER")
         verticalScrollState.maxValue = (totalHeight - editorHeight).coerceAtLeast(0)
