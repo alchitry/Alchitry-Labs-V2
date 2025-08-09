@@ -47,7 +47,7 @@ in the code editor gutter or right-clicking on the test folder in the project tr
 You should download the latest [oss-cad-suite build](https://github.com/alchitry/oss-cad-suite-build) by running the
 gradle task `download-oss-cad-suite` in the `build setup` group.
 
-To run the GUI, open the file `GUI.kt` file and run the main function.
+To run the GUI, open the file `GUI.kt` at this path `src/main/kotlin/com/alchitry/labs2/GUI.kt` and run the main function.
 This will fail as `app.dir` isn't set, but it should create the run configuration.
 
 Edit that configuration by adding `-Dapp.dir=includes/linux-x64` to the `VM options` field.
