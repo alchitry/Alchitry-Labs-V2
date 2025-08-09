@@ -32,7 +32,9 @@ Compose should let me rewrite this in a much cleaner way.
 
 ## Setup
 
-Install Java JDK version 22.
+Download and Install any Java JDK version 22.
+
+Download and Install 7-zip and add the installation folder to your Environment variables / System path. On Windows the folder is typically `C:\Program Files\7-Zip`.
 
 Clone the repo and open it as a project in Intellij. The gradle build files should cause Intellij to install the correct
 versions of all libraries and Kotlin.
