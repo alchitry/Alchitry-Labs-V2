@@ -32,6 +32,8 @@ Compose should let me rewrite this in a much cleaner way.
 
 ## Setup
 
+Install Java JDK version 22.
+
 Clone the repo and open it as a project in Intellij. The gradle build files should cause Intellij to install the correct
 versions of all libraries and Kotlin.
 
