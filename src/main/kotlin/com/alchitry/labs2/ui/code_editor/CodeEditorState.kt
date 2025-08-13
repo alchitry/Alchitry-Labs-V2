@@ -534,9 +534,9 @@ class CodeEditorState(
         val line = lines.getOrNull(textPosition.line) ?: return
         val layout = line.layoutResult ?: return
 
-        val left = layout.getHorizontalPosition(textPosition.offset, true).roundToInt()
+        val left = layout.getHorizontalPosition(textPosition.offset.coerceIn(0, line.text.length), true).roundToInt()
         val right =
-            layout.getHorizontalPosition((textPosition.offset + 1).coerceAtMost(line.text.length), true).roundToInt()
+            layout.getHorizontalPosition((textPosition.offset + 1).coerceIn(0, line.text.length), true).roundToInt()
         val top = offsetAtLineTop(textPosition.line)
         val bottom = top + (lineHeight(textPosition.line) ?: 0)
 
