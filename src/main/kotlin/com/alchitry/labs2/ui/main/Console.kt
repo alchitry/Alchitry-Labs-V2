@@ -26,6 +26,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -188,7 +189,8 @@ class Console {
     @Composable
     fun show(blinkCursor: Boolean = false) {
         val lazyListState = rememberLazyListState()
-        caretBlinker.uiScope = rememberCoroutineScope()
+        val scope = rememberCoroutineScope()
+        caretBlinker.uiScope = scope
 
         LaunchedEffect(blinkCursor) {
             if (blinkCursor)
@@ -204,9 +206,18 @@ class Console {
         }
         CompositionLocalProvider(LocalTextStyle provides AlchitryTypography.editor) {
             Box(Modifier.fillMaxSize()) {
+                // TODO: Replace with LocalClipboard when there's a way to use it on Desktop
+                val clipboard = LocalClipboardManager.current
                 ContextMenuDataProvider(items = {
                     listOf(
-                        ContextMenuItem("Clear All") { clear() }
+                        ContextMenuItem("Copy All") {
+                            scope.launch(Dispatchers.IO) {
+                                clipboard.setText(buildAnnotatedString {
+                                    content.forEach { appendLine(it) }
+                                })
+                            }
+                        },
+                        ContextMenuItem("Clear All") { clear() },
                     )
                 }) {
                     SelectionContainer {
@@ -215,10 +226,14 @@ class Console {
                             contentPadding = PaddingValues(10.dp),
                             modifier = Modifier.fillMaxWidth(1f - SCALE)
                         ) {
-                            items(if (content.isEmpty()) listOf(AnnotatedString("")) else content) {
-                                if (blinkCursor && (content.isEmpty() || content.last() === it)) {
+                            items(if (content.isEmpty()) listOf(AnnotatedString("")) else content) { lineText ->
+                                val lineWithLineBreak = buildAnnotatedString {
+                                    append(lineText)
+                                    append("\n")
+                                }
+                                if (blinkCursor && (content.isEmpty() || content.last() === lineText)) {
                                     Layout(content = {
-                                        Text(it, maxLines = 1)
+                                        Text(lineWithLineBreak, maxLines = 1)
                                         Box(
                                             Modifier.fillMaxHeight().width(2.dp)
                                                 .graphicsLayer { alpha = if (caretBlinker.showCaret) 1f else 0f }
@@ -234,7 +249,7 @@ class Console {
                                         }
                                     }
                                 } else {
-                                    Text(it, maxLines = 1)
+                                    Text(lineWithLineBreak, maxLines = 1)
                                 }
                             }
                         }
