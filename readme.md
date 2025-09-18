@@ -32,6 +32,10 @@ Compose should let me rewrite this in a much cleaner way.
 
 ## Setup
 
+Download and Install any Java JDK version 22.
+
+Download and Install 7-zip and add the installation folder to your Environment variables / System path. On Windows the folder is typically `C:\Program Files\7-Zip`.
+
 Clone the repo and open it as a project in Intellij. The gradle build files should cause Intellij to install the correct
 versions of all libraries and Kotlin.
 
@@ -43,7 +47,7 @@ in the code editor gutter or right-clicking on the test folder in the project tr
 You should download the latest [oss-cad-suite build](https://github.com/alchitry/oss-cad-suite-build) by running the
 gradle task `download-oss-cad-suite` in the `build setup` group.
 
-To run the GUI, open the file `GUI.kt` file and run the main function.
+To run the GUI, open the file `GUI.kt` at this path `src/main/kotlin/com/alchitry/labs2/GUI.kt` and run the main function.
 This will fail as `app.dir` isn't set, but it should create the run configuration.
 
 Edit that configuration by adding `-Dapp.dir=includes/linux-x64` to the `VM options` field.
