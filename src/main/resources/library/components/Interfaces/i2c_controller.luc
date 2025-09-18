@@ -75,7 +75,7 @@ module i2c_controller #(
     // Write interface
     input data_in[8],    // data to write
     input write,        // start write signal (1 = start write)
-    output ack_write,    // was the last write acknowledged (1 = ack, 0 = no_ack)
+    output ack_write,    // was the last write acknowledged (1 = ack, 0 = no ack)
 
     // Read interface
     output data_out[8],  // data read
@@ -201,7 +201,7 @@ module i2c_controller #(
 
                 // otherwise, if the clock counter is 0
                 else if (scl_reg.q == 0)
-                    ack_write_reg.d = sda // read the acknowledge bit
+                    ack_write_reg.d = ~sda // read the acknowledge bit
 
                 // increment the clock counter
                 scl_reg.d = scl_reg.q + 1
