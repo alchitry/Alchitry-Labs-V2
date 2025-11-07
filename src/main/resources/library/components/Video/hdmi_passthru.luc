@@ -1,7 +1,7 @@
 /**
     "name": "HDMI Passthru"
     "description": "Decodes then re-encodes HDMI data while allowing it to be modified."
-    "supportedBoards" : ["Au", "Au+", "AuV2"]
+    "supportedBoards" : ["Au", "Au+", "AuV2", "PtV2"]
 **/
 /******************************************************************************
 

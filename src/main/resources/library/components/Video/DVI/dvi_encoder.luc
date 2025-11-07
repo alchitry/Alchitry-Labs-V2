@@ -1,7 +1,7 @@
 /**
     "name": "DVI Encoder"
     "description": "Encodes video data into a DVI stream. Typically used by the HDMI Encoder module and not directly."
-    "supportedBoards" : ["Au", "Au+", "AuV2"]
+    "supportedBoards" : ["Au", "Au+", "AuV2", "PtV2"]
 **/
 /******************************************************************************
 

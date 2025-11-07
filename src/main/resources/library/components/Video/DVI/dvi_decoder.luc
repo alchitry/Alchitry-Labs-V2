@@ -1,7 +1,7 @@
 /**
     "name": "DVI Decoder"
     "description": "Decodes a DVI stream into video data. Typically used by the HDMI Decoder module and not directly."
-    "supportedBoards" : ["Au", "Au+", "AuV2"]
+    "supportedBoards" : ["Au", "Au+", "AuV2", "PtV2"]
 **/
 /******************************************************************************
 

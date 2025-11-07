@@ -1,7 +1,7 @@
 /**
     "name": "TMDS Channel Align"
     "description": "Aligns TMDS data across multiple channels."
-    "supportedBoards" : ["Au", "Au+", "AuV2"]
+    "supportedBoards" : ["Au", "Au+", "AuV2", "PtV2"]
 **/
 /******************************************************************************
 

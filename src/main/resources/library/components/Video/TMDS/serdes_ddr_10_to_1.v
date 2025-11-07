@@ -1,7 +1,7 @@
 /**
     "name": "SerDes DDR 10 to 1"
     "description": "Serializes data with a DDR clock from 10 to 1."
-    "supportedBoards" : ["Au", "Au+", "AuV2"]
+    "supportedBoards" : ["Au", "Au+", "AuV2", "PtV2"]
 **/
 /******************************************************************************
 

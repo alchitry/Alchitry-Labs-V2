@@ -1,7 +1,7 @@
 /**
     "name": "EDID ROM"
     "description": "EDID ROM for use with the HDMI Decoder. It tells an HDMI source that the Hd is a monitor capable of 1080p50, 720p120, and 720p60."
-    "supportedBoards" : ["Au", "Au+", "AuV2"]
+    "supportedBoards" : ["Au", "Au+", "AuV2", "PtV2"]
 **/
 /******************************************************************************
 

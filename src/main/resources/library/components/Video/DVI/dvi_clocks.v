@@ -1,7 +1,7 @@
 /**
     "name": "DVI Clocks"
     "description": "Uses a PLLE2_BASE to generate x1 and x5 clocks for DVI modules."
-    "supportedBoards" : ["Au", "Au+", "AuV2"]
+    "supportedBoards" : ["Au", "Au+", "AuV2", "PtV2"]
     **/
 /******************************************************************************
 

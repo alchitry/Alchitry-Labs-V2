@@ -1,7 +1,7 @@
 /**
     "name": "TMDS Bit Align"
     "description": "Aligns the TMDS bits from a deserializer."
-    "supportedBoards" : ["Au", "Au+", "AuV2"]
+    "supportedBoards" : ["Au", "Au+", "AuV2", "PtV2"]
 **/
 /******************************************************************************
 

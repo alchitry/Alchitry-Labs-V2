@@ -1,7 +1,7 @@
 /**
     "name": "DVI Globals"
     "description": "Control token definitions for DVI."
-    "supportedBoards" : ["Au", "Au+", "AuV2"]
+    "supportedBoards" : ["Au", "Au+", "AuV2", "PtV2"]
 **/
 /******************************************************************************
 

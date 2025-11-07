@@ -1,7 +1,7 @@
 /**
     "name": "HDMI Encoder"
     "description": "Encodes video data into an HDMI stream with configurable resolution."
-    "supportedBoards" : ["Au", "Au+", "AuV2"]
+    "supportedBoards" : ["Au", "Au+", "AuV2", "PtV2"]
 **/
 /******************************************************************************
 

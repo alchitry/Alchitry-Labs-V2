@@ -1,7 +1,7 @@
 /**
     "name": "TMDS Decoder"
     "description": "Decodes 10 bit TMDS data into the original 8 bits."
-    "supportedBoards" : ["Au", "Au+", "AuV2"]
+    "supportedBoards" : ["Au", "Au+", "AuV2", "PtV2"]
 **/
 /******************************************************************************
 
