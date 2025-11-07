@@ -73,9 +73,10 @@ fun NewProjectDialog(visible: Boolean, onClose: () -> Unit) {
         val spacedBy = Arrangement.spacedBy(10.dp)
 
         var projectName by remember { mutableStateOf("") }
-        var workspace by remember { mutableStateOf(File(Locations.workspace)) }
+        var workspace by remember { mutableStateOf(Locations.workspace) }
         var board by remember { mutableStateOf(Settings.boardType?.let { Board.fromName(it) } ?: Board.AlchitryAuV2) }
         var template by remember { mutableStateOf<ProjectTemplate?>(null) }
+        val workspaceFile by derivedStateOf { File(workspace) }
 
         Column(Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = spacedBy) {
@@ -90,20 +91,20 @@ fun NewProjectDialog(visible: Boolean, onClose: () -> Unit) {
             }
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = spacedBy) {
                 OutlinedTextField(
-                    workspace.path,
-                    onValueChange = { workspace = File(it) },
+                    workspace,
+                    onValueChange = { workspace = it },
                     modifier = Modifier.weight(1f).defaultMinSize(minWidth = 500.dp),
                     singleLine = true,
-                    isError = !workspace.isDirectory,
+                    isError = !workspaceFile.isDirectory,
                     label = { Text("Workspace") }
                 )
                 Button(onClick = {
                     openDirectoryDialog(
                         window = mainWindow,
                         "Select a Workspace",
-                        workspace
+                        workspaceFile
                     )?.let { newWorkspace ->
-                        workspace = newWorkspace
+                        workspace = newWorkspace.path
                     }
                 }) {
                     Text("Browse...")
@@ -127,8 +128,8 @@ fun NewProjectDialog(visible: Boolean, onClose: () -> Unit) {
                             loading = true
                             scope.launch(Dispatchers.IO) {
                                 try {
-                                    template?.instantiate(projectName, workspace, board)?.let {
-                                        Settings.workspace = workspace.absolutePath
+                                    template?.instantiate(projectName, workspaceFile, board)?.let {
+                                        Settings.workspace = workspaceFile.absolutePath
                                         Settings.boardType = board.name
                                         onClose()
                                     }
@@ -139,7 +140,7 @@ fun NewProjectDialog(visible: Boolean, onClose: () -> Unit) {
                                 }
                             }
                         },
-                        enabled = projectName.isNotBlank() && workspace.isDirectory && template != null
+                        enabled = projectName.isNotBlank() && workspaceFile.isDirectory && template != null
                     ) {
                         Text("Create Project")
                     }
