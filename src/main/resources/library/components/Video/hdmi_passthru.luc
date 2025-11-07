@@ -29,7 +29,7 @@
 
    ****************************************************************************
 
-   The MAX_CLK_FREQ and MIN_CLK_FREQ paramters are used to specify the expected
+   The MAX_CLK_FREQ and MIN_CLK_FREQ parameters are used to specify the expected
    minimum and maximum pixel clocks. Timing is performed based on MAX_CLK_FREQ
    and the MIN_CLK_FREQ is used to check if the minimum frequency will be
    supported by the PLL used to create the x5 data clock.
