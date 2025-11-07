@@ -1,7 +1,7 @@
 /**
     "name": "IDELAYCTRL"
     "description": "IDELAYCTRL for the Artix 7."
-    "supportedBoards" : ["Au", "Au+", "AuV2"]
+    "supportedBoards" : ["Au", "Au+", "AuV2", "PtV2"]
 **/
 /******************************************************************************
 

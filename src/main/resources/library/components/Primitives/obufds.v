@@ -1,7 +1,7 @@
 /**
     "name": "OBUFDS"
     "description": "Differential output buffer on the Artix 7."
-    "supportedBoards" : ["Au", "Au+", "AuV2"]
+    "supportedBoards" : ["Au", "Au+", "AuV2", "PtV2"]
 **/
 /******************************************************************************
 
