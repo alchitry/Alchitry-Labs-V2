@@ -77,6 +77,8 @@ class ExprParser(
 
         if (caseExprCtx != null) {
             val caseExpr = context.resolve(caseExprCtx) ?: return
+            if (!expr.value.width.isSimple() || !caseExpr.value.width.isSimple())
+                return
             evaluator.setBlockState(ctx, expr.value.isEqualTo(caseExpr.value).invert().bit == Bit.B1, expr.type.known)
             return
         }
