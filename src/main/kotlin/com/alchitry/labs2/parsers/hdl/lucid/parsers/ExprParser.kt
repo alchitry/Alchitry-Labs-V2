@@ -232,12 +232,14 @@ class ExprParser(
     }
 
     override suspend fun exitStructConst(ctx: StructConstContext) {
-        ctx.skip = true
         if (evaluator.canSkip(ctx)) return
+        val memberCtxList = ctx.structMemberConst()
+        evaluator.copyDependencies(ctx, memberCtxList)
 
         val type = ctx.structType()?.let { context.resolve(it) } ?: return
 
         val members = mutableMapOf<String, Value>()
+        val memberExprTypes = mutableListOf<ExprType>()
 
         ctx.structMemberConst().forEach { memberCtx ->
             val nameCtx = memberCtx.name() ?: return
@@ -248,7 +250,8 @@ class ExprParser(
                 return
             }
 
-            val value = memberCtx.expr()?.let { evaluator.resolve(it)?.value } ?: return
+            val expr = memberCtx.expr()?.let { evaluator.resolve(it) } ?: return
+            val value = expr.value
 
             if (!member.width.canAssign(value.width)) {
                 context.reportError(nameCtx, "The member $name width does not match this expression.")
@@ -261,6 +264,8 @@ class ExprParser(
                     "The member $name has fewer bits than this expression. It will be truncated."
                 )
             }
+
+            memberExprTypes.add(expr.type)
 
             members[name] =
                 if (value is SimpleValue || value is UndefinedValue) value.resizeToMatch(member.width) else value
@@ -275,7 +280,9 @@ class ExprParser(
             return
         }
 
-        evaluator.setExpr(ctx, StructValue(type, members).asConstExpr())
+        val exprType = evaluator.getExprType(memberExprTypes)
+
+        evaluator.setExpr(ctx, StructValue(type, members).asExpr(exprType))
     }
 
     override suspend fun exitBitSelection(ctx: BitSelectionContext) {

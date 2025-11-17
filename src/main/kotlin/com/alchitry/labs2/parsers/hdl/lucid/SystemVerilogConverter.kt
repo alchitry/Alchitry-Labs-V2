@@ -7,6 +7,7 @@ import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.grammar.LucidParser.FunctionContext
 import com.alchitry.labs2.parsers.grammar.VerilogParser
 import com.alchitry.labs2.parsers.hdl.ExprType
+import com.alchitry.labs2.parsers.hdl.lucid.SystemVerilogConverter.Companion.reservedWords
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.ArraySize
 import com.alchitry.labs2.parsers.hdl.lucid.parsers.ExprParser
@@ -1088,8 +1089,41 @@ class SystemVerilogConverter(
     }
 
     override fun exitExprStruct(ctx: LucidParser.ExprStructContext) {
-        if (!handleConstant(ctx))
-            error(ctx, "Missing value for struct constant: \"${ctx.text}\"")
+        if (handleConstant(ctx))
+            return
+        val type = ctx.structConst()?.structType()?.let { context.resolve(it) }
+            ?: error("Failed to resolve struct type \"${ctx.structConst()?.structType()?.text}\".")
+
+        val members = mutableMapOf<String, LucidParser.ExprContext>()
+
+        ctx.structConst()?.structMemberConst()?.forEach { memberCtx ->
+            val name = memberCtx.name()?.text ?: error("Struct member name missing for \"${memberCtx.text}\".")
+            val exprCtx = memberCtx.expr() ?: error("Struct member expression missing for \"${memberCtx.text}\".")
+            members[name] = exprCtx
+        }
+
+        ctx.verilog = buildString {
+            //"{{${type.values.joinToString(", ") { this[it.name]!!.toVerilog() }}}}"
+            append("{{")
+            type.values.forEachIndexed { i, member ->
+                val memberCtx = members[member.name] ?: error("Struct member \"${member.name}\" not found.")
+                val memberExpr =
+                    context.resolve(memberCtx) ?: error("Failed to resolve struct member expr: \"${memberCtx.text}\".")
+                if (memberExpr.value.width != member.width) {
+                    append("(")
+                    append(member.width.verilogBits())
+                    append(")'(")
+                    append(memberCtx.verilog)
+                    append(")")
+                } else {
+                    append(memberCtx.verilog)
+                }
+                if (i < type.values.size - 1) {
+                    append(", ")
+                }
+            }
+            append("}}")
+        }
     }
 
     override fun exitExprArray(ctx: LucidParser.ExprArrayContext) {
