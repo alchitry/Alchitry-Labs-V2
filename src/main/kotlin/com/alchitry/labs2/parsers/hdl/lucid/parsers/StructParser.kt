@@ -78,7 +78,7 @@ data class StructParser(
 
     override fun exitStructType(ctx: StructTypeContext) {
         val nameCtx = ctx.name()
-        val name = nameCtx.firstOrNull()?.text ?: return
+        var name = nameCtx.firstOrNull()?.text ?: return
 
         val type = if (nameCtx.size > 1) { // includes a . aka GlobalSpace.structName
             val global = context.resolveGlobal(name)
@@ -92,15 +92,16 @@ data class StructParser(
                 return
             }
 
-            global.structs[nameCtx[1].text]
+            global.structs[nameCtx[1].text].also {
+                if (it == null)
+                    context.reportError(nameCtx[1], "Failed to find struct with name ${nameCtx[1].text}.")
+            }
         } else { // local struct
-            context.resolveStruct(name)
-        }
-
-        if (type == null) {
-            context.reportError(nameCtx[0], "Failed to find struct with name $name.")
-            return
-        }
+            context.resolveStruct(name).also {
+                if (it == null)
+                    context.reportError(nameCtx[0], "Failed to find struct with name $name.")
+            }
+        } ?: return
 
         resolvedStructTypes[ctx] = type
     }
