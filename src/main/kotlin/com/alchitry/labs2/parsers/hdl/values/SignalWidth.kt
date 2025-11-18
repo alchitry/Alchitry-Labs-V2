@@ -300,9 +300,25 @@ sealed class SignalWidth {
     fun select(selector: SignalSelector): SignalWidth {
         return when (selector) {
             is SignalSelector.Bits -> when (this) {
-                is ArrayWidth -> if (selector.single) next else DefinedArrayWidth(selector.count, next)
+                is ArrayWidth -> if (selector.single) next else {
+                    val count = if (this is DefinedArrayWidth) selector.count(size) else selector.count()
+                    if (count != null) {
+                        DefinedArrayWidth(selector.count(count), next)
+                    } else {
+                        UndefinedArrayWidth(next)
+                    }
+                }
+
                 BitWidth -> throw SignalSelectionException(selector, "Bit selection can't be used on a single bit.")
-                is SimpleWidth -> if (selector.single) BitWidth else BitListWidth(selector.count)
+                is SimpleWidth -> if (selector.single) BitWidth else {
+                    val count = if (this is DefinedSimpleWidth) selector.count(size) else selector.count()
+                    if (count != null) {
+                        BitListWidth(selector.count(count))
+                    } else {
+                        UndefinedSimpleWidth()
+                    }
+                }
+
                 is StructWidth -> throw SignalSelectionException(selector, "Bit selection can't be used on a struct.")
             }
 
@@ -323,6 +339,7 @@ sealed class SignalWidth {
 
 
 sealed interface SimpleWidth
+
 /**
  * Creates a [DefinedSimpleWidth] with the given number of bits.
  * If bits == 1, then it returns [BitWidth].
@@ -356,6 +373,10 @@ data object BitWidth : DefinedSimpleWidth() {
 data class BitListWidth(
     override val size: Int
 ) : DefinedSimpleWidth() {
+    init {
+        require(size >= 0) { "BitListWidth must have a non-negative size!" }
+    }
+
     override fun filledWith(bit: Bit, signed: Boolean): BitListValue =
         BitListValue(size, signed) { bit }
 }

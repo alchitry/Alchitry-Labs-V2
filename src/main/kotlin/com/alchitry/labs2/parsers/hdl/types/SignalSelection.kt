@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.hdl.types
 
 import com.alchitry.labs2.parsers.grammar.LucidParser
+import kotlin.math.sign
 
 typealias SignalSelection = List<SignalSelector>
 
@@ -36,9 +37,25 @@ sealed class SignalSelector {
         )
 
         /**
-         * The number of elements selected
+         * The number of elements selected.
+         * Requires totalWidth in the case of a negative range.
+         * Use count() if the width isn't known.
          */
-        val count: Int get() = range.last - range.first + 1
+        fun count(totalWidth: Int): Int {
+            val last = if (range.last >= 0) range.last else totalWidth + range.last
+            val first = if (range.first >= 0) range.first else totalWidth + range.first
+            return last - first + 1
+        }
+
+        /**
+         * The number of elements selected.
+         * Returns null if the range includes positive and negative numbers.
+         * Use count(totalWidth) for a guaranteed resolve.
+         */
+        fun count(): Int? {
+            if (range.last.sign != range.first.sign) return null
+            return range.last - range.first + 1
+        }
 
         override fun toString(): String {
             return if (range.first == range.last) {

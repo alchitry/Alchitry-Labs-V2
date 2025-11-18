@@ -44,33 +44,43 @@ data class UndefinedValue(
         return when (width) {
             is BitWidth -> throw SignalSelectionException(selection, "BitWidth can't be selected!")
             is SimpleWidth -> {
-                if (width is DefinedSimpleWidth)
+                val count = if (width is DefinedSimpleWidth) {
                     if (!(selection.range.first <= width.size && selection.range.last <= width.size)) {
-                        throw throw SignalSelectionException(
+                        throw SignalSelectionException(
                             selection,
                             "Selection of ${selection.range} is out of range of the value's width of ${width.size}!"
                         )
                     }
-                if (selection.count == 1)
-                    UndefinedValue(BitWidth)
-                else
-                    UndefinedValue(BitListWidth(selection.count))
+                    selection.count(width.size)
+                } else {
+                    selection.count()
+                }
+                when (count) {
+                    1 -> UndefinedValue(BitWidth)
+                    null -> UndefinedValue(UndefinedSimpleWidth())
+                    else -> UndefinedValue(DefinedSimpleWidth(count))
+                }
             }
 
             is StructWidth -> throw SignalSelectionException(selection, "Bit selector used on StructWidth!")
 
             is ArrayWidth -> {
-                if (width is DefinedArrayWidth)
+                val count = if (width is DefinedArrayWidth) {
                     if (!(selection.range.first <= width.size && selection.range.last <= width.size)) {
-                        throw throw SignalSelectionException(
+                        throw SignalSelectionException(
                             selection,
                             "Selection of ${selection.range} is out of range of the value's width of ${width.size}!"
                         )
                     }
-                if (selection.count == 1)
-                    UndefinedValue(width.next)
-                else
-                    UndefinedValue(DefinedArrayWidth(selection.count, width.next))
+                    selection.count(width.size)
+                } else {
+                    selection.count()
+                }
+                when (count) {
+                    1 -> UndefinedValue(width.next)
+                    null -> UndefinedValue(UndefinedArrayWidth(width.next))
+                    else -> UndefinedValue(DefinedArrayWidth(count, width.next))
+                }
             }
 
         }
