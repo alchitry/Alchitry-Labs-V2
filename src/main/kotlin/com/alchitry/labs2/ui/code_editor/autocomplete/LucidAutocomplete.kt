@@ -117,9 +117,14 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
             fun getConstants(): List<String> {
                 val list = mutableListOf<String>()
                 thisModule.context.project.getGlobals().values.forEach { global ->
-                    list.addAll(global.constants.keys.map { "${global.name}.$it" })
+                    list.addAll(global.constants.values.flatMap { nameOrExpand("${global.name}.${it.name}", it.width) })
                 }
-                list.addAll(thisModule.context.constant.localConstants.keys)
+                list.addAll(thisModule.context.constant.localConstants.values.flatMap {
+                    nameOrExpand(
+                        it.name,
+                        it.width
+                    )
+                })
                 return list
             }
 
