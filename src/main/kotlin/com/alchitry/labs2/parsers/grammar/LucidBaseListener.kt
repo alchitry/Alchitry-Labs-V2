@@ -634,6 +634,16 @@ public open class LucidBaseListener : LucidListener {
     /**
      * The default implementation does nothing.
      */
+    override fun enterCaseJunk(ctx: LucidParser.CaseJunkContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override fun exitCaseJunk(ctx: LucidParser.CaseJunkContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
     override fun enterIfStat(ctx: LucidParser.IfStatContext) {}
 
     /**
@@ -1547,6 +1557,16 @@ public open class SuspendLucidBaseListener : SuspendLucidListener {
      * The default implementation does nothing.
      */
     override suspend fun exitCaseBlock(ctx: LucidParser.CaseBlockContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override suspend fun enterCaseJunk(ctx: LucidParser.CaseJunkContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override suspend fun exitCaseJunk(ctx: LucidParser.CaseJunkContext) {}
 
     /**
      * The default implementation does nothing.

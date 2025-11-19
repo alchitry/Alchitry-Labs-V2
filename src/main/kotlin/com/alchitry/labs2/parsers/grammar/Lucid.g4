@@ -1,5 +1,12 @@
 grammar Lucid;
 
+@parser::members {
+private fun isStartOfStatement(): Boolean {
+    val text = _input.LT(1)?.text ?: return false
+    return  text.length == 1 && (text[0].isLetterOrDigit() || text[0] == '$')
+}
+}
+
 // starting rule
 source: (global | module | testBench | NL)* EOF;
 
@@ -98,9 +105,10 @@ bitSelection: (arrayIndex | NL)* (arrayIndex | bitSelector);
 
 signal: name (NL* bitSelection)? (NL* '.' NL* name (NL* bitSelection)?)*;
 
-caseStat: 'case' NL* '(' NL* expr NL* ')' NL* '{' (caseElem | NL)* '}';
-caseElem: (expr | 'default') NL* ':' caseBlock;
-caseBlock: (alwaysStat | NL)* alwaysStat;
+caseStat: 'case' NL* '(' NL* expr NL* ')' NL* '{' NL* caseElem* '}';
+caseElem: (expr | 'default') ':' caseBlock;
+caseBlock: (alwaysStat | NL)* caseJunk?;
+caseJunk: { isStartOfStatement() }? . NL*;
 
 ifStat: 'if' NL* '(' NL* expr NL* ')' NL* block (NL* elseStat)?;
 elseStat: 'else' NL* block;
@@ -138,16 +146,30 @@ name: TYPE_ID | CONST_ID | SPACE_ID;
 
 semi: NL | (NL* SEMICOLON);
 
+SEMICOLON : ';';
+COLON : ':';
+LPAREN : '(';
+RPAREN : ')';
+LBRACKET : '[';
+RBRACKET : ']';
+LANGLE : '<';
+RANGLE : '>';
+LBRACE : '{';
+RBRACE : '}';
+IF : 'if';
+CASE : 'case';
+REPEAT : 'repeat';
+SIGNED: 'signed';
+SIG : 'sig';
 HEX: ([1-9][0-9]*)? 'h' ([0-9a-fA-FzZX_]|('x' {_input.LA(1) != '{'.code}?))+;
 BIN: ([1-9][0-9]*)? 'b' ([0-1zZX_]|('x' {_input.LA(1) != '{'.code}?))+;
 DEC: ([1-9][0-9]*)? 'd' [0-9_]+;
 REAL: '-'? [0-9]* '.' [0-9]+ | '-'? [0-9]+ '.' [0-9]*;
 INT: [0-9_]+;
 STRING: '"' ( '\\' ~[\r\n] | ~[\\"\r\n] )* '"';
-SEMICOLON : ';';
 NL : '\r' '\n' | '\n' | '\r';
 
-SIGNED: 'signed';
+
 TYPE_ID: [a-z]([a-wy-zA-Z0-9_]|('x' {_input.LA(1) != '{'.code}?))*;
 CONST_ID: [A-Z][A-Z0-9_]*;
 SPACE_ID: [A-Z]([a-wy-zA-Z0-9_]|('x' {_input.LA(1) != '{'.code}?))*;
@@ -156,3 +178,5 @@ FUNCTION_ID: '$'[a-z][a-zA-Z0-9_]*;
 BLOCK_COMMENT: ('/*' .*? '*/') -> channel(HIDDEN);
 COMMENT: ('//' ~[\r\n]*) -> channel(HIDDEN);
 WS: [ \t]+ -> channel(HIDDEN);
+
+ANY_CHAR : . ;

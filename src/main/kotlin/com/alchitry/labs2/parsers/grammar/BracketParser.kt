@@ -41,7 +41,7 @@ public open class BracketParser(input: TokenStream) : Parser(input) {
 
         private val SHARED_CONTEXT_CACHE = PredictionContextCache()
         private val RULE_NAMES: Array<String> = arrayOf(
-            "source", "block", "parenBlock", "squareBlock", "curlyBlock", 
+            "source", "block", "parenBlock", "squareBlock", "curlyBlock",
             "commentBlock"
         )
 
@@ -50,7 +50,7 @@ public open class BracketParser(input: TokenStream) : Parser(input) {
         )
 
         private val SYMBOLIC_NAMES: Array<String?> = arrayOf(
-            null, null, null, null, null, null, null, null, null, "COMMENT", 
+            null, null, null, null, null, null, null, null, null, "COMMENT",
             "WS", "JUNK"
         )
 
@@ -128,11 +128,13 @@ public open class BracketParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): SourceContext {
             return SourceContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is BracketListener) {
                 listener.enterSource(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendBracketListener) {
                 listener.enterSource(this)
@@ -144,6 +146,7 @@ public open class BracketParser(input: TokenStream) : Parser(input) {
                 listener.exitSource(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendBracketListener) {
                 listener.exitSource(this)
@@ -211,11 +214,13 @@ public open class BracketParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): BlockContext {
             return BlockContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is BracketListener) {
                 listener.enterBlock(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendBracketListener) {
                 listener.enterBlock(this)
@@ -227,6 +232,7 @@ public open class BracketParser(input: TokenStream) : Parser(input) {
                 listener.exitBlock(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendBracketListener) {
                 listener.exitBlock(this)
@@ -274,6 +280,7 @@ public open class BracketParser(input: TokenStream) : Parser(input) {
                     commentBlock()
 
                 }
+
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -301,11 +308,13 @@ public open class BracketParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ParenBlockContext {
             return ParenBlockContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is BracketListener) {
                 listener.enterParenBlock(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendBracketListener) {
                 listener.enterParenBlock(this)
@@ -317,6 +326,7 @@ public open class BracketParser(input: TokenStream) : Parser(input) {
                 listener.exitParenBlock(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendBracketListener) {
                 listener.exitParenBlock(this)
@@ -378,11 +388,13 @@ public open class BracketParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): SquareBlockContext {
             return SquareBlockContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is BracketListener) {
                 listener.enterSquareBlock(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendBracketListener) {
                 listener.enterSquareBlock(this)
@@ -394,6 +406,7 @@ public open class BracketParser(input: TokenStream) : Parser(input) {
                 listener.exitSquareBlock(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendBracketListener) {
                 listener.exitSquareBlock(this)
@@ -455,11 +468,13 @@ public open class BracketParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): CurlyBlockContext {
             return CurlyBlockContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is BracketListener) {
                 listener.enterCurlyBlock(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendBracketListener) {
                 listener.enterCurlyBlock(this)
@@ -471,6 +486,7 @@ public open class BracketParser(input: TokenStream) : Parser(input) {
                 listener.exitCurlyBlock(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendBracketListener) {
                 listener.exitCurlyBlock(this)
@@ -530,11 +546,13 @@ public open class BracketParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): CommentBlockContext {
             return CommentBlockContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is BracketListener) {
                 listener.enterCommentBlock(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendBracketListener) {
                 listener.enterCommentBlock(this)
@@ -546,6 +564,7 @@ public open class BracketParser(input: TokenStream) : Parser(input) {
                 listener.exitCommentBlock(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendBracketListener) {
                 listener.exitCommentBlock(this)

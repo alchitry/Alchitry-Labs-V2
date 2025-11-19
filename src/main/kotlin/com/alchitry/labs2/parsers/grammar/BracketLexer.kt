@@ -36,7 +36,7 @@ public open class BracketLexer(input: CharStream) : Lexer(input) {
         )
 
         private val SYMBOLIC_NAMES: Array<String?> = arrayOf(
-            null, null, null, null, null, null, null, null, null, "COMMENT", 
+            null, null, null, null, null, null, null, null, null, "COMMENT",
             "WS", "JUNK"
         )
 
@@ -83,7 +83,7 @@ public open class BracketLexer(input: CharStream) : Lexer(input) {
         SERIALIZED_ATN
 
     override val ruleNames: Array<String> = arrayOf(
-        "T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7", 
+        "T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7",
         "COMMENT", "WS", "JUNK"
     )
 

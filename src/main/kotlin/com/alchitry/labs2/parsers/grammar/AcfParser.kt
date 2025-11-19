@@ -41,18 +41,18 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
         private val SHARED_CONTEXT_CACHE = PredictionContextCache()
         private val RULE_NAMES: Array<String> = arrayOf(
             "source", "line", "pin", "attributeBlock", "nativeBlock", "name",
-            "attribute", "attributeValue", "portName", "pinName", "frequency", 
+            "attribute", "attributeValue", "portName", "pinName", "frequency",
             "arrayIndex", "number", "semi"
         )
 
         private val LITERAL_NAMES: Array<String?> = arrayOf(
-            null, "'pin'", "','", "'{'", "'}'", "'('", "')'", "'.'", "'['", 
+            null, "'pin'", "','", "'{'", "'}'", "'('", "')'", "'.'", "'['",
             "']'", null, "';'"
         )
 
         private val SYMBOLIC_NAMES: Array<String?> = arrayOf(
             null, null, null, null, null, null, null, null, null, null,
-            "NATIVE_BLOCK", "SEMICOLON", "NL", "FREQ_UNIT", "BASIC_NAME", 
+            "NATIVE_BLOCK", "SEMICOLON", "NL", "FREQ_UNIT", "BASIC_NAME",
             "REAL", "INT", "BLOCK_COMMENT", "COMMENT", "WS"
         )
 
@@ -146,11 +146,13 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): SourceContext {
             return SourceContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) {
                 listener.enterSource(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.enterSource(this)
@@ -162,6 +164,7 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
                 listener.exitSource(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.exitSource(this)
@@ -229,11 +232,13 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): LineContext {
             return LineContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) {
                 listener.enterLine(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.enterLine(this)
@@ -245,6 +250,7 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
                 listener.exitLine(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.exitLine(this)
@@ -292,6 +298,7 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
                     match(Tokens.NL)
 
                 }
+
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -322,11 +329,13 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): PinContext {
             return PinContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) {
                 listener.enterPin(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.enterPin(this)
@@ -338,6 +347,7 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
                 listener.exitPin(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.exitPin(this)
@@ -407,11 +417,13 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): AttributeBlockContext {
             return AttributeBlockContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) {
                 listener.enterAttributeBlock(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.enterAttributeBlock(this)
@@ -423,6 +435,7 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
                 listener.exitAttributeBlock(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.exitAttributeBlock(this)
@@ -501,11 +514,13 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): NativeBlockContext {
             return NativeBlockContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) {
                 listener.enterNativeBlock(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.enterNativeBlock(this)
@@ -517,6 +532,7 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
                 listener.exitNativeBlock(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.exitNativeBlock(this)
@@ -565,11 +581,13 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): NameContext {
             return NameContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) {
                 listener.enterName(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.enterName(this)
@@ -581,6 +599,7 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
                 listener.exitName(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.exitName(this)
@@ -637,11 +656,13 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): AttributeContext {
             return AttributeContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) {
                 listener.enterAttribute(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.enterAttribute(this)
@@ -653,6 +674,7 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
                 listener.exitAttribute(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.exitAttribute(this)
@@ -708,11 +730,13 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): AttributeValueContext {
             return AttributeValueContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) {
                 listener.enterAttributeValue(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.enterAttributeValue(this)
@@ -724,6 +748,7 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
                 listener.exitAttributeValue(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.exitAttributeValue(this)
@@ -792,11 +817,13 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): PortNameContext {
             return PortNameContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) {
                 listener.enterPortName(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.enterPortName(this)
@@ -808,6 +835,7 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
                 listener.exitPortName(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.exitPortName(this)
@@ -892,11 +920,13 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): PinNameContext {
             return PinNameContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) {
                 listener.enterPinName(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.enterPinName(this)
@@ -908,6 +938,7 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
                 listener.exitPinName(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.exitPinName(this)
@@ -953,11 +984,13 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): FrequencyContext {
             return FrequencyContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) {
                 listener.enterFrequency(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.enterFrequency(this)
@@ -969,6 +1002,7 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
                 listener.exitFrequency(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.exitFrequency(this)
@@ -1016,11 +1050,13 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ArrayIndexContext {
             return ArrayIndexContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) {
                 listener.enterArrayIndex(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.enterArrayIndex(this)
@@ -1032,6 +1068,7 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
                 listener.exitArrayIndex(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.exitArrayIndex(this)
@@ -1083,11 +1120,13 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): NumberContext {
             return NumberContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) {
                 listener.enterNumber(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.enterNumber(this)
@@ -1099,6 +1138,7 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
                 listener.exitNumber(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.exitNumber(this)
@@ -1157,11 +1197,13 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): SemiContext {
             return SemiContext().also { it.deepCopyFrom(this) }
         }
+
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is AcfListener) {
                 listener.enterSemi(this)
             }
         }
+
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.enterSemi(this)
@@ -1173,6 +1215,7 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
                 listener.exitSemi(this)
             }
         }
+
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendAcfListener) {
                 listener.exitSemi(this)

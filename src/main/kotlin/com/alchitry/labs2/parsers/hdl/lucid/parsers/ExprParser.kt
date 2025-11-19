@@ -75,6 +75,11 @@ class ExprParser(
         val caseExprCtx = parent.expr()
         val expr = context.resolve((parent.getParent() as CaseStatContext).expr() ?: return) ?: return
 
+        if (ctx.caseJunk() != null) {
+            context.reportError(ctx.caseJunk()!!, "Incomplete statement. Expected \"=\" or \":\".")
+            return
+        }
+
         if (caseExprCtx != null) {
             val caseExpr = context.resolve(caseExprCtx) ?: return
             if (!expr.value.width.isSimple() || !caseExpr.value.width.isSimple())

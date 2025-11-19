@@ -77,7 +77,7 @@ public open class VerilogLexer(input: CharStream) : Lexer(input) {
             null, null, null, null, null, null, null, "'celldefine'", null,
             null, null, null, "'end_keywords'", "'endcelldefine'", null,
             null, null, null, null, "'nounconnected_drive'", null, "'resetall'",
-            null, null, null, null, null, null, null, null, "'``'", null, 
+            null, null, null, null, null, null, null, null, "'``'", null,
             "'`\\`\"'", "'`\"'"
         )
 
@@ -124,7 +124,7 @@ public open class VerilogLexer(input: CharStream) : Lexer(input) {
             "UNCONNECTED_DRIVE_DIRECTIVE", "UNDEF_DIRECTIVE", "MACRO_USAGE",
             "VERSION_SPECIFIER", "DEFAULT_NETTYPE_VALUE", "MACRO_NAME",
             "FILENAME", "MACRO_DELIMITER", "MACRO_ESC_NEWLINE", "MACRO_ESC_QUOTE",
-            "MACRO_QUOTE", "MACRO_TEXT", "SOURCE_TEXT", "TIME_UNIT", "TIME_VALUE", 
+            "MACRO_QUOTE", "MACRO_TEXT", "SOURCE_TEXT", "TIME_UNIT", "TIME_VALUE",
             "UNCONNECTED_DRIVE_VALUE", "MACRO_IDENTIFIER"
         )
 
@@ -492,7 +492,7 @@ public open class VerilogLexer(input: CharStream) : Lexer(input) {
         "ASCII_NO_NEWLINE_QUOTE_SLASH_BACKSLASH_GRAVE_ACCENT", "ASCII_NO_PARENTHESES",
         "ASCII_NO_SLASH_GRAVE_ACCENT", "ASCII_PRINTABLE", "ASCII_PRINTABLE_NO_QUOTE_BACKSLASH",
         "ASCII_PRINTABLE_NO_SPACE", "CHAR_OCTAL", "ESC_ASCII_NO_NEWLINE",
-        "ESC_ASCII_PRINTABLE", "ESC_NEWLINE", "ESC_SPECIAL_CHAR", "IDENTIFIER", 
+        "ESC_ASCII_PRINTABLE", "ESC_NEWLINE", "ESC_SPECIAL_CHAR", "IDENTIFIER",
         "MACRO_ARGS", "NEWLINE", "SPACE_TAB"
     )
 
@@ -508,7 +508,7 @@ public open class VerilogLexer(input: CharStream) : Lexer(input) {
         "DEFINE_DIRECTIVE_MODE", "ELSE_DIRECTIVE_MODE", "ELSIF_DIRECTIVE_MODE",
         "FILENAME_MODE", "IFDEF_DIRECTIVE_MODE", "INCLUDE_DIRECTIVE_MODE",
         "LINE_DIRECTIVE_MODE", "MACRO_TEXT_MODE", "PRAGMA_DIRECTIVE_MODE",
-        "SOURCE_TEXT_MODE", "TIMESCALE_DIRECTIVE_MODE", "UNCONNECTED_DRIVE_DIRECTIVE_MODE", 
+        "SOURCE_TEXT_MODE", "TIMESCALE_DIRECTIVE_MODE", "UNCONNECTED_DRIVE_DIRECTIVE_MODE",
         "UNDEF_DIRECTIVE_MODE"
     )
 

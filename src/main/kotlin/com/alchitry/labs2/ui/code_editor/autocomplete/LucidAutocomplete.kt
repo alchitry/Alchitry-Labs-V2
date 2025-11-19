@@ -24,6 +24,7 @@ private enum class ContextType {
     INVALID,
     READ_SIG,
     WRITE_SIG,
+    CASE_LABEL_OR_SIG,
     MODULE_INST,
     FUNCTION
 }
@@ -38,9 +39,16 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
         val nameContext = context.getParent() as? LucidParser.NameContext ?: return ContextType.INVALID
         val parent = nameContext.getParent()
         if (parent is LucidParser.SignalContext) {
-            return when (parent.getParent()) {
+            return when (val grandparent = parent.getParent()) {
                 is LucidParser.AssignStatContext -> ContextType.WRITE_SIG
-                is LucidParser.ExprContext -> ContextType.READ_SIG
+                is LucidParser.ExprContext -> {
+                    val ggp = grandparent.getParent()
+                    if (ggp is LucidParser.CaseElemContext && ggp.getChild(1)?.text != ":")
+                        ContextType.CASE_LABEL_OR_SIG // ambiguous at this point
+                    else
+                        ContextType.READ_SIG
+                }
+
                 else -> ContextType.INVALID
             }
         }
@@ -91,59 +99,63 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
                 project.top?.firstInstanceOfFile(state.file) ?: project.getTestBenches()
                     .firstOrNull { it.sourceFile == state.file } ?: return@withContext emptyList()
 
-            return@withContext when (type) {
-                ContextType.INVALID -> emptyList()
-                ContextType.READ_SIG -> {
-                    val list = mutableListOf<String>()
+            fun getReadableSignals(): List<String> {
+                val list = mutableListOf<String>()
+                list.addAll(
+                    thisModule.context.types.resolveLocalSignals(node).mapNotNull {
+                        if (it.direction.canRead) it.name else null
+                    }
+                )
+                list.addAll(thisModule.context.types.sigs.keys)
+                list.addAll(thisModule.context.types.dffs.keys.map { "$it.q" })
+                if (thisModule is ModuleInstance) {
                     list.addAll(
-                        thisModule.context.types.resolveLocalSignals(node).mapNotNull {
+                        thisModule.module.ports.values.mapNotNull {
                             if (it.direction.canRead) it.name else null
                         }
                     )
-                    list.addAll(thisModule.context.types.sigs.keys)
-                    list.addAll(thisModule.context.types.dffs.keys.map { "$it.q" })
-                    if (thisModule is ModuleInstance) {
-                        list.addAll(
-                            thisModule.module.ports.values.mapNotNull {
-                                if (it.direction.canRead) it.name else null
-                            }
-                        )
-                        list.addAll(
-                            thisModule.context.types.moduleInstances.flatMap { inst ->
-                                inst.value.external.values.mapNotNull {
-                                    if (it.direction.canRead) "${inst.value.name}.${it.name}" else null
-                                }
-                            }
-                        )
-                    }
-                    list
-                }
-
-                ContextType.WRITE_SIG -> {
-                    val list = mutableListOf<String>()
                     list.addAll(
-                        thisModule.context.types.resolveLocalSignals(node).mapNotNull {
+                        thisModule.context.types.moduleInstances.flatMap { inst ->
+                            inst.value.external.values.mapNotNull {
+                                if (it.direction.canRead) "${inst.value.name}.${it.name}" else null
+                            }
+                        }
+                    )
+                }
+                return list
+            }
+
+            fun getWritableSignals(): List<String> {
+                val list = mutableListOf<String>()
+                list.addAll(
+                    thisModule.context.types.resolveLocalSignals(node).mapNotNull {
+                        if (it.direction.canWrite) it.name else null
+                    }
+                )
+                list.addAll(thisModule.context.types.sigs.keys)
+                list.addAll(thisModule.context.types.dffs.keys.map { "$it.d" })
+                if (thisModule is ModuleInstance) {
+                    list.addAll(
+                        thisModule.module.ports.values.mapNotNull {
                             if (it.direction.canWrite) it.name else null
                         }
                     )
-                    list.addAll(thisModule.context.types.sigs.keys)
-                    list.addAll(thisModule.context.types.dffs.keys.map { "$it.d" })
-                    if (thisModule is ModuleInstance) {
-                        list.addAll(
-                            thisModule.module.ports.values.mapNotNull {
-                                if (it.direction.canWrite) it.name else null
+                    list.addAll(
+                        thisModule.context.types.moduleInstances.flatMap { inst ->
+                            inst.value.external.values.mapNotNull {
+                                if (it.direction.canWrite) "${inst.value.name}.${it.name}" else null
                             }
-                        )
-                        list.addAll(
-                            thisModule.context.types.moduleInstances.flatMap { inst ->
-                                inst.value.external.values.mapNotNull {
-                                    if (it.direction.canWrite) "${inst.value.name}.${it.name}" else null
-                                }
-                            }
-                        )
-                    }
-                    list
+                        }
+                    )
                 }
+                return list
+            }
+
+            return@withContext when (type) {
+                ContextType.INVALID -> emptyList()
+                ContextType.READ_SIG -> getReadableSignals()
+                ContextType.WRITE_SIG -> getWritableSignals()
+                ContextType.CASE_LABEL_OR_SIG -> getWritableSignals() // TODO: Add constants support
 
                 ContextType.MODULE_INST -> {
                     project.getModules().mapNotNull {

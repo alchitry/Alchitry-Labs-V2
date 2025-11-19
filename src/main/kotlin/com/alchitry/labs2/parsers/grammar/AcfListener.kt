@@ -226,6 +226,7 @@ public interface AcfListener : ParseTreeListener {
 
         override suspend fun enterNativeBlock(ctx: AcfParser.NativeBlockContext) =
             this@AcfListener.enterNativeBlock(ctx)
+
         override suspend fun exitNativeBlock(ctx: AcfParser.NativeBlockContext) = this@AcfListener.exitNativeBlock(ctx)
 
         override suspend fun enterName(ctx: AcfParser.NameContext) = this@AcfListener.enterName(ctx)

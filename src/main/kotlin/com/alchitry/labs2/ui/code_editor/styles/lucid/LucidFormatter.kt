@@ -5,14 +5,17 @@ import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.ui.code_editor.CodeEditorState
 import com.alchitry.labs2.ui.code_editor.styles.CodeFormatter
-import org.antlr.v4.kotlinruntime.*
+import org.antlr.v4.kotlinruntime.CharStreams
+import org.antlr.v4.kotlinruntime.CommonTokenStream
+import org.antlr.v4.kotlinruntime.ParserRuleContext
+import org.antlr.v4.kotlinruntime.Token
 import org.antlr.v4.kotlinruntime.tree.ParseTree
 import org.antlr.v4.kotlinruntime.tree.ParseTreeWalker
 import org.antlr.v4.kotlinruntime.tree.TerminalNode
 
 class LucidFormatter(private val codeEditorState: CodeEditorState) : CodeFormatter {
     override fun getIndentFor(line: Int): String {
-        val listener = ConsoleErrorListener.INSTANCE
+        //val listener = ConsoleErrorListener.INSTANCE
         val lexer = LucidLexer(CharStreams.fromString(codeEditorState.getText())).apply { removeErrorListeners() }
         val tokens = lexer.allTokens
         lexer.reset()

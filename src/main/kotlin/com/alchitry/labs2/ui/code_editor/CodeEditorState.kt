@@ -887,7 +887,10 @@ class CodeEditorState(
             }
 
             replaceText(modifiedText)
-            if (line?.isBlank() == true && modifiedText.isNotBlank()) {
+            if (
+                (line?.isBlank() == true && modifiedText.isNotBlank()) ||
+                (text == ":" && line?.length == selectionManager.caret.offset - 1)
+            ) {
                 val current = lines[lineNum].text.text
                 replaceText(
                     codeFormatter.getIndentFor(lineNum) + current.trim(),
