@@ -70,6 +70,10 @@ class ExprParser(
         }
     }
 
+    override suspend fun exitCaseStat(ctx: CaseStatContext) {
+
+    }
+
     override suspend fun enterCaseBlock(ctx: CaseBlockContext) {
         val parent = ctx.getParent() as CaseElemContext
         val caseExprCtx = parent.expr()

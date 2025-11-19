@@ -198,6 +198,7 @@ data class BlockParser(
             return
         }
 
+        val values = mutableSetOf<Value>()
         ctx.caseElem().forEach { caseElemContext ->
             val caseExprCtx = caseElemContext.expr() ?: return@forEach
             val condition = context.expr.resolve(caseExprCtx)
@@ -209,6 +210,11 @@ data class BlockParser(
                 context.notationCollector.reportError(caseExprCtx, "Case statement conditions must be constant.")
                 return
             }
+            if (values.contains(condition.value)) {
+                context.reportError(caseExprCtx, "The case value ${condition.value} is already used.")
+                return@forEach
+            }
+            values.add(condition.value)
         }
     }
 
