@@ -38,7 +38,12 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
             return ContextType.FUNCTION
         }
 
-        val nameContext = context.getParent() as? LucidParser.NameContext ?: return ContextType.INVALID
+        val nameContext = if (context is TerminalNode && context.getParent() is LucidParser.SignalContext) {
+            // this implies we are at the "." after a signal like "signal."
+            (context.getParent() as LucidParser.SignalContext).name(0)
+        } else {
+            context.getParent() as? LucidParser.NameContext
+        } ?: return ContextType.INVALID
         val parent = nameContext.getParent()
         if (parent is LucidParser.SignalContext) {
             return when (val grandparent = parent.getParent()) {

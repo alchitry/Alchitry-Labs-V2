@@ -103,24 +103,32 @@ abstract class Autocomplete(protected val state: CodeEditorState) {
         }
 
         val line = state.lines.getOrNull(caret.line)?.text?.text ?: return
-        val relevantText = line.substring(0, caret.offset.coerceAtMost(line.length)).getRelevantText()
+        val relevantText = line.take(caret.offset.coerceAtMost(line.length)).getRelevantText()
         if (relevantText.isBlank()) {
             reset()
             return
         }
         val pieces = relevantText.split('.')
-        val requiredPrefix = if (pieces.size > 1) pieces.subList(0, pieces.size - 1).joinToString(".") else ""
+        val requiredPrefix =
+            if (pieces.size > 1) pieces.subList(0, pieces.size - 1).joinToString(".", postfix = ".") else ""
 
         val start = caret.copy(offset = caret.offset - relevantText.length)
         val end = caret
 
-        suggestions = possible.mapNotNull {
-            if (!it.startsWith(requiredPrefix)) return@mapNotNull null
-            val diff = calculateEditDistance(it, pieces.last()) ?: return@mapNotNull null
-            Suggestion(it, diff, start..<end)
-        }.sortedBy { it.quality }.also {
-            active = it.isNotEmpty()
+        suggestions = if (pieces.last().isNotEmpty()) {
+            possible.mapNotNull {
+                if (!it.startsWith(requiredPrefix)) return@mapNotNull null
+                val diff = calculateEditDistance(it, pieces.last()) ?: return@mapNotNull null
+                Suggestion(it, diff, start..<end)
+            }.sortedBy { it.quality }
+        } else {
+            possible.mapNotNull {
+                if (!it.startsWith(requiredPrefix)) return@mapNotNull null
+                Suggestion(it, 0, start..<end)
+            }
         }
+
+        active = suggestions.isNotEmpty()
 
         overlayPosition = state.textPositionToScreenOffset(caret.copy(offset = caret.offset - relevantText.length))
     }
