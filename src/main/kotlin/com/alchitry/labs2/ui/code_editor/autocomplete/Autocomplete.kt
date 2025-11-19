@@ -109,11 +109,13 @@ abstract class Autocomplete(protected val state: CodeEditorState) {
             return
         }
         val pieces = relevantText.split('.')
+        val requiredPrefix = if (pieces.size > 1) pieces.subList(0, pieces.size - 1).joinToString(".") else ""
 
         val start = caret.copy(offset = caret.offset - relevantText.length)
         val end = caret
 
         suggestions = possible.mapNotNull {
+            if (!it.startsWith(requiredPrefix)) return@mapNotNull null
             val diff = calculateEditDistance(it, pieces.last()) ?: return@mapNotNull null
             Suggestion(it, diff, start..<end)
         }.sortedBy { it.quality }.also {

@@ -7,6 +7,8 @@ import com.alchitry.labs2.parsers.hdl.types.Function
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstance
 import com.alchitry.labs2.parsers.hdl.types.ModuleInstanceArray
 import com.alchitry.labs2.parsers.hdl.types.TestOrModuleInstance
+import com.alchitry.labs2.parsers.hdl.values.SignalWidth
+import com.alchitry.labs2.parsers.hdl.values.StructWidth
 import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.files.ProjectFile
@@ -75,6 +77,14 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
         return null
     }
 
+    private fun nameOrExpand(name: String, width: SignalWidth): List<String> {
+        val list = mutableListOf(name)
+        if (width is StructWidth) {
+            list.addAll(width.type.keys.map { element -> "${name}.$element" })
+        }
+        return list
+    }
+
     override suspend fun getPossible(offset: Int): List<String>? {
         val file = state.file
 
@@ -99,25 +109,41 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
                 project.top?.firstInstanceOfFile(state.file) ?: project.getTestBenches()
                     .firstOrNull { it.sourceFile == state.file } ?: return@withContext emptyList()
 
+            fun getConstants(): List<String> {
+                val list = mutableListOf<String>()
+                thisModule.context.project.getGlobals().values.forEach { global ->
+                    list.addAll(global.constants.keys.map { "${global.name}.$it" })
+                }
+                list.addAll(thisModule.context.constant.localConstants.keys)
+                return list
+            }
+
             fun getReadableSignals(): List<String> {
                 val list = mutableListOf<String>()
                 list.addAll(
-                    thisModule.context.types.resolveLocalSignals(node).mapNotNull {
-                        if (it.direction.canRead) it.name else null
+                    thisModule.context.types.resolveLocalSignals(node).flatMap {
+                        if (it.direction.canRead) nameOrExpand(it.name, it.width) else emptyList()
                     }
                 )
-                list.addAll(thisModule.context.types.sigs.keys)
-                list.addAll(thisModule.context.types.dffs.keys.map { "$it.q" })
+                list.addAll(thisModule.context.types.sigs.values.flatMap {
+                    nameOrExpand(it.name, it.width)
+                })
+                list.addAll(thisModule.context.types.dffs.values.flatMap {
+                    nameOrExpand("${it.name}.q", it.q.width)
+                })
                 if (thisModule is ModuleInstance) {
                     list.addAll(
-                        thisModule.module.ports.values.mapNotNull {
-                            if (it.direction.canRead) it.name else null
+                        thisModule.module.ports.values.flatMap {
+                            if (it.direction.canRead) nameOrExpand(it.name, it.width) else emptyList()
                         }
                     )
                     list.addAll(
                         thisModule.context.types.moduleInstances.flatMap { inst ->
-                            inst.value.external.values.mapNotNull {
-                                if (it.direction.canRead) "${inst.value.name}.${it.name}" else null
+                            inst.value.external.values.flatMap {
+                                if (it.direction.canRead) nameOrExpand(
+                                    "${inst.value.name}.${it.name}",
+                                    it.width
+                                ) else emptyList()
                             }
                         }
                     )
@@ -128,22 +154,29 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
             fun getWritableSignals(): List<String> {
                 val list = mutableListOf<String>()
                 list.addAll(
-                    thisModule.context.types.resolveLocalSignals(node).mapNotNull {
-                        if (it.direction.canWrite) it.name else null
+                    thisModule.context.types.resolveLocalSignals(node).flatMap {
+                        if (it.direction.canWrite) nameOrExpand(it.name, it.width) else emptyList()
                     }
                 )
-                list.addAll(thisModule.context.types.sigs.keys)
-                list.addAll(thisModule.context.types.dffs.keys.map { "$it.d" })
+                list.addAll(thisModule.context.types.sigs.values.flatMap {
+                    nameOrExpand(it.name, it.width)
+                })
+                list.addAll(thisModule.context.types.dffs.values.flatMap {
+                    nameOrExpand("${it.name}.d", it.d.width)
+                })
                 if (thisModule is ModuleInstance) {
                     list.addAll(
-                        thisModule.module.ports.values.mapNotNull {
-                            if (it.direction.canWrite) it.name else null
+                        thisModule.module.ports.values.flatMap {
+                            if (it.direction.canWrite) nameOrExpand(it.name, it.width) else emptyList()
                         }
                     )
                     list.addAll(
                         thisModule.context.types.moduleInstances.flatMap { inst ->
-                            inst.value.external.values.mapNotNull {
-                                if (it.direction.canWrite) "${inst.value.name}.${it.name}" else null
+                            inst.value.external.values.flatMap {
+                                if (it.direction.canWrite) nameOrExpand(
+                                    "${inst.value.name}.${it.name}",
+                                    it.width
+                                ) else emptyList()
                             }
                         }
                     )
@@ -153,9 +186,9 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
 
             return@withContext when (type) {
                 ContextType.INVALID -> emptyList()
-                ContextType.READ_SIG -> getReadableSignals()
+                ContextType.READ_SIG -> getReadableSignals() + getConstants()
                 ContextType.WRITE_SIG -> getWritableSignals()
-                ContextType.CASE_LABEL_OR_SIG -> getWritableSignals() // TODO: Add constants support
+                ContextType.CASE_LABEL_OR_SIG -> getWritableSignals() + getConstants()
 
                 ContextType.MODULE_INST -> {
                     project.getModules().mapNotNull {
