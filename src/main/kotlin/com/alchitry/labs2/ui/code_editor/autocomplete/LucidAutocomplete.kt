@@ -125,6 +125,7 @@ class LucidAutocomplete(state: CodeEditorState) : Autocomplete(state) {
                         it.width
                     )
                 })
+                list.addAll(thisModule.context.enum.localEnumType.values.flatMap { enum -> enum.members.map { "${enum.name}.$it" } })
                 return list
             }
 
