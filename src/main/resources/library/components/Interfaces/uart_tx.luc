@@ -35,7 +35,6 @@ module uart_tx #(
     input clk,          // clock
     input rst,          // reset active high
     output tx,          // TX output
-    input block,        // block transmissions
     output busy,        // module is busy when 1
     input data[8],      // data to send
     input new_data      // flag for new data
@@ -54,15 +53,12 @@ module uart_tx #(
         dff bit_ctr[3]     // bit counter
         dff saved_data[8]  // transmission data
         dff tx_reg         // output buffer
-        dff block_flag     // input buffer
     }
 
     always {
         // Outputs
         tx = tx_reg.q
         busy = 1                            // default to 1
-
-        block_flag.d = block                 // connect to buffer
 
         /* When a new byte is presented to send, that byte is saved so that
             if the input changes the correct data is still sent. We first
@@ -79,14 +75,12 @@ module uart_tx #(
         case (state.q) {                           // FSM
             States.IDLE:
                 tx_reg.d = 1                       // idle high (UART standard)
-                if (!block_flag.q) {
-                    busy = 0                       // not busy
-                    bit_ctr.d = 0                  // reset counter
-                    ctr.d = 0                      // reset counter
-                    if (new_data) {                // request to send data?
-                        saved_data.d = data        // save the data
-                        state.d = States.START_BIT // switch states
-                    }
+                busy = 0                       // not busy
+                bit_ctr.d = 0                  // reset counter
+                ctr.d = 0                      // reset counter
+                if (new_data) {                // request to send data?
+                    saved_data.d = data        // save the data
+                    state.d = States.START_BIT // switch states
                 }
 
             States.START_BIT:

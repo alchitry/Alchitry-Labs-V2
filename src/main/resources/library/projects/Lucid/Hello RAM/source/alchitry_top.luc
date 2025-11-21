@@ -38,6 +38,5 @@ module alchitry_top (
         tx.new_data = greeter.new_tx
         tx.data = greeter.tx_data
         greeter.tx_busy = tx.busy
-        tx.block = 0           // no flow control, do not block
     }
 }

@@ -30,7 +30,6 @@ module alchitry_top (
         uart_rx.rx = usb_rx     // connect the input
         
         // TX Connections
-        uart_tx.block = 0       // don't block
         greeter.tx_busy = uart_tx.busy
         uart_tx.new_data = greeter.new_tx
         uart_tx.data = greeter.tx_data
