@@ -54,8 +54,8 @@
 */
 
 module lru_cache #(
-    ENTRIES = 4 : ENTRIES > 0,
-    WORD_SIZE = 16 : WORD_SIZE >= 8 && WORD_SIZE <= 128 && (WORD_SIZE == $pow(2,$clog2(WORD_SIZE/8))*8), // 8,16,32,64,128 valid
+    ENTRIES ~ 4 : ENTRIES > 0,
+    WORD_SIZE ~ 16 : WORD_SIZE >= 8 && WORD_SIZE <= 128 && (WORD_SIZE == $pow(2,$clog2(WORD_SIZE/8))*8), // 8,16,32,64,128 valid
     AGE_BITS = 3 : AGE_BITS > 0
 )(
     input clk,  // clock
