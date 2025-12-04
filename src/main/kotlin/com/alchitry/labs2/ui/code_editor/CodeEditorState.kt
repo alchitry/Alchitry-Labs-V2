@@ -6,7 +6,6 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.lazy.layout.LazyLayoutMeasureScope
 import androidx.compose.foundation.text.TextDelegate
-import androidx.compose.foundation.text.isTypedEvent
 import androidx.compose.foundation.text.platformDefaultKeyMapping
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
@@ -54,6 +53,7 @@ import com.alchitry.labs2.ui.code_editor.styles.acf.AcfFormatter
 import com.alchitry.labs2.ui.code_editor.styles.lucid.LucidFormatter
 import com.alchitry.labs2.ui.code_editor.tooltip.NotationTooltipProvider
 import com.alchitry.labs2.ui.gestures.detectEditorActions
+import com.alchitry.labs2.ui.isAwtTypedEvent
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.ui.theme.AlchitryTypography
 import kotlinx.collections.immutable.toImmutableList
@@ -865,7 +865,7 @@ class CodeEditorState(
             }
         }
 
-        if (event.isTypedEvent) {
+        if (event.isAwtTypedEvent) {
             val text = StringBuilder().appendCodePoint(event.utf16CodePoint).toString()
 
             val lineNum = selectionManager.caret.line

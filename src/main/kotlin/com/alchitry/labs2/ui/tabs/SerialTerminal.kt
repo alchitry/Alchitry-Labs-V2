@@ -5,7 +5,6 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.isTypedEvent
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,6 +21,7 @@ import com.alchitry.labs2.hardware.usb.UsbUtil
 import com.alchitry.labs2.ui.components.DeviceSelector
 import com.alchitry.labs2.ui.components.ToolbarButton
 import com.alchitry.labs2.ui.hiddenClickable
+import com.alchitry.labs2.ui.isAwtTypedEvent
 import com.alchitry.labs2.ui.main.Console
 import com.alchitry.labs2.windows.LocalLabsState
 import kotlinx.coroutines.*
@@ -157,7 +157,7 @@ class SerialTerminal(
                         .onFocusChanged { hasFocus = it.hasFocus }
                         .hiddenClickable { }
                         .onKeyEvent { keyEvent ->
-                            if (keyEvent.isTypedEvent ||
+                            if (keyEvent.isAwtTypedEvent ||
                                 (keyEvent.type == KeyEventType.KeyDown &&
                                         (keyEvent.key == Key.Enter || keyEvent.key == Key.NumPadEnter))
                             ) {

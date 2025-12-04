@@ -17,13 +17,12 @@ buildscript {
 val antlrKotlinVersion = extra.get("antlrKotlinVersion") as String
 
 plugins {
-    kotlin("jvm") version "2.2.0"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.2.0"
-    kotlin("plugin.serialization") version "2.0.10"
-    id("org.jetbrains.compose") version "1.8.2"
+    kotlin("jvm") version "2.2.21"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.2.21"
+    kotlin("plugin.serialization") version "2.2.21"
+    id("org.jetbrains.compose") version "1.9.3"
     id("dev.hydraulic.conveyor") version "1.12"
     id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
-    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
 val fullVersion = "2.0.42-BETA"
@@ -40,11 +39,6 @@ repositories {
     maven("https://jitpack.io")
 }
 
-javafx {
-    version = "21.0.1"
-    modules("javafx.controls", "javafx.swing")
-}
-
 dependencies {
     implementation("com.github.alchitry.antlr-kotlin:antlr-kotlin-runtime:$antlrKotlinVersion")
     implementation("org.apache.commons:commons-text:1.14.0")
@@ -58,10 +52,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.6")
     implementation("org.usb4java:usb4java:1.3.0")
     macAarch64("io.github.dsheirer:libusb4java-darwin-aarch64:1.3.1") // ARM Mac binary
-    implementation("com.fazecast:jSerialComm:2.11.2")
+    implementation("com.fazecast:jSerialComm:2.11.4")
     implementation("com.github.alchitry.yad2xx:yad2xxJava:8d48cda")
     implementation("me.tongfei:progressbar:0.10.1")
-    implementation("org.jline:jline:3.30.5")
+    implementation("org.jline:jline:3.30.6")
     implementation("org.fusesource.jansi:jansi:2.4.2")
     implementation("li.flor:native-j-file-chooser:1.6.4")
 
@@ -71,7 +65,7 @@ dependencies {
     macAarch64(compose.desktop.macos_arm64)
     windowsAmd64(compose.desktop.windows_x64)
 
-    implementation("org.jetbrains.compose.material3:material3-desktop:1.8.2")
+    implementation("org.jetbrains.compose.material3:material3-desktop:1.9.0")
 
     testImplementation(kotlin("test"))
 }
