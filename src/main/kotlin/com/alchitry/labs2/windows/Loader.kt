@@ -316,6 +316,7 @@ fun BinSelector(
     onBinPathChanged: (String) -> Unit
 ) {
     val window = LocalComposeWindow.current
+    val scope = rememberCoroutineScope()
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -334,15 +335,17 @@ fun BinSelector(
         )
         Button(
             onClick = {
-                val file = openFileDialog(
-                    window,
-                    "Select a Bin File",
-                    listOf(".bin"),
-                    allowMultiSelection = false,
-                    startingDirectory = File(binPath).run { parentFile }
-                ).firstOrNull() ?: return@Button
-                onBinPathChanged(file.path)
-                binFileValid = file.isValidBinFile
+                scope.launch {
+                    val file = openFileDialog(
+                        window,
+                        "Select a Bin File",
+                        listOf("bin"),
+                        allowMultiSelection = false,
+                        startingDirectory = File(binPath).run { parentFile }
+                    )?.firstOrNull() ?: return@launch
+                    onBinPathChanged(file.path)
+                    binFileValid = file.isValidBinFile
+                }
             }
         ) {
             Text("Select")

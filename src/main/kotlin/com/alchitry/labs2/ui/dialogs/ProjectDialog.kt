@@ -42,8 +42,12 @@ fun ProjectDialog(mainContent: @Composable BoxScope.() -> Unit) {
                 Surface {
                     Column {
                         Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                            val scope = rememberCoroutineScope()
                             DialogButton(painterResource("icons/add.svg"), "Create Project") { show = true }
-                            DialogButton(painterResource("icons/open.svg"), "Open Project") { openProjectDialog() }
+                            DialogButton(
+                                painterResource("icons/open.svg"),
+                                "Open Project"
+                            ) { scope.launch { openProjectDialog() } }
                             DialogButton(
                                 painterResource("icons/load.svg"),
                                 "Alchitry Loader"
@@ -77,6 +81,8 @@ fun NewProjectDialog(visible: Boolean, onClose: () -> Unit) {
         var board by remember { mutableStateOf(Settings.boardType?.let { Board.fromName(it) } ?: Board.AlchitryAuV2) }
         var template by remember { mutableStateOf<ProjectTemplate?>(null) }
         val workspaceFile by derivedStateOf { File(workspace) }
+        val scope = rememberCoroutineScope()
+        var workspaceOpen by remember { mutableStateOf(false) }
 
         Column(Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = spacedBy) {
@@ -99,14 +105,21 @@ fun NewProjectDialog(visible: Boolean, onClose: () -> Unit) {
                     label = { Text("Workspace") }
                 )
                 Button(onClick = {
-                    openDirectoryDialog(
-                        window = mainWindow,
-                        "Select a Workspace",
-                        workspaceFile
-                    )?.let { newWorkspace ->
-                        workspace = newWorkspace.path
+                    workspaceOpen = true
+                    scope.launch {
+                        try {
+                            openDirectoryDialog(
+                                window = mainWindow,
+                                "Select a Workspace",
+                                workspaceFile
+                            )?.let { newWorkspace ->
+                                workspace = newWorkspace.path
+                            }
+                        } finally {
+                            workspaceOpen = false
+                        }
                     }
-                }) {
+                }, enabled = !workspaceOpen) {
                     Text("Browse...")
                 }
             }
@@ -276,13 +289,16 @@ fun SaveAsProjectDialog(project: Project, visible: Boolean, onClose: () -> Unit)
                     isError = !workspace.isDirectory,
                     label = { Text("Workspace") }
                 )
+                val scope = rememberCoroutineScope()
                 Button(onClick = {
-                    openDirectoryDialog(
-                        window = mainWindow,
-                        "Select a Workspace",
-                        workspace
-                    )?.let { newWorkspace ->
-                        workspace = newWorkspace
+                    scope.launch {
+                        openDirectoryDialog(
+                            window = mainWindow,
+                            "Select a Workspace",
+                            workspace
+                        )?.let { newWorkspace ->
+                            workspace = newWorkspace
+                        }
                     }
                 }) {
                     Text("Browse...")

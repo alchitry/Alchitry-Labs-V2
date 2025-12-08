@@ -4,7 +4,7 @@ import com.alchitry.labs2.project.Locations
 import com.alchitry.labs2.windows.mainWindow
 import java.io.File
 
-fun VivadoLocationDialog(): File? {
+suspend fun VivadoLocationDialog(): File? {
     return openDirectoryDialog(
         mainWindow,
         "Vivado Location",
@@ -12,7 +12,7 @@ fun VivadoLocationDialog(): File? {
     )
 }
 
-fun iCEcubeLocationDialog(): File? {
+suspend fun iCEcubeLocationDialog(): File? {
     return openDirectoryDialog(
         mainWindow,
         "iCEcube2 Location",
@@ -20,12 +20,12 @@ fun iCEcubeLocationDialog(): File? {
     )
 }
 
-fun iCEcubeLicenseDialog(): File? {
+suspend fun iCEcubeLicenseDialog(): File? {
     return openFileDialog(
         window = mainWindow,
         title = "iCEcube2 License",
-        allowedExtensions = listOf(".dat"),
+        allowedExtensions = listOf("dat"),
         allowMultiSelection = false,
         startingDirectory = Locations.iceCubeLicense?.parentFile,
-    ).firstOrNull()
+    )?.firstOrNull()
 }

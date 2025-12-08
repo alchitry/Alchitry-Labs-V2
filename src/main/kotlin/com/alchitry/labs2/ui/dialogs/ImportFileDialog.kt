@@ -9,7 +9,7 @@ import com.alchitry.labs2.windows.mainWindow
 import java.io.File
 import kotlin.io.path.relativeTo
 
-fun importFilesDialog(project: Project) {
+suspend fun importFilesDialog(project: Project) {
     val supportedExtensions = Language.all.map { ".${it.extension}" }
     try {
         val files = openFileDialog(
@@ -18,7 +18,7 @@ fun importFilesDialog(project: Project) {
             supportedExtensions,
             allowMultiSelection = true,
             startingDirectory = File(Locations.workspace)
-        )
+        ) ?: return
         val sourceFiles = project.data.sourceFiles.toMutableSet()
         val constraintFiles = project.data.constraintFiles.toMutableSet()
         files.forEach { file ->

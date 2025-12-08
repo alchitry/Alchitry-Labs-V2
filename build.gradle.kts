@@ -57,7 +57,8 @@ dependencies {
     implementation("me.tongfei:progressbar:0.10.1")
     implementation("org.jline:jline:3.30.6")
     implementation("org.fusesource.jansi:jansi:2.4.2")
-    implementation("li.flor:native-j-file-chooser:1.6.4")
+    implementation("io.github.vinceglb:filekit-dialogs:0.12.0")
+    implementation("org.slf4j:slf4j-nop:2.0.17")
 
     linuxAmd64(compose.desktop.linux_x64)
     linuxAarch64(compose.desktop.linux_arm64)

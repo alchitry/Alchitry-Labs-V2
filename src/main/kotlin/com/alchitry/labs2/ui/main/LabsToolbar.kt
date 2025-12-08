@@ -56,33 +56,41 @@ fun LabsToolbar() {
                 showProjectDialog = true
             }
             MenuItem({ Text("Open Project...") }) {
-                openProjectDialog()
+                scope.launch {
+                    openProjectDialog()
+                }
             }
             MenuItem({ Text("Save Project As...") }) {
                 showSaveProjectAsDialog = true
             }
             MenuParent(label = { Text("Settings") }) {
                 MenuItem({ Text("Set Vivado Location") }) {
-                    VivadoLocationDialog()?.let {
-                        Log.info("Set Vivado Location: ${it.absolutePath}")
-                        Settings.vivadoLocation = it.absolutePath
+                    scope.launch {
+                        VivadoLocationDialog()?.let {
+                            Log.info("Set Vivado Location: ${it.absolutePath}")
+                            Settings.vivadoLocation = it.absolutePath
+                        }
                     }
                 }
                 MenuItem({ Text("Set iCEcube2 Location") }) {
-                    iCEcubeLocationDialog()?.let {
-                        Log.info("Set iCEcube2 Location: ${it.absolutePath}")
-                        Settings.iceCubeLocation = it.absolutePath
+                    scope.launch {
+                        iCEcubeLocationDialog()?.let {
+                            Log.info("Set iCEcube2 Location: ${it.absolutePath}")
+                            Settings.iceCubeLocation = it.absolutePath
+                        }
                     }
                 }
 
                 MenuItem({ Text("Set iCEcube2 License Location") }) {
-                    iCEcubeLicenseDialog()?.let {
-                        if (!it.exists() || !it.isFile) {
-                            Log.error("${it.absolutePath} isn't a file!")
-                            return@let
+                    scope.launch {
+                        iCEcubeLicenseDialog()?.let {
+                            if (!it.exists() || !it.isFile) {
+                                Log.error("${it.absolutePath} isn't a file!")
+                                return@let
+                            }
+                            Log.info("Set iCEcube2 License Location: ${it.absolutePath}")
+                            Settings.iceCubeLicense = it.absolutePath
                         }
-                        Log.info("Set iCEcube2 License Location: ${it.absolutePath}")
-                        Settings.iceCubeLicense = it.absolutePath
                     }
                 }
 
@@ -185,7 +193,9 @@ fun LabsToolbar() {
                 showVerilogFileDialog = true
             }
             MenuItem({ Text("Import Existing File") }) {
-                project?.let { importFilesDialog(it) }
+                scope.launch {
+                    project?.let { importFilesDialog(it) }
+                }
             }
         }
 
