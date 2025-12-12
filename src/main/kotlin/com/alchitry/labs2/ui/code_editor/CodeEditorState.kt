@@ -931,6 +931,7 @@ class CodeEditorState(
                 java.awt.event.KeyEvent.VK_ENTER -> KeyCommand.NEW_LINE
                 java.awt.event.KeyEvent.VK_HOME if event.isCtrlPressed -> KeyCommand.HOME
                 java.awt.event.KeyEvent.VK_END if event.isCtrlPressed -> KeyCommand.END
+                java.awt.event.KeyEvent.VK_BACK_SPACE if event.isShiftPressed -> KeyCommand.DELETE_PREV_CHAR
                 else -> return false
             }
         var consumed = true
