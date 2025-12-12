@@ -27,17 +27,20 @@ data class TextPosition(val line: Int, val offset: Int) : Comparable<TextPositio
     }
 
     context(CodeEditorState)
-    fun getTopOffset(): Offset {
-        val lineState = lines.getOrNull(line)
-        val layout = lineState?.layoutResult
-        val xOffset = round(
-            layout?.getHorizontalPosition(
+    fun getXOffset(): Float {
+        val lineState = lines.getOrNull(line) ?: return 0f
+        val layout = lineState.layoutResult ?: return 0f
+        return round(
+            layout.getHorizontalPosition(
                 offset.coerceIn(0, lineState.text.length),
                 usePrimaryDirection = true
-            ) ?: 0f
+            )
         )
-        val yOffset = offsetAtLineTop(line).toFloat()
-        return Offset(xOffset, yOffset)
+    }
+
+    context(CodeEditorState)
+    fun getTopOffset(): Offset {
+        return Offset(getXOffset(), offsetAtLineTop(line).toFloat())
     }
 
     context(CodeEditorState)

@@ -7,9 +7,12 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.input.pointer.PointerKeyboardModifiers
+import androidx.compose.ui.input.pointer.isShiftPressed
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.toOffset
+import com.alchitry.labs2.leadingWhitespace
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -189,6 +192,135 @@ class SelectionManager(
         return moveCaret(newPosition)
     }
 
+    fun moveLeftToken(): CaretMovement {
+        if (!active) return CaretMovement(caret, caret)
+
+        val newPosition = with(editorState) {
+            val token = textPositionToToken(caret) ?: return CaretMovement(caret, caret)
+            if (token.range.start == caret) {
+                val nextToken = tokens[(tokens.indexOf(token) - 1).coerceAtLeast(0)]
+                return@with nextToken.range.start
+            }
+            token.range.start
+        }
+
+        return moveCaret(newPosition)
+    }
+
+    fun moveRightToken(): CaretMovement {
+        if (!active) return CaretMovement(caret, caret)
+
+        val newPosition = with(editorState) {
+            val token = textPositionToToken(caret) ?: return CaretMovement(caret, caret)
+            if (token.range.endInclusive == caret) {
+                val nextToken = tokens[(tokens.indexOf(token) + 1).coerceAtMost(tokens.size - 1)]
+                return@with nextToken.range.endInclusive
+            }
+            token.range.endInclusive
+        }
+
+        return moveCaret(newPosition)
+    }
+
+    private fun verticalScrollToOrCursor(offset: Int) {
+        with(editorState) {
+            scrollTarget = null
+
+            val top = offsetAtLineTop(caret.line)
+            val bottom = top + (lineHeight(caret.line) ?: 0)
+
+            val viewBottom = offset + size.height
+
+            val verticalDestination = when {
+                top < offset -> top
+                bottom > viewBottom -> bottom - size.height
+                else -> offset
+            }
+
+            uiScope?.launch {
+                verticalScrollState.animateScrollTo(verticalDestination)
+            }
+        }
+    }
+
+    fun movePageUp(): CaretMovement {
+        if (!active) return CaretMovement(caret, caret)
+
+        val newPosition = with(editorState) {
+            val currentY = textPositionToScreenOffset(caret)?.y ?: return@with null
+            val newY = currentY - size.height
+            val newOffset = screenOffsetToTextPosition(Offset(0f, newY))
+            if (newY + verticalScrollState.value >= 0) {
+                caret.copy(line = newOffset.line)
+            } else {
+                newOffset
+            }
+
+        } ?: return CaretMovement(caret, caret)
+
+        return moveCaret(newPosition).also {
+            verticalScrollToOrCursor(editorState.verticalScrollState.value - editorState.size.height)
+        }
+    }
+
+    fun movePageDown(): CaretMovement {
+        if (!active) return CaretMovement(caret, caret)
+
+        val newPosition = with(editorState) {
+            val currentY = textPositionToScreenOffset(caret)?.y ?: return@with null
+            val newY = currentY + size.height
+            val newOffset = screenOffsetToTextPosition(Offset(0f, newY))
+            if (newY + verticalScrollState.value <= verticalScrollState.maxValue) {
+                caret.copy(line = newOffset.line)
+            } else {
+                newOffset
+            }
+        } ?: return CaretMovement(caret, caret)
+
+        return moveCaret(newPosition).also {
+            verticalScrollToOrCursor(editorState.verticalScrollState.value + editorState.size.height)
+        }
+    }
+
+    fun moveToStartOfLine(): CaretMovement {
+        if (!active) return CaretMovement(caret, caret)
+
+        val newPosition = with(editorState) {
+            val whiteSpaceOffset = lines[caret.line].text.text.leadingWhitespace()
+            val offset = if (selectionManager.caret.offset == whiteSpaceOffset) 0 else whiteSpaceOffset
+            caret.copy(offset = offset)
+        }
+
+        return moveCaret(newPosition)
+    }
+
+    fun moveToEndOfLine(): CaretMovement {
+        if (!active) return CaretMovement(caret, caret)
+
+        with(editorState) {
+            return moveCaret(
+                caret.copy(
+                    offset = lines.getOrNull(caret.line)?.text?.length ?: 0
+                )
+            )
+        }
+    }
+
+    fun moveToStart(): CaretMovement {
+        if (!active) return CaretMovement(caret, caret)
+        return moveCaret(TextPosition(0, 0))
+    }
+
+    fun moveToEnd(): CaretMovement {
+        if (!active) return CaretMovement(caret, caret)
+        return moveCaret(
+            TextPosition(
+                editorState.lines.size - 1,
+                editorState.lines.lastOrNull()?.text?.length ?: 0
+            )
+        )
+    }
+
     fun setCaretToSelectionOr(start: Boolean, or: SelectionManager.() -> Unit) {
         if (hasSelection) {
             caret = if (start) firstPosition else secondPosition
@@ -219,10 +351,15 @@ class SelectionManager(
         caret = end
     }
 
-    fun onClick(uiOffset: Offset) {
+    fun onClick(uiOffset: Offset, modifiers: PointerKeyboardModifiers) {
         editorState.focusRequester.requestFocus()
-        start = uiOffset.toTextPosition()
-        end = start
+
+        end = uiOffset.toTextPosition()
+
+        if (!modifiers.isShiftPressed) {
+            start = end
+        }
+
         caret = start
     }
 

@@ -6,9 +6,10 @@ import androidx.compose.foundation.gestures.drag
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.PointerInputScope
+import androidx.compose.ui.input.pointer.PointerKeyboardModifiers
 
 suspend fun PointerInputScope.detectEditorActions(
-    onClick: (Offset) -> Unit,
+    onClick: (Offset, PointerKeyboardModifiers) -> Unit,
     onDoubleClick: (Offset) -> Unit,
     onTripleClick: (Offset) -> Unit,
     onDrag: (change: PointerInputChange) -> Unit,
@@ -35,7 +36,7 @@ suspend fun PointerInputScope.detectEditorActions(
                 null
             }
         } else {
-            onClick(down.position)
+            onClick(down.position, currentEvent.keyboardModifiers)
             clickCount = 1
             down
         }

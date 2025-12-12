@@ -48,3 +48,18 @@ fun <T> List<T>.joinToOrString(transform: ((T) -> CharSequence)? = null): String
     2 -> "${transform?.let { it(first()) } ?: first()} or ${transform?.let { it(last()) } ?: last()}"
     else -> "${dropLast(1).joinToString(", ", transform = transform)}, or ${transform?.let { it(last()) } ?: last()}"
 }
+
+/**
+ * Returns the number of leading whitespace characters in the string.
+ *
+ * @receiver The string to check for leading whitespace.
+ * @return The number of leading whitespace characters.
+ */
+fun String.leadingWhitespace(): Int {
+    var count = 0
+    for (char in this) {
+        if (!char.isWhitespace()) break
+        count++
+    }
+    return count
+}
