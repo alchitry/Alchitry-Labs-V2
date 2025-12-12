@@ -335,10 +335,15 @@ class ExprParser(
 
         val value = if (context.mode == ExprEvalMode.Building && signal.type == ExprType.Fixed) {
             // outermost dimension is undefined for parameters
-            val newWidth = when (val width = signal.width) {
-                is SimpleWidth -> UndefinedSimpleWidth()
-                is ArrayWidth -> UndefinedArrayWidth(width.next)
-                else -> width
+            val width = signal.width
+            val newWidth = if (bitSelectionType == ExprType.Constant) {
+                width
+            } else {
+                when (width) {
+                    is SimpleWidth -> UndefinedSimpleWidth()
+                    is ArrayWidth -> UndefinedArrayWidth(width.next)
+                    else -> width
+                }
             }
             UndefinedValue(newWidth)
         } else {
@@ -809,14 +814,18 @@ class ExprParser(
                     return
                 }
 
-                if (type != ExprType.Constant) {
-                    if (ctx.functionExpr(0)?.expr() !is ExprSignalContext) {
-                        context.reportError(
-                            ctx.functionExpr(0) ?: ctx,
-                            "\$reverse() can only be used on constant expressions or signals."
-                        )
-                        return
-                    }
+                val expr = ctx.functionExpr(0)?.expr()
+
+                if (type != ExprType.Constant &&
+                    expr !is ExprSignalContext &&
+                    expr !is ExprArrayContext &&
+                    expr !is ExprConcatContext
+                ) {
+                    context.reportError(
+                        ctx.functionExpr(0) ?: ctx,
+                        "\$reverse() can only be used on constant expressions, concatenations, array builders, or signals."
+                    )
+                    return
                 }
 
                 evaluator.setExpr(ctx, arg.reverse().asExpr(type))

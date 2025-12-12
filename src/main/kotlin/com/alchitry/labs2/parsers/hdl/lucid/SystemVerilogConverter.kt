@@ -1298,38 +1298,62 @@ class SystemVerilogConverter(
             }
 
             Function.REVERSE -> {
-                val signalContext =
-                    (functionCtx.functionExpr(0)?.expr() as? LucidParser.ExprSignalContext)?.signal() ?: error(
-                        ctx,
-                        "Non-constant \$reverse() used on something other than a signal!"
-                    )
-                val signal = context.signal.resolve(signalContext)
-                    ?: error(ctx, "Failed to resolve signal for ${function.label}!")
-                val selection = when (signal) {
-                    is Signal -> {
-                        val msb = when (val width = signal.width) {
-                            is DefinedArrayWidth -> width.size
-                            is BitListWidth -> width.size
-                            BitWidth -> 1
-                            else -> error(ctx, "\$reverse() used on a non-array signal!")
-                        } - 1
-                        listOf(SignalSelector.Bits(0..msb, SelectionContext.Constant))
+                val expr = functionCtx.functionExpr(0)?.expr() ?: error($$"Missing expr context for $reverse()!")
+
+                when (expr) {
+                    is LucidParser.ExprSignalContext -> {
+                        val signalContext = expr.signal() ?: error($$"Missing signal for $reverse() expr.")
+                        val signal = context.signal.resolve(signalContext)
+                            ?: error(ctx, "Failed to resolve signal for ${function.label}!")
+                        val selection = when (signal) {
+                            is Signal -> {
+                                val msb = when (val width = signal.width) {
+                                    is DefinedArrayWidth -> width.size
+                                    is BitListWidth -> width.size
+                                    BitWidth -> 1
+                                    else -> error(ctx, "\$reverse() used on a non-array signal!")
+                                } - 1
+                                listOf(SignalSelector.Bits(0..msb, SelectionContext.Constant))
+                            }
+
+                            is SubSignal -> signal.selection
+                        }
+                        val lastSelector = selection.last()
+                        if (lastSelector !is SignalSelector.Bits)
+                            error(ctx, "\$reverse() used on a non-array signal!")
+
+                        lastSelector.range.joinToString(separator = ", ", prefix = "{", postfix = "}") { index ->
+                            val newSelector = selection.toMutableList().apply {
+                                removeLast()
+                                add(SignalSelector.Bits(index))
+                            }
+                            val selectedSignal = signal.getSignal().select(newSelector)
+                            selectedSignal.toVerilog(write = false)
+                        }
                     }
 
-                    is SubSignal -> signal.selection
-                }
-                val lastSelector = selection.last()
-                if (lastSelector !is SignalSelector.Bits)
-                    error(ctx, "\$reverse() used on a non-array signal!")
-
-                lastSelector.range.joinToString(separator = ", ", prefix = "{", postfix = "}") { index ->
-                    val newSelector = selection.toMutableList().apply {
-                        removeLast()
-                        add(SignalSelector.Bits(index))
+                    is LucidParser.ExprArrayContext -> {
+                        buildString {
+                            append("{")
+                            expr.expr().asReversed().forEachIndexed { index, exprContext ->
+                                if (index > 0)
+                                    append(", ")
+                                append(exprContext.verilog)
+                            }
+                            append("}")
+                        }
                     }
-                    val selectedSignal = signal.getSignal().select(newSelector)
-                    selectedSignal.toVerilog(write = false)
+
+                    is LucidParser.ExprConcatContext -> {
+                        expr.expr().asReversed().joinToString(", ", "{", "}") {
+                            verilog[it] ?: error(it, "Missing verilog for expr in concat: \"${it.text}\"")
+                        }
+                    }
+
+                    else -> error("Non-constant \$reverse() used on something other than a signal, array, or concatenation!")
                 }
+
+
             }
 
             Function.WIDTH -> {
