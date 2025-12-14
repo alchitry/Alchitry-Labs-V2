@@ -5,11 +5,13 @@ import com.alchitry.labs2.parsers.hdl.values.ArrayWidth
 import com.alchitry.labs2.parsers.hdl.values.SignalWidth
 import com.alchitry.labs2.parsers.hdl.values.UndefinedArrayWidth
 import com.alchitry.labs2.parsers.hdl.values.Value
+import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 data class Parameter(
     val name: String,
     val default: Value?,
     val defaultTestOnly: Boolean,
+    val defaultExpr: ParserRuleContext?,
     val constraint: ExprContext?
 ) {
     companion object {

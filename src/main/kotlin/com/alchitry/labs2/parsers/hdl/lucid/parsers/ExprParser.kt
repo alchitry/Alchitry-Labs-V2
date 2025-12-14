@@ -468,7 +468,9 @@ class ExprParser(
         val args = functionExprCtxs.map { expr ->
             val exprExpr = expr.expr()
             if (exprExpr != null) {
-                FunctionArg.ValueArg(evaluator.resolve(exprExpr)?.value ?: return)
+                evaluator.resolve(exprExpr)?.let {
+                    FunctionArg.ValueArg(it.value, it.type)
+                } ?: return
             } else if (expr.REAL() != null) {
                 expr.REAL()?.text?.toDoubleOrNull().let {
                     if (it == null) {
@@ -496,7 +498,7 @@ class ExprParser(
             return
         }
 
-        fun checkOnlyValues(): List<Value>? {
+        fun checkOnlyValues(): List<FunctionArg.ValueArg>? {
             args.forEachIndexed { index, functionArg ->
                 if (functionArg is FunctionArg.RealArg) {
                     context.reportError(
@@ -506,7 +508,7 @@ class ExprParser(
                     return null
                 }
             }
-            return args.map { (it as FunctionArg.ValueArg).value }
+            return args.map { (it as FunctionArg.ValueArg) }
         }
 
         when (function) {
@@ -534,7 +536,7 @@ class ExprParser(
                         return
                     }
                 }
-                val width = arg.width
+                val width = arg.value.width
                 if (!width.isSimpleArray()) {
                     context.reportError(
                         ctx.functionExpr(0) ?: ctx,
@@ -542,7 +544,7 @@ class ExprParser(
                     )
                     return
                 }
-                val widthType = if (width.isDefined()) ExprType.Constant else ExprType.Fixed
+                val widthType = if (width.isDefined() && arg.type == ExprType.Constant) ExprType.Constant else ExprType.Fixed
                 val widthValue = width.toValue()
                 if (dimArg == null && widthValue is ArrayValue) {
                     context.reportError(
@@ -552,11 +554,11 @@ class ExprParser(
                     return
                 }
                 val value = if (dimArg != null) {
-                    if (!dimArg.isNumber()) {
+                    if (!dimArg.value.isNumber()) {
                         context.reportError(ctx.functionExpr(1) ?: ctx, "The dimension argument must be a number.")
                         return
                     }
-                    val dimInt = (dimArg as SimpleValue).toBigInt()!!.toInt()
+                    val dimInt = (dimArg.value as SimpleValue).toBigInt()!!.toInt()
 
                     if (widthValue !is ArrayValue) {
                         if (dimInt != 0) {
@@ -610,7 +612,7 @@ class ExprParser(
                         }
                         try {
                             w.value.toBigInt()!!.intValueExact()
-                        } catch (e: ArithmeticException) {
+                        } catch (_: ArithmeticException) {
                             context.reportError(
                                 ctx.functionExpr(1) ?: ctx,
                                 "The width value doesn't fit into an integer!"
@@ -641,7 +643,7 @@ class ExprParser(
                         }
                         try {
                             w.value.toBigInt()!!.intValueExact()
-                        } catch (e: ArithmeticException) {
+                        } catch (_: ArithmeticException) {
                             context.reportError(
                                 ctx.functionExpr(2) ?: ctx,
                                 "The width value doesn't fit into an integer!"
@@ -722,7 +724,7 @@ class ExprParser(
 
             Function.CLOG2 -> {
                 val valArgs = checkOnlyValues() ?: return
-                val arg = valArgs[0]
+                val arg = valArgs[0].value
                 if (!arg.width.isSimple()) {
                     context.reportError(
                         ctx.functionExpr(0) ?: ctx,
@@ -751,8 +753,8 @@ class ExprParser(
 
             Function.POWER -> {
                 val valArgs = checkOnlyValues() ?: return
-                val arg1 = valArgs[0]
-                val arg2 = valArgs[1]
+                val arg1 = valArgs[0].value
+                val arg2 = valArgs[1].value
                 if (!arg1.width.isSimple()) {
                     context.reportError(
                         ctx.functionExpr(0) ?: ctx,
@@ -795,7 +797,7 @@ class ExprParser(
                 val b2 = arg2.toBigInt()!!
                 try {
                     evaluator.setExpr(ctx, b1.pow(b2.intValueExact()).toBitListValue().asExpr(type))
-                } catch (e: ArithmeticException) {
+                } catch (_: ArithmeticException) {
                     context.reportError(
                         ctx.functionExpr(1) ?: ctx,
                         ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.functionExpr(1)?.text)
@@ -805,7 +807,7 @@ class ExprParser(
 
             Function.REVERSE -> {
                 val valArgs = checkOnlyValues() ?: return
-                val arg = valArgs[0]
+                val arg = valArgs[0].value
                 if (!arg.width.isArrayOrSimple()) {
                     context.reportError(
                         ctx.functionExpr(0) ?: ctx,
@@ -834,15 +836,15 @@ class ExprParser(
             Function.FLATTEN -> {
                 val valArgs = checkOnlyValues() ?: return
                 evaluator.setExpr(
-                    ctx, if (valArgs[0].width.isDefined()) {
-                        if (valArgs[0] is UndefinedValue) {
+                    ctx, if (valArgs[0].value.width.isDefined()) {
+                        if (valArgs[0].value is UndefinedValue) {
                             UndefinedValue(
                                 DefinedSimpleWidth(
-                                    valArgs[0].width.bitCount ?: error("Failed to get bit count. Should be impossible.")
+                                    valArgs[0].value.width.bitCount ?: error("Failed to get bit count. Should be impossible.")
                                 )
                             )
                         } else {
-                            valArgs[0].flatten()
+                            valArgs[0].value.flatten()
                         }
                     } else {
                         UndefinedValue(UndefinedSimpleWidth())
@@ -852,14 +854,14 @@ class ExprParser(
 
             Function.BUILD -> {
                 val valArgs = checkOnlyValues() ?: return
-                val value = valArgs[0]
+                val value = valArgs[0].value
                 val dimArgs = valArgs.subList(1, valArgs.size)
                 if (!value.width.isSimple()) {
                     context.reportError(ctx.functionExpr(0) ?: ctx, "Only single dimensional arrays can be built")
                     return
                 }
                 for (i in 1 until valArgs.size) {
-                    if (valArgs[i] !is UndefinedValue && (!valArgs[i].isNumber() || valArgs[i] !is SimpleValue)) {
+                    if (valArgs[i].value !is UndefinedValue && (!valArgs[i].value.isNumber() || valArgs[i].value !is SimpleValue)) {
                         context.reportError(
                             ctx.functionExpr(i) ?: ctx,
                             ErrorStrings.FUNCTION_ARG_NAN.format(ctx.functionExpr(i)?.text, valArgs[i].toString())
@@ -868,11 +870,11 @@ class ExprParser(
                     }
                 }
                 val dims = dimArgs.mapIndexed { i, it ->
-                    if (it is UndefinedValue) {
+                    if (it.value is UndefinedValue) {
                         null
                     } else {
                         try {
-                            val bigInt = (it as SimpleValue).toBigInt()
+                            val bigInt = (it.value as SimpleValue).toBigInt()
                             if (bigInt == null) {
                                 context.reportError(
                                     ctx.functionExpr(i + 1) ?: ctx,
@@ -881,7 +883,7 @@ class ExprParser(
                                 return
                             }
                             bigInt.intValueExact()
-                        } catch (e: ArithmeticException) {
+                        } catch (_: ArithmeticException) {
                             context.reportError(
                                 ctx.functionExpr(i + 1) ?: ctx,
                                 ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.functionExpr(i + 1)?.text)
@@ -910,7 +912,7 @@ class ExprParser(
                     }
                 }
 
-                if (dimArgs.any { it is UndefinedValue }) {
+                if (dimArgs.any { it.value is UndefinedValue }) {
                     var width: SignalWidth = UndefinedSimpleWidth()
                     dims.asReversed().forEach { d ->
                         width = d?.let { DefinedArrayWidth(it, width) } ?: UndefinedArrayWidth(width)
@@ -982,7 +984,7 @@ class ExprParser(
 
             Function.SIGNED -> {
                 val valArgs = checkOnlyValues() ?: return
-                val arg = valArgs[0]
+                val arg = valArgs[0].value
                 if (!arg.width.isSimple()) {
                     context.reportError(ctx.functionExpr(0) ?: ctx, "Only single dimensional values can use \$signed()")
                 }
@@ -996,7 +998,7 @@ class ExprParser(
 
             Function.UNSIGNED -> {
                 val valArgs = checkOnlyValues() ?: return
-                val arg = valArgs[0]
+                val arg = valArgs[0].value
                 if (!arg.width.isSimple()) {
                     context.reportError(
                         ctx.functionExpr(0) ?: ctx,
@@ -1013,8 +1015,8 @@ class ExprParser(
 
             Function.CDIV -> {
                 val valArgs = checkOnlyValues() ?: return
-                val arg1 = valArgs[0]
-                val arg2 = valArgs[1]
+                val arg1 = valArgs[0].value
+                val arg2 = valArgs[1].value
                 if (!arg1.width.isSimple()) {
                     context.reportError(
                         ctx.functionExpr(0) ?: ctx,
@@ -1076,17 +1078,17 @@ class ExprParser(
 
             Function.RESIZE -> {
                 val valArgs = checkOnlyValues() ?: return
-                val value = valArgs[0]
-                val size = valArgs[1]
+                val value = valArgs[0].value
+                val size = valArgs[1].value
                 if (evaluator.resolve(ctx.functionExpr(1)?.expr() ?: return)?.type?.fixed == false) {
                     context.reportError(
-                        ctx.functionExpr(1) ?: ctx, "The size (second) argument of \$resize() must be a constant."
+                        ctx.functionExpr(1) ?: ctx, $$"The size (second) argument of $resize() must be a constant."
                     )
                 }
                 if (size.isNumber() && size is BitListValue) {
                     val numBits = try {
                         size.toBigInt()!!.intValueExact()
-                    } catch (e: ArithmeticException) {
+                    } catch (_: ArithmeticException) {
                         context.reportError(
                             ctx.functionExpr(1) ?: ctx,
                             ErrorStrings.VALUE_BIGGER_THAN_INT.format(ctx.functionExpr(1)?.text)
@@ -1244,7 +1246,7 @@ class ExprParser(
                 val valArgs = checkOnlyValues() ?: return
 
                 function.args.forEachIndexed { index, customArg ->
-                    if (!customArg.width.canAssign(valArgs[index].width)) {
+                    if (!customArg.width.canAssign(valArgs[index].value.width)) {
                         context.reportError(
                             ctx.functionExpr(index) ?: ctx,
                             "The function parameter \"${customArg.name}\" can't be assigned the value \"${
@@ -1255,7 +1257,7 @@ class ExprParser(
                     }
                 }
 
-                context.runFunction(function, valArgs)
+                context.runFunction(function, valArgs.map { it.value })
             }
         }
     }

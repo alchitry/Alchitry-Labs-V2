@@ -115,12 +115,13 @@ data class ModuleParser(
             }
 
             val defaultTestOnly = paramCtx.paramDefault()?.getChild(0)?.text == "~"
-            val defaultValue = paramCtx.paramDefault()?.expr()?.let { context.resolve(it)?.value }
+            val defaultContext = paramCtx.paramDefault()?.expr()
+            val defaultValue = defaultContext?.let { context.resolve(it)?.value }
             val constraintContext = paramCtx.paramConstraint()?.expr()
 
             if (params.putIfAbsent(
                     paramName,
-                    Parameter(paramName, defaultValue, defaultTestOnly, constraintContext)
+                    Parameter(paramName, defaultValue, defaultTestOnly, defaultContext, constraintContext)
                 ) != null
             ) {
                 context.reportError(

@@ -86,6 +86,7 @@ data class ModuleParser(
         }
         ctx.list_of_param_assignments()?.param_assignment()?.forEach { pCtx ->
             val pName = pCtx.parameter_identifier()?.text ?: return@forEach
+            val defaultContext = pCtx.constant_mintypmax_expression()?.constant_expression(0)
             val value = if (pCtx.constant_mintypmax_expression()?.constant_expression()?.size != 1) {
                 context.reportWarning(
                     pCtx.constant_mintypmax_expression() ?: pCtx,
@@ -105,7 +106,7 @@ data class ModuleParser(
                 }
             }
 
-            parameters[pName] = Parameter(pName, value?.value, false, null)
+            parameters[pName] = Parameter(pName, value?.value, false, defaultContext, null)
         }
     }
 

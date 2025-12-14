@@ -41,8 +41,9 @@ class SystemVerilogConverter(
      */
     private fun StringBuilder.newLine(): StringBuilder {
         append("\n")
-        for (i in 0..<tabCount)
+        repeat(tabCount) {
             append("    ")
+        }
         return this
     }
 
@@ -132,8 +133,8 @@ class SystemVerilogConverter(
             append("parameter ")
             append(param.name)
             append(" = ")
-            if (param.default != null) {
-                append(param.default.toVerilog())
+            if (param.defaultExpr != null) {
+                append(param.defaultExpr.verilog)
             } else {
                 append("0")
             }
@@ -596,7 +597,7 @@ class SystemVerilogConverter(
                         "idx_${index}_${instance.hashCode()}"
                     }
                     append("genvar ")
-                    instance.dimensions.forEachIndexed { index, arraySize ->
+                    instance.dimensions.forEachIndexed { index, _ ->
                         if (index != 0)
                             append(", ")
                         append(dimIndexNames[index])
@@ -812,7 +813,7 @@ class SystemVerilogConverter(
                                             v.toString()
                                         }
                                     }
-                                    return (w + v).toString()
+                                    (w + v).toString()
                                 } else {
                                     val v = this.verilog
                                     "(($v) < 0 ? ($widthString) + ($v) : ($v))"
@@ -1023,8 +1024,9 @@ class SystemVerilogConverter(
             append(" + 1) ")
             val blockLines = ctx.repeatBlock().requireNotNull(ctx).verilog.split("\n").toMutableList()
             blockLines.add(1, buildString {
-                for (i in 0..<tabCount + 1)
+                repeat(tabCount + 1) {
                     append("  ")
+                }
                 append(repSigName)
                 append(" = (")
                 append(startExpr)
@@ -1361,7 +1363,8 @@ class SystemVerilogConverter(
                 val dimension = if (dimArgCtx == null) 0 else {
                     (context.resolve(dimArgCtx)!!.value as SimpleValue).toBigInt()!!.toInt()
                 }
-                val width = functionCtx.functionExpr(0)?.expr()?.let { context.resolve(it) }?.value?.width
+                val expr = functionCtx.functionExpr(0)?.expr()?.let { context.resolve(it) }
+                val width = expr?.value?.width
                     ?: error("Failed to get width of value passed to \$width().")
                 val exprCtx = functionCtx.functionExpr(0)?.expr()
                 val exprVerilog = exprCtx?.verilog ?: error(ctx, "Missing value for ${function.label}!")
@@ -1407,12 +1410,11 @@ class SystemVerilogConverter(
                         if (exprCtx is LucidParser.ExprSignalContext) {
                             val signal = context.resolve(exprCtx.signal() ?: error("Missing signal context!"))
                             val signalWidth = signal?.width
-                            if (signalWidth?.isDefined() == true) {
-                                "${signalWidth.bitCount!!}"
-                            } else if (signalWidth?.isResolvable() == true) {
-                                signalWidth.verilogBits()
-                            } else {
-                                fallbackString
+                            when {
+                                expr.type != ExprType.Constant -> fallbackString
+                                signalWidth?.isDefined() == true -> "${signalWidth.bitCount!!}"
+                                signalWidth?.isResolvable() == true -> signalWidth.verilogBits()
+                                else -> fallbackString
                             }
                         } else {
                             fallbackString

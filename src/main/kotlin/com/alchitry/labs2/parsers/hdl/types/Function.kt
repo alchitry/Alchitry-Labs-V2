@@ -53,7 +53,7 @@ data class CustomArg(
 )
 
 sealed class FunctionArg {
-    class ValueArg(val value: Value) : FunctionArg() {
+    class ValueArg(val value: Value, val type: ExprType) : FunctionArg() {
         override fun toString() = value.toString()
     }
 
