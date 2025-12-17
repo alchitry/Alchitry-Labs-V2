@@ -66,7 +66,7 @@ module i2c_controller #(
 
     // Device interface
     inout sda,          // bi-directional
-    output scl,         // data clock
+    inout scl,          // data clock
 
     // Control signals
     input start,        // send start signal
@@ -98,13 +98,18 @@ module i2c_controller #(
         dff bit_ctr[4]        // bit counter
         dff ack_write_reg     // ack_write buffer
         dff ack_read_reg      // ack_read buffer
+        dff scl_sync[2]
     }
-
-    sig sda_value
 
     always {
         // the clock is the MSB of scl_reg inverted
-        scl = ~scl_reg.q[CLK_DIV - 1]
+        scl = scl_reg.q[-1] ? b0 : bz
+
+        // sync the scl input to the clock
+        scl_sync.d = c{scl_sync.q[-2:0], scl}
+
+        // streaching the clock if it should be high but is 0
+        sig clock_streaching = scl_reg.q[-1] == 0 && scl_sync.q[-1] == 0
 
         // we are busy if we aren't idle or waiting for a command
         busy = state.q != States.IDLE && state.q != States.WAIT_CMD
@@ -116,7 +121,7 @@ module i2c_controller #(
 
         // defaults
         out_valid_reg.d = 0 // not valid
-        sda_value = 1 // default to floating pin
+        sig sda_value = 1 // default to floating pin
 
         case (state.q) {
             // Start here
@@ -128,9 +133,10 @@ module i2c_controller #(
                     state.d = States.START // go to start state
                 }
 
-            // Send start command
+                // Send start command
             States.START:
-                scl_reg.d = scl_reg.q + 1 // increment the counter
+                if (!clock_streaching)
+                    scl_reg.d = scl_reg.q + 1 // increment the counter
 
                 // if the clock counter is less than 1/4 full or more than 3/4 full
                 if (scl_reg.q < c{2b01, ($width(scl_reg.q)-2)x{1b0}} || scl_reg.q > c{2b11, ($width(scl_reg.q)-2)x{1b0}})
@@ -142,8 +148,7 @@ module i2c_controller #(
                 if (scl_reg.q == c{2b11, ($width(scl_reg.q)-2)x{1b0}})
                     state.d = States.WAIT_CMD // enter wait command state
 
-            // Wait for read or write command
-            States.WAIT_CMD:
+            States.WAIT_CMD: // Wait for read or write command
                 bit_ctr.d = 0 // reset bit counter
 
                 // set clock counter to just over half full
@@ -168,18 +173,21 @@ module i2c_controller #(
                     scl_reg.d = c{2b11, ($width(scl_reg.q)-2)x{1b0}} + 1
                 }
 
-            // Read in a byte
-            States.READ:
+            States.READ: // Read in a byte
                 // if we at the end of the 8th bit or later
                 if (bit_ctr.q == 9 || (bit_ctr.q > 7 && scl_reg.q >= c{2b11, ($width(scl_reg.q)-2)x{1b0}})) {
                     sda_value = ~ack_read_reg.q // write the acknowledge bit
                 }
 
                 // increment the clock counter
-                scl_reg.d = scl_reg.q + 1
+                if (!clock_streaching)
+                    scl_reg.d = scl_reg.q + 1
 
                 // if the clock is 0
                 if (scl_reg.q == 0) {
+                    // make sure we don't get stuck here and increment bit_ctr multiple times
+                    scl_reg.d = scl_reg.q + 1
+
                     // if it's a data bit
                     if (bit_ctr.q < 8)
                         data.d = c{data.q[6:0], sda} // shift it in
@@ -193,8 +201,7 @@ module i2c_controller #(
                     state.d = States.WAIT_CMD // wait for next command
                 }
 
-            // Write a byte
-            States.WRITE:
+            States.WRITE: // Write a byte
                 // if we aren't on the acknowledge bit
                 if (bit_ctr.q != 8)
                     sda_value = data.q[7]     // write the MSB of data
@@ -204,7 +211,8 @@ module i2c_controller #(
                     ack_write_reg.d = ~sda // read the acknowledge bit
 
                 // increment the clock counter
-                scl_reg.d = scl_reg.q + 1
+                if (!clock_streaching)
+                    scl_reg.d = scl_reg.q + 1
 
                 // if the clock counter is 3/4 full
                 if (scl_reg.q ==  c{2b11, ($width(scl_reg.q)-2)x{1b0}}) {
@@ -219,10 +227,10 @@ module i2c_controller #(
                         state.d = States.WAIT_CMD // wait for the next command
                 }
 
-            // Send stop command
-            States.STOP:
+            States.STOP: // Send stop command
                 sda_value = 0
-                scl_reg.d = scl_reg.q + 1 // increment the clock counter
+                if (!clock_streaching)
+                    scl_reg.d = scl_reg.q + 1 // increment the clock counter
 
                 // if the clock counter is just under half full
                 // We don't want it to reach 1/2 full because
@@ -233,9 +241,9 @@ module i2c_controller #(
                     scl_reg.d = 0          // reset clock counter
                 }
 
-            // Wait 1/2 a clock period
-            States.WAIT:
-                scl_reg.d = scl_reg.q + 1 // increment the clock counter
+            States.WAIT: // Wait 1/2 a clock period
+                if (!clock_streaching)
+                    scl_reg.d = scl_reg.q + 1 // increment the clock counter
 
                 // if the clock counter is just under half full
                 // We don't want it to reach 1/2 full because
@@ -245,12 +253,11 @@ module i2c_controller #(
                     scl_reg.d = 0          // reset clock counter
                 }
 
-            // Should never enter here
-            default:
+            default: // Should never enter here
                 state.d = States.IDLE // reset to idle if we do
         }
 
         // default values
-        sda = sda_value == 0 ? b0 : bz // only pull down
+        sda = sda_value ? bz : b0 // only pull down
     }
 }
