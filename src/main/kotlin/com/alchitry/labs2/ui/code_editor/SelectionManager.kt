@@ -39,8 +39,8 @@ class SelectionManager(
             editorState.onCaretChanged()
         }
 
-    val firstPosition: TextPosition get() = start.coerceAtMost(end)
-    val secondPosition: TextPosition get() = start.coerceAtLeast(end)
+    val firstPosition: TextPosition get() = if (hasSelection) start.coerceAtMost(end) else caret
+    val secondPosition: TextPosition get() = if (hasSelection) start.coerceAtLeast(end) else caret
     val hasSelection: Boolean get() = start != end
 
     val selectedRange: OpenEndRange<TextPosition>
