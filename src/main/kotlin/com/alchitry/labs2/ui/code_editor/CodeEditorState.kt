@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.*
 import com.alchitry.labs2.Log
+import com.alchitry.labs2.Settings
 import com.alchitry.labs2.noNulls
 import com.alchitry.labs2.parsers.findFinalNode
 import com.alchitry.labs2.parsers.grammar.*
@@ -86,11 +87,7 @@ private fun rememberCodeEditorStyle(): CodeEditorStyle {
             AlchitryTypography.editor.copy(
                 color = textColor,
                 lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.None)
-            ),
-            density,
-            fontFamilyResolver,
-            textColor.copy(alpha = 0.7f),
-            selectionColor
+            ), density, fontFamilyResolver, textColor.copy(alpha = 0.7f), selectionColor
         )
     }
 }
@@ -154,8 +151,7 @@ class CodeEditorState(
     private var lineOffsetCache: List<Int>? = null
 
     val selectionManager = SelectionManager(
-        this,
-        ::invalidate
+        this, ::invalidate
     )
     private val undoManager = UndoManager(this, selectionManager)
 
@@ -213,14 +209,12 @@ class CodeEditorState(
     }
 
     fun lineNotationLevel(line: Int): NotationType? {
-        return notations
-            ?.filter { (it.range.start.line..it.range.endInclusive.line).contains(line) }
+        return notations?.filter { (it.range.start.line..it.range.endInclusive.line).contains(line) }
             ?.minByOrNull { it.type.ordinal }?.type
     }
 
     private fun updateHighlightTokens() {
-        if (lines.isEmpty())
-            return
+        if (lines.isEmpty()) return
         lines.forEach { it.highlights.clear() }
         val token = textPositionToToken(selectionManager.caret) ?: return
 
@@ -261,21 +255,18 @@ class CodeEditorState(
             val bracketParser = BracketParser(stream).apply { removeErrorListeners() }.source()
             val offset = lines.subList(0, selectionManager.caret.line).sumOf { it.text.length + 1 } + caretOffset
             var node = bracketParser.findFinalNode(stream, offset)
-            if (node is TerminalNode)
-                node = node.getParent()!!
+            if (node is TerminalNode) node = node.getParent()!!
             (node.getChild(0) as? TerminalNode)?.symbol?.let {
                 lines[it.line - 1].highlights.add(
                     HighlightAnnotation(
-                        it.toEditorToken(null).range,
-                        AlchitryColors.current.TokenHighlight
+                        it.toEditorToken(null).range, AlchitryColors.current.TokenHighlight
                     )
                 )
             }
             (node.getChild(node.childCount - 1) as? TerminalNode)?.symbol?.let {
                 lines[it.line - 1].highlights.add(
                     HighlightAnnotation(
-                        it.toEditorToken(null).range,
-                        AlchitryColors.current.TokenHighlight
+                        it.toEditorToken(null).range, AlchitryColors.current.TokenHighlight
                     )
                 )
             }
@@ -293,8 +284,7 @@ class CodeEditorState(
      */
     fun textPositionToScreenOffset(position: TextPosition): Offset? {
         val line = lines.getOrNull(position.line) ?: return null
-        if (line.layoutResult == null)
-            line.layout(Constraints())
+        if (line.layoutResult == null) line.layout(Constraints())
         val layout = line.layoutResult ?: return null
         val rect = layout.getCursorRect(position.offset.coerceIn(0, line.text.length - 1))
         return Offset(
@@ -308,8 +298,7 @@ class CodeEditorState(
 
     fun screenOffsetToTextPosition(offset: Offset): TextPosition {
         val textOffset = screenToTextOffset(offset)
-        if (lines.isEmpty())
-            return TextPosition(0, 0)
+        if (lines.isEmpty()) return TextPosition(0, 0)
         var lineBottom = 0
         val lineNumber = lines.indexOfFirst {
             lineBottom += it.lineHeight ?: 0
@@ -331,13 +320,11 @@ class CodeEditorState(
      * Converts a screen space offset to the nearest token.
      */
     fun offsetToToken(offset: Offset, excludeRight: Boolean = false): EditorToken? {
-        if (lines.isEmpty())
-            return null
+        if (lines.isEmpty()) return null
         val textPosition = screenOffsetToTextPosition(offset)
         if (excludeRight) {
             val line = lines[textPosition.line]
-            if (line.text.isEmpty())
-                return null
+            if (line.text.isEmpty()) return null
             if (line.text.length == textPosition.offset) {
                 if ((line.layoutResult?.getBoundingBox((textPosition.offset - 1).coerceAtLeast(0))?.right
                         ?: 0f) < offset.x
@@ -394,15 +381,14 @@ class CodeEditorState(
     }
 
     fun onTextChange() {
-        if (!file.isReadOnly)
-            scope.launch {
-                saveJob?.cancelAndJoin()
-                saveJob = launch {
-                    delay(100)
-                    file.writeText(getText())
-                    Project.current?.queueNotationsUpdate()
-                }
+        if (!file.isReadOnly) scope.launch {
+            saveJob?.cancelAndJoin()
+            saveJob = launch {
+                delay(100)
+                file.writeText(getText())
+                Project.current?.queueNotationsUpdate()
             }
+        }
         lineOffsetCache = null
         tokens = file.editorTokenizer.getTokens(lines.toCharStream())
         styler.updateStyle()
@@ -414,21 +400,18 @@ class CodeEditorState(
         invalidator?.invoke()
     }
 
-    fun getSnapshot() =
-        EditorSnapshot(
-            lines.map { it.text }.toImmutableList(),
-            selectionManager.caret,
-            selectionManager.start,
-            selectionManager.end
-        )
+    fun getSnapshot() = EditorSnapshot(
+        lines.map { it.text }.toImmutableList(), selectionManager.caret, selectionManager.start, selectionManager.end
+    )
 
     private fun TextPosition.charAt(): Char? {
         return lines.getOrNull(line)?.text?.getOrNull(offset)
     }
 
     internal fun newLineState(text: AnnotatedString) =
-        CodeLineState(text, style?.density, mutableListOf(), style?.fontFamilyResolver, style?.style)
-            .also { it.layout(layoutConstraints) }
+        CodeLineState(text, style?.density, mutableListOf(), style?.fontFamilyResolver, style?.style).also {
+            it.layout(layoutConstraints)
+        }
 
     /**
      * Replaces the text covered by range with newText.
@@ -439,9 +422,7 @@ class CodeEditorState(
      * @return the position of the end of the new text
      */
     fun replaceText(
-        newText: String,
-        range: OpenEndRange<TextPosition> = selectionManager.selectedRange,
-        updateCaret: Boolean = true
+        newText: String, range: OpenEndRange<TextPosition> = selectionManager.selectedRange, updateCaret: Boolean = true
     ) {
         if (readOnly) {
             showReadOnlyDialog = true
@@ -458,8 +439,7 @@ class CodeEditorState(
         val suffix = endLine.text.substring(end.offset, endLine.text.length)
 
         // remove extra lines
-        if (end.line != start.line)
-            lines.subList(start.line + 1, end.line + 1).clear()
+        if (end.line != start.line) lines.subList(start.line + 1, end.line + 1).clear()
 
         val newTextLines = newText.split(newLineRegex)
 
@@ -475,8 +455,7 @@ class CodeEditorState(
 
         lines[start.line] = newLines.first()
 
-        if (newLines.size > 1)
-            lines.addAll(start.line + 1, newLines.subList(1, newLines.size))
+        if (newLines.size > 1) lines.addAll(start.line + 1, newLines.subList(1, newLines.size))
 
         onTextChange()
 
@@ -519,21 +498,20 @@ class CodeEditorState(
     }
 
     fun offsetAtLineTop(line: Int): Int {
-        if (line == 0)
-            return 0
+        if (line == 0) return 0
         var cache = lineOffsetCache
         if (cache == null || !cache.indices.contains(line)) {
             val lineHeights = lines.map { it.lineHeight }
-            val validLineHeights = lineHeights.noNulls()
-                ?: return lineHeights.subList(0, line).reduce { acc, i -> (acc ?: 0) + (i ?: 0) } ?: 0
+            val validLineHeights =
+                lineHeights.noNulls() ?: return lineHeights.subList(0, line).reduce { acc, i -> (acc ?: 0) + (i ?: 0) }
+                    ?: 0
             cache = validLineHeights.runningReduce { acc, l -> acc + l }
             lineOffsetCache = cache
         }
         return cache.getOrElse(line - 1) { cache.lastOrNull() ?: 0 }
     }
 
-    fun offsetAtLineBottom(line: Int): Int =
-        offsetAtLineTop(line + 1)
+    fun offsetAtLineBottom(line: Int): Int = offsetAtLineTop(line + 1)
 
     fun showOffset(offset: TextPosition) {
         scrollTarget = offset
@@ -579,8 +557,7 @@ class CodeEditorState(
     }
 
     fun isLineVisible(line: Int): Boolean {
-        if (!lines.indices.contains(line))
-            return false
+        if (!lines.indices.contains(line)) return false
         val top = offsetAtLineTop(line)
         val bottom = top + (lines[line].lineHeight ?: 0)
         return bottom > verticalScrollState.value || top < verticalScrollState.value + size.height
@@ -610,8 +587,7 @@ class CodeEditorState(
                     canvas.translate(dx = 0f, dy = (line.lineHeight ?: 0).toFloat() - margin)
                 } else {
                     canvas.translate(dx = 0f, dy = (line.lineHeight ?: 0).toFloat())
-                    if (wasVisible)
-                        break
+                    if (wasVisible) break
                 }
                 currentY = nextY
             }
@@ -647,11 +623,8 @@ class CodeEditorState(
         val editorHeight = (constraints.maxHeight - 20.dp.roundToPx()).coerceAtLeast(0)
         val editorWidth = (constraints.maxWidth - gutterWidth).coerceAtLeast(0)
 
-        val lineConstraints =
-            if (softWrap)
-                Constraints.fixedWidth(editorWidth)
-            else
-                Constraints()
+        val lineConstraints = if (softWrap) Constraints.fixedWidth(editorWidth)
+        else Constraints()
 
         layoutConstraints = lineConstraints
 
@@ -662,14 +635,10 @@ class CodeEditorState(
         val totalHeight = lines.sumOf { it.lineHeight ?: 0 }
         longestLine = (lines.maxOfOrNull { it.layoutResult?.size?.width ?: 0 } ?: 0) + 20.dp.roundToPx()
 
-        @Suppress("INVISIBLE_SETTER")
-        verticalScrollState.maxValue = (totalHeight - editorHeight).coerceAtLeast(0)
-        @Suppress("INVISIBLE_SETTER")
-        verticalScrollState.viewportSize = editorHeight
-        @Suppress("INVISIBLE_SETTER")
-        horizontalScrollState.maxValue = (longestLine - editorWidth).coerceAtLeast(0)
-        @Suppress("INVISIBLE_SETTER")
-        horizontalScrollState.viewportSize = editorWidth
+        @Suppress("INVISIBLE_SETTER") verticalScrollState.maxValue = (totalHeight - editorHeight).coerceAtLeast(0)
+        @Suppress("INVISIBLE_SETTER") verticalScrollState.viewportSize = editorHeight
+        @Suppress("INVISIBLE_SETTER") horizontalScrollState.maxValue = (longestLine - editorWidth).coerceAtLeast(0)
+        @Suppress("INVISIBLE_SETTER") horizontalScrollState.viewportSize = editorWidth
 
         scrollTarget?.let { startScrollToPosition(it) }
         scrollTarget = null
@@ -698,73 +667,59 @@ class CodeEditorState(
         selectionManager.selectRange(TextPosition(offset.line, start)..TextPosition(offset.line, end))
     }
 
-    fun tapModifier() = Modifier
-        .pointerInput(selectionManager) {
-            detectEditorActions(
-                onClick = { offset, modifiers ->
-                    selectionManager.onClick(offset, modifiers)
-                },
-                onDoubleClick = { offset ->
-                    val token = offsetToToken(offset) ?: return@detectEditorActions
+    fun tapModifier() = Modifier.pointerInput(selectionManager) {
+        detectEditorActions(onClick = { offset, modifiers ->
+            selectionManager.onClick(offset, modifiers)
+        }, onDoubleClick = { offset ->
+            val token = offsetToToken(offset) ?: return@detectEditorActions
 
-                    when (file.language) {
-                        Languages.ACF -> when (token.token.type) {
-                            AcfLexer.Tokens.BLOCK_COMMENT,
-                            AcfLexer.Tokens.COMMENT -> {
-                                selectWordAt(screenOffsetToTextPosition(offset))
-                                return@detectEditorActions
-                            }
-                        }
-
-                        Languages.Lucid -> when (token.token.type) {
-                            LucidLexer.Tokens.BLOCK_COMMENT,
-                            LucidLexer.Tokens.COMMENT,
-                            LucidLexer.Tokens.STRING -> {
-                                selectWordAt(screenOffsetToTextPosition(offset))
-                                return@detectEditorActions
-                            }
-                        }
-
-                        Languages.Verilog -> when (token.token.type) {
-                            VerilogLexer.Tokens.BLOCK_COMMENT,
-                            VerilogLexer.Tokens.LINE_COMMENT,
-                            VerilogLexer.Tokens.STRING -> {
-                                selectWordAt(screenOffsetToTextPosition(offset))
-                                return@detectEditorActions
-                            }
-                        }
-
-                        else -> {}
+            when (file.language) {
+                Languages.ACF -> when (token.token.type) {
+                    AcfLexer.Tokens.BLOCK_COMMENT, AcfLexer.Tokens.COMMENT -> {
+                        selectWordAt(screenOffsetToTextPosition(offset))
+                        return@detectEditorActions
                     }
-
-                    selectionManager.selectRange(token.range)
-                },
-                onTripleClick = { offset ->
-                    val position = screenOffsetToTextPosition(offset)
-                    selectionManager.selectLine(position.line)
-                },
-                onDrag = { change ->
-                    selectionManager.onDrag(change.position)
                 }
-            )
-        }
 
+                Languages.Lucid -> when (token.token.type) {
+                    LucidLexer.Tokens.BLOCK_COMMENT, LucidLexer.Tokens.COMMENT, LucidLexer.Tokens.STRING -> {
+                        selectWordAt(screenOffsetToTextPosition(offset))
+                        return@detectEditorActions
+                    }
+                }
 
-    fun keyModifier() = Modifier
-        .onKeyEvent {
-            if (selectionManager.active) {
-                return@onKeyEvent processKey(it)
+                Languages.Verilog -> when (token.token.type) {
+                    VerilogLexer.Tokens.BLOCK_COMMENT, VerilogLexer.Tokens.LINE_COMMENT, VerilogLexer.Tokens.STRING -> {
+                        selectWordAt(screenOffsetToTextPosition(offset))
+                        return@detectEditorActions
+                    }
+                }
+
+                else -> {}
             }
-            return@onKeyEvent false
+
+            selectionManager.selectRange(token.range)
+        }, onTripleClick = { offset ->
+            val position = screenOffsetToTextPosition(offset)
+            selectionManager.selectLine(position.line)
+        }, onDrag = { change ->
+            selectionManager.onDrag(change.position)
+        })
+    }
+
+
+    fun keyModifier() = Modifier.onKeyEvent {
+        if (selectionManager.active) {
+            return@onKeyEvent processKey(it)
         }
+        return@onKeyEvent false
+    }
         // must be before other focus modifiers
         .onFocusChanged {
             if (!it.hasFocus) {
                 selectionManager.onFocusLost()
             }
-        }
-        .focusRequester(focusRequester)
-        .focusable()
+        }.focusRequester(focusRequester).focusable()
 
     /**
      * Returns a TextPosition that is the closest valid position for the
@@ -805,12 +760,11 @@ class CodeEditorState(
     }
 
     fun adjustIndents() {
-        if (lines.isNotEmpty())
-            replaceText( // use replaceText so this ends up on the undo/redo stack
-                codeFormatter.formatAll(),
-                TextPosition(0, 0)..<TextPosition(lines.size - 1, lines.last().text.length),
-                false
-            )
+        if (lines.isNotEmpty()) replaceText( // use replaceText so this ends up on the undo/redo stack
+            codeFormatter.formatAll(),
+            TextPosition(0, 0)..<TextPosition(lines.size - 1, lines.last().text.length),
+            false
+        )
     }
 
     private fun processKey(event: KeyEvent): Boolean {
@@ -839,34 +793,29 @@ class CodeEditorState(
                         }
 
                         replaceText(
-                            "",
-                            startOfLine..<TextPosition(lineIndex, whitespace),
-                            false
+                            "", startOfLine..<TextPosition(lineIndex, whitespace), false
                         )
 
                         if (selectionManager.start.line == lineIndex) {
-                            selectionManager.start =
-                                selectionManager.start.copy(
-                                    offset = (selectionManager.start.offset - whitespace).coerceAtLeast(
-                                        0
-                                    )
+                            selectionManager.start = selectionManager.start.copy(
+                                offset = (selectionManager.start.offset - whitespace).coerceAtLeast(
+                                    0
                                 )
+                            )
                         }
                         if (selectionManager.end.line == lineIndex) {
-                            selectionManager.end =
-                                selectionManager.end.copy(
-                                    offset = (selectionManager.end.offset - whitespace).coerceAtLeast(
-                                        0
-                                    )
+                            selectionManager.end = selectionManager.end.copy(
+                                offset = (selectionManager.end.offset - whitespace).coerceAtLeast(
+                                    0
                                 )
+                            )
                         }
                         if (selectionManager.caret.line == lineIndex) {
-                            selectionManager.caret =
-                                selectionManager.caret.copy(
-                                    offset = (selectionManager.caret.offset - whitespace).coerceAtLeast(
-                                        0
-                                    )
+                            selectionManager.caret = selectionManager.caret.copy(
+                                offset = (selectionManager.caret.offset - whitespace).coerceAtLeast(
+                                    0
                                 )
+                            )
                         }
                     }
                     return true
@@ -896,10 +845,7 @@ class CodeEditorState(
             }
 
             replaceText(modifiedText)
-            if (
-                (line?.isBlank() == true && modifiedText.isNotBlank()) ||
-                (text == ":" && line?.length == selectionManager.caret.offset - 1)
-            ) {
+            if ((line?.isBlank() == true && modifiedText.isNotBlank()) || (text == ":" && line?.length == selectionManager.caret.offset - 1)) {
                 val current = lines[lineNum].text.text
                 replaceText(
                     codeFormatter.getIndentFor(lineNum) + current.trim(),
@@ -926,14 +872,13 @@ class CodeEditorState(
         val commandName = platformDefaultKeyMapping.map(event)?.name
 
         // compose ignores the number-pad enter key so check for it here
-        val command: KeyCommand = commandName?.let { KeyCommand.valueOf(it) }
-            ?: when (event.key.nativeKeyCode) {
-                java.awt.event.KeyEvent.VK_ENTER -> KeyCommand.NEW_LINE
-                java.awt.event.KeyEvent.VK_HOME if event.isCtrlPressed -> KeyCommand.HOME
-                java.awt.event.KeyEvent.VK_END if event.isCtrlPressed -> KeyCommand.END
-                java.awt.event.KeyEvent.VK_BACK_SPACE if event.isShiftPressed -> KeyCommand.DELETE_PREV_CHAR
-                else -> return false
-            }
+        val command: KeyCommand = commandName?.let { KeyCommand.valueOf(it) } ?: when (event.key.nativeKeyCode) {
+            java.awt.event.KeyEvent.VK_ENTER -> KeyCommand.NEW_LINE
+            java.awt.event.KeyEvent.VK_HOME if event.isCtrlPressed -> KeyCommand.HOME
+            java.awt.event.KeyEvent.VK_END if event.isCtrlPressed -> KeyCommand.END
+            java.awt.event.KeyEvent.VK_BACK_SPACE if event.isShiftPressed -> KeyCommand.DELETE_PREV_CHAR
+            else -> return false
+        }
         var consumed = true
         var resetAutocomplete = true
         when (command) {
@@ -965,14 +910,12 @@ class CodeEditorState(
             }
 
             KeyCommand.UP -> {
-                if (autocomplete?.selectionUp() != true)
-                    selectionManager.setCaretToSelectionOr(true) { moveUp() }
+                if (autocomplete?.selectionUp() != true) selectionManager.setCaretToSelectionOr(true) { moveUp() }
                 resetAutocomplete = false
             }
 
             KeyCommand.DOWN -> {
-                if (autocomplete?.selectionDown() != true)
-                    selectionManager.setCaretToSelectionOr(false) { moveDown() }
+                if (autocomplete?.selectionDown() != true) selectionManager.setCaretToSelectionOr(false) { moveDown() }
                 resetAutocomplete = false
             }
 
@@ -1017,31 +960,27 @@ class CodeEditorState(
                     }
                 }
                 replaceText("", selectionManager.caret.getPrevious()..<endPosition)
-                if (autocomplete?.active == true)
-                    autocomplete.updateSuggestions()
+                if (autocomplete?.active == true) autocomplete.updateSuggestions()
                 resetAutocomplete = false
             }
 
             KeyCommand.DELETE_NEXT_CHAR -> deleteIfSelectedOr {
                 replaceText("", selectionManager.caret..<selectionManager.caret.getNext())
-                if (autocomplete?.active == true)
-                    autocomplete.updateSuggestions()
+                if (autocomplete?.active == true) autocomplete.updateSuggestions()
                 resetAutocomplete = false
             }
 
             KeyCommand.DELETE_PREV_WORD -> deleteIfSelectedOr {
                 val movement = selectionManager.moveLeftToken()
                 replaceText("", movement.new..<movement.old)
-                if (autocomplete?.active == true)
-                    autocomplete.updateSuggestions()
+                if (autocomplete?.active == true) autocomplete.updateSuggestions()
                 resetAutocomplete = false
             }
 
             KeyCommand.DELETE_NEXT_WORD -> deleteIfSelectedOr {
                 val movement = selectionManager.moveRightToken()
                 replaceText("", movement.old..<movement.new)
-                if (autocomplete?.active == true)
-                    autocomplete.updateSuggestions()
+                if (autocomplete?.active == true) autocomplete.updateSuggestions()
                 resetAutocomplete = false
             }
 
@@ -1065,17 +1004,44 @@ class CodeEditorState(
                     return true
                 }
 
-                val nextChar = selectionManager.caret.charAt()
-                val prevChar = selectionManager.caret.getPrevious().charAt()
-                if (nextChar == '}' && prevChar == '{') {
-                    replaceText("\n\n")
-                    replaceText(codeFormatter.getIndentFor(selectionManager.caret.line))
-                    selectionManager.moveUp()
-                    replaceText(codeFormatter.getIndentFor(selectionManager.caret.line))
-                } else {
-                    replaceText("\n")
-                    replaceText(codeFormatter.getIndentFor(selectionManager.caret.line))
+                when (Settings.newLineIndent) {
+                    "none" -> replaceText("\n")
+                    "current" -> {
+                        val lineBeforeBreak = lines.getOrNull(selectionManager.caret.line)?.text?.text
+                        replaceText("\n", updateCaret = false)
+                        val lineNum = selectionManager.caret.line + 1
+                        val current = lines[lineNum].text.text
+                        replaceText(
+                            (lineBeforeBreak?.takeWhile { it.isWhitespace() } ?: "") + current.trimStart(),
+                            TextPosition(lineNum, 0)..<TextPosition(lineNum, current.length),
+                            updateCaret = false
+                        )
+                        selectionManager.moveDown()
+                    }
+
+                    else -> { // auto
+                        val nextChar = selectionManager.caret.charAt()
+                        val prevChar = selectionManager.caret.getPrevious().charAt()
+                        if (nextChar == '}' && prevChar == '{') {
+                            replaceText("\n\n")
+                            replaceText(codeFormatter.getIndentFor(selectionManager.caret.line))
+                            selectionManager.moveUp()
+                            replaceText(codeFormatter.getIndentFor(selectionManager.caret.line))
+                        } else {
+                            replaceText("\n", updateCaret = false)
+                            val lineNum = selectionManager.caret.line + 1
+                            val current = lines[lineNum].text.text
+                            replaceText(
+                                codeFormatter.getIndentFor(lineNum) + current.trimStart(),
+                                TextPosition(lineNum, 0)..<TextPosition(lineNum, current.length),
+                                updateCaret = false
+                            )
+                            selectionManager.moveDown()
+                        }
+                    }
                 }
+
+
             }
 
             KeyCommand.TAB -> {
@@ -1117,12 +1083,9 @@ class CodeEditorState(
                         (currentFirstLine..currentLastLine).joinToString("\n") { lines[it].text.text }
                     val previousLineText = lines[previousLine].text.text
                     replaceText(
-                        "$currentLinesText\n$previousLineText",
-                        TextPosition(previousLine, 0)..<TextPosition(
-                            currentLastLine,
-                            lines[currentLastLine].text.length
-                        ),
-                        updateCaret = false
+                        "$currentLinesText\n$previousLineText", TextPosition(previousLine, 0)..<TextPosition(
+                            currentLastLine, lines[currentLastLine].text.length
+                        ), updateCaret = false
                     )
                     selectionManager.moveUp()
                     selectionManager.start = selectionManager.start.copy(line = selectionManager.start.line - 1)
@@ -1139,12 +1102,9 @@ class CodeEditorState(
                         (currentFirstLine..currentLastLine).joinToString("\n") { lines[it].text.text }
                     val nextLineText = lines[nextLine].text.text
                     replaceText(
-                        "$nextLineText\n$currentLinesText",
-                        TextPosition(currentFirstLine, 0)..<TextPosition(
-                            nextLine,
-                            nextLineText.length
-                        ),
-                        updateCaret = false
+                        "$nextLineText\n$currentLinesText", TextPosition(currentFirstLine, 0)..<TextPosition(
+                            nextLine, nextLineText.length
+                        ), updateCaret = false
                     )
                     selectionManager.moveDown()
                     selectionManager.start = selectionManager.start.copy(line = selectionManager.start.line + 1)
@@ -1173,8 +1133,7 @@ class CodeEditorState(
                 Log.warn("Command $command not implemented yet!")
             }
         }
-        if (resetAutocomplete)
-            autocomplete?.reset()
+        if (resetAutocomplete) autocomplete?.reset()
         return consumed
     }
 

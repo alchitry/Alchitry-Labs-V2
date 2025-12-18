@@ -141,6 +141,23 @@ fun LabsToolbar() {
                 ) {
                     Settings.darkTheme = it
                 }
+
+                RadioMenuItem(
+                    label = { Text("New Line Indent") },
+                    items = listOf("auto", "current", "none"),
+                    labeler = {
+                        Text(
+                            when (it) {
+                                "current" -> "From Current Line"
+                                "none" -> "None"
+                                else -> "Auto"
+                            }
+                        )
+                    },
+                    selected = Settings.newLineIndent ?: "auto"
+                ) {
+                    Settings.newLineIndent = it
+                }
             }
 
             MenuItem({ Text("Switch to Alchitry Loader") }) {

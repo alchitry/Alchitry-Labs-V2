@@ -137,4 +137,6 @@ object Settings {
     var errorReporting by BooleanSetting("ERROR_REPORTING", false)
     var errorReportingPrompted by BooleanSetting("ERROR_REPORTING_PROMPTED", false)
     var loaderBinFile by StringSetting("LOADER_BIN_FILE", null)
+
+    var newLineIndent by StringSetting("NEW_LINE_INDENT", null)
 }
