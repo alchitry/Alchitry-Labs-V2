@@ -1198,7 +1198,11 @@ class SystemVerilogConverter(
         basic2OpExpr(ctx, ctx.expr(), width)
     }
 
-    override fun exitExprLogical(ctx: LucidParser.ExprLogicalContext) {
+    override fun exitExprLogicalAnd(ctx: LucidParser.ExprLogicalAndContext) {
+        basic2OpExpr(ctx, ctx.expr(), null)
+    }
+
+    override fun exitExprLogicalOr(ctx: LucidParser.ExprLogicalOrContext) {
         basic2OpExpr(ctx, ctx.expr(), null)
     }
 
@@ -1227,7 +1231,15 @@ class SystemVerilogConverter(
         ctx.verilog = "(${ctx.expr().requireNotNull(ctx).verilog})"
     }
 
-    override fun exitExprBitwise(ctx: LucidParser.ExprBitwiseContext) {
+    override fun exitExprBitwiseAnd(ctx: LucidParser.ExprBitwiseAndContext) {
+        basic2OpExpr(ctx, ctx.expr(), null)
+    }
+
+    override fun exitExprBitwiseOr(ctx: LucidParser.ExprBitwiseOrContext) {
+        basic2OpExpr(ctx, ctx.expr(), null)
+    }
+
+    override fun exitExprBitwiseXor(ctx: LucidParser.ExprBitwiseXorContext) {
         basic2OpExpr(ctx, ctx.expr(), null)
     }
 

@@ -169,7 +169,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
             "parameter_identifier", "port_identifier", "real_identifier",
             "simple_identifier", "specparam_identifier", "system_function_identifier",
             "system_task_identifier", "task_identifier", "terminal_identifier",
-            "topmodule_identifier", "udp_identifier", "udp_instance_identifier",
+            "topmodule_identifier", "udp_identifier", "udp_instance_identifier", 
             "variable_identifier"
         )
 
@@ -210,7 +210,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
             null, null, null, null, null, null, null, "'celldefine'", null,
             null, null, null, "'end_keywords'", "'endcelldefine'", null,
             null, null, null, null, "'nounconnected_drive'", null, "'resetall'",
-            null, null, null, null, null, null, null, null, "'``'", null,
+            null, null, null, null, null, null, null, null, "'``'", null, 
             "'`\\`\"'", "'`\"'"
         )
 
@@ -257,7 +257,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
             "UNCONNECTED_DRIVE_DIRECTIVE", "UNDEF_DIRECTIVE", "MACRO_USAGE",
             "VERSION_SPECIFIER", "DEFAULT_NETTYPE_VALUE", "MACRO_NAME",
             "FILENAME", "MACRO_DELIMITER", "MACRO_ESC_NEWLINE", "MACRO_ESC_QUOTE",
-            "MACRO_QUOTE", "MACRO_TEXT", "SOURCE_TEXT", "TIME_UNIT", "TIME_VALUE",
+            "MACRO_QUOTE", "MACRO_TEXT", "SOURCE_TEXT", "TIME_UNIT", "TIME_VALUE", 
             "UNCONNECTED_DRIVE_VALUE", "MACRO_IDENTIFIER"
         )
 
@@ -948,13 +948,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Library_textContext {
             return Library_textContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterLibrary_text(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterLibrary_text(this)
@@ -966,7 +964,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitLibrary_text(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitLibrary_text(this)
@@ -1016,7 +1013,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun library_declaration(): Library_declarationContext? =
             getRuleContext(Library_declarationContext::class, 0)
-
         public fun include_statement(): Include_statementContext? = getRuleContext(Include_statementContext::class, 0)
         public fun config_declaration(): Config_declarationContext? =
             getRuleContext(Config_declarationContext::class, 0)
@@ -1029,13 +1025,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Library_descriptionContext {
             return Library_descriptionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterLibrary_description(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterLibrary_description(this)
@@ -1047,7 +1041,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitLibrary_description(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitLibrary_description(this)
@@ -1088,7 +1081,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     config_declaration()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -1108,7 +1100,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LIBRARY(): TerminalNode? = getToken(Tokens.LIBRARY, 0)
         public fun library_identifier(): Library_identifierContext? =
             getRuleContext(Library_identifierContext::class, 0)
-
         public fun file_path_spec(): List<File_path_specContext> = getRuleContexts(File_path_specContext::class)
         public fun file_path_spec(i: Int): File_path_specContext? = getRuleContext(File_path_specContext::class, i)
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
@@ -1124,13 +1115,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Library_declarationContext {
             return Library_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterLibrary_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterLibrary_declaration(this)
@@ -1142,7 +1131,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitLibrary_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitLibrary_declaration(this)
@@ -1225,13 +1213,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Library_incdirContext {
             return Library_incdirContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterLibrary_incdir(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterLibrary_incdir(this)
@@ -1243,7 +1229,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitLibrary_incdir(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitLibrary_incdir(this)
@@ -1309,13 +1294,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Include_statementContext {
             return Include_statementContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterInclude_statement(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterInclude_statement(this)
@@ -1327,7 +1310,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitInclude_statement(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitInclude_statement(this)
@@ -1378,13 +1360,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): File_path_specContext {
             return File_path_specContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterFile_path_spec(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterFile_path_spec(this)
@@ -1396,7 +1376,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitFile_path_spec(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitFile_path_spec(this)
@@ -1443,13 +1422,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Source_textContext {
             return Source_textContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSource_text(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSource_text(this)
@@ -1461,7 +1438,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSource_text(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSource_text(this)
@@ -1511,7 +1487,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun module_declaration(): Module_declarationContext? =
             getRuleContext(Module_declarationContext::class, 0)
-
         public fun udp_declaration(): Udp_declarationContext? = getRuleContext(Udp_declarationContext::class, 0)
         public fun config_declaration(): Config_declarationContext? =
             getRuleContext(Config_declarationContext::class, 0)
@@ -1524,13 +1499,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): DescriptionContext {
             return DescriptionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDescription(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDescription(this)
@@ -1542,7 +1515,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDescription(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDescription(this)
@@ -1613,7 +1585,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun list_of_port_declarations(): List_of_port_declarationsContext? =
             getRuleContext(List_of_port_declarationsContext::class, 0)
-
         public fun module_item(): List<Module_itemContext> = getRuleContexts(Module_itemContext::class)
         public fun module_item(i: Int): Module_itemContext? = getRuleContext(Module_itemContext::class, i)
 
@@ -1625,13 +1596,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Module_declarationContext {
             return Module_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterModule_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModule_declaration(this)
@@ -1643,7 +1612,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModule_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModule_declaration(this)
@@ -1741,13 +1709,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Module_keywordContext {
             return Module_keywordContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterModule_keyword(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModule_keyword(this)
@@ -1759,7 +1725,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModule_keyword(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModule_keyword(this)
@@ -1812,7 +1777,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun parameter_declaration(i: Int): Parameter_declarationContext? =
             getRuleContext(Parameter_declarationContext::class, i)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
@@ -1825,13 +1789,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Module_parameter_port_listContext {
             return Module_parameter_port_listContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterModule_parameter_port_list(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModule_parameter_port_list(this)
@@ -1843,7 +1805,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModule_parameter_port_list(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModule_parameter_port_list(this)
@@ -1907,7 +1868,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun port_declaration(): List<Port_declarationContext> = getRuleContexts(Port_declarationContext::class)
         public fun port_declaration(i: Int): Port_declarationContext? =
             getRuleContext(Port_declarationContext::class, i)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
@@ -1924,13 +1884,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_port_declarationsContext {
             return List_of_port_declarationsContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_port_declarations(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_port_declarations(this)
@@ -1942,7 +1900,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_port_declarations(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_port_declarations(this)
@@ -2000,7 +1957,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     this.state = 869
                     port()
 
-                    this.state = 872
+                    this.state = 872 
                     errorHandler.sync(this)
                     _la = _input.LA(1)
 
@@ -2011,7 +1968,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                         this.state = 871
                         port()
 
-                        this.state = 874
+                        this.state = 874 
                         errorHandler.sync(this)
                         _la = _input.LA(1)
                     } while (_la == Tokens.CO)
@@ -2081,13 +2038,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): PortContext {
             return PortContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPort(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPort(this)
@@ -2099,7 +2054,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPort(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPort(this)
@@ -2140,7 +2094,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     port_explicit()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -2167,13 +2120,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Port_implicitContext {
             return Port_implicitContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPort_implicit(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPort_implicit(this)
@@ -2185,7 +2136,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPort_implicit(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPort_implicit(this)
@@ -2234,13 +2184,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Port_explicitContext {
             return Port_explicitContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPort_explicit(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPort_explicit(this)
@@ -2252,7 +2200,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPort_explicit(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPort_explicit(this)
@@ -2321,13 +2268,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Port_expressionContext {
             return Port_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPort_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPort_expression(this)
@@ -2339,7 +2284,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPort_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPort_expression(this)
@@ -2395,7 +2339,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     match(Tokens.RC)
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -2416,7 +2359,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
         public fun constant_range_expression(): Constant_range_expressionContext? =
             getRuleContext(Constant_range_expressionContext::class, 0)
-
         public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -2427,13 +2369,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Port_referenceContext {
             return Port_referenceContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPort_reference(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPort_reference(this)
@@ -2445,7 +2385,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPort_reference(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPort_reference(this)
@@ -2502,7 +2441,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun input_declaration(): Input_declarationContext? = getRuleContext(Input_declarationContext::class, 0)
         public fun output_declaration(): Output_declarationContext? =
             getRuleContext(Output_declarationContext::class, 0)
@@ -2515,13 +2453,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Port_declarationContext {
             return Port_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPort_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPort_declaration(this)
@@ -2533,7 +2469,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPort_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPort_declaration(this)
@@ -2657,7 +2592,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterModuleSpecifyBlock(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModuleSpecifyBlock(this)
@@ -2669,7 +2603,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModuleSpecifyBlock(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModuleSpecifyBlock(this)
@@ -2680,7 +2613,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
     public open class ModuleParameterContext : Module_itemContext {
         public fun parameter_declaration(): Parameter_declarationContext? =
             getRuleContext(Parameter_declarationContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
@@ -2701,7 +2633,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterModuleParameter(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModuleParameter(this)
@@ -2713,7 +2644,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModuleParameter(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModuleParameter(this)
@@ -2744,7 +2674,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterModuleSpecparam(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModuleSpecparam(this)
@@ -2756,7 +2685,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModuleSpecparam(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModuleSpecparam(this)
@@ -2781,7 +2709,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterModuleInstanceOrGenerate(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModuleInstanceOrGenerate(this)
@@ -2793,7 +2720,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModuleInstanceOrGenerate(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModuleInstanceOrGenerate(this)
@@ -2817,7 +2743,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterModuleGenerateRegion(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModuleGenerateRegion(this)
@@ -2829,7 +2754,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModuleGenerateRegion(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModuleGenerateRegion(this)
@@ -2854,7 +2778,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterModulePort(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModulePort(this)
@@ -2866,7 +2789,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModulePort(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModulePort(this)
@@ -2991,18 +2913,15 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun local_parameter_declaration(): Local_parameter_declarationContext? =
             getRuleContext(Local_parameter_declarationContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun parameter_override(): Parameter_overrideContext? =
             getRuleContext(Parameter_overrideContext::class, 0)
-
         public fun continuous_assign(): Continuous_assignContext? = getRuleContext(Continuous_assignContext::class, 0)
         public fun gate_instantiation(): Gate_instantiationContext? =
             getRuleContext(Gate_instantiationContext::class, 0)
 
         public fun module_instantiation(): Module_instantiationContext? =
             getRuleContext(Module_instantiationContext::class, 0)
-
         public fun udp_instantiation(): Udp_instantiationContext? = getRuleContext(Udp_instantiationContext::class, 0)
         public fun initial_construct(): Initial_constructContext? = getRuleContext(Initial_constructContext::class, 0)
         public fun always_construct(): Always_constructContext? = getRuleContext(Always_constructContext::class, 0)
@@ -3020,13 +2939,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Module_or_generate_itemContext {
             return Module_or_generate_itemContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterModule_or_generate_item(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModule_or_generate_item(this)
@@ -3038,7 +2955,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModule_or_generate_item(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModule_or_generate_item(this)
@@ -3290,16 +3206,13 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun reg_declaration(): Reg_declarationContext? = getRuleContext(Reg_declarationContext::class, 0)
         public fun integer_declaration(): Integer_declarationContext? =
             getRuleContext(Integer_declarationContext::class, 0)
-
         public fun real_declaration(): Real_declarationContext? = getRuleContext(Real_declarationContext::class, 0)
         public fun time_declaration(): Time_declarationContext? = getRuleContext(Time_declarationContext::class, 0)
         public fun realtime_declaration(): Realtime_declarationContext? =
             getRuleContext(Realtime_declarationContext::class, 0)
-
         public fun event_declaration(): Event_declarationContext? = getRuleContext(Event_declarationContext::class, 0)
         public fun genvar_declaration(): Genvar_declarationContext? =
             getRuleContext(Genvar_declarationContext::class, 0)
-
         public fun task_declaration(): Task_declarationContext? = getRuleContext(Task_declarationContext::class, 0)
         public fun function_declaration(): Function_declarationContext? =
             getRuleContext(Function_declarationContext::class, 0)
@@ -3312,13 +3225,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Module_or_generate_item_declarationContext {
             return Module_or_generate_item_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterModule_or_generate_item_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModule_or_generate_item_declaration(this)
@@ -3330,7 +3241,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModule_or_generate_item_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModule_or_generate_item_declaration(this)
@@ -3420,7 +3330,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     function_declaration()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -3440,7 +3349,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun DEFPARAM(): TerminalNode? = getToken(Tokens.DEFPARAM, 0)
         public fun list_of_defparam_assignments(): List_of_defparam_assignmentsContext? =
             getRuleContext(List_of_defparam_assignmentsContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -3451,13 +3359,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Parameter_overrideContext {
             return Parameter_overrideContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterParameter_override(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterParameter_override(this)
@@ -3469,7 +3375,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitParameter_override(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitParameter_override(this)
@@ -3529,13 +3434,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Config_declarationContext {
             return Config_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterConfig_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConfig_declaration(this)
@@ -3547,7 +3450,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConfig_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConfig_declaration(this)
@@ -3623,13 +3525,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Design_statementContext {
             return Design_statementContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDesign_statement(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDesign_statement(this)
@@ -3641,7 +3541,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDesign_statement(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDesign_statement(this)
@@ -3695,7 +3594,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun cell_identifier(): Cell_identifierContext? = getRuleContext(Cell_identifierContext::class, 0)
         public fun library_identifier(): Library_identifierContext? =
             getRuleContext(Library_identifierContext::class, 0)
-
         public fun DT(): TerminalNode? = getToken(Tokens.DT, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -3706,13 +3604,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Design_statement_itemContext {
             return Design_statement_itemContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDesign_statement_item(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDesign_statement_item(this)
@@ -3724,7 +3620,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDesign_statement_item(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDesign_statement_item(this)
@@ -3787,13 +3682,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Config_rule_statementContext {
             return Config_rule_statementContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterConfig_rule_statement(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConfig_rule_statement(this)
@@ -3805,7 +3698,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConfig_rule_statement(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConfig_rule_statement(this)
@@ -3915,13 +3807,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Default_clauseContext {
             return Default_clauseContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDefault_clause(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDefault_clause(this)
@@ -3933,7 +3823,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDefault_clause(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDefault_clause(this)
@@ -3979,13 +3868,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Inst_clauseContext {
             return Inst_clauseContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterInst_clause(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterInst_clause(this)
@@ -3997,7 +3884,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitInst_clause(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitInst_clause(this)
@@ -4037,7 +3923,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun topmodule_identifier(): Topmodule_identifierContext? =
             getRuleContext(Topmodule_identifierContext::class, 0)
-
         public fun DT(): List<TerminalNode> = getTokens(Tokens.DT)
         public fun DT(i: Int): TerminalNode? = getToken(Tokens.DT, i)
         public fun instance_identifier(): List<Instance_identifierContext> =
@@ -4054,13 +3939,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Inst_nameContext {
             return Inst_nameContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterInst_name(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterInst_name(this)
@@ -4072,7 +3955,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitInst_name(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitInst_name(this)
@@ -4127,7 +4009,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun cell_identifier(): Cell_identifierContext? = getRuleContext(Cell_identifierContext::class, 0)
         public fun library_identifier(): Library_identifierContext? =
             getRuleContext(Library_identifierContext::class, 0)
-
         public fun DT(): TerminalNode? = getToken(Tokens.DT, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -4138,13 +4019,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Cell_clauseContext {
             return Cell_clauseContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterCell_clause(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterCell_clause(this)
@@ -4156,7 +4035,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitCell_clause(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitCell_clause(this)
@@ -4222,13 +4100,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Liblist_clauseContext {
             return Liblist_clauseContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterLiblist_clause(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterLiblist_clause(this)
@@ -4240,7 +4116,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitLiblist_clause(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitLiblist_clause(this)
@@ -4292,7 +4167,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun cell_identifier(): Cell_identifierContext? = getRuleContext(Cell_identifierContext::class, 0)
         public fun library_identifier(): Library_identifierContext? =
             getRuleContext(Library_identifierContext::class, 0)
-
         public fun DT(): TerminalNode? = getToken(Tokens.DT, 0)
         public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
         public fun CONFIG(): TerminalNode? = getToken(Tokens.CONFIG, 0)
@@ -4305,13 +4179,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Use_clauseContext {
             return Use_clauseContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterUse_clause(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterUse_clause(this)
@@ -4323,7 +4195,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitUse_clause(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitUse_clause(this)
@@ -4390,7 +4261,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LOCALPARAM(): TerminalNode? = getToken(Tokens.LOCALPARAM, 0)
         public fun list_of_param_assignments(): List_of_param_assignmentsContext? =
             getRuleContext(List_of_param_assignmentsContext::class, 0)
-
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
         public fun parameter_type(): Parameter_typeContext? = getRuleContext(Parameter_typeContext::class, 0)
@@ -4403,13 +4273,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Local_parameter_declarationContext {
             return Local_parameter_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterLocal_parameter_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterLocal_parameter_declaration(this)
@@ -4421,7 +4289,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitLocal_parameter_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitLocal_parameter_declaration(this)
@@ -4501,7 +4368,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun PARAMETER(): TerminalNode? = getToken(Tokens.PARAMETER, 0)
         public fun list_of_param_assignments(): List_of_param_assignmentsContext? =
             getRuleContext(List_of_param_assignmentsContext::class, 0)
-
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
         public fun parameter_type(): Parameter_typeContext? = getRuleContext(Parameter_typeContext::class, 0)
@@ -4514,13 +4380,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Parameter_declarationContext {
             return Parameter_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterParameter_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterParameter_declaration(this)
@@ -4532,7 +4396,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitParameter_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitParameter_declaration(this)
@@ -4612,7 +4475,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun SPECPARAM(): TerminalNode? = getToken(Tokens.SPECPARAM, 0)
         public fun list_of_specparam_assignments(): List_of_specparam_assignmentsContext? =
             getRuleContext(List_of_specparam_assignmentsContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
 
@@ -4624,13 +4486,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Specparam_declarationContext {
             return Specparam_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSpecparam_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSpecparam_declaration(this)
@@ -4642,7 +4502,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSpecparam_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSpecparam_declaration(this)
@@ -4706,13 +4565,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Parameter_typeContext {
             return Parameter_typeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterParameter_type(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterParameter_type(this)
@@ -4724,7 +4581,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitParameter_type(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitParameter_type(this)
@@ -4773,7 +4629,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun INOUT(): TerminalNode? = getToken(Tokens.INOUT, 0)
         public fun list_of_port_identifiers(): List_of_port_identifiersContext? =
             getRuleContext(List_of_port_identifiersContext::class, 0)
-
         public fun net_type(): Net_typeContext? = getRuleContext(Net_typeContext::class, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
@@ -4786,13 +4641,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Inout_declarationContext {
             return Inout_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterInout_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterInout_declaration(this)
@@ -4804,7 +4657,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitInout_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitInout_declaration(this)
@@ -4873,7 +4725,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun INPUT(): TerminalNode? = getToken(Tokens.INPUT, 0)
         public fun list_of_port_identifiers(): List_of_port_identifiersContext? =
             getRuleContext(List_of_port_identifiersContext::class, 0)
-
         public fun net_type(): Net_typeContext? = getRuleContext(Net_typeContext::class, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
@@ -4886,13 +4737,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Input_declarationContext {
             return Input_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterInput_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterInput_declaration(this)
@@ -4904,7 +4753,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitInput_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitInput_declaration(this)
@@ -4973,7 +4821,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun OUTPUT(): TerminalNode? = getToken(Tokens.OUTPUT, 0)
         public fun list_of_port_identifiers(): List_of_port_identifiersContext? =
             getRuleContext(List_of_port_identifiersContext::class, 0)
-
         public fun net_type(): Net_typeContext? = getRuleContext(Net_typeContext::class, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
@@ -4992,13 +4839,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Output_declarationContext {
             return Output_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterOutput_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterOutput_declaration(this)
@@ -5010,7 +4855,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitOutput_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitOutput_declaration(this)
@@ -5130,7 +4974,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun EVENT(): TerminalNode? = getToken(Tokens.EVENT, 0)
         public fun list_of_event_identifiers(): List_of_event_identifiersContext? =
             getRuleContext(List_of_event_identifiersContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -5141,13 +4984,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Event_declarationContext {
             return Event_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEvent_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEvent_declaration(this)
@@ -5159,7 +5000,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEvent_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEvent_declaration(this)
@@ -5203,7 +5043,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun INTEGER(): TerminalNode? = getToken(Tokens.INTEGER, 0)
         public fun list_of_variable_identifiers(): List_of_variable_identifiersContext? =
             getRuleContext(List_of_variable_identifiersContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -5214,13 +5053,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Integer_declarationContext {
             return Integer_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterInteger_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterInteger_declaration(this)
@@ -5232,7 +5069,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitInteger_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitInteger_declaration(this)
@@ -5276,13 +5112,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun net_type(): Net_typeContext? = getRuleContext(Net_typeContext::class, 0)
         public fun list_of_net_identifiers(): List_of_net_identifiersContext? =
             getRuleContext(List_of_net_identifiersContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun delay3(): Delay3Context? = getRuleContext(Delay3Context::class, 0)
         public fun list_of_net_decl_assignments(): List_of_net_decl_assignmentsContext? =
             getRuleContext(List_of_net_decl_assignmentsContext::class, 0)
-
         public fun drive_strength(): Drive_strengthContext? = getRuleContext(Drive_strengthContext::class, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
         public fun VECTORED(): TerminalNode? = getToken(Tokens.VECTORED, 0)
@@ -5298,13 +5132,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Net_declarationContext {
             return Net_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterNet_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterNet_declaration(this)
@@ -5316,7 +5148,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitNet_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitNet_declaration(this)
@@ -5745,7 +5576,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun REAL(): TerminalNode? = getToken(Tokens.REAL, 0)
         public fun list_of_real_identifiers(): List_of_real_identifiersContext? =
             getRuleContext(List_of_real_identifiersContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -5756,13 +5586,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Real_declarationContext {
             return Real_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterReal_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterReal_declaration(this)
@@ -5774,7 +5602,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitReal_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitReal_declaration(this)
@@ -5818,7 +5645,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun REALTIME(): TerminalNode? = getToken(Tokens.REALTIME, 0)
         public fun list_of_real_identifiers(): List_of_real_identifiersContext? =
             getRuleContext(List_of_real_identifiersContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -5829,13 +5655,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Realtime_declarationContext {
             return Realtime_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterRealtime_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterRealtime_declaration(this)
@@ -5847,7 +5671,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitRealtime_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitRealtime_declaration(this)
@@ -5891,7 +5714,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun REG(): TerminalNode? = getToken(Tokens.REG, 0)
         public fun list_of_variable_identifiers(): List_of_variable_identifiersContext? =
             getRuleContext(List_of_variable_identifiersContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
@@ -5904,13 +5726,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Reg_declarationContext {
             return Reg_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterReg_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterReg_declaration(this)
@@ -5922,7 +5742,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitReg_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitReg_declaration(this)
@@ -5985,7 +5804,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun TIME(): TerminalNode? = getToken(Tokens.TIME, 0)
         public fun list_of_variable_identifiers(): List_of_variable_identifiersContext? =
             getRuleContext(List_of_variable_identifiersContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -5996,13 +5814,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Time_declarationContext {
             return Time_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTime_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTime_declaration(this)
@@ -6014,7 +5830,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTime_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTime_declaration(this)
@@ -6075,13 +5890,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Net_typeContext {
             return Net_typeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterNet_type(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterNet_type(this)
@@ -6093,7 +5906,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitNet_type(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitNet_type(this)
@@ -6150,13 +5962,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Output_variable_typeContext {
             return Output_variable_typeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterOutput_variable_type(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterOutput_variable_type(this)
@@ -6168,7 +5978,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitOutput_variable_type(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitOutput_variable_type(this)
@@ -6229,13 +6038,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Real_typeContext {
             return Real_typeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterReal_type(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterReal_type(this)
@@ -6247,7 +6054,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitReal_type(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitReal_type(this)
@@ -6317,7 +6123,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun variable_identifier(): Variable_identifierContext? =
             getRuleContext(Variable_identifierContext::class, 0)
-
         public fun dimension(): List<DimensionContext> = getRuleContexts(DimensionContext::class)
         public fun dimension(i: Int): DimensionContext? = getRuleContext(DimensionContext::class, i)
         public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
@@ -6332,13 +6137,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Variable_typeContext {
             return Variable_typeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterVariable_type(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterVariable_type(this)
@@ -6350,7 +6153,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitVariable_type(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitVariable_type(this)
@@ -6434,13 +6236,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Drive_strengthContext {
             return Drive_strengthContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDrive_strength(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDrive_strength(this)
@@ -6452,7 +6252,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDrive_strength(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDrive_strength(this)
@@ -6614,13 +6413,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Strength0Context {
             return Strength0Context().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterStrength0(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterStrength0(this)
@@ -6632,7 +6429,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitStrength0(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitStrength0(this)
@@ -6691,13 +6487,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Strength1Context {
             return Strength1Context().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterStrength1(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterStrength1(this)
@@ -6709,7 +6503,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitStrength1(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitStrength1(this)
@@ -6769,13 +6562,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Charge_strengthContext {
             return Charge_strengthContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterCharge_strength(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterCharge_strength(this)
@@ -6787,7 +6578,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitCharge_strength(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitCharge_strength(this)
@@ -6869,7 +6659,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun mintypmax_expression(i: Int): Mintypmax_expressionContext? =
             getRuleContext(Mintypmax_expressionContext::class, i)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
@@ -6882,13 +6671,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Delay3Context {
             return Delay3Context().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDelay3(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDelay3(this)
@@ -6900,7 +6687,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDelay3(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDelay3(this)
@@ -6994,7 +6780,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun mintypmax_expression(i: Int): Mintypmax_expressionContext? =
             getRuleContext(Mintypmax_expressionContext::class, i)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
 
@@ -7006,13 +6791,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Delay2Context {
             return Delay2Context().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDelay2(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDelay2(this)
@@ -7024,7 +6807,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDelay2(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDelay2(this)
@@ -7110,13 +6892,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Delay_valueContext {
             return Delay_valueContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDelay_value(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDelay_value(this)
@@ -7128,7 +6908,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDelay_value(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDelay_value(this)
@@ -7169,7 +6948,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     identifier()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -7191,7 +6969,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun defparam_assignment(i: Int): Defparam_assignmentContext? =
             getRuleContext(Defparam_assignmentContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -7203,13 +6980,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_defparam_assignmentsContext {
             return List_of_defparam_assignmentsContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_defparam_assignments(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_defparam_assignments(this)
@@ -7221,7 +6996,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_defparam_assignments(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_defparam_assignments(this)
@@ -7285,13 +7059,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_event_identifiersContext {
             return List_of_event_identifiersContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_event_identifiers(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_event_identifiers(this)
@@ -7303,7 +7075,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_event_identifiers(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_event_identifiers(this)
@@ -7366,13 +7137,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Event_idContext {
             return Event_idContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEvent_id(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEvent_id(this)
@@ -7384,7 +7153,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEvent_id(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEvent_id(this)
@@ -7437,7 +7205,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun net_decl_assignment(i: Int): Net_decl_assignmentContext? =
             getRuleContext(Net_decl_assignmentContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -7449,13 +7216,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_net_decl_assignmentsContext {
             return List_of_net_decl_assignmentsContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_net_decl_assignments(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_net_decl_assignments(this)
@@ -7467,7 +7232,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_net_decl_assignments(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_net_decl_assignments(this)
@@ -7531,13 +7295,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_net_identifiersContext {
             return List_of_net_identifiersContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_net_identifiers(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_net_identifiers(this)
@@ -7549,7 +7311,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_net_identifiers(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_net_identifiers(this)
@@ -7612,13 +7373,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Net_idContext {
             return Net_idContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterNet_id(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterNet_id(this)
@@ -7630,7 +7389,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitNet_id(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitNet_id(this)
@@ -7681,7 +7439,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun param_assignment(): List<Param_assignmentContext> = getRuleContexts(Param_assignmentContext::class)
         public fun param_assignment(i: Int): Param_assignmentContext? =
             getRuleContext(Param_assignmentContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -7693,13 +7450,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_param_assignmentsContext {
             return List_of_param_assignmentsContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_param_assignments(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_param_assignments(this)
@@ -7711,7 +7466,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_param_assignments(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_param_assignments(this)
@@ -7778,13 +7532,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_port_identifiersContext {
             return List_of_port_identifiersContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_port_identifiers(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_port_identifiers(this)
@@ -7796,7 +7548,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_port_identifiers(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_port_identifiers(this)
@@ -7863,13 +7614,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_real_identifiersContext {
             return List_of_real_identifiersContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_real_identifiers(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_real_identifiers(this)
@@ -7881,7 +7630,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_real_identifiers(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_real_identifiers(this)
@@ -7937,7 +7685,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun specparam_assignment(i: Int): Specparam_assignmentContext? =
             getRuleContext(Specparam_assignmentContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -7949,13 +7696,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_specparam_assignmentsContext {
             return List_of_specparam_assignmentsContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_specparam_assignments(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_specparam_assignments(this)
@@ -7967,7 +7712,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_specparam_assignments(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_specparam_assignments(this)
@@ -8031,13 +7775,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_variable_identifiersContext {
             return List_of_variable_identifiersContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_variable_identifiers(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_variable_identifiers(this)
@@ -8049,7 +7791,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_variable_identifiers(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_variable_identifiers(this)
@@ -8113,13 +7854,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_variable_port_identifiersContext {
             return List_of_variable_port_identifiersContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_variable_port_identifiers(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_variable_port_identifiers(this)
@@ -8131,7 +7870,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_variable_port_identifiers(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_variable_port_identifiers(this)
@@ -8198,13 +7936,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Var_port_idContext {
             return Var_port_idContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterVar_port_id(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterVar_port_id(this)
@@ -8216,7 +7952,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitVar_port_id(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitVar_port_id(this)
@@ -8266,7 +8001,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun hierarchical_identifier(): Hierarchical_identifierContext? =
             getRuleContext(Hierarchical_identifierContext::class, 0)
-
         public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
         public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext? =
             getRuleContext(Constant_mintypmax_expressionContext::class, 0)
@@ -8279,13 +8013,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Defparam_assignmentContext {
             return Defparam_assignmentContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDefparam_assignment(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDefparam_assignment(this)
@@ -8297,7 +8029,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDefparam_assignment(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDefparam_assignment(this)
@@ -8350,13 +8081,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Net_decl_assignmentContext {
             return Net_decl_assignmentContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterNet_decl_assignment(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterNet_decl_assignment(this)
@@ -8368,7 +8097,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitNet_decl_assignment(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitNet_decl_assignment(this)
@@ -8411,7 +8139,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun parameter_identifier(): Parameter_identifierContext? =
             getRuleContext(Parameter_identifierContext::class, 0)
-
         public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
         public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext? =
             getRuleContext(Constant_mintypmax_expressionContext::class, 0)
@@ -8424,13 +8151,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Param_assignmentContext {
             return Param_assignmentContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterParam_assignment(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterParam_assignment(this)
@@ -8442,7 +8167,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitParam_assignment(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitParam_assignment(this)
@@ -8485,7 +8209,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun specparam_identifier(): Specparam_identifierContext? =
             getRuleContext(Specparam_identifierContext::class, 0)
-
         public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
         public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext? =
             getRuleContext(Constant_mintypmax_expressionContext::class, 0)
@@ -8501,13 +8224,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Specparam_assignmentContext {
             return Specparam_assignmentContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSpecparam_assignment(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSpecparam_assignment(this)
@@ -8519,7 +8240,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSpecparam_assignment(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSpecparam_assignment(this)
@@ -8559,7 +8279,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     pulse_control_specparam()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -8581,13 +8300,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun reject_limit_value(): Reject_limit_valueContext? =
             getRuleContext(Reject_limit_valueContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
         public fun error_limit_value(): Error_limit_valueContext? = getRuleContext(Error_limit_valueContext::class, 0)
         public fun specify_input_terminal_descriptor(): Specify_input_terminal_descriptorContext? =
             getRuleContext(Specify_input_terminal_descriptorContext::class, 0)
-
         public fun DL(): TerminalNode? = getToken(Tokens.DL, 0)
         public fun specify_output_terminal_descriptor(): Specify_output_terminal_descriptorContext? =
             getRuleContext(Specify_output_terminal_descriptorContext::class, 0)
@@ -8600,13 +8317,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Pulse_control_specparamContext {
             return Pulse_control_specparamContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPulse_control_specparam(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPulse_control_specparam(this)
@@ -8618,7 +8333,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPulse_control_specparam(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPulse_control_specparam(this)
@@ -8735,13 +8449,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Error_limit_valueContext {
             return Error_limit_valueContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterError_limit_value(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterError_limit_value(this)
@@ -8753,7 +8465,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitError_limit_value(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitError_limit_value(this)
@@ -8798,13 +8509,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Reject_limit_valueContext {
             return Reject_limit_valueContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterReject_limit_value(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterReject_limit_value(this)
@@ -8816,7 +8525,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitReject_limit_value(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitReject_limit_value(this)
@@ -8862,13 +8570,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Limit_valueContext {
             return Limit_valueContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterLimit_value(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterLimit_value(this)
@@ -8880,7 +8586,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitLimit_value(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitLimit_value(this)
@@ -8921,7 +8626,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun dimension_constant_expression(i: Int): Dimension_constant_expressionContext? =
             getRuleContext(Dimension_constant_expressionContext::class, i)
-
         public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
         public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
 
@@ -8933,13 +8637,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): DimensionContext {
             return DimensionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDimension(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDimension(this)
@@ -8951,7 +8653,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDimension(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDimension(this)
@@ -9001,11 +8702,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
         public fun msb_constant_expression(): Msb_constant_expressionContext? =
             getRuleContext(Msb_constant_expressionContext::class, 0)
-
         public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
         public fun lsb_constant_expression(): Lsb_constant_expressionContext? =
             getRuleContext(Lsb_constant_expressionContext::class, 0)
-
         public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -9016,13 +8715,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Range_Context {
             return Range_Context().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterRange_(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterRange_(this)
@@ -9034,7 +8731,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitRange_(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitRange_(this)
@@ -9084,11 +8780,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun FUNCTION(): TerminalNode? = getToken(Tokens.FUNCTION, 0)
         public fun function_identifier(): Function_identifierContext? =
             getRuleContext(Function_identifierContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun function_statement(): Function_statementContext? =
             getRuleContext(Function_statementContext::class, 0)
-
         public fun ENDFUNCTION(): TerminalNode? = getToken(Tokens.ENDFUNCTION, 0)
         public fun AUTOMATIC(): TerminalNode? = getToken(Tokens.AUTOMATIC, 0)
         public fun function_range_or_type(): Function_range_or_typeContext? =
@@ -9099,11 +8793,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun function_item_declaration(i: Int): Function_item_declarationContext? =
             getRuleContext(Function_item_declarationContext::class, i)
-
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun function_port_list(): Function_port_listContext? =
             getRuleContext(Function_port_listContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun block_item_declaration(): List<Block_item_declarationContext> =
             getRuleContexts(Block_item_declarationContext::class)
@@ -9119,13 +8811,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Function_declarationContext {
             return Function_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterFunction_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterFunction_declaration(this)
@@ -9137,7 +8827,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitFunction_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitFunction_declaration(this)
@@ -9189,7 +8878,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     this.state = 1680
                     match(Tokens.SC)
 
-                    this.state = 1682
+                    this.state = 1682 
                     errorHandler.sync(this)
                     _alt = 1
 
@@ -9200,11 +8889,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                                 function_item_declaration()
 
                             }
-
                             else -> throw NoViableAltException(this)
                         }
 
-                        this.state = 1684
+                        this.state = 1684 
                         errorHandler.sync(this)
                         _alt = interpreter.adaptivePredict(_input, 129, context)
                     } while (_alt != 2 && _alt != INVALID_ALT_NUMBER)
@@ -9296,7 +8984,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun tf_input_declaration(): Tf_input_declarationContext? =
             getRuleContext(Tf_input_declarationContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
@@ -9312,13 +8999,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Function_item_declarationContext {
             return Function_item_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterFunction_item_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterFunction_item_declaration(this)
@@ -9330,7 +9015,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitFunction_item_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitFunction_item_declaration(this)
@@ -9408,13 +9092,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Function_port_listContext {
             return Function_port_listContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterFunction_port_list(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterFunction_port_list(this)
@@ -9426,7 +9108,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitFunction_port_list(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitFunction_port_list(this)
@@ -9494,13 +9175,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Func_port_itemContext {
             return Func_port_itemContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterFunc_port_item(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterFunc_port_item(this)
@@ -9512,7 +9191,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitFunc_port_item(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitFunc_port_item(this)
@@ -9575,13 +9253,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Function_range_or_typeContext {
             return Function_range_or_typeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterFunction_range_or_type(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterFunction_range_or_type(this)
@@ -9593,7 +9269,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitFunction_range_or_type(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitFunction_range_or_type(this)
@@ -9665,7 +9340,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     match(Tokens.TIME)
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -9693,7 +9367,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun task_item_declaration(i: Int): Task_item_declarationContext? =
             getRuleContext(Task_item_declarationContext::class, i)
-
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun task_port_list(): Task_port_listContext? = getRuleContext(Task_port_listContext::class, 0)
@@ -9711,13 +9384,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Task_declarationContext {
             return Task_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTask_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTask_declaration(this)
@@ -9729,7 +9400,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTask_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTask_declaration(this)
@@ -9872,7 +9542,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun tf_input_declaration(): Tf_input_declarationContext? =
             getRuleContext(Tf_input_declarationContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
@@ -9894,13 +9563,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Task_item_declarationContext {
             return Task_item_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTask_item_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTask_item_declaration(this)
@@ -9912,7 +9579,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTask_item_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTask_item_declaration(this)
@@ -10034,13 +9700,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Task_port_listContext {
             return Task_port_listContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTask_port_list(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTask_port_list(this)
@@ -10052,7 +9716,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTask_port_list(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTask_port_list(this)
@@ -10126,13 +9789,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Task_port_itemContext {
             return Task_port_itemContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTask_port_item(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTask_port_item(this)
@@ -10144,7 +9805,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTask_port_item(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTask_port_item(this)
@@ -10240,7 +9900,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun INPUT(): TerminalNode? = getToken(Tokens.INPUT, 0)
         public fun list_of_port_identifiers(): List_of_port_identifiersContext? =
             getRuleContext(List_of_port_identifiersContext::class, 0)
-
         public fun REG(): TerminalNode? = getToken(Tokens.REG, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
@@ -10254,13 +9913,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Tf_input_declarationContext {
             return Tf_input_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTf_input_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTf_input_declaration(this)
@@ -10272,7 +9929,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTf_input_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTf_input_declaration(this)
@@ -10361,7 +10017,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun OUTPUT(): TerminalNode? = getToken(Tokens.OUTPUT, 0)
         public fun list_of_port_identifiers(): List_of_port_identifiersContext? =
             getRuleContext(List_of_port_identifiersContext::class, 0)
-
         public fun REG(): TerminalNode? = getToken(Tokens.REG, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
@@ -10375,13 +10030,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Tf_output_declarationContext {
             return Tf_output_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTf_output_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTf_output_declaration(this)
@@ -10393,7 +10046,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTf_output_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTf_output_declaration(this)
@@ -10482,7 +10134,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun INOUT(): TerminalNode? = getToken(Tokens.INOUT, 0)
         public fun list_of_port_identifiers(): List_of_port_identifiersContext? =
             getRuleContext(List_of_port_identifiersContext::class, 0)
-
         public fun REG(): TerminalNode? = getToken(Tokens.REG, 0)
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
@@ -10496,13 +10147,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Tf_inout_declarationContext {
             return Tf_inout_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTf_inout_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTf_inout_declaration(this)
@@ -10514,7 +10163,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTf_inout_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTf_inout_declaration(this)
@@ -10613,13 +10261,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Task_port_typeContext {
             return Task_port_typeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTask_port_type(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTask_port_type(this)
@@ -10631,7 +10277,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTask_port_type(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTask_port_type(this)
@@ -10680,14 +10325,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun REG(): TerminalNode? = getToken(Tokens.REG, 0)
         public fun list_of_block_variable_identifiers(): List_of_block_variable_identifiersContext? =
             getRuleContext(List_of_block_variable_identifiersContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun SIGNED(): TerminalNode? = getToken(Tokens.SIGNED, 0)
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
         public fun INTEGER(): TerminalNode? = getToken(Tokens.INTEGER, 0)
@@ -10695,7 +10338,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun REAL(): TerminalNode? = getToken(Tokens.REAL, 0)
         public fun list_of_block_real_identifiers(): List_of_block_real_identifiersContext? =
             getRuleContext(List_of_block_real_identifiersContext::class, 0)
-
         public fun REALTIME(): TerminalNode? = getToken(Tokens.REALTIME, 0)
         public fun event_declaration(): Event_declarationContext? = getRuleContext(Event_declarationContext::class, 0)
         public fun local_parameter_declaration(): Local_parameter_declarationContext? =
@@ -10712,13 +10354,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Block_item_declarationContext {
             return Block_item_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterBlock_item_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterBlock_item_declaration(this)
@@ -10730,7 +10370,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitBlock_item_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitBlock_item_declaration(this)
@@ -10977,7 +10616,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun block_variable_type(i: Int): Block_variable_typeContext? =
             getRuleContext(Block_variable_typeContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -10989,13 +10627,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_block_variable_identifiersContext {
             return List_of_block_variable_identifiersContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_block_variable_identifiers(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_block_variable_identifiers(this)
@@ -11007,7 +10643,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_block_variable_identifiers(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_block_variable_identifiers(this)
@@ -11071,13 +10706,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_block_real_identifiersContext {
             return List_of_block_real_identifiersContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_block_real_identifiers(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_block_real_identifiers(this)
@@ -11089,7 +10722,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_block_real_identifiers(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_block_real_identifiers(this)
@@ -11142,7 +10774,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun variable_identifier(): Variable_identifierContext? =
             getRuleContext(Variable_identifierContext::class, 0)
-
         public fun dimension(): List<DimensionContext> = getRuleContexts(DimensionContext::class)
         public fun dimension(i: Int): DimensionContext? = getRuleContext(DimensionContext::class, i)
 
@@ -11154,13 +10785,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Block_variable_typeContext {
             return Block_variable_typeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterBlock_variable_type(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterBlock_variable_type(this)
@@ -11172,7 +10801,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitBlock_variable_type(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitBlock_variable_type(this)
@@ -11232,13 +10860,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Block_real_typeContext {
             return Block_real_typeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterBlock_real_type(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterBlock_real_type(this)
@@ -11250,7 +10876,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitBlock_real_type(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitBlock_real_type(this)
@@ -11304,7 +10929,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun cmos_switch_instance(i: Int): Cmos_switch_instanceContext? =
             getRuleContext(Cmos_switch_instanceContext::class, i)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun delay3(): Delay3Context? = getRuleContext(Delay3Context::class, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
@@ -11315,7 +10939,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun enable_gate_instance(i: Int): Enable_gate_instanceContext? =
             getRuleContext(Enable_gate_instanceContext::class, i)
-
         public fun drive_strength(): Drive_strengthContext? = getRuleContext(Drive_strengthContext::class, 0)
         public fun mos_switchtype(): Mos_switchtypeContext? = getRuleContext(Mos_switchtypeContext::class, 0)
         public fun mos_switch_instance(): List<Mos_switch_instanceContext> =
@@ -11323,14 +10946,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun mos_switch_instance(i: Int): Mos_switch_instanceContext? =
             getRuleContext(Mos_switch_instanceContext::class, i)
-
         public fun n_input_gatetype(): N_input_gatetypeContext? = getRuleContext(N_input_gatetypeContext::class, 0)
         public fun n_input_gate_instance(): List<N_input_gate_instanceContext> =
             getRuleContexts(N_input_gate_instanceContext::class)
 
         public fun n_input_gate_instance(i: Int): N_input_gate_instanceContext? =
             getRuleContext(N_input_gate_instanceContext::class, i)
-
         public fun delay2(): Delay2Context? = getRuleContext(Delay2Context::class, 0)
         public fun n_output_gatetype(): N_output_gatetypeContext? = getRuleContext(N_output_gatetypeContext::class, 0)
         public fun n_output_gate_instance(): List<N_output_gate_instanceContext> =
@@ -11347,21 +10968,18 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun pass_enable_switch_instance(i: Int): Pass_enable_switch_instanceContext? =
             getRuleContext(Pass_enable_switch_instanceContext::class, i)
-
         public fun pass_switchtype(): Pass_switchtypeContext? = getRuleContext(Pass_switchtypeContext::class, 0)
         public fun pass_switch_instance(): List<Pass_switch_instanceContext> =
             getRuleContexts(Pass_switch_instanceContext::class)
 
         public fun pass_switch_instance(i: Int): Pass_switch_instanceContext? =
             getRuleContext(Pass_switch_instanceContext::class, i)
-
         public fun PULLDOWN(): TerminalNode? = getToken(Tokens.PULLDOWN, 0)
         public fun pull_gate_instance(): List<Pull_gate_instanceContext> =
             getRuleContexts(Pull_gate_instanceContext::class)
 
         public fun pull_gate_instance(i: Int): Pull_gate_instanceContext? =
             getRuleContext(Pull_gate_instanceContext::class, i)
-
         public fun pulldown_strength(): Pulldown_strengthContext? = getRuleContext(Pulldown_strengthContext::class, 0)
         public fun PULLUP(): TerminalNode? = getToken(Tokens.PULLUP, 0)
         public fun pullup_strength(): Pullup_strengthContext? = getRuleContext(Pullup_strengthContext::class, 0)
@@ -11374,13 +10992,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Gate_instantiationContext {
             return Gate_instantiationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterGate_instantiation(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterGate_instantiation(this)
@@ -11392,7 +11008,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitGate_instantiation(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitGate_instantiation(this)
@@ -11769,7 +11384,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     match(Tokens.SC)
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -11805,13 +11419,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Cmos_switch_instanceContext {
             return Cmos_switch_instanceContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterCmos_switch_instance(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterCmos_switch_instance(this)
@@ -11823,7 +11435,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitCmos_switch_instance(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitCmos_switch_instance(this)
@@ -11910,13 +11521,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Enable_gate_instanceContext {
             return Enable_gate_instanceContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEnable_gate_instance(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEnable_gate_instance(this)
@@ -11928,7 +11537,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEnable_gate_instance(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEnable_gate_instance(this)
@@ -12009,13 +11617,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Mos_switch_instanceContext {
             return Mos_switch_instanceContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterMos_switch_instance(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterMos_switch_instance(this)
@@ -12027,7 +11633,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitMos_switch_instance(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitMos_switch_instance(this)
@@ -12108,13 +11713,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): N_input_gate_instanceContext {
             return N_input_gate_instanceContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterN_input_gate_instance(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterN_input_gate_instance(this)
@@ -12126,7 +11729,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitN_input_gate_instance(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitN_input_gate_instance(this)
@@ -12216,13 +11818,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): N_output_gate_instanceContext {
             return N_output_gate_instanceContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterN_output_gate_instance(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterN_output_gate_instance(this)
@@ -12234,7 +11834,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitN_output_gate_instance(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitN_output_gate_instance(this)
@@ -12326,13 +11925,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Pass_switch_instanceContext {
             return Pass_switch_instanceContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPass_switch_instance(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPass_switch_instance(this)
@@ -12344,7 +11941,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPass_switch_instance(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPass_switch_instance(this)
@@ -12419,13 +12015,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Pass_enable_switch_instanceContext {
             return Pass_enable_switch_instanceContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPass_enable_switch_instance(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPass_enable_switch_instance(this)
@@ -12437,7 +12031,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPass_enable_switch_instance(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPass_enable_switch_instance(this)
@@ -12514,13 +12107,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Pull_gate_instanceContext {
             return Pull_gate_instanceContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPull_gate_instance(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPull_gate_instance(this)
@@ -12532,7 +12123,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPull_gate_instance(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPull_gate_instance(this)
@@ -12585,7 +12175,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun gate_instance_identifier(): Gate_instance_identifierContext? =
             getRuleContext(Gate_instance_identifierContext::class, 0)
-
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -12596,13 +12185,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Name_of_gate_instanceContext {
             return Name_of_gate_instanceContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterName_of_gate_instance(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterName_of_gate_instance(this)
@@ -12614,7 +12201,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitName_of_gate_instance(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitName_of_gate_instance(this)
@@ -12673,13 +12259,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Pulldown_strengthContext {
             return Pulldown_strengthContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPulldown_strength(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPulldown_strength(this)
@@ -12691,7 +12275,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPulldown_strength(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPulldown_strength(this)
@@ -12791,13 +12374,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Pullup_strengthContext {
             return Pullup_strengthContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPullup_strength(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPullup_strength(this)
@@ -12809,7 +12390,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPullup_strength(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPullup_strength(this)
@@ -12905,13 +12485,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Enable_terminalContext {
             return Enable_terminalContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEnable_terminal(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEnable_terminal(this)
@@ -12923,7 +12501,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEnable_terminal(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEnable_terminal(this)
@@ -12968,13 +12545,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Inout_terminalContext {
             return Inout_terminalContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterInout_terminal(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterInout_terminal(this)
@@ -12986,7 +12561,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitInout_terminal(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitInout_terminal(this)
@@ -13031,13 +12605,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Input_terminalContext {
             return Input_terminalContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterInput_terminal(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterInput_terminal(this)
@@ -13049,7 +12621,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitInput_terminal(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitInput_terminal(this)
@@ -13094,13 +12665,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Ncontrol_terminalContext {
             return Ncontrol_terminalContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterNcontrol_terminal(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterNcontrol_terminal(this)
@@ -13112,7 +12681,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitNcontrol_terminal(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitNcontrol_terminal(this)
@@ -13157,13 +12725,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Output_terminalContext {
             return Output_terminalContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterOutput_terminal(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterOutput_terminal(this)
@@ -13175,7 +12741,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitOutput_terminal(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitOutput_terminal(this)
@@ -13220,13 +12785,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Pcontrol_terminalContext {
             return Pcontrol_terminalContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPcontrol_terminal(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPcontrol_terminal(this)
@@ -13238,7 +12801,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPcontrol_terminal(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPcontrol_terminal(this)
@@ -13284,13 +12846,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Cmos_switchtypeContext {
             return Cmos_switchtypeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterCmos_switchtype(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterCmos_switchtype(this)
@@ -13302,7 +12862,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitCmos_switchtype(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitCmos_switchtype(this)
@@ -13361,13 +12920,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Enable_gatetypeContext {
             return Enable_gatetypeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEnable_gatetype(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEnable_gatetype(this)
@@ -13379,7 +12936,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEnable_gatetype(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEnable_gatetype(this)
@@ -13438,13 +12994,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Mos_switchtypeContext {
             return Mos_switchtypeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterMos_switchtype(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterMos_switchtype(this)
@@ -13456,7 +13010,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitMos_switchtype(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitMos_switchtype(this)
@@ -13517,13 +13070,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): N_input_gatetypeContext {
             return N_input_gatetypeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterN_input_gatetype(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterN_input_gatetype(this)
@@ -13535,7 +13086,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitN_input_gatetype(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitN_input_gatetype(this)
@@ -13592,13 +13142,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): N_output_gatetypeContext {
             return N_output_gatetypeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterN_output_gatetype(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterN_output_gatetype(this)
@@ -13610,7 +13158,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitN_output_gatetype(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitN_output_gatetype(this)
@@ -13669,13 +13216,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Pass_en_switchtypeContext {
             return Pass_en_switchtypeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPass_en_switchtype(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPass_en_switchtype(this)
@@ -13687,7 +13232,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPass_en_switchtype(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPass_en_switchtype(this)
@@ -13744,13 +13288,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Pass_switchtypeContext {
             return Pass_switchtypeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPass_switchtype(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPass_switchtype(this)
@@ -13762,7 +13304,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPass_switchtype(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPass_switchtype(this)
@@ -13814,7 +13355,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun parameter_value_assignment(): Parameter_value_assignmentContext? =
             getRuleContext(Parameter_value_assignmentContext::class, 0)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -13826,13 +13366,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Module_instantiationContext {
             return Module_instantiationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterModule_instantiation(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModule_instantiation(this)
@@ -13844,7 +13382,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModule_instantiation(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModule_instantiation(this)
@@ -13914,7 +13451,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun list_of_parameter_assignments(): List_of_parameter_assignmentsContext? =
             getRuleContext(List_of_parameter_assignmentsContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -13925,13 +13461,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Parameter_value_assignmentContext {
             return Parameter_value_assignmentContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterParameter_value_assignment(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterParameter_value_assignment(this)
@@ -13943,7 +13477,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitParameter_value_assignment(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitParameter_value_assignment(this)
@@ -13992,7 +13525,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun ordered_parameter_assignment(i: Int): Ordered_parameter_assignmentContext? =
             getRuleContext(Ordered_parameter_assignmentContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
         public fun named_parameter_assignment(): List<Named_parameter_assignmentContext> =
@@ -14009,13 +13541,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_parameter_assignmentsContext {
             return List_of_parameter_assignmentsContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_parameter_assignments(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_parameter_assignments(this)
@@ -14027,7 +13557,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_parameter_assignments(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_parameter_assignments(this)
@@ -14092,7 +13621,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                         _la = _input.LA(1)
                     }
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -14119,13 +13647,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Ordered_parameter_assignmentContext {
             return Ordered_parameter_assignmentContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterOrdered_parameter_assignment(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterOrdered_parameter_assignment(this)
@@ -14137,7 +13663,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitOrdered_parameter_assignment(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitOrdered_parameter_assignment(this)
@@ -14175,7 +13700,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun DT(): TerminalNode? = getToken(Tokens.DT, 0)
         public fun parameter_identifier(): Parameter_identifierContext? =
             getRuleContext(Parameter_identifierContext::class, 0)
-
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun mintypmax_expression(): Mintypmax_expressionContext? =
@@ -14189,13 +13713,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Named_parameter_assignmentContext {
             return Named_parameter_assignmentContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterNamed_parameter_assignment(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterNamed_parameter_assignment(this)
@@ -14207,7 +13729,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitNamed_parameter_assignment(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitNamed_parameter_assignment(this)
@@ -14263,11 +13784,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun name_of_module_instance(): Name_of_module_instanceContext? =
             getRuleContext(Name_of_module_instanceContext::class, 0)
-
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun list_of_port_connections(): List_of_port_connectionsContext? =
             getRuleContext(List_of_port_connectionsContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -14278,13 +13797,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Module_instanceContext {
             return Module_instanceContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterModule_instance(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModule_instance(this)
@@ -14296,7 +13813,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModule_instance(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModule_instance(this)
@@ -14342,7 +13858,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun module_instance_identifier(): Module_instance_identifierContext? =
             getRuleContext(Module_instance_identifierContext::class, 0)
-
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -14353,13 +13868,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Name_of_module_instanceContext {
             return Name_of_module_instanceContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterName_of_module_instance(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterName_of_module_instance(this)
@@ -14371,7 +13884,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitName_of_module_instance(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitName_of_module_instance(this)
@@ -14421,7 +13933,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun ordered_port_connection(i: Int): Ordered_port_connectionContext? =
             getRuleContext(Ordered_port_connectionContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
         public fun named_port_connection(): List<Named_port_connectionContext> =
@@ -14438,13 +13949,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_port_connectionsContext {
             return List_of_port_connectionsContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_port_connections(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_port_connections(this)
@@ -14456,7 +13965,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_port_connections(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_port_connections(this)
@@ -14541,7 +14049,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -14552,13 +14059,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Ordered_port_connectionContext {
             return Ordered_port_connectionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterOrdered_port_connection(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterOrdered_port_connection(this)
@@ -14570,7 +14075,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitOrdered_port_connection(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitOrdered_port_connection(this)
@@ -14637,7 +14141,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -14648,13 +14151,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Named_port_connectionContext {
             return Named_port_connectionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterNamed_port_connection(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterNamed_port_connection(this)
@@ -14666,7 +14167,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitNamed_port_connection(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitNamed_port_connection(this)
@@ -14748,13 +14248,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Generate_regionContext {
             return Generate_regionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterGenerate_region(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterGenerate_region(this)
@@ -14766,7 +14264,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitGenerate_region(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitGenerate_region(this)
@@ -14820,7 +14317,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun GENVAR(): TerminalNode? = getToken(Tokens.GENVAR, 0)
         public fun list_of_genvar_identifiers(): List_of_genvar_identifiersContext? =
             getRuleContext(List_of_genvar_identifiersContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -14831,13 +14327,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Genvar_declarationContext {
             return Genvar_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterGenvar_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterGenvar_declaration(this)
@@ -14849,7 +14343,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitGenvar_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitGenvar_declaration(this)
@@ -14895,7 +14388,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun genvar_identifier(i: Int): Genvar_identifierContext? =
             getRuleContext(Genvar_identifierContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -14907,13 +14399,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_genvar_identifiersContext {
             return List_of_genvar_identifiersContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_genvar_identifiers(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_genvar_identifiers(this)
@@ -14925,7 +14415,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_genvar_identifiers(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_genvar_identifiers(this)
@@ -14980,7 +14469,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun genvar_initialization(): Genvar_initializationContext? =
             getRuleContext(Genvar_initializationContext::class, 0)
-
         public fun SC(): List<TerminalNode> = getTokens(Tokens.SC)
         public fun SC(i: Int): TerminalNode? = getToken(Tokens.SC, i)
         public fun genvar_expression(): Genvar_expressionContext? = getRuleContext(Genvar_expressionContext::class, 0)
@@ -14996,13 +14484,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Loop_generate_constructContext {
             return Loop_generate_constructContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterLoop_generate_construct(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterLoop_generate_construct(this)
@@ -15014,7 +14500,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitLoop_generate_construct(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitLoop_generate_construct(this)
@@ -15086,13 +14571,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Genvar_initializationContext {
             return Genvar_initializationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterGenvar_initialization(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterGenvar_initialization(this)
@@ -15104,7 +14587,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitGenvar_initialization(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitGenvar_initialization(this)
@@ -15156,13 +14638,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Genvar_expressionContext {
             return Genvar_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterGenvar_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterGenvar_expression(this)
@@ -15174,7 +14654,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitGenvar_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitGenvar_expression(this)
@@ -15221,13 +14700,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Genvar_iterationContext {
             return Genvar_iterationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterGenvar_iteration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterGenvar_iteration(this)
@@ -15239,7 +14716,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitGenvar_iteration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitGenvar_iteration(this)
@@ -15294,13 +14770,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Conditional_generate_constructContext {
             return Conditional_generate_constructContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterConditional_generate_construct(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConditional_generate_construct(this)
@@ -15312,7 +14786,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConditional_generate_construct(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConditional_generate_construct(this)
@@ -15346,7 +14819,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     case_generate_construct()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -15367,14 +14839,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun constant_expression(): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun generate_block_or_null(): List<Generate_block_or_nullContext> =
             getRuleContexts(Generate_block_or_nullContext::class)
 
         public fun generate_block_or_null(i: Int): Generate_block_or_nullContext? =
             getRuleContext(Generate_block_or_nullContext::class, i)
-
         public fun ELSE(): TerminalNode? = getToken(Tokens.ELSE, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -15385,13 +14855,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): If_generate_constructContext {
             return If_generate_constructContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterIf_generate_construct(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterIf_generate_construct(this)
@@ -15403,7 +14871,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitIf_generate_construct(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitIf_generate_construct(this)
@@ -15467,7 +14934,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun constant_expression(): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun ENDCASE(): TerminalNode? = getToken(Tokens.ENDCASE, 0)
         public fun case_generate_item(): List<Case_generate_itemContext> =
@@ -15484,13 +14950,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Case_generate_constructContext {
             return Case_generate_constructContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterCase_generate_construct(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterCase_generate_construct(this)
@@ -15502,7 +14966,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitCase_generate_construct(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitCase_generate_construct(this)
@@ -15533,7 +14996,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
             this.state = 2463
             match(Tokens.RP)
 
-            this.state = 2465
+            this.state = 2465 
             errorHandler.sync(this)
             _la = _input.LA(1)
 
@@ -15541,7 +15004,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 this.state = 2464
                 case_generate_item()
 
-                this.state = 2467
+                this.state = 2467 
                 errorHandler.sync(this)
                 _la = _input.LA(1)
             } while (_la == Tokens.DEFAULT || ((((_la - 137)) and 0x3f.inv()) == 0 && ((1L shl (_la - 137)) and -587789827252928127L) != 0L) || _la == Tokens.UNSIGNED_NUMBER)
@@ -15567,11 +15030,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
         public fun generate_block_or_null(): Generate_block_or_nullContext? =
             getRuleContext(Generate_block_or_nullContext::class, 0)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
         public fun DEFAULT(): TerminalNode? = getToken(Tokens.DEFAULT, 0)
@@ -15584,13 +15045,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Case_generate_itemContext {
             return Case_generate_itemContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterCase_generate_item(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterCase_generate_item(this)
@@ -15602,7 +15061,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitCase_generate_item(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitCase_generate_item(this)
@@ -15670,7 +15128,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     generate_block_or_null()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -15692,7 +15149,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun module_or_generate_item(i: Int): Module_or_generate_itemContext? =
             getRuleContext(Module_or_generate_itemContext::class, i)
-
         public fun BEGIN(): TerminalNode? = getToken(Tokens.BEGIN, 0)
         public fun END(): TerminalNode? = getToken(Tokens.END, 0)
         public fun generate_block_name(): Generate_block_nameContext? =
@@ -15706,13 +15162,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Generate_blockContext {
             return Generate_blockContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterGenerate_block(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterGenerate_block(this)
@@ -15724,7 +15178,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitGenerate_block(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitGenerate_block(this)
@@ -15783,7 +15236,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     match(Tokens.END)
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -15812,13 +15264,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Generate_block_nameContext {
             return Generate_block_nameContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterGenerate_block_name(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterGenerate_block_name(this)
@@ -15830,7 +15280,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitGenerate_block_name(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitGenerate_block_name(this)
@@ -15879,13 +15328,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Generate_block_or_nullContext {
             return Generate_block_or_nullContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterGenerate_block_or_null(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterGenerate_block_or_null(this)
@@ -15897,7 +15344,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitGenerate_block_or_null(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitGenerate_block_or_null(this)
@@ -15931,7 +15377,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     match(Tokens.SC)
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -15979,13 +15424,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Udp_declarationContext {
             return Udp_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterUdp_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterUdp_declaration(this)
@@ -15997,7 +15440,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitUdp_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitUdp_declaration(this)
@@ -16051,7 +15493,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     this.state = 2521
                     match(Tokens.SC)
 
-                    this.state = 2523
+                    this.state = 2523 
                     errorHandler.sync(this)
                     _la = _input.LA(1)
 
@@ -16059,7 +15501,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                         this.state = 2522
                         udp_port_declaration()
 
-                        this.state = 2525
+                        this.state = 2525 
                         errorHandler.sync(this)
                         _la = _input.LA(1)
                     } while (((((_la - 59)) and 0x3f.inv()) == 0 && ((1L shl (_la - 59)) and 68721573889L) != 0L) || _la == Tokens.LP)
@@ -16127,7 +15569,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun output_port_identifier(): Output_port_identifierContext? =
             getRuleContext(Output_port_identifierContext::class, 0)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
         public fun input_port_identifier(): List<Input_port_identifierContext> =
@@ -16144,13 +15585,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Udp_port_listContext {
             return Udp_port_listContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterUdp_port_list(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterUdp_port_list(this)
@@ -16162,7 +15601,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitUdp_port_list(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitUdp_port_list(this)
@@ -16221,7 +15659,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun udp_output_declaration(): Udp_output_declarationContext? =
             getRuleContext(Udp_output_declarationContext::class, 0)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
         public fun udp_input_declaration(): List<Udp_input_declarationContext> =
@@ -16238,13 +15675,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Udp_declaration_port_listContext {
             return Udp_declaration_port_listContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterUdp_declaration_port_list(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterUdp_declaration_port_list(this)
@@ -16256,7 +15691,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitUdp_declaration_port_list(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitUdp_declaration_port_list(this)
@@ -16315,7 +15749,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun udp_output_declaration(): Udp_output_declarationContext? =
             getRuleContext(Udp_output_declarationContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun udp_input_declaration(): Udp_input_declarationContext? =
             getRuleContext(Udp_input_declarationContext::class, 0)
@@ -16331,13 +15764,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Udp_port_declarationContext {
             return Udp_port_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterUdp_port_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterUdp_port_declaration(this)
@@ -16349,7 +15780,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitUdp_port_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitUdp_port_declaration(this)
@@ -16421,7 +15851,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun REG(): TerminalNode? = getToken(Tokens.REG, 0)
         public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
         public fun constant_expression(): Constant_expressionContext? =
@@ -16435,13 +15864,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Udp_output_declarationContext {
             return Udp_output_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterUdp_output_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterUdp_output_declaration(this)
@@ -16453,7 +15880,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitUdp_output_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitUdp_output_declaration(this)
@@ -16566,13 +15992,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Udp_input_declarationContext {
             return Udp_input_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterUdp_input_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterUdp_input_declaration(this)
@@ -16584,7 +16008,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitUdp_input_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitUdp_input_declaration(this)
@@ -16653,13 +16076,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Udp_reg_declarationContext {
             return Udp_reg_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterUdp_reg_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterUdp_reg_declaration(this)
@@ -16671,7 +16092,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitUdp_reg_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitUdp_reg_declaration(this)
@@ -16724,7 +16144,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun combinational_body(): Combinational_bodyContext? =
             getRuleContext(Combinational_bodyContext::class, 0)
-
         public fun sequential_body(): Sequential_bodyContext? = getRuleContext(Sequential_bodyContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -16735,13 +16154,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Udp_bodyContext {
             return Udp_bodyContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterUdp_body(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterUdp_body(this)
@@ -16753,7 +16170,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitUdp_body(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitUdp_body(this)
@@ -16818,13 +16234,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Combinational_bodyContext {
             return Combinational_bodyContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterCombinational_body(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterCombinational_body(this)
@@ -16836,7 +16250,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitCombinational_body(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitCombinational_body(this)
@@ -16858,7 +16271,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
             this.state = 2623
             match(Tokens.TABLE)
 
-            this.state = 2625
+            this.state = 2625 
             errorHandler.sync(this)
             _la = _input.LA(1)
 
@@ -16866,7 +16279,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 this.state = 2624
                 combinational_entry()
 
-                this.state = 2627
+                this.state = 2627 
                 errorHandler.sync(this)
                 _la = _input.LA(1)
             } while (_la == Tokens.LEVEL_ONLY_SYMBOL || _la == Tokens.OUTPUT_OR_LEVEL_SYMBOL)
@@ -16900,13 +16313,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Combinational_entryContext {
             return Combinational_entryContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterCombinational_entry(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterCombinational_entry(this)
@@ -16918,7 +16329,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitCombinational_entry(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitCombinational_entry(this)
@@ -16966,7 +16376,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun ENDTABLE(): TerminalNode? = getToken(Tokens.ENDTABLE, 0)
         public fun udp_initial_statement(): Udp_initial_statementContext? =
             getRuleContext(Udp_initial_statementContext::class, 0)
-
         public fun sequential_entry(): List<Sequential_entryContext> = getRuleContexts(Sequential_entryContext::class)
         public fun sequential_entry(i: Int): Sequential_entryContext? =
             getRuleContext(Sequential_entryContext::class, i)
@@ -16979,13 +16388,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Sequential_bodyContext {
             return Sequential_bodyContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSequential_body(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSequential_body(this)
@@ -16997,7 +16404,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSequential_body(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSequential_body(this)
@@ -17028,7 +16434,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
             this.state = 2639
             match(Tokens.TABLE)
 
-            this.state = 2641
+            this.state = 2641 
             errorHandler.sync(this)
             _la = _input.LA(1)
 
@@ -17036,7 +16442,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 this.state = 2640
                 sequential_entry()
 
-                this.state = 2643
+                this.state = 2643 
                 errorHandler.sync(this)
                 _la = _input.LA(1)
             } while (((((_la - 166)) and 0x3f.inv()) == 0 && ((1L shl (_la - 166)) and 61572651155457L) != 0L))
@@ -17060,7 +16466,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun INITIAL(): TerminalNode? = getToken(Tokens.INITIAL, 0)
         public fun output_port_identifier(): Output_port_identifierContext? =
             getRuleContext(Output_port_identifierContext::class, 0)
-
         public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
         public fun init_val(): Init_valContext? = getRuleContext(Init_valContext::class, 0)
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
@@ -17073,13 +16478,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Udp_initial_statementContext {
             return Udp_initial_statementContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterUdp_initial_statement(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterUdp_initial_statement(this)
@@ -17091,7 +16494,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitUdp_initial_statement(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitUdp_initial_statement(this)
@@ -17149,13 +16551,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Init_valContext {
             return Init_valContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterInit_val(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterInit_val(this)
@@ -17167,7 +16567,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitInit_val(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitInit_val(this)
@@ -17231,13 +16630,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Sequential_entryContext {
             return Sequential_entryContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSequential_entry(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSequential_entry(this)
@@ -17249,7 +16646,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSequential_entry(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSequential_entry(this)
@@ -17310,13 +16706,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Seq_input_listContext {
             return Seq_input_listContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSeq_input_list(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSeq_input_list(this)
@@ -17328,7 +16722,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSeq_input_list(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSeq_input_list(this)
@@ -17388,13 +16781,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Level_input_listContext {
             return Level_input_listContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterLevel_input_list(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterLevel_input_list(this)
@@ -17406,7 +16797,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitLevel_input_list(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitLevel_input_list(this)
@@ -17425,7 +16815,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         try {
             enterOuterAlt(_localctx, 1)
-            this.state = 2669
+            this.state = 2669 
             errorHandler.sync(this)
             _la = _input.LA(1)
 
@@ -17433,7 +16823,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 this.state = 2668
                 level_symbol()
 
-                this.state = 2671
+                this.state = 2671 
                 errorHandler.sync(this)
                 _la = _input.LA(1)
             } while (_la == Tokens.LEVEL_ONLY_SYMBOL || _la == Tokens.OUTPUT_OR_LEVEL_SYMBOL)
@@ -17463,13 +16853,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Edge_input_listContext {
             return Edge_input_listContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEdge_input_list(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEdge_input_list(this)
@@ -17481,7 +16869,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEdge_input_list(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEdge_input_list(this)
@@ -17555,13 +16942,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Edge_indicatorContext {
             return Edge_indicatorContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEdge_indicator(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEdge_indicator(this)
@@ -17573,7 +16958,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEdge_indicator(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEdge_indicator(this)
@@ -17616,7 +17000,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     edge_symbol()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -17643,13 +17026,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Current_stateContext {
             return Current_stateContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterCurrent_state(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterCurrent_state(this)
@@ -17661,7 +17042,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitCurrent_state(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitCurrent_state(this)
@@ -17707,13 +17087,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Next_stateContext {
             return Next_stateContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterNext_state(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterNext_state(this)
@@ -17725,7 +17103,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitNext_state(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitNext_state(this)
@@ -17759,7 +17136,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     match(Tokens.MI)
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -17786,13 +17162,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Output_symbolContext {
             return Output_symbolContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterOutput_symbol(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterOutput_symbol(this)
@@ -17804,7 +17178,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitOutput_symbol(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitOutput_symbol(this)
@@ -17850,13 +17223,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Level_symbolContext {
             return Level_symbolContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterLevel_symbol(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterLevel_symbol(this)
@@ -17868,7 +17239,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitLevel_symbol(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitLevel_symbol(this)
@@ -17924,13 +17294,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Edge_symbolContext {
             return Edge_symbolContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEdge_symbol(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEdge_symbol(this)
@@ -17942,7 +17310,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEdge_symbol(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEdge_symbol(this)
@@ -17994,13 +17361,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Udp_instantiationContext {
             return Udp_instantiationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterUdp_instantiation(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterUdp_instantiation(this)
@@ -18012,7 +17377,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitUdp_instantiation(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitUdp_instantiation(this)
@@ -18106,13 +17470,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Udp_instanceContext {
             return Udp_instanceContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterUdp_instance(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterUdp_instance(this)
@@ -18124,7 +17486,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitUdp_instance(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitUdp_instance(this)
@@ -18198,7 +17559,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun udp_instance_identifier(): Udp_instance_identifierContext? =
             getRuleContext(Udp_instance_identifierContext::class, 0)
-
         public fun range_(): Range_Context? = getRuleContext(Range_Context::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -18209,13 +17569,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Name_of_udp_instanceContext {
             return Name_of_udp_instanceContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterName_of_udp_instance(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterName_of_udp_instance(this)
@@ -18227,7 +17585,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitName_of_udp_instance(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitName_of_udp_instance(this)
@@ -18275,7 +17632,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun ASSIGN(): TerminalNode? = getToken(Tokens.ASSIGN, 0)
         public fun list_of_net_assignments(): List_of_net_assignmentsContext? =
             getRuleContext(List_of_net_assignmentsContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun drive_strength(): Drive_strengthContext? = getRuleContext(Drive_strengthContext::class, 0)
         public fun delay3(): Delay3Context? = getRuleContext(Delay3Context::class, 0)
@@ -18288,13 +17644,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Continuous_assignContext {
             return Continuous_assignContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterContinuous_assign(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterContinuous_assign(this)
@@ -18306,7 +17660,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitContinuous_assign(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitContinuous_assign(this)
@@ -18379,13 +17732,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_net_assignmentsContext {
             return List_of_net_assignmentsContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_net_assignments(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_net_assignments(this)
@@ -18397,7 +17748,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_net_assignments(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_net_assignments(this)
@@ -18460,13 +17810,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Net_assignmentContext {
             return Net_assignmentContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterNet_assignment(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterNet_assignment(this)
@@ -18478,7 +17826,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitNet_assignment(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitNet_assignment(this)
@@ -18530,13 +17877,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Initial_constructContext {
             return Initial_constructContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterInitial_construct(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterInitial_construct(this)
@@ -18548,7 +17893,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitInitial_construct(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitInitial_construct(this)
@@ -18597,13 +17941,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Always_constructContext {
             return Always_constructContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterAlways_construct(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterAlways_construct(this)
@@ -18615,7 +17957,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitAlways_construct(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitAlways_construct(this)
@@ -18667,13 +18008,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Blocking_assignmentContext {
             return Blocking_assignmentContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterBlocking_assignment(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterBlocking_assignment(this)
@@ -18685,7 +18024,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitBlocking_assignment(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitBlocking_assignment(this)
@@ -18750,13 +18088,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Nonblocking_assignmentContext {
             return Nonblocking_assignmentContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterNonblocking_assignment(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterNonblocking_assignment(this)
@@ -18768,7 +18104,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitNonblocking_assignment(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitNonblocking_assignment(this)
@@ -18822,7 +18157,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun ASSIGN(): TerminalNode? = getToken(Tokens.ASSIGN, 0)
         public fun variable_assignment(): Variable_assignmentContext? =
             getRuleContext(Variable_assignmentContext::class, 0)
-
         public fun DEASSIGN(): TerminalNode? = getToken(Tokens.DEASSIGN, 0)
         public fun variable_lvalue(): Variable_lvalueContext? = getRuleContext(Variable_lvalueContext::class, 0)
         public fun FORCE(): TerminalNode? = getToken(Tokens.FORCE, 0)
@@ -18836,13 +18170,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Procedural_continuous_assignmentsContext {
             return Procedural_continuous_assignmentsContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterProcedural_continuous_assignments(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterProcedural_continuous_assignments(this)
@@ -18854,7 +18186,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitProcedural_continuous_assignments(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitProcedural_continuous_assignments(this)
@@ -18914,7 +18245,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     variable_lvalue()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -18943,13 +18273,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Variable_assignmentContext {
             return Variable_assignmentContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterVariable_assignment(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterVariable_assignment(this)
@@ -18961,7 +18289,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitVariable_assignment(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitVariable_assignment(this)
@@ -19021,13 +18348,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Par_blockContext {
             return Par_blockContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPar_block(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPar_block(this)
@@ -19039,7 +18364,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPar_block(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPar_block(this)
@@ -19126,13 +18450,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Block_nameContext {
             return Block_nameContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterBlock_name(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterBlock_name(this)
@@ -19144,7 +18466,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitBlock_name(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitBlock_name(this)
@@ -19201,13 +18522,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Seq_blockContext {
             return Seq_blockContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSeq_block(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSeq_block(this)
@@ -19219,7 +18538,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSeq_block(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSeq_block(this)
@@ -19297,35 +18615,29 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun blocking_assignment(): Blocking_assignmentContext? =
             getRuleContext(Blocking_assignmentContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun case_statement(): Case_statementContext? = getRuleContext(Case_statementContext::class, 0)
         public fun conditional_statement(): Conditional_statementContext? =
             getRuleContext(Conditional_statementContext::class, 0)
-
         public fun disable_statement(): Disable_statementContext? = getRuleContext(Disable_statementContext::class, 0)
         public fun event_trigger(): Event_triggerContext? = getRuleContext(Event_triggerContext::class, 0)
         public fun loop_statement(): Loop_statementContext? = getRuleContext(Loop_statementContext::class, 0)
         public fun nonblocking_assignment(): Nonblocking_assignmentContext? =
             getRuleContext(Nonblocking_assignmentContext::class, 0)
-
         public fun par_block(): Par_blockContext? = getRuleContext(Par_blockContext::class, 0)
         public fun procedural_continuous_assignments(): Procedural_continuous_assignmentsContext? =
             getRuleContext(Procedural_continuous_assignmentsContext::class, 0)
 
         public fun procedural_timing_control_statement(): Procedural_timing_control_statementContext? =
             getRuleContext(Procedural_timing_control_statementContext::class, 0)
-
         public fun seq_block(): Seq_blockContext? = getRuleContext(Seq_blockContext::class, 0)
         public fun system_task_enable(): System_task_enableContext? =
             getRuleContext(System_task_enableContext::class, 0)
-
         public fun task_enable(): Task_enableContext? = getRuleContext(Task_enableContext::class, 0)
         public fun wait_statement(): Wait_statementContext? = getRuleContext(Wait_statementContext::class, 0)
 
@@ -19337,13 +18649,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): StatementContext {
             return StatementContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterStatement(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterStatement(this)
@@ -19355,7 +18665,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitStatement(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitStatement(this)
@@ -19682,13 +18991,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Statement_or_nullContext {
             return Statement_or_nullContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterStatement_or_null(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterStatement_or_null(this)
@@ -19700,7 +19007,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitStatement_or_null(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitStatement_or_null(this)
@@ -19772,13 +19078,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Function_statementContext {
             return Function_statementContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterFunction_statement(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterFunction_statement(this)
@@ -19790,7 +19094,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitFunction_statement(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitFunction_statement(this)
@@ -19830,7 +19133,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun mintypmax_expression(): Mintypmax_expressionContext? =
             getRuleContext(Mintypmax_expressionContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -19841,13 +19143,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Delay_controlContext {
             return Delay_controlContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDelay_control(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDelay_control(this)
@@ -19859,7 +19159,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDelay_control(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDelay_control(this)
@@ -19935,13 +19234,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Delay_or_event_controlContext {
             return Delay_or_event_controlContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDelay_or_event_control(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDelay_or_event_control(this)
@@ -19953,7 +19250,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDelay_or_event_control(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDelay_or_event_control(this)
@@ -20006,7 +19302,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     event_control()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -20026,7 +19321,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun DISABLE(): TerminalNode? = getToken(Tokens.DISABLE, 0)
         public fun hierarchical_identifier(): Hierarchical_identifierContext? =
             getRuleContext(Hierarchical_identifierContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -20037,13 +19331,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Disable_statementContext {
             return Disable_statementContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDisable_statement(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDisable_statement(this)
@@ -20055,7 +19347,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDisable_statement(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDisable_statement(this)
@@ -20099,7 +19390,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun AT(): TerminalNode? = getToken(Tokens.AT, 0)
         public fun hierarchical_identifier(): Hierarchical_identifierContext? =
             getRuleContext(Hierarchical_identifierContext::class, 0)
-
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun event_expression(): Event_expressionContext? = getRuleContext(Event_expressionContext::class, 0)
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
@@ -20113,13 +19403,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Event_controlContext {
             return Event_controlContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEvent_control(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEvent_control(this)
@@ -20131,7 +19419,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEvent_control(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEvent_control(this)
@@ -20221,7 +19508,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun MIGT(): TerminalNode? = getToken(Tokens.MIGT, 0)
         public fun hierarchical_identifier(): Hierarchical_identifierContext? =
             getRuleContext(Hierarchical_identifierContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun bit_select(): Bit_selectContext? = getRuleContext(Bit_selectContext::class, 0)
 
@@ -20233,13 +19519,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Event_triggerContext {
             return Event_triggerContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEvent_trigger(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEvent_trigger(this)
@@ -20251,7 +19535,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEvent_trigger(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEvent_trigger(this)
@@ -20308,7 +19591,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun event_expression(): List<Event_expressionContext> = getRuleContexts(Event_expressionContext::class)
         public fun event_expression(i: Int): Event_expressionContext? =
             getRuleContext(Event_expressionContext::class, i)
-
         public fun OR(): TerminalNode? = getToken(Tokens.OR, 0)
         public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
 
@@ -20320,13 +19602,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Event_expressionContext {
             return Event_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEvent_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEvent_expression(this)
@@ -20338,7 +19618,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEvent_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEvent_expression(this)
@@ -20392,7 +19671,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     expression(0)
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
             context!!.stop = _input.LT(-1)
@@ -20442,7 +19720,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                             event_expression(2)
 
                         }
-                    }
+                    } 
                 }
 
                 this.state = 3019
@@ -20474,13 +19752,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Procedural_timing_controlContext {
             return Procedural_timing_controlContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterProcedural_timing_control(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterProcedural_timing_control(this)
@@ -20492,7 +19768,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitProcedural_timing_control(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitProcedural_timing_control(this)
@@ -20526,7 +19801,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     event_control()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -20545,7 +19819,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun procedural_timing_control(): Procedural_timing_controlContext? =
             getRuleContext(Procedural_timing_controlContext::class, 0)
-
         public fun statement_or_null(): Statement_or_nullContext? = getRuleContext(Statement_or_nullContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -20556,13 +19829,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Procedural_timing_control_statementContext {
             return Procedural_timing_control_statementContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterProcedural_timing_control_statement(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterProcedural_timing_control_statement(this)
@@ -20574,7 +19845,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitProcedural_timing_control_statement(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitProcedural_timing_control_statement(this)
@@ -20626,13 +19896,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Wait_statementContext {
             return Wait_statementContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterWait_statement(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterWait_statement(this)
@@ -20644,7 +19912,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitWait_statement(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitWait_statement(this)
@@ -20700,7 +19967,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun statement_or_null(i: Int): Statement_or_nullContext? =
             getRuleContext(Statement_or_nullContext::class, i)
-
         public fun ELSE(): TerminalNode? = getToken(Tokens.ELSE, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -20711,13 +19977,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Conditional_statementContext {
             return Conditional_statementContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterConditional_statement(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConditional_statement(this)
@@ -20729,7 +19993,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConditional_statement(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConditional_statement(this)
@@ -20807,13 +20070,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Case_statementContext {
             return Case_statementContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterCase_statement(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterCase_statement(this)
@@ -20825,7 +20086,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitCase_statement(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitCase_statement(this)
@@ -20861,7 +20121,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     this.state = 3045
                     match(Tokens.RP)
 
-                    this.state = 3047
+                    this.state = 3047 
                     errorHandler.sync(this)
                     _la = _input.LA(1)
 
@@ -20869,7 +20129,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                         this.state = 3046
                         case_item()
 
-                        this.state = 3049
+                        this.state = 3049 
                         errorHandler.sync(this)
                         _la = _input.LA(1)
                     } while (_la == Tokens.DEFAULT || ((((_la - 137)) and 0x3f.inv()) == 0 && ((1L shl (_la - 137)) and -587789827252928127L) != 0L) || _la == Tokens.UNSIGNED_NUMBER)
@@ -20892,7 +20152,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     this.state = 3056
                     match(Tokens.RP)
 
-                    this.state = 3058
+                    this.state = 3058 
                     errorHandler.sync(this)
                     _la = _input.LA(1)
 
@@ -20900,7 +20160,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                         this.state = 3057
                         case_item()
 
-                        this.state = 3060
+                        this.state = 3060 
                         errorHandler.sync(this)
                         _la = _input.LA(1)
                     } while (_la == Tokens.DEFAULT || ((((_la - 137)) and 0x3f.inv()) == 0 && ((1L shl (_la - 137)) and -587789827252928127L) != 0L) || _la == Tokens.UNSIGNED_NUMBER)
@@ -20923,7 +20183,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     this.state = 3067
                     match(Tokens.RP)
 
-                    this.state = 3069
+                    this.state = 3069 
                     errorHandler.sync(this)
                     _la = _input.LA(1)
 
@@ -20931,7 +20191,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                         this.state = 3068
                         case_item()
 
-                        this.state = 3071
+                        this.state = 3071 
                         errorHandler.sync(this)
                         _la = _input.LA(1)
                     } while (_la == Tokens.DEFAULT || ((((_la - 137)) and 0x3f.inv()) == 0 && ((1L shl (_la - 137)) and -587789827252928127L) != 0L) || _la == Tokens.UNSIGNED_NUMBER)
@@ -20939,7 +20199,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     match(Tokens.ENDCASE)
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -20972,13 +20231,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Case_itemContext {
             return Case_itemContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterCase_item(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterCase_item(this)
@@ -20990,7 +20247,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitCase_item(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitCase_item(this)
@@ -21058,7 +20314,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     statement_or_null()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -21088,7 +20343,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun variable_assignment(i: Int): Variable_assignmentContext? =
             getRuleContext(Variable_assignmentContext::class, i)
-
         public fun SC(): List<TerminalNode> = getTokens(Tokens.SC)
         public fun SC(i: Int): TerminalNode? = getToken(Tokens.SC, i)
 
@@ -21100,13 +20354,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Loop_statementContext {
             return Loop_statementContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterLoop_statement(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterLoop_statement(this)
@@ -21118,7 +20370,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitLoop_statement(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitLoop_statement(this)
@@ -21217,7 +20468,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     statement()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -21236,7 +20486,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun system_task_identifier(): System_task_identifierContext? =
             getRuleContext(System_task_identifierContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun sys_task_en_port_list(): Sys_task_en_port_listContext? =
             getRuleContext(Sys_task_en_port_listContext::class, 0)
@@ -21249,13 +20498,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): System_task_enableContext {
             return System_task_enableContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSystem_task_enable(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSystem_task_enable(this)
@@ -21267,7 +20514,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSystem_task_enable(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSystem_task_enable(this)
@@ -21321,7 +20567,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun sys_task_en_port_item(i: Int): Sys_task_en_port_itemContext? =
             getRuleContext(Sys_task_en_port_itemContext::class, i)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
@@ -21334,13 +20579,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Sys_task_en_port_listContext {
             return Sys_task_en_port_listContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSys_task_en_port_list(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSys_task_en_port_list(this)
@@ -21352,7 +20595,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSys_task_en_port_list(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSys_task_en_port_list(this)
@@ -21419,13 +20661,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Sys_task_en_port_itemContext {
             return Sys_task_en_port_itemContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSys_task_en_port_item(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSys_task_en_port_item(this)
@@ -21437,7 +20677,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSys_task_en_port_item(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSys_task_en_port_item(this)
@@ -21481,7 +20720,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun hierarchical_identifier(): Hierarchical_identifierContext? =
             getRuleContext(Hierarchical_identifierContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun task_en_port_list(): Task_en_port_listContext? = getRuleContext(Task_en_port_listContext::class, 0)
 
@@ -21493,13 +20731,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Task_enableContext {
             return Task_enableContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTask_enable(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTask_enable(this)
@@ -21511,7 +20747,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTask_enable(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTask_enable(this)
@@ -21574,13 +20809,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Task_en_port_listContext {
             return Task_en_port_listContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTask_en_port_list(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTask_en_port_list(this)
@@ -21592,7 +20825,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTask_en_port_list(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTask_en_port_list(this)
@@ -21662,13 +20894,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Specify_blockContext {
             return Specify_blockContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSpecify_block(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSpecify_block(this)
@@ -21680,7 +20910,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSpecify_block(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSpecify_block(this)
@@ -21739,7 +20968,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun showcancelled_declaration(): Showcancelled_declarationContext? =
             getRuleContext(Showcancelled_declarationContext::class, 0)
-
         public fun path_declaration(): Path_declarationContext? = getRuleContext(Path_declarationContext::class, 0)
         public fun system_timing_check(): System_timing_checkContext? =
             getRuleContext(System_timing_checkContext::class, 0)
@@ -21752,13 +20980,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Specify_itemContext {
             return Specify_itemContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSpecify_item(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSpecify_item(this)
@@ -21770,7 +20996,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSpecify_item(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSpecify_item(this)
@@ -21825,7 +21050,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     system_timing_check()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -21845,7 +21069,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun PULSESTYLE_ONEVENT(): TerminalNode? = getToken(Tokens.PULSESTYLE_ONEVENT, 0)
         public fun list_of_path_outputs(): List_of_path_outputsContext? =
             getRuleContext(List_of_path_outputsContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun PULSESTYLE_ONDETECT(): TerminalNode? = getToken(Tokens.PULSESTYLE_ONDETECT, 0)
 
@@ -21857,13 +21080,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Pulsestyle_declarationContext {
             return Pulsestyle_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPulsestyle_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPulsestyle_declaration(this)
@@ -21875,7 +21096,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPulsestyle_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPulsestyle_declaration(this)
@@ -21921,7 +21141,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     match(Tokens.SC)
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -21941,7 +21160,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun SHOWCANCELLED(): TerminalNode? = getToken(Tokens.SHOWCANCELLED, 0)
         public fun list_of_path_outputs(): List_of_path_outputsContext? =
             getRuleContext(List_of_path_outputsContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun NOSHOWCANCELLED(): TerminalNode? = getToken(Tokens.NOSHOWCANCELLED, 0)
 
@@ -21953,13 +21171,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Showcancelled_declarationContext {
             return Showcancelled_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterShowcancelled_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterShowcancelled_declaration(this)
@@ -21971,7 +21187,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitShowcancelled_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitShowcancelled_declaration(this)
@@ -22017,7 +21232,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     match(Tokens.SC)
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -22036,7 +21250,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun simple_path_declaration(): Simple_path_declarationContext? =
             getRuleContext(Simple_path_declarationContext::class, 0)
-
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun edge_sensitive_path_declaration(): Edge_sensitive_path_declarationContext? =
             getRuleContext(Edge_sensitive_path_declarationContext::class, 0)
@@ -22052,13 +21265,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Path_declarationContext {
             return Path_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPath_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPath_declaration(this)
@@ -22070,7 +21281,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPath_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPath_declaration(this)
@@ -22137,7 +21347,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun parallel_path_description(): Parallel_path_descriptionContext? =
             getRuleContext(Parallel_path_descriptionContext::class, 0)
-
         public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
         public fun path_delay_value(): Path_delay_valueContext? = getRuleContext(Path_delay_valueContext::class, 0)
         public fun full_path_description(): Full_path_descriptionContext? =
@@ -22151,13 +21360,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Simple_path_declarationContext {
             return Simple_path_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSimple_path_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSimple_path_declaration(this)
@@ -22169,7 +21376,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSimple_path_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSimple_path_declaration(this)
@@ -22233,11 +21439,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun specify_input_terminal_descriptor(): Specify_input_terminal_descriptorContext? =
             getRuleContext(Specify_input_terminal_descriptorContext::class, 0)
-
         public fun EQGT(): TerminalNode? = getToken(Tokens.EQGT, 0)
         public fun specify_output_terminal_descriptor(): Specify_output_terminal_descriptorContext? =
             getRuleContext(Specify_output_terminal_descriptorContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun polarity_operator(): Polarity_operatorContext? = getRuleContext(Polarity_operatorContext::class, 0)
 
@@ -22249,13 +21453,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Parallel_path_descriptionContext {
             return Parallel_path_descriptionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterParallel_path_description(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterParallel_path_description(this)
@@ -22267,7 +21469,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitParallel_path_description(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitParallel_path_description(this)
@@ -22327,11 +21528,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun list_of_path_inputs(): List_of_path_inputsContext? =
             getRuleContext(List_of_path_inputsContext::class, 0)
-
         public fun ASGT(): TerminalNode? = getToken(Tokens.ASGT, 0)
         public fun list_of_path_outputs(): List_of_path_outputsContext? =
             getRuleContext(List_of_path_outputsContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun polarity_operator(): Polarity_operatorContext? = getRuleContext(Polarity_operatorContext::class, 0)
 
@@ -22343,13 +21542,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Full_path_descriptionContext {
             return Full_path_descriptionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterFull_path_description(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterFull_path_description(this)
@@ -22361,7 +21558,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitFull_path_description(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitFull_path_description(this)
@@ -22423,7 +21619,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun specify_input_terminal_descriptor(i: Int): Specify_input_terminal_descriptorContext? =
             getRuleContext(Specify_input_terminal_descriptorContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -22435,13 +21630,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_path_inputsContext {
             return List_of_path_inputsContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_path_inputs(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_path_inputs(this)
@@ -22453,7 +21646,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_path_inputs(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_path_inputs(this)
@@ -22509,7 +21701,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun specify_output_terminal_descriptor(i: Int): Specify_output_terminal_descriptorContext? =
             getRuleContext(Specify_output_terminal_descriptorContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -22521,13 +21712,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_path_outputsContext {
             return List_of_path_outputsContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_path_outputs(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_path_outputs(this)
@@ -22539,7 +21728,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_path_outputs(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_path_outputs(this)
@@ -22594,7 +21782,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
         public fun constant_range_expression(): Constant_range_expressionContext? =
             getRuleContext(Constant_range_expressionContext::class, 0)
-
         public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -22605,13 +21792,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Specify_input_terminal_descriptorContext {
             return Specify_input_terminal_descriptorContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSpecify_input_terminal_descriptor(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSpecify_input_terminal_descriptor(this)
@@ -22623,7 +21808,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSpecify_input_terminal_descriptor(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSpecify_input_terminal_descriptor(this)
@@ -22678,7 +21862,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
         public fun constant_range_expression(): Constant_range_expressionContext? =
             getRuleContext(Constant_range_expressionContext::class, 0)
-
         public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -22689,13 +21872,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Specify_output_terminal_descriptorContext {
             return Specify_output_terminal_descriptorContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSpecify_output_terminal_descriptor(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSpecify_output_terminal_descriptor(this)
@@ -22707,7 +21888,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSpecify_output_terminal_descriptor(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSpecify_output_terminal_descriptor(this)
@@ -22768,13 +21948,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Input_identifierContext {
             return Input_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterInput_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterInput_identifier(this)
@@ -22786,7 +21964,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitInput_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitInput_identifier(this)
@@ -22831,13 +22008,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Output_identifierContext {
             return Output_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterOutput_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterOutput_identifier(this)
@@ -22849,7 +22024,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitOutput_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitOutput_identifier(this)
@@ -22886,7 +22060,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun list_of_path_delay_expressions(): List_of_path_delay_expressionsContext? =
             getRuleContext(List_of_path_delay_expressionsContext::class, 0)
-
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
 
@@ -22898,13 +22071,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Path_delay_valueContext {
             return Path_delay_valueContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPath_delay_value(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPath_delay_value(this)
@@ -22916,7 +22087,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPath_delay_value(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPath_delay_value(this)
@@ -22976,7 +22146,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun trise_path_delay_expression(): Trise_path_delay_expressionContext? =
             getRuleContext(Trise_path_delay_expressionContext::class, 0)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
         public fun tfall_path_delay_expression(): Tfall_path_delay_expressionContext? =
@@ -23029,13 +22198,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): List_of_path_delay_expressionsContext {
             return List_of_path_delay_expressionsContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterList_of_path_delay_expressions(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterList_of_path_delay_expressions(this)
@@ -23047,7 +22214,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitList_of_path_delay_expressions(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitList_of_path_delay_expressions(this)
@@ -23205,13 +22371,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): T_path_delay_expressionContext {
             return T_path_delay_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterT_path_delay_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterT_path_delay_expression(this)
@@ -23223,7 +22387,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitT_path_delay_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitT_path_delay_expression(this)
@@ -23269,13 +22432,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Trise_path_delay_expressionContext {
             return Trise_path_delay_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTrise_path_delay_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTrise_path_delay_expression(this)
@@ -23287,7 +22448,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTrise_path_delay_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTrise_path_delay_expression(this)
@@ -23333,13 +22493,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Tfall_path_delay_expressionContext {
             return Tfall_path_delay_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTfall_path_delay_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTfall_path_delay_expression(this)
@@ -23351,7 +22509,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTfall_path_delay_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTfall_path_delay_expression(this)
@@ -23397,13 +22554,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Tz_path_delay_expressionContext {
             return Tz_path_delay_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTz_path_delay_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTz_path_delay_expression(this)
@@ -23415,7 +22570,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTz_path_delay_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTz_path_delay_expression(this)
@@ -23461,13 +22615,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): T01_path_delay_expressionContext {
             return T01_path_delay_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterT01_path_delay_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterT01_path_delay_expression(this)
@@ -23479,7 +22631,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitT01_path_delay_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitT01_path_delay_expression(this)
@@ -23525,13 +22676,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): T10_path_delay_expressionContext {
             return T10_path_delay_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterT10_path_delay_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterT10_path_delay_expression(this)
@@ -23543,7 +22692,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitT10_path_delay_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitT10_path_delay_expression(this)
@@ -23589,13 +22737,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): T0z_path_delay_expressionContext {
             return T0z_path_delay_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterT0z_path_delay_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterT0z_path_delay_expression(this)
@@ -23607,7 +22753,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitT0z_path_delay_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitT0z_path_delay_expression(this)
@@ -23653,13 +22798,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Tz1_path_delay_expressionContext {
             return Tz1_path_delay_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTz1_path_delay_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTz1_path_delay_expression(this)
@@ -23671,7 +22814,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTz1_path_delay_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTz1_path_delay_expression(this)
@@ -23717,13 +22859,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): T1z_path_delay_expressionContext {
             return T1z_path_delay_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterT1z_path_delay_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterT1z_path_delay_expression(this)
@@ -23735,7 +22875,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitT1z_path_delay_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitT1z_path_delay_expression(this)
@@ -23781,13 +22920,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Tz0_path_delay_expressionContext {
             return Tz0_path_delay_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTz0_path_delay_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTz0_path_delay_expression(this)
@@ -23799,7 +22936,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTz0_path_delay_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTz0_path_delay_expression(this)
@@ -23845,13 +22981,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): T0x_path_delay_expressionContext {
             return T0x_path_delay_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterT0x_path_delay_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterT0x_path_delay_expression(this)
@@ -23863,7 +22997,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitT0x_path_delay_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitT0x_path_delay_expression(this)
@@ -23909,13 +23042,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Tx1_path_delay_expressionContext {
             return Tx1_path_delay_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTx1_path_delay_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTx1_path_delay_expression(this)
@@ -23927,7 +23058,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTx1_path_delay_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTx1_path_delay_expression(this)
@@ -23973,13 +23103,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): T1x_path_delay_expressionContext {
             return T1x_path_delay_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterT1x_path_delay_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterT1x_path_delay_expression(this)
@@ -23991,7 +23119,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitT1x_path_delay_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitT1x_path_delay_expression(this)
@@ -24037,13 +23164,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Tx0_path_delay_expressionContext {
             return Tx0_path_delay_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTx0_path_delay_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTx0_path_delay_expression(this)
@@ -24055,7 +23180,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTx0_path_delay_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTx0_path_delay_expression(this)
@@ -24101,13 +23225,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Txz_path_delay_expressionContext {
             return Txz_path_delay_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTxz_path_delay_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTxz_path_delay_expression(this)
@@ -24119,7 +23241,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTxz_path_delay_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTxz_path_delay_expression(this)
@@ -24165,13 +23286,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Tzx_path_delay_expressionContext {
             return Tzx_path_delay_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTzx_path_delay_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTzx_path_delay_expression(this)
@@ -24183,7 +23302,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTzx_path_delay_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTzx_path_delay_expression(this)
@@ -24229,13 +23347,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Path_delay_expressionContext {
             return Path_delay_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPath_delay_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPath_delay_expression(this)
@@ -24247,7 +23363,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPath_delay_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPath_delay_expression(this)
@@ -24284,7 +23399,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun parallel_edge_sensitive_path_description(): Parallel_edge_sensitive_path_descriptionContext? =
             getRuleContext(Parallel_edge_sensitive_path_descriptionContext::class, 0)
-
         public fun EQ(): TerminalNode? = getToken(Tokens.EQ, 0)
         public fun path_delay_value(): Path_delay_valueContext? = getRuleContext(Path_delay_valueContext::class, 0)
         public fun full_edge_sensitive_path_description(): Full_edge_sensitive_path_descriptionContext? =
@@ -24298,13 +23412,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Edge_sensitive_path_declarationContext {
             return Edge_sensitive_path_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEdge_sensitive_path_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEdge_sensitive_path_declaration(this)
@@ -24316,7 +23428,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEdge_sensitive_path_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEdge_sensitive_path_declaration(this)
@@ -24381,15 +23492,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LP(i: Int): TerminalNode? = getToken(Tokens.LP, i)
         public fun specify_input_terminal_descriptor(): Specify_input_terminal_descriptorContext? =
             getRuleContext(Specify_input_terminal_descriptorContext::class, 0)
-
         public fun EQGT(): TerminalNode? = getToken(Tokens.EQGT, 0)
         public fun specify_output_terminal_descriptor(): Specify_output_terminal_descriptorContext? =
             getRuleContext(Specify_output_terminal_descriptorContext::class, 0)
-
         public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
         public fun data_source_expression(): Data_source_expressionContext? =
             getRuleContext(Data_source_expressionContext::class, 0)
-
         public fun RP(): List<TerminalNode> = getTokens(Tokens.RP)
         public fun RP(i: Int): TerminalNode? = getToken(Tokens.RP, i)
         public fun edge_identifier(): Edge_identifierContext? = getRuleContext(Edge_identifierContext::class, 0)
@@ -24403,13 +23511,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Parallel_edge_sensitive_path_descriptionContext {
             return Parallel_edge_sensitive_path_descriptionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterParallel_edge_sensitive_path_description(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterParallel_edge_sensitive_path_description(this)
@@ -24421,7 +23527,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitParallel_edge_sensitive_path_description(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitParallel_edge_sensitive_path_description(this)
@@ -24503,15 +23608,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LP(i: Int): TerminalNode? = getToken(Tokens.LP, i)
         public fun list_of_path_inputs(): List_of_path_inputsContext? =
             getRuleContext(List_of_path_inputsContext::class, 0)
-
         public fun ASGT(): TerminalNode? = getToken(Tokens.ASGT, 0)
         public fun list_of_path_outputs(): List_of_path_outputsContext? =
             getRuleContext(List_of_path_outputsContext::class, 0)
-
         public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
         public fun data_source_expression(): Data_source_expressionContext? =
             getRuleContext(Data_source_expressionContext::class, 0)
-
         public fun RP(): List<TerminalNode> = getTokens(Tokens.RP)
         public fun RP(i: Int): TerminalNode? = getToken(Tokens.RP, i)
         public fun edge_identifier(): Edge_identifierContext? = getRuleContext(Edge_identifierContext::class, 0)
@@ -24525,13 +23627,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Full_edge_sensitive_path_descriptionContext {
             return Full_edge_sensitive_path_descriptionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterFull_edge_sensitive_path_description(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterFull_edge_sensitive_path_description(this)
@@ -24543,7 +23643,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitFull_edge_sensitive_path_description(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitFull_edge_sensitive_path_description(this)
@@ -24631,13 +23730,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Data_source_expressionContext {
             return Data_source_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterData_source_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterData_source_expression(this)
@@ -24649,7 +23746,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitData_source_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitData_source_expression(this)
@@ -24695,13 +23791,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Edge_identifierContext {
             return Edge_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEdge_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEdge_identifier(this)
@@ -24713,7 +23807,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEdge_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEdge_identifier(this)
@@ -24763,14 +23856,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun module_path_expression(): Module_path_expressionContext? =
             getRuleContext(Module_path_expressionContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun simple_path_declaration(): Simple_path_declarationContext? =
             getRuleContext(Simple_path_declarationContext::class, 0)
 
         public fun edge_sensitive_path_declaration(): Edge_sensitive_path_declarationContext? =
             getRuleContext(Edge_sensitive_path_declarationContext::class, 0)
-
         public fun IFNONE(): TerminalNode? = getToken(Tokens.IFNONE, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -24781,13 +23872,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): State_dependent_path_declarationContext {
             return State_dependent_path_declarationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterState_dependent_path_declaration(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterState_dependent_path_declaration(this)
@@ -24799,7 +23888,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitState_dependent_path_declaration(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitState_dependent_path_declaration(this)
@@ -24893,13 +23981,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Polarity_operatorContext {
             return Polarity_operatorContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPolarity_operator(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPolarity_operator(this)
@@ -24911,7 +23997,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPolarity_operator(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPolarity_operator(this)
@@ -24959,7 +24044,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun setup_timing_check(): Setup_timing_checkContext? =
             getRuleContext(Setup_timing_checkContext::class, 0)
-
         public fun hold_timing_check(): Hold_timing_checkContext? = getRuleContext(Hold_timing_checkContext::class, 0)
         public fun setuphold_timing_check(): Setuphold_timing_checkContext? =
             getRuleContext(Setuphold_timing_checkContext::class, 0)
@@ -24972,7 +24056,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun recrem_timing_check(): Recrem_timing_checkContext? =
             getRuleContext(Recrem_timing_checkContext::class, 0)
-
         public fun skew_timing_check(): Skew_timing_checkContext? = getRuleContext(Skew_timing_checkContext::class, 0)
         public fun timeskew_timing_check(): Timeskew_timing_checkContext? =
             getRuleContext(Timeskew_timing_checkContext::class, 0)
@@ -24997,13 +24080,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): System_timing_checkContext {
             return System_timing_checkContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSystem_timing_check(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSystem_timing_check(this)
@@ -25015,7 +24096,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSystem_timing_check(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSystem_timing_check(this)
@@ -25119,7 +24199,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     nochange_timing_check()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -25144,7 +24223,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun reference_event(): Reference_eventContext? = getRuleContext(Reference_eventContext::class, 0)
         public fun timing_check_limit(): Timing_check_limitContext? =
             getRuleContext(Timing_check_limitContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun notifier_opt(): Notifier_optContext? = getRuleContext(Notifier_optContext::class, 0)
@@ -25157,13 +24235,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Setup_timing_checkContext {
             return Setup_timing_checkContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSetup_timing_check(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSetup_timing_check(this)
@@ -25175,7 +24251,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSetup_timing_check(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSetup_timing_check(this)
@@ -25255,13 +24330,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Notifier_optContext {
             return Notifier_optContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterNotifier_opt(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterNotifier_opt(this)
@@ -25273,7 +24346,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitNotifier_opt(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitNotifier_opt(this)
@@ -25326,7 +24398,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun data_event(): Data_eventContext? = getRuleContext(Data_eventContext::class, 0)
         public fun timing_check_limit(): Timing_check_limitContext? =
             getRuleContext(Timing_check_limitContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun notifier_opt(): Notifier_optContext? = getRuleContext(Notifier_optContext::class, 0)
@@ -25339,13 +24410,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Hold_timing_checkContext {
             return Hold_timing_checkContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterHold_timing_check(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterHold_timing_check(this)
@@ -25357,7 +24426,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitHold_timing_check(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitHold_timing_check(this)
@@ -25437,7 +24505,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun timing_check_limit(i: Int): Timing_check_limitContext? =
             getRuleContext(Timing_check_limitContext::class, i)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun timing_check_opt(): Timing_check_optContext? = getRuleContext(Timing_check_optContext::class, 0)
@@ -25450,13 +24517,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Setuphold_timing_checkContext {
             return Setuphold_timing_checkContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSetuphold_timing_check(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSetuphold_timing_check(this)
@@ -25468,7 +24533,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSetuphold_timing_check(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSetuphold_timing_check(this)
@@ -25556,13 +24620,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Timing_check_optContext {
             return Timing_check_optContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTiming_check_opt(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTiming_check_opt(this)
@@ -25574,7 +24636,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTiming_check_opt(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTiming_check_opt(this)
@@ -25643,13 +24704,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Stamptime_cond_optContext {
             return Stamptime_cond_optContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterStamptime_cond_opt(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterStamptime_cond_opt(this)
@@ -25661,7 +24720,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitStamptime_cond_opt(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitStamptime_cond_opt(this)
@@ -25718,7 +24776,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
         public fun checktime_condition(): Checktime_conditionContext? =
             getRuleContext(Checktime_conditionContext::class, 0)
-
         public fun delayed_ref_opt(): Delayed_ref_optContext? = getRuleContext(Delayed_ref_optContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -25729,13 +24786,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Checktime_cond_optContext {
             return Checktime_cond_optContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterChecktime_cond_opt(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterChecktime_cond_opt(this)
@@ -25747,7 +24802,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitChecktime_cond_opt(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitChecktime_cond_opt(this)
@@ -25813,13 +24867,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Delayed_ref_optContext {
             return Delayed_ref_optContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDelayed_ref_opt(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDelayed_ref_opt(this)
@@ -25831,7 +24883,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDelayed_ref_opt(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDelayed_ref_opt(this)
@@ -25896,13 +24947,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Delayed_data_optContext {
             return Delayed_data_optContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDelayed_data_opt(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDelayed_data_opt(this)
@@ -25914,7 +24963,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDelayed_data_opt(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDelayed_data_opt(this)
@@ -25967,7 +25015,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun data_event(): Data_eventContext? = getRuleContext(Data_eventContext::class, 0)
         public fun timing_check_limit(): Timing_check_limitContext? =
             getRuleContext(Timing_check_limitContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun notifier_opt(): Notifier_optContext? = getRuleContext(Notifier_optContext::class, 0)
@@ -25980,13 +25027,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Recovery_timing_checkContext {
             return Recovery_timing_checkContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterRecovery_timing_check(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterRecovery_timing_check(this)
@@ -25998,7 +25043,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitRecovery_timing_check(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitRecovery_timing_check(this)
@@ -26075,7 +25119,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun data_event(): Data_eventContext? = getRuleContext(Data_eventContext::class, 0)
         public fun timing_check_limit(): Timing_check_limitContext? =
             getRuleContext(Timing_check_limitContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun notifier_opt(): Notifier_optContext? = getRuleContext(Notifier_optContext::class, 0)
@@ -26088,13 +25131,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Removal_timing_checkContext {
             return Removal_timing_checkContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterRemoval_timing_check(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterRemoval_timing_check(this)
@@ -26106,7 +25147,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitRemoval_timing_check(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitRemoval_timing_check(this)
@@ -26186,7 +25226,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun timing_check_limit(i: Int): Timing_check_limitContext? =
             getRuleContext(Timing_check_limitContext::class, i)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun timing_check_opt(): Timing_check_optContext? = getRuleContext(Timing_check_optContext::class, 0)
@@ -26199,13 +25238,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Recrem_timing_checkContext {
             return Recrem_timing_checkContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterRecrem_timing_check(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterRecrem_timing_check(this)
@@ -26217,7 +25254,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitRecrem_timing_check(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitRecrem_timing_check(this)
@@ -26300,7 +25336,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun data_event(): Data_eventContext? = getRuleContext(Data_eventContext::class, 0)
         public fun timing_check_limit(): Timing_check_limitContext? =
             getRuleContext(Timing_check_limitContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun notifier_opt(): Notifier_optContext? = getRuleContext(Notifier_optContext::class, 0)
@@ -26313,13 +25348,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Skew_timing_checkContext {
             return Skew_timing_checkContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSkew_timing_check(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSkew_timing_check(this)
@@ -26331,7 +25364,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSkew_timing_check(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSkew_timing_check(this)
@@ -26408,7 +25440,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun data_event(): Data_eventContext? = getRuleContext(Data_eventContext::class, 0)
         public fun timing_check_limit(): Timing_check_limitContext? =
             getRuleContext(Timing_check_limitContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun skew_timing_check_opt(): Skew_timing_check_optContext? =
@@ -26422,13 +25453,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Timeskew_timing_checkContext {
             return Timeskew_timing_checkContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTimeskew_timing_check(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTimeskew_timing_check(this)
@@ -26440,7 +25469,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTimeskew_timing_check(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTimeskew_timing_check(this)
@@ -26522,13 +25550,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Skew_timing_check_optContext {
             return Skew_timing_check_optContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSkew_timing_check_opt(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSkew_timing_check_opt(this)
@@ -26540,7 +25566,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSkew_timing_check_opt(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSkew_timing_check_opt(this)
@@ -26607,13 +25632,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Event_based_flag_optContext {
             return Event_based_flag_optContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEvent_based_flag_opt(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEvent_based_flag_opt(this)
@@ -26625,7 +25648,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEvent_based_flag_opt(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEvent_based_flag_opt(this)
@@ -26691,13 +25713,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Remain_active_flag_optContext {
             return Remain_active_flag_optContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterRemain_active_flag_opt(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterRemain_active_flag_opt(this)
@@ -26709,7 +25729,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitRemain_active_flag_opt(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitRemain_active_flag_opt(this)
@@ -26765,7 +25784,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun timing_check_limit(i: Int): Timing_check_limitContext? =
             getRuleContext(Timing_check_limitContext::class, i)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun skew_timing_check_opt(): Skew_timing_check_optContext? =
@@ -26779,13 +25797,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Fullskew_timing_checkContext {
             return Fullskew_timing_checkContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterFullskew_timing_check(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterFullskew_timing_check(this)
@@ -26797,7 +25813,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitFullskew_timing_check(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitFullskew_timing_check(this)
@@ -26876,11 +25891,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun controlled_reference_event(): Controlled_reference_eventContext? =
             getRuleContext(Controlled_reference_eventContext::class, 0)
-
         public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
         public fun timing_check_limit(): Timing_check_limitContext? =
             getRuleContext(Timing_check_limitContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun notifier_opt(): Notifier_optContext? = getRuleContext(Notifier_optContext::class, 0)
@@ -26893,13 +25906,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Period_timing_checkContext {
             return Period_timing_checkContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPeriod_timing_check(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPeriod_timing_check(this)
@@ -26911,7 +25922,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPeriod_timing_check(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPeriod_timing_check(this)
@@ -26978,11 +25988,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun controlled_reference_event(): Controlled_reference_eventContext? =
             getRuleContext(Controlled_reference_eventContext::class, 0)
-
         public fun CO(): TerminalNode? = getToken(Tokens.CO, 0)
         public fun timing_check_limit(): Timing_check_limitContext? =
             getRuleContext(Timing_check_limitContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun SC(): TerminalNode? = getToken(Tokens.SC, 0)
         public fun threshold_opt(): Threshold_optContext? = getRuleContext(Threshold_optContext::class, 0)
@@ -26995,13 +26003,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Width_timing_checkContext {
             return Width_timing_checkContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterWidth_timing_check(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterWidth_timing_check(this)
@@ -27013,7 +26019,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitWidth_timing_check(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitWidth_timing_check(this)
@@ -27089,13 +26094,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Threshold_optContext {
             return Threshold_optContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterThreshold_opt(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterThreshold_opt(this)
@@ -27107,7 +26110,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitThreshold_opt(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitThreshold_opt(this)
@@ -27178,13 +26180,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Nochange_timing_checkContext {
             return Nochange_timing_checkContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterNochange_timing_check(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterNochange_timing_check(this)
@@ -27196,7 +26196,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitNochange_timing_check(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitNochange_timing_check(this)
@@ -27282,13 +26281,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Checktime_conditionContext {
             return Checktime_conditionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterChecktime_condition(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterChecktime_condition(this)
@@ -27300,7 +26297,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitChecktime_condition(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitChecktime_condition(this)
@@ -27346,13 +26342,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Controlled_reference_eventContext {
             return Controlled_reference_eventContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterControlled_reference_event(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterControlled_reference_event(this)
@@ -27364,7 +26358,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitControlled_reference_event(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitControlled_reference_event(this)
@@ -27410,13 +26403,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Data_eventContext {
             return Data_eventContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterData_event(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterData_event(this)
@@ -27428,7 +26419,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitData_event(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitData_event(this)
@@ -27465,11 +26455,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun terminal_identifier(): Terminal_identifierContext? =
             getRuleContext(Terminal_identifierContext::class, 0)
-
         public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
         public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext? =
             getRuleContext(Constant_mintypmax_expressionContext::class, 0)
-
         public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -27480,13 +26468,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Delayed_dataContext {
             return Delayed_dataContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDelayed_data(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDelayed_data(this)
@@ -27498,7 +26484,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDelayed_data(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDelayed_data(this)
@@ -27551,11 +26536,9 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun terminal_identifier(): Terminal_identifierContext? =
             getRuleContext(Terminal_identifierContext::class, 0)
-
         public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
         public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext? =
             getRuleContext(Constant_mintypmax_expressionContext::class, 0)
-
         public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -27566,13 +26549,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Delayed_referenceContext {
             return Delayed_referenceContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDelayed_reference(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDelayed_reference(this)
@@ -27584,7 +26565,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDelayed_reference(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDelayed_reference(this)
@@ -27646,13 +26626,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): End_edge_offsetContext {
             return End_edge_offsetContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEnd_edge_offset(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEnd_edge_offset(this)
@@ -27664,7 +26642,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEnd_edge_offset(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEnd_edge_offset(this)
@@ -27710,13 +26687,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Event_based_flagContext {
             return Event_based_flagContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEvent_based_flag(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEvent_based_flag(this)
@@ -27728,7 +26703,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEvent_based_flag(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEvent_based_flag(this)
@@ -27774,13 +26748,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): NotifierContext {
             return NotifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterNotifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterNotifier(this)
@@ -27792,7 +26764,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitNotifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitNotifier(this)
@@ -27838,13 +26809,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Reference_eventContext {
             return Reference_eventContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterReference_event(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterReference_event(this)
@@ -27856,7 +26825,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitReference_event(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitReference_event(this)
@@ -27902,13 +26870,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Remain_active_flagContext {
             return Remain_active_flagContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterRemain_active_flag(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterRemain_active_flag(this)
@@ -27920,7 +26886,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitRemain_active_flag(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitRemain_active_flag(this)
@@ -27966,13 +26931,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Stamptime_conditionContext {
             return Stamptime_conditionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterStamptime_condition(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterStamptime_condition(this)
@@ -27984,7 +26947,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitStamptime_condition(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitStamptime_condition(this)
@@ -28030,13 +26992,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Start_edge_offsetContext {
             return Start_edge_offsetContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterStart_edge_offset(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterStart_edge_offset(this)
@@ -28048,7 +27008,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitStart_edge_offset(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitStart_edge_offset(this)
@@ -28094,13 +27053,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ThresholdContext {
             return ThresholdContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterThreshold(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterThreshold(this)
@@ -28112,7 +27069,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitThreshold(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitThreshold(this)
@@ -28157,13 +27113,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Timing_check_limitContext {
             return Timing_check_limitContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTiming_check_limit(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTiming_check_limit(this)
@@ -28175,7 +27129,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTiming_check_limit(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTiming_check_limit(this)
@@ -28215,7 +27168,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun timing_check_event_control(): Timing_check_event_controlContext? =
             getRuleContext(Timing_check_event_controlContext::class, 0)
-
         public fun AMAMAM(): TerminalNode? = getToken(Tokens.AMAMAM, 0)
         public fun timing_check_condition(): Timing_check_conditionContext? =
             getRuleContext(Timing_check_conditionContext::class, 0)
@@ -28228,13 +27180,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Timing_check_eventContext {
             return Timing_check_eventContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTiming_check_event(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTiming_check_event(this)
@@ -28246,7 +27196,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTiming_check_event(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTiming_check_event(this)
@@ -28308,7 +27257,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun specify_terminal_descriptor(): Specify_terminal_descriptorContext? =
             getRuleContext(Specify_terminal_descriptorContext::class, 0)
-
         public fun AMAMAM(): TerminalNode? = getToken(Tokens.AMAMAM, 0)
         public fun timing_check_condition(): Timing_check_conditionContext? =
             getRuleContext(Timing_check_conditionContext::class, 0)
@@ -28321,13 +27269,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Controlled_timing_check_eventContext {
             return Controlled_timing_check_eventContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterControlled_timing_check_event(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterControlled_timing_check_event(this)
@@ -28339,7 +27285,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitControlled_timing_check_event(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitControlled_timing_check_event(this)
@@ -28403,13 +27348,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Timing_check_event_controlContext {
             return Timing_check_event_controlContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTiming_check_event_control(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTiming_check_event_control(this)
@@ -28421,7 +27364,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTiming_check_event_control(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTiming_check_event_control(this)
@@ -28462,7 +27404,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     edge_control_specifier()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -28493,13 +27434,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Specify_terminal_descriptorContext {
             return Specify_terminal_descriptorContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSpecify_terminal_descriptor(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSpecify_terminal_descriptor(this)
@@ -28511,7 +27450,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSpecify_terminal_descriptor(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSpecify_terminal_descriptor(this)
@@ -28576,13 +27514,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Edge_control_specifierContext {
             return Edge_control_specifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEdge_control_specifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEdge_control_specifier(this)
@@ -28594,7 +27530,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEdge_control_specifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEdge_control_specifier(this)
@@ -28664,13 +27599,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Edge_descriptorContext {
             return Edge_descriptorContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEdge_descriptor(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEdge_descriptor(this)
@@ -28682,7 +27615,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEdge_descriptor(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEdge_descriptor(this)
@@ -28719,7 +27651,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun scalar_timing_check_condition(): Scalar_timing_check_conditionContext? =
             getRuleContext(Scalar_timing_check_conditionContext::class, 0)
-
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
 
@@ -28731,13 +27662,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Timing_check_conditionContext {
             return Timing_check_conditionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTiming_check_condition(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTiming_check_condition(this)
@@ -28749,7 +27678,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTiming_check_condition(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTiming_check_condition(this)
@@ -28820,13 +27748,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Scalar_timing_check_conditionContext {
             return Scalar_timing_check_conditionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterScalar_timing_check_condition(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterScalar_timing_check_condition(this)
@@ -28838,7 +27764,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitScalar_timing_check_condition(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitScalar_timing_check_condition(this)
@@ -28953,13 +27878,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Scalar_constantContext {
             return Scalar_constantContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterScalar_constant(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterScalar_constant(this)
@@ -28971,7 +27894,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitScalar_constant(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitScalar_constant(this)
@@ -29035,13 +27957,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ConcatenationContext {
             return ConcatenationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterConcatenation(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConcatenation(this)
@@ -29053,7 +27973,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConcatenation(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConcatenation(this)
@@ -29116,7 +28035,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun RC(): TerminalNode? = getToken(Tokens.RC, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
@@ -29129,13 +28047,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Constant_concatenationContext {
             return Constant_concatenationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterConstant_concatenation(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstant_concatenation(this)
@@ -29147,7 +28063,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstant_concatenation(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstant_concatenation(this)
@@ -29210,7 +28125,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_concatenation(): Constant_concatenationContext? =
             getRuleContext(Constant_concatenationContext::class, 0)
-
         public fun RC(): TerminalNode? = getToken(Tokens.RC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -29221,13 +28135,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Constant_multiple_concatenationContext {
             return Constant_multiple_concatenationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterConstant_multiple_concatenation(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstant_multiple_concatenation(this)
@@ -29239,7 +28151,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstant_multiple_concatenation(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstant_multiple_concatenation(this)
@@ -29289,7 +28200,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun module_path_expression(i: Int): Module_path_expressionContext? =
             getRuleContext(Module_path_expressionContext::class, i)
-
         public fun RC(): TerminalNode? = getToken(Tokens.RC, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
@@ -29302,13 +28212,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Module_path_concatenationContext {
             return Module_path_concatenationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterModule_path_concatenation(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModule_path_concatenation(this)
@@ -29320,7 +28228,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModule_path_concatenation(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModule_path_concatenation(this)
@@ -29383,7 +28290,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun module_path_concatenation(): Module_path_concatenationContext? =
             getRuleContext(Module_path_concatenationContext::class, 0)
-
         public fun RC(): TerminalNode? = getToken(Tokens.RC, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -29394,13 +28300,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Module_path_multiple_concatenationContext {
             return Module_path_multiple_concatenationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterModule_path_multiple_concatenation(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModule_path_multiple_concatenation(this)
@@ -29412,7 +28316,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModule_path_multiple_concatenation(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModule_path_multiple_concatenation(this)
@@ -29459,7 +28362,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LC(): TerminalNode? = getToken(Tokens.LC, 0)
         public fun constant_expression(): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, 0)
-
         public fun concatenation(): ConcatenationContext? = getRuleContext(ConcatenationContext::class, 0)
         public fun RC(): TerminalNode? = getToken(Tokens.RC, 0)
 
@@ -29471,13 +28373,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Multiple_concatenationContext {
             return Multiple_concatenationContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterMultiple_concatenation(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterMultiple_concatenation(this)
@@ -29489,7 +28389,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitMultiple_concatenation(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitMultiple_concatenation(this)
@@ -29535,21 +28434,18 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun function_identifier(): Function_identifierContext? =
             getRuleContext(Function_identifierContext::class, 0)
-
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun constant_expression(): List<Constant_expressionContext> =
             getRuleContexts(Constant_expressionContext::class)
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -29561,13 +28457,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Constant_function_callContext {
             return Constant_function_callContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterConstant_function_call(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstant_function_call(this)
@@ -29579,7 +28473,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstant_function_call(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstant_function_call(this)
@@ -29657,14 +28550,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun system_function_identifier(): System_function_identifierContext? =
             getRuleContext(System_function_identifierContext::class, 0)
-
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun constant_expression(): List<Constant_expressionContext> =
             getRuleContexts(Constant_expressionContext::class)
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
@@ -29677,13 +28568,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Constant_system_function_callContext {
             return Constant_system_function_callContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterConstant_system_function_call(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstant_system_function_call(this)
@@ -29695,7 +28584,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstant_system_function_call(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstant_system_function_call(this)
@@ -29757,7 +28645,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun hierarchical_identifier(): Hierarchical_identifierContext? =
             getRuleContext(Hierarchical_identifierContext::class, 0)
-
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun expression(): List<ExpressionContext> = getRuleContexts(ExpressionContext::class)
         public fun expression(i: Int): ExpressionContext? = getRuleContext(ExpressionContext::class, i)
@@ -29767,7 +28654,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun CO(): List<TerminalNode> = getTokens(Tokens.CO)
         public fun CO(i: Int): TerminalNode? = getToken(Tokens.CO, i)
 
@@ -29779,13 +28665,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Function_callContext {
             return Function_callContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterFunction_call(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterFunction_call(this)
@@ -29797,7 +28681,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitFunction_call(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitFunction_call(this)
@@ -29887,13 +28770,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): System_function_callContext {
             return System_function_callContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSystem_function_call(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSystem_function_call(this)
@@ -29905,7 +28786,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSystem_function_call(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSystem_function_call(this)
@@ -29965,13 +28845,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Sys_func_call_port_listContext {
             return Sys_func_call_port_listContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSys_func_call_port_list(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSys_func_call_port_list(this)
@@ -29983,7 +28861,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSys_func_call_port_list(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSys_func_call_port_list(this)
@@ -30050,13 +28927,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Base_expressionContext {
             return Base_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterBase_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterBase_expression(this)
@@ -30068,7 +28943,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitBase_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitBase_expression(this)
@@ -30114,13 +28988,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Constant_base_expressionContext {
             return Constant_base_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterConstant_base_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstant_base_expression(this)
@@ -30132,7 +29004,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstant_base_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstant_base_expression(this)
@@ -30204,7 +29075,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstExprUnary(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstExprUnary(this)
@@ -30216,7 +29086,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstExprUnary(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstExprUnary(this)
@@ -30230,7 +29099,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun PL(): TerminalNode? = getToken(Tokens.PL, 0)
         public fun MI(): TerminalNode? = getToken(Tokens.MI, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
@@ -30252,7 +29120,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstExprAddSub(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstExprAddSub(this)
@@ -30264,7 +29131,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstExprAddSub(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstExprAddSub(this)
@@ -30278,7 +29144,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun AMAM(): TerminalNode? = getToken(Tokens.AMAM, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
@@ -30299,7 +29164,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstExprLogicalAnd(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstExprLogicalAnd(this)
@@ -30311,7 +29175,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstExprLogicalAnd(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstExprLogicalAnd(this)
@@ -30325,7 +29188,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun AS(): TerminalNode? = getToken(Tokens.AS, 0)
         public fun SL(): TerminalNode? = getToken(Tokens.SL, 0)
         public fun MO(): TerminalNode? = getToken(Tokens.MO, 0)
@@ -30348,7 +29210,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstExprMulDivRem(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstExprMulDivRem(this)
@@ -30360,7 +29221,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstExprMulDivRem(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstExprMulDivRem(this)
@@ -30374,7 +29234,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun CA(): TerminalNode? = getToken(Tokens.CA, 0)
         public fun CATI(): TerminalNode? = getToken(Tokens.CATI, 0)
         public fun TICA(): TerminalNode? = getToken(Tokens.TICA, 0)
@@ -30397,7 +29256,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstExprXor(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstExprXor(this)
@@ -30409,7 +29267,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstExprXor(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstExprXor(this)
@@ -30423,7 +29280,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun AM(): TerminalNode? = getToken(Tokens.AM, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
@@ -30444,7 +29300,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstExprAnd(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstExprAnd(this)
@@ -30456,7 +29311,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstExprAnd(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstExprAnd(this)
@@ -30470,7 +29324,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun GTGT(): TerminalNode? = getToken(Tokens.GTGT, 0)
         public fun LTLT(): TerminalNode? = getToken(Tokens.LTLT, 0)
         public fun GTGTGT(): TerminalNode? = getToken(Tokens.GTGTGT, 0)
@@ -30494,7 +29347,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstExprShift(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstExprShift(this)
@@ -30506,7 +29358,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstExprShift(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstExprShift(this)
@@ -30520,7 +29371,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun LT(): TerminalNode? = getToken(Tokens.LT, 0)
         public fun LTEQ(): TerminalNode? = getToken(Tokens.LTEQ, 0)
         public fun GT(): TerminalNode? = getToken(Tokens.GT, 0)
@@ -30544,7 +29394,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstExprCompare(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstExprCompare(this)
@@ -30556,7 +29405,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstExprCompare(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstExprCompare(this)
@@ -30570,7 +29418,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun ASAS(): TerminalNode? = getToken(Tokens.ASAS, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
@@ -30591,7 +29438,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstExprExpo(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstExprExpo(this)
@@ -30603,7 +29449,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstExprExpo(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstExprExpo(this)
@@ -30617,7 +29462,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun VL(): TerminalNode? = getToken(Tokens.VL, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
@@ -30638,7 +29482,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstExprOr(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstExprOr(this)
@@ -30650,7 +29493,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstExprOr(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstExprOr(this)
@@ -30664,7 +29506,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun VLVL(): TerminalNode? = getToken(Tokens.VLVL, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
             getRuleContexts(Attribute_instanceContext::class)
@@ -30685,7 +29526,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstExprLogicalOr(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstExprLogicalOr(this)
@@ -30697,7 +29537,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstExprLogicalOr(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstExprLogicalOr(this)
@@ -30711,7 +29550,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun EQEQ(): TerminalNode? = getToken(Tokens.EQEQ, 0)
         public fun EMEQ(): TerminalNode? = getToken(Tokens.EMEQ, 0)
         public fun EQEQEQ(): TerminalNode? = getToken(Tokens.EQEQEQ, 0)
@@ -30735,7 +29573,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstExprEquality(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstExprEquality(this)
@@ -30747,7 +29584,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstExprEquality(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstExprEquality(this)
@@ -30761,7 +29597,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun QM(): TerminalNode? = getToken(Tokens.QM, 0)
         public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
         public fun attribute_instance(): List<Attribute_instanceContext> =
@@ -30783,7 +29618,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstExprTernary(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstExprTernary(this)
@@ -30795,7 +29629,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstExprTernary(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstExprTernary(this)
@@ -30819,7 +29652,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstExprPrimary(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstExprPrimary(this)
@@ -30831,7 +29663,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstExprPrimary(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstExprPrimary(this)
@@ -30899,7 +29730,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     constant_primary()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
             context!!.stop = _input.LT(-1)
@@ -31355,7 +30185,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                             constant_expression(1)
 
                         }
-                    }
+                    } 
                 }
 
                 this.state = 3992
@@ -31381,7 +30211,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun CL(): List<TerminalNode> = getTokens(Tokens.CL)
         public fun CL(i: Int): TerminalNode? = getToken(Tokens.CL, i)
 
@@ -31393,13 +30222,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Constant_mintypmax_expressionContext {
             return Constant_mintypmax_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterConstant_mintypmax_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstant_mintypmax_expression(this)
@@ -31411,7 +30238,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstant_mintypmax_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstant_mintypmax_expression(this)
@@ -31470,18 +30296,15 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun msb_constant_expression(): Msb_constant_expressionContext? =
             getRuleContext(Msb_constant_expressionContext::class, 0)
-
         public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
         public fun lsb_constant_expression(): Lsb_constant_expressionContext? =
             getRuleContext(Lsb_constant_expressionContext::class, 0)
 
         public fun constant_base_expression(): Constant_base_expressionContext? =
             getRuleContext(Constant_base_expressionContext::class, 0)
-
         public fun PLCL(): TerminalNode? = getToken(Tokens.PLCL, 0)
         public fun width_constant_expression(): Width_constant_expressionContext? =
             getRuleContext(Width_constant_expressionContext::class, 0)
-
         public fun MICL(): TerminalNode? = getToken(Tokens.MICL, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -31492,13 +30315,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Constant_range_expressionContext {
             return Constant_range_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterConstant_range_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstant_range_expression(this)
@@ -31510,7 +30331,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstant_range_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstant_range_expression(this)
@@ -31602,13 +30422,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Dimension_constant_expressionContext {
             return Dimension_constant_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDimension_constant_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDimension_constant_expression(this)
@@ -31620,7 +30438,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDimension_constant_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDimension_constant_expression(this)
@@ -31662,7 +30479,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun attribute_instance(i: Int): Attribute_instanceContext? =
             getRuleContext(Attribute_instanceContext::class, i)
-
         public fun expression(): List<ExpressionContext> = getRuleContexts(ExpressionContext::class)
         public fun expression(i: Int): ExpressionContext? = getRuleContext(ExpressionContext::class, i)
         public fun ASAS(): TerminalNode? = getToken(Tokens.ASAS, 0)
@@ -31701,13 +30517,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): ExpressionContext {
             return ExpressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterExpression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterExpression(this)
@@ -31719,7 +30533,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitExpression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitExpression(this)
@@ -31780,7 +30593,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     primary()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
             context!!.stop = _input.LT(-1)
@@ -32236,7 +31048,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                             expression(1)
 
                         }
-                    }
+                    } 
                 }
 
                 this.state = 4146
@@ -32268,13 +31080,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Lsb_constant_expressionContext {
             return Lsb_constant_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterLsb_constant_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterLsb_constant_expression(this)
@@ -32286,7 +31096,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitLsb_constant_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitLsb_constant_expression(this)
@@ -32334,13 +31143,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Mintypmax_expressionContext {
             return Mintypmax_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterMintypmax_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterMintypmax_expression(this)
@@ -32352,7 +31159,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitMintypmax_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitMintypmax_expression(this)
@@ -32423,7 +31229,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun module_path_expression(i: Int): Module_path_expressionContext? =
             getRuleContext(Module_path_expressionContext::class, i)
-
         public fun EQEQ(): TerminalNode? = getToken(Tokens.EQEQ, 0)
         public fun EMEQ(): TerminalNode? = getToken(Tokens.EMEQ, 0)
         public fun AM(): TerminalNode? = getToken(Tokens.AM, 0)
@@ -32444,13 +31249,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Module_path_expressionContext {
             return Module_path_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterModule_path_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModule_path_expression(this)
@@ -32462,7 +31265,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModule_path_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModule_path_expression(this)
@@ -32523,7 +31325,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     module_path_primary()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
             context!!.stop = _input.LT(-1)
@@ -32784,7 +31585,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                             module_path_expression(1)
 
                         }
-                    }
+                    } 
                 }
 
                 this.state = 4240
@@ -32810,7 +31611,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun module_path_expression(i: Int): Module_path_expressionContext? =
             getRuleContext(Module_path_expressionContext::class, i)
-
         public fun CL(): List<TerminalNode> = getTokens(Tokens.CL)
         public fun CL(i: Int): TerminalNode? = getToken(Tokens.CL, i)
 
@@ -32822,13 +31622,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Module_path_mintypmax_expressionContext {
             return Module_path_mintypmax_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterModule_path_mintypmax_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModule_path_mintypmax_expression(this)
@@ -32840,7 +31638,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModule_path_mintypmax_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModule_path_mintypmax_expression(this)
@@ -32905,13 +31702,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Msb_constant_expressionContext {
             return Msb_constant_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterMsb_constant_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterMsb_constant_expression(this)
@@ -32923,7 +31718,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitMsb_constant_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitMsb_constant_expression(this)
@@ -32961,16 +31755,13 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun expression(): ExpressionContext? = getRuleContext(ExpressionContext::class, 0)
         public fun msb_constant_expression(): Msb_constant_expressionContext? =
             getRuleContext(Msb_constant_expressionContext::class, 0)
-
         public fun CL(): TerminalNode? = getToken(Tokens.CL, 0)
         public fun lsb_constant_expression(): Lsb_constant_expressionContext? =
             getRuleContext(Lsb_constant_expressionContext::class, 0)
-
         public fun base_expression(): Base_expressionContext? = getRuleContext(Base_expressionContext::class, 0)
         public fun PLCL(): TerminalNode? = getToken(Tokens.PLCL, 0)
         public fun width_constant_expression(): Width_constant_expressionContext? =
             getRuleContext(Width_constant_expressionContext::class, 0)
-
         public fun MICL(): TerminalNode? = getToken(Tokens.MICL, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -32981,13 +31772,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Range_expressionContext {
             return Range_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterRange_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterRange_expression(this)
@@ -32999,7 +31788,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitRange_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitRange_expression(this)
@@ -33091,13 +31879,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Width_constant_expressionContext {
             return Width_constant_expressionContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterWidth_constant_expression(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterWidth_constant_expression(this)
@@ -33109,7 +31895,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitWidth_constant_expression(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitWidth_constant_expression(this)
@@ -33176,7 +31961,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstPrimaryConcatenation(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstPrimaryConcatenation(this)
@@ -33188,7 +31972,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstPrimaryConcatenation(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstPrimaryConcatenation(this)
@@ -33212,7 +31995,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstPrimaryString(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstPrimaryString(this)
@@ -33224,7 +32006,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstPrimaryString(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstPrimaryString(this)
@@ -33237,7 +32018,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
         public fun constant_range_expression(): Constant_range_expressionContext? =
             getRuleContext(Constant_range_expressionContext::class, 0)
-
         public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
 
         public constructor(ctx: Constant_primaryContext) {
@@ -33253,7 +32033,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstPrimaryIdentifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstPrimaryIdentifier(this)
@@ -33265,7 +32044,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstPrimaryIdentifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstPrimaryIdentifier(this)
@@ -33290,7 +32068,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstPrimaryMultipleConcatenation(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstPrimaryMultipleConcatenation(this)
@@ -33302,7 +32079,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstPrimaryMultipleConcatenation(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstPrimaryMultipleConcatenation(this)
@@ -33314,7 +32090,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun constant_mintypmax_expression(): Constant_mintypmax_expressionContext? =
             getRuleContext(Constant_mintypmax_expressionContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
 
         public constructor(ctx: Constant_primaryContext) {
@@ -33330,7 +32105,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstPrimaryGroup(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstPrimaryGroup(this)
@@ -33342,7 +32116,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstPrimaryGroup(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstPrimaryGroup(this)
@@ -33366,7 +32139,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstPrimaryNumber(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstPrimaryNumber(this)
@@ -33378,7 +32150,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstPrimaryNumber(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstPrimaryNumber(this)
@@ -33403,7 +32174,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstPrimaryFunctionCall(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstPrimaryFunctionCall(this)
@@ -33415,7 +32185,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstPrimaryFunctionCall(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstPrimaryFunctionCall(this)
@@ -33440,7 +32209,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.enterConstPrimarySystemFunctionCall(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConstPrimarySystemFunctionCall(this)
@@ -33452,7 +32220,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConstPrimarySystemFunctionCall(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConstPrimarySystemFunctionCall(this)
@@ -33580,15 +32347,12 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun module_path_multiple_concatenation(): Module_path_multiple_concatenationContext? =
             getRuleContext(Module_path_multiple_concatenationContext::class, 0)
-
         public fun function_call(): Function_callContext? = getRuleContext(Function_callContext::class, 0)
         public fun system_function_call(): System_function_callContext? =
             getRuleContext(System_function_callContext::class, 0)
-
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun module_path_mintypmax_expression(): Module_path_mintypmax_expressionContext? =
             getRuleContext(Module_path_mintypmax_expressionContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -33599,13 +32363,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Module_path_primaryContext {
             return Module_path_primaryContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterModule_path_primary(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModule_path_primary(this)
@@ -33617,7 +32379,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModule_path_primary(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModule_path_primary(this)
@@ -33710,20 +32471,16 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun number(): NumberContext? = getRuleContext(NumberContext::class, 0)
         public fun hierarchical_identifier(): Hierarchical_identifierContext? =
             getRuleContext(Hierarchical_identifierContext::class, 0)
-
         public fun select_(): Select_Context? = getRuleContext(Select_Context::class, 0)
         public fun concatenation(): ConcatenationContext? = getRuleContext(ConcatenationContext::class, 0)
         public fun multiple_concatenation(): Multiple_concatenationContext? =
             getRuleContext(Multiple_concatenationContext::class, 0)
-
         public fun function_call(): Function_callContext? = getRuleContext(Function_callContext::class, 0)
         public fun system_function_call(): System_function_callContext? =
             getRuleContext(System_function_callContext::class, 0)
-
         public fun LP(): TerminalNode? = getToken(Tokens.LP, 0)
         public fun mintypmax_expression(): Mintypmax_expressionContext? =
             getRuleContext(Mintypmax_expressionContext::class, 0)
-
         public fun RP(): TerminalNode? = getToken(Tokens.RP, 0)
         public fun string_(): String_Context? = getRuleContext(String_Context::class, 0)
 
@@ -33735,13 +32492,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): PrimaryContext {
             return PrimaryContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPrimary(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPrimary(this)
@@ -33753,7 +32508,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPrimary(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPrimary(this)
@@ -33873,13 +32627,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Select_Context {
             return Select_Context().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSelect_(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSelect_(this)
@@ -33891,7 +32643,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSelect_(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSelect_(this)
@@ -33957,13 +32708,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Bit_selectContext {
             return Bit_selectContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterBit_select(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterBit_select(this)
@@ -33975,7 +32724,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitBit_select(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitBit_select(this)
@@ -33994,7 +32742,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         try {
             var _alt: Int
             enterOuterAlt(_localctx, 1)
-            this.state = 4326
+            this.state = 4326 
             errorHandler.sync(this)
             _alt = 1
 
@@ -34011,11 +32759,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                         match(Tokens.RB)
 
                     }
-
                     else -> throw NoViableAltException(this)
                 }
 
-                this.state = 4328
+                this.state = 4328 
                 errorHandler.sync(this)
                 _alt = interpreter.adaptivePredict(_input, 449, context)
             } while (_alt != 2 && _alt != INVALID_ALT_NUMBER)
@@ -34035,7 +32782,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun hierarchical_identifier(): Hierarchical_identifierContext? =
             getRuleContext(Hierarchical_identifierContext::class, 0)
-
         public fun const_select(): Const_selectContext? = getRuleContext(Const_selectContext::class, 0)
         public fun LC(): TerminalNode? = getToken(Tokens.LC, 0)
         public fun net_lvalue(): List<Net_lvalueContext> = getRuleContexts(Net_lvalueContext::class)
@@ -34052,13 +32798,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Net_lvalueContext {
             return Net_lvalueContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterNet_lvalue(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterNet_lvalue(this)
@@ -34070,7 +32814,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitNet_lvalue(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitNet_lvalue(this)
@@ -34135,7 +32878,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     match(Tokens.RC)
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -34155,7 +32897,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         public fun LB(): TerminalNode? = getToken(Tokens.LB, 0)
         public fun constant_range_expression(): Constant_range_expressionContext? =
             getRuleContext(Constant_range_expressionContext::class, 0)
-
         public fun RB(): TerminalNode? = getToken(Tokens.RB, 0)
         public fun const_bit_select(): Const_bit_selectContext? = getRuleContext(Const_bit_selectContext::class, 0)
 
@@ -34167,13 +32908,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Const_selectContext {
             return Const_selectContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterConst_select(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConst_select(this)
@@ -34185,7 +32924,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConst_select(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConst_select(this)
@@ -34243,7 +32981,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun constant_expression(i: Int): Constant_expressionContext? =
             getRuleContext(Constant_expressionContext::class, i)
-
         public fun RB(): List<TerminalNode> = getTokens(Tokens.RB)
         public fun RB(i: Int): TerminalNode? = getToken(Tokens.RB, i)
 
@@ -34255,13 +32992,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Const_bit_selectContext {
             return Const_bit_selectContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterConst_bit_select(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConst_bit_select(this)
@@ -34273,7 +33008,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConst_bit_select(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConst_bit_select(this)
@@ -34292,7 +33026,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         try {
             var _alt: Int
             enterOuterAlt(_localctx, 1)
-            this.state = 4358
+            this.state = 4358 
             errorHandler.sync(this)
             _alt = 1
 
@@ -34309,11 +33043,10 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                         match(Tokens.RB)
 
                     }
-
                     else -> throw NoViableAltException(this)
                 }
 
-                this.state = 4360
+                this.state = 4360 
                 errorHandler.sync(this)
                 _alt = interpreter.adaptivePredict(_input, 454, context)
             } while (_alt != 2 && _alt != INVALID_ALT_NUMBER)
@@ -34333,7 +33066,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun hierarchical_identifier(): Hierarchical_identifierContext? =
             getRuleContext(Hierarchical_identifierContext::class, 0)
-
         public fun select_(): Select_Context? = getRuleContext(Select_Context::class, 0)
         public fun LC(): TerminalNode? = getToken(Tokens.LC, 0)
         public fun variable_lvalue(): List<Variable_lvalueContext> = getRuleContexts(Variable_lvalueContext::class)
@@ -34350,13 +33082,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Variable_lvalueContext {
             return Variable_lvalueContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterVariable_lvalue(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterVariable_lvalue(this)
@@ -34368,7 +33098,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitVariable_lvalue(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitVariable_lvalue(this)
@@ -34433,7 +33162,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     match(Tokens.RC)
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -34470,13 +33198,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Unary_operatorContext {
             return Unary_operatorContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterUnary_operator(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterUnary_operator(this)
@@ -34488,7 +33214,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitUnary_operator(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitUnary_operator(this)
@@ -34552,13 +33277,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Unary_module_path_operatorContext {
             return Unary_module_path_operatorContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterUnary_module_path_operator(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterUnary_module_path_operator(this)
@@ -34570,7 +33293,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitUnary_module_path_operator(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitUnary_module_path_operator(this)
@@ -34630,13 +33352,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): NumberContext {
             return NumberContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterNumber(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterNumber(this)
@@ -34648,7 +33368,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitNumber(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitNumber(this)
@@ -34732,13 +33451,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Real_numberContext {
             return Real_numberContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterReal_number(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterReal_number(this)
@@ -34750,7 +33467,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitReal_number(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitReal_number(this)
@@ -34784,7 +33500,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     exponential_number()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -34814,13 +33529,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Decimal_numberContext {
             return Decimal_numberContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDecimal_number(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDecimal_number(this)
@@ -34832,7 +33545,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDecimal_number(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDecimal_number(this)
@@ -34906,13 +33618,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Binary_numberContext {
             return Binary_numberContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterBinary_number(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterBinary_number(this)
@@ -34924,7 +33634,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitBinary_number(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitBinary_number(this)
@@ -34984,13 +33693,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Octal_numberContext {
             return Octal_numberContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterOctal_number(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterOctal_number(this)
@@ -35002,7 +33709,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitOctal_number(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitOctal_number(this)
@@ -35062,13 +33768,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Hex_numberContext {
             return Hex_numberContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterHex_number(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterHex_number(this)
@@ -35080,7 +33784,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitHex_number(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitHex_number(this)
@@ -35138,13 +33841,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): SizeContext {
             return SizeContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSize(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSize(this)
@@ -35156,7 +33857,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSize(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSize(this)
@@ -35201,13 +33901,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Fixed_point_numberContext {
             return Fixed_point_numberContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterFixed_point_number(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterFixed_point_number(this)
@@ -35219,7 +33917,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitFixed_point_number(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitFixed_point_number(this)
@@ -35264,13 +33961,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Exponential_numberContext {
             return Exponential_numberContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterExponential_number(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterExponential_number(this)
@@ -35282,7 +33977,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitExponential_number(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitExponential_number(this)
@@ -35327,13 +34021,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Unsigned_numberContext {
             return Unsigned_numberContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterUnsigned_number(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterUnsigned_number(this)
@@ -35345,7 +34037,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitUnsigned_number(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitUnsigned_number(this)
@@ -35391,13 +34082,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Decimal_valueContext {
             return Decimal_valueContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDecimal_value(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDecimal_value(this)
@@ -35409,7 +34098,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDecimal_value(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDecimal_value(this)
@@ -35465,13 +34153,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Binary_valueContext {
             return Binary_valueContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterBinary_value(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterBinary_value(this)
@@ -35483,7 +34169,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitBinary_value(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitBinary_value(this)
@@ -35528,13 +34213,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Octal_valueContext {
             return Octal_valueContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterOctal_value(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterOctal_value(this)
@@ -35546,7 +34229,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitOctal_value(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitOctal_value(this)
@@ -35591,13 +34273,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Hex_valueContext {
             return Hex_valueContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterHex_value(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterHex_value(this)
@@ -35609,7 +34289,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitHex_value(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitHex_value(this)
@@ -35654,13 +34333,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Decimal_baseContext {
             return Decimal_baseContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterDecimal_base(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterDecimal_base(this)
@@ -35672,7 +34349,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitDecimal_base(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitDecimal_base(this)
@@ -35717,13 +34393,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Binary_baseContext {
             return Binary_baseContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterBinary_base(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterBinary_base(this)
@@ -35735,7 +34409,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitBinary_base(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitBinary_base(this)
@@ -35780,13 +34453,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Octal_baseContext {
             return Octal_baseContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterOctal_base(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterOctal_base(this)
@@ -35798,7 +34469,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitOctal_base(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitOctal_base(this)
@@ -35843,13 +34513,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Hex_baseContext {
             return Hex_baseContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterHex_base(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterHex_base(this)
@@ -35861,7 +34529,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitHex_base(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitHex_base(this)
@@ -35906,13 +34573,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): String_Context {
             return String_Context().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterString_(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterString_(this)
@@ -35924,7 +34589,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitString_(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitString_(this)
@@ -35976,13 +34640,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Attribute_instanceContext {
             return Attribute_instanceContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterAttribute_instance(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterAttribute_instance(this)
@@ -35994,7 +34656,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitAttribute_instance(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitAttribute_instance(this)
@@ -36070,13 +34731,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Attr_specContext {
             return Attr_specContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterAttr_spec(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterAttr_spec(this)
@@ -36088,7 +34747,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitAttr_spec(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitAttr_spec(this)
@@ -36146,13 +34804,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Attr_nameContext {
             return Attr_nameContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterAttr_name(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterAttr_name(this)
@@ -36164,7 +34820,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitAttr_name(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitAttr_name(this)
@@ -36209,13 +34864,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Block_identifierContext {
             return Block_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterBlock_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterBlock_identifier(this)
@@ -36227,7 +34880,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitBlock_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitBlock_identifier(this)
@@ -36272,13 +34924,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Cell_identifierContext {
             return Cell_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterCell_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterCell_identifier(this)
@@ -36290,7 +34940,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitCell_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitCell_identifier(this)
@@ -36335,13 +34984,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Config_identifierContext {
             return Config_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterConfig_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterConfig_identifier(this)
@@ -36353,7 +35000,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitConfig_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitConfig_identifier(this)
@@ -36398,13 +35044,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Escaped_identifierContext {
             return Escaped_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEscaped_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEscaped_identifier(this)
@@ -36416,7 +35060,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEscaped_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEscaped_identifier(this)
@@ -36461,13 +35104,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Event_identifierContext {
             return Event_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterEvent_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterEvent_identifier(this)
@@ -36479,7 +35120,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitEvent_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitEvent_identifier(this)
@@ -36524,13 +35164,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Function_identifierContext {
             return Function_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterFunction_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterFunction_identifier(this)
@@ -36542,7 +35180,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitFunction_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitFunction_identifier(this)
@@ -36587,13 +35224,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Gate_instance_identifierContext {
             return Gate_instance_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterGate_instance_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterGate_instance_identifier(this)
@@ -36605,7 +35240,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitGate_instance_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitGate_instance_identifier(this)
@@ -36650,13 +35284,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Generate_block_identifierContext {
             return Generate_block_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterGenerate_block_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterGenerate_block_identifier(this)
@@ -36668,7 +35300,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitGenerate_block_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitGenerate_block_identifier(this)
@@ -36713,13 +35344,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Genvar_identifierContext {
             return Genvar_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterGenvar_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterGenvar_identifier(this)
@@ -36731,7 +35360,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitGenvar_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitGenvar_identifier(this)
@@ -36778,13 +35406,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Hierarchical_identifierContext {
             return Hierarchical_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterHierarchical_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterHierarchical_identifier(this)
@@ -36796,7 +35422,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitHierarchical_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitHierarchical_identifier(this)
@@ -36859,13 +35484,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Hier_refContext {
             return Hier_refContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterHier_ref(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterHier_ref(this)
@@ -36877,7 +35500,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitHier_ref(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitHier_ref(this)
@@ -36927,7 +35549,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
 
         public fun escaped_identifier(): Escaped_identifierContext? =
             getRuleContext(Escaped_identifierContext::class, 0)
-
         public fun simple_identifier(): Simple_identifierContext? = getRuleContext(Simple_identifierContext::class, 0)
 
         public constructor(parent: ParserRuleContext?, invokingState: Int) : super(parent, invokingState) {
@@ -36938,13 +35559,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): IdentifierContext {
             return IdentifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterIdentifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterIdentifier(this)
@@ -36956,7 +35575,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitIdentifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitIdentifier(this)
@@ -36990,7 +35608,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                     simple_identifier()
 
                 }
-
                 else -> throw NoViableAltException(this)
             }
         } catch (re: RecognitionException) {
@@ -37017,13 +35634,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Input_port_identifierContext {
             return Input_port_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterInput_port_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterInput_port_identifier(this)
@@ -37035,7 +35650,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitInput_port_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitInput_port_identifier(this)
@@ -37080,13 +35694,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Instance_identifierContext {
             return Instance_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterInstance_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterInstance_identifier(this)
@@ -37098,7 +35710,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitInstance_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitInstance_identifier(this)
@@ -37143,13 +35754,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Library_identifierContext {
             return Library_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterLibrary_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterLibrary_identifier(this)
@@ -37161,7 +35770,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitLibrary_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitLibrary_identifier(this)
@@ -37206,13 +35814,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Module_identifierContext {
             return Module_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterModule_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModule_identifier(this)
@@ -37224,7 +35830,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModule_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModule_identifier(this)
@@ -37269,13 +35874,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Module_instance_identifierContext {
             return Module_instance_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterModule_instance_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterModule_instance_identifier(this)
@@ -37287,7 +35890,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitModule_instance_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitModule_instance_identifier(this)
@@ -37332,13 +35934,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Net_identifierContext {
             return Net_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterNet_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterNet_identifier(this)
@@ -37350,7 +35950,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitNet_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitNet_identifier(this)
@@ -37395,13 +35994,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Output_port_identifierContext {
             return Output_port_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterOutput_port_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterOutput_port_identifier(this)
@@ -37413,7 +36010,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitOutput_port_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitOutput_port_identifier(this)
@@ -37458,13 +36054,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Parameter_identifierContext {
             return Parameter_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterParameter_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterParameter_identifier(this)
@@ -37476,7 +36070,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitParameter_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitParameter_identifier(this)
@@ -37521,13 +36114,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Port_identifierContext {
             return Port_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterPort_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterPort_identifier(this)
@@ -37539,7 +36130,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitPort_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitPort_identifier(this)
@@ -37584,13 +36174,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Real_identifierContext {
             return Real_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterReal_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterReal_identifier(this)
@@ -37602,7 +36190,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitReal_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitReal_identifier(this)
@@ -37647,13 +36234,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Simple_identifierContext {
             return Simple_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSimple_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSimple_identifier(this)
@@ -37665,7 +36250,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSimple_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSimple_identifier(this)
@@ -37710,13 +36294,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Specparam_identifierContext {
             return Specparam_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSpecparam_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSpecparam_identifier(this)
@@ -37728,7 +36310,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSpecparam_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSpecparam_identifier(this)
@@ -37773,13 +36354,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): System_function_identifierContext {
             return System_function_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSystem_function_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSystem_function_identifier(this)
@@ -37791,7 +36370,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSystem_function_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSystem_function_identifier(this)
@@ -37836,13 +36414,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): System_task_identifierContext {
             return System_task_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterSystem_task_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterSystem_task_identifier(this)
@@ -37854,7 +36430,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitSystem_task_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitSystem_task_identifier(this)
@@ -37899,13 +36474,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Task_identifierContext {
             return Task_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTask_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTask_identifier(this)
@@ -37917,7 +36490,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTask_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTask_identifier(this)
@@ -37962,13 +36534,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Terminal_identifierContext {
             return Terminal_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTerminal_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTerminal_identifier(this)
@@ -37980,7 +36550,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTerminal_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTerminal_identifier(this)
@@ -38025,13 +36594,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Topmodule_identifierContext {
             return Topmodule_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterTopmodule_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterTopmodule_identifier(this)
@@ -38043,7 +36610,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitTopmodule_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitTopmodule_identifier(this)
@@ -38088,13 +36654,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Udp_identifierContext {
             return Udp_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterUdp_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterUdp_identifier(this)
@@ -38106,7 +36670,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitUdp_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitUdp_identifier(this)
@@ -38151,13 +36714,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Udp_instance_identifierContext {
             return Udp_instance_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterUdp_instance_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterUdp_instance_identifier(this)
@@ -38169,7 +36730,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitUdp_instance_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitUdp_instance_identifier(this)
@@ -38214,13 +36774,11 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
         override fun deepCopy(): Variable_identifierContext {
             return Variable_identifierContext().also { it.deepCopyFrom(this) }
         }
-
         override fun enterRule(listener: ParseTreeListener) {
             if (listener is VerilogParserListener) {
                 listener.enterVariable_identifier(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.enterVariable_identifier(this)
@@ -38232,7 +36790,6 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
                 listener.exitVariable_identifier(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendVerilogParserListener) {
                 listener.exitVariable_identifier(this)

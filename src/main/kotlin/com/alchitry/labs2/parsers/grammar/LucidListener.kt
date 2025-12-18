@@ -1048,6 +1048,20 @@ public interface LucidListener : ParseTreeListener {
     public fun exitExprReduction(ctx: LucidParser.ExprReductionContext)
 
     /**
+     * Enter a parse tree produced by the `ExprBitwiseOr` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public fun enterExprBitwiseOr(ctx: LucidParser.ExprBitwiseOrContext)
+
+    /**
+     * Exit a parse tree produced by the `ExprBitwiseOr` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public fun exitExprBitwiseOr(ctx: LucidParser.ExprBitwiseOrContext)
+
+    /**
      * Enter a parse tree produced by the `ExprInvert` labeled alternative in [LucidParser.expr].
      *
      * @param ctx The parse tree
@@ -1060,6 +1074,20 @@ public interface LucidListener : ParseTreeListener {
      * @param ctx The parse tree
      */
     public fun exitExprInvert(ctx: LucidParser.ExprInvertContext)
+
+    /**
+     * Enter a parse tree produced by the `ExprLogicalOr` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public fun enterExprLogicalOr(ctx: LucidParser.ExprLogicalOrContext)
+
+    /**
+     * Exit a parse tree produced by the `ExprLogicalOr` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public fun exitExprLogicalOr(ctx: LucidParser.ExprLogicalOrContext)
 
     /**
      * Enter a parse tree produced by the `ExprStruct` labeled alternative in [LucidParser.expr].
@@ -1118,20 +1146,6 @@ public interface LucidListener : ParseTreeListener {
     public fun exitExprAddSub(ctx: LucidParser.ExprAddSubContext)
 
     /**
-     * Enter a parse tree produced by the `ExprLogical` labeled alternative in [LucidParser.expr].
-     *
-     * @param ctx The parse tree
-     */
-    public fun enterExprLogical(ctx: LucidParser.ExprLogicalContext)
-
-    /**
-     * Exit a parse tree produced by the `ExprLogical` labeled alternative in [LucidParser.expr].
-     *
-     * @param ctx The parse tree
-     */
-    public fun exitExprLogical(ctx: LucidParser.ExprLogicalContext)
-
-    /**
      * Enter a parse tree produced by the `ExprNegate` labeled alternative in [LucidParser.expr].
      *
      * @param ctx The parse tree
@@ -1158,20 +1172,6 @@ public interface LucidListener : ParseTreeListener {
      * @param ctx The parse tree
      */
     public fun exitExprGroup(ctx: LucidParser.ExprGroupContext)
-
-    /**
-     * Enter a parse tree produced by the `ExprBitwise` labeled alternative in [LucidParser.expr].
-     *
-     * @param ctx The parse tree
-     */
-    public fun enterExprBitwise(ctx: LucidParser.ExprBitwiseContext)
-
-    /**
-     * Exit a parse tree produced by the `ExprBitwise` labeled alternative in [LucidParser.expr].
-     *
-     * @param ctx The parse tree
-     */
-    public fun exitExprBitwise(ctx: LucidParser.ExprBitwiseContext)
 
     /**
      * Enter a parse tree produced by the `ExprFunction` labeled alternative in [LucidParser.expr].
@@ -1230,6 +1230,20 @@ public interface LucidListener : ParseTreeListener {
     public fun exitExprMultDiv(ctx: LucidParser.ExprMultDivContext)
 
     /**
+     * Enter a parse tree produced by the `ExprBitwiseAnd` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public fun enterExprBitwiseAnd(ctx: LucidParser.ExprBitwiseAndContext)
+
+    /**
+     * Exit a parse tree produced by the `ExprBitwiseAnd` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public fun exitExprBitwiseAnd(ctx: LucidParser.ExprBitwiseAndContext)
+
+    /**
      * Enter a parse tree produced by the `ExprSignal` labeled alternative in [LucidParser.expr].
      *
      * @param ctx The parse tree
@@ -1242,6 +1256,34 @@ public interface LucidListener : ParseTreeListener {
      * @param ctx The parse tree
      */
     public fun exitExprSignal(ctx: LucidParser.ExprSignalContext)
+
+    /**
+     * Enter a parse tree produced by the `ExprBitwiseXor` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public fun enterExprBitwiseXor(ctx: LucidParser.ExprBitwiseXorContext)
+
+    /**
+     * Exit a parse tree produced by the `ExprBitwiseXor` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public fun exitExprBitwiseXor(ctx: LucidParser.ExprBitwiseXorContext)
+
+    /**
+     * Enter a parse tree produced by the `ExprLogicalAnd` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public fun enterExprLogicalAnd(ctx: LucidParser.ExprLogicalAndContext)
+
+    /**
+     * Exit a parse tree produced by the `ExprLogicalAnd` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public fun exitExprLogicalAnd(ctx: LucidParser.ExprLogicalAndContext)
 
     /**
      * Enter a parse tree produced by [LucidParser.name].
@@ -1281,7 +1323,6 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterGlobalStat(ctx: LucidParser.GlobalStatContext) =
             this@LucidListener.enterGlobalStat(ctx)
-
         override suspend fun exitGlobalStat(ctx: LucidParser.GlobalStatContext) = this@LucidListener.exitGlobalStat(ctx)
 
         override suspend fun enterModule(ctx: LucidParser.ModuleContext) = this@LucidListener.enterModule(ctx)
@@ -1331,7 +1372,6 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterStructType(ctx: LucidParser.StructTypeContext) =
             this@LucidListener.enterStructType(ctx)
-
         override suspend fun exitStructType(ctx: LucidParser.StructTypeContext) = this@LucidListener.exitStructType(ctx)
 
         override suspend fun enterStructMemberConst(ctx: LucidParser.StructMemberConstContext) =
@@ -1348,7 +1388,6 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterModuleBody(ctx: LucidParser.ModuleBodyContext) =
             this@LucidListener.enterModuleBody(ctx)
-
         override suspend fun exitModuleBody(ctx: LucidParser.ModuleBodyContext) = this@LucidListener.exitModuleBody(ctx)
 
         override suspend fun enterStatConst(ctx: LucidParser.StatConstContext) = this@LucidListener.enterStatConst(ctx)
@@ -1371,17 +1410,14 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterStatAssign(ctx: LucidParser.StatAssignContext) =
             this@LucidListener.enterStatAssign(ctx)
-
         override suspend fun exitStatAssign(ctx: LucidParser.StatAssignContext) = this@LucidListener.exitStatAssign(ctx)
 
         override suspend fun enterStatAlways(ctx: LucidParser.StatAlwaysContext) =
             this@LucidListener.enterStatAlways(ctx)
-
         override suspend fun exitStatAlways(ctx: LucidParser.StatAlwaysContext) = this@LucidListener.exitStatAlways(ctx)
 
         override suspend fun enterStatStruct(ctx: LucidParser.StatStructContext) =
             this@LucidListener.enterStatStruct(ctx)
-
         override suspend fun exitStatStruct(ctx: LucidParser.StatStructContext) = this@LucidListener.exitStatStruct(ctx)
 
         override suspend fun enterStatTest(ctx: LucidParser.StatTestContext) = this@LucidListener.enterStatTest(ctx)
@@ -1419,7 +1455,6 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterModuleInst(ctx: LucidParser.ModuleInstContext) =
             this@LucidListener.enterModuleInst(ctx)
-
         override suspend fun exitModuleInst(ctx: LucidParser.ModuleInstContext) = this@LucidListener.exitModuleInst(ctx)
 
         override suspend fun enterInstCons(ctx: LucidParser.InstConsContext) = this@LucidListener.enterInstCons(ctx)
@@ -1430,7 +1465,6 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterConnection(ctx: LucidParser.ConnectionContext) =
             this@LucidListener.enterConnection(ctx)
-
         override suspend fun exitConnection(ctx: LucidParser.ConnectionContext) = this@LucidListener.exitConnection(ctx)
 
         override suspend fun enterStructMember(ctx: LucidParser.StructMemberContext) =
@@ -1477,7 +1511,6 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterAlwaysCase(ctx: LucidParser.AlwaysCaseContext) =
             this@LucidListener.enterAlwaysCase(ctx)
-
         override suspend fun exitAlwaysCase(ctx: LucidParser.AlwaysCaseContext) = this@LucidListener.exitAlwaysCase(ctx)
 
         override suspend fun enterAlwaysIf(ctx: LucidParser.AlwaysIfContext) = this@LucidListener.enterAlwaysIf(ctx)
@@ -1506,12 +1539,10 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterAssignStat(ctx: LucidParser.AssignStatContext) =
             this@LucidListener.enterAssignStat(ctx)
-
         override suspend fun exitAssignStat(ctx: LucidParser.AssignStatContext) = this@LucidListener.exitAssignStat(ctx)
 
         override suspend fun enterArrayIndex(ctx: LucidParser.ArrayIndexContext) =
             this@LucidListener.enterArrayIndex(ctx)
-
         override suspend fun exitArrayIndex(ctx: LucidParser.ArrayIndexContext) = this@LucidListener.exitArrayIndex(ctx)
 
         override suspend fun enterBitSelectorConst(ctx: LucidParser.BitSelectorConstContext) =
@@ -1555,7 +1586,6 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterRepeatStat(ctx: LucidParser.RepeatStatContext) =
             this@LucidListener.enterRepeatStat(ctx)
-
         override suspend fun exitRepeatStat(ctx: LucidParser.RepeatStatContext) = this@LucidListener.exitRepeatStat(ctx)
 
         override suspend fun enterRepeatBlock(ctx: LucidParser.RepeatBlockContext) =
@@ -1587,7 +1617,6 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterExprConcat(ctx: LucidParser.ExprConcatContext) =
             this@LucidListener.enterExprConcat(ctx)
-
         override suspend fun exitExprConcat(ctx: LucidParser.ExprConcatContext) = this@LucidListener.exitExprConcat(ctx)
 
         override suspend fun enterExprReduction(ctx: LucidParser.ExprReductionContext) =
@@ -1596,14 +1625,24 @@ public interface LucidListener : ParseTreeListener {
         override suspend fun exitExprReduction(ctx: LucidParser.ExprReductionContext) =
             this@LucidListener.exitExprReduction(ctx)
 
+        override suspend fun enterExprBitwiseOr(ctx: LucidParser.ExprBitwiseOrContext) =
+            this@LucidListener.enterExprBitwiseOr(ctx)
+
+        override suspend fun exitExprBitwiseOr(ctx: LucidParser.ExprBitwiseOrContext) =
+            this@LucidListener.exitExprBitwiseOr(ctx)
+
         override suspend fun enterExprInvert(ctx: LucidParser.ExprInvertContext) =
             this@LucidListener.enterExprInvert(ctx)
-
         override suspend fun exitExprInvert(ctx: LucidParser.ExprInvertContext) = this@LucidListener.exitExprInvert(ctx)
+
+        override suspend fun enterExprLogicalOr(ctx: LucidParser.ExprLogicalOrContext) =
+            this@LucidListener.enterExprLogicalOr(ctx)
+
+        override suspend fun exitExprLogicalOr(ctx: LucidParser.ExprLogicalOrContext) =
+            this@LucidListener.exitExprLogicalOr(ctx)
 
         override suspend fun enterExprStruct(ctx: LucidParser.ExprStructContext) =
             this@LucidListener.enterExprStruct(ctx)
-
         override suspend fun exitExprStruct(ctx: LucidParser.ExprStructContext) = this@LucidListener.exitExprStruct(ctx)
 
         override suspend fun enterExprArray(ctx: LucidParser.ExprArrayContext) = this@LucidListener.enterExprArray(ctx)
@@ -1614,28 +1653,14 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterExprAddSub(ctx: LucidParser.ExprAddSubContext) =
             this@LucidListener.enterExprAddSub(ctx)
-
         override suspend fun exitExprAddSub(ctx: LucidParser.ExprAddSubContext) = this@LucidListener.exitExprAddSub(ctx)
-
-        override suspend fun enterExprLogical(ctx: LucidParser.ExprLogicalContext) =
-            this@LucidListener.enterExprLogical(ctx)
-
-        override suspend fun exitExprLogical(ctx: LucidParser.ExprLogicalContext) =
-            this@LucidListener.exitExprLogical(ctx)
 
         override suspend fun enterExprNegate(ctx: LucidParser.ExprNegateContext) =
             this@LucidListener.enterExprNegate(ctx)
-
         override suspend fun exitExprNegate(ctx: LucidParser.ExprNegateContext) = this@LucidListener.exitExprNegate(ctx)
 
         override suspend fun enterExprGroup(ctx: LucidParser.ExprGroupContext) = this@LucidListener.enterExprGroup(ctx)
         override suspend fun exitExprGroup(ctx: LucidParser.ExprGroupContext) = this@LucidListener.exitExprGroup(ctx)
-
-        override suspend fun enterExprBitwise(ctx: LucidParser.ExprBitwiseContext) =
-            this@LucidListener.enterExprBitwise(ctx)
-
-        override suspend fun exitExprBitwise(ctx: LucidParser.ExprBitwiseContext) =
-            this@LucidListener.exitExprBitwise(ctx)
 
         override suspend fun enterExprFunction(ctx: LucidParser.ExprFunctionContext) =
             this@LucidListener.enterExprFunction(ctx)
@@ -1658,10 +1683,27 @@ public interface LucidListener : ParseTreeListener {
         override suspend fun exitExprMultDiv(ctx: LucidParser.ExprMultDivContext) =
             this@LucidListener.exitExprMultDiv(ctx)
 
+        override suspend fun enterExprBitwiseAnd(ctx: LucidParser.ExprBitwiseAndContext) =
+            this@LucidListener.enterExprBitwiseAnd(ctx)
+
+        override suspend fun exitExprBitwiseAnd(ctx: LucidParser.ExprBitwiseAndContext) =
+            this@LucidListener.exitExprBitwiseAnd(ctx)
+
         override suspend fun enterExprSignal(ctx: LucidParser.ExprSignalContext) =
             this@LucidListener.enterExprSignal(ctx)
-
         override suspend fun exitExprSignal(ctx: LucidParser.ExprSignalContext) = this@LucidListener.exitExprSignal(ctx)
+
+        override suspend fun enterExprBitwiseXor(ctx: LucidParser.ExprBitwiseXorContext) =
+            this@LucidListener.enterExprBitwiseXor(ctx)
+
+        override suspend fun exitExprBitwiseXor(ctx: LucidParser.ExprBitwiseXorContext) =
+            this@LucidListener.exitExprBitwiseXor(ctx)
+
+        override suspend fun enterExprLogicalAnd(ctx: LucidParser.ExprLogicalAndContext) =
+            this@LucidListener.enterExprLogicalAnd(ctx)
+
+        override suspend fun exitExprLogicalAnd(ctx: LucidParser.ExprLogicalAndContext) =
+            this@LucidListener.exitExprLogicalAnd(ctx)
 
         override suspend fun enterName(ctx: LucidParser.NameContext) = this@LucidListener.enterName(ctx)
         override suspend fun exitName(ctx: LucidParser.NameContext) = this@LucidListener.exitName(ctx)
@@ -2718,6 +2760,20 @@ public interface SuspendLucidListener : SuspendParseTreeListener {
     public suspend fun exitExprReduction(ctx: LucidParser.ExprReductionContext)
 
     /**
+     * Enter a parse tree produced by the `ExprBitwiseOr` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public suspend fun enterExprBitwiseOr(ctx: LucidParser.ExprBitwiseOrContext)
+
+    /**
+     * Exit a parse tree produced by the `ExprBitwiseOr` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public suspend fun exitExprBitwiseOr(ctx: LucidParser.ExprBitwiseOrContext)
+
+    /**
      * Enter a parse tree produced by the `ExprInvert` labeled alternative in [LucidParser.expr].
      *
      * @param ctx The parse tree
@@ -2730,6 +2786,20 @@ public interface SuspendLucidListener : SuspendParseTreeListener {
      * @param ctx The parse tree
      */
     public suspend fun exitExprInvert(ctx: LucidParser.ExprInvertContext)
+
+    /**
+     * Enter a parse tree produced by the `ExprLogicalOr` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public suspend fun enterExprLogicalOr(ctx: LucidParser.ExprLogicalOrContext)
+
+    /**
+     * Exit a parse tree produced by the `ExprLogicalOr` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public suspend fun exitExprLogicalOr(ctx: LucidParser.ExprLogicalOrContext)
 
     /**
      * Enter a parse tree produced by the `ExprStruct` labeled alternative in [LucidParser.expr].
@@ -2788,20 +2858,6 @@ public interface SuspendLucidListener : SuspendParseTreeListener {
     public suspend fun exitExprAddSub(ctx: LucidParser.ExprAddSubContext)
 
     /**
-     * Enter a parse tree produced by the `ExprLogical` labeled alternative in [LucidParser.expr].
-     *
-     * @param ctx The parse tree
-     */
-    public suspend fun enterExprLogical(ctx: LucidParser.ExprLogicalContext)
-
-    /**
-     * Exit a parse tree produced by the `ExprLogical` labeled alternative in [LucidParser.expr].
-     *
-     * @param ctx The parse tree
-     */
-    public suspend fun exitExprLogical(ctx: LucidParser.ExprLogicalContext)
-
-    /**
      * Enter a parse tree produced by the `ExprNegate` labeled alternative in [LucidParser.expr].
      *
      * @param ctx The parse tree
@@ -2828,20 +2884,6 @@ public interface SuspendLucidListener : SuspendParseTreeListener {
      * @param ctx The parse tree
      */
     public suspend fun exitExprGroup(ctx: LucidParser.ExprGroupContext)
-
-    /**
-     * Enter a parse tree produced by the `ExprBitwise` labeled alternative in [LucidParser.expr].
-     *
-     * @param ctx The parse tree
-     */
-    public suspend fun enterExprBitwise(ctx: LucidParser.ExprBitwiseContext)
-
-    /**
-     * Exit a parse tree produced by the `ExprBitwise` labeled alternative in [LucidParser.expr].
-     *
-     * @param ctx The parse tree
-     */
-    public suspend fun exitExprBitwise(ctx: LucidParser.ExprBitwiseContext)
 
     /**
      * Enter a parse tree produced by the `ExprFunction` labeled alternative in [LucidParser.expr].
@@ -2900,6 +2942,20 @@ public interface SuspendLucidListener : SuspendParseTreeListener {
     public suspend fun exitExprMultDiv(ctx: LucidParser.ExprMultDivContext)
 
     /**
+     * Enter a parse tree produced by the `ExprBitwiseAnd` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public suspend fun enterExprBitwiseAnd(ctx: LucidParser.ExprBitwiseAndContext)
+
+    /**
+     * Exit a parse tree produced by the `ExprBitwiseAnd` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public suspend fun exitExprBitwiseAnd(ctx: LucidParser.ExprBitwiseAndContext)
+
+    /**
      * Enter a parse tree produced by the `ExprSignal` labeled alternative in [LucidParser.expr].
      *
      * @param ctx The parse tree
@@ -2912,6 +2968,34 @@ public interface SuspendLucidListener : SuspendParseTreeListener {
      * @param ctx The parse tree
      */
     public suspend fun exitExprSignal(ctx: LucidParser.ExprSignalContext)
+
+    /**
+     * Enter a parse tree produced by the `ExprBitwiseXor` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public suspend fun enterExprBitwiseXor(ctx: LucidParser.ExprBitwiseXorContext)
+
+    /**
+     * Exit a parse tree produced by the `ExprBitwiseXor` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public suspend fun exitExprBitwiseXor(ctx: LucidParser.ExprBitwiseXorContext)
+
+    /**
+     * Enter a parse tree produced by the `ExprLogicalAnd` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public suspend fun enterExprLogicalAnd(ctx: LucidParser.ExprLogicalAndContext)
+
+    /**
+     * Exit a parse tree produced by the `ExprLogicalAnd` labeled alternative in [LucidParser.expr].
+     *
+     * @param ctx The parse tree
+     */
+    public suspend fun exitExprLogicalAnd(ctx: LucidParser.ExprLogicalAndContext)
 
     /**
      * Enter a parse tree produced by [LucidParser.name].

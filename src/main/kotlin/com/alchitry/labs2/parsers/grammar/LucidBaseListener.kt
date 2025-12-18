@@ -754,12 +754,32 @@ public open class LucidBaseListener : LucidListener {
     /**
      * The default implementation does nothing.
      */
+    override fun enterExprBitwiseOr(ctx: LucidParser.ExprBitwiseOrContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override fun exitExprBitwiseOr(ctx: LucidParser.ExprBitwiseOrContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
     override fun enterExprInvert(ctx: LucidParser.ExprInvertContext) {}
 
     /**
      * The default implementation does nothing.
      */
     override fun exitExprInvert(ctx: LucidParser.ExprInvertContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override fun enterExprLogicalOr(ctx: LucidParser.ExprLogicalOrContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override fun exitExprLogicalOr(ctx: LucidParser.ExprLogicalOrContext) {}
 
     /**
      * The default implementation does nothing.
@@ -804,16 +824,6 @@ public open class LucidBaseListener : LucidListener {
     /**
      * The default implementation does nothing.
      */
-    override fun enterExprLogical(ctx: LucidParser.ExprLogicalContext) {}
-
-    /**
-     * The default implementation does nothing.
-     */
-    override fun exitExprLogical(ctx: LucidParser.ExprLogicalContext) {}
-
-    /**
-     * The default implementation does nothing.
-     */
     override fun enterExprNegate(ctx: LucidParser.ExprNegateContext) {}
 
     /**
@@ -830,16 +840,6 @@ public open class LucidBaseListener : LucidListener {
      * The default implementation does nothing.
      */
     override fun exitExprGroup(ctx: LucidParser.ExprGroupContext) {}
-
-    /**
-     * The default implementation does nothing.
-     */
-    override fun enterExprBitwise(ctx: LucidParser.ExprBitwiseContext) {}
-
-    /**
-     * The default implementation does nothing.
-     */
-    override fun exitExprBitwise(ctx: LucidParser.ExprBitwiseContext) {}
 
     /**
      * The default implementation does nothing.
@@ -884,12 +884,42 @@ public open class LucidBaseListener : LucidListener {
     /**
      * The default implementation does nothing.
      */
+    override fun enterExprBitwiseAnd(ctx: LucidParser.ExprBitwiseAndContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override fun exitExprBitwiseAnd(ctx: LucidParser.ExprBitwiseAndContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
     override fun enterExprSignal(ctx: LucidParser.ExprSignalContext) {}
 
     /**
      * The default implementation does nothing.
      */
     override fun exitExprSignal(ctx: LucidParser.ExprSignalContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override fun enterExprBitwiseXor(ctx: LucidParser.ExprBitwiseXorContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override fun exitExprBitwiseXor(ctx: LucidParser.ExprBitwiseXorContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override fun enterExprLogicalAnd(ctx: LucidParser.ExprLogicalAndContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override fun exitExprLogicalAnd(ctx: LucidParser.ExprLogicalAndContext) {}
 
     /**
      * The default implementation does nothing.
@@ -1681,12 +1711,32 @@ public open class SuspendLucidBaseListener : SuspendLucidListener {
     /**
      * The default implementation does nothing.
      */
+    override suspend fun enterExprBitwiseOr(ctx: LucidParser.ExprBitwiseOrContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override suspend fun exitExprBitwiseOr(ctx: LucidParser.ExprBitwiseOrContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
     override suspend fun enterExprInvert(ctx: LucidParser.ExprInvertContext) {}
 
     /**
      * The default implementation does nothing.
      */
     override suspend fun exitExprInvert(ctx: LucidParser.ExprInvertContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override suspend fun enterExprLogicalOr(ctx: LucidParser.ExprLogicalOrContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override suspend fun exitExprLogicalOr(ctx: LucidParser.ExprLogicalOrContext) {}
 
     /**
      * The default implementation does nothing.
@@ -1731,16 +1781,6 @@ public open class SuspendLucidBaseListener : SuspendLucidListener {
     /**
      * The default implementation does nothing.
      */
-    override suspend fun enterExprLogical(ctx: LucidParser.ExprLogicalContext) {}
-
-    /**
-     * The default implementation does nothing.
-     */
-    override suspend fun exitExprLogical(ctx: LucidParser.ExprLogicalContext) {}
-
-    /**
-     * The default implementation does nothing.
-     */
     override suspend fun enterExprNegate(ctx: LucidParser.ExprNegateContext) {}
 
     /**
@@ -1757,16 +1797,6 @@ public open class SuspendLucidBaseListener : SuspendLucidListener {
      * The default implementation does nothing.
      */
     override suspend fun exitExprGroup(ctx: LucidParser.ExprGroupContext) {}
-
-    /**
-     * The default implementation does nothing.
-     */
-    override suspend fun enterExprBitwise(ctx: LucidParser.ExprBitwiseContext) {}
-
-    /**
-     * The default implementation does nothing.
-     */
-    override suspend fun exitExprBitwise(ctx: LucidParser.ExprBitwiseContext) {}
 
     /**
      * The default implementation does nothing.
@@ -1811,12 +1841,42 @@ public open class SuspendLucidBaseListener : SuspendLucidListener {
     /**
      * The default implementation does nothing.
      */
+    override suspend fun enterExprBitwiseAnd(ctx: LucidParser.ExprBitwiseAndContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override suspend fun exitExprBitwiseAnd(ctx: LucidParser.ExprBitwiseAndContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
     override suspend fun enterExprSignal(ctx: LucidParser.ExprSignalContext) {}
 
     /**
      * The default implementation does nothing.
      */
     override suspend fun exitExprSignal(ctx: LucidParser.ExprSignalContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override suspend fun enterExprBitwiseXor(ctx: LucidParser.ExprBitwiseXorContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override suspend fun exitExprBitwiseXor(ctx: LucidParser.ExprBitwiseXorContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override suspend fun enterExprLogicalAnd(ctx: LucidParser.ExprLogicalAndContext) {}
+
+    /**
+     * The default implementation does nothing.
+     */
+    override suspend fun exitExprLogicalAnd(ctx: LucidParser.ExprLogicalAndContext) {}
 
     /**
      * The default implementation does nothing.

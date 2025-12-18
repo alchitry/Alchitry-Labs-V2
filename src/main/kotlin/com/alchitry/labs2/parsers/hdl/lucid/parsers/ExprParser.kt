@@ -392,7 +392,15 @@ class ExprParser(
         evaluator.shift(ctx, ctx.expr(), getOperator(ctx) ?: return)
     }
 
-    override suspend fun exitExprBitwise(ctx: ExprBitwiseContext) {
+    override suspend fun exitExprBitwiseAnd(ctx: ExprBitwiseAndContext) {
+        evaluator.bitwise(ctx, ctx.expr(), getOperator(ctx) ?: return)
+    }
+
+    override suspend fun exitExprBitwiseOr(ctx: ExprBitwiseOrContext) {
+        evaluator.bitwise(ctx, ctx.expr(), getOperator(ctx) ?: return)
+    }
+
+    override suspend fun exitExprBitwiseXor(ctx: ExprBitwiseXorContext) {
         evaluator.bitwise(ctx, ctx.expr(), getOperator(ctx) ?: return)
     }
 
@@ -404,7 +412,11 @@ class ExprParser(
         evaluator.comparison(ctx, ctx.expr(), getOperator(ctx) ?: return)
     }
 
-    override suspend fun exitExprLogical(ctx: ExprLogicalContext) {
+    override suspend fun exitExprLogicalAnd(ctx: ExprLogicalAndContext) {
+        evaluator.logical(ctx, ctx.expr(), getOperator(ctx) ?: return)
+    }
+
+    override suspend fun exitExprLogicalOr(ctx: ExprLogicalOrContext) {
         evaluator.logical(ctx, ctx.expr(), getOperator(ctx) ?: return)
     }
 

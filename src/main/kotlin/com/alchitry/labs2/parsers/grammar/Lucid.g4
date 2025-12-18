@@ -135,10 +135,13 @@ expr
   | expr NL* ('*'|'/') NL* expr                     #ExprMultDiv
   | expr NL* ('+'|'-') NL* expr                     #ExprAddSub
   | expr NL* ('>>'|'<<'|'<<<'|'>>>') NL* expr       #ExprShift
-  | expr NL* ('|'|'&'|'^') NL* expr                 #ExprBitwise
+  | expr NL* '&' NL* expr                           #ExprBitwiseAnd
+  | expr NL* '^' NL* expr                           #ExprBitwiseXor
+  | expr NL* '|' NL* expr                           #ExprBitwiseOr
   | ('|'|'&'|'^') NL* expr                          #ExprReduction
   | expr NL* ('<'|'>'|'=='|'!='|'>='|'<=') NL* expr #ExprCompare
-  | expr NL* ('||'|'&&') NL* expr                   #ExprLogical
+  | expr NL* '&&' NL* expr                          #ExprLogicalAnd
+  | expr NL* '||' NL* expr                          #ExprLogicalOr
   | <assoc = right> expr NL* '?' NL* expr NL* ':' NL* expr #ExprTernary
   ;
 

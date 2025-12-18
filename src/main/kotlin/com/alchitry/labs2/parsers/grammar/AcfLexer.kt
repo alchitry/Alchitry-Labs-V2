@@ -32,13 +32,13 @@ public open class AcfLexer(input: CharStream) : Lexer(input) {
         private val SHARED_CONTEXT_CACHE = PredictionContextCache()
 
         private val LITERAL_NAMES: Array<String?> = arrayOf(
-            null, "'pin'", "','", "'{'", "'}'", "'('", "')'", "'.'", "'['",
+            null, "'pin'", "','", "'{'", "'}'", "'('", "')'", "'.'", "'['", 
             "']'", null, "';'"
         )
 
         private val SYMBOLIC_NAMES: Array<String?> = arrayOf(
             null, null, null, null, null, null, null, null, null, null,
-            "NATIVE_BLOCK", "SEMICOLON", "NL", "FREQ_UNIT", "BASIC_NAME",
+            "NATIVE_BLOCK", "SEMICOLON", "NL", "FREQ_UNIT", "BASIC_NAME", 
             "REAL", "INT", "BLOCK_COMMENT", "COMMENT", "WS"
         )
 
@@ -96,7 +96,7 @@ public open class AcfLexer(input: CharStream) : Lexer(input) {
         "T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7",
         "T__8", "NATIVE_BLOCK", "SEMICOLON", "NL", "FREQ_UNIT", "BASIC_NAME",
         "REAL", "INT", "BLOCK_COMMENT", "COMMENT", "WS", "A", "B", "C",
-        "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
+        "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", 
         "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
     )
 

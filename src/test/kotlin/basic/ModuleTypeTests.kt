@@ -50,18 +50,24 @@ class ModuleTypeTests {
                         BitListValue(100000000.toBigInteger()),
                         true,
                         (tree.first().second as LucidParser.SourceContext).module(0)?.paramList()?.paramDec(0)
+                            ?.paramDefault()?.expr(),
+                        (tree.first().second as LucidParser.SourceContext).module(0)?.paramList()?.paramDec(0)
                             ?.paramConstraint()?.expr()
                     ),
                     "MAX_CT" to Parameter(
                         "MAX_CT",
                         BitListValue(100.toBigInteger()),
                         false,
+                        (tree.first().second as LucidParser.SourceContext).module(0)?.paramList()?.paramDec(1)
+                            ?.paramDefault()?.expr(),
                         null
                     ),
                     "NEG_TEST" to Parameter(
                         "NEG_TEST",
                         BitListValue((-100).toBigInteger()),
                         false,
+                        (tree.first().second as LucidParser.SourceContext).module(0)?.paramList()?.paramDec(2)
+                            ?.paramDefault()?.expr(),
                         (tree.first().second as LucidParser.SourceContext).module(0)?.paramList()?.paramDec(2)
                             ?.paramConstraint()?.expr()
                     )
