@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.*
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
+import com.alchitry.labs2.leadingWhitespace
 import com.alchitry.labs2.noNulls
 import com.alchitry.labs2.parsers.findFinalNode
 import com.alchitry.labs2.parsers.grammar.*
@@ -1022,21 +1023,33 @@ class CodeEditorState(
                     else -> { // auto
                         val nextChar = selectionManager.caret.charAt()
                         val prevChar = selectionManager.caret.getPrevious().charAt()
-                        if (nextChar == '}' && prevChar == '{') {
+                        if ((nextChar == '}' && prevChar == '{') ||
+                            (nextChar == ')' && prevChar == '(') ||
+                            (nextChar == ']' && prevChar == '[')
+                        ) {
                             replaceText("\n\n")
                             replaceText(codeFormatter.getIndentFor(selectionManager.caret.line))
                             selectionManager.moveUp()
                             replaceText(codeFormatter.getIndentFor(selectionManager.caret.line))
                         } else {
-                            replaceText("\n", updateCaret = false)
-                            val lineNum = selectionManager.caret.line + 1
+                            val inLeadingWhitespace =
+                                lines[selectionManager.caret.line].text.text.leadingWhitespace() >= selectionManager.caret.offset
+                            replaceText("\n", updateCaret = !inLeadingWhitespace)
+                            val lineNum = selectionManager.caret.line + if (inLeadingWhitespace) 1 else 0
                             val current = lines[lineNum].text.text
+
+                            val indent = codeFormatter.getIndentFor(lineNum)
+
                             replaceText(
-                                codeFormatter.getIndentFor(lineNum) + current.trimStart(),
+                                indent + current.trimStart(),
                                 TextPosition(lineNum, 0)..<TextPosition(lineNum, current.length),
                                 updateCaret = false
                             )
-                            selectionManager.moveDown()
+                            if (inLeadingWhitespace) {
+                                selectionManager.moveDown()
+                            } else {
+                                selectionManager.caret = selectionManager.caret.copy(offset = indent.length)
+                            }
                         }
                     }
                 }
