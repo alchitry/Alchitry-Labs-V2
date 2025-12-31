@@ -1417,7 +1417,7 @@ class SystemVerilogConverter(
                     }
 
                     is SimpleWidth -> {
-                        val fallbackString = "\$clog2(\$bits($exprVerilog)+1)'(\$bits($exprVerilog))"
+                        val fallbackString = $$"$unsigned(($clog2($bits($$exprVerilog)+1))'($bits($$exprVerilog)))"
 
                         if (exprCtx is LucidParser.ExprSignalContext) {
                             val signal = context.resolve(exprCtx.signal() ?: error("Missing signal context!"))

@@ -65,7 +65,7 @@ class ModuleInstance(
         }.distinct()
     }
 
-    // Use the provided parameters or the default value from the module is it is missing
+    // Use the provided parameters or the default value from the module if it is missing
     val parameters = module.parameters.mapValues { (name, param) ->
         Signal(
             name,
