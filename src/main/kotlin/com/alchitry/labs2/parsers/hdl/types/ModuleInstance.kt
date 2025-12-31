@@ -6,9 +6,7 @@ import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidBlockContext
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SnapshotOrParent
 import com.alchitry.labs2.parsers.hdl.lucid.signals.snapshot.SnapshotParent
-import com.alchitry.labs2.parsers.hdl.values.UndefinedSimpleWidth
-import com.alchitry.labs2.parsers.hdl.values.UndefinedValue
-import com.alchitry.labs2.parsers.hdl.values.Value
+import com.alchitry.labs2.parsers.hdl.values.*
 import com.alchitry.labs2.parsers.notations.ErrorListener
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 
@@ -65,6 +63,12 @@ class ModuleInstance(
         }.distinct()
     }
 
+    private fun SignalWidth.withUndefinedOuter(): SignalWidth = when (this) {
+        is SimpleWidth -> UndefinedSimpleWidth()
+        is ArrayWidth -> UndefinedArrayWidth(next)
+        is StructWidth -> this
+    }
+
     // Use the provided parameters or the default value from the module if it is missing
     val parameters = module.parameters.mapValues { (name, param) ->
         Signal(
@@ -72,9 +76,9 @@ class ModuleInstance(
             SignalDirection.Read,
             this,
             (parameters[name]
-                ?: (if (param.defaultTestOnly && !mode.testing) null else param.default)
+                ?: (if (param.defaultTestOnly && !mode.testing || mode.building) null else param.default)
                 ?: if (mode != ExprEvalMode.Default) UndefinedValue(
-                    param.default?.width ?: UndefinedSimpleWidth()
+                    param.default?.width?.withUndefinedOuter() ?: UndefinedSimpleWidth()
                 ) else error("Missing value for parameter \"${name}\" in module \"${this.name}\" of type \"${module.name}\".")),
             ExprType.Fixed
         )

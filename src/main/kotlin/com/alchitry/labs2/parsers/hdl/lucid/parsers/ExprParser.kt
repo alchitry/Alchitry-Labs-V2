@@ -556,7 +556,7 @@ class ExprParser(
                     )
                     return
                 }
-                val widthType = if (width.isDefined() && arg.type == ExprType.Constant) ExprType.Constant else ExprType.Fixed
+                val widthType = if (width.isDefined()) ExprType.Constant else ExprType.Fixed
                 val widthValue = width.toValue()
                 if (dimArg == null && widthValue is ArrayValue) {
                     context.reportError(
