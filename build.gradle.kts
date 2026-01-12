@@ -25,7 +25,7 @@ plugins {
     id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
 }
 
-val fullVersion = "2.0.48-BETA"
+val fullVersion = "2.0.49-BETA"
 val numOnlyVersion = fullVersion.split('-').first()
 
 group = "com.alchitry"
