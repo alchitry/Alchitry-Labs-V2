@@ -24,7 +24,8 @@ class ProjectTester(vararg val files: SourceFile) {
     val notationManager = NotationManager()
     val project = ProjectContext(notationManager, Board.AlchitryAuV2)
 
-    suspend fun parseText() = Project.parseAll(files.toList(), notationManager) ?: error("Failed to parse all files!")
+    suspend fun parseText() = Project.parseAll(files.toList(), notationManager)
+        ?: error("Failed to parse all files: ${notationManager.getReport()}")
 
     suspend fun globalParse(
         trees: List<Pair<SourceFile, ParserRuleContext>>? = null

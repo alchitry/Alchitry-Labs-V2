@@ -784,6 +784,25 @@ class SystemVerilogConverter(
             var currentWidth: SignalWidth? = parent.width
             checkNotNull(currentWidth) { "Signal width was not defined!" }
 
+            // Parameters have undefined widths and need to be handled here
+            // We can transform them into resolvable widths with dummy contexts and provide a verilog expression directly
+            if ((context.instance as? ModuleInstance)?.parameters?.keys?.contains(parent.name) == true) {
+                when (currentWidth) {
+                    is UndefinedSimpleWidth -> {
+                        currentWidth = ResolvableSimpleWidth(object : ParserRuleContext() {})
+                        currentWidth.context.verilog = $$"$bits($${parent.verilogName})"
+                    }
+
+                    is UndefinedArrayWidth -> {
+                        currentWidth = ResolvableArrayWidth(object : ParserRuleContext() {}, currentWidth.next)
+                        currentWidth.context.verilog =
+                            $$"($bits($${parent.verilogName})/($${currentWidth.next.verilogBits()}))"
+                    }
+
+                    else -> { /* Do nothing */
+                    }
+                }
+            }
 
             for (selector in selection) {
                 when (currentWidth) {
@@ -859,7 +878,7 @@ class SystemVerilogConverter(
                         currentWidth = member.width
                     }
 
-                    is UndefinedWidth -> error("Undefined width during verilog conversion!")
+                    is UndefinedWidth -> error("Undefined width during subsignal selection in verilog conversion!")
                     null -> error("Too many selectors for the signal width!")
                 }
             }
@@ -1131,15 +1150,7 @@ class SystemVerilogConverter(
     override fun exitExprArray(ctx: LucidParser.ExprArrayContext) {
         if (handleConstant(ctx))
             return
-        ctx.verilog = buildString {
-            append("{")
-            ctx.expr().forEachIndexed { index, exprContext ->
-                if (index > 0)
-                    append(", ")
-                append(exprContext.verilog)
-            }
-            append("}")
-        }
+        ctx.verilog = ctx.expr().joinToString(", ", "{", "}") { it.verilog }
     }
 
     private fun basic2OpExpr(ctx: LucidParser.ExprContext, expr: List<LucidParser.ExprContext>, width: String?) {
@@ -1347,24 +1358,18 @@ class SystemVerilogConverter(
                     }
 
                     is LucidParser.ExprArrayContext -> {
-                        buildString {
-                            append("{")
-                            expr.expr().asReversed().forEachIndexed { index, exprContext ->
-                                if (index > 0)
-                                    append(", ")
-                                append(exprContext.verilog)
-                            }
-                            append("}")
+                        expr.expr().asReversed().joinToString(", ", "{", "}") {
+                            verilog[it] ?: error(it, "Missing verilog for expr in reverse array: \"${it.text}\"")
                         }
                     }
 
                     is LucidParser.ExprConcatContext -> {
                         expr.expr().asReversed().joinToString(", ", "{", "}") {
-                            verilog[it] ?: error(it, "Missing verilog for expr in concat: \"${it.text}\"")
+                            verilog[it] ?: error(it, "Missing verilog for expr in reverse concat: \"${it.text}\"")
                         }
                     }
 
-                    else -> error("Non-constant \$reverse() used on something other than a signal, array, or concatenation!")
+                    else -> error($$"Non-constant $reverse() used on something other than a signal, array, or concatenation!")
                 }
 
 
@@ -1627,7 +1632,7 @@ class SystemVerilogConverter(
                     is DefinedSimpleWidth -> "[${size - 1}:0]"
                     is StructWidth -> ""
                     is ResolvableWidth<*> -> error("Resolvable widths are not allowed in globals!")
-                    is UndefinedWidth -> error("Undefined width during verilog conversion!")
+                    is UndefinedWidth -> error("Undefined width during globals to verilog conversion!")
                 }
             }
             append(HEADER)
@@ -1702,7 +1707,7 @@ fun List<String>.surroundNameWithWidths(name: String) = buildString {
 
 fun Value.toVerilog(): String {
     return when (this) {
-        is ArrayValue -> "{{${elements.asReversed().joinToString(", ") { it.toVerilog() }}}}"
+        is ArrayValue -> "{${elements.asReversed().joinToString(", ") { it.toVerilog() }}}"
         is SimpleValue -> buildString {
             if (!width.isDefined())
                 error("Can't convert undefined width value to Verilog!")
