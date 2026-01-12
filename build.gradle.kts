@@ -2,7 +2,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.FileOutputStream
 import java.net.HttpURLConnection
+import java.net.URI
 import java.net.URL
+import java.security.MessageDigest
 import java.util.*
 
 buildscript {
@@ -180,8 +182,8 @@ tasks.register<com.strumenta.antlrkotlin.gradle.AntlrKotlinTask>("generateKotlin
 }
 
 tasks.register("publish") {
-    group = "conveyor"
-    dependsOn("copied-site", "ms-store-release")
+    group = "publishing"
+    dependsOn("copied-site", "ms-store-release", "updateAUR")
 }
 
 tasks.register("download-oss-cad-suite") {
@@ -225,6 +227,61 @@ tasks.register("download-oss-cad-suite") {
                 if (arch.startsWith("darwin")) {
                     // these files aren't needed and cause failures during signing
                     target.resolve("lib/python3.11/config-3.11-darwin/python.o").delete()
+                }
+            }
+        }
+    }
+}
+
+tasks.register("updateAUR") {
+    group = "publishing"
+    description = "Updates the PKGBUILD with the latest version and sha256sum, then pushes to AUR."
+
+    doLast {
+        val pkgbuildFile = file("${System.getProperty("user.home")}/AUR/alchitry-labs-bin/PKGBUILD")
+        if (!pkgbuildFile.exists()) {
+            throw GradleException("PKGBUILD not found at ${pkgbuildFile.absolutePath}")
+        }
+
+        val downloadUrl =
+            "https://github.com/alchitry/Alchitry-Labs-V2/releases/download/$numOnlyVersion/alchitry-labs-$numOnlyVersion-linux-amd64.tar.gz"
+        println("Downloading $downloadUrl to calculate SHA256...")
+
+        val digest = MessageDigest.getInstance("SHA-256")
+        URI(downloadUrl).toURL().openStream().use { input ->
+            val buffer = ByteArray(8192)
+            var bytesRead = input.read(buffer)
+            while (bytesRead != -1) {
+                digest.update(buffer, 0, bytesRead)
+                bytesRead = input.read(buffer)
+            }
+        }
+        val sha256sum = digest.digest().joinToString("") { "%02x".format(it) }
+        println("New SHA256: $sha256sum")
+
+        var content = pkgbuildFile.readText()
+        content = content.replace(Regex("pkgver=.*"), "pkgver=$numOnlyVersion")
+        content = content.replace(Regex("pkgrel=.*"), "pkgrel=1") // Reset pkgrel on version bump
+        content = content.replace(Regex("sha256sums=\\(\".*\"\\)"), "sha256sums=(\"$sha256sum\")")
+
+        pkgbuildFile.writeText(content)
+
+        val aurDir = pkgbuildFile.parentFile
+        val commands = listOf(
+            listOf("makepkg", "--printsrcinfo"),
+            listOf("git", "add", "PKGBUILD", ".SRCINFO"),
+            listOf("git", "commit", "-m", "Updated to $numOnlyVersion"),
+            listOf("git", "push")
+        )
+
+        commands.forEachIndexed { index, cmd ->
+            println("Executing: ${cmd.joinToString(" ")}")
+            exec {
+                workingDir = aurDir
+                commandLine = cmd
+                // For the first command, redirect output to .SRCINFO
+                if (index == 0) {
+                    standardOutput = FileOutputStream(file("${aurDir.absolutePath}/.SRCINFO"))
                 }
             }
         }
