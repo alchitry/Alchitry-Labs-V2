@@ -25,7 +25,7 @@ module z_buffer (
     enum State {IDLE, WAIT_READ}
     
     .clk(clk) {
-        lru_cache cache(.rst(rst))
+        lru_cache cache(.rst(rst), #ENTRIES(4), #WORD_SIZE(16))
         .rst(rst) {
             dff valid_pipe[PIPE_LENGTH-1]
             dff read_valid
