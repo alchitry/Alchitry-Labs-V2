@@ -95,7 +95,8 @@ class AlchitryTextFieldState(
     val autocomplete: Autocomplete? = null,
     val onTextChanged: () -> Unit = {},
     val onDoubleClicK: (Offset) -> Boolean = { false },
-    val onReplaceText: (String, OpenEndRange<TextPosition>) -> Boolean = { _, _ -> false }
+    val onReplaceText: (String, OpenEndRange<TextPosition>) -> Boolean = { _, _ -> false },
+    val onKeyEvent: (KeyEvent) -> Boolean = { false },
 ) : TextProvider, AutocompleteSource {
 
     var style: AlchitryTextFieldStyle? = null
@@ -740,6 +741,7 @@ class AlchitryTextFieldState(
     }
 
     private fun processKey(event: KeyEvent): Boolean {
+        if (onKeyEvent(event)) return true
         // Special key combinations
         if (event.type == KeyEventType.KeyDown) {
             val key = event.key

@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
@@ -40,13 +41,14 @@ private data class StyledText(
     val style: SpanStyle?
 )
 
-class Console {
+class Console(onKeyEvent: (KeyEvent) -> Boolean = { false }) {
     companion object {
         val main = Console()
         private const val SCALE = 0.08f
     }
 
     private val state = AlchitryTextFieldState(
+        onKeyEvent = onKeyEvent,
         onReplaceText = { _, _ -> true } // read only
     )
 
@@ -157,7 +159,7 @@ class Console {
     }
 
     @Composable
-    fun show(showCursor: Boolean = false) {
+    fun show() {
         state.subscribe()
         state.clipboardManager = LocalClipboardManager.current
 

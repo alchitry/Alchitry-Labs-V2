@@ -1,15 +1,12 @@
 package com.alchitry.labs2.ui.tabs
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -20,7 +17,6 @@ import com.alchitry.labs2.hardware.usb.SerialDevice
 import com.alchitry.labs2.hardware.usb.UsbUtil
 import com.alchitry.labs2.ui.components.DeviceSelector
 import com.alchitry.labs2.ui.components.ToolbarButton
-import com.alchitry.labs2.ui.hiddenClickable
 import com.alchitry.labs2.ui.isAwtTypedEvent
 import com.alchitry.labs2.ui.main.Console
 import com.alchitry.labs2.windows.LocalLabsState
@@ -112,7 +108,20 @@ fun SerialTerminalToolbar(
 class SerialTerminal(
     override var parent: TabPanel
 ) : Tab {
-    private val console = Console()
+    private val console = Console(
+        onKeyEvent = { keyEvent ->
+            if (keyEvent.isAwtTypedEvent ||
+                (keyEvent.type == KeyEventType.KeyDown &&
+                        (keyEvent.key == Key.Enter || keyEvent.key == Key.NumPadEnter))
+            ) {
+                val text = String(intArrayOf(keyEvent.utf16CodePoint), 0, 1)
+                textFlow.tryEmit(text)
+                true
+            } else {
+                false
+            }
+        }
+    )
     private val textFlow = MutableSharedFlow<String>(extraBufferCapacity = 8192)
     private val state = SerialState()
 
@@ -149,28 +158,8 @@ class SerialTerminal(
                     }
                 }
 
-                var hasFocus by remember { mutableStateOf(false) }
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .focusable(true, remember { MutableInteractionSource() })
-                        .onFocusChanged { hasFocus = it.hasFocus }
-                        .hiddenClickable { }
-                        .onKeyEvent { keyEvent ->
-                            if (keyEvent.isAwtTypedEvent ||
-                                (keyEvent.type == KeyEventType.KeyDown &&
-                                        (keyEvent.key == Key.Enter || keyEvent.key == Key.NumPadEnter))
-                            ) {
-                                val text = String(intArrayOf(keyEvent.utf16CodePoint), 0, 1)
-                                textFlow.tryEmit(text)
-                                true
-                            } else {
-                                false
-                            }
-                        }
-                ) {
-                    console.show(hasFocus && state.connected)
-                }
+                console.show()
+
             }
         }
     }

@@ -70,17 +70,17 @@ sealed class NotationType(val label: String, val style: SpanStyle) {
 
     data object Warning : NotationType(
         "Warning",
-        SpanStyle(AlchitryColors.current.Warning, textDecoration = TextDecoration.Underline)
+        SpanStyle(AlchitryColors.current.Warning)
     )
 
     data object SyntaxAmbiguity : NotationType(
         "Syntax ambiguity",
-        SpanStyle(AlchitryColors.current.Warning, textDecoration = TextDecoration.Underline)
+        SpanStyle(AlchitryColors.current.Warning)
     )
 
     data object Info : NotationType(
         "Info",
-        SpanStyle(AlchitryColors.current.Info, textDecoration = TextDecoration.Underline)
+        SpanStyle(AlchitryColors.current.Info)
     )
 
     class Custom(label: String, style: SpanStyle) : NotationType(label, style)
