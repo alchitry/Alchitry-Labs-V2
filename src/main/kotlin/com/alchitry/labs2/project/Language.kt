@@ -1,15 +1,15 @@
 package com.alchitry.labs2.project
 
 import com.alchitry.labs2.allSealedObjects
-import com.alchitry.labs2.ui.code_editor.styles.EditorTokenizer
-import com.alchitry.labs2.ui.code_editor.styles.acf.AcfTokenizer
-import com.alchitry.labs2.ui.code_editor.styles.lucid.LucidTokenizer
-import com.alchitry.labs2.ui.code_editor.styles.verilog.VerilogTokenizer
+import com.alchitry.labs2.ui.alchitry_text_field.styles.TextTokenizer
+import com.alchitry.labs2.ui.alchitry_text_field.styles.acf.AcfTokenizer
+import com.alchitry.labs2.ui.alchitry_text_field.styles.lucid.LucidTokenizer
+import com.alchitry.labs2.ui.alchitry_text_field.styles.verilog.VerilogTokenizer
 
 sealed class Language {
     abstract val name: String
     abstract val extension: String
-    abstract val tokenizer: EditorTokenizer
+    abstract val tokenizer: TextTokenizer
 
     companion object {
         val all by lazy { Language::class.allSealedObjects() }
@@ -56,21 +56,21 @@ object Languages {
     data object XDC : ConstraintLang() {
         override val name: String = "xdc"
         override val extension: String = "xdc"
-        override val tokenizer: EditorTokenizer
+        override val tokenizer: TextTokenizer
             get() = TODO("Not yet implemented")
     }
 
     data object SDC : ConstraintLang() {
         override val name: String = "sdc"
         override val extension: String = "sdc"
-        override val tokenizer: EditorTokenizer
+        override val tokenizer: TextTokenizer
             get() = TODO("Not yet implemented")
     }
 
     data object PCF : ConstraintLang() {
         override val name: String = "pcf"
         override val extension: String = "pcf"
-        override val tokenizer: EditorTokenizer
+        override val tokenizer: TextTokenizer
             get() = TODO("Not yet implemented")
     }
 }

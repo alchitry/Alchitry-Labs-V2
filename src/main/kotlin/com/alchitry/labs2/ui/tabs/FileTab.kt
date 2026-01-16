@@ -3,8 +3,8 @@ package com.alchitry.labs2.ui.tabs
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.alchitry.labs2.project.files.ProjectFile
-import com.alchitry.labs2.ui.code_editor.CodeEditor
-import com.alchitry.labs2.ui.code_editor.CodeEditorState
+import com.alchitry.labs2.ui.alchitry_text_field.CodeEditor
+import com.alchitry.labs2.ui.alchitry_text_field.CodeEditorState
 
 class FileTab(
     val file: ProjectFile,
@@ -25,7 +25,7 @@ class FileTab(
 
     override fun onClose(save: Boolean): Boolean {
         if (!file.isReadOnly && save)
-            file.file.writeText(codeEditorState.getText())
+            file.file.writeText(codeEditorState.textFieldState.getText())
         return true
     }
 }

@@ -1,7 +1,7 @@
 package com.alchitry.labs2.project.files
 
 import com.alchitry.labs2.project.Language
-import com.alchitry.labs2.ui.code_editor.styles.EditorTokenizer
+import com.alchitry.labs2.ui.alchitry_text_field.styles.TextTokenizer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -21,7 +21,7 @@ sealed class ProjectFile(val file: FileProvider) {
     val isReadOnly: Boolean get() = file.readOnly
     abstract val language: Language
 
-    val editorTokenizer: EditorTokenizer get() = language.tokenizer
+    val textTokenizer: TextTokenizer get() = language.tokenizer
 
     suspend fun readText(): String = lock.withLock {
         withContext(Dispatchers.IO) {

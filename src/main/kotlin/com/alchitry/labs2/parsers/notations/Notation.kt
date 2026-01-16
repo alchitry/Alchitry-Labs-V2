@@ -1,7 +1,7 @@
 package com.alchitry.labs2.parsers.notations
 
 import androidx.compose.ui.graphics.Color
-import com.alchitry.labs2.ui.code_editor.TextPosition
+import com.alchitry.labs2.ui.alchitry_text_field.TextPosition
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.Token

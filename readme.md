@@ -123,5 +123,6 @@ For example, I should be able to make tooltips popup showing not only the error 
 implement a suggested fix.
 
 I've started the basic work by creating a custom
-[CodeEditor](src/main/kotlin/com/alchitry/labs2/ui/code_editor/CodeEditor.kt) that is still efficient with thousands of
+[CodeEditor](src/main/kotlin/com/alchitry/labs2/ui/alchitry_text_field/CodeEditor.kt) that is still efficient with
+thousands of
 lines of code (the built-in TextField's performance scales terribly).

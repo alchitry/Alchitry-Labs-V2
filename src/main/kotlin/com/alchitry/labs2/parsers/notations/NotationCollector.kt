@@ -7,7 +7,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.withStyle
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.project.files.ProjectFile
-import com.alchitry.labs2.ui.code_editor.TextPosition
+import com.alchitry.labs2.ui.alchitry_text_field.TextPosition
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.strumenta.antlrkotlin.runtime.BitSet
 import kotlinx.collections.immutable.toImmutableMap

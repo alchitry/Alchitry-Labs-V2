@@ -32,8 +32,8 @@ import com.alchitry.labs2.project.files.Component
 import com.alchitry.labs2.project.files.FileProvider
 import com.alchitry.labs2.project.files.ProjectFile
 import com.alchitry.labs2.project.files.SourceFile
-import com.alchitry.labs2.ui.code_editor.TextPosition
-import com.alchitry.labs2.ui.code_editor.line_actions.LineActionButton
+import com.alchitry.labs2.ui.alchitry_text_field.TextPosition
+import com.alchitry.labs2.ui.alchitry_text_field.line_actions.LineActionButton
 import com.alchitry.labs2.ui.tabs.FileTab
 import com.alchitry.labs2.ui.tabs.SimulationResultTab
 import com.alchitry.labs2.ui.tabs.Workspace

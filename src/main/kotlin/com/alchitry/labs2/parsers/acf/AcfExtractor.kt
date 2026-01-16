@@ -16,7 +16,7 @@ import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.parsers.notations.NotationType
 import com.alchitry.labs2.project.files.ConstraintFile
-import com.alchitry.labs2.ui.code_editor.textPositionAtOffset
+import com.alchitry.labs2.ui.alchitry_text_field.textPositionAtOffset
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 import org.antlr.v4.kotlinruntime.ParserRuleContext
