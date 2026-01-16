@@ -1,7 +1,6 @@
 package com.alchitry.labs2.parsers.notations
 
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.style.TextDecoration
 import com.alchitry.labs2.ui.alchitry_text_field.TextPosition
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import org.antlr.v4.kotlinruntime.ParserRuleContext
@@ -60,12 +59,12 @@ data class Notation(
 sealed class NotationType(val label: String, val style: SpanStyle) {
     data object Error : NotationType(
         "Error",
-        SpanStyle(color = AlchitryColors.current.Error, textDecoration = TextDecoration.Underline)
+        SpanStyle(color = AlchitryColors.current.Error)
     )
 
     data object SyntaxError : NotationType(
         "Syntax error",
-        SpanStyle(AlchitryColors.current.Error, textDecoration = TextDecoration.Underline)
+        SpanStyle(AlchitryColors.current.Error)
     )
 
     data object Warning : NotationType(
