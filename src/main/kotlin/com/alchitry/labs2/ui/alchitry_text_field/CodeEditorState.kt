@@ -120,7 +120,8 @@ class CodeEditorState(val file: ProjectFile) {
      * @param notationCollector The notation collector from which to retrieve the notations and line actions.
      */
     fun updateNotations(notationCollector: NotationCollector) {
-        textFieldState.notations = notationCollector.getAllNotations()
+        textFieldState.notations.clear()
+        textFieldState.notations.addAll(notationCollector.getAllNotations())
         lineActions = notationCollector.getLineActions()
         maxLineActions = lineActions?.values?.maxOfOrNull { actions -> actions.size } ?: 0
     }

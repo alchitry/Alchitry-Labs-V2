@@ -37,7 +37,7 @@ public open class LucidLexer(input: CharStream) : Lexer(input) {
             "'#'", "'dff'", "'enum'", "'struct'", "'fun'", "'test'", "'always'",
             "'+'", "'-'", "'default'", "'else'", "'c{'", "'x{'", "'!'",
             "'*'", "'/'", "'>>'", "'<<'", "'<<<'", "'>>>'", "'&'", "'^'",
-            "'|'", "'=='", "'!='", "'>='", "'<='", "'&&'", "'||'", "'?'",
+            "'|'", "'=='", "'!='", "'>='", "'<='", "'&&'", "'||'", "'?'", 
             "';'", "':'", "'('", "')'", "'['", "']'", "'<'", "'>'", "'{'", 
             "'}'", "'if'", "'case'", "'repeat'", "'signed'", "'sig'"
         )
@@ -49,7 +49,7 @@ public open class LucidLexer(input: CharStream) : Lexer(input) {
             null, null, null, null, null, null, null, null, null, null,
             null, null, null, "SEMICOLON", "COLON", "LPAREN", "RPAREN",
             "LBRACKET", "RBRACKET", "LANGLE", "RANGLE", "LBRACE", "RBRACE",
-            "IF", "CASE", "REPEAT", "SIGNED", "SIG", "HEX", "BIN", "DEC",
+            "IF", "CASE", "REPEAT", "SIGNED", "SIG", "HEX", "BIN", "DEC", 
             "REAL", "INT", "STRING", "NL", "TYPE_ID", "CONST_ID", "SPACE_ID", 
             "FUNCTION_ID", "BLOCK_COMMENT", "COMMENT", "WS", "ANY_CHAR"
         )
@@ -165,7 +165,7 @@ public open class LucidLexer(input: CharStream) : Lexer(input) {
         "T__32", "T__33", "T__34", "T__35", "T__36", "T__37", "T__38", "T__39",
         "T__40", "T__41", "SEMICOLON", "COLON", "LPAREN", "RPAREN", "LBRACKET",
         "RBRACKET", "LANGLE", "RANGLE", "LBRACE", "RBRACE", "IF", "CASE",
-        "REPEAT", "SIGNED", "SIG", "HEX", "BIN", "DEC", "REAL", "INT", "STRING",
+        "REPEAT", "SIGNED", "SIG", "HEX", "BIN", "DEC", "REAL", "INT", "STRING", 
         "NL", "TYPE_ID", "CONST_ID", "SPACE_ID", "FUNCTION_ID", "BLOCK_COMMENT", 
         "COMMENT", "WS", "ANY_CHAR"
     )

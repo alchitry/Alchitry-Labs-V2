@@ -1,7 +1,6 @@
 package com.alchitry.labs2.ui.alchitry_text_field
 
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.style.TextDecoration
 import com.alchitry.labs2.parsers.notations.Notation
 import org.antlr.v4.kotlinruntime.Token
 
@@ -63,9 +62,8 @@ fun Token.toEditorToken(style: SpanStyle?): EditorToken {
 }
 
 fun Notation.toStyleToken(): StyleToken {
-    val style = SpanStyle(color = type.color, textDecoration = TextDecoration.Underline)
     return StyleToken(
         range = range,
-        style = style
+        style = type.style
     )
 }

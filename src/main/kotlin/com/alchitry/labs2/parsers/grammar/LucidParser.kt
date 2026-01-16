@@ -50,7 +50,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
             "functionArg", "functionBlock", "functionBody", "testBlock",
             "alwaysBlock", "alwaysStat", "block", "assignStat", "arrayIndex",
             "bitSelector", "bitSelection", "signal", "caseStat", "caseElem",
-            "caseBlock", "caseJunk", "ifStat", "elseStat", "repeatStat",
+            "caseBlock", "caseJunk", "ifStat", "elseStat", "repeatStat", 
             "repeatBlock", "function", "functionExpr", "number", "expr", 
             "name", "semi"
         )
@@ -61,7 +61,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
             "'#'", "'dff'", "'enum'", "'struct'", "'fun'", "'test'", "'always'",
             "'+'", "'-'", "'default'", "'else'", "'c{'", "'x{'", "'!'",
             "'*'", "'/'", "'>>'", "'<<'", "'<<<'", "'>>>'", "'&'", "'^'",
-            "'|'", "'=='", "'!='", "'>='", "'<='", "'&&'", "'||'", "'?'",
+            "'|'", "'=='", "'!='", "'>='", "'<='", "'&&'", "'||'", "'?'", 
             "';'", "':'", "'('", "')'", "'['", "']'", "'<'", "'>'", "'{'", 
             "'}'", "'if'", "'case'", "'repeat'", "'signed'", "'sig'"
         )
@@ -73,7 +73,7 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
             null, null, null, null, null, null, null, null, null, null,
             null, null, null, "SEMICOLON", "COLON", "LPAREN", "RPAREN",
             "LBRACKET", "RBRACKET", "LANGLE", "RANGLE", "LBRACE", "RBRACE",
-            "IF", "CASE", "REPEAT", "SIGNED", "SIG", "HEX", "BIN", "DEC",
+            "IF", "CASE", "REPEAT", "SIGNED", "SIG", "HEX", "BIN", "DEC", 
             "REAL", "INT", "STRING", "NL", "TYPE_ID", "CONST_ID", "SPACE_ID", 
             "FUNCTION_ID", "BLOCK_COMMENT", "COMMENT", "WS", "ANY_CHAR"
         )
@@ -7355,7 +7355,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprBitwiseOr(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprBitwiseOr(this)
@@ -7367,7 +7366,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprBitwiseOr(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprBitwiseOr(this)
@@ -7430,7 +7428,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprLogicalOr(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprLogicalOr(this)
@@ -7442,7 +7439,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprLogicalOr(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprLogicalOr(this)
@@ -7838,7 +7834,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprBitwiseAnd(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprBitwiseAnd(this)
@@ -7850,7 +7845,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprBitwiseAnd(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprBitwiseAnd(this)
@@ -7911,7 +7905,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprBitwiseXor(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprBitwiseXor(this)
@@ -7923,7 +7916,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprBitwiseXor(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprBitwiseXor(this)
@@ -7950,7 +7942,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.enterExprLogicalAnd(this)
             }
         }
-
         override suspend fun enterRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.enterExprLogicalAnd(this)
@@ -7962,7 +7953,6 @@ public open class LucidParser(input: TokenStream) : Parser(input) {
                 listener.exitExprLogicalAnd(this)
             }
         }
-
         override suspend fun exitRule(listener: SuspendParseTreeListener) {
             if (listener is SuspendLucidListener) {
                 listener.exitExprLogicalAnd(this)

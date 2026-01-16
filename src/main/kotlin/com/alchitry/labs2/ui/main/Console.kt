@@ -1,42 +1,37 @@
 package com.alchitry.labs2.ui.main
 
-import androidx.compose.foundation.ContextMenuDataProvider
-import androidx.compose.foundation.ContextMenuItem
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.drag
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import com.alchitry.labs2.ui.alchitry_text_field.AlchitryTextFieldState
+import com.alchitry.labs2.ui.alchitry_text_field.TextPosition
+import com.alchitry.labs2.ui.alchitry_text_field.textCursor
 import com.alchitry.labs2.ui.theme.AlchitryColors
-import com.alchitry.labs2.ui.theme.AlchitryTypography
 import com.alchitry.labs2.ui.theme.ubuntuMonoFont
-import kotlinx.coroutines.*
+import kotlinx.coroutines.launch
 import me.tongfei.progressbar.ProgressBarConsumer
 import kotlin.math.roundToInt
 
@@ -51,17 +46,27 @@ class Console {
         private const val SCALE = 0.08f
     }
 
-    private val content = mutableStateListOf<AnnotatedString>()
-    private var appendToLastLine = true
-    private var scrollToIdx by mutableStateOf(-1)
+    private val state = AlchitryTextFieldState(
+        onReplaceText = { _, _ -> true } // read only
+    )
 
-    private var activeProgressBar: AnnotatedString? = null
-    private val caretBlinker = CaretBlinker()
+    private var activeProgressBar: String? = null
+
+    private fun removeLastLine() {
+        val lineCount = state.lines.size
+        val lastLine = state.lines.getOrNull(lineCount - 1) ?: return
+        val lastLastLine = state.lines.getOrNull(lineCount - 2)
+        val startLine = if (lastLastLine == null) lineCount - 1 else lineCount - 2
+        val startOffset = lastLastLine?.text?.length ?: 0
+        val startPosition = TextPosition(startLine, startOffset)
+        val endPosition = TextPosition(lineCount - 1, lastLine.text.length)
+        state.replaceText("", startPosition..<endPosition)
+    }
 
     val progressBarConsumer = object : ProgressBarConsumer {
         override fun clear() {
-            if (content.lastOrNull() == activeProgressBar) {
-                content.removeLastOrNull()
+            if (state.lines.lastOrNull()?.text?.text == activeProgressBar) {
+                removeLastLine()
             }
             activeProgressBar = null
         }
@@ -92,12 +97,12 @@ class Console {
                 end?.let { append(it) }
             }
 
-            if (content.isNotEmpty() && (content.last() == activeProgressBar || content.last().isBlank())) {
-                content.removeLastOrNull()
+            if (state.lines.isNotEmpty() && (state.lines.last().text.text == activeProgressBar || state.lines.last().text.isBlank())) {
+                removeLastLine()
             }
-            content.add(newLine)
-            activeProgressBar = newLine
-            scrollToIdx = content.size - 1
+
+            state.appendText(AnnotatedString("\n" + newLine.text))
+            activeProgressBar = newLine.text
         }
 
         override fun close() {
@@ -133,43 +138,8 @@ class Console {
         return result
     }
 
-    private fun appendSingleLine(annotatedString: AnnotatedString) {
-        val adjustedString = if (annotatedString.endsWith("\n")) {
-            annotatedString.subSequence(0, annotatedString.length - 1)
-        } else {
-            annotatedString
-        }.let {
-            // empty strings can have styles that cause a crash
-            // so we replace them with a fresh empty string
-            it.ifEmpty { AnnotatedString("") }
-        }
-
-        if (appendToLastLine) {
-            val last = content.removeLastOrNull() ?: buildAnnotatedString {}
-            content.add(last + adjustedString)
-        } else {
-            content.add(adjustedString)
-        }
-
-        appendToLastLine = !annotatedString.endsWith("\n")
-
-        scrollToIdx = content.size - 1
-    }
-
-    fun append(annotatedString: AnnotatedString) {
-        val lines = annotatedString.split("\n")
-        lines
-            .mapIndexed { idx, line ->
-                buildAnnotatedString {
-                    append(line)
-                    if (idx != lines.size - 1) {
-                        appendLine()
-                    }
-                }
-            }
-            .toMutableList()
-            .forEach { appendSingleLine(it) }
-        caretBlinker.launchBlinkCursor()
+    fun append(text: AnnotatedString) {
+        state.appendText(text) // TODO: deal with styles
     }
 
     fun append(text: String, style: SpanStyle? = null) {
@@ -183,106 +153,80 @@ class Console {
     }
 
     fun clear() {
-        content.clear()
+        state.clearText()
     }
 
     @Composable
-    fun show(blinkCursor: Boolean = false) {
-        val lazyListState = rememberLazyListState()
-        val scope = rememberCoroutineScope()
-        caretBlinker.uiScope = scope
+    fun show(showCursor: Boolean = false) {
+        state.subscribe()
+        state.clipboardManager = LocalClipboardManager.current
 
-        LaunchedEffect(blinkCursor) {
-            if (blinkCursor)
-                caretBlinker.launchBlinkCursor()
-            else
-                caretBlinker.cancelBlinkCursor()
-        }
-        LaunchedEffect(scrollToIdx) {
-            if (scrollToIdx >= 0) {
-                lazyListState.animateScrollToItem(scrollToIdx)
-                scrollToIdx = -1
+        Box(contentAlignment = Alignment.TopStart) {
+            Canvas(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                state.redrawTriggerStates.value
+                with(state.selectionManager) {
+                    drawLineHighlight()
+                }
             }
-        }
-        CompositionLocalProvider(LocalTextStyle provides AlchitryTypography.editor) {
-            Box(Modifier.fillMaxSize()) {
-                // TODO: Replace with LocalClipboard when there's a way to use it on Desktop
-                val clipboard = LocalClipboardManager.current
-                ContextMenuDataProvider(items = {
-                    listOf(
-                        ContextMenuItem("Copy All") {
-                            scope.launch(Dispatchers.IO) {
-                                clipboard.setText(buildAnnotatedString {
-                                    content.forEach { appendLine(it) }
-                                })
+            Row {
+                Spacer(modifier = Modifier.width(10.dp))
+                Box {
+                    ContextMenuArea(
+                        items = {
+                            listOf(
+                                ContextMenuItem("Copy") { state.copy() },
+                                ContextMenuItem("Select All") { state.selectionManager.selectAll() },
+                                ContextMenuItem("Clear All") { clear() },
+                            )
+                        }
+                    ) {
+                        BoxWithConstraints {
+                            state.redrawTriggerStates.value
+                            with(LocalDensity.current) {
+                                state.updateLayout(maxWidth.roundToPx(), maxHeight.roundToPx(), this)
                             }
-                        },
-                        ContextMenuItem("Clear All") { clear() },
-                    )
-                }) {
-                    SelectionContainer {
-                        LazyColumn(
-                            state = lazyListState,
-                            contentPadding = PaddingValues(10.dp),
-                            modifier = Modifier.fillMaxWidth(1f - SCALE)
-                        ) {
-                            items(if (content.isEmpty()) listOf(AnnotatedString("")) else content) { lineText ->
-                                val lineWithLineBreak = buildAnnotatedString {
-                                    append(lineText)
-                                    append("\n")
-                                }
-                                if (blinkCursor && (content.isEmpty() || content.last() === lineText)) {
-                                    Layout(content = {
-                                        Text(lineWithLineBreak, maxLines = 1)
-                                        Box(
-                                            Modifier.fillMaxHeight().width(2.dp)
-                                                .graphicsLayer { alpha = if (caretBlinker.showCaret) 1f else 0f }
-                                                .background(LocalContentColor.current)
-                                        )
-                                    }) { measurables, constraints ->
-                                        val text = measurables[0].measure(constraints)
-                                        val cursor = measurables[1].measure(Constraints.fixedHeight(text.height))
 
-                                        layout(constraints.maxWidth, text.height) {
-                                            text.place(0, 0)
-                                            cursor.place(text.width, 0)
-                                        }
-                                    }
-                                } else {
-                                    Text(lineWithLineBreak, maxLines = 1)
+                            Canvas(
+                                modifier = Modifier
+                                    .clipToBounds()
+                                    .scrollable(
+                                        state.verticalScrollState,
+                                        Orientation.Vertical,
+                                        reverseDirection = true
+                                    )
+                                    .scrollable(
+                                        state.horizontalScrollState,
+                                        Orientation.Horizontal,
+                                        reverseDirection = true
+                                    )
+                                    .fillMaxSize()
+                                    .pointerHoverIcon(textCursor)
+                                    .then(state.keyModifier())
+                                    .then(state.tapModifier())
+
+                            ) {
+                                with(state) {
+                                    draw()
                                 }
                             }
                         }
-                    }
 
-                    LazyListMiniScrollBar(lazyListState, Modifier.fillMaxWidth(SCALE).align(Alignment.TopEnd)) {
-                        MiniText(content, SCALE)
                     }
+                    VerticalScrollbar(
+                        rememberScrollbarAdapter(state.verticalScrollState),
+                        Modifier.align(Alignment.CenterEnd).fillMaxHeight()
+                            .padding(end = 8.dp, top = 8.dp, bottom = 8.dp)
+                    )
+                    HorizontalScrollbar(
+                        rememberScrollbarAdapter(state.horizontalScrollState),
+                        Modifier.align(Alignment.BottomStart).fillMaxWidth()
+                            .padding(bottom = 8.dp, start = 8.dp, end = 20.dp),
+                    )
                 }
             }
         }
-    }
-}
-
-class CaretBlinker() {
-    var uiScope: CoroutineScope? = null
-    var showCaret by mutableStateOf(false)
-    private var blinkJob: Job? = null
-    fun launchBlinkCursor() {
-        blinkJob?.cancel()
-        blinkJob = uiScope?.launch {
-            showCaret = true
-            delay(1000)
-            while (isActive) {
-                showCaret = !showCaret
-                delay(500)
-            }
-        }
-    }
-
-    fun cancelBlinkCursor() {
-        blinkJob?.cancel()
-        showCaret = false
     }
 }
 

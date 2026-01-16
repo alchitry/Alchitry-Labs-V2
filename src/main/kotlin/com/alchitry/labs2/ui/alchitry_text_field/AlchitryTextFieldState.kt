@@ -90,9 +90,9 @@ data class AlchitryTextFieldStyle(
 )
 
 class AlchitryTextFieldState(
-    val codeFormatter: CodeFormatter,
-    val autocomplete: Autocomplete?,
-    val tokenizer: TextTokenizer,
+    val tokenizer: TextTokenizer? = null,
+    val codeFormatter: CodeFormatter? = null,
+    val autocomplete: Autocomplete? = null,
     val onTextChanged: () -> Unit = {},
     val onDoubleClicK: (Offset) -> Boolean = { false },
     val onReplaceText: (String, OpenEndRange<TextPosition>) -> Boolean = { _, _ -> false }
@@ -110,7 +110,7 @@ class AlchitryTextFieldState(
 
     var lineTopOffset: Float = 0f
     val tooltipState = NotationTooltipProvider(this)
-    var notations: List<Notation>? = null
+    val notations: MutableList<Notation> = mutableListOf()
     val focusRequester = FocusRequester()
     val lines = ArrayList<AlchitryLineState>()
     val verticalScrollState = ScrollState(0)
@@ -137,8 +137,13 @@ class AlchitryTextFieldState(
     private val undoManager = UndoManager(this, selectionManager)
 
     val styler = CodeStyler(this)
-
     var clipboardManager: ClipboardManager? = null
+    private var pendingText = AnnotatedString.Builder()
+
+    init {
+        lines.add(newLineState(AnnotatedString("")))
+    }
+
 
     override fun getLine(line: Int): String? = lines.getOrNull(line)?.text?.text
     override fun getLineCount(): Int = lines.size
@@ -297,6 +302,43 @@ class AlchitryTextFieldState(
             autocomplete?.reset(scope)
         }
 
+        LaunchedEffect(Unit) {
+            while (true) {
+                withFrameNanos { // 60Hz or display refresh rate sync
+                    if (pendingText.length != 0) {
+                        val textToAppend = pendingText.toAnnotatedString()
+                        val endPosition =
+                            TextPosition((lines.size - 1).coerceAtLeast(0), lines.lastOrNull()?.text?.length ?: 0)
+                        textToAppend.spanStyles.forEach { spanStyle ->
+                            fun offsetToPosition(offset: Int): TextPosition {
+                                val subText = textToAppend.text.substring(0, offset)
+                                val lineBreaks = subText.count { it == '\n' }
+                                return if (lineBreaks == 0) {
+                                    TextPosition(endPosition.line, endPosition.offset + offset)
+                                } else {
+                                    val lastLineStart = subText.lastIndexOf('\n') + 1
+                                    TextPosition(endPosition.line + lineBreaks, offset - lastLineStart)
+                                }
+                            }
+
+                            notations.add(
+                                Notation(
+                                    message = null,
+                                    range = offsetToPosition(spanStyle.start)..offsetToPosition(spanStyle.end),
+                                    type = NotationType.Custom("Log", spanStyle.item)
+                                )
+                            )
+                        }
+                        pendingText = AnnotatedString.Builder()
+
+                        replaceTextInternal(textToAppend.text, endPosition..<endPosition, true)
+                        startScrollToPosition(endPosition)
+                        styler.updateStyle()
+                    }
+                }
+            }
+        }
+
         DisposableEffect(Unit) {
             invalidator = {
                 redrawTriggerStates.value = true
@@ -315,8 +357,10 @@ class AlchitryTextFieldState(
         onTextChanged()
 
         lineOffsetCache = null
-        tokens = tokenizer.getTokens(lines.toCharStream())
-        styler.updateStyle()
+        tokenizer?.let { tokenizer ->
+            tokens = tokenizer.getTokens(lines.toCharStream()) ?: emptyList()
+            styler.updateStyle()
+        }
         updateHighlightTokens()
         invalidate()
     }
@@ -345,6 +389,20 @@ class AlchitryTextFieldState(
         replaceText(newText, range, true)
     }
 
+    fun clearText() {
+        val startPosition = TextPosition(0, 0)
+        val endPosition = TextPosition((lines.size - 1).coerceAtLeast(0), lines.lastOrNull()?.text?.length ?: 0)
+        replaceTextInternal("", startPosition..<endPosition, true)
+        startScrollToPosition(startPosition)
+    }
+
+    fun appendText(
+        newText: AnnotatedString
+    ) {
+        pendingText.append(newText)
+    }
+
+
     /**
      * Replaces the text covered by range with newText.
      *
@@ -359,7 +417,12 @@ class AlchitryTextFieldState(
         if (onReplaceText(newText, range)) {
             return
         }
+        replaceTextInternal(newText, range, updateCaret)
+    }
 
+    private fun replaceTextInternal(
+        newText: String, range: OpenEndRange<TextPosition> = selectionManager.selectedRange, updateCaret: Boolean = true
+    ) {
         val start = range.start.coerceInRange()
         val end = range.endExclusive.coerceInRange()
 
@@ -495,11 +558,11 @@ class AlchitryTextFieldState(
     }
 
     fun DrawScope.draw() {
-        val intSize = size.roundToIntSize()
-        if (this@AlchitryTextFieldState.size != intSize) {
-            this@AlchitryTextFieldState.size = intSize
-            layout()
-        }
+//        val intSize = size.roundToIntSize()
+//        if (this@AlchitryTextFieldState.size != intSize) {
+//            this@AlchitryTextFieldState.size = intSize
+//            layout()
+//        }
         redrawTriggerStates.value // triggers redraws on demand
         with(selectionManager) {
             drawSelection()
@@ -540,9 +603,10 @@ class AlchitryTextFieldState(
         newLineState(AnnotatedString("0")).apply { layout(Constraints()) }.lineHeight ?: 0
 
 
-    fun DrawScope.layout() {
-        val editorHeight = (size.height.roundToInt() - 20.dp.roundToPx()).coerceAtLeast(0)
-        val editorWidth = (size.width.roundToInt()).coerceAtLeast(0)
+    fun updateLayout(width: Int, height: Int, density: Density) {
+        this.size = IntSize(width, height)
+        val editorHeight = (height - with(density) { 20.dp.roundToPx() }).coerceAtLeast(0)
+        val editorWidth = width.coerceAtLeast(0)
 
         val lineConstraints = if (softWrap) Constraints.fixedWidth(editorWidth)
         else Constraints()
@@ -554,7 +618,8 @@ class AlchitryTextFieldState(
         }
 
         val totalHeight = lines.sumOf { it.lineHeight ?: 0 }
-        longestLine = (lines.maxOfOrNull { it.layoutResult?.size?.width ?: 0 } ?: 0) + 20.dp.roundToPx()
+        longestLine =
+            (lines.maxOfOrNull { it.layoutResult?.size?.width ?: 0 } ?: 0) + with(density) { 20.dp.roundToPx() }
 
         @Suppress("INVISIBLE_SETTER")
         verticalScrollState.maxValue = (totalHeight - editorHeight).coerceAtLeast(0)
@@ -610,8 +675,8 @@ class AlchitryTextFieldState(
     }
 
     fun lineNotationLevel(line: Int): NotationType? {
-        return notations?.filter { (it.range.start.line..it.range.endInclusive.line).contains(line) }
-            ?.minByOrNull { it.type.ordinal }?.type
+        return notations.filter { (it.range.start.line..it.range.endInclusive.line).contains(line) }
+            .minByOrNull { it.type.priority }?.type
     }
 
     fun keyModifier() = Modifier.onKeyEvent {
@@ -666,6 +731,7 @@ class AlchitryTextFieldState(
     }
 
     fun adjustIndents() {
+        val codeFormatter = codeFormatter ?: return
         if (lines.isNotEmpty()) replaceText( // use replaceText so this ends up on the undo/redo stack
             codeFormatter.formatAll(this),
             TextPosition(0, 0)..<TextPosition(lines.size - 1, lines.last().text.length),
@@ -751,12 +817,14 @@ class AlchitryTextFieldState(
             }
 
             replaceText(modifiedText)
-            if ((line?.isBlank() == true && modifiedText.isNotBlank()) || (text == ":" && line?.length == selectionManager.caret.offset - 1)) {
-                val current = lines[lineNum].text.text
-                replaceText(
-                    codeFormatter.getIndentFor(this, lineNum) + current.trim(),
-                    TextPosition(lineNum, 0)..<TextPosition(lineNum, current.length)
-                )
+            codeFormatter?.let { codeFormatter ->
+                if ((line?.isBlank() == true && modifiedText.isNotBlank()) || (text == ":" && line?.length == selectionManager.caret.offset - 1)) {
+                    val current = lines[lineNum].text.text
+                    replaceText(
+                        codeFormatter.getIndentFor(this, lineNum) + current.trim(),
+                        TextPosition(lineNum, 0)..<TextPosition(lineNum, current.length)
+                    )
+                }
             }
             repeat(modifiedText.length - text.length) {
                 selectionManager.moveLeft()
@@ -933,9 +1001,9 @@ class AlchitryTextFieldState(
                             (nextChar == ']' && prevChar == '[')
                         ) {
                             replaceText("\n\n")
-                            replaceText(codeFormatter.getIndentFor(this, selectionManager.caret.line))
+                            replaceText(codeFormatter?.getIndentFor(this, selectionManager.caret.line) ?: "")
                             selectionManager.moveUp()
-                            replaceText(codeFormatter.getIndentFor(this, selectionManager.caret.line))
+                            replaceText(codeFormatter?.getIndentFor(this, selectionManager.caret.line) ?: "")
                         } else {
                             val inLeadingWhitespace =
                                 lines[selectionManager.caret.line].text.text.leadingWhitespace() >= selectionManager.caret.offset
@@ -943,7 +1011,7 @@ class AlchitryTextFieldState(
                             val lineNum = selectionManager.caret.line + if (inLeadingWhitespace) 1 else 0
                             val current = lines[lineNum].text.text
 
-                            val indent = codeFormatter.getIndentFor(this, lineNum)
+                            val indent = codeFormatter?.getIndentFor(this, lineNum) ?: ""
 
                             replaceText(
                                 indent + current.trimStart(),
@@ -978,7 +1046,7 @@ class AlchitryTextFieldState(
                     }
 
                     lines.getOrNull(selectionManager.caret.line)?.text?.isBlank() == true -> {
-                        replaceText(codeFormatter.getIndentFor(this, selectionManager.caret.line))
+                        replaceText(codeFormatter?.getIndentFor(this, selectionManager.caret.line) ?: "")
                     }
 
                     else -> {

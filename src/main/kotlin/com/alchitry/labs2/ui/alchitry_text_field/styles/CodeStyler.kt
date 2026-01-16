@@ -12,7 +12,7 @@ class CodeStyler(
 
     fun updateStyle() {
         val lines = editor.lines
-        if (lines.size == 0) // no text to show
+        if (lines.isEmpty()) // no text to show
             return
 
         val styles = MutableList(lines.size) { mutableListOf<LineStyle>() }
@@ -20,7 +20,7 @@ class CodeStyler(
         val styleTokens = mutableListOf<StyleToken>().apply {
             addAll(editor.tokens.map { it.styleToken })
             // sort the notations so more severe ones override less severe ones
-            editor.notations?.sortedBy { it.type }?.asReversed()?.map { it.toStyleToken() }?.let { addAll(it) }
+            editor.notations.sortedBy { it.type.priority }.asReversed().map { it.toStyleToken() }.let { addAll(it) }
         }
 
         styleTokens.forEach { token ->

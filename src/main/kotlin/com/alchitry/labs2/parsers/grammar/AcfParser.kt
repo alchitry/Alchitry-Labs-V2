@@ -40,7 +40,7 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
 
         private val SHARED_CONTEXT_CACHE = PredictionContextCache()
         private val RULE_NAMES: Array<String> = arrayOf(
-            "source", "line", "pin", "attributeBlock", "nativeBlock", "name",
+            "source", "line", "pin", "attributeBlock", "nativeBlock", "name", 
             "attribute", "attributeValue", "portName", "pinName", "frequency", 
             "arrayIndex", "number", "semi"
         )
@@ -51,7 +51,7 @@ public open class AcfParser(input: TokenStream) : Parser(input) {
         )
 
         private val SYMBOLIC_NAMES: Array<String?> = arrayOf(
-            null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, 
             "NATIVE_BLOCK", "SEMICOLON", "NL", "FREQ_UNIT", "BASIC_NAME", 
             "REAL", "INT", "BLOCK_COMMENT", "COMMENT", "WS"
         )

@@ -66,8 +66,8 @@ fun ProjectTree() {
                                         .notationCollectorFlowForFile(file)
                                         .collectAsState(null).value
                                         ?.getAllNotations()
-                                        ?.minByOrNull { it.type.ordinal }
-                                        ?.type?.color
+                                        ?.minByOrNull { it.type.priority }
+                                        ?.type?.style?.color
 
                                     ContextMenuArea(
                                         items = {
@@ -171,8 +171,8 @@ fun ProjectTree() {
                                         .notationCollectorFlowForFile(file)
                                         .collectAsState(null).value
                                         ?.getAllNotations()
-                                        ?.minByOrNull { it.type.ordinal }
-                                        ?.type?.color
+                                        ?.minByOrNull { it.type.priority }
+                                        ?.type?.style?.color
                                     ContextMenuArea(
                                         items = {
                                             when {

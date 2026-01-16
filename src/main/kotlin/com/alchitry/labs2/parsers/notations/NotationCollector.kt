@@ -3,12 +3,10 @@ package com.alchitry.labs2.parsers.notations
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.withStyle
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.project.files.ProjectFile
 import com.alchitry.labs2.ui.alchitry_text_field.TextPosition
-import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.strumenta.antlrkotlin.runtime.BitSet
 import kotlinx.collections.immutable.toImmutableMap
 import org.antlr.v4.kotlinruntime.*
@@ -99,14 +97,7 @@ class NotationCollector private constructor(
                     (if (includeInfos) infos else emptyList())
 
         notations.sortedBy { it.range.start }.forEach {
-            val style = when (it.type) {
-                NotationType.Error -> SpanStyle(color = AlchitryColors.current.Error)
-                NotationType.Warning -> SpanStyle(color = AlchitryColors.current.Warning)
-                NotationType.Info -> SpanStyle(color = AlchitryColors.current.Info)
-                NotationType.SyntaxError -> SpanStyle(color = AlchitryColors.current.Error)
-                NotationType.SyntaxAmbiguity -> SpanStyle(color = AlchitryColors.current.Warning)
-            }
-            withStyle(style) {
+            withStyle(it.type.style) {
                 append("$prefix    $it\n")
             }
         }
@@ -201,6 +192,7 @@ class NotationCollector private constructor(
             NotationType.Error, NotationType.SyntaxError, NotationType.SyntaxAmbiguity -> errors.add(notation)
             NotationType.Warning -> warnings.add(notation)
             NotationType.Info -> infos.add(notation)
+            is NotationType.Custom -> {}
         }
     }
 

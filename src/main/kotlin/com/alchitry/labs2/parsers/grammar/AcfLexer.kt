@@ -37,7 +37,7 @@ public open class AcfLexer(input: CharStream) : Lexer(input) {
         )
 
         private val SYMBOLIC_NAMES: Array<String?> = arrayOf(
-            null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, 
             "NATIVE_BLOCK", "SEMICOLON", "NL", "FREQ_UNIT", "BASIC_NAME", 
             "REAL", "INT", "BLOCK_COMMENT", "COMMENT", "WS"
         )
@@ -95,7 +95,7 @@ public open class AcfLexer(input: CharStream) : Lexer(input) {
     override val ruleNames: Array<String> = arrayOf(
         "T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7",
         "T__8", "NATIVE_BLOCK", "SEMICOLON", "NL", "FREQ_UNIT", "BASIC_NAME",
-        "REAL", "INT", "BLOCK_COMMENT", "COMMENT", "WS", "A", "B", "C",
+        "REAL", "INT", "BLOCK_COMMENT", "COMMENT", "WS", "A", "B", "C", 
         "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", 
         "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
     )
@@ -107,6 +107,7 @@ public open class AcfLexer(input: CharStream) : Lexer(input) {
     override val modeNames: Array<String> = arrayOf(
         "DEFAULT_MODE"
     )
+
 
 
     override fun action(_localctx: RuleContext?, ruleIndex: Int, actionIndex: Int) {
@@ -142,7 +143,7 @@ public open class AcfLexer(input: CharStream) : Lexer(input) {
                         charPositionInLine++
                     }
                 }
-
+                    
             }
         }
     }

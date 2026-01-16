@@ -168,7 +168,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
             "module_instance_identifier", "net_identifier", "output_port_identifier",
             "parameter_identifier", "port_identifier", "real_identifier",
             "simple_identifier", "specparam_identifier", "system_function_identifier",
-            "system_task_identifier", "task_identifier", "terminal_identifier",
+            "system_task_identifier", "task_identifier", "terminal_identifier", 
             "topmodule_identifier", "udp_identifier", "udp_instance_identifier", 
             "variable_identifier"
         )
@@ -209,7 +209,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
             null, null, null, null, null, null, null, null, null, null,
             null, null, null, null, null, null, null, "'celldefine'", null,
             null, null, null, "'end_keywords'", "'endcelldefine'", null,
-            null, null, null, null, "'nounconnected_drive'", null, "'resetall'",
+            null, null, null, null, "'nounconnected_drive'", null, "'resetall'", 
             null, null, null, null, null, null, null, null, "'``'", null, 
             "'`\\`\"'", "'`\"'"
         )
@@ -256,7 +256,7 @@ public open class VerilogParser(input: TokenStream) : Parser(input) {
             "PRAGMA_DIRECTIVE", "RESETALL_DIRECTIVE", "TIMESCALE_DIRECTIVE",
             "UNCONNECTED_DRIVE_DIRECTIVE", "UNDEF_DIRECTIVE", "MACRO_USAGE",
             "VERSION_SPECIFIER", "DEFAULT_NETTYPE_VALUE", "MACRO_NAME",
-            "FILENAME", "MACRO_DELIMITER", "MACRO_ESC_NEWLINE", "MACRO_ESC_QUOTE",
+            "FILENAME", "MACRO_DELIMITER", "MACRO_ESC_NEWLINE", "MACRO_ESC_QUOTE", 
             "MACRO_QUOTE", "MACRO_TEXT", "SOURCE_TEXT", "TIME_UNIT", "TIME_VALUE", 
             "UNCONNECTED_DRIVE_VALUE", "MACRO_IDENTIFIER"
         )

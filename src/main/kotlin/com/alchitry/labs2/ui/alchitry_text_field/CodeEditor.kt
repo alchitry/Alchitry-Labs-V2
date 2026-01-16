@@ -39,7 +39,6 @@ fun CodeEditor(
     state.textFieldState.clipboardManager = LocalClipboardManager.current
 
     CopyReadOnlyDialog(state.showReadOnlyDialog, state.file) { state.showReadOnlyDialog = false }
-    val density = LocalDensity.current
 
     Box(contentAlignment = Alignment.TopStart) {
         Canvas(
@@ -67,7 +66,8 @@ fun CodeEditor(
                                     notation != null
                                 ) 1f else 0.4f
                             CompositionLocalProvider(
-                                LocalContentColor provides (notation?.color ?: AlchitryColors.current.GutterForeground),
+                                LocalContentColor provides (notation?.style?.color
+                                    ?: AlchitryColors.current.GutterForeground),
                                 LocalTextStyle provides AlchitryTypography.editor
                             ) {
                                 // if the index is negative,
@@ -179,30 +179,37 @@ fun CodeEditor(
                             notation.message?.let { Text(it) }
                         }
                     ) {
-                        Canvas(
-                            modifier = Modifier
-                                .clipToBounds()
-                                .scrollable(
-                                    state.textFieldState.verticalScrollState,
-                                    Orientation.Vertical,
-                                    reverseDirection = true
-                                )
-                                .scrollable(
-                                    state.textFieldState.horizontalScrollState,
-                                    Orientation.Horizontal,
-                                    reverseDirection = true
-                                )
-                                .fillMaxSize()
-                                .pointerHoverIcon(textCursor)
-                                .then(state.textFieldState.keyModifier())
-                                .then(state.textFieldState.tapModifier())
-
-                        ) {
-                            with(state.textFieldState) {
-                                draw()
+                        BoxWithConstraints {
+                            state.textFieldState.redrawTriggerStates.value
+                            with(LocalDensity.current) {
+                                state.textFieldState.updateLayout(maxWidth.roundToPx(), maxHeight.roundToPx(), this)
                             }
+                            Canvas(
+                                modifier = Modifier
+                                    .clipToBounds()
+                                    .scrollable(
+                                        state.textFieldState.verticalScrollState,
+                                        Orientation.Vertical,
+                                        reverseDirection = true
+                                    )
+                                    .scrollable(
+                                        state.textFieldState.horizontalScrollState,
+                                        Orientation.Horizontal,
+                                        reverseDirection = true
+                                    )
+                                    .fillMaxSize()
+                                    .pointerHoverIcon(textCursor)
+                                    .then(state.textFieldState.keyModifier())
+                                    .then(state.textFieldState.tapModifier())
+
+                            ) {
+                                with(state.textFieldState) {
+                                    draw()
+                                }
+                            }
+
+                            state.textFieldState.autocomplete?.suggestionOverlay(state.textFieldState)
                         }
-                        state.textFieldState.autocomplete?.suggestionOverlay(state.textFieldState)
                     }
                 }
                 VerticalScrollbar(
@@ -220,7 +227,7 @@ fun CodeEditor(
 }
 
 
-private val textCursor = PointerIcon(Cursor(Cursor.TEXT_CURSOR))
+val textCursor = PointerIcon(Cursor(Cursor.TEXT_CURSOR))
 
 
 

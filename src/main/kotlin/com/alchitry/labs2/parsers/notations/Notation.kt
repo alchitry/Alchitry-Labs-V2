@@ -1,6 +1,7 @@
 package com.alchitry.labs2.parsers.notations
 
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.style.TextDecoration
 import com.alchitry.labs2.ui.alchitry_text_field.TextPosition
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import org.antlr.v4.kotlinruntime.ParserRuleContext
@@ -56,17 +57,40 @@ data class Notation(
     }
 }
 
-enum class NotationType(val label: String) {
-    Error("Error"),
-    SyntaxError("Syntax error"),
-    Warning("Warning"),
-    SyntaxAmbiguity("Syntax ambiguity"),
-    Info("Info");
+sealed class NotationType(val label: String, val style: SpanStyle) {
+    data object Error : NotationType(
+        "Error",
+        SpanStyle(color = AlchitryColors.current.Error, textDecoration = TextDecoration.Underline)
+    )
 
-    val color: Color
+    data object SyntaxError : NotationType(
+        "Syntax error",
+        SpanStyle(AlchitryColors.current.Error, textDecoration = TextDecoration.Underline)
+    )
+
+    data object Warning : NotationType(
+        "Warning",
+        SpanStyle(AlchitryColors.current.Warning, textDecoration = TextDecoration.Underline)
+    )
+
+    data object SyntaxAmbiguity : NotationType(
+        "Syntax ambiguity",
+        SpanStyle(AlchitryColors.current.Warning, textDecoration = TextDecoration.Underline)
+    )
+
+    data object Info : NotationType(
+        "Info",
+        SpanStyle(AlchitryColors.current.Info, textDecoration = TextDecoration.Underline)
+    )
+
+    class Custom(label: String, style: SpanStyle) : NotationType(label, style)
+
+    val priority: Int
         get() = when (this) {
-            Error, SyntaxError -> AlchitryColors.current.Error
-            Warning, SyntaxAmbiguity -> AlchitryColors.current.Warning
-            Info -> AlchitryColors.current.Info
+            is Error, is SyntaxError -> 0
+            is Warning, is SyntaxAmbiguity -> 1
+            is Info -> 2
+            is Custom -> 3
         }
 }
+
