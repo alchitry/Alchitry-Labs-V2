@@ -39,6 +39,7 @@ fun CodeEditor(
     state.textFieldState.clipboardManager = LocalClipboardManager.current
 
     CopyReadOnlyDialog(state.showReadOnlyDialog, state.file) { state.showReadOnlyDialog = false }
+    val density = LocalDensity.current
 
     Box(contentAlignment = Alignment.TopStart) {
         Canvas(
@@ -122,8 +123,8 @@ fun CodeEditor(
                     ),
                 prefetchState = null,
                 measurePolicy = fun LazyLayoutMeasureScope.(constraints: Constraints): MeasureResult {
-                    with(state.textFieldState) {
-                        layout(constraints)
+                    with(state) {
+                        layoutGutter()
                     }
 
                     // subscribe to editor changes
@@ -138,7 +139,7 @@ fun CodeEditor(
 
                             val result = if (nextY >= 0 && y < constraints.maxHeight) {
                                 val measured =
-                                    measure(lineNum, Constraints.fixed(state.textFieldState.gutterWidth, lineHeight))
+                                    measure(lineNum, Constraints.fixed(state.gutterWidth, lineHeight))
                                 val yOffset = y + (lineHeight - (measured.maxOfOrNull { it.height } ?: 0)) / 2
                                 yOffset to measured
                             } else null
@@ -148,12 +149,12 @@ fun CodeEditor(
                         }
 
                     return layout(
-                        width = state.textFieldState.gutterWidth,
+                        width = state.gutterWidth,
                         height = constraints.maxHeight
                     ) {
                         placeables.forEach { p ->
                             p.second.forEach {
-                                it.place(state.textFieldState.gutterWidth - it.width, p.first)
+                                it.place(state.gutterWidth - it.width, p.first)
                             }
                         }
                     }

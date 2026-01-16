@@ -1,7 +1,9 @@
 package com.alchitry.labs2.ui.alchitry_text_field
 
+import androidx.compose.foundation.lazy.layout.LazyLayoutMeasureScope
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.Constraints
 import com.alchitry.labs2.parsers.grammar.AcfLexer
 import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.VerilogLexer
@@ -16,6 +18,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.abs
+import kotlin.math.log10
 
 class CodeEditorState(val file: ProjectFile) {
     val textFieldState = AlchitryTextFieldState(
@@ -31,6 +35,9 @@ class CodeEditorState(val file: ProjectFile) {
     var maxLineActions = 0
     val scope = textFieldState.scope
     var showReadOnlyDialog by mutableStateOf(false)
+    private var gutterDigits = 0
+    var gutterWidth = 0
+        private set
 
     init {
         Project.current?.currentNotationCollectorForFile(file)?.let { collector ->
@@ -116,5 +123,21 @@ class CodeEditorState(val file: ProjectFile) {
         textFieldState.notations = notationCollector.getAllNotations()
         lineActions = notationCollector.getLineActions()
         maxLineActions = lineActions?.values?.maxOfOrNull { actions -> actions.size } ?: 0
+    }
+
+    private fun Int.length() = when (this) {
+        0 -> 1
+        else -> log10(abs(toDouble())).toInt() + 1
+    }
+
+    fun LazyLayoutMeasureScope.layoutGutter() {
+        val lineHeight = textFieldState.lines.firstOrNull()?.lineHeight.let {
+            if (it == null || it == 0) textFieldState.defaultLineHeight() else it
+        }
+
+        val maxDigits = textFieldState.lines.size.length()
+        val placeables = measure(-maxDigits - 1, Constraints(maxHeight = lineHeight))
+        gutterWidth = placeables.maxOf { it.width }
+        gutterDigits = maxDigits
     }
 }

@@ -4,7 +4,6 @@ package com.alchitry.labs2.ui.alchitry_text_field
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.lazy.layout.LazyLayoutMeasureScope
 import androidx.compose.foundation.text.TextDelegate
 import androidx.compose.foundation.text.platformDefaultKeyMapping
 import androidx.compose.material3.LocalContentColor
@@ -59,8 +58,6 @@ import kotlinx.coroutines.launch
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 import org.antlr.v4.kotlinruntime.tree.TerminalNode
-import kotlin.math.abs
-import kotlin.math.log10
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
@@ -116,11 +113,8 @@ class AlchitryTextFieldState(
     var notations: List<Notation>? = null
     val focusRequester = FocusRequester()
     val lines = ArrayList<AlchitryLineState>()
-    private var gutterDigits = 0
     val verticalScrollState = ScrollState(0)
     val horizontalScrollState = ScrollState(0)
-    var gutterWidth = 0
-        private set
     var softWrap by Delegates.observable(false) { _, _, _ -> invalidate() }
     private var invalidator: (() -> Unit)? = null
     val redrawTriggerStates = mutableStateOf(false, neverEqualPolicy())
@@ -158,7 +152,6 @@ class AlchitryTextFieldState(
 
     fun onCaretChanged() {
         updateHighlightTokens()
-        //autocomplete?.reset()
     }
 
     private fun updateHighlightTokens() {
@@ -468,7 +461,7 @@ class AlchitryTextFieldState(
         val viewTop = verticalScrollState.value
         val viewBottom = viewTop + size.height
         val viewLeft = horizontalScrollState.value
-        val viewRight = viewLeft + (size.width - gutterWidth)
+        val viewRight = viewLeft + size.width
 
         val verticalDestination = when {
             top < viewTop -> top
@@ -478,7 +471,7 @@ class AlchitryTextFieldState(
 
         val horizontalDestination = when {
             left < viewLeft -> left
-            right > viewRight -> right - (size.width - gutterWidth)
+            right > viewRight -> right - size.width
             else -> null
         }
 
@@ -502,6 +495,11 @@ class AlchitryTextFieldState(
     }
 
     fun DrawScope.draw() {
+        val intSize = size.roundToIntSize()
+        if (this@AlchitryTextFieldState.size != intSize) {
+            this@AlchitryTextFieldState.size = intSize
+            layout()
+        }
         redrawTriggerStates.value // triggers redraws on demand
         with(selectionManager) {
             drawSelection()
@@ -537,29 +535,14 @@ class AlchitryTextFieldState(
         }
     }
 
-    private fun Int.length() = when (this) {
-        0 -> 1
-        else -> log10(abs(toDouble())).toInt() + 1
-    }
 
-    private fun defaultLineHeight(): Int =
+    fun defaultLineHeight(): Int =
         newLineState(AnnotatedString("0")).apply { layout(Constraints()) }.lineHeight ?: 0
 
 
-    fun LazyLayoutMeasureScope.layout(constraints: Constraints) {
-        size = IntSize(constraints.maxWidth, constraints.maxHeight)
-
-        val lineHeight = lines.firstOrNull()?.lineHeight.let {
-            if (it == null || it == 0) defaultLineHeight() else it
-        }
-
-        val maxDigits = lines.size.length()
-        val placeables = measure(-maxDigits - 1, Constraints(maxHeight = lineHeight))
-        gutterWidth = placeables.maxOf { it.width }
-        gutterDigits = maxDigits
-
-        val editorHeight = (constraints.maxHeight - 20.dp.roundToPx()).coerceAtLeast(0)
-        val editorWidth = (constraints.maxWidth - gutterWidth).coerceAtLeast(0)
+    fun DrawScope.layout() {
+        val editorHeight = (size.height.roundToInt() - 20.dp.roundToPx()).coerceAtLeast(0)
+        val editorWidth = (size.width.roundToInt()).coerceAtLeast(0)
 
         val lineConstraints = if (softWrap) Constraints.fixedWidth(editorWidth)
         else Constraints()
@@ -584,7 +567,6 @@ class AlchitryTextFieldState(
 
         scrollTarget?.let { startScrollToPosition(it) }
         scrollTarget = null
-
     }
 
     fun selectWordAt(offset: TextPosition) {
