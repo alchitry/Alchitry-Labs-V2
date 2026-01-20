@@ -52,6 +52,12 @@ class FtdiLibUSB(dev: Device, val interfaceType: PortInterfaceType) : UsbDevice(
             else -> 64
         }
         maxPacketSize = maxPacketSize.coerceAtMost(maxPacket)
+        try {
+            setLineProperty(LineDatabit.BITS_8, LineStopbit.STOP_BIT_1, LineParity.NONE)
+        } catch (e: LibUsbException) {
+            close()
+            throw LibUsbException("set line property failed", -8)
+        }
     }
 
     override fun usbReset() {

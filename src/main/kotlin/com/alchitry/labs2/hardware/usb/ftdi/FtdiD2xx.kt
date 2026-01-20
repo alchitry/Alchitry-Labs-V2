@@ -10,6 +10,13 @@ class FtdiD2xx(private val device: Device) : Ftdi, SerialDevice {
     private var readTimeout = 0
     private var writeTimeout = 0
 
+    init {
+        try {
+            device.setDataCharacteristics(8, 0, FTDIConstants.FT_PARITY_NONE)
+        } catch (e: FTDIException) {
+            throw RuntimeException(e)
+        }
+    }
     override fun setTimeouts(read: Int, write: Int) {
         readTimeout = read
         writeTimeout = write
