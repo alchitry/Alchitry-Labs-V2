@@ -308,33 +308,8 @@ class AlchitryTextFieldState(
                 withFrameNanos { // 60Hz or display refresh rate sync
                     if (pendingText.length != 0) {
                         val textToAppend = pendingText.toAnnotatedString()
-                        val endPosition =
-                            TextPosition((lines.size - 1).coerceAtLeast(0), lines.lastOrNull()?.text?.length ?: 0)
-                        textToAppend.spanStyles.forEach { spanStyle ->
-                            fun offsetToPosition(offset: Int): TextPosition {
-                                val subText = textToAppend.text.substring(0, offset)
-                                val lineBreaks = subText.count { it == '\n' }
-                                return if (lineBreaks == 0) {
-                                    TextPosition(endPosition.line, endPosition.offset + offset)
-                                } else {
-                                    val lastLineStart = subText.lastIndexOf('\n') + 1
-                                    TextPosition(endPosition.line + lineBreaks, offset - lastLineStart)
-                                }
-                            }
-
-                            notations.add(
-                                Notation(
-                                    message = null,
-                                    range = offsetToPosition(spanStyle.start)..offsetToPosition(spanStyle.end),
-                                    type = NotationType.Custom("Log", spanStyle.item)
-                                )
-                            )
-                        }
+                        appendText(textToAppend, updateCaret = false)
                         pendingText = AnnotatedString.Builder()
-
-                        replaceTextInternal(textToAppend.text, endPosition..<endPosition, true)
-                        startScrollToPosition(endPosition)
-                        styler.updateStyle()
                     }
                 }
             }
@@ -393,16 +368,46 @@ class AlchitryTextFieldState(
     fun clearText() {
         val startPosition = TextPosition(0, 0)
         val endPosition = TextPosition((lines.size - 1).coerceAtLeast(0), lines.lastOrNull()?.text?.length ?: 0)
-        replaceTextInternal("", startPosition..<endPosition, true)
+        forceReplaceText("", startPosition..<endPosition, true)
         startScrollToPosition(startPosition)
     }
 
-    fun appendText(
+    fun queueAppendText(
         newText: AnnotatedString
     ) {
         pendingText.append(newText)
     }
 
+    fun appendText(newText: AnnotatedString, updateCaret: Boolean = true) {
+        val endPosition =
+            TextPosition((lines.size - 1).coerceAtLeast(0), lines.lastOrNull()?.text?.length ?: 0)
+        newText.spanStyles.forEach { spanStyle ->
+            fun offsetToPosition(offset: Int): TextPosition {
+                val subText = newText.text.substring(0, offset)
+                val lineBreaks = subText.count { it == '\n' }
+                return if (lineBreaks == 0) {
+                    TextPosition(endPosition.line, endPosition.offset + offset)
+                } else {
+                    val lastLineStart = subText.lastIndexOf('\n') + 1
+                    TextPosition(endPosition.line + lineBreaks, offset - lastLineStart)
+                }
+            }
+
+            notations.add(
+                Notation(
+                    message = null,
+                    range = offsetToPosition(spanStyle.start)..offsetToPosition(spanStyle.end),
+                    type = NotationType.Custom("Log", spanStyle.item)
+                )
+            )
+        }
+
+        forceReplaceText(newText.text, endPosition..<endPosition, updateCaret)
+        val bottomPosition =
+            TextPosition((lines.size - 1).coerceAtLeast(0), lines.lastOrNull()?.text?.length ?: 0)
+        startScrollToPosition(bottomPosition)
+        styler.updateStyle()
+    }
 
     /**
      * Replaces the text covered by range with newText.
@@ -418,10 +423,20 @@ class AlchitryTextFieldState(
         if (onReplaceText(newText, range)) {
             return
         }
-        replaceTextInternal(newText, range, updateCaret)
+        forceReplaceText(newText, range, updateCaret)
     }
 
-    private fun replaceTextInternal(
+    /**
+     * Replaces a specified range of text with the given new text, with the option to update the
+     * caret position after the replacement.
+     *
+     * @param newText the text to replace the specified range of text with.
+     * @param range the range of text to be replaced, defined as an open-ended range of [TextPosition].
+     *        Defaults to the currently selected range.
+     * @param updateCaret a boolean indicating whether the caret position should be updated after
+     *        the text replacement. Defaults to true.
+     */
+    fun forceReplaceText(
         newText: String, range: OpenEndRange<TextPosition> = selectionManager.selectedRange, updateCaret: Boolean = true
     ) {
         val start = range.start.coerceInRange()

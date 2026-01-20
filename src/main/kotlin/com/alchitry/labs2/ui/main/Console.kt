@@ -54,21 +54,20 @@ class Console(onKeyEvent: (KeyEvent) -> Boolean = { false }) {
 
     private var activeProgressBar: String? = null
 
-    private fun removeLastLine() {
+    private fun clearLastLine() {
         val lineCount = state.lines.size
         val lastLine = state.lines.getOrNull(lineCount - 1) ?: return
-        val lastLastLine = state.lines.getOrNull(lineCount - 2)
-        val startLine = if (lastLastLine == null) lineCount - 1 else lineCount - 2
-        val startOffset = lastLastLine?.text?.length ?: 0
-        val startPosition = TextPosition(startLine, startOffset)
-        val endPosition = TextPosition(lineCount - 1, lastLine.text.length)
-        state.replaceText("", startPosition..<endPosition)
+        val lineNumber = lineCount - 1
+        val startPosition = TextPosition(lineNumber, 0)
+        val endPosition = TextPosition(lineNumber, lastLine.text.length)
+        state.forceReplaceText("", startPosition..<endPosition, false)
+        state.notations.removeIf { it.range.endInclusive.line == lineNumber }
     }
 
     val progressBarConsumer = object : ProgressBarConsumer {
         override fun clear() {
             if (state.lines.lastOrNull()?.text?.text == activeProgressBar) {
-                removeLastLine()
+                clearLastLine()
             }
             activeProgressBar = null
         }
@@ -100,10 +99,10 @@ class Console(onKeyEvent: (KeyEvent) -> Boolean = { false }) {
             }
 
             if (state.lines.isNotEmpty() && (state.lines.last().text.text == activeProgressBar || state.lines.last().text.isBlank())) {
-                removeLastLine()
+                clearLastLine()
             }
 
-            state.appendText(AnnotatedString("\n" + newLine.text))
+            state.appendText(newLine, false)
             activeProgressBar = newLine.text
         }
 
@@ -141,7 +140,7 @@ class Console(onKeyEvent: (KeyEvent) -> Boolean = { false }) {
     }
 
     fun append(text: AnnotatedString) {
-        state.appendText(text) // TODO: deal with styles
+        state.queueAppendText(text) // TODO: deal with styles
     }
 
     fun append(text: String, style: SpanStyle? = null) {
