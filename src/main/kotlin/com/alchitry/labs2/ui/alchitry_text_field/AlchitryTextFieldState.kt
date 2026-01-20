@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.platformDefaultKeyMapping
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -113,7 +114,7 @@ class AlchitryTextFieldState(
     val tooltipState = NotationTooltipProvider(this)
     val notations: MutableList<Notation> = mutableListOf()
     val focusRequester = FocusRequester()
-    val lines = ArrayList<AlchitryLineState>()
+    val lines = SnapshotStateList<AlchitryLineState>()
     val verticalScrollState = ScrollState(0)
     val horizontalScrollState = ScrollState(0)
     var softWrap by Delegates.observable(false) { _, _, _ -> invalidate() }

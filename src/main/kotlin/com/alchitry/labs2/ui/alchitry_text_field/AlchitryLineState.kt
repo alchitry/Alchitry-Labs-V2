@@ -17,7 +17,7 @@ class AlchitryLineState(
     density: Density?,
     val highlights: MutableList<HighlightAnnotation>,
     fontFamilyResolver: FontFamily.Resolver?,
-    style: TextStyle?
+    val style: TextStyle?
 ) {
     var layoutResult: TextLayoutResult? = null
     private var lastConstraints: Constraints? = null

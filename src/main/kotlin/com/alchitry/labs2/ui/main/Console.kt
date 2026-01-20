@@ -3,8 +3,8 @@ package com.alchitry.labs2.ui.main
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -27,6 +27,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import com.alchitry.labs2.ui.alchitry_text_field.AlchitryLineState
 import com.alchitry.labs2.ui.alchitry_text_field.AlchitryTextFieldState
 import com.alchitry.labs2.ui.alchitry_text_field.TextPosition
 import com.alchitry.labs2.ui.alchitry_text_field.textCursor
@@ -162,122 +163,114 @@ class Console(onKeyEvent: (KeyEvent) -> Boolean = { false }) {
         state.subscribe()
         state.clipboardManager = LocalClipboardManager.current
 
-        Box(contentAlignment = Alignment.TopStart) {
-            Canvas(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                state.redrawTriggerStates.value
-                with(state.selectionManager) {
-                    drawLineHighlight()
-                }
-            }
-            Row {
-                Spacer(modifier = Modifier.width(10.dp))
-                Box {
-                    ContextMenuArea(
-                        items = {
-                            listOf(
-                                ContextMenuItem("Copy") { state.copy() },
-                                ContextMenuItem("Select All") { state.selectionManager.selectAll() },
-                                ContextMenuItem("Clear All") { clear() },
-                            )
-                        }
-                    ) {
-                        BoxWithConstraints {
-                            state.redrawTriggerStates.value
-                            with(LocalDensity.current) {
-                                state.updateLayout(maxWidth.roundToPx(), maxHeight.roundToPx(), this)
-                            }
-
-                            Canvas(
-                                modifier = Modifier
-                                    .clipToBounds()
-                                    .scrollable(
-                                        state.verticalScrollState,
-                                        Orientation.Vertical,
-                                        reverseDirection = true
-                                    )
-                                    .scrollable(
-                                        state.horizontalScrollState,
-                                        Orientation.Horizontal,
-                                        reverseDirection = true
-                                    )
-                                    .fillMaxSize()
-                                    .pointerHoverIcon(textCursor)
-                                    .then(state.keyModifier())
-                                    .then(state.tapModifier())
-
-                            ) {
-                                with(state) {
-                                    draw()
-                                }
-                            }
-                        }
-
+        Row {
+            Box(Modifier.fillMaxWidth(1f - SCALE)) {
+                Canvas(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    state.redrawTriggerStates.value
+                    with(state.selectionManager) {
+                        drawLineHighlight()
                     }
-                    VerticalScrollbar(
-                        rememberScrollbarAdapter(state.verticalScrollState),
-                        Modifier.align(Alignment.CenterEnd).fillMaxHeight()
-                            .padding(end = 8.dp, top = 8.dp, bottom = 8.dp)
-                    )
-                    HorizontalScrollbar(
-                        rememberScrollbarAdapter(state.horizontalScrollState),
-                        Modifier.align(Alignment.BottomStart).fillMaxWidth()
-                            .padding(bottom = 8.dp, start = 8.dp, end = 20.dp),
-                    )
                 }
+                ContextMenuArea(
+                    items = {
+                        listOf(
+                            ContextMenuItem("Copy") { state.copy() },
+                            ContextMenuItem("Select All") { state.selectionManager.selectAll() },
+                            ContextMenuItem("Clear All") { clear() },
+                        )
+                    }
+                ) {
+                    BoxWithConstraints(Modifier.padding(start = 10.dp)) {
+                        state.redrawTriggerStates.value
+                        with(LocalDensity.current) {
+                            state.updateLayout(maxWidth.roundToPx(), maxHeight.roundToPx(), this)
+                        }
+
+                        Canvas(
+                            modifier = Modifier
+                                .clipToBounds()
+                                .scrollable(
+                                    state.verticalScrollState,
+                                    Orientation.Vertical,
+                                    reverseDirection = true
+                                )
+                                .scrollable(
+                                    state.horizontalScrollState,
+                                    Orientation.Horizontal,
+                                    reverseDirection = true
+                                )
+                                .fillMaxSize()
+                                .pointerHoverIcon(textCursor)
+                                .then(state.keyModifier())
+                                .then(state.tapModifier())
+
+                        ) {
+                            with(state) {
+                                draw()
+                            }
+                        }
+                    }
+
+                }
+                HorizontalScrollbar(
+                    rememberScrollbarAdapter(state.horizontalScrollState),
+                    Modifier.align(Alignment.BottomStart).fillMaxWidth()
+                        .padding(bottom = 8.dp, start = 8.dp, end = 8.dp),
+                )
             }
+
+            ScrollStateMiniScrollBar(
+                state.verticalScrollState,
+                state.horizontalScrollState,
+                SCALE,
+                state.lines,
+                Modifier.fillMaxWidth()
+            )
         }
     }
 }
 
 @Composable
-fun LazyListMiniScrollBar(
-    lazyListState: LazyListState,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
+fun ScrollStateMiniScrollBar(
+    verticalScrollState: ScrollState,
+    horizontalScrollState: ScrollState,
+    scale: Float,
+    lines: SnapshotStateList<AlchitryLineState>,
+    modifier: Modifier = Modifier
 ) {
-    val layoutInfo = lazyListState.layoutInfo
-    val visibleItems = layoutInfo.visibleItemsInfo
-
-    if (visibleItems.isEmpty()) return
-
-    val first = visibleItems.first()
-    val last = visibleItems.last()
-    val itemCount = layoutInfo.totalItemsCount
-    val startPercent =
-        first.index / (itemCount.toFloat() - 1).coerceAtLeast(1f) - (first.offset.toFloat() - layoutInfo.viewportStartOffset) / first.size / itemCount
-    val endPercent =
-        last.index / (itemCount.toFloat() - 1).coerceAtLeast(1f) - (last.size - (layoutInfo.viewportEndOffset.toFloat() - last.offset).coerceIn(
-            0f,
-            last.size.toFloat()
-        )) / last.size / itemCount
-    val visiblePercent = endPercent - startPercent
-
+    val max = (verticalScrollState.maxValue + verticalScrollState.viewportSize).toFloat().coerceAtLeast(1f)
+    val startPercent = verticalScrollState.value.toFloat() / max
+    val visiblePercent = verticalScrollState.viewportSize.toFloat() / max
     val scope = rememberCoroutineScope()
 
     MiniScrollBar(
+        horizontalScrollState = horizontalScrollState,
+        scale = scale,
         startPercent = startPercent,
         visiblePercent = visiblePercent,
         onScroll = { it, animate ->
             val p = it.coerceIn(0f, 1f)
-            val itemCt = lazyListState.layoutInfo.totalItemsCount
-            val index = (itemCt * p).toInt().coerceIn(0, itemCt - 1)
-            val offset = ((itemCt * p) % 1 * first.size).toInt()
+            val offset = (verticalScrollState.maxValue * p).roundToInt()
             scope.launch {
                 if (animate)
-                    lazyListState.animateScrollToItem(index, offset)
+                    verticalScrollState.animateScrollTo(offset)
                 else
-                    lazyListState.scrollToItem(index, offset)
+                    verticalScrollState.scrollTo(offset)
             }
         },
         modifier = modifier,
-        content = content
+        content = {
+            MiniText(lines, scale)
+        }
     )
 }
 
 @Composable
 fun MiniScrollBar(
+    horizontalScrollState: ScrollState,
+    scale: Float,
     startPercent: Float,
     visiblePercent: Float,
     onScroll: (Float, Boolean) -> Unit,
@@ -294,7 +287,7 @@ fun MiniScrollBar(
     }
 
     Layout(
-        modifier = modifier,
+        modifier = modifier.clipToBounds(),
         content = {
             Box(
                 Modifier.pointerInput(Unit) {
@@ -333,7 +326,7 @@ fun MiniScrollBar(
     ) { measurables, constraints ->
         require(measurables.size == 2) { "Expected exactly two children composables!" }
         val miniText =
-            measurables[0].measure(constraints.copy(minHeight = 0, maxHeight = Constraints.Infinity)) // unconstrained
+            measurables[0].measure(Constraints())//constraints.copy(minHeight = 0, maxHeight = Constraints.Infinity)) // unconstrained
         miniTextHeight = miniText.height
         actualHeight = miniText.height.coerceIn(constraints.minHeight, constraints.maxHeight)
         val actualWidth = miniText.width.coerceIn(constraints.minWidth, constraints.maxWidth)
@@ -354,7 +347,7 @@ fun MiniScrollBar(
         )
 
         layout(actualWidth, actualHeight) {
-            miniText.place(0, -oversizeOffset)
+            miniText.place((-horizontalScrollState.value * scale).roundToInt(), -oversizeOffset)
             overlayBox.place(0, boxStart - oversizeOffset)
         }
     }
@@ -363,12 +356,12 @@ fun MiniScrollBar(
 // Splitting this into its own function reduces expensive redrawing
 @Composable
 fun MiniText(
-    content: SnapshotStateList<AnnotatedString>,
+    content: SnapshotStateList<AlchitryLineState>,
     scale: Float
 ) {
     Column(modifier = Modifier.scaleSize(scale)) {
         content.forEach {
-            Text(it)
+            Text(it.text, style = it.style ?: LocalTextStyle.current)
         }
     }
 }
