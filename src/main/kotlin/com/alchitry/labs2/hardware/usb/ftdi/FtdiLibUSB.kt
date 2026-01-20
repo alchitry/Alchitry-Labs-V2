@@ -58,6 +58,12 @@ class FtdiLibUSB(dev: Device, val interfaceType: PortInterfaceType) : UsbDevice(
             close()
             throw LibUsbException("set line property failed", -8)
         }
+        try {
+            setFlowCtrl(FlowControl.DISABLE_FLOW_CTRL)
+        } catch (e: LibUsbException) {
+            close()
+            throw LibUsbException("set line property failed", -8)
+        }
     }
 
     override fun usbReset() {
@@ -288,10 +294,12 @@ class FtdiLibUSB(dev: Device, val interfaceType: PortInterfaceType) : UsbDevice(
         } else {
             /* We divide by 16 to have 3 fractional bits and one bit for rounding */
             divisor = clk * 16 / clkDiv / baudrate
-            bestDivisor = if (divisor and 1 == 1) /* Decide if to round up or down */ divisor / 2 + 1 else divisor / 2
+            bestDivisor =
+                if (divisor and 1 == 1) /* Decide if to round up or down */ divisor / 2 + 1 else divisor / 2
             if (bestDivisor > 0x20000) bestDivisor = 0x1ffff
             bestBaud = clk * 16 / clkDiv / bestDivisor
-            bestBaud = if (bestBaud and 1 == 1) /* Decide if to round up or down */ bestBaud / 2 + 1 else bestBaud / 2
+            bestBaud =
+                if (bestBaud and 1 == 1) /* Decide if to round up or down */ bestBaud / 2 + 1 else bestBaud / 2
             res.encodedDivisor = (bestDivisor shr 3 or (fracCode[bestDivisor and 0x7] shl 14)).toLong()
         }
         res.bestBaud = bestBaud
@@ -309,9 +317,9 @@ class FtdiLibUSB(dev: Device, val interfaceType: PortInterfaceType) : UsbDevice(
         if (ChipType.TYPE_2232H == type || ChipType.TYPE_4232H == type || ChipType.TYPE_232H == type) {
             if (baudrate * 10 > H_CLK / 0x3fff) {
                 /*
-				 * On H Devices, use 12 000 000 Baudrate when possible We have a 14 bit divisor, a 1 bit divisor switch (10 or 16) three fractional bits and a 120 MHz clock
-				 * Assume AN_120 "Sub-integer divisors between 0 and 2 are not allowed" holds for DIV/10 CLK too, so /1, /1.5 and /2 can be handled the same
-				 */
+                 * On H Devices, use 12 000 000 Baudrate when possible We have a 14 bit divisor, a 1 bit divisor switch (10 or 16) three fractional bits and a 120 MHz clock
+                 * Assume AN_120 "Sub-integer divisors between 0 and 2 are not allowed" holds for DIV/10 CLK too, so /1, /1.5 and /2 can be handled the same
+                 */
                 res = toClkBits(baudrate, H_CLK, 10)
                 res.encodedDivisor = res.encodedDivisor or 0x20000L /* switch on CLK/10 */
             } else res = toClkBits(baudrate, C_CLK, 16)

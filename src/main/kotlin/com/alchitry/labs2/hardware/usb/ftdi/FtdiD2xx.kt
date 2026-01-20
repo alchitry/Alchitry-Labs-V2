@@ -13,6 +13,7 @@ class FtdiD2xx(private val device: Device) : Ftdi, SerialDevice {
     init {
         try {
             device.setDataCharacteristics(8, 0, FTDIConstants.FT_PARITY_NONE)
+            device.setFlowControl(FTDIConstants.FT_FLOW_NONE, 0.toChar(), 0.toChar())
         } catch (e: FTDIException) {
             throw RuntimeException(e)
         }
