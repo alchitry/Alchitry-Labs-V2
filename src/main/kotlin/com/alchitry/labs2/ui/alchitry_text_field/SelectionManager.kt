@@ -361,7 +361,7 @@ class SelectionManager(
             start = end
         }
 
-        caret = start
+        caret = end
     }
 
     private var blinkJob: Job? = null
