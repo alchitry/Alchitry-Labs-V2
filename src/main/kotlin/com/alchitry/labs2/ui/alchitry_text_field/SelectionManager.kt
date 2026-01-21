@@ -424,8 +424,10 @@ class SelectionManager(
         ) { // +2 to get caret centered in the line
             drawRect(
                 editorState.style?.cursorColor ?: Color.Transparent,
-                topLeft = cursorRect.topLeft
-                    .copy(y = cursorRect.topLeft.y + offset.y + margin)
+                topLeft = Offset(
+                    x = cursorRect.topLeft.x.coerceAtLeast(1f),
+                    y = cursorRect.topLeft.y + offset.y + margin
+                )
                     .round()
                     .toOffset(),
                 size = cursorRect.size,

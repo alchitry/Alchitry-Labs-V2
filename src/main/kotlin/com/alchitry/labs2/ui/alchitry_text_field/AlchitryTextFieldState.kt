@@ -575,11 +575,6 @@ class AlchitryTextFieldState(
     }
 
     fun DrawScope.draw() {
-//        val intSize = size.roundToIntSize()
-//        if (this@AlchitryTextFieldState.size != intSize) {
-//            this@AlchitryTextFieldState.size = intSize
-//            layout()
-//        }
         redrawTriggerStates.value // triggers redraws on demand
         with(selectionManager) {
             drawSelection()
