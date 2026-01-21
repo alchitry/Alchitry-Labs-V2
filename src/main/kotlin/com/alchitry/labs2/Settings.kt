@@ -112,6 +112,11 @@ object Settings {
         Loader
     }
 
+    enum class ScrollBarStyle {
+        Minimal,
+        MiniText
+    }
+
     var version by StringSetting("VERSION", "0")
 
     var openWindow by EnumSetting("OPEN_WINDOW", WindowType.Labs)
@@ -131,7 +136,7 @@ object Settings {
     var vivadoLocation by StringSetting("VIVADO_LOC", null)
     var iceCubeLocation by StringSetting("ICECUBE_LOC", null)
     var iceCubeLicense by StringSetting("ICECUBE_LICENSE", null)
-    var useIceCube by BooleanSetting("USE_ICECUBE", true)
+    var useIceCube by BooleanSetting("USE_ICECUBE", false)
 
     var uiScale by FloatSetting("UI_SCALE", 1.0f)
     var errorReporting by BooleanSetting("ERROR_REPORTING", false)
@@ -139,4 +144,8 @@ object Settings {
     var loaderBinFile by StringSetting("LOADER_BIN_FILE", null)
 
     var newLineIndent by StringSetting("NEW_LINE_INDENT", null)
+
+    var consoleScrollBarStyle by EnumSetting("CONSOLE_SCROLLBAR_STYLE", ScrollBarStyle.MiniText)
+    var editorScrollBarStyle by EnumSetting("EDITOR_SCROLLBAR_STYLE", ScrollBarStyle.MiniText)
 }
+

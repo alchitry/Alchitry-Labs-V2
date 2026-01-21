@@ -143,6 +143,32 @@ fun LabsToolbar() {
                 }
 
                 RadioMenuItem(
+                    label = { Text("Editor Scrollbar Style") },
+                    items = Settings.ScrollBarStyle.entries,
+                    labeler = {
+                        val text = when (it) {
+                            Settings.ScrollBarStyle.Minimal -> "Minimal"
+                            Settings.ScrollBarStyle.MiniText -> "Mini Text"
+                        }
+                        Text(text)
+                    },
+                    selected = Settings.editorScrollBarStyle
+                ) { Settings.editorScrollBarStyle = it }
+
+                RadioMenuItem(
+                    label = { Text("Console Scrollbar Style") },
+                    items = Settings.ScrollBarStyle.entries,
+                    labeler = {
+                        val text = when (it) {
+                            Settings.ScrollBarStyle.Minimal -> "Minimal"
+                            Settings.ScrollBarStyle.MiniText -> "Mini Text"
+                        }
+                        Text(text)
+                    },
+                    selected = Settings.consoleScrollBarStyle
+                ) { Settings.consoleScrollBarStyle = it }
+
+                RadioMenuItem(
                     label = { Text("New Line Indent") },
                     items = listOf("auto", "current", "none"),
                     labeler = {

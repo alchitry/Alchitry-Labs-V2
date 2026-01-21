@@ -622,7 +622,6 @@ class AlchitryTextFieldState(
 
     fun updateLayout(width: Int, height: Int, density: Density) {
         this.size = IntSize(width, height)
-        val editorHeight = (height - with(density) { 20.dp.roundToPx() }).coerceAtLeast(0)
         val editorWidth = width.coerceAtLeast(0)
 
         val lineConstraints = if (softWrap) Constraints.fixedWidth(editorWidth)
@@ -639,9 +638,10 @@ class AlchitryTextFieldState(
             (lines.maxOfOrNull { it.layoutResult?.size?.width ?: 0 } ?: 0) + with(density) { 20.dp.roundToPx() }
 
         @Suppress("INVISIBLE_SETTER")
-        verticalScrollState.maxValue = (totalHeight - editorHeight).coerceAtLeast(0)
+        verticalScrollState.maxValue =
+            (totalHeight - height + with(density) { EXTRA_VERT_PADDING.roundToPx() }).coerceAtLeast(0)
         @Suppress("INVISIBLE_SETTER")
-        verticalScrollState.viewportSize = editorHeight
+        verticalScrollState.viewportSize = height.coerceAtLeast(0)
         @Suppress("INVISIBLE_SETTER")
         horizontalScrollState.maxValue = (longestLine - editorWidth).coerceAtLeast(0)
         @Suppress("INVISIBLE_SETTER")
@@ -1153,5 +1153,6 @@ class AlchitryTextFieldState(
         private val closingBrackets = listOf(')', ']', '}')
         private val openingBrackets = listOf('(', '[', '{')
         private val brackets = closingBrackets + openingBrackets
+        val EXTRA_VERT_PADDING = 20.dp
     }
 }

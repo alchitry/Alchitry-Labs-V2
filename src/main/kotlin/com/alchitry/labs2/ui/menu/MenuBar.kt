@@ -280,7 +280,7 @@ fun MenuBarContext.MenuItem(
 @Composable
 fun <T> MenuBarContext.RadioMenuItem(
     label: @Composable () -> Unit,
-    items: List<T>,
+    items: Collection<T>,
     labeler: @Composable (T) -> Unit,
     selected: T?,
     onSelected: (T) -> Unit
