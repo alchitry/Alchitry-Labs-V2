@@ -136,7 +136,7 @@ object Settings {
     var vivadoLocation by StringSetting("VIVADO_LOC", null)
     var iceCubeLocation by StringSetting("ICECUBE_LOC", null)
     var iceCubeLicense by StringSetting("ICECUBE_LICENSE", null)
-    var useIceCube by BooleanSetting("USE_ICECUBE", false)
+    var useIceCube by BooleanSetting("USE_ICECUBE", true)
 
     var uiScale by FloatSetting("UI_SCALE", 1.0f)
     var errorReporting by BooleanSetting("ERROR_REPORTING", false)
