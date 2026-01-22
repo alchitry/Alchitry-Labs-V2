@@ -83,4 +83,32 @@ class FunctionTests {
         println(verilog)
         assert(verilog.isNotEmpty())
     }
+
+    @Test
+    fun paramSignalWidth() = runBlocking {
+        val test = ProjectTester(
+            $$"""
+            module alchitry_top #(
+                CLK_DIV = 8 : CLK_DIV >= 3
+            )(
+                input clk,
+                output junk
+            ) {
+                .clk(clk) {
+                    dff scl_reg[CLK_DIV]
+                }
+                const RISING_EDGE = $width(scl_reg.q)x{1b0}
+                
+                always {
+                    scl_reg.d = scl_reg.q + 1
+                    junk = RISING_EDGE
+                }
+            }
+            """.trimIndent().toSourceFile()
+        )
+        val tree = test.fullParse(ExprEvalMode.Default)
+        val text = tree.context.resolveSignal(tree.moduleContext, "RISING_EDGE") as? Signal
+        assert(test.notationManager.hasNoErrors) { test.notationManager.getReport() }
+        assertEquals(BitListValue(0, 8, false), text?.read())
+    }
 }
