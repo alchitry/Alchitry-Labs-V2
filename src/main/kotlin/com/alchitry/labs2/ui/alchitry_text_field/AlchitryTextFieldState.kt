@@ -367,6 +367,7 @@ class AlchitryTextFieldState(
     }
 
     fun clearText() {
+        notations.clear()
         val startPosition = TextPosition(0, 0)
         val endPosition = TextPosition((lines.size - 1).coerceAtLeast(0), lines.lastOrNull()?.text?.length ?: 0)
         forceReplaceText("", startPosition..<endPosition, true)
