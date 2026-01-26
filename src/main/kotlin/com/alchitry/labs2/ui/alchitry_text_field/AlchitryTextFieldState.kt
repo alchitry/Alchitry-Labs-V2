@@ -334,6 +334,7 @@ class AlchitryTextFieldState(
             styler.updateStyle()
         }
         updateHighlightTokens()
+        searchAndReplaceState.updateHighlights(moveCaret = false)
         invalidate()
     }
 
@@ -572,6 +573,38 @@ class AlchitryTextFieldState(
 
     fun DrawScope.draw() {
         redrawTriggerStates.value // triggers redraws on demand
+        if (!searchAndReplaceState.hasFocus()) {
+            drawIntoCanvas { canvas ->
+                canvas.save()
+                var currentY = -verticalScrollState.value
+                val currentX = -horizontalScrollState.value
+                canvas.translate(dx = currentX.toFloat(), dy = currentY.toFloat())
+                var wasVisible = false
+                var lineNumber = 0
+                for (line in lines) {
+                    val nextY = currentY + (line.lineHeight ?: 0)
+                    val visible = nextY > 0 && currentY < size.height
+                    if (visible) {
+                        wasVisible = true
+                        bracketHighlights.forEach { highlight ->
+                            if (highlight.range.start.line >= lineNumber && highlight.range.endInclusive.line <= lineNumber)
+                                highlight.draw(line)
+                        }
+                        tokenHighlights.forEach { highlight ->
+                            if (highlight.range.start.line >= lineNumber && highlight.range.endInclusive.line <= lineNumber)
+                                highlight.draw(line)
+                        }
+                        canvas.translate(dx = 0f, dy = (line.lineHeight ?: 0).toFloat())
+                    } else {
+                        canvas.translate(dx = 0f, dy = (line.lineHeight ?: 0).toFloat())
+                        if (wasVisible) break
+                    }
+                    currentY = nextY
+                    lineNumber += 1
+                }
+                canvas.restore()
+            }
+        }
         with(selectionManager) {
             drawSelection()
         }
@@ -590,14 +623,6 @@ class AlchitryTextFieldState(
                 val visible = nextY > 0 && currentY < size.height
                 if (visible) {
                     wasVisible = true
-                    bracketHighlights.forEach { highlight ->
-                        if (highlight.range.start.line >= lineNumber && highlight.range.endInclusive.line <= lineNumber)
-                            highlight.draw(line)
-                    }
-                    tokenHighlights.forEach { highlight ->
-                        if (highlight.range.start.line >= lineNumber && highlight.range.endInclusive.line <= lineNumber)
-                            highlight.draw(line)
-                    }
                     canvas.translate(dx = 0f, dy = margin)
                     TextPainter.paint(canvas, layout)
                     canvas.translate(dx = 0f, dy = (line.lineHeight ?: 0).toFloat() - margin)
@@ -611,9 +636,10 @@ class AlchitryTextFieldState(
             canvas.restore()
         }
 
-        with(selectionManager) {
-            drawCaret()
-        }
+        if (!searchAndReplaceState.hasFocus())
+            with(selectionManager) {
+                drawCaret()
+            }
     }
 
 

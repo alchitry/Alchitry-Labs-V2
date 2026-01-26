@@ -56,9 +56,9 @@ data object DarkAlchitryColors : AlchitryColors {
     override val MenuBarBackground = Color(0xFF424242)
 
     override val GutterForeground = Color(0xFFA1A1A1)
-    override val LineHighlight = Accent.copy(alpha = 0.05f)
-    override val TokenHighlight = Accent.copy(alpha = 0.2f)
-    override val SearchMatchHighlight = Color(0xFF8368FF)
+    override val LineHighlight = Color(0xFF2f2d27)
+    override val TokenHighlight = Color(0xFF353658)
+    override val SearchMatchHighlight = Accent
 
     override val SelectionColor = Color(0xFF6C5600)
 
@@ -100,9 +100,9 @@ data object LightAlchitryColors : AlchitryColors {
     override val MenuBarBackground = Color(0xFF424242)
 
     override val GutterForeground = Color(0xFFA1A1A1)
-    override val LineHighlight = Accent.copy(alpha = 0.1f)
-    override val TokenHighlight = Accent.copy(alpha = 0.2f)
-    override val SearchMatchHighlight = Color(0xFF7A1FFA).copy(alpha = 0.2f)
+    override val LineHighlight = Color(0xFFFFFAEB)
+    override val TokenHighlight = Color(0xFFFFE9C7)
+    override val SearchMatchHighlight = Accent
 
     override val SelectionColor = Accent.copy(alpha = 0.5f)
 

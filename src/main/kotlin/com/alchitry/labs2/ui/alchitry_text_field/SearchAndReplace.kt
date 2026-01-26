@@ -1,8 +1,6 @@
 package com.alchitry.labs2.ui.alchitry_text_field
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -13,6 +11,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -23,6 +22,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -48,7 +48,12 @@ class SearchAndReplaceState(private val editor: AlchitryTextFieldState) {
     private var regex by mutableStateOf(false)
     private var wholeWord by mutableStateOf(false)
     val searchHighlights = SnapshotStateList<HighlightAnnotation>()
+    var activeIndex: Int? = null
     var grabFocus by mutableStateOf(false)
+    var hasFocus by mutableStateOf(false)
+
+    private val activeColor get() = AlchitryColors.current.SearchMatchHighlight.copy(alpha = 0.6f)
+    private val inactiveColor get() = AlchitryColors.current.SearchMatchHighlight.copy(alpha = 0.3f)
 
     context(scope: DrawScope)
     fun drawHighlights() {
@@ -76,6 +81,8 @@ class SearchAndReplaceState(private val editor: AlchitryTextFieldState) {
     }
 
     fun isShown(): Boolean = mode != SearchAndReplaceMode.None
+
+    fun hasFocus(): Boolean = hasFocus
 
     fun hide() {
         mode = SearchAndReplaceMode.None
@@ -120,17 +127,62 @@ class SearchAndReplaceState(private val editor: AlchitryTextFieldState) {
         }
     }
 
-    fun updateHighlights() {
+    fun nextMatch() {
+        val activeIndex = activeIndex ?: return
+        searchHighlights[activeIndex] = searchHighlights[activeIndex].copy(
+            color = inactiveColor
+        )
+        val nextIndex = if (activeIndex + 1 >= searchHighlights.size) 0 else activeIndex + 1
+        searchHighlights[nextIndex] = searchHighlights[nextIndex].copy(
+            color = activeColor
+        )
+        this.activeIndex = nextIndex
+
+        editor.selectionManager.start = searchHighlights[nextIndex].range.start
+        editor.selectionManager.end = searchHighlights[nextIndex].range.endInclusive
+        editor.selectionManager.caret = searchHighlights[nextIndex].range.endInclusive
+    }
+
+    fun previousMatch() {
+        val activeIndex = activeIndex ?: return
+        searchHighlights[activeIndex] = searchHighlights[activeIndex].copy(
+            color = inactiveColor
+        )
+        val nextIndex = if (activeIndex - 1 < 0) searchHighlights.size - 1 else activeIndex - 1
+        searchHighlights[nextIndex] = searchHighlights[nextIndex].copy(
+            color = activeColor
+        )
+        this.activeIndex = nextIndex
+
+        editor.selectionManager.start = searchHighlights[nextIndex].range.start
+        editor.selectionManager.end = searchHighlights[nextIndex].range.endInclusive
+        editor.selectionManager.caret = searchHighlights[nextIndex].range.endInclusive
+    }
+
+    fun updateHighlights(moveCaret: Boolean = true) {
         val text = editor.getText()
         searchHighlights.clear()
         val searchRegex = buildSearchRegexOrNull() ?: return
-        searchRegex.findAll(text).forEach {
-            val start = textOffsetToPosition(text, it.range.start)
+        var matched = false
+        searchRegex.findAll(text).forEachIndexed { index, it ->
+            val start = textOffsetToPosition(text, it.range.first)
             val stop = textOffsetToPosition(text, it.range.last + 1)
+            val active = if (!matched) {
+                if (editor.selectionManager.start <= start) {
+                    matched = true
+                    activeIndex = index
+                    if (moveCaret) {
+                        editor.selectionManager.start = start
+                        editor.selectionManager.end = stop
+                        editor.selectionManager.caret = stop
+                    }
+                    true
+                } else false
+            } else false
             searchHighlights.add(
                 HighlightAnnotation(
                     start..stop,
-                    AlchitryColors.current.SearchMatchHighlight.copy(alpha = 0.3f)
+                    if (active) activeColor else inactiveColor
                 )
             )
         }
@@ -150,7 +202,16 @@ class SearchAndReplaceState(private val editor: AlchitryTextFieldState) {
                     .background(AlchitryColors.current.SearchBar)
                     .padding(8.dp)
                     .fillMaxWidth()
-                    .height(IntrinsicSize.Min),
+                    .height(IntrinsicSize.Min)
+                    .onFocusChanged {
+                        hasFocus = it.hasFocus
+                    }
+                    .onPreviewKeyEvent { e ->
+                        if (e.type == KeyEventType.KeyDown && e.key == Key.Escape) {
+                            hide()
+                            true
+                        } else false
+                    },
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 val interactionSource = remember { MutableInteractionSource() }
@@ -175,7 +236,7 @@ class SearchAndReplaceState(private val editor: AlchitryTextFieldState) {
                     interactionSource = interactionSource,
                     cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
                     modifier = Modifier
-                        .height(34.dp)
+                        .height(40.dp)
                         .widthIn(min = 400.dp)
                         .clip(shape)
                         .background(MaterialTheme.colorScheme.surfaceVariant)
@@ -189,7 +250,7 @@ class SearchAndReplaceState(private val editor: AlchitryTextFieldState) {
                 ) { innerTextField ->
                     Row(
                         modifier = Modifier
-                            .padding(start = 14.dp, end = 6.dp), // you control the right padding here
+                            .padding(start = 14.dp, end = 10.dp), // you control the right padding here
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
@@ -199,59 +260,85 @@ class SearchAndReplaceState(private val editor: AlchitryTextFieldState) {
                             }
                             innerTextField()
                         }
-
-                        if (textFieldState.text.isNotEmpty()) {
-                            Box(
-                                modifier = Modifier
-                                    .size(22.dp) // tight, predictable
-                                    .clip(CircleShape)
-                                    .clickable {
-                                        textFieldState = TextFieldValue("")
-                                        scope.launch {
-                                            delay(100)
-                                            focusRequester.requestFocus()
-                                        }
-                                    },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    painterResource("icons/close.svg"),
-                                    contentDescription = "Clear",
-                                    modifier = Modifier.size(14.dp)
-                                )
+                        Row(
+                            modifier = Modifier.padding(vertical = 5.dp),
+                            horizontalArrangement = Arrangement.spacedBy(5.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            AnimatedVisibility(textFieldState.text.isNotEmpty(), enter = fadeIn(), exit = fadeOut()) {
+                                Box(
+                                    modifier = Modifier
+                                        .aspectRatio(1f)
+                                        .clip(CircleShape)
+                                        .clickable {
+                                            textFieldState = TextFieldValue("")
+                                            scope.launch {
+                                                delay(100)
+                                                focusRequester.requestFocus()
+                                            }
+                                        },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        painterResource("icons/close.svg"),
+                                        contentDescription = "Clear",
+                                        modifier = Modifier.size(14.dp),
+                                        tint = LocalContentColor.current.copy(alpha = 0.6f)
+                                    )
+                                }
                             }
+                            SearchBarToggle(
+                                value = caseSensitive,
+                                onValueChange = {
+                                    caseSensitive = it
+                                    updateHighlights()
+                                },
+                                "icons/case_sensitive.svg",
+                                "Case Sensitive"
+                            )
+                            SearchBarToggle(
+                                value = wholeWord,
+                                onValueChange = {
+                                    wholeWord = it
+                                    updateHighlights()
+                                },
+                                "icons/whole_word.svg",
+                                "Whole Word"
+                            )
+
+                            SearchBarToggle(
+                                value = regex,
+                                onValueChange = {
+                                    regex = it
+                                    updateHighlights()
+                                },
+                                "icons/regex.svg",
+                                "Regular Expression"
+                            )
                         }
                     }
                 }
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    SearchBarToggle(
-                        value = caseSensitive,
-                        onValueChange = {
-                            caseSensitive = it
-                            updateHighlights()
-                        },
-                        "icons/case_sensitive.svg",
-                        "Case Sensitive"
-                    )
-                    SearchBarToggle(
-                        value = wholeWord,
-                        onValueChange = {
-                            wholeWord = it
-                            updateHighlights()
-                        },
-                        "icons/whole_word.svg",
-                        "Whole Word"
-                    )
 
-                    SearchBarToggle(
-                        value = regex,
-                        onValueChange = {
-                            regex = it
-                            updateHighlights()
-                        },
-                        "icons/regex.svg",
-                        "Regular Expression"
-                    )
+                AnimatedVisibility(searchHighlights.isNotEmpty(), enter = fadeIn(), exit = fadeOut()) {
+                    Row(
+                        modifier = Modifier.padding(start = 10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "${((activeIndex ?: 0) + 1).coerceIn(0, searchHighlights.size)}/${searchHighlights.size}",
+                            Modifier.alpha(0.6f)
+                        )
+                        SearchBarButton(
+                            "icons/chevron-up.svg",
+                            "Previous"
+                        ) { previousMatch() }
+                        SearchBarButton(
+                            "icons/chevron-down.svg",
+                            "Next"
+                        ) { nextMatch() }
+                    }
+
                 }
 
 
@@ -292,11 +379,39 @@ private fun SearchBarToggle(
         Box(
             modifier = Modifier
                 .aspectRatio(1f)
-                .padding(2.dp)
                 .clip(RoundedCornerShape(percent = 20))
                 .background(if (value) AlchitryColors.current.Accent.copy(alpha = 0.8f) else Color.Transparent)
                 .clickable(
                     onClick = { onValueChange(!value) },
+                    role = Role.Button,
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painterResource(iconPath),
+                description,
+                modifier = Modifier.matchParentSize().padding(4.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun SearchBarButton(
+    iconPath: String,
+    description: String,
+    onClick: () -> Unit,
+) {
+    TextTooltipArea(
+        text = description
+    ) {
+        Box(
+            modifier = Modifier
+                .aspectRatio(1f)
+                .padding(2.dp)
+                .clip(RoundedCornerShape(percent = 20))
+                .clickable(
+                    onClick = onClick,
                     role = Role.Button,
                 ),
             contentAlignment = Alignment.Center
