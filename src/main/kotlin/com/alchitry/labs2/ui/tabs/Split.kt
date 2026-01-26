@@ -14,7 +14,7 @@ class HorizontalSplit(
     var right by this::second
 
 
-    context(DragAndDropContext<Tab>)
+    context(context: DragAndDropContext<Tab>)
     @Composable
     override fun content() {
         key(this) {
@@ -31,7 +31,7 @@ class VerticalSplit(
     var top by this::first
     var bottom by this::second
 
-    context(DragAndDropContext<Tab>)
+    context(context: DragAndDropContext<Tab>)
     @Composable
     override fun content() {
         key(this) {

@@ -12,7 +12,7 @@ data class HighlightAnnotation(
     val range: ClosedRange<TextPosition>,
     val color: Color
 ) {
-    context(DrawScope)
+    context(scope: DrawScope)
     fun draw(lineState: AlchitryLineState) {
         require(range.start.line == range.endInclusive.line) {
             "When drawing on a single line the range must be only a single line."
@@ -36,10 +36,10 @@ data class HighlightAnnotation(
             )
         )
 
-        drawRect(color, Offset(xStart, 0f), Size(xEnd - xStart, (lineState.lineHeight ?: 0).toFloat()))
+        scope.drawRect(color, Offset(xStart, 0f), Size(xEnd - xStart, (lineState.lineHeight ?: 0).toFloat()))
     }
 
-    context(DrawScope)
+    context(scope: DrawScope)
     fun draw(editorState: AlchitryTextFieldState) {
         if (range.isEmpty())
             return
@@ -50,7 +50,7 @@ data class HighlightAnnotation(
         val bounds = Rect(
             0f,
             editorState.offsetAtLineTop(firstPos.line).toFloat(),
-            size.width,
+            scope.size.width,
             editorState.offsetAtLineBottom(secondPos.line).toFloat()
         )
 
@@ -58,7 +58,7 @@ data class HighlightAnnotation(
             return
         }
 
-        translate(
+        scope.translate(
             top = -editorState.verticalScrollState.value.toFloat(),
             left = -editorState.horizontalScrollState.value.toFloat()
         ) {

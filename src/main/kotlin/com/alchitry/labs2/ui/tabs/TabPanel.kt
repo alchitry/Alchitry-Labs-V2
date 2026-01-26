@@ -78,7 +78,7 @@ class TabPanel(parent: TabParent) : TabSection(parent) {
         activeTab = tab
     }
 
-    context(DragAndDropContext<Tab>)
+    context(context: DragAndDropContext<Tab>)
     @Composable
     override fun content() {
         key(this) {
@@ -91,13 +91,13 @@ class TabPanel(parent: TabParent) : TabSection(parent) {
                 Column {
                     Row(Modifier.fillMaxWidth().height(TAB_HEIGHT)) {
                         val width = LocalDensity.current.run { 1.toDp() }
-                        DropZone(minimumSize = DpSize(width, TAB_HEIGHT)) {
+                        context.DropZone(minimumSize = DpSize(width, TAB_HEIGHT)) {
                             addTab(it, 0)
                         }
                         tabs.forEach { tab ->
                             key(tab) {
                                 var dragging by remember { mutableStateOf(false) }
-                                Draggable(tab, onMoved = {
+                                context.Draggable(tab, onMoved = {
                                     removeTab(tab)
                                     dragging = false
                                 }, onDragging = { dragging = it }) {
@@ -119,7 +119,7 @@ class TabPanel(parent: TabParent) : TabSection(parent) {
                     }
                     Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.background)
 
-                    PanelDropContainer(
+                    context.PanelDropContainer(
                         onDropped = { tab, region ->
                             if (tabs.isEmpty()) {
                                 addTab(tab)

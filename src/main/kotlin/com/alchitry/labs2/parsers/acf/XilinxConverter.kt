@@ -9,57 +9,57 @@ import com.alchitry.labs2.project.Languages
 
 
 data object XilinxConverter : AcfConverter {
-    context (StringBuilder)
+    context (builder: StringBuilder)
     private fun Constraint.PinConstraint.toXdc() {
         val portName = port.fullPortName
-        append("set_property PACKAGE_PIN ")
-        append(pin.fpgaPin)
-        append(" [get_ports {")
-        append(portName)
-        append("}]\n")
+        builder.append("set_property PACKAGE_PIN ")
+        builder.append(pin.fpgaPin)
+        builder.append(" [get_ports {")
+        builder.append(portName)
+        builder.append("}]\n")
 
         attributes.firstOfTypeOrNull<PinAttribute.Standard>()?.let { standard ->
-            append("set_property IOSTANDARD ")
-            append(standard.value.name)
-            append(" [get_ports {")
-            append(portName)
-            append("}]\n")
+            builder.append("set_property IOSTANDARD ")
+            builder.append(standard.value.name)
+            builder.append(" [get_ports {")
+            builder.append(portName)
+            builder.append("}]\n")
         }
 
         attributes.firstOfTypeOrNull<PinAttribute.Pull>()?.let { pull ->
-            append("set_property ")
+            builder.append("set_property ")
             when (pull.value) {
-                PinPull.Up -> append("PULLUP")
-                PinPull.Down -> append("PULLDOWN")
-                PinPull.Keep -> append("KEEPER")
+                PinPull.Up -> builder.append("PULLUP")
+                PinPull.Down -> builder.append("PULLDOWN")
+                PinPull.Keep -> builder.append("KEEPER")
             }
-            append(" true [get_ports {")
-            append(portName)
-            append("}]\n")
+            builder.append(" true [get_ports {")
+            builder.append(portName)
+            builder.append("}]\n")
         }
 
         attributes.firstOfTypeOrNull<PinAttribute.Drive>()?.let { drive ->
-            append("set_property DRIVE ")
-            append(drive.value)
-            append(" [get_ports {")
-            append(portName)
-            append("}]\n")
+            builder.append("set_property DRIVE ")
+            builder.append(drive.value)
+            builder.append(" [get_ports {")
+            builder.append(portName)
+            builder.append("}]\n")
         }
 
         attributes.firstOfTypeOrNull<PinAttribute.Slew>()?.let { slew ->
-            append("set_property SLEW ")
-            append(slew.value.name)
-            append(" [get_ports {")
-            append(portName)
-            append("}]\n")
+            builder.append("set_property SLEW ")
+            builder.append(slew.value.name)
+            builder.append(" [get_ports {")
+            builder.append(portName)
+            builder.append("}]\n")
         }
 
         attributes.firstOfTypeOrNull<PinAttribute.DiffTerm>()?.let { diffTerm ->
-            append("set_property DIFF_TERM ")
-            append(if (diffTerm.value) "TRUE" else "FALSE")
-            append(" [get_ports {")
-            append(portName)
-            append("}]\n")
+            builder.append("set_property DIFF_TERM ")
+            builder.append(if (diffTerm.value) "TRUE" else "FALSE")
+            builder.append(" [get_ports {")
+            builder.append(portName)
+            builder.append("}]\n")
         }
     }
 

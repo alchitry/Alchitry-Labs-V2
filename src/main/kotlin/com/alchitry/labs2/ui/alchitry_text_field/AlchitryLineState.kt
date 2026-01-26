@@ -44,7 +44,7 @@ class AlchitryLineState(
         return delegate?.layout(constraints, LayoutDirection.Ltr, layoutResult).also { layoutResult = it }
     }
 
-    context(DrawScope)
+    context(_: DrawScope)
     fun drawHighlights() {
         highlights.forEach { it.draw(this) }
     }

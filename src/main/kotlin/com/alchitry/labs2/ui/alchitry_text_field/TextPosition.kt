@@ -26,9 +26,9 @@ data class TextPosition(val line: Int, val offset: Int) : Comparable<TextPositio
         return TextPosition(newLine, newOffset)
     }
 
-    context(AlchitryTextFieldState)
+    context(state: AlchitryTextFieldState)
     fun getXOffset(): Float {
-        val lineState = lines.getOrNull(line) ?: return 0f
+        val lineState = state.lines.getOrNull(line) ?: return 0f
         val layout = lineState.layoutResult ?: return 0f
         return round(
             layout.getHorizontalPosition(
@@ -38,16 +38,16 @@ data class TextPosition(val line: Int, val offset: Int) : Comparable<TextPositio
         )
     }
 
-    context(AlchitryTextFieldState)
+    context(state: AlchitryTextFieldState)
     fun getTopOffset(): Offset {
-        return Offset(getXOffset(), offsetAtLineTop(line).toFloat())
+        return Offset(getXOffset(), state.offsetAtLineTop(line).toFloat())
     }
 
-    context(AlchitryTextFieldState)
+    context(state: AlchitryTextFieldState)
     fun getBottomOffset(): Offset {
         return getTopOffset().let {
             it.copy(
-                y = it.y + (lineHeight(line) ?: 0).toFloat()
+                y = it.y + (state.lineHeight(line) ?: 0).toFloat()
             )
         }
     }

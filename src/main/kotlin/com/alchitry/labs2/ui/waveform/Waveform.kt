@@ -63,7 +63,7 @@ private data class DrawablePath(
     val alpha: Float = 1f,
     val style: DrawStyle
 ) {
-    context(DrawScope)
+    context(scope: DrawScope)
     fun draw(matrix: Matrix = Matrix()) {
         val drawPath = if (!matrix.isIdentity()) {
             Path().apply {
@@ -71,7 +71,7 @@ private data class DrawablePath(
                 transform(matrix)
             }
         } else path
-        drawPath(drawPath, color = color, alpha = alpha, style = style)
+        scope.drawPath(drawPath, color = color, alpha = alpha, style = style)
     }
 }
 

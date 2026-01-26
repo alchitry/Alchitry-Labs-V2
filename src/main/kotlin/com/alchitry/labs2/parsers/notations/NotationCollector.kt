@@ -79,7 +79,7 @@ class NotationCollector private constructor(
         }.toAnnotatedString()
     }
 
-    context(AnnotatedString.Builder)
+    context(builder: AnnotatedString.Builder)
     private fun appendChildReport(
         prefix: String,
         includeErrors: Boolean = true,
@@ -89,7 +89,7 @@ class NotationCollector private constructor(
         if (hasNoMessages)
             return
 
-        appendLine("${prefix}Issues detected in $name:")
+        builder.appendLine("${prefix}Issues detected in $name:")
 
         val notations =
             (if (includeErrors) errors else emptyList()) +
@@ -97,7 +97,7 @@ class NotationCollector private constructor(
                     (if (includeInfos) infos else emptyList())
 
         notations.sortedBy { it.range.start }.forEach {
-            withStyle(it.type.style) {
+            builder.withStyle(it.type.style) {
                 append("$prefix    $it\n")
             }
         }
