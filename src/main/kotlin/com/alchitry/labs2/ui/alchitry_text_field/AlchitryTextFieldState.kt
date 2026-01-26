@@ -113,6 +113,9 @@ class AlchitryTextFieldState(
     var lineTopOffset: Float = 0f
     val tooltipState = NotationTooltipProvider(this)
     val notations: MutableList<Notation> = mutableListOf()
+    val bracketHighlights = SnapshotStateList<HighlightAnnotation>()
+    var tokenHighlights = SnapshotStateList<HighlightAnnotation>()
+    val searchAndReplaceState = SearchAndReplaceState(this)
     val focusRequester = FocusRequester()
     val lines = SnapshotStateList<AlchitryLineState>()
     val verticalScrollState = ScrollState(0)
@@ -163,28 +166,20 @@ class AlchitryTextFieldState(
 
     private fun updateHighlightTokens() {
         if (lines.isEmpty()) return
-        lines.forEach { it.highlights.clear() }
+        tokenHighlights.clear()
+        bracketHighlights.clear()
         val token = textPositionToToken(selectionManager.caret) ?: return
 
-        val tokens = when (token.token.type) {
+        when (token.token.type) {
             LucidLexer.Tokens.TYPE_ID, LucidLexer.Tokens.CONST_ID, LucidLexer.Tokens.SPACE_ID, LucidLexer.Tokens.FUNCTION_ID -> {
-                tokens.mapNotNull { t ->
+                tokens.forEach { t ->
                     if (t.token.type == token.token.type && t.token.text == token.token.text) {
-                        HighlightAnnotation(t.range, AlchitryColors.current.TokenHighlight)
-                    } else {
-                        null
+                        tokenHighlights.add(HighlightAnnotation(t.range, AlchitryColors.current.TokenHighlight))
                     }
                 }
             }
 
-            else -> emptyList()
-        }
-
-        tokens.forEach {
-            if (it.range.start.line != it.range.endInclusive.line) {
-                TODO("Multiline token highlighting not supported!")
-            }
-            lines[it.range.start.line].highlights.add(it)
+            else -> {}
         }
 
         val line = lines.getOrNull(selectionManager.caret.line)?.text?.text ?: return
@@ -205,14 +200,14 @@ class AlchitryTextFieldState(
             var node = bracketParser.findFinalNode(stream, offset)
             if (node is TerminalNode) node = node.getParent()!!
             (node.getChild(0) as? TerminalNode)?.symbol?.let {
-                lines[it.line - 1].highlights.add(
+                bracketHighlights.add(
                     HighlightAnnotation(
                         it.toEditorToken(null).range, AlchitryColors.current.TokenHighlight
                     )
                 )
             }
             (node.getChild(node.childCount - 1) as? TerminalNode)?.symbol?.let {
-                lines[it.line - 1].highlights.add(
+                bracketHighlights.add(
                     HighlightAnnotation(
                         it.toEditorToken(null).range, AlchitryColors.current.TokenHighlight
                     )
@@ -355,7 +350,7 @@ class AlchitryTextFieldState(
     }
 
     internal fun newLineState(text: AnnotatedString) =
-        AlchitryLineState(text, style?.density, mutableListOf(), style?.fontFamilyResolver, style?.style).also {
+        AlchitryLineState(text, style?.density, style?.fontFamilyResolver, style?.style).also {
             it.layout(layoutConstraints)
         }
 
@@ -580,12 +575,14 @@ class AlchitryTextFieldState(
         with(selectionManager) {
             drawSelection()
         }
+        searchAndReplaceState.drawHighlights()
         drawIntoCanvas { canvas ->
             canvas.save()
             var currentY = -verticalScrollState.value
             val currentX = -horizontalScrollState.value
             canvas.translate(dx = currentX.toFloat(), dy = currentY.toFloat())
             var wasVisible = false
+            var lineNumber = 0
             for (line in lines) {
                 val layout = line.layoutResult ?: continue
                 val margin = lineTopOffset
@@ -593,7 +590,14 @@ class AlchitryTextFieldState(
                 val visible = nextY > 0 && currentY < size.height
                 if (visible) {
                     wasVisible = true
-                    line.drawHighlights()
+                    bracketHighlights.forEach { highlight ->
+                        if (highlight.range.start.line >= lineNumber && highlight.range.endInclusive.line <= lineNumber)
+                            highlight.draw(line)
+                    }
+                    tokenHighlights.forEach { highlight ->
+                        if (highlight.range.start.line >= lineNumber && highlight.range.endInclusive.line <= lineNumber)
+                            highlight.draw(line)
+                    }
                     canvas.translate(dx = 0f, dy = margin)
                     TextPainter.paint(canvas, layout)
                     canvas.translate(dx = 0f, dy = (line.lineHeight ?: 0).toFloat() - margin)
@@ -602,6 +606,7 @@ class AlchitryTextFieldState(
                     if (wasVisible) break
                 }
                 currentY = nextY
+                lineNumber += 1
             }
             canvas.restore()
         }
@@ -700,7 +705,9 @@ class AlchitryTextFieldState(
     }
         // must be before other focus modifiers
         .onFocusChanged {
-            if (!it.hasFocus) {
+            if (it.hasFocus) {
+                selectionManager.onFocusGained()
+            } else {
                 selectionManager.onFocusLost()
             }
         }.focusRequester(focusRequester).focusable()
@@ -766,6 +773,14 @@ class AlchitryTextFieldState(
                 ctrl && alt && !shift && !meta && key == Key.L -> { // Ctrl + Alt + L
                     adjustIndents()
                     return true
+                }
+
+                ctrl && !alt && !shift && !meta && key == Key.F -> {
+                    searchAndReplaceState.showSearch(selectionManager.getSelectedText().text.let { it.ifEmpty { null } })
+                }
+
+                ctrl && !alt && !shift && !meta && key == Key.R -> {
+                    searchAndReplaceState.showReplace(selectionManager.getSelectedText().text.let { it.ifEmpty { null } })
                 }
 
                 !ctrl && !alt && shift && !meta && key == Key.Tab -> { // Shift + Tab
@@ -854,7 +869,11 @@ class AlchitryTextFieldState(
         }
 
         if (event.key == Key.Escape) {
-            autocomplete?.reset(scope)
+            if (searchAndReplaceState.isShown()) {
+                searchAndReplaceState.hide()
+            } else {
+                autocomplete?.reset(scope)
+            }
         }
 
         val commandName = platformDefaultKeyMapping.map(event)?.name

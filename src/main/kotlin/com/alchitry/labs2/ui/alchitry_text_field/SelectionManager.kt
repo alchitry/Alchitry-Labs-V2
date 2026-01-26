@@ -135,6 +135,12 @@ class SelectionManager(
         onChange()
     }
 
+    fun onFocusGained() {
+        active = true
+        launchBlinkCursor()
+        onChange()
+    }
+
     fun onFocusLost() {
         active = false
         blinkJob?.cancel()

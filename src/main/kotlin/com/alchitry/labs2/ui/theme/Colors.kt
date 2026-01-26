@@ -18,11 +18,13 @@ sealed interface AlchitryColors {
     val GutterForeground: Color
     val LineHighlight: Color
     val TokenHighlight: Color
+    val SearchMatchHighlight: Color
     val SelectionColor: Color
     val Success: Color
     val Warning: Color
     val Error: Color
     val Info: Color
+    val SearchBar: Color
 
     val dangerButton: ButtonColors
         @Composable get() = ButtonDefaults.buttonColors(
@@ -56,6 +58,7 @@ data object DarkAlchitryColors : AlchitryColors {
     override val GutterForeground = Color(0xFFA1A1A1)
     override val LineHighlight = Accent.copy(alpha = 0.05f)
     override val TokenHighlight = Accent.copy(alpha = 0.2f)
+    override val SearchMatchHighlight = Color(0xFF8368FF)
 
     override val SelectionColor = Color(0xFF6C5600)
 
@@ -63,6 +66,8 @@ data object DarkAlchitryColors : AlchitryColors {
     override val Warning = Color(0xFFCBCB18)
     override val Error = Color(0xFFCE1111)
     override val Info = Color(0xFF29A2CC)
+
+    override val SearchBar = Color(0xFF242424)
 
     override val scheme = darkColorScheme(
         primary = Accent,
@@ -97,6 +102,7 @@ data object LightAlchitryColors : AlchitryColors {
     override val GutterForeground = Color(0xFFA1A1A1)
     override val LineHighlight = Accent.copy(alpha = 0.1f)
     override val TokenHighlight = Accent.copy(alpha = 0.2f)
+    override val SearchMatchHighlight = Color(0xFF7A1FFA).copy(alpha = 0.2f)
 
     override val SelectionColor = Accent.copy(alpha = 0.5f)
 
@@ -104,6 +110,8 @@ data object LightAlchitryColors : AlchitryColors {
     override val Warning = Color(0xFFCBCB18)
     override val Error = Color(0xFFCE1111)
     override val Info = Color(0xFF29A2CC)
+
+    override val SearchBar = Color(0xFFD0D0D0)
 
     override val scheme = lightColorScheme(
         primary = Accent,

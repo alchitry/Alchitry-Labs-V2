@@ -3,7 +3,6 @@
 package com.alchitry.labs2.ui.alchitry_text_field
 
 import androidx.compose.foundation.text.TextDelegate
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -15,7 +14,6 @@ import androidx.compose.ui.unit.LayoutDirection
 class AlchitryLineState(
     val text: AnnotatedString,
     density: Density?,
-    val highlights: MutableList<HighlightAnnotation>,
     fontFamilyResolver: FontFamily.Resolver?,
     val style: TextStyle?
 ) {
@@ -42,10 +40,5 @@ class AlchitryLineState(
         lastConstraints = constraints
 
         return delegate?.layout(constraints, LayoutDirection.Ltr, layoutResult).also { layoutResult = it }
-    }
-
-    context(_: DrawScope)
-    fun drawHighlights() {
-        highlights.forEach { it.draw(this) }
     }
 }
