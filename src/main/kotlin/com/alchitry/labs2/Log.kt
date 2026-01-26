@@ -6,7 +6,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
-import com.alchitry.labs2.ui.main.Console
+import com.alchitry.labs2.ui.alchitry_text_field.Console
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.windows.LoaderProgressBarConsumer
 import com.alchitry.labs2.windows.LoaderProgressBarRender

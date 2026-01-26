@@ -15,10 +15,10 @@ import com.alchitry.labs2.Log
 import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.hardware.usb.SerialDevice
 import com.alchitry.labs2.hardware.usb.UsbUtil
+import com.alchitry.labs2.ui.alchitry_text_field.Console
 import com.alchitry.labs2.ui.components.DeviceSelector
 import com.alchitry.labs2.ui.components.ToolbarButton
 import com.alchitry.labs2.ui.isAwtTypedEvent
-import com.alchitry.labs2.ui.main.Console
 import com.alchitry.labs2.windows.LocalLabsState
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow

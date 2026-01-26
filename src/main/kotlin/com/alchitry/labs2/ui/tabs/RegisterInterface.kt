@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.hardware.usb.SerialDevice
-import com.alchitry.labs2.ui.main.Console
+import com.alchitry.labs2.ui.alchitry_text_field.Console
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow

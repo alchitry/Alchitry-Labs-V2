@@ -1,4 +1,4 @@
-package com.alchitry.labs2.ui.main
+package com.alchitry.labs2.ui.toolbars
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Text

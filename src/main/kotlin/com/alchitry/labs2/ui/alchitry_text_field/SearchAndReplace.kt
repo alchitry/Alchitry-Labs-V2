@@ -163,33 +163,44 @@ class SearchAndReplaceState(private val editor: AlchitryTextFieldState) {
         editor.replaceText(newText, activeHighlight.range)
     }
 
-    private fun cycleMatch(next: Boolean) {
+    private fun setActiveIndex(newIndex: Int) {
         if (searchHighlights.isEmpty()) return
-        val activeIndex = (activeIndex ?: return).coerceIn(0, searchHighlights.size - 1)
-        searchHighlights[activeIndex] = searchHighlights[activeIndex].copy(
-            color = inactiveColor
-        )
-        val nextIndex = if (next) {
-            if (activeIndex + 1 >= searchHighlights.size) 0 else activeIndex + 1
-        } else {
-            if (activeIndex - 1 < 0) searchHighlights.size - 1 else activeIndex - 1
-        }
-        searchHighlights[nextIndex] = searchHighlights[nextIndex].copy(
-            color = activeColor
-        )
-        this.activeIndex = nextIndex
+        val boundedNewIndex = newIndex.coerceIn(0, searchHighlights.size - 1)
 
-        editor.selectionManager.start = searchHighlights[nextIndex].range.start
-        editor.selectionManager.end = searchHighlights[nextIndex].range.endExclusive
-        editor.selectionManager.caret = searchHighlights[nextIndex].range.endExclusive
+        activeIndex?.let { oldIndex ->
+            val boundedOldIndex = oldIndex.coerceIn(0, searchHighlights.size - 1)
+            searchHighlights[boundedOldIndex] = searchHighlights[boundedOldIndex].copy(color = inactiveColor)
+        }
+
+        searchHighlights[boundedNewIndex] = searchHighlights[boundedNewIndex].copy(color = activeColor)
+        activeIndex = boundedNewIndex
+
+        val range = searchHighlights[boundedNewIndex].range
+        editor.selectionManager.start = range.start
+        editor.selectionManager.end = range.endExclusive
+        editor.selectionManager.caret = range.endExclusive
     }
 
     fun nextMatch() {
-        cycleMatch(true)
+        if (searchHighlights.isEmpty()) return
+
+        // Find the first match strictly after selectionManager.end (wrap to start if none).
+        val anchor = editor.selectionManager.end
+        val nextIndex = searchHighlights.indexOfFirst { it.range.start > anchor }
+            .let { if (it >= 0) it else 0 }
+
+        setActiveIndex(nextIndex)
     }
 
     fun previousMatch() {
-        cycleMatch(false)
+        if (searchHighlights.isEmpty()) return
+
+        // Find the closest match strictly before selectionManager.start (wrap to end if none).
+        val anchor = editor.selectionManager.start
+        val prevIndex = searchHighlights.indexOfLast { it.range.endExclusive < anchor }
+            .let { if (it >= 0) it else (searchHighlights.size - 1) }
+
+        setActiveIndex(prevIndex)
     }
 
     fun updateHighlights(moveCaret: Boolean = true) {

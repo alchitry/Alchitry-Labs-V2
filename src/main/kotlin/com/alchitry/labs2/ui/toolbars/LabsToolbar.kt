@@ -1,4 +1,4 @@
-package com.alchitry.labs2.ui.main
+package com.alchitry.labs2.ui.toolbars
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background

@@ -23,8 +23,8 @@ import com.alchitry.labs2.hardware.usb.UsbUtil
 import com.alchitry.labs2.ui.components.AlchitryToolTip
 import com.alchitry.labs2.ui.components.WindowDecoration
 import com.alchitry.labs2.ui.dialogs.openFileDialog
-import com.alchitry.labs2.ui.main.LoaderToolbar
 import com.alchitry.labs2.ui.theme.AlchitryColors
+import com.alchitry.labs2.ui.toolbars.LoaderToolbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive

@@ -1,4 +1,4 @@
-package com.alchitry.labs2.ui.main
+package com.alchitry.labs2.ui.alchitry_text_field
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
@@ -18,7 +18,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.Settings
-import com.alchitry.labs2.ui.alchitry_text_field.*
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.ui.theme.ubuntuMonoFont
 import me.tongfei.progressbar.ProgressBarConsumer
@@ -72,7 +71,7 @@ class Console(onKeyEvent: (KeyEvent) -> Boolean = { false }) {
                 middle?.let {
                     withStyle(
                         SpanStyle(
-                            color = AlchitryColors.current.ProgressBar,
+                            color = AlchitryColors.Companion.current.ProgressBar,
                             fontFamily = ubuntuMonoFont
                         )
                     ) { append(it) }
@@ -144,87 +143,89 @@ class Console(onKeyEvent: (KeyEvent) -> Boolean = { false }) {
         state.subscribe()
         state.clipboardManager = LocalClipboardManager.current
 
-        Row {
-            val width =
-                if (Settings.consoleScrollBarStyle == Settings.ScrollBarStyle.MiniText) 1f - MINI_TEXT_SCALE else 1f
-            Box(Modifier.fillMaxWidth(width)) {
-                Canvas(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    state.redrawTriggerStates.value
-                    with(state.selectionManager) {
-                        drawLineHighlight()
-                    }
-                }
-                ContextMenuArea(
-                    items = {
-                        listOf(
-                            ContextMenuItem("Copy") { state.copy() },
-                            ContextMenuItem("Select All") { state.selectionManager.selectAll() },
-                            ContextMenuItem("Clear All") { clear() },
-                        )
-                    }
-                ) {
-                    BoxWithConstraints(Modifier.padding(start = 10.dp)) {
+        Column {
+            state.searchAndReplaceState.drawBar()
+            Row(Modifier.fillMaxWidth().clipToBounds()) {
+                val width =
+                    if (Settings.consoleScrollBarStyle == Settings.ScrollBarStyle.MiniText) 1f - MINI_TEXT_SCALE else 1f
+                Box(Modifier.Companion.fillMaxWidth(width)) {
+                    Canvas(
+                        modifier = Modifier.Companion.fillMaxSize()
+                    ) {
                         state.redrawTriggerStates.value
-                        with(LocalDensity.current) {
-                            state.updateLayout(maxWidth.roundToPx(), maxHeight.roundToPx(), this)
+                        with(state.selectionManager) {
+                            drawLineHighlight()
                         }
+                    }
+                    ContextMenuArea(
+                        items = {
+                            listOf(
+                                ContextMenuItem("Copy") { state.copy() },
+                                ContextMenuItem("Select All") { state.selectionManager.selectAll() },
+                                ContextMenuItem("Clear All") { clear() },
+                            )
+                        }
+                    ) {
+                        BoxWithConstraints(Modifier.Companion.padding(start = 10.dp)) {
+                            state.redrawTriggerStates.value
+                            with(LocalDensity.current) {
+                                state.updateLayout(maxWidth.roundToPx(), maxHeight.roundToPx(), this)
+                            }
 
-                        Canvas(
-                            modifier = Modifier
-                                .clipToBounds()
-                                .scrollable(
-                                    state.verticalScrollState,
-                                    Orientation.Vertical,
-                                    reverseDirection = true
-                                )
-                                .scrollable(
-                                    state.horizontalScrollState,
-                                    Orientation.Horizontal,
-                                    reverseDirection = true
-                                )
-                                .fillMaxSize()
-                                .pointerHoverIcon(textCursor)
-                                .then(state.keyModifier())
-                                .then(state.tapModifier())
+                            Canvas(
+                                modifier = Modifier.Companion
+                                    .clipToBounds()
+                                    .scrollable(
+                                        state.verticalScrollState,
+                                        Orientation.Vertical,
+                                        reverseDirection = true
+                                    )
+                                    .scrollable(
+                                        state.horizontalScrollState,
+                                        Orientation.Horizontal,
+                                        reverseDirection = true
+                                    )
+                                    .fillMaxSize()
+                                    .pointerHoverIcon(textCursor)
+                                    .then(state.keyModifier())
+                                    .then(state.tapModifier())
 
-                        ) {
-                            with(state) {
-                                draw()
+                            ) {
+                                with(state) {
+                                    draw()
+                                }
                             }
                         }
-                    }
 
+                    }
+                    HorizontalScrollbar(
+                        rememberScrollbarAdapter(state.horizontalScrollState),
+                        Modifier.Companion.align(Alignment.Companion.BottomStart).fillMaxWidth()
+                            .padding(
+                                bottom = 8.dp,
+                                start = 8.dp,
+                                end = if (Settings.consoleScrollBarStyle == Settings.ScrollBarStyle.Minimal) 24.dp else 8.dp
+                            ),
+                    )
+                    if (Settings.consoleScrollBarStyle == Settings.ScrollBarStyle.Minimal) {
+                        VerticalScrollbar(
+                            rememberScrollbarAdapter(state.verticalScrollState),
+                            Modifier.Companion.align(Alignment.Companion.CenterEnd).fillMaxHeight()
+                                .padding(end = 8.dp, top = 8.dp, bottom = 8.dp)
+                        )
+                    }
                 }
-                HorizontalScrollbar(
-                    rememberScrollbarAdapter(state.horizontalScrollState),
-                    Modifier.align(Alignment.BottomStart).fillMaxWidth()
-                        .padding(
-                            bottom = 8.dp,
-                            start = 8.dp,
-                            end = if (Settings.consoleScrollBarStyle == Settings.ScrollBarStyle.Minimal) 24.dp else 8.dp
-                        ),
-                )
-                if (Settings.consoleScrollBarStyle == Settings.ScrollBarStyle.Minimal) {
-                    VerticalScrollbar(
-                        rememberScrollbarAdapter(state.verticalScrollState),
-                        Modifier.align(Alignment.CenterEnd).fillMaxHeight()
-                            .padding(end = 8.dp, top = 8.dp, bottom = 8.dp)
+
+                if (Settings.consoleScrollBarStyle == Settings.ScrollBarStyle.MiniText) {
+                    ScrollStateMiniScrollBar(
+                        state.verticalScrollState,
+                        state.horizontalScrollState,
+                        MINI_TEXT_SCALE,
+                        state.lines,
+                        Modifier.Companion.fillMaxWidth()
                     )
                 }
-            }
-
-            if (Settings.consoleScrollBarStyle == Settings.ScrollBarStyle.MiniText) {
-                ScrollStateMiniScrollBar(
-                    state.verticalScrollState,
-                    state.horizontalScrollState,
-                    MINI_TEXT_SCALE,
-                    state.lines,
-                    Modifier.fillMaxWidth()
-                )
             }
         }
     }
 }
-

@@ -19,14 +19,14 @@ import com.alchitry.labs2.Settings
 import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.hardware.usb.UsbUtil
 import com.alchitry.labs2.project.Project
+import com.alchitry.labs2.ui.alchitry_text_field.Console
 import com.alchitry.labs2.ui.components.ResizePriority
 import com.alchitry.labs2.ui.components.Sash
 import com.alchitry.labs2.ui.components.WindowDecoration
 import com.alchitry.labs2.ui.components.rememberSashData
 import com.alchitry.labs2.ui.dialogs.ProjectDialog
-import com.alchitry.labs2.ui.main.Console
-import com.alchitry.labs2.ui.main.LabsToolbar
 import com.alchitry.labs2.ui.tabs.Workspace
+import com.alchitry.labs2.ui.toolbars.LabsToolbar
 import com.alchitry.labs2.ui.tree.ProjectTree
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
