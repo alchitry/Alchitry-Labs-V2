@@ -9,12 +9,12 @@ import androidx.compose.ui.graphics.drawscope.translate
 import kotlin.math.round
 
 data class HighlightAnnotation(
-    val range: ClosedRange<TextPosition>,
+    val range: OpenEndRange<TextPosition>,
     val color: Color
 ) {
     context(scope: DrawScope)
     fun draw(lineState: AlchitryLineState) {
-        require(range.start.line == range.endInclusive.line) {
+        require(range.start.line == range.endExclusive.line) {
             "When drawing on a single line the range must be only a single line."
         }
         if (range.isEmpty())
@@ -31,7 +31,7 @@ data class HighlightAnnotation(
 
         val xEnd = round(
             layout.getHorizontalPosition(
-                range.endInclusive.offset.coerceIn(0, lineState.text.length),
+                range.endExclusive.offset.coerceIn(0, lineState.text.length),
                 usePrimaryDirection = true
             )
         )
@@ -45,7 +45,7 @@ data class HighlightAnnotation(
             return
 
         val firstPos = range.start
-        val secondPos = range.endInclusive
+        val secondPos = range.endExclusive
 
         val bounds = Rect(
             0f,

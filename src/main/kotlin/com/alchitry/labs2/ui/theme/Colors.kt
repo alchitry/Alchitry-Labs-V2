@@ -101,7 +101,7 @@ data object LightAlchitryColors : AlchitryColors {
 
     override val GutterForeground = Color(0xFFA1A1A1)
     override val LineHighlight = Color(0xFFFFFAEB)
-    override val TokenHighlight = Color(0xFFFFE9C7)
+    override val TokenHighlight = Color(0xFFE2E2FC)
     override val SearchMatchHighlight = Accent
 
     override val SelectionColor = Accent.copy(alpha = 0.5f)
@@ -111,7 +111,7 @@ data object LightAlchitryColors : AlchitryColors {
     override val Error = Color(0xFFCE1111)
     override val Info = Color(0xFF29A2CC)
 
-    override val SearchBar = Color(0xFFD0D0D0)
+    override val SearchBar = Color(0xFFE5E5E5)
 
     override val scheme = lightColorScheme(
         primary = Accent,
@@ -124,8 +124,8 @@ data object LightAlchitryColors : AlchitryColors {
         surface = Color.White,
         onSurface = Color.Black,
         surfaceTint = Color(0xFF333333),
-        //surfaceVariant = Color(0xFF333333),
-        //onSurfaceVariant = Color(0xFFA1A1A1),
+        surfaceVariant = Color(0xFFF3F3F3),
+        onSurfaceVariant = Color(0xFF101010),
     )
 }
 

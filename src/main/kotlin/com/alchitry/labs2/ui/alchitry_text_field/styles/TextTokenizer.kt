@@ -17,7 +17,7 @@ interface TextTokenizer {
             append(text)
             tokens.forEach {
                 if (it.style != null)
-                    addStyle(it.style, it.range.start.offset, it.range.endInclusive.offset)
+                    addStyle(it.style, it.range.start.offset, it.range.endExclusive.offset)
             }
         }.toAnnotatedString()
     }

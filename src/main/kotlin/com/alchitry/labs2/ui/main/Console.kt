@@ -30,7 +30,8 @@ class Console(onKeyEvent: (KeyEvent) -> Boolean = { false }) {
 
     private val state = AlchitryTextFieldState(
         onKeyEvent = onKeyEvent,
-        onReplaceText = { _, _ -> true } // read only
+        isReadOnly = true,
+        onReplaceText = { _, _ -> true } // prevent writes
     )
 
     private var activeProgressBar: String? = null
@@ -42,7 +43,7 @@ class Console(onKeyEvent: (KeyEvent) -> Boolean = { false }) {
         val startPosition = TextPosition(lineNumber, 0)
         val endPosition = TextPosition(lineNumber, lastLine.text.length)
         state.forceReplaceText("", startPosition..<endPosition, false)
-        state.notations.removeIf { it.range.endInclusive.line == lineNumber }
+        state.notations.removeIf { it.range.endExclusive.line == lineNumber }
     }
 
     val progressBarConsumer = object : ProgressBarConsumer {

@@ -96,6 +96,7 @@ class AlchitryTextFieldState(
     val autocomplete: Autocomplete? = null,
     val onTextChanged: () -> Unit = {},
     val onDoubleClicK: (Offset) -> Boolean = { false },
+    val isReadOnly: Boolean = false,
     val onReplaceText: (String, OpenEndRange<TextPosition>) -> Boolean = { _, _ -> false },
     val onKeyEvent: (KeyEvent) -> Boolean = { false },
 ) : TextProvider, AutocompleteSource {
@@ -325,6 +326,19 @@ class AlchitryTextFieldState(
         return lines.joinToString("\n") { it.text.text }
     }
 
+    fun getTextInRange(range: OpenEndRange<TextPosition>): String {
+        if (range.start.line == range.endExclusive.line) return lines.getOrNull(range.start.line)?.text?.text?.substring(
+            range.start.offset,
+            range.endExclusive.offset
+        ) ?: ""
+
+        val startLine = lines.getOrNull(range.start.line)?.text?.text?.substring(range.start.offset) ?: return ""
+        val endLine =
+            lines.getOrNull(range.endExclusive.line)?.text?.text?.substring(0, range.endExclusive.offset) ?: return ""
+        val middleLines = lines.subList(range.start.line + 1, range.endExclusive.line).map { it.text.text }
+        return listOf(startLine, *middleLines.toTypedArray(), endLine).joinToString("\n")
+    }
+
     fun onTextChange() {
         onTextChanged()
 
@@ -394,7 +408,7 @@ class AlchitryTextFieldState(
             notations.add(
                 Notation(
                     message = null,
-                    range = offsetToPosition(spanStyle.start)..offsetToPosition(spanStyle.end),
+                    range = offsetToPosition(spanStyle.start)..<offsetToPosition(spanStyle.end),
                     type = NotationType.Custom("Log", spanStyle.item)
                 )
             )
@@ -587,11 +601,11 @@ class AlchitryTextFieldState(
                     if (visible) {
                         wasVisible = true
                         bracketHighlights.forEach { highlight ->
-                            if (highlight.range.start.line >= lineNumber && highlight.range.endInclusive.line <= lineNumber)
+                            if (highlight.range.start.line >= lineNumber && highlight.range.endExclusive.line <= lineNumber)
                                 highlight.draw(line)
                         }
                         tokenHighlights.forEach { highlight ->
-                            if (highlight.range.start.line >= lineNumber && highlight.range.endInclusive.line <= lineNumber)
+                            if (highlight.range.start.line >= lineNumber && highlight.range.endExclusive.line <= lineNumber)
                                 highlight.draw(line)
                         }
                         canvas.translate(dx = 0f, dy = (line.lineHeight ?: 0).toFloat())
@@ -697,7 +711,7 @@ class AlchitryTextFieldState(
         while (end < text.length && isWordChar(text[end])) {
             end++
         }
-        selectionManager.selectRange(TextPosition(offset.line, start)..TextPosition(offset.line, end))
+        selectionManager.selectRange(TextPosition(offset.line, start)..<TextPosition(offset.line, end))
     }
 
     fun tapModifier() = Modifier.pointerInput(selectionManager) {
@@ -719,7 +733,7 @@ class AlchitryTextFieldState(
     }
 
     fun lineNotationLevel(line: Int): NotationType? {
-        return notations.filter { (it.range.start.line..it.range.endInclusive.line).contains(line) }
+        return notations.filter { (it.range.start.line..it.range.endExclusive.line).contains(line) }
             .minByOrNull { it.type.priority }?.type
     }
 
@@ -1189,6 +1203,7 @@ class AlchitryTextFieldState(
             block()
         }
     }
+
 
     companion object {
         private val closingBrackets = listOf(')', ']', '}')

@@ -9,7 +9,7 @@ data class EditorToken(
     val styleToken: StyleToken,
     val token: Token
 ) {
-    constructor(range: ClosedRange<TextPosition>, style: SpanStyle?, token: Token) : this(
+    constructor(range: OpenEndRange<TextPosition>, style: SpanStyle?, token: Token) : this(
         StyleToken(range, style),
         token
     )
@@ -19,10 +19,10 @@ data class EditorToken(
 }
 
 data class StyleToken(
-    val range: ClosedRange<TextPosition>,
+    val range: OpenEndRange<TextPosition>,
     val style: SpanStyle?
 ) {
-    val isSingleLine: Boolean get() = range.start.line == range.endInclusive.line
+    val isSingleLine: Boolean get() = range.start.line == range.endExclusive.line
 }
 
 data class LineStyle(
@@ -54,7 +54,7 @@ fun Token.textPositionAtOffset(offset: Int?): TextPosition {
 
 fun Token.toEditorToken(style: SpanStyle?): EditorToken {
     return EditorToken(
-        range = textPositionAtOffset(0)..
+        range = textPositionAtOffset(0)..<
                 textPositionAtOffset(null),
         style = style,
         token = this

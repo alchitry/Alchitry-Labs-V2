@@ -645,7 +645,7 @@ data class Project(
                         .addNotation(
                             Notation(
                                 "${constraintFile.language.name} constraints are not supported yet!",
-                                TextPosition(1, 1)..TextPosition(1, 1),
+                                TextPosition(1, 1)..<TextPosition(1, 1),
                                 NotationType.Warning
                             )
                         )

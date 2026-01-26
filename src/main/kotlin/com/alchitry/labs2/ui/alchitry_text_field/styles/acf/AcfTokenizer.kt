@@ -28,7 +28,7 @@ object AcfTokenizer : TextTokenizer {
                 newTokens.add(
                     EditorToken(
                         styleToken = StyleToken(
-                            token.textPositionAtOffset(0)..token.textPositionAtOffset("native".length),
+                            token.textPositionAtOffset(0)..<token.textPositionAtOffset("native".length),
                             LucidStyle.keyword
                         ),
                         token = token
@@ -40,7 +40,7 @@ object AcfTokenizer : TextTokenizer {
                 newTokens.add(
                     EditorToken(
                         styleToken = StyleToken(
-                            token.textPositionAtOffset(bracketOffset).run { this..copy(offset = offset + 1) },
+                            token.textPositionAtOffset(bracketOffset).run { this..<copy(offset = offset + 1) },
                             LucidStyle.operator
                         ),
                         token = token
@@ -58,7 +58,7 @@ object AcfTokenizer : TextTokenizer {
                         newTokens.add(
                             EditorToken(
                                 styleToken = StyleToken(
-                                    token.textPositionAtOffset(indexOffset + lastIndex)..token.textPositionAtOffset(
+                                    token.textPositionAtOffset(indexOffset + lastIndex)..<token.textPositionAtOffset(
                                         indexOffset + match.range.first
                                     ),
                                     LucidStyle.string
@@ -74,7 +74,7 @@ object AcfTokenizer : TextTokenizer {
                     newTokens.add(
                         EditorToken(
                             styleToken = StyleToken(
-                                token.textPositionAtOffset(match.range.first + indexOffset)..
+                                token.textPositionAtOffset(match.range.first + indexOffset)..<
                                         token.textPositionAtOffset(startOffset + indexOffset),
                                 LucidStyle.keyword
                             ),
@@ -86,7 +86,7 @@ object AcfTokenizer : TextTokenizer {
                         EditorToken(
                             styleToken = StyleToken(
                                 token.textPositionAtOffset(startOffset + indexOffset)
-                                    .run { this..copy(offset = offset + 1) },
+                                    .run { this..<copy(offset = offset + 1) },
                                 LucidStyle.operator
                             ),
                             token = token
@@ -97,7 +97,7 @@ object AcfTokenizer : TextTokenizer {
                         EditorToken(
                             styleToken = StyleToken(
                                 token.textPositionAtOffset(endOffset + indexOffset)
-                                    .run { this..copy(offset = offset + 1) },
+                                    .run { this..<copy(offset = offset + 1) },
                                 LucidStyle.operator
                             ),
                             token = token
@@ -116,13 +116,13 @@ object AcfTokenizer : TextTokenizer {
                             if (it.range.start.line == 0) startPosition.offset + it.range.start.offset else it.range.start.offset
                         )
                         val offsetEnd = TextPosition(
-                            startPosition.line + it.range.endInclusive.line,
-                            if (it.range.endInclusive.line == 0) startPosition.offset + it.range.endInclusive.offset else it.range.endInclusive.offset
+                            startPosition.line + it.range.endExclusive.line,
+                            if (it.range.endExclusive.line == 0) startPosition.offset + it.range.endExclusive.offset else it.range.endExclusive.offset
                         )
                         newTokens.add(
                             EditorToken(
                                 StyleToken(
-                                    range = offsetStart..offsetEnd,
+                                    range = offsetStart..<offsetEnd,
                                     style = it.style
                                 ),
                                 token = it.token
@@ -137,7 +137,7 @@ object AcfTokenizer : TextTokenizer {
                     newTokens.add(
                         EditorToken(
                             styleToken = StyleToken(
-                                token.textPositionAtOffset(indexOffset + lastIndex)..token.textPositionAtOffset(
+                                token.textPositionAtOffset(indexOffset + lastIndex)..<token.textPositionAtOffset(
                                     indexOffset + nativeText.length
                                 ),
                                 LucidStyle.string

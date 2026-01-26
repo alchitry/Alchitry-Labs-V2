@@ -82,9 +82,9 @@ class SelectionManager(
         onChange()
     }
 
-    fun selectRange(range: ClosedRange<TextPosition>) {
+    fun selectRange(range: OpenEndRange<TextPosition>) {
         start = range.start
-        end = range.endInclusive
+        end = range.endExclusive
         onChange()
     }
 
@@ -219,11 +219,11 @@ class SelectionManager(
 
         val newPosition = with(editorState) {
             val token = textPositionToToken(caret) ?: return CaretMovement(caret, caret)
-            if (token.range.endInclusive == caret) {
+            if (token.range.endExclusive == caret) {
                 val nextToken = tokens[(tokens.indexOf(token) + 1).coerceAtMost(tokens.size - 1)]
-                return@with nextToken.range.endInclusive
+                return@with nextToken.range.endExclusive
             }
-            token.range.endInclusive
+            token.range.endExclusive
         }
 
         return moveCaret(newPosition)
@@ -387,7 +387,7 @@ class SelectionManager(
 
     fun DrawScope.drawSelection() {
         HighlightAnnotation(
-            start.coerceAtMost(end)..end.coerceAtLeast(start),
+            start.coerceAtMost(end)..<end.coerceAtLeast(start),
             editorState.style?.selectionColor ?: Color.Transparent
         ).draw(editorState)
     }
@@ -396,7 +396,7 @@ class SelectionManager(
         if (!active) return
 
         val lineTop = editorState.offsetAtLineTop(caret.line).toFloat()
-        val lineBottom = lineTop + (editorState.lines[caret.line].lineHeight ?: 0)
+        val lineBottom = lineTop + (editorState.lines.getOrNull(caret.line)?.lineHeight ?: 0)
 
         val lineBounds = Rect(
             topLeft = Offset(0f, lineTop),

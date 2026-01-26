@@ -137,7 +137,7 @@ class AcfExtractor(
                         notationCollector.addNotation(
                             Notation(
                                 "Failed to resolve a pin converter!",
-                                startPosition..endPosition,
+                                startPosition..<endPosition,
                                 NotationType.Error
                             )
                         )
@@ -148,7 +148,7 @@ class AcfExtractor(
                         notationCollector.addNotation(
                             Notation(
                                 "ACF pin \"$body\" not found!",
-                                startPosition..endPosition,
+                                startPosition..<endPosition,
                                 NotationType.Error
                             )
                         )

@@ -8,7 +8,7 @@ import org.antlr.v4.kotlinruntime.Token
 
 data class Notation(
     val message: String?,
-    val range: ClosedRange<TextPosition>,
+    val range: OpenEndRange<TextPosition>,
     val type: NotationType
 ) {
     override fun toString(): String {
@@ -25,7 +25,7 @@ data class Notation(
             }
             return Notation(
                 message = message,
-                range = TextPosition(line, lineOffset)..
+                range = TextPosition(line, lineOffset)..<
                         TextPosition(line, lineOffset + ((token.text?.length) ?: 0)),
                 type = type
             )
@@ -48,7 +48,7 @@ data class Notation(
             }
             return Notation(
                 message = message,
-                range = TextPosition(startLine, startOffset)..
+                range = TextPosition(startLine, startOffset)..<
                         TextPosition(stopLine, stopOffset + (stop.text?.length ?: 0)),
                 type = type
             )

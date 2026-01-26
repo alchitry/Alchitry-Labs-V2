@@ -27,6 +27,7 @@ class CodeEditorState(val file: ProjectFile) {
         codeFormatter = CodeFormatter.forLanguage(file.language),
         tokenizer = file.textTokenizer,
         onTextChanged = { onTextChanged() },
+        isReadOnly = file.isReadOnly,
         onDoubleClicK = { onDoubleClick(it) },
         onReplaceText = { _, _ -> onReplaceText() },
     )

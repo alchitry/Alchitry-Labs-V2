@@ -28,7 +28,7 @@ class CodeStyler(
                 return@forEach
 
             val start = token.range.start.coerceInRange(lines)
-            val end = token.range.endInclusive.coerceInRange(lines)
+            val end = token.range.endExclusive.coerceInRange(lines)
 
             if (token.isSingleLine) {
                 styles[start.line].add(
