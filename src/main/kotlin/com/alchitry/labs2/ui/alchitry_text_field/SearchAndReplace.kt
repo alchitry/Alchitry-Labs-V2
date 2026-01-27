@@ -276,8 +276,7 @@ class SearchAndReplaceState(private val editor: AlchitryTextFieldState) {
                             return@onPreviewKeyEvent true
                         }
                         false
-                    },
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    }
             ) {
                 Row(
                     Modifier
@@ -445,7 +444,8 @@ class SearchAndReplaceState(private val editor: AlchitryTextFieldState) {
                 ) {
                     Row(
                         Modifier
-                            .height(IntrinsicSize.Min),
+                            .height(IntrinsicSize.Min)
+                            .padding(top = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         val focusRequester = remember { FocusRequester() }
