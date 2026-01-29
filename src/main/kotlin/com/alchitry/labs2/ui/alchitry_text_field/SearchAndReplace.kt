@@ -204,8 +204,10 @@ class SearchAndReplaceState(private val editor: AlchitryTextFieldState) {
     }
 
     fun updateHighlights(moveCaret: Boolean = true) {
-        val text = editor.getText()
         searchHighlights.clear()
+        if (mode == SearchAndReplaceMode.None) return
+
+        val text = editor.getText()
         val searchRegex = buildSearchRegexOrNull() ?: return
         var matched = false
         searchRegex.findAll(text).forEachIndexed { index, it ->
@@ -232,7 +234,8 @@ class SearchAndReplaceState(private val editor: AlchitryTextFieldState) {
         }
         if (!matched) {
             if (searchHighlights.isNotEmpty()) {
-                nextMatch()
+                if (moveCaret)
+                    nextMatch()
             } else {
                 activeIndex = null
                 editor.selectionManager.clearSelection()
