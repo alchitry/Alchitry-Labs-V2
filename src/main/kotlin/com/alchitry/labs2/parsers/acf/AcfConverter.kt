@@ -6,6 +6,8 @@ import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.project.ConstraintLang
+import com.alchitry.labs2.project.Project
+import com.alchitry.labs2.project.builders.IceStormBuilder
 import com.alchitry.labs2.project.files.ConstraintFile
 
 data class NativeConstraint(
@@ -47,13 +49,17 @@ private fun SignalSelection.toVerilogSelectors() = buildString {
     }
 }
 
-val SignalOrSubSignal.fullPortName: String
+val SignalOrSubSignal.nativePortName: String
+    get() = if (Project.current?.data?.board?.projectBuilder is IceStormBuilder) flatFullPortName else fullPortName
+
+
+private val SignalOrSubSignal.fullPortName: String
     get() = when (this) {
         is Signal -> name
         is SubSignal -> "${parent.name}${selection.toVerilogSelectors()}"
     }
 
-val SignalOrSubSignal.flatFullPortName: String
+private val SignalOrSubSignal.flatFullPortName: String
     get() = when (this) {
         is Signal -> name
         is SubSignal -> "${parent.name}[${flatSelectionData.offset}]"

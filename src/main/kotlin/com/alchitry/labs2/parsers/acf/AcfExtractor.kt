@@ -79,6 +79,7 @@ class AcfExtractor(
         blockAttributes.clear()
     }
 
+
     override fun exitNativeBlock(ctx: NativeBlockContext) {
         val offsetIndex = ctx.text.indexOf("{")
         if (offsetIndex == -1) {
@@ -114,7 +115,8 @@ class AcfExtractor(
                         }
                         ParseTreeWalker.DEFAULT.walk(this, tree)
                         val signal = signals[tree]
-                        val port = signal?.flatFullPortName
+
+                        val port = signal?.nativePortName
                         if (port == null) {
                             notationCollector.reportError(
                                 tree,
@@ -160,7 +162,7 @@ class AcfExtractor(
 
                 else -> error("Match doesn't start with acf_port or acf_pin!")
             }
-        }.trim()
+        }.trimMargin()
         Constraint.NativeBlockConstraint(convertedText, ctx).also {
             context.addConstraint(it)
             constraints.add(it)

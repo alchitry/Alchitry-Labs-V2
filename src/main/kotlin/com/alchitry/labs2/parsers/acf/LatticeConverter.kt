@@ -21,7 +21,7 @@ data object LatticeConverter : AcfConverter {
                         if (constraint.attributes.any { attr -> attr is PinAttribute.Frequency }) {
                             val frequency =
                                 constraint.attributes.first { it is PinAttribute.Frequency } as PinAttribute.Frequency
-                            val portName = constraint.port.flatFullPortName
+                            val portName = constraint.port.nativePortName
                             append("# ")
                             append(portName)
                             append(" => ")
@@ -52,7 +52,7 @@ data object LatticeConverter : AcfConverter {
         val pcf = buildString {
             constraints.filterIsInstance<Constraint.PinConstraint>().forEach { constraint ->
                 append("set_io ")
-                append(constraint.port.flatFullPortName)
+                append(constraint.port.nativePortName)
                 append(" ")
                 append(constraint.pin.fpgaPin)
                 val pull = constraint.attributes.firstOfTypeOrNull<PinAttribute.Pull>()

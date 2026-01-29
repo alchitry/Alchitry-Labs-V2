@@ -11,7 +11,7 @@ import com.alchitry.labs2.project.Languages
 data object XilinxConverter : AcfConverter {
     context (builder: StringBuilder)
     private fun Constraint.PinConstraint.toXdc() {
-        val portName = port.fullPortName
+        val portName = port.nativePortName
         builder.append("set_property PACKAGE_PIN ")
         builder.append(pin.fpgaPin)
         builder.append(" [get_ports {")
@@ -78,7 +78,7 @@ data object XilinxConverter : AcfConverter {
                             constraint.toXdc()
 
                             constraint.attributes.firstOfTypeOrNull<PinAttribute.Frequency>()?.let { frequency ->
-                                val portName = constraint.port.fullPortName
+                                val portName = constraint.port.nativePortName
                                 val clockName = "${portName.replace("[", "_").replace("]", "_")}_$index"
                                 append("# ")
                                 append(portName)
