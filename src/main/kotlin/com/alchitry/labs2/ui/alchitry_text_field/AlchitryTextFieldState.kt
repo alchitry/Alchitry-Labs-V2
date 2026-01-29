@@ -1078,8 +1078,10 @@ class AlchitryTextFieldState(
                             selectionManager.moveUp()
                             replaceText(codeFormatter?.getIndentFor(this, selectionManager.caret.line) ?: "")
                         } else {
+                            val lineText = lines[selectionManager.caret.line].text.text
                             val inLeadingWhitespace =
-                                lines[selectionManager.caret.line].text.text.leadingWhitespace() >= selectionManager.caret.offset
+                                lineText.isNotBlank() &&
+                                        lineText.leadingWhitespace() >= selectionManager.caret.offset
                             replaceText("\n", updateCaret = !inLeadingWhitespace)
                             val lineNum = selectionManager.caret.line + if (inLeadingWhitespace) 1 else 0
                             val current = lines[lineNum].text.text
@@ -1091,6 +1093,7 @@ class AlchitryTextFieldState(
                                 TextPosition(lineNum, 0)..<TextPosition(lineNum, current.length),
                                 updateCaret = false
                             )
+                            selectionManager.clearSelection()
                             if (inLeadingWhitespace) {
                                 selectionManager.moveDown()
                             } else {

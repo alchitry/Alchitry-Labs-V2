@@ -575,6 +575,8 @@ private fun SearchBarButton(
     description: String,
     onClick: () -> Unit,
 ) {
+
+
     TextTooltipArea(
         text = description
     ) {
