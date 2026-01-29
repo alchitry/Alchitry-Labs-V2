@@ -15,7 +15,6 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -50,7 +49,7 @@ class SearchAndReplaceState(private val editor: AlchitryTextFieldState) {
     private var caseSensitive by mutableStateOf(false)
     private var regex by mutableStateOf(false)
     private var wholeWord by mutableStateOf(false)
-    val searchHighlights = SnapshotStateList<HighlightAnnotation>()
+    val searchHighlights = mutableListOf<HighlightAnnotation>()
     var activeIndex: Int? = null
     var grabFocus by mutableStateOf(false)
     var hasFocus by mutableStateOf(false)
