@@ -37,6 +37,7 @@ import com.alchitry.labs2.ui.components.TextTooltipArea
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.apache.commons.text.StringEscapeUtils
 
 private enum class SearchAndReplaceMode {
     None, Search, Replace
@@ -133,34 +134,38 @@ class SearchAndReplaceState(private val editor: AlchitryTextFieldState) {
     fun replaceAll() {
         val pattern = buildSearchRegexOrNull() ?: return
         val text = editor.getText()
-        val replacement = if (regex) replaceFieldState.text else Regex.escapeReplacement(replaceFieldState.text)
+        val replaceText = StringEscapeUtils.unescapeJava(replaceFieldState.text)
+        val replacement = if (regex) replaceText else Regex.escapeReplacement(replaceText)
         val newText = try {
             text.replace(pattern, replacement)
         } catch (e: Exception) {
             Log.error(e.message)
             return
         }
-        editor.setText(newText)
+        editor.replaceText(
+            newText,
+            TextPosition(0, 0)..<
+                    TextPosition(editor.lines.size - 1, editor.lines.lastOrNull()?.text?.length ?: 0)
+        )
     }
 
     fun replaceOnce() {
         val activeHighlight = searchHighlights.getOrNull(activeIndex ?: return) ?: return
+        val replaceText = StringEscapeUtils.unescapeJava(replaceFieldState.text)
         val newText = if (regex) {
             val pattern = buildSearchRegexOrNull() ?: return
             val text = editor.getTextInRange(activeHighlight.range)
             try {
-                text.replace(pattern, replaceFieldState.text)
+                text.replace(pattern, replaceText)
             } catch (e: Exception) {
                 Log.error(e.message)
                 return
             }
         } else {
-            replaceFieldState.text
+            replaceText
         }
-        editor.selectionManager.start = activeHighlight.range.endExclusive
-        editor.selectionManager.end = activeHighlight.range.endExclusive
-        editor.selectionManager.caret = activeHighlight.range.endExclusive
         editor.replaceText(newText, activeHighlight.range)
+        nextMatch()
     }
 
     private fun setActiveIndex(newIndex: Int) {
