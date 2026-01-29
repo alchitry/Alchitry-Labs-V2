@@ -96,10 +96,13 @@ data class ArrayValue(
         }
         when (val selector = selection.first()) {
             is SignalSelector.Bits -> {
-                val selectedCt = selector.range.last - selector.range.first + 1
+                val last = if (selector.range.last >= 0) selector.range.last else size + selector.range.last
+                val first = if (selector.range.first >= 0) selector.range.first else size + selector.range.first
+
+                val selectedCt = last - first + 1
                 if (selectedCt == 1) {
                     return copy(elements = List(elements.size) {
-                        if (it == selector.range.first)
+                        if (it == first)
                             elements[it].write(selection.subList(1, selection.size), newValue)
                         else
                             elements[it]
@@ -110,7 +113,7 @@ data class ArrayValue(
                     if (newValue.elements.size != selectedCt)
                         error("The selection size doesn't match the newValue size!")
                     return copy(elements = List(elements.size) {
-                        if (selector.range.contains(it))
+                        if ((first..last).contains(it))
                             newValue.elements[it - selector.range.first]
                         else
                             elements[it]
