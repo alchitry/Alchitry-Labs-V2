@@ -109,7 +109,6 @@ data object VivadoBuilder : ProjectBuilder() {
         return@withContext timingReport.readText().contains("All user specified timing constraints are met.")
     }
 
-
     private fun generateProjectFile(project: Project, sourceFiles: List<File>, constraintFiles: List<File>): String =
         buildString {
             append("set projDir \"").append("./vivado\"").appendLine()

@@ -17,7 +17,7 @@ data class ArrayValue(
         }
     }
 
-    override fun toString(format: ValueFormat): String = joinToString(", ", "[", "]") {
+    override fun toString(format: ValueFormat): String = asReversed().joinToString(", ", "[", "]") {
         it.toString(format)
     }
 
