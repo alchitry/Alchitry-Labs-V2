@@ -183,7 +183,7 @@ tasks.register<com.strumenta.antlrkotlin.gradle.AntlrKotlinTask>("generateKotlin
 
 tasks.register("publish") {
     group = "publishing"
-    dependsOn("copied-site", "updateAUR", "ms-store-release")
+    dependsOn("copied-site", "ms-store-release", "updateAUR")
 }
 
 tasks.register("download-oss-cad-suite") {
