@@ -1,10 +1,11 @@
 package com.alchitry.labs2.parsers
 
+import com.alchitry.hardware.Board
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.firstOfTypeOrNull
-import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.hardware.pinout.BoardSide
 import com.alchitry.labs2.hardware.pinout.ConverterVersion
+import com.alchitry.labs2.hardware.pinout.pinConverters
 import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.acf.types.PinAttribute
 import com.alchitry.labs2.parsers.hdl.lucid.SystemVerilogConverter

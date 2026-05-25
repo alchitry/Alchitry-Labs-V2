@@ -1,7 +1,7 @@
 package com.alchitry.labs2.parsers.acf
 
+import com.alchitry.hardware.Board
 import com.alchitry.labs2.firstOfTypeOrNull
-import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.acf.types.PinAttribute
 import com.alchitry.labs2.parsers.acf.types.PinPull

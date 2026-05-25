@@ -6,6 +6,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import com.alchitry.hardware.Log
 import com.alchitry.labs2.ui.alchitry_text_field.Console
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.windows.LoaderProgressBarConsumer
@@ -31,6 +32,23 @@ object Log {
         GlobalScope.launch(Dispatchers.Main) {
             while (isActive) {
                 mainPrint(messageChannel.receive())
+            }
+        }
+        Log.listener = object : Log.LogListener {
+            override fun onMessage(message: String) {
+                println(message)
+            }
+
+            override fun onError(message: String) {
+                error(message)
+            }
+
+            override fun onSuccess(message: String) {
+                success(message)
+            }
+
+            override fun progressBar(taskName: String, total: Long): ProgressBar {
+                return makeProgressBar(taskName, total)
             }
         }
     }
@@ -156,8 +174,8 @@ object Log {
         }.build()
     }
 
-    inline fun progressBar(name: String, max: Long, block: (ProgressBar) -> Unit) {
-        val progressBar = when (Env.mode) {
+    fun makeProgressBar(name: String, max: Long): ProgressBar {
+        return when (Env.mode) {
             Env.Mode.Loader -> {
                 ProgressBar(
                     name,
@@ -192,6 +210,10 @@ object Log {
                 }.build()
             }
         }
+    }
+
+    inline fun progressBar(name: String, max: Long, block: (ProgressBar) -> Unit) {
+        val progressBar = makeProgressBar(name, max)
         progressBar.use(block)
     }
 

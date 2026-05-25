@@ -1,6 +1,8 @@
 package com.alchitry.labs2.project.builders
 
+import com.alchitry.hardware.Board
 import com.alchitry.labs2.Log
+import com.alchitry.labs2.Settings
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import kotlinx.coroutines.*
@@ -13,6 +15,12 @@ import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.pathString
 import kotlin.io.path.relativeTo
+
+val Board.projectBuilder: ProjectBuilder
+    get() = when (this) {
+        Board.AlchitryAu, Board.AlchitryAuPlus, Board.AlchitryAuV2, Board.AlchitryPtV2 -> VivadoBuilder
+        Board.AlchitryCu, Board.AlchitryCuV2 -> if (Settings.useIceCube) IceCubeBuilder else IceStormBuilder
+    }
 
 sealed class ProjectBuilder {
     abstract suspend fun buildProject(

@@ -14,10 +14,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
+import com.alchitry.hardware.Board
+import com.alchitry.hardware.usb.UsbUtil
 import com.alchitry.labs2.Env
 import com.alchitry.labs2.Settings
-import com.alchitry.labs2.hardware.Board
-import com.alchitry.labs2.hardware.usb.UsbUtil
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.ui.alchitry_text_field.Console
 import com.alchitry.labs2.ui.components.ResizePriority

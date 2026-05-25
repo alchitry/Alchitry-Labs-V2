@@ -1,7 +1,7 @@
 package com.alchitry.labs2.project
 
+import com.alchitry.hardware.Board
 import com.alchitry.labs2.JarUtils
-import com.alchitry.labs2.hardware.Board
 import java.io.File
 import java.net.URL
 

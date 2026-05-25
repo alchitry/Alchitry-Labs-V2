@@ -1,7 +1,7 @@
 package com.alchitry.labs2.project.library
 
+import com.alchitry.hardware.Board
 import com.alchitry.labs2.Log
-import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.project.Locations
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.builders.ProjectBuilder

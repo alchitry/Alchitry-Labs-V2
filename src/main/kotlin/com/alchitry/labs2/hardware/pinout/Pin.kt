@@ -1,5 +1,6 @@
 package com.alchitry.labs2.hardware.pinout
 
+import com.alchitry.hardware.Board
 import com.alchitry.labs2.parsers.acf.types.IoStandard
 
 enum class ConverterVersion {
@@ -10,6 +11,15 @@ enum class BoardSide {
     TOP,
     BOTTOM
 }
+
+val Board.pinConverters: List<PinConverter>
+    get() = when (this) {
+        Board.AlchitryAu, Board.AlchitryAuPlus -> listOf(AuPin)
+        Board.AlchitryAuV2 -> listOf(AuV2Pin, AuV2toV1Pin)
+        Board.AlchitryCu -> listOf(CuPin)
+        Board.AlchitryCuV2 -> listOf(CuV2Pin, CuV2toV1Pin)
+        Board.AlchitryPtV2 -> listOf(PtV2TopPin, PtV2BottomPin, PtV2AlphaTopPin)
+    }
 
 interface PinConverter {
     val boardSide: BoardSide

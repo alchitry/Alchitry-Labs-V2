@@ -1,6 +1,6 @@
 package basic
 
-import com.alchitry.labs2.hardware.Board
+import com.alchitry.hardware.Board
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.hdl.types.ports.Inout
 import com.alchitry.labs2.parsers.hdl.values.Bit

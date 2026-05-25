@@ -1,8 +1,8 @@
 package com.alchitry.labs2.project
 
+import com.alchitry.hardware.Board
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.camelToSnakeCase
-import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.project.files.*
 import com.alchitry.labs2.project.library.ComponentLibrary
 import kotlinx.serialization.SerialName

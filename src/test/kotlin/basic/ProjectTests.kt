@@ -1,6 +1,6 @@
 package basic
 
-import com.alchitry.labs2.hardware.Board
+import com.alchitry.hardware.Board
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.ProjectData
 import com.alchitry.labs2.project.ProjectData1V0

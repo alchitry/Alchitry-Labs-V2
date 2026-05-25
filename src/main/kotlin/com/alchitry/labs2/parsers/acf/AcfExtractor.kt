@@ -1,9 +1,10 @@
 package com.alchitry.labs2.parsers.acf
 
+import com.alchitry.hardware.Board
 import com.alchitry.labs2.firstOfTypeOrNull
-import com.alchitry.labs2.hardware.Board
 import com.alchitry.labs2.hardware.pinout.BoardSide
 import com.alchitry.labs2.hardware.pinout.PinConverter
+import com.alchitry.labs2.hardware.pinout.pinConverters
 import com.alchitry.labs2.joinToOrString
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.acf.types.*

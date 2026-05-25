@@ -1,6 +1,6 @@
 package helpers
 
-import com.alchitry.labs2.hardware.Board
+import com.alchitry.hardware.Board
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidGlobalContext

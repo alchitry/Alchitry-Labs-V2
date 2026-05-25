@@ -13,7 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.alchitry.labs2.hardware.Board
+import com.alchitry.hardware.Board
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.addComponents
 import com.alchitry.labs2.project.files.Component

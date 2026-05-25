@@ -52,15 +52,13 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation("org.jdom:jdom2:2.0.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.6")
-    implementation("org.usb4java:usb4java:1.3.0")
-    macAarch64("io.github.dsheirer:libusb4java-darwin-aarch64:1.3.1") // ARM Mac binary
-    implementation("com.fazecast:jSerialComm:2.11.4")
-    implementation("com.github.alchitry.yad2xx:yad2xxJava:8d48cda")
     implementation("me.tongfei:progressbar:0.10.1")
     implementation("org.jline:jline:3.30.6")
     implementation("org.fusesource.jansi:jansi:2.4.2")
     implementation("io.github.vinceglb:filekit-dialogs:0.12.0")
     implementation("org.slf4j:slf4j-nop:2.0.17")
+
+    implementation("com.github.alchitry:Alchitry-Interface:c059f130be")
 
     linuxAmd64(compose.desktop.linux_x64)
     linuxAarch64(compose.desktop.linux_arm64)
@@ -85,7 +83,7 @@ tasks.test {
 
 tasks.withType<KotlinCompile> {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_22)
+        jvmTarget.set(JvmTarget.JVM_23)
         freeCompilerArgs.add("-opt-in=kotlin.contracts.ExperimentalContracts")
         freeCompilerArgs.add("-opt-in=kotlin.ExperimentalStdlibApi")
         freeCompilerArgs.add("-opt-in=kotlinx.serialization.ExperimentalSerializationApi")
@@ -96,7 +94,7 @@ tasks.withType<KotlinCompile> {
 }
 
 kotlin {
-    jvmToolchain(22)
+    jvmToolchain(23)
 }
 
 compose.desktop {

@@ -3,12 +3,13 @@ package com.alchitry.labs2.project
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.alchitry.hardware.Board.XilinxBoard
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
-import com.alchitry.labs2.hardware.Board.XilinxBoard
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.acf.AcfExtractor
 import com.alchitry.labs2.parsers.acf.NativeConstraint
+import com.alchitry.labs2.parsers.acf.acfConverter
 import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.LucidParser
@@ -28,6 +29,7 @@ import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.parsers.notations.NotationManager
 import com.alchitry.labs2.parsers.notations.NotationType
+import com.alchitry.labs2.project.builders.projectBuilder
 import com.alchitry.labs2.project.files.Component
 import com.alchitry.labs2.project.files.FileProvider
 import com.alchitry.labs2.project.files.ProjectFile
@@ -68,7 +70,7 @@ data class Project(
     val sourceDirectory: Path = path.resolve("source")
     val constraintDirectory: Path = path.resolve("constraint")
     val ipCoreDirectory: Path = path.resolve("cores")
-    val binFile: File = buildDirectory.resolve("${data.board.binName}.bin").toFile()
+    val binFile: File = buildDirectory.resolve("${data.board.name.lowercase().replace(" ", "_")}.bin").toFile()
     private val mutableProjectContextFlow = MutableStateFlow<ProjectContext?>(null)
     private val notationManagerFlow = MutableStateFlow<NotationManager?>(null)
     val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())

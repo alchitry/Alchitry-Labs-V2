@@ -14,12 +14,12 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
+import com.alchitry.hardware.Board
+import com.alchitry.hardware.usb.BoardLoader
+import com.alchitry.hardware.usb.UsbUtil
 import com.alchitry.labs2.Env
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
-import com.alchitry.labs2.hardware.Board
-import com.alchitry.labs2.hardware.usb.BoardLoader
-import com.alchitry.labs2.hardware.usb.UsbUtil
 import com.alchitry.labs2.ui.components.AlchitryToolTip
 import com.alchitry.labs2.ui.components.WindowDecoration
 import com.alchitry.labs2.ui.dialogs.openFileDialog

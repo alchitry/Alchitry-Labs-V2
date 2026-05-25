@@ -1,6 +1,6 @@
 package com.alchitry.labs2.parsers.acf
 
-import com.alchitry.labs2.hardware.Board
+import com.alchitry.hardware.Board
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.acf.types.Constraint
 import com.alchitry.labs2.parsers.hdl.types.*
@@ -8,6 +8,7 @@ import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.project.ConstraintLang
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.builders.IceStormBuilder
+import com.alchitry.labs2.project.builders.projectBuilder
 import com.alchitry.labs2.project.files.ConstraintFile
 
 data class NativeConstraint(
@@ -15,6 +16,13 @@ data class NativeConstraint(
     val language: ConstraintLang,
     val contents: String
 )
+
+
+val Board.acfConverter: AcfConverter
+    get() = when (this) {
+        Board.AlchitryAu, Board.AlchitryAuPlus, Board.AlchitryAuV2, Board.AlchitryPtV2 -> XilinxConverter
+        Board.AlchitryCu, Board.AlchitryCuV2 -> LatticeConverter
+    }
 
 sealed interface AcfConverter {
     suspend fun convert(
