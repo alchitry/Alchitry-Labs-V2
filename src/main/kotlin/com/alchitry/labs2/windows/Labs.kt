@@ -35,6 +35,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.jline.utils.Log
 import java.io.File
+import kotlin.time.Duration.Companion.milliseconds
 
 val LocalLabsState = compositionLocalOf<LabsState> { error("No LabsState provided!") }
 
@@ -64,9 +65,15 @@ fun ApplicationScope.labsWindow(projectPath: String?) {
             withContext(Dispatchers.IO) {
                 while (isActive) {
                     UsbUtil.lock.withLock {
-                        labsState.detectedBoards.value = UsbUtil.detectAttachedBoards()
+                        val alchitryBoards = mutableMapOf<Board, Int>()
+                        UsbUtil.detectAttachedBoards().forEach { (board, i) ->
+                            if (board == null)
+                                return@forEach
+                            alchitryBoards[board] = i
+                        }
+                        labsState.detectedBoards.value = alchitryBoards
                     }
-                    delay(1000)
+                    delay(1000.milliseconds)
                 }
             }
         }

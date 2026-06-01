@@ -240,7 +240,13 @@ private fun BoardSelector(
             while (isActive) {
                 if (!busy)
                     try {
-                        boards = UsbUtil.detectAttachedBoards()
+                        val alchitryBoards = mutableMapOf<Board, Int>()
+                        UsbUtil.detectAttachedBoards().forEach { (board, i) ->
+                            if (board == null)
+                                return@forEach
+                            alchitryBoards[board] = i
+                        }
+                        boards = alchitryBoards
                     } catch (_: Exception) {
 
                     }
