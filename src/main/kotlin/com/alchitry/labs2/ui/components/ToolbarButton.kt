@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.alchitry.labs2.Settings
 import com.alchitry.labs2.ui.theme.AlchitryTheme
 
 @Preview
@@ -75,6 +76,34 @@ fun ToolbarButton(
 
                         }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun AlchitryToolbarIcon() {
+    LocalDensity.current.run {
+        val icon = if (Settings.darkTheme) "icons/alchitry_icon.svg" else "icons/alchitry_icon_black.svg"
+        CompositionLocalProvider(
+            LocalContentColor provides MaterialTheme.colorScheme.onBackground
+        ) {
+            ProvideTextStyle(
+                value = MaterialTheme.typography.labelLarge
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(icon),
+                        contentDescription = "Logo",
+                        colorFilter = null,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.padding(6.dp).size(40.dp)
+                    )
+                }
+
             }
         }
     }

@@ -20,6 +20,7 @@ import com.alchitry.labs2.Settings
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.library.VivadoIP
 import com.alchitry.labs2.switchActiveWindow
+import com.alchitry.labs2.ui.components.AlchitryToolbarIcon
 import com.alchitry.labs2.ui.components.ToolbarButton
 import com.alchitry.labs2.ui.dialogs.*
 import com.alchitry.labs2.ui.menu.*
@@ -50,8 +51,8 @@ fun LabsToolbar() {
     }
 
     Row {
-        val icon = if (Settings.darkTheme) "icons/alchitry_icon.svg" else "icons/alchitry_icon_black.svg"
-        IconMenu(painterResource(icon), "Menu", colorFilter = null) {
+        AlchitryToolbarIcon()
+        IconMenu(painterResource("icons/menu.svg"), "Menu") {
             MenuItem({ Text("New Project...") }) {
                 showProjectDialog = true
             }
