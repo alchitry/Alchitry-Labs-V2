@@ -17,6 +17,8 @@ import com.alchitry.labs2.parsers.hdl.types.Function
 import com.alchitry.labs2.parsers.hdl.values.*
 import com.alchitry.labs2.parsers.notations.Notation
 import com.alchitry.labs2.parsers.notations.NotationType
+import com.alchitry.labs2.project.builders.IceCubeBuilder
+import com.alchitry.labs2.project.builders.projectBuilder
 import kotlinx.coroutines.runBlocking
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 import org.antlr.v4.kotlinruntime.tree.ParseTree
@@ -251,6 +253,8 @@ class SystemVerilogConverter(
         val dff = context.types.dffs.values.firstOrNull { it.name == name }
             ?: error("Failed to find dff with name \"$name\"!")
         ctx.verilog = buildString {
+            if (context.project.board.projectBuilder == IceCubeBuilder)
+                append("(* syn_preserve=1 *) ")
             val type = dff.d.width.firstStructType() ?: "logic"
             append("$type ")
             if (dff.signed)
