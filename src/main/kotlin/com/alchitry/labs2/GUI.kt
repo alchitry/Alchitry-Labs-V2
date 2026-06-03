@@ -14,6 +14,9 @@ fun switchActiveWindow(windowType: Settings.WindowType) {
 }
 
 fun main(args: Array<String>) {
+    @Suppress("UnusedExpression")
+    Log // ensure Log init runs to add hooks to board loader
+
     if (Env.os == Env.OS.Unknown) {
         System.err.println("Warning: OS detection failed!")
     }
