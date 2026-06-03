@@ -201,16 +201,19 @@ tasks.register<com.strumenta.antlrkotlin.gradle.AntlrKotlinTask>("generateKotlin
 }
 
 tasks.register("publish") {
+    description = "Publishes a release to the stable channel"
     group = "publishing"
     dependsOn("copied-site", "ms-store-release", "updateAUR")
 }
 
 tasks.register("publish-beta") {
+    description = "Publishes a release to the beta channel"
     group = "publishing"
     dependsOn("copied-site-beta", "ms-store-release-beta", "updateAUR-beta")
 }
 
 tasks.register("download-oss-cad-suite") {
+    description = "Downloads the latest pre-built OSS suite."
     group = "build setup"
     doLast {
         val includesDirectory = project.buildFile.parentFile.resolve("includes")
