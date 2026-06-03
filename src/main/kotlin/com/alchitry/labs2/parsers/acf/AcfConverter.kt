@@ -7,6 +7,7 @@ import com.alchitry.labs2.parsers.hdl.types.*
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.project.ConstraintLang
 import com.alchitry.labs2.project.Project
+import com.alchitry.labs2.project.builders.IceCubeBuilder
 import com.alchitry.labs2.project.builders.IceStormBuilder
 import com.alchitry.labs2.project.builders.projectBuilder
 import com.alchitry.labs2.project.files.ConstraintFile
@@ -58,7 +59,10 @@ private fun SignalSelection.toVerilogSelectors() = buildString {
 }
 
 val SignalOrSubSignal.nativePortName: String
-    get() = if (Project.current?.data?.board?.projectBuilder is IceStormBuilder) flatFullPortName else fullPortName
+    get() = when (Project.current?.data?.board?.projectBuilder) {
+        is IceStormBuilder, is IceCubeBuilder -> flatFullPortName
+        else -> fullPortName
+    }
 
 
 private val SignalOrSubSignal.fullPortName: String
