@@ -27,11 +27,10 @@ plugins {
     id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
 }
 
-val fullVersion = "2.0.52-BETA"
-val numOnlyVersion = fullVersion.split('-').first()
+val versionText = "2.0.53"
 
 group = "com.alchitry"
-version = numOnlyVersion
+version = versionText
 
 repositories {
     google()
@@ -65,6 +64,7 @@ dependencies {
     macAmd64(compose.desktop.macos_x64)
     macAarch64(compose.desktop.macos_arm64)
     windowsAmd64(compose.desktop.windows_x64)
+    windowsAarch64(compose.desktop.windows_arm64)
 
     implementation("org.jetbrains.compose.material3:material3-desktop:1.9.0")
 
@@ -93,6 +93,10 @@ tasks.withType<KotlinCompile> {
     }
 }
 
+tasks.withType<JavaExec>().configureEach {
+    jvmArgs("--enable-native-access=ALL-UNNAMED")
+}
+
 kotlin {
     jvmToolchain(23)
 }
@@ -105,15 +109,32 @@ compose.desktop {
 
 val conveyorCommand = "/home/justin/.npm-global/bin/conveyor"
 fun TaskContainer.registerConveyorTask(name: String, arg: String? = null) {
-    register(name) {
-        group = "conveyor"
-        dependsOn.add("jar")
-        doLast {
-            exec {
-                if (arg == null) {
-                    commandLine(conveyorCommand, "--passphrase=${secrets.get("conveyorRootKey")}", "make", name)
-                } else {
-                    commandLine(conveyorCommand, "--passphrase=${secrets.get("conveyorRootKey")}", arg, "make", name)
+    listOf(name to "stable.conf", "$name-beta" to "beta.conf").forEach { (taskName, confFile) ->
+        register(taskName) {
+            group = "conveyor"
+            dependsOn.add("jar")
+            doLast {
+                exec {
+                    if (arg == null) {
+                        commandLine(
+                            conveyorCommand,
+                            "-f",
+                            confFile,
+                            "--passphrase=${secrets.get("conveyorRootKey")}",
+                            "make",
+                            name
+                        )
+                    } else {
+                        commandLine(
+                            conveyorCommand,
+                            "-f",
+                            confFile,
+                            "--passphrase=${secrets.get("conveyorRootKey")}",
+                            arg,
+                            "make",
+                            name
+                        )
+                    }
                 }
             }
         }
@@ -139,7 +160,7 @@ tasks.register("generateVersionProperties") {
         val propertiesFile = file("$generatedVersionDir/version.properties")
         propertiesFile.parentFile.mkdirs()
         val properties = Properties()
-        properties.setProperty("version", fullVersion)
+        properties.setProperty("version", versionText)
         val out = FileOutputStream(propertiesFile)
         properties.store(out, null)
     }
@@ -184,6 +205,11 @@ tasks.register("publish") {
     dependsOn("copied-site", "ms-store-release", "updateAUR")
 }
 
+tasks.register("publish-beta") {
+    group = "publishing"
+    dependsOn("copied-site-beta", "ms-store-release-beta", "updateAUR-beta")
+}
+
 tasks.register("download-oss-cad-suite") {
     group = "build setup"
     doLast {
@@ -194,7 +220,7 @@ tasks.register("download-oss-cad-suite") {
         val urlDate = latestReleaseUrl.split('/').last()
         val dateStamp = urlDate.replace("-", "")
 
-        listOf("windows-x64", "linux-x64", "darwin-x64", "darwin-arm64").forEach { arch ->
+        listOf("windows-x64", "linux-x64", "linux-arm64", "darwin-x64", "darwin-arm64").forEach { arch ->
             val extension = if (arch == "windows-x64") "exe" else "tgz"
             val archive = temporaryDir.resolve("$arch.$extension")
 
@@ -231,58 +257,75 @@ tasks.register("download-oss-cad-suite") {
     }
 }
 
+fun Project.updateAurPackage(pkgName: String, downloadUrl: String) {
+    val pkgbuildFile = file("${System.getProperty("user.home")}/AUR/$pkgName/PKGBUILD")
+    if (!pkgbuildFile.exists()) {
+        throw GradleException("PKGBUILD not found at ${pkgbuildFile.absolutePath}")
+    }
+
+    println("Downloading $downloadUrl to calculate SHA256...")
+
+    val digest = MessageDigest.getInstance("SHA-256")
+    URI(downloadUrl).toURL().openStream().use { input ->
+        val buffer = ByteArray(8192)
+        var bytesRead = input.read(buffer)
+        while (bytesRead != -1) {
+            digest.update(buffer, 0, bytesRead)
+            bytesRead = input.read(buffer)
+        }
+    }
+    val sha256sum = digest.digest().joinToString("") { "%02x".format(it) }
+    println("New SHA256: $sha256sum")
+
+    var content = pkgbuildFile.readText()
+    content = content.replace(Regex("pkgver=.*"), "pkgver=$versionText")
+    content = content.replace(Regex("pkgrel=.*"), "pkgrel=1") // Reset pkgrel on version bump
+    content = content.replace(Regex("sha256sums=\\(\".*\"\\)"), "sha256sums=(\"$sha256sum\")")
+
+    pkgbuildFile.writeText(content)
+
+    val aurDir = pkgbuildFile.parentFile
+    val commands = listOf(
+        listOf("makepkg", "--printsrcinfo"),
+        listOf("git", "add", "PKGBUILD", ".SRCINFO"),
+        listOf("git", "commit", "-m", "Updated to $versionText"),
+        listOf("git", "push")
+    )
+
+    commands.forEachIndexed { index, cmd ->
+        println("Executing: ${cmd.joinToString(" ")}")
+        exec {
+            workingDir = aurDir
+            commandLine = cmd
+            // For the first command, redirect output to .SRCINFO
+            if (index == 0) {
+                standardOutput = FileOutputStream(file("${aurDir.absolutePath}/.SRCINFO"))
+            }
+        }
+    }
+}
+
 tasks.register("updateAUR") {
     group = "publishing"
     description = "Updates the PKGBUILD with the latest version and sha256sum, then pushes to AUR."
 
     doLast {
-        val pkgbuildFile = file("${System.getProperty("user.home")}/AUR/alchitry-labs-bin/PKGBUILD")
-        if (!pkgbuildFile.exists()) {
-            throw GradleException("PKGBUILD not found at ${pkgbuildFile.absolutePath}")
-        }
-
-        val downloadUrl =
-            "https://github.com/alchitry/Alchitry-Labs-V2/releases/download/$numOnlyVersion/alchitry-labs-$numOnlyVersion-linux-amd64.tar.gz"
-        println("Downloading $downloadUrl to calculate SHA256...")
-
-        val digest = MessageDigest.getInstance("SHA-256")
-        URI(downloadUrl).toURL().openStream().use { input ->
-            val buffer = ByteArray(8192)
-            var bytesRead = input.read(buffer)
-            while (bytesRead != -1) {
-                digest.update(buffer, 0, bytesRead)
-                bytesRead = input.read(buffer)
-            }
-        }
-        val sha256sum = digest.digest().joinToString("") { "%02x".format(it) }
-        println("New SHA256: $sha256sum")
-
-        var content = pkgbuildFile.readText()
-        content = content.replace(Regex("pkgver=.*"), "pkgver=$numOnlyVersion")
-        content = content.replace(Regex("pkgrel=.*"), "pkgrel=1") // Reset pkgrel on version bump
-        content = content.replace(Regex("sha256sums=\\(\".*\"\\)"), "sha256sums=(\"$sha256sum\")")
-
-        pkgbuildFile.writeText(content)
-
-        val aurDir = pkgbuildFile.parentFile
-        val commands = listOf(
-            listOf("makepkg", "--printsrcinfo"),
-            listOf("git", "add", "PKGBUILD", ".SRCINFO"),
-            listOf("git", "commit", "-m", "Updated to $numOnlyVersion"),
-            listOf("git", "push")
+        updateAurPackage(
+            "alchitry-labs-bin",
+            "https://github.com/alchitry/Alchitry-Labs-V2/releases/download/$versionText/alchitry-labs-$versionText-linux-amd64.tar.gz"
         )
+    }
+}
 
-        commands.forEachIndexed { index, cmd ->
-            println("Executing: ${cmd.joinToString(" ")}")
-            exec {
-                workingDir = aurDir
-                commandLine = cmd
-                // For the first command, redirect output to .SRCINFO
-                if (index == 0) {
-                    standardOutput = FileOutputStream(file("${aurDir.absolutePath}/.SRCINFO"))
-                }
-            }
-        }
+tasks.register("updateAUR-beta") {
+    group = "publishing"
+    description = "Updates the beta PKGBUILD with the latest version and sha256sum, then pushes to AUR."
+
+    doLast {
+        updateAurPackage(
+            "alchitry-labs-beta-bin",
+            "https://github.com/alchitry/Alchitry-Labs-V2-Beta/releases/download/$versionText/alchitry-labs-beta-$versionText-linux-amd64.tar.gz"
+        )
     }
 }
 
