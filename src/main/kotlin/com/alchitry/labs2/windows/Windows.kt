@@ -4,18 +4,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import com.alchitry.labs2.Env
 import com.alchitry.labs2.Settings
+import com.alchitry.labs2.painterResource
 import com.alchitry.labs2.ui.theme.AlchitryTheme
 import kotlinx.coroutines.delay
 import java.awt.Dimension
 import java.awt.GraphicsEnvironment
 import javax.swing.ImageIcon
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.milliseconds
 
 val LocalComposeWindow = compositionLocalOf<ComposeWindow> { error("No ComposeWindow set!") }
 lateinit var mainWindow: ComposeWindow
@@ -39,7 +40,7 @@ fun ApplicationScope.openWindow(
     Window(
         state = windowState,
         title = "$title - ${Env.version}",
-        icon = painterResource("/icons/icon.png"),
+        icon = painterResource("icons/icon.png"),
         onCloseRequest = {
             onClose(windowState)
             exitApplication()
@@ -62,7 +63,7 @@ fun ApplicationScope.openWindow(
                         )
                     }
                 }
-                delay(50) // need to wait for the window to open then resize it to the size we want
+                delay(100.milliseconds) // need to wait for the window to open, then resize it to the size we want
 
                 window.size =
                     Dimension(
@@ -71,7 +72,7 @@ fun ApplicationScope.openWindow(
                     )
                 window.iconImage =
                     ImageIcon(this::class.java.getResource("/icons/icon.png")).image
-                delay(100) // need to wait for the window to open then resize it to the size we want
+                delay(100.milliseconds) // need to wait for the window to open, then resize it to the size we want
                 updateMinSize = true
             }
             SideEffect { mainWindow = this.window }
@@ -101,15 +102,17 @@ fun ApplicationScope.openWindow(
                         )
                         if (updateMinSize) {
                             updateMinSize = false
-                            // some window manages seem to include the window decorations while others don't
+                            // some window managers seem to include the window decorations, while others don't
                             // the offsets adjust for window decorations
                             val offsetX = window.size.width - window.rootPane.size.width
                             val offsetY = window.size.height - window.rootPane.size.height
                             with(density) {
-                                window.minimumSize = Dimension(
+                                val packedSize = Dimension(
                                     ((minDim.width + offsetX).toDp().value).roundToInt(),
                                     ((minDim.height + offsetY).toDp().value).roundToInt()
                                 )
+                                window.minimumSize = packedSize
+                                window.size = packedSize
                             }
                         }
                     }

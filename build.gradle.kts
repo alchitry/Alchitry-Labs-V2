@@ -67,6 +67,7 @@ dependencies {
     windowsAarch64(compose.desktop.windows_arm64)
 
     implementation("org.jetbrains.compose.material3:material3-desktop:1.9.0")
+    implementation(compose.components.resources)
 
 
     testImplementation(kotlin("test"))

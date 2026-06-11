@@ -35,6 +35,7 @@ import me.tongfei.progressbar.ProgressBarConsumer
 import me.tongfei.progressbar.ProgressBarRenderer
 import me.tongfei.progressbar.ProgressState
 import java.io.File
+import kotlin.time.Duration.Companion.milliseconds
 
 private val File.isValidBinFile: Boolean get() = exists() && isFile && canRead() && extension == "bin"
 
@@ -111,7 +112,7 @@ fun ApplicationScope.loaderWindow() {
 
                 LaunchedEffect(busy, loaderStatus) {
                     if (busy) return@LaunchedEffect
-                    delay(3000)
+                    delay(3000.milliseconds)
                     loaderStatus = null
                 }
 
@@ -267,7 +268,7 @@ private fun BoardSelector(
                     } catch (_: Exception) {
 
                     }
-                delay(1000)
+                delay(1000.milliseconds)
             }
         }
 
@@ -307,7 +308,7 @@ private fun BoardSelector(
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded)
                 },
                 // colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                modifier = Modifier.menuAnchor().fillMaxWidth()
+                modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable).fillMaxWidth()
             )
             SideEffect {
                 if (choices.isEmpty())

@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import com.alchitry.labs2.Log
+import com.alchitry.labs2.painterResource
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.files.FileProvider
 import com.alchitry.labs2.project.files.IPCore

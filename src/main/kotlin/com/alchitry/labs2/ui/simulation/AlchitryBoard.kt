@@ -8,8 +8,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
-import androidx.compose.ui.res.painterResource
 import com.alchitry.hardware.Board
+import com.alchitry.labs2.painterResource
 import com.alchitry.labs2.ui.cache.CachedImage
 
 @Composable

@@ -26,12 +26,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.key.*
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.Log
+import com.alchitry.labs2.painterResource
 import com.alchitry.labs2.ui.components.TextTooltipArea
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import kotlinx.coroutines.delay

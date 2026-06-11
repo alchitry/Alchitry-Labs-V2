@@ -11,16 +11,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.alchitry.hardware.Board
 import com.alchitry.hardware.usb.BoardLoader
-import com.alchitry.labs2.Analytics
-import com.alchitry.labs2.Log
-import com.alchitry.labs2.Settings
+import com.alchitry.labs2.*
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.library.VivadoIP
-import com.alchitry.labs2.switchActiveWindow
 import com.alchitry.labs2.ui.components.AlchitryToolbarIcon
 import com.alchitry.labs2.ui.components.ToolbarButton
 import com.alchitry.labs2.ui.dialogs.*

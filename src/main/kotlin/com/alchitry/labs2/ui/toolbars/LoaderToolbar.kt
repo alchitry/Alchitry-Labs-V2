@@ -3,8 +3,8 @@ package com.alchitry.labs2.ui.toolbars
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.painterResource
 import com.alchitry.labs2.Settings
+import com.alchitry.labs2.painterResource
 import com.alchitry.labs2.switchActiveWindow
 import com.alchitry.labs2.ui.components.AlchitryToolbarIcon
 import com.alchitry.labs2.ui.components.ToolbarButton
