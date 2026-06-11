@@ -63,7 +63,7 @@ fun ApplicationScope.openWindow(
                         )
                     }
                 }
-                delay(100.milliseconds) // need to wait for the window to open, then resize it to the size we want
+                delay(50.milliseconds) // need to wait for the window to open, then resize it to the size we want
 
                 window.size =
                     Dimension(
