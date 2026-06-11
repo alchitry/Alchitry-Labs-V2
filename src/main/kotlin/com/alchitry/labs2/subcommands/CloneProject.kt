@@ -1,5 +1,6 @@
 package com.alchitry.labs2.subcommands
 
+import com.alchitry.labs2.Analytics
 import com.alchitry.labs2.project.Locations
 import com.alchitry.labs2.project.ProjectCreator
 import com.alchitry.labs2.showHelp
@@ -22,6 +23,8 @@ class CloneProject : Subcommand("clone", "Clone an existing project") {
     ).default(Locations.workspace)
 
     override fun execute() {
+        Analytics.trackEvent("cli_clone_project")
+
         val workspace = File(workspace)
         if (!workspace.exists()) {
             showHelp("The workspace ${workspace.path} does not exist!")

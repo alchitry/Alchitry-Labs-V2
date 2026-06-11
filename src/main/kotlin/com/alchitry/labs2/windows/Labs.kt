@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
 import com.alchitry.hardware.Board
 import com.alchitry.hardware.usb.UsbUtil
+import com.alchitry.labs2.Analytics
 import com.alchitry.labs2.Env
 import com.alchitry.labs2.Settings
 import com.alchitry.labs2.project.Project
@@ -24,6 +25,7 @@ import com.alchitry.labs2.ui.components.ResizePriority
 import com.alchitry.labs2.ui.components.Sash
 import com.alchitry.labs2.ui.components.WindowDecoration
 import com.alchitry.labs2.ui.components.rememberSashData
+import com.alchitry.labs2.ui.dialogs.AnalyticsDialog
 import com.alchitry.labs2.ui.dialogs.ProjectDialog
 import com.alchitry.labs2.ui.tabs.Workspace
 import com.alchitry.labs2.ui.toolbars.LabsToolbar
@@ -33,6 +35,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.JsonPrimitive
 import org.jline.utils.Log
 import java.io.File
 import kotlin.time.Duration.Companion.milliseconds
@@ -57,6 +60,16 @@ fun ApplicationScope.labsWindow(projectPath: String?) {
             Settings.commit()
         }
     ) { state ->
+        AnalyticsDialog()
+        LaunchedEffect(Unit) {
+            Analytics.trackEvent(
+                "alchitry_labs_opened",
+                mapOf(
+                    "uiScale" to JsonPrimitive(Settings.uiScale),
+                    "windowSize" to JsonPrimitive(Settings.labsWindowState.size.toString())
+                )
+            )
+        }
         val labsState = remember { LabsState() }
         LaunchedEffect(labsState.attachedToBoard.value) {
             if (labsState.attachedToBoard.value) {

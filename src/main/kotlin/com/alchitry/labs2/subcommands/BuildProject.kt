@@ -1,5 +1,6 @@
 package com.alchitry.labs2.subcommands
 
+import com.alchitry.labs2.Analytics
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.showHelp
 import kotlinx.cli.ArgType
@@ -20,6 +21,8 @@ class BuildProject : Subcommand("build", "Build an Alchitry Project") {
     private val board by option(ArgType.Int, "device", "d", "Index of device to load").default(0)
 
     override fun execute() {
+        Analytics.trackEvent("cli_build_project")
+
         if (flash && ram) {
             showHelp("Commands flash and ram can't both be specified!")
             return

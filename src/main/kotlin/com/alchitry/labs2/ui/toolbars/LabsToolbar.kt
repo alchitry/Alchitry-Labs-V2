@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.alchitry.hardware.Board
 import com.alchitry.hardware.usb.BoardLoader
+import com.alchitry.labs2.Analytics
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
 import com.alchitry.labs2.project.Project
@@ -34,6 +35,7 @@ import com.alchitry.labs2.windows.LocalLabsState
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonPrimitive
 import kotlin.math.roundToInt
 
 @Composable
@@ -185,6 +187,19 @@ fun LabsToolbar() {
                 ) {
                     Settings.newLineIndent = it
                 }
+
+                RadioMenuItem(
+                    label = { Text("Collect Usage Data") },
+                    items = listOf(true, false),
+                    labeler = {
+                        Text(
+                            if (it) "Allow" else "Deny"
+                        )
+                    },
+                    selected = Settings.sendAnalytics == true
+                ) {
+                    Settings.sendAnalytics = it
+                }
             }
 
             MenuItem({ Text("Switch to Alchitry Loader") }) {
@@ -283,6 +298,10 @@ fun LabsToolbar() {
             enabled = !running && project != null
         ) {
             runWithProject { project ->
+                Analytics.trackEvent(
+                    "simulate_project",
+                    mapOf("board" to JsonPrimitive(project.data.board.name))
+                )
                 val context = project.check(simulating = true) ?: return@runWithProject
                 val existingTab = Workspace.getTabs().firstOrNull { it is BoardSimulationTab }
                 val tabPanel = existingTab?.parent ?: Workspace.activeTabPanel()
@@ -313,6 +332,13 @@ fun LabsToolbar() {
         val canLoad = boardDetected && project != null && !attachedToBoard
 
         suspend fun loadProject(project: Project, shouldRebuild: Boolean, flash: Boolean) {
+            Analytics.trackEvent(
+                if (flash) "load_flash" else "load_ram", mapOf(
+                    "board" to JsonPrimitive(project.data.board.name),
+                    "source" to JsonPrimitive("labs")
+                )
+            )
+
             when (project.binFileIsUpToDate()) {
                 true -> {}
                 false -> {
@@ -383,6 +409,10 @@ fun LabsToolbar() {
         ToolbarButton(
             onClick = {
                 runWithProject {
+                    Analytics.trackEvent(
+                        "erase_board",
+                        mapOf("board" to JsonPrimitive(it.data.board.name))
+                    )
                     try {
                         attachedToBoard = true
                         BoardLoader.erase(it.data.board, 0)
@@ -397,9 +427,11 @@ fun LabsToolbar() {
         )
         IconMenu(painterResource("icons/terminal.svg"), "Tools", enabled = !running) {
             MenuItem({ Text("Serial Terminal") }) {
+                Analytics.trackEvent("open_serial_terminal")
                 Workspace.focusOrAddTab { SerialTerminal(it) }
             }
             MenuItem({ Text("Register Interface") }) {
+                Analytics.trackEvent("open_register_interface")
                 Workspace.focusOrAddTab { RegisterInterface(it) }
             }
         }

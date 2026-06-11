@@ -34,6 +34,18 @@ object Settings {
         }
     }
 
+    private class OptionalBooleanSetting(private val key: String, private val default: Boolean?) {
+        private var value by mutableStateOf(
+            if (pref.get(key, null) != null) pref.getBoolean(key, false) else default
+        )
+
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): Boolean? = value
+        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Boolean?) {
+            this.value = value
+            if (value != null) pref.putBoolean(key, value) else pref.remove(key)
+        }
+    }
+
     private class IntSetting(private val key: String, default: Int) {
         private var value by mutableStateOf(pref.getInt(key, default))
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Int = value
@@ -66,7 +78,7 @@ object Settings {
         }
     }
 
-    private class WindowStateSetting(private val prefix: String, private val default: WindowState) {
+    private class WindowStateSetting(prefix: String, default: WindowState) {
         private var width by FloatSetting("${prefix}_WINDOW_WIDTH", default.size.width.value)
         private var height by FloatSetting("${prefix}_WINDOW_HEIGHT", default.size.height.value)
         private var x by FloatSetting("${prefix}_WINDOW_X", default.position.x.value)
@@ -139,13 +151,13 @@ object Settings {
     var useIceCube by BooleanSetting("USE_ICECUBE", true)
 
     var uiScale by FloatSetting("UI_SCALE", 1.0f)
-    var errorReporting by BooleanSetting("ERROR_REPORTING", false)
-    var errorReportingPrompted by BooleanSetting("ERROR_REPORTING_PROMPTED", false)
     var loaderBinFile by StringSetting("LOADER_BIN_FILE", null)
 
     var newLineIndent by StringSetting("NEW_LINE_INDENT", null)
 
     var consoleScrollBarStyle by EnumSetting("CONSOLE_SCROLLBAR_STYLE", ScrollBarStyle.MiniText)
     var editorScrollBarStyle by EnumSetting("EDITOR_SCROLLBAR_STYLE", ScrollBarStyle.MiniText)
+
+    var sendAnalytics by OptionalBooleanSetting("SEND_ANALYTICS", null)
 }
 

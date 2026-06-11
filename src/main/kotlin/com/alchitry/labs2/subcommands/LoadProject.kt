@@ -3,6 +3,7 @@ package com.alchitry.labs2.subcommands
 import com.alchitry.hardware.Board
 import com.alchitry.hardware.usb.BoardLoader
 import com.alchitry.hardware.usb.UsbUtil
+import com.alchitry.labs2.Analytics
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.showHelp
@@ -11,6 +12,7 @@ import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.Subcommand
 import kotlinx.cli.default
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.JsonPrimitive
 import java.io.File
 
 @OptIn(ExperimentalCli::class)
@@ -38,6 +40,8 @@ class LoadProject : Subcommand("load", "Load a project or .bin file") {
     )
 
     override fun execute() {
+        Analytics.trackEvent("cli_load_project")
+
         if (listOf(flash, ram, erase).count { it } > 1) {
             showHelp("Only one of flash, ram, and erase commands can be specified!")
             return
@@ -101,6 +105,13 @@ class LoadProject : Subcommand("load", "Load a project or .bin file") {
                 showHelp("A board must be specified when providing a raw .bin file.")
                 return
             }
+
+            Analytics.trackEvent(
+                if (flash) "load_flash" else "load_ram", mapOf(
+                    "board" to JsonPrimitive(boardType.name),
+                    "source" to JsonPrimitive("cli")
+                )
+            )
 
             runBlocking {
                 try {

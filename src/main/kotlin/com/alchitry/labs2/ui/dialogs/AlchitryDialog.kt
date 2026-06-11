@@ -36,7 +36,6 @@ fun AlchitryDialog(
             val dialogWindow = this.window
             var updateMinSize by remember { mutableStateOf(true) }
 
-
             AlchitryTheme {
                 Layout(
                     content = {

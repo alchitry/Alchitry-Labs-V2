@@ -21,6 +21,8 @@ fun main(args: Array<String>) {
         System.err.println("Warning: OS detection failed!")
     }
 
+    Analytics.trackEvent("cli_command")
+
     val parser = ArgParser("alchitry", strictSubcommandOptionsOrder = true)
 
     parser.subcommands(

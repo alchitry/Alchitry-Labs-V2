@@ -1,6 +1,7 @@
 package com.alchitry.labs2.subcommands
 
 import com.alchitry.hardware.Board
+import com.alchitry.labs2.Analytics
 import com.alchitry.labs2.allSealedObjects
 import com.alchitry.labs2.project.Locations
 import com.alchitry.labs2.project.ProjectTemplate
@@ -31,6 +32,8 @@ class CreateProject : Subcommand("new", "Create a new project") {
     ).default(Locations.workspace)
 
     override fun execute() {
+        Analytics.trackEvent("cli_create_project")
+
         fun printTemplates(board: Board? = null) {
             val templates = ProjectTemplate.getTemplates()
             val boards = board?.let { listOf(board) } ?: Board::class.allSealedObjects()

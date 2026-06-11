@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.alchitry.hardware.Board.XilinxBoard
+import com.alchitry.labs2.Analytics
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
 import com.alchitry.labs2.parsers.ProjectContext
@@ -48,6 +49,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonPrimitive
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 import org.antlr.v4.kotlinruntime.ParserRuleContext
@@ -98,6 +100,7 @@ data class Project(
 
     fun binFileIsUpToDate(): Boolean? =
         if (binFile.lastModified() == 0L) null else binFile.lastModified() >= lastModified()
+
     fun lastModified(): Long {
         return max(
             data.sourceFiles.mapNotNull { (it.file as? FileProvider.DiskFile)?.file?.lastModified() }.maxOrNull()
@@ -323,6 +326,14 @@ data class Project(
     suspend fun build(): Boolean = withContext(Dispatchers.Default) {
         val context = check() ?: return@withContext false
         val topModule = context.top ?: return@withContext false
+
+        Analytics.trackEvent(
+            "build_project",
+            mapOf(
+                "board" to JsonPrimitive(data.board.name),
+                "toolchain" to JsonPrimitive(data.board.projectBuilder::class.simpleName)
+            )
+        )
 
         val sourceFiles = try {
             context.convertToVerilog()

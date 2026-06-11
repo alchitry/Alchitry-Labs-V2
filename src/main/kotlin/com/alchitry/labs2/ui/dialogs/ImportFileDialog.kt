@@ -34,7 +34,7 @@ suspend fun importFilesDialog(project: Project) {
             val newFilePath = directory.resolve(file.name)
             try {
                 file.copyTo(newFilePath.toFile())
-            } catch (e: FileAlreadyExistsException) {
+            } catch (_: FileAlreadyExistsException) {
                 Log.showError("File already exists in the project: ${file.name}")
                 return@forEach
             }

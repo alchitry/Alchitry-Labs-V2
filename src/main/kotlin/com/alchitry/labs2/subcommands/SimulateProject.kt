@@ -1,5 +1,6 @@
 package com.alchitry.labs2.subcommands
 
+import com.alchitry.labs2.Analytics
 import com.alchitry.labs2.parsers.notations.NotationManager
 import com.alchitry.labs2.project.Project
 import kotlinx.cli.ArgType
@@ -16,6 +17,8 @@ class SimulateProject : Subcommand("sim", "Simulate a project") {
     private val tests by option(ArgType.String, "tests", "t", "Comma seperated list of tests to run")
 
     override fun execute() {
+        Analytics.trackEvent("cli_simulate_project")
+
         val project = try {
             Project.open(File(project))
         } catch (e: Exception) {

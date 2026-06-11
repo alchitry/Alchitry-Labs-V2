@@ -17,6 +17,7 @@ import androidx.compose.ui.window.ApplicationScope
 import com.alchitry.hardware.Board
 import com.alchitry.hardware.usb.BoardLoader
 import com.alchitry.hardware.usb.UsbUtil
+import com.alchitry.labs2.Analytics
 import com.alchitry.labs2.Env
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
@@ -29,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonPrimitive
 import me.tongfei.progressbar.ProgressBarConsumer
 import me.tongfei.progressbar.ProgressBarRenderer
 import me.tongfei.progressbar.ProgressState
@@ -72,6 +74,15 @@ fun ApplicationScope.loaderWindow() {
     ) { state ->
         LaunchedEffect(Unit) {
             Env.mode = Env.Mode.Loader
+        }
+        LaunchedEffect(Unit) {
+            Analytics.trackEvent(
+                "alchitry_loader_opened",
+                mapOf(
+                    "uiScale" to JsonPrimitive(Settings.uiScale),
+                    "windowSize" to JsonPrimitive(Settings.labsWindowState.size.toString())
+                )
+            )
         }
         Column {
             WindowDecoration(state) {
@@ -159,6 +170,12 @@ fun ApplicationScope.loaderWindow() {
                             scope.launch(Dispatchers.IO) {
                                 try {
                                     board?.let { board ->
+                                        Analytics.trackEvent(
+                                            if (flash) "load_flash" else "load_ram", mapOf(
+                                                "board" to JsonPrimitive(board.board.name),
+                                                "source" to JsonPrimitive("loader")
+                                            )
+                                        )
                                         if (!BoardLoader.load(
                                                 board.board,
                                                 board.index,
