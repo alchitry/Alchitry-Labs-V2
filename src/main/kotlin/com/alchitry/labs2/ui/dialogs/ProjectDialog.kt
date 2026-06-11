@@ -180,7 +180,7 @@ private fun BoardSelector(
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded)
             },
-            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable).fillMaxWidth()
+            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable).fillMaxWidth()
         )
         ExposedDropdownMenu(
             expanded,
@@ -236,7 +236,7 @@ private fun TemplateSelector(
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded)
             },
             singleLine = true,
-            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable).fillMaxWidth()
+            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable).fillMaxWidth()
         )
         SideEffect {
             if (validTemplates.isEmpty())
