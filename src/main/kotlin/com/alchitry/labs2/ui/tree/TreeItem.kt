@@ -40,28 +40,27 @@ fun <T> SelectionContext<T>.TreeItem(
 
     Row(
         Modifier
-        .fillMaxWidth()
-        .onFocusChanged { focused = it.hasFocus }
-        .focusRequester(focusRequester)
-        .pointerInput(focusRequester) {
-            detectTapGestures(
-                onDoubleTap = {
-                    onDoubleClick()
-                },
-                onPress = {
-                    requestSelection(selectable)
-                    focusRequester.requestFocus()
-                },
+            .fillMaxWidth()
+            .onFocusChanged { focused = it.hasFocus }
+            .focusRequester(focusRequester)
+            .focusable()
+            .pointerInput(focusRequester) {
+                detectTapGestures(
+                    onDoubleTap = {
+                        onDoubleClick()
+                    },
+                    onPress = {
+                        requestSelection(selectable)
+                        focusRequester.requestFocus()
+                    },
+                )
+            }
+            .background(
+                if (isSelected) (if (focused) AlchitryColors.current.Accent else LocalContentColor.current).copy(
+                    0.15f
+                ) else Color.Transparent
             )
-        }
-        .background(
-            if (isSelected) (if (focused) AlchitryColors.current.Accent else LocalContentColor.current).copy(
-                0.15f
-            ) else Color.Transparent
-        )
-        .padding(vertical = 5.dp)
-        .padding(start = 25.dp * indentLevel)
-        .focusable(),
+            .padding(start = 25.dp * indentLevel, 5.dp, 24.dp, 5.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (icon != null) {

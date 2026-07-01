@@ -42,6 +42,7 @@ fun ProjectTree() {
                     .fillMaxWidth()
                     .horizontalScroll(horizontalScrollState)
                     .verticalScroll(verticalScrollState)
+                    .width(IntrinsicSize.Max)
             ) {
                 var fileToDelete by remember { mutableStateOf<ProjectFile?>(null) }
                 DeleteFileDialog(fileToDelete) { fileToDelete = null }
@@ -49,7 +50,7 @@ fun ProjectTree() {
                 var coreToDelete by remember { mutableStateOf<IPCore?>(null) }
                 DeleteCoreDialog(coreToDelete, scope) { coreToDelete = null }
 
-                Column(Modifier.padding(end = 24.dp)) {
+                Column {
                     var showNewLucidModule by remember { mutableStateOf(false) }
                     LucidFileDialog(showNewLucidModule) { showNewLucidModule = false }
                     var showNewAlchitryConstraint by remember { mutableStateOf(false) }

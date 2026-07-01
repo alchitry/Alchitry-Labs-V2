@@ -52,8 +52,7 @@ fun <T> SelectionContext<T>.TreeSection(
                         0.15f
                     ) else Color.Transparent
                 )
-                .padding(start = 25.dp * indentLevel)
-                .padding(vertical = 5.dp)
+                .padding(start = 25.dp * indentLevel, 5.dp, 24.dp, 5.dp)
         ) {
             ExpandArrow(expandTransition, Modifier.hiddenClickable { expanded = !expanded })
             title()
