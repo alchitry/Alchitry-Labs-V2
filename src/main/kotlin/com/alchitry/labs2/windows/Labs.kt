@@ -18,6 +18,7 @@ import com.alchitry.hardware.Board
 import com.alchitry.hardware.usb.UsbUtil
 import com.alchitry.labs2.Analytics
 import com.alchitry.labs2.Env
+import com.alchitry.labs2.ProjectAlreadyOpenException
 import com.alchitry.labs2.Settings
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.ui.alchitry_text_field.Console
@@ -27,14 +28,12 @@ import com.alchitry.labs2.ui.components.WindowDecoration
 import com.alchitry.labs2.ui.components.rememberSashData
 import com.alchitry.labs2.ui.dialogs.AnalyticsDialog
 import com.alchitry.labs2.ui.dialogs.ProjectDialog
+import com.alchitry.labs2.ui.dialogs.ProjectLockedDialog
 import com.alchitry.labs2.ui.tabs.Workspace
 import com.alchitry.labs2.ui.toolbars.LabsToolbar
 import com.alchitry.labs2.ui.tree.ProjectTree
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonPrimitive
 import org.jline.utils.Log
 import java.io.File
@@ -91,12 +90,29 @@ fun ApplicationScope.labsWindow(projectPath: String?) {
             }
         }
 
+        var showLockedDialog by remember { mutableStateOf(false) }
+        var lockedDialogDeferred by remember { mutableStateOf<CompletableDeferred<Boolean?>?>(null) }
+        ProjectLockedDialog(showLockedDialog) { result ->
+            showLockedDialog = false
+            lockedDialogDeferred?.complete(result)
+            lockedDialogDeferred = null
+        }
+
         LaunchedEffect(Unit) {
             Env.mode = Env.Mode.Labs
             (projectPath ?: Settings.openProject)?.let {
                 if (Project.current == null) {
                     try {
                         Project.open(File(it))
+                    } catch (_: ProjectAlreadyOpenException) {
+                        if (projectPath != null) {
+                            val deferred = CompletableDeferred<Boolean?>()
+                            lockedDialogDeferred = deferred
+                            showLockedDialog = true
+                            if (deferred.await() == true) {
+                                Project.open(File(it), true)
+                            }
+                        }
                     } catch (e: Exception) {
                         if (projectPath != null) {
                             Log.error("Failed to open project file $it")

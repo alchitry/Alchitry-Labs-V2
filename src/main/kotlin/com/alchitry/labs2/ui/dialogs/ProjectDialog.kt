@@ -22,6 +22,7 @@ import com.alchitry.labs2.project.ProjectCreator
 import com.alchitry.labs2.project.ProjectTemplate
 import com.alchitry.labs2.switchActiveWindow
 import com.alchitry.labs2.windows.mainWindow
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -35,6 +36,13 @@ fun ProjectDialog(mainContent: @Composable BoxScope.() -> Unit) {
         if (Project.currentFlow.collectAsState().value == null) {
             var show by remember { mutableStateOf(false) }
             NewProjectDialog(show) { show = false }
+            var showLockedDialog by remember { mutableStateOf(false) }
+            var lockedDialogDeferred by remember { mutableStateOf<CompletableDeferred<Boolean?>?>(null) }
+            ProjectLockedDialog(showLockedDialog) { result ->
+                showLockedDialog = false
+                lockedDialogDeferred?.complete(result)
+                lockedDialogDeferred = null
+            }
             Box(
                 Modifier.background(Color.Black.copy(alpha = 0.7f)).matchParentSize(),
                 contentAlignment = Alignment.Center
@@ -47,7 +55,16 @@ fun ProjectDialog(mainContent: @Composable BoxScope.() -> Unit) {
                             DialogButton(
                                 painterResource("icons/open.svg"),
                                 "Open Project"
-                            ) { scope.launch { openProjectDialog() } }
+                            ) {
+                                scope.launch {
+                                    openProjectDialog {
+                                        val deferred = CompletableDeferred<Boolean?>()
+                                        lockedDialogDeferred = deferred
+                                        showLockedDialog = true
+                                        deferred.await()
+                                    }
+                                }
+                            }
                             DialogButton(
                                 painterResource("icons/load.svg"),
                                 "Alchitry Loader"

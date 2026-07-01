@@ -29,6 +29,7 @@ import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.ui.theme.AlchitryTheme
 import com.alchitry.labs2.windows.LocalLabsState
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonPrimitive
@@ -48,6 +49,14 @@ fun LabsToolbar() {
         SaveAsProjectDialog(it, showSaveProjectAsDialog) { showSaveProjectAsDialog = false }
     }
 
+    var showLockedDialog by remember { mutableStateOf(false) }
+    var lockedDialogDeferred by remember { mutableStateOf<CompletableDeferred<Boolean?>?>(null) }
+    ProjectLockedDialog(showLockedDialog) { result ->
+        showLockedDialog = false
+        lockedDialogDeferred?.complete(result)
+        lockedDialogDeferred = null
+    }
+
     Row {
         AlchitryToolbarIcon()
         IconMenu(painterResource("icons/menu.svg"), "Menu") {
@@ -56,7 +65,12 @@ fun LabsToolbar() {
             }
             MenuItem({ Text("Open Project...") }) {
                 scope.launch {
-                    openProjectDialog()
+                    openProjectDialog {
+                        val deferred = CompletableDeferred<Boolean?>()
+                        lockedDialogDeferred = deferred
+                        showLockedDialog = true
+                        deferred.await()
+                    }
                 }
             }
             MenuItem({ Text("Save Project As...") }) {

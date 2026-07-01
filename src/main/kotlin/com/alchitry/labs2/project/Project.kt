@@ -4,9 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.alchitry.hardware.Board.XilinxBoard
-import com.alchitry.labs2.Analytics
-import com.alchitry.labs2.Log
-import com.alchitry.labs2.Settings
+import com.alchitry.labs2.*
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.acf.AcfExtractor
 import com.alchitry.labs2.parsers.acf.NativeConstraint
@@ -149,11 +147,24 @@ data class Project(
         val current: Project?
             get() = mutableCurrentFlow.value
 
-        fun open(file: File): Project = open(load(file))
+        /**
+         * Opens a project file. Throws [ProjectAlreadyOpenException] if the project
+         * is locked by another instance. Callers should catch this to prompt the user.
+         */
+        fun open(file: File, forceOpen: Boolean = false): Project {
+            val project = load(file)
+            if (!forceOpen && ProjectLock.isProjectLocked(file)) {
+                throw ProjectAlreadyOpenException(
+                    "The project \"${project.data.projectName}\" appears to be open in another instance of Alchitry Labs."
+                )
+            }
+            return open(project)
+        }
 
         fun open(project: Project): Project {
             if (project.projectFile != current?.projectFile)
                 close()
+            ProjectLock.acquireLock(project.projectFile)
             mutableCurrentFlow.tryEmit(project)
             Settings.openProject = project.projectFile.absolutePath
             project.queueNotationsUpdate()
@@ -188,6 +199,7 @@ data class Project(
 
         fun close() {
             Workspace.closeAll()
+            ProjectLock.releaseLock()
             mutableCurrentFlow.tryEmit(null)
         }
 
