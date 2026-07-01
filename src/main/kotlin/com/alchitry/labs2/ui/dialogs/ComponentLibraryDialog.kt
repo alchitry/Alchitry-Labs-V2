@@ -124,7 +124,7 @@ private fun SelectionContext<Component?>.LibrarySectionTree(
             }
         }
     section.subSections.forEach { (name, subSection) ->
-        TreeSection(name, indentLevel, remember { Selectable(null) }, false) {
+        TreeSection({ Text(name) }, indentLevel, remember { Selectable(null) }, false) {
             LibrarySectionTree(subSection, board, indentLevel + 1)
         }
     }

@@ -5,7 +5,6 @@ import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +21,7 @@ import com.alchitry.labs2.ui.theme.AlchitryColors
 
 @Composable
 fun <T> SelectionContext<T>.TreeSection(
-    title: String,
+    title: @Composable RowScope.() -> Unit,
     indentLevel: Int,
     selectable: Selectable<T>,
     initiallyExpanded: Boolean = true,
@@ -57,7 +56,8 @@ fun <T> SelectionContext<T>.TreeSection(
                 .padding(vertical = 5.dp)
         ) {
             ExpandArrow(expandTransition, Modifier.hiddenClickable { expanded = !expanded })
-            Text(title, modifier = Modifier.padding(bottom = 4.dp))
+            title()
+            Spacer(Modifier.padding(bottom = 4.dp))
         }
 
         AnimatedVisibility(expanded) {
