@@ -59,6 +59,8 @@ import kotlinx.coroutines.launch
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 import org.antlr.v4.kotlinruntime.tree.TerminalNode
+import java.awt.EventQueue
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
@@ -144,7 +146,7 @@ class AlchitryTextFieldState(
 
     val styler = CodeStyler(this)
     var clipboardManager: ClipboardManager? = null
-    private var pendingText = AnnotatedString.Builder()
+    private val pendingText = ConcurrentLinkedQueue<AnnotatedString>()
 
     init {
         lines.add(newLineState(AnnotatedString("")))
@@ -303,10 +305,14 @@ class AlchitryTextFieldState(
         LaunchedEffect(Unit) {
             while (true) {
                 withFrameNanos { // 60Hz or display refresh rate sync
-                    if (pendingText.length != 0) {
-                        val textToAppend = pendingText.toAnnotatedString()
-                        appendText(textToAppend, updateCaret = false)
-                        pendingText = AnnotatedString.Builder()
+                    val builder = AnnotatedString.Builder()
+                    var item = pendingText.poll()
+                    while (item != null) {
+                        builder.append(item)
+                        item = pendingText.poll()
+                    }
+                    if (builder.length != 0) {
+                        appendText(builder.toAnnotatedString(), updateCaret = false)
                     }
                 }
             }
@@ -377,6 +383,9 @@ class AlchitryTextFieldState(
     }
 
     fun clearText() {
+        if (!EventQueue.isDispatchThread()) {
+            Log.error("clearText() must only be called from the main thread!")
+        }
         notations.clear()
         val startPosition = TextPosition(0, 0)
         val endPosition = TextPosition((lines.size - 1).coerceAtLeast(0), lines.lastOrNull()?.text?.length ?: 0)
@@ -387,10 +396,13 @@ class AlchitryTextFieldState(
     fun queueAppendText(
         newText: AnnotatedString
     ) {
-        pendingText.append(newText)
+        pendingText.add(newText)
     }
 
     fun appendText(newText: AnnotatedString, updateCaret: Boolean = true) {
+        if (!EventQueue.isDispatchThread()) {
+            Log.error("appendText() must only be called from the main thread!")
+        }
         val endPosition =
             TextPosition((lines.size - 1).coerceAtLeast(0), lines.lastOrNull()?.text?.length ?: 0)
         newText.spanStyles.forEach { spanStyle ->
@@ -432,6 +444,9 @@ class AlchitryTextFieldState(
     fun replaceText(
         newText: String, range: OpenEndRange<TextPosition> = selectionManager.selectedRange, updateCaret: Boolean = true
     ) {
+        if (!EventQueue.isDispatchThread()) {
+            Log.error("replaceText() must only be called from the main thread!")
+        }
         if (onReplaceText(newText, range)) {
             return
         }
@@ -451,6 +466,9 @@ class AlchitryTextFieldState(
     fun forceReplaceText(
         newText: String, range: OpenEndRange<TextPosition> = selectionManager.selectedRange, updateCaret: Boolean = true
     ) {
+        if (!EventQueue.isDispatchThread()) {
+            Log.error("forceReplaceText() must only be called from the main thread!")
+        }
         val start = range.start.coerceInRange()
         val end = range.endExclusive.coerceInRange()
 
@@ -493,6 +511,9 @@ class AlchitryTextFieldState(
     }
 
     fun setText(text: String) {
+        if (!EventQueue.isDispatchThread()) {
+            Log.error("setText() must only be called from the main thread!")
+        }
         val lines = text.split(newLineRegex)
         this.lines.clear()
         lines.forEach { line ->

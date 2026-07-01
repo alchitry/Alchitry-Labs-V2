@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import com.alchitry.labs2.Settings
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.ui.theme.ubuntuMonoFont
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import me.tongfei.progressbar.ProgressBarConsumer
 
 class Console(onKeyEvent: (KeyEvent) -> Boolean = { false }) {
@@ -47,48 +49,54 @@ class Console(onKeyEvent: (KeyEvent) -> Boolean = { false }) {
 
     val progressBarConsumer = object : ProgressBarConsumer {
         override fun clear() {
-            if (state.lines.lastOrNull()?.text?.text == activeProgressBar) {
-                clearLastLine()
+            runBlocking(Dispatchers.Main) {
+                if (state.lines.lastOrNull()?.text?.text == activeProgressBar) {
+                    clearLastLine()
+                }
+                activeProgressBar = null
             }
-            activeProgressBar = null
         }
 
         override fun accept(rendered: String) {
-            // over-write the lines
-            val overloadedText = buildString {
-                rendered.split("\r").forEach { line ->
-                    replace(0, line.length.coerceAtMost(length), line)
+            runBlocking(Dispatchers.Main) {
+                // over-write the lines
+                val overloadedText = buildString {
+                    rendered.split("\r").forEach { line ->
+                        replace(0, line.length.coerceAtMost(length), line)
+                    }
                 }
-            }
 
-            val newLine = buildAnnotatedString {
-                val firstSplit = overloadedText.split("\u001b[33m")
-                val start = firstSplit.firstOrNull()
-                val secondSplit = firstSplit.getOrNull(1)?.split("\u001b[0m")
-                val middle = secondSplit?.firstOrNull()
-                val end = secondSplit?.getOrNull(1)
-                start?.let { append(it) }
-                middle?.let {
-                    withStyle(
-                        SpanStyle(
-                            color = AlchitryColors.Companion.current.ProgressBar,
-                            fontFamily = ubuntuMonoFont
-                        )
-                    ) { append(it) }
+                val newLine = buildAnnotatedString {
+                    val firstSplit = overloadedText.split("\u001b[33m")
+                    val start = firstSplit.firstOrNull()
+                    val secondSplit = firstSplit.getOrNull(1)?.split("\u001b[0m")
+                    val middle = secondSplit?.firstOrNull()
+                    val end = secondSplit?.getOrNull(1)
+                    start?.let { append(it) }
+                    middle?.let {
+                        withStyle(
+                            SpanStyle(
+                                color = AlchitryColors.Companion.current.ProgressBar,
+                                fontFamily = ubuntuMonoFont
+                            )
+                        ) { append(it) }
+                    }
+                    end?.let { append(it) }
                 }
-                end?.let { append(it) }
-            }
 
-            if (state.lines.isNotEmpty() && (state.lines.last().text.text == activeProgressBar || state.lines.last().text.isBlank())) {
-                clearLastLine()
-            }
+                if (state.lines.isNotEmpty() && (state.lines.last().text.text == activeProgressBar || state.lines.last().text.isBlank())) {
+                    clearLastLine()
+                }
 
-            state.appendText(newLine, false)
-            activeProgressBar = newLine.text
+                state.appendText(newLine, false)
+                activeProgressBar = newLine.text
+            }
         }
 
         override fun close() {
-            activeProgressBar = null
+            runBlocking(Dispatchers.Main) {
+                activeProgressBar = null
+            }
         }
 
         override fun getMaxRenderedLength(): Int = 80
