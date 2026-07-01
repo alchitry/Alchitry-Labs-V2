@@ -10,7 +10,7 @@ import java.io.File
 import kotlin.io.path.relativeTo
 
 suspend fun importFilesDialog(project: Project) {
-    val supportedExtensions = Language.all.map { ".${it.extension}" }
+    val supportedExtensions = Language.all.map { it.extension }
     try {
         val files = openFileDialog(
             mainWindow,
