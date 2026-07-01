@@ -73,6 +73,10 @@ sealed class FileProvider {
             return file.readText().also { cachedContents = it }
         }
 
+        fun wasModifiedOnDisk(): Boolean {
+            return readTime != file.lastModified() && cachedContents != file.readText()
+        }
+
         override fun writeText(text: String) {
             val file = file
             if (text == cachedContents && readTime == file.lastModified())

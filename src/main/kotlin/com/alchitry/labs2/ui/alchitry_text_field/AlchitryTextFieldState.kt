@@ -97,6 +97,7 @@ class AlchitryTextFieldState(
     val codeFormatter: CodeFormatter? = null,
     val autocomplete: Autocomplete? = null,
     val onTextChanged: () -> Unit = {},
+    val onFocused: () -> Unit = {},
     val onDoubleClicK: (Offset) -> Boolean = { false },
     val isReadOnly: Boolean = false,
     val onReplaceText: (String, OpenEndRange<TextPosition>) -> Boolean = { _, _ -> false },
@@ -768,6 +769,7 @@ class AlchitryTextFieldState(
         .onFocusChanged {
             if (it.hasFocus) {
                 selectionManager.onFocusGained()
+                onFocused()
             } else {
                 selectionManager.onFocusLost()
             }
