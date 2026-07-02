@@ -677,15 +677,39 @@ class SystemVerilogConverter(
             addPorts(instance.internal.values)
             newLine()
             addIoSignals(instance.internal.values)
-            addSigs()
             ctx.moduleBody()?.stat()?.forEach {
                 when (it) {
-                    is LucidParser.StatTestContext,
-                    is LucidParser.StatFunctionContext -> return@forEach
+                    is LucidParser.StatConstContext,
+                    is LucidParser.StatSigContext,
+                    is LucidParser.StatEnumContext,
+                    is LucidParser.StatDFFContext,
+                    is LucidParser.StatModuleInstContext,
+                    is LucidParser.StatStructContext -> {
+                        append(it.verilog)
+                        newLine()
+                    }
 
                     is LucidParser.StatAssignContext -> addAssignBlock(
                         it.assignBlock() ?: error("Missing assignBlock!")
                     )
+
+                    else -> {
+                        return@forEach
+                    }
+                }
+            }
+            addSigs()
+            ctx.moduleBody()?.stat()?.forEach {
+                when (it) {
+                    is LucidParser.StatTestContext,
+                    is LucidParser.StatFunctionContext,
+                    is LucidParser.StatConstContext,
+                    is LucidParser.StatSigContext,
+                    is LucidParser.StatEnumContext,
+                    is LucidParser.StatDFFContext,
+                    is LucidParser.StatModuleInstContext,
+                    is LucidParser.StatStructContext,
+                    is LucidParser.StatAssignContext -> return@forEach
 
                     else -> {
                         append(it.verilog)
