@@ -313,7 +313,7 @@ sealed class SignalWidth {
                 is SimpleWidth -> if (selector.single) BitWidth else {
                     val count = if (this is DefinedSimpleWidth) selector.count(size) else selector.count()
                     if (count != null) {
-                        BitListWidth(selector.count(count))
+                        BitListWidth(count)
                     } else {
                         UndefinedSimpleWidth()
                     }
