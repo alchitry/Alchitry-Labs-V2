@@ -312,7 +312,7 @@ sealed class SignalWidth {
                 BitWidth -> throw SignalSelectionException(selector, "Bit selection can't be used on a single bit.")
                 is SimpleWidth -> if (selector.single) BitWidth else {
                     val count = if (this is DefinedSimpleWidth) selector.count(size) else selector.count()
-                    if (count != null) {
+                    if (count != null && count >= 0) {
                         BitListWidth(count)
                     } else {
                         UndefinedSimpleWidth()
