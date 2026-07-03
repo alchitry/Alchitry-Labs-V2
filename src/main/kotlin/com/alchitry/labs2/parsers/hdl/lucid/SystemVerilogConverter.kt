@@ -1131,9 +1131,19 @@ class SystemVerilogConverter(
     override fun exitExprInvert(ctx: LucidParser.ExprInvertContext) {
         if (handleConstant(ctx))
             return
+        val operator = ctx.getChild(0).requireNotNull(ctx).text
+        val expr = ctx.expr().requireNotNull(ctx)
         ctx.verilog = buildString {
-            append(ctx.getChild(0).requireNotNull(ctx).text)
-            append(ctx.expr().requireNotNull(ctx).verilog)
+            if (operator == "~") {
+                append($$"(($bits(")
+                append(expr.verilog)
+                append("))'(")
+            }
+            append(operator)
+            append(expr.verilog)
+            if (operator == "~") {
+                append("))")
+            }
         }
     }
 

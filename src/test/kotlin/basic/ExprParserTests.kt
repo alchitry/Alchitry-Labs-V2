@@ -1257,4 +1257,20 @@ internal class ExprParserTests {
             value
         )
     }
+
+    @Test
+    fun bitInversionExpansionTest() = runBlocking {
+        val test =
+            SimpleLucidTester("1 ? ~16d1 : 32d1")
+        val expr = test.parser.expr().also { test.context.walk(it) }
+
+        assert(test.hasNoIssues)
+
+        val value = test.context.resolve(expr)
+
+        assertEquals(
+            BitListValue(65534, 32, false).asConstExpr(),
+            value
+        )
+    }
 }
