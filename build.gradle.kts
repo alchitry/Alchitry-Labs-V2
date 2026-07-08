@@ -202,18 +202,6 @@ tasks.register<com.strumenta.antlrkotlin.gradle.AntlrKotlinTask>("generateKotlin
     outputDirectory = File("src/main/kotlin/com/alchitry/labs2/parsers/grammar")
 }
 
-tasks.register("publish") {
-    description = "Publishes a release to the stable channel"
-    group = "publishing"
-    dependsOn("copied-site", "ms-store-release", "updateAUR")
-}
-
-tasks.register("publish-beta") {
-    description = "Publishes a release to the beta channel"
-    group = "publishing"
-    dependsOn("copied-site-beta", "ms-store-release-beta", "updateAUR-beta")
-}
-
 tasks.register("download-oss-cad-suite") {
     description = "Downloads the latest pre-built OSS suite."
     group = "build setup"
@@ -333,6 +321,23 @@ tasks.register("updateAUR-beta") {
         )
     }
 }
+
+tasks.register("publish") {
+    description = "Publishes a release to the stable channel"
+    group = "publishing"
+    dependsOn("copied-site", "ms-store-release", "updateAUR")
+}
+
+tasks.register("publish-beta") {
+    description = "Publishes a release to the beta channel"
+    group = "publishing"
+    dependsOn("copied-site-beta", "ms-store-release-beta", "updateAUR-beta")
+}
+
+tasks.named("ms-store-release-beta") { mustRunAfter("copied-site-beta") }
+tasks.named("updateAUR-beta") { mustRunAfter("ms-store-release-beta") }
+tasks.named("ms-store-release") { mustRunAfter("copied-site") }
+tasks.named("updateAUR") { mustRunAfter("ms-store-release") }
 
 fun downloadFile(url: String, destination: File) {
     try {
