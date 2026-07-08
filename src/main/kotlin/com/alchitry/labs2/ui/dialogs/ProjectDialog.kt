@@ -1,8 +1,7 @@
 package com.alchitry.labs2.ui.dialogs
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -21,6 +20,7 @@ import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.ProjectCreator
 import com.alchitry.labs2.project.ProjectTemplate
 import com.alchitry.labs2.switchActiveWindow
+import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.windows.mainWindow
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -280,21 +280,38 @@ private fun TemplateSelector(
 
 @Composable
 fun SaveAsProjectDialog(project: Project, visible: Boolean, onClose: () -> Unit) {
-    AlchitryDialog(visible, "Save Project As", onClose = onClose) {
+    AlchitryDialog(visible, "Save Project As", onClose = onClose, resizable = true) {
         val spacedBy = Arrangement.spacedBy(10.dp)
 
         var projectName by remember { mutableStateOf("") }
         var workspace by remember { mutableStateOf(File(Locations.workspace)) }
+        val folderExists by remember {
+            derivedStateOf {
+                projectName.isNotBlank() && File(
+                    workspace.absolutePath,
+                    projectName
+                ).exists()
+            }
+        }
 
-        Column(Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+        Column(
+            Modifier.padding(10.dp).verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = spacedBy) {
                 OutlinedTextField(
                     projectName,
                     onValueChange = { projectName = it },
-                    isError = projectName.isBlank(),
+                    isError = projectName.isBlank() or folderExists,
                     modifier = Modifier.weight(1f),
                     singleLine = true,
                     label = { Text("New Project Name") }
+                )
+            }
+            AnimatedVisibility(folderExists) {
+                Text(
+                    "The folder \"${File(workspace.absolutePath, projectName).absolutePath}\" already exists.",
+                    color = AlchitryColors.current.Error
                 )
             }
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = spacedBy) {
@@ -336,6 +353,7 @@ fun SaveAsProjectDialog(project: Project, visible: Boolean, onClose: () -> Unit)
                             loading = true
                             scope.launch(Dispatchers.IO) {
                                 try {
+                                    Project.close()
                                     val newProject = ProjectCreator.clone(
                                         project.path.toUri().toURL(),
                                         project.projectFile.name,
@@ -352,7 +370,7 @@ fun SaveAsProjectDialog(project: Project, visible: Boolean, onClose: () -> Unit)
                                 }
                             }
                         },
-                        enabled = projectName.isNotBlank() && workspace.isDirectory
+                        enabled = projectName.isNotBlank() && workspace.isDirectory && !folderExists
                     ) {
                         Text("Create Project")
                     }
