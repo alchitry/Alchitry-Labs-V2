@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.FileOutputStream
 import java.net.HttpURLConnection
 import java.net.URI
-import java.net.URL
 import java.security.MessageDigest
 import java.util.*
 
@@ -19,11 +18,11 @@ buildscript {
 val antlrKotlinVersion = extra.get("antlrKotlinVersion") as String
 
 plugins {
-    kotlin("jvm") version "2.2.21"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.2.21"
-    kotlin("plugin.serialization") version "2.2.21"
+    kotlin("jvm") version "2.3.21"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.3.21"
+    kotlin("plugin.serialization") version "2.3.21"
     id("org.jetbrains.compose") version "1.9.3"
-    id("dev.hydraulic.conveyor") version "1.12"
+    id("dev.hydraulic.conveyor") version "1.13"
     id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
 }
 
@@ -73,9 +72,11 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
-configurations.all {
-    attributes {
-        attribute(Attribute.of("ui", String::class.java), "awt")
+configurations.configureEach {
+    if (isCanBeResolved || isCanBeConsumed) {
+        attributes {
+            attribute(Attribute.of("ui", String::class.java), "awt")
+        }
     }
 }
 
@@ -112,40 +113,36 @@ compose.desktop {
 val conveyorCommand = "/home/justin/.npm-global/bin/conveyor"
 fun TaskContainer.registerConveyorTask(name: String, arg: String? = null) {
     listOf(name to "stable.conf", "$name-beta" to "beta.conf").forEach { (taskName, confFile) ->
-        register(taskName) {
+        register<Exec>(taskName) {
             group = "conveyor"
             dependsOn.add("jar")
-            doLast {
-                exec {
-                    if (arg == null) {
-                        commandLine(
-                            conveyorCommand,
-                            "-f",
-                            confFile,
-                            "--passphrase=${secrets.get("conveyorRootKey")}",
-                            "make",
-                            name
-                        )
-                    } else {
-                        commandLine(
-                            conveyorCommand,
-                            "-f",
-                            confFile,
-                            "--passphrase=${secrets.get("conveyorRootKey")}",
-                            arg,
-                            "make",
-                            name
-                        )
-                    }
-                }
+            if (arg == null) {
+                commandLine(
+                    conveyorCommand,
+                    "-f",
+                    confFile,
+                    "--passphrase=${secrets.get("conveyorRootKey")}",
+                    "make",
+                    name
+                )
+            } else {
+                commandLine(
+                    conveyorCommand,
+                    "-f",
+                    confFile,
+                    "--passphrase=${secrets.get("conveyorRootKey")}",
+                    arg,
+                    "make",
+                    name
+                )
             }
         }
     }
 }
 
-tasks.register("version") {
+tasks.register<Exec>("version") {
     group = "conveyor"
-    doLast { exec { commandLine(conveyorCommand, "--version") } }
+    commandLine(conveyorCommand, "--version")
 }
 tasks.registerConveyorTask("app")
 tasks.registerConveyorTask("site") // makes the site files locally
@@ -158,6 +155,7 @@ tasks.registerConveyorTask("mac-app", "-Kapp.machines=mac.aarch64")
 val generatedVersionDir = "${layout.buildDirectory.get()}/resources/main"
 
 tasks.register("generateVersionProperties") {
+    description = "Generates the version.properties file"
     doLast {
         val propertiesFile = file("$generatedVersionDir/version.properties")
         propertiesFile.parentFile.mkdirs()
@@ -229,7 +227,14 @@ tasks.register("download-oss-cad-suite") {
             target.mkdirs()
 
             if (arch == "windows-x64") {
-                project.exec { commandLine("7z", "x", archive.absolutePath, "-o${toolsDir.absolutePath}") }
+                project.providers.exec {
+                    commandLine(
+                        "7z",
+                        "x",
+                        archive.absolutePath,
+                        "-o${toolsDir.absolutePath}"
+                    )
+                }.result.get()
                 // work around for windows not finding the .dlls
                 target.resolve("lib").apply {
                     listFiles()?.forEach {
@@ -239,7 +244,15 @@ tasks.register("download-oss-cad-suite") {
                     }
                 }
             } else {
-                project.exec { commandLine("tar", "-xzf", archive.absolutePath, "-C", toolsDir.absolutePath) }
+                project.providers.exec {
+                    commandLine(
+                        "tar",
+                        "-xzf",
+                        archive.absolutePath,
+                        "-C",
+                        toolsDir.absolutePath
+                    )
+                }.result.get()
 
                 if (arch.startsWith("darwin")) {
                     // these files aren't needed and cause failures during signing
@@ -287,14 +300,14 @@ fun Project.updateAurPackage(pkgName: String, downloadUrl: String) {
 
     commands.forEachIndexed { index, cmd ->
         println("Executing: ${cmd.joinToString(" ")}")
-        exec {
+        project.providers.exec {
             workingDir = aurDir
             commandLine = cmd
             // For the first command, redirect output to .SRCINFO
             if (index == 0) {
                 standardOutput = FileOutputStream(file("${aurDir.absolutePath}/.SRCINFO"))
             }
-        }
+        }.result.get()
     }
 }
 
@@ -341,7 +354,7 @@ tasks.named("updateAUR") { mustRunAfter("ms-store-release") }
 
 fun downloadFile(url: String, destination: File) {
     try {
-        val urlObj = URL(url)
+        val urlObj = URI(url).toURL()
         val connection = urlObj.openConnection()
         val inputStream = connection.getInputStream()
         val buffer = ByteArray(4096)
@@ -365,7 +378,7 @@ fun getRedirectedUrl(url: String): String? {
     var connection: HttpURLConnection? = null
     try {
         do {
-            connection = URL(currentUrl).openConnection() as HttpURLConnection
+            connection = URI(currentUrl).toURL().openConnection() as HttpURLConnection
             connection.instanceFollowRedirects = false
             connection.connect()
             val location = connection.getHeaderField("Location")
@@ -374,7 +387,7 @@ fun getRedirectedUrl(url: String): String? {
             } else {
                 return currentUrl
             }
-        } while (connection!!.responseCode in 300..399)
+        } while (connection.responseCode in 300..399)
     } catch (e: Exception) {
         e.printStackTrace()
     } finally {
