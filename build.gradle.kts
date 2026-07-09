@@ -300,14 +300,17 @@ fun Project.updateAurPackage(pkgName: String, downloadUrl: String) {
 
     commands.forEachIndexed { index, cmd ->
         println("Executing: ${cmd.joinToString(" ")}")
-        project.providers.exec {
+        val execOutput = project.providers.exec {
             workingDir = aurDir
             commandLine = cmd
-            // For the first command, redirect output to .SRCINFO
-            if (index == 0) {
-                standardOutput = FileOutputStream(file("${aurDir.absolutePath}/.SRCINFO"))
-            }
-        }.result.get()
+        }
+        // For the first command, redirect output to .SRCINFO
+        if (index == 0) {
+            val srcInfo = execOutput.standardOutput.asText.get()
+            file("${aurDir.absolutePath}/.SRCINFO").writeText(srcInfo)
+        } else {
+            execOutput.result.get()
+        }
     }
 }
 
