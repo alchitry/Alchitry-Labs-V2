@@ -14,6 +14,7 @@ import com.alchitry.labs2.windows.LoaderProgressBarRender
 import com.alchitry.labs2.windows.loaderStatus
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import kotlinx.serialization.json.JsonPrimitive
 import me.tongfei.progressbar.*
 import org.fusesource.jansi.Ansi.ansi
 import org.fusesource.jansi.AnsiConsole
@@ -27,6 +28,7 @@ import kotlin.math.roundToInt
 @OptIn(DelicateCoroutinesApi::class)
 object Log {
     private val messageChannel = Channel<AnnotatedString>(capacity = Channel.UNLIMITED)
+
     init {
         AnsiConsole.systemInstall()
         GlobalScope.launch(Dispatchers.Main) {
@@ -87,6 +89,13 @@ object Log {
 
     fun exception(e: Throwable) {
         printlnError("", e)
+        Analytics.trackEvent(
+            "exception",
+            mapOf(
+                "message" to JsonPrimitive(e.message),
+                "stack_trace" to JsonPrimitive(e.stackTraceToString())
+            )
+        )
     }
 
     fun showError(message: Any?, throwable: Throwable? = null) {
@@ -154,6 +163,13 @@ object Log {
         if (throwable != null) {
             throwable.message?.let { println(it, AlchitryColors.current.Error) }
             println(throwable.stackTraceToString(), AlchitryColors.current.Error)
+            Analytics.trackEvent(
+                "printlnError",
+                mapOf(
+                    "message" to JsonPrimitive(throwable.message),
+                    "stack_trace" to JsonPrimitive(throwable.stackTraceToString())
+                )
+            )
         }
     }
 
