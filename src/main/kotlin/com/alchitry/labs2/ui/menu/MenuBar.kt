@@ -253,6 +253,7 @@ fun MenuBarContext.MenuParent(
 @Composable
 fun MenuBarContext.MenuItem(
     label: @Composable () -> Unit,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     val item = remember { MenuBarItem() }
@@ -264,14 +265,18 @@ fun MenuBarContext.MenuItem(
                     false
                 }
             )
-            .clickable(onClick = {
+            .clickable(enabled = enabled) {
                 dismiss()
                 onClick()
-            })
+            }
             .padding(8.dp)
             .fillMaxWidth()
     ) {
-        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
+        CompositionLocalProvider(
+            LocalContentColor provides if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(
+                alpha = 0.5f
+            )
+        ) {
             label()
         }
     }

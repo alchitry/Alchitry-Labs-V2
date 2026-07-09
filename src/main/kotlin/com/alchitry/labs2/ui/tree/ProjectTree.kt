@@ -67,11 +67,15 @@ fun ProjectTree() {
                     }, 0, remember { Selectable("Root") }) {
                         ContextMenuDataProvider(
                             items = {
-                                listOf(
-                                    ContextMenuItem("New Lucid Module") {
-                                        showNewLucidModule = true
-                                    }
-                                )
+                                if (Project.building) {
+                                    emptyList()
+                                } else {
+                                    listOf(
+                                        ContextMenuItem("New Lucid Module") {
+                                            showNewLucidModule = true
+                                        }
+                                    )
+                                }
                             }
                         ) {
                             TreeSection({ Text("Source Files") }, 1, remember { Selectable("Source Files") }) {
@@ -87,6 +91,7 @@ fun ProjectTree() {
                                         ContextMenuArea(
                                             items = {
                                                 when {
+                                                    Project.building -> emptyList()
                                                     project.top == file -> emptyList()
                                                     file.isLibFile || file.isReadOnly -> listOf(
                                                         ContextMenuItem("Remove ${file.name}") {
@@ -142,15 +147,19 @@ fun ProjectTree() {
                                             val color = if (core.stub == null) AlchitryColors.current.Error else null
                                             ContextMenuArea(
                                                 items = {
-                                                    listOf(
-                                                        ContextMenuItem("Delete ${core.name}") {
-                                                            if (Project.building) {
-                                                                Log.warn("Something is already running. Can't delete IP core.")
-                                                                return@ContextMenuItem
+                                                    if (Project.building) {
+                                                        emptyList()
+                                                    } else {
+                                                        listOf(
+                                                            ContextMenuItem("Delete ${core.name}") {
+                                                                if (Project.building) {
+                                                                    Log.warn("Something is already running. Can't delete IP core.")
+                                                                    return@ContextMenuItem
+                                                                }
+                                                                coreToDelete = core
                                                             }
-                                                            coreToDelete = core
-                                                        }
-                                                    )
+                                                        )
+                                                    }
                                                 }
                                             ) {
                                                 TreeItem(
@@ -172,11 +181,15 @@ fun ProjectTree() {
                         }
                         ContextMenuDataProvider(
                             items = {
-                                listOf(
-                                    ContextMenuItem("New Alchitry Constraint") {
-                                        showNewAlchitryConstraint = true
-                                    }
-                                )
+                                if (Project.building) {
+                                    emptyList()
+                                } else {
+                                    listOf(
+                                        ContextMenuItem("New Alchitry Constraint") {
+                                            showNewAlchitryConstraint = true
+                                        }
+                                    )
+                                }
                             }
                         ) {
                             TreeSection({ Text("Constraint Files") }, 1, remember { Selectable("Constraint Files") }) {
@@ -191,6 +204,7 @@ fun ProjectTree() {
                                         ContextMenuArea(
                                             items = {
                                                 when {
+                                                    Project.building -> emptyList()
                                                     file.isLibFile || file.isReadOnly -> listOf(
                                                         ContextMenuItem("Remove ${file.name}") {
                                                             project.removeFile(file, false)

@@ -44,6 +44,7 @@ val LocalLabsState = compositionLocalOf<LabsState> { error("No LabsState provide
 data class LabsState(
     val detectedBoards: MutableState<Map<Board, Int>> = mutableStateOf(emptyMap()),
     val attachedToBoard: MutableState<Boolean> = mutableStateOf(false),
+    val coreGenOpen: MutableState<Boolean> = mutableStateOf(false)
 )
 
 @Composable

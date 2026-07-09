@@ -60,10 +60,10 @@ fun LabsToolbar() {
     Row {
         AlchitryToolbarIcon()
         IconMenu(painterResource("icons/menu.svg"), "Menu") {
-            MenuItem({ Text("New Project...") }) {
+            MenuItem({ Text("New Project...") }, !running) {
                 showProjectDialog = true
             }
-            MenuItem({ Text("Open Project...") }) {
+            MenuItem({ Text("Open Project...") }, !running) {
                 scope.launch {
                     openProjectDialog {
                         val deferred = CompletableDeferred<Boolean?>()
@@ -73,7 +73,7 @@ fun LabsToolbar() {
                     }
                 }
             }
-            MenuItem({ Text("Save Project As...") }) {
+            MenuItem({ Text("Save Project As...") }, !running) {
                 showSaveProjectAsDialog = true
             }
             MenuParent(label = { Text("Settings") }) {
@@ -248,7 +248,7 @@ fun LabsToolbar() {
         var showVerilogFileDialog by remember { mutableStateOf(false) }
         VerilogFileDialog(showVerilogFileDialog) { showVerilogFileDialog = false }
 
-        IconMenu(painterResource("icons/open.svg"), "New File", enabled = project != null) {
+        IconMenu(painterResource("icons/open.svg"), "New File", enabled = project != null && !running) {
             MenuItem({ Text("New Lucid Module") }) {
                 showLucidFileDialog = true
             }
