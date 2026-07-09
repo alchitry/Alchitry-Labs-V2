@@ -22,8 +22,8 @@ import androidx.compose.ui.focus.focusTarget
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
@@ -214,7 +214,8 @@ fun MenuBarContext.MenuParent(
 
     Box {
         Box(
-            Modifier.menuHoverFocus(item,
+            Modifier.menuHoverFocus(
+                item,
                 active = active,
                 enabled = isActive.value,
                 interactionSource = remember { MutableInteractionSource() }).padding(8.dp).fillMaxWidth()
@@ -234,7 +235,8 @@ fun MenuBarContext.MenuParent(
             }
         }
 
-        MenuBarDropdown(expanded = active,
+        MenuBarDropdown(
+            expanded = active,
             focusable = false,
             dropDirection = DropDirection.RIGHT,
             onDismissRequest = { dismiss() }) {
@@ -259,12 +261,9 @@ fun MenuBarContext.MenuItem(
     val item = remember { MenuBarItem() }
     Box(
         Modifier
-            .pointerMoveFilter(
-                onEnter = {
-                    requestFocus(item)
-                    false
-                }
-            )
+            .onPointerEvent(PointerEventType.Enter) {
+                requestFocus(item)
+            }
             .clickable(enabled = enabled) {
                 dismiss()
                 onClick()
