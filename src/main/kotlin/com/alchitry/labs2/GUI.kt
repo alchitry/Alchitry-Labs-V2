@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.application
+import com.alchitry.hardware.usb.UsbDevice
 import com.alchitry.labs2.windows.labsWindow
 import com.alchitry.labs2.windows.loaderWindow
 
@@ -17,16 +18,18 @@ fun main(args: Array<String>) {
     @Suppress("UnusedExpression")
     Log // ensure Log init runs to add hooks to board loader
 
-    if (Env.os == Env.OS.Unknown) {
-        System.err.println("Warning: OS detection failed!")
-    }
+    UsbDevice.use {
+        if (Env.os == Env.OS.Unknown) {
+            System.err.println("Warning: OS detection failed!")
+        }
 
-    val projectPath = args.firstOrNull()
+        val projectPath = args.firstOrNull()
 
-    application {
-        when (activeWindow) {
-            Settings.WindowType.Labs -> labsWindow(projectPath)
-            Settings.WindowType.Loader -> loaderWindow()
+        application {
+            when (activeWindow) {
+                Settings.WindowType.Labs -> labsWindow(projectPath)
+                Settings.WindowType.Loader -> loaderWindow()
+            }
         }
     }
 }

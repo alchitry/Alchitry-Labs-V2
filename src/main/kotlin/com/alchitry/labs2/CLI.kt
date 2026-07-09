@@ -1,5 +1,6 @@
 package com.alchitry.labs2
 
+import com.alchitry.hardware.usb.UsbDevice
 import com.alchitry.labs2.subcommands.*
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ExperimentalCli
@@ -17,26 +18,28 @@ fun main(args: Array<String>) {
     @Suppress("UnusedExpression")
     Log // ensure Log init runs to add hooks to board loader
 
-    if (Env.os == Env.OS.Unknown) {
-        System.err.println("Warning: OS detection failed!")
-    }
+    UsbDevice.use {
+        if (Env.os == Env.OS.Unknown) {
+            System.err.println("Warning: OS detection failed!")
+        }
 
-    Analytics.trackEvent("cli_command")
+        Analytics.trackEvent("cli_command")
 
-    val parser = ArgParser("alchitry", strictSubcommandOptionsOrder = true)
+        val parser = ArgParser("alchitry", strictSubcommandOptionsOrder = true)
 
-    parser.subcommands(
-        CreateProject(),
-        CloneProject(),
-        CheckProject(),
-        BuildProject(),
-        LoadProject(),
-        SimulateProject()
-    )
+        parser.subcommands(
+            CreateProject(),
+            CloneProject(),
+            CheckProject(),
+            BuildProject(),
+            LoadProject(),
+            SimulateProject()
+        )
 
-    parser.parse(args)
+        parser.parse(args)
 
-    if (args.isEmpty()) {
-        parser.showHelp("A subcommand must be specified!")
+        if (args.isEmpty()) {
+            parser.showHelp("A subcommand must be specified!")
+        }
     }
 }
