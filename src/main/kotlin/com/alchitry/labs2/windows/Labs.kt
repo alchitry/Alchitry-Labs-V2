@@ -18,9 +18,9 @@ import com.alchitry.hardware.Board
 import com.alchitry.hardware.usb.UsbUtil
 import com.alchitry.labs2.Analytics
 import com.alchitry.labs2.Env
-import com.alchitry.labs2.ProjectAlreadyOpenException
 import com.alchitry.labs2.Settings
 import com.alchitry.labs2.project.Project
+import com.alchitry.labs2.project.ProjectAlreadyOpenException
 import com.alchitry.labs2.ui.alchitry_text_field.Console
 import com.alchitry.labs2.ui.components.ResizePriority
 import com.alchitry.labs2.ui.components.Sash

@@ -1,10 +1,10 @@
 package com.alchitry.labs2.ui.dialogs
 
 import com.alchitry.labs2.Log
-import com.alchitry.labs2.ProjectAlreadyOpenException
 import com.alchitry.labs2.Settings
 import com.alchitry.labs2.project.Locations
 import com.alchitry.labs2.project.Project
+import com.alchitry.labs2.project.ProjectAlreadyOpenException
 import com.alchitry.labs2.windows.mainWindow
 import java.io.File
 
