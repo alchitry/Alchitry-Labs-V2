@@ -26,7 +26,7 @@ plugins {
     id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
 }
 
-val versionText = "2.0.56"
+val versionText = "2.0.57"
 
 group = "com.alchitry"
 version = versionText
@@ -151,6 +151,7 @@ tasks.registerConveyorTask("windows-app") // builds a windows app
 tasks.registerConveyorTask("ms-store-release") // publish to microsoft store
 tasks.registerConveyorTask("copied-site") // pushes the site files to GitHub
 tasks.registerConveyorTask("mac-app", "-Kapp.machines=mac.aarch64")
+tasks.registerConveyorTask("debian-package")
 
 val generatedVersionDir = "${layout.buildDirectory.get()}/resources/main"
 
