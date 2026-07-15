@@ -22,6 +22,9 @@ object ProjectCreator {
             error("Failed to copy project")
         }
 
+        // Remove old .lock files
+        destination.listFiles { it.extension == "lock" }.forEach { it.delete() }
+
         val projFile = File(destination, sourceName)
         if (!projFile.exists()) {
             error("Failed to find copied project file ${projFile.path}")
