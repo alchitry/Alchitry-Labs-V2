@@ -13,7 +13,8 @@ object ProjectLock {
     private var lockFile: RandomAccessFile? = null
     private var fileLock: FileLock? = null
 
-    private fun lockFileFor(projectFile: File): File = File(projectFile.parentFile, ".${projectFile.name}.lock")
+    private fun lockFileFor(projectFile: File): File =
+        File(projectFile.parentFile, ".${projectFile.nameWithoutExtension}.lock")
 
     /**
      * Checks if the project file is locked by another instance.
