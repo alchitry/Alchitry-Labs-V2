@@ -303,29 +303,6 @@ fun LabsToolbar() {
         ) { runWithProject { it.check() } }
 
         ToolbarButton(
-            icon = painterResource("icons/debug.svg"),
-            description = "Simulate",
-            enabled = !running && project != null
-        ) {
-            runWithProject { project ->
-                Analytics.trackEvent(
-                    "simulate_project",
-                    mapOf("board" to JsonPrimitive(project.data.board.name))
-                )
-                val context = project.check(simulating = true) ?: return@runWithProject
-                val existingTab = Workspace.getTabs().firstOrNull { it is BoardSimulationTab }
-                val tabPanel = existingTab?.parent ?: Workspace.activeTabPanel()
-                try {
-                    tabPanel.addTab(BoardSimulationTab(tabPanel, context))
-                    existingTab?.let { it.parent.closeTab(it, false) }
-                } catch (e: IllegalStateException) {
-                    Log.error(e.message)
-                }
-            }
-
-        }
-
-        ToolbarButton(
             icon = painterResource("icons/build.svg"),
             description = "Build",
             enabled = !running && project != null
@@ -443,6 +420,38 @@ fun LabsToolbar() {
             MenuItem({ Text("Register Interface") }) {
                 Analytics.trackEvent("open_register_interface")
                 Workspace.focusOrAddTab { RegisterInterface(it) }
+            }
+        }
+
+        ToolbarButton(
+            icon = painterResource("icons/inspect.svg"),
+            description = "Inspect internal signals",
+            enabled = !running && project != null
+        ) {
+            runWithProject { project ->
+                project.probe.getProbableSignals()
+            }
+        }
+
+        ToolbarButton(
+            icon = painterResource("icons/simulate.svg"),
+            description = "Interactive simulator",
+            enabled = !running && project != null
+        ) {
+            runWithProject { project ->
+                Analytics.trackEvent(
+                    "simulate_project",
+                    mapOf("board" to JsonPrimitive(project.data.board.name))
+                )
+                val context = project.check(simulating = true) ?: return@runWithProject
+                val existingTab = Workspace.getTabs().firstOrNull { it is BoardSimulationTab }
+                val tabPanel = existingTab?.parent ?: Workspace.activeTabPanel()
+                try {
+                    tabPanel.addTab(BoardSimulationTab(tabPanel, context))
+                    existingTab?.let { it.parent.closeTab(it, false) }
+                } catch (e: IllegalStateException) {
+                    Log.error(e.message)
+                }
             }
         }
     }

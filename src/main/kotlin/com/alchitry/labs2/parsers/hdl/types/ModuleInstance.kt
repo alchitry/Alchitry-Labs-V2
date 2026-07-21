@@ -120,6 +120,10 @@ class ModuleInstance(
 
     fun getInternalSignal(name: String) = internal[name] ?: parameters[name]
     override fun getSignal(name: String) = external[name]
+
+    override fun toString(): String {
+        return "ModuleInstance(name='$name', module=${module.name})"
+    }
 }
 
 class ConnectionException(override val message: String, val port: String) :

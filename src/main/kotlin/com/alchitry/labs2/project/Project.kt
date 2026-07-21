@@ -4,7 +4,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.alchitry.hardware.Board.XilinxBoard
-import com.alchitry.labs2.*
+import com.alchitry.labs2.Analytics
+import com.alchitry.labs2.Log
+import com.alchitry.labs2.Settings
 import com.alchitry.labs2.parsers.ProjectContext
 import com.alchitry.labs2.parsers.acf.AcfExtractor
 import com.alchitry.labs2.parsers.acf.NativeConstraint
@@ -33,6 +35,7 @@ import com.alchitry.labs2.project.files.Component
 import com.alchitry.labs2.project.files.FileProvider
 import com.alchitry.labs2.project.files.ProjectFile
 import com.alchitry.labs2.project.files.SourceFile
+import com.alchitry.labs2.project.probe.Probe
 import com.alchitry.labs2.ui.alchitry_text_field.TextPosition
 import com.alchitry.labs2.ui.alchitry_text_field.line_actions.LineActionButton
 import com.alchitry.labs2.ui.tabs.FileTab
@@ -87,6 +90,7 @@ data class Project(
     val moduleMapFlow = mutableModuleMapFlow.asStateFlow()
 
     val projectFiles = (data.sourceFiles + data.constraintFiles + data.ipCores.mapNotNull { it.stub })
+    val probe = Probe(this)
 
     init {
         projectFiles.forEach { fileProvider ->
@@ -336,8 +340,11 @@ data class Project(
     }
 
     suspend fun build(): Boolean = withContext(Dispatchers.Default) {
-        val context = check() ?: return@withContext false
-        val topModule = context.top ?: return@withContext false
+        build(check() ?: return@withContext false)
+    }
+
+    suspend fun build(context: ProjectContext): Boolean {
+        val topModule = context.top ?: return false
 
         Analytics.trackEvent(
             "build_project",
@@ -352,7 +359,7 @@ data class Project(
         } catch (e: Exception) {
             Log.printlnError("Failed to convert source files to Verilog. This should be considered a bug!", e)
             Log.print(context.notationManager.getReport())
-            return@withContext false
+            return false
         }
 
         val sourceDir = buildDirectory.resolve("source")
@@ -361,7 +368,7 @@ data class Project(
             buildDirectory.toFile().deleteRecursively()
         } catch (e: Exception) {
             Log.printlnError("Failed to delete build directory!", e)
-            return@withContext false
+            return false
         }
 
         val vSourceFiles: List<File>
@@ -377,7 +384,7 @@ data class Project(
             }
         } catch (e: Exception) {
             Log.printlnError("Failed to write source files to ${sourceDir.absolutePathString()}", e)
-            return@withContext false
+            return false
         }
 
         val constraintNotationManager = NotationManager()
@@ -398,12 +405,12 @@ data class Project(
             }
         } catch (e: Exception) {
             Log.printlnError("Failed to get constraint files!", e)
-            return@withContext false
+            return false
         } + data.board.acfConverter.convert("alchitry", data.board, context.getConstraints())
 
         if (!constraintNotationManager.hasNoMessages) {
             Log.print(constraintNotationManager.getReport(), AlchitryColors.current.Error)
-            return@withContext false
+            return false
         }
 
         val mergedSdcBuilder = StringBuilder()
@@ -457,7 +464,7 @@ data class Project(
             }
         } catch (e: Exception) {
             Log.printlnError("Failed to write constraint files to ${constraintDir.absolutePathString()}", e)
-            return@withContext false
+            return false
         }
 
         data.board.projectBuilder.buildProject(
@@ -467,7 +474,7 @@ data class Project(
             constraintFiles
         )
 
-        return@withContext true
+        return true
     }
 
     suspend fun getTypesForLucid(file: SourceFile, tree: LucidParser.SourceContext?): ProjectContext {

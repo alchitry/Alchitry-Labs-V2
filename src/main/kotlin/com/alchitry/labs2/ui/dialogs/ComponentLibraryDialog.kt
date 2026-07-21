@@ -124,6 +124,8 @@ private fun SelectionContext<Component?>.LibrarySectionTree(
             }
         }
     section.subSections.forEach { (name, subSection) ->
+        if (name == "Internal") // skip the internal category
+            return@forEach
         TreeSection({ Text(name) }, indentLevel, remember { Selectable(null) }, false) {
             LibrarySectionTree(subSection, board, indentLevel + 1)
         }
