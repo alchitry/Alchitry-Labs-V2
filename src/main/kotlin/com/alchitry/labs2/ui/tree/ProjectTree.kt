@@ -110,11 +110,11 @@ fun ProjectTree() {
                                             }
                                         ) {
                                             TreeItem(
-                                                file.name,
+                                                { Text(file.name) },
                                                 2,
                                                 remember { Selectable(file.name) },
-                                                color,
-                                                if (file.isLibFile) painterResource("icons/component.svg") else null
+                                                color = color,
+                                                icon = if (file.isLibFile) painterResource("icons/component.svg") else null
                                             ) {
                                                 Workspace.openFile(file)
                                             }
@@ -163,11 +163,11 @@ fun ProjectTree() {
                                                 }
                                             ) {
                                                 TreeItem(
-                                                    core.name,
+                                                    { Text(core.name) },
                                                     2,
                                                     remember { Selectable(core.name) },
-                                                    color,
-                                                    painterResource("icons/component.svg")
+                                                    color = color,
+                                                    icon = painterResource("icons/component.svg")
                                                 ) {
                                                     core.stub?.let {
                                                         Workspace.openFile(it)
@@ -222,11 +222,11 @@ fun ProjectTree() {
                                             }
                                         ) {
                                             TreeItem(
-                                                file.name,
+                                                { Text(file.name) },
                                                 2,
                                                 remember { Selectable(file.name) },
-                                                color,
-                                                if (file.isLibFile) painterResource("icons/component.svg") else null
+                                                color = color,
+                                                icon = if (file.isLibFile) painterResource("icons/component.svg") else null
                                             ) {
                                                 Workspace.openFile(file)
                                             }

@@ -423,14 +423,14 @@ fun LabsToolbar() {
             }
         }
 
+        var showProbeSignalSelectionDialog by remember { mutableStateOf(false) }
+        ProbeSignalSelectorDialog(showProbeSignalSelectionDialog) { showProbeSignalSelectionDialog = false }
         ToolbarButton(
             icon = painterResource("icons/inspect.svg"),
             description = "Inspect internal signals",
             enabled = !running && project != null
         ) {
-            runWithProject { project ->
-                project.probe.getProbableSignals()
-            }
+            showProbeSignalSelectionDialog = true
         }
 
         ToolbarButton(

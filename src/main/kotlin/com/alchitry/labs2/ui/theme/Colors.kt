@@ -25,6 +25,7 @@ sealed interface AlchitryColors {
     val Error: Color
     val Info: Color
     val SearchBar: Color
+    val ProbeSelection: Color
 
     val dangerButton: ButtonColors
         @Composable get() = ButtonDefaults.buttonColors(
@@ -69,6 +70,8 @@ data object DarkAlchitryColors : AlchitryColors {
 
     override val SearchBar = Color(0xFF242424)
 
+    override val ProbeSelection = Color(0xFF06535F)
+
     override val scheme = darkColorScheme(
         primary = Accent,
         onPrimary = Color.White,
@@ -112,6 +115,8 @@ data object LightAlchitryColors : AlchitryColors {
     override val Info = Color(0xFF29A2CC)
 
     override val SearchBar = Color(0xFFE5E5E5)
+
+    override val ProbeSelection = Color(0xFF68B4C9)
 
     override val scheme = lightColorScheme(
         primary = Accent,

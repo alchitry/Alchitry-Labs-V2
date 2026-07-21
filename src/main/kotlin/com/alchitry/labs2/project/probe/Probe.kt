@@ -18,28 +18,47 @@ class Probe(private val project: Project) {
             error("Failed to parse project!")
         }
 
-        fun buildTree(moduleInstance: ModuleInstance): SignalTree {
-            val children = mutableListOf<SignalTreeNode>()
-            moduleInstance.internal.values.forEach { if (it.direction.canRead) children.add(SignalNode(it)) }
-            moduleInstance.context.types.dffs.values.forEach { children.add(SignalNode(it.q)) }
-            moduleInstance.context.types.sigs.values.forEach { children.add(SignalNode(it)) }
-            moduleInstance.context.types.moduleInstances.values.forEach { submoduleInstance ->
-                when (submoduleInstance) {
-                    is ModuleInstance -> {
-                        submoduleInstance.external.values.forEach { if (it.direction.canRead) children.add(SignalNode(it)) }
-                        children.add(buildTree(submoduleInstance))
-                    }
+        fun buildTree(moduleInstance: ModuleInstance, parent: SignalTree?): SignalTree =
+            SignalTree(moduleInstance, parent) { currentTree ->
+                val children = mutableListOf<SignalTreeNode>()
+                moduleInstance.internal.values.forEach {
+                    if (it.direction.canRead) children.add(
+                        SignalNode(
+                            it,
+                            currentTree
+                        )
+                    )
+                }
+                moduleInstance.context.types.dffs.values.forEach { children.add(SignalNode(it.q, currentTree)) }
+                moduleInstance.context.types.sigs.values.forEach { children.add(SignalNode(it, currentTree)) }
+                moduleInstance.context.types.moduleInstances.values.forEach { submoduleInstance ->
+                    when (submoduleInstance) {
+                        is ModuleInstance -> {
+                            submoduleInstance.external.values.forEach {
+                                if (it.direction.canRead) children.add(
+                                    SignalNode(it, currentTree)
+                                )
+                            }
+                            children.add(buildTree(submoduleInstance, currentTree))
+                        }
 
-                    is ModuleInstanceArray -> submoduleInstance.modules.forEach { subSubModule ->
-                        subSubModule.external.values.forEach { if (it.direction.canRead) children.add(SignalNode(it)) }
-                        children.add(buildTree(subSubModule))
+                        is ModuleInstanceArray -> submoduleInstance.modules.forEach { subSubModule ->
+                            subSubModule.external.values.forEach {
+                                if (it.direction.canRead) children.add(
+                                    SignalNode(
+                                        it,
+                                        currentTree
+                                    )
+                                )
+                            }
+                            children.add(buildTree(subSubModule, currentTree))
+                        }
                     }
                 }
+                return@SignalTree children
             }
-            return SignalTree(moduleInstance, children)
-        }
 
-        val tree = buildTree(topModule)
+        val tree = buildTree(topModule, null)
         println(tree)
 
         return@withContext tree
@@ -48,11 +67,22 @@ class Probe(private val project: Project) {
 
 sealed interface SignalTreeNode
 
-data class SignalTree(
+class SignalTree(
     val module: ModuleInstance,
-    val children: List<SignalTreeNode>
-) : SignalTreeNode
+    val parent: SignalTree?,
+    childrenBuilder: (SignalTree) -> List<SignalTreeNode>
+) : SignalTreeNode {
+    val children: List<SignalTreeNode> = childrenBuilder(this)
+    override fun toString(): String {
+        return "SignalTree(module=$module, children=$children)"
+    }
+}
 
-data class SignalNode(
-    val signal: Signal
-) : SignalTreeNode
+class SignalNode(
+    val signal: Signal,
+    val parent: SignalTree
+) : SignalTreeNode {
+    override fun toString(): String {
+        return "SignalNode(signal=$signal)"
+    }
+}

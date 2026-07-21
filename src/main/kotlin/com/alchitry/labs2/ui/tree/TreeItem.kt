@@ -4,12 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,9 +23,10 @@ import com.alchitry.labs2.ui.theme.AlchitryColors
 
 @Composable
 fun <T> SelectionContext<T>.TreeItem(
-    title: String,
+    title: @Composable () -> Unit,
     indentLevel: Int,
     selectable: Selectable<T>,
+    modifier: Modifier = Modifier,
     color: Color? = null,
     icon: Painter? = null,
     onDoubleClick: () -> Unit,
@@ -39,7 +36,7 @@ fun <T> SelectionContext<T>.TreeItem(
     val isSelected by remember { isSelectedState(selectable) }
 
     Row(
-        Modifier
+        modifier
             .fillMaxWidth()
             .onFocusChanged { focused = it.hasFocus }
             .focusRequester(focusRequester)
@@ -71,6 +68,9 @@ fun <T> SelectionContext<T>.TreeItem(
                 modifier = Modifier.padding(end = 8.dp).size(20.dp)
             )
         }
-        Text(title, color = color ?: LocalContentColor.current, modifier = Modifier.padding(bottom = 4.dp))
+        CompositionLocalProvider(LocalContentColor provides (color ?: LocalContentColor.current)) {
+            title()
+        }
+        Spacer(Modifier.padding(bottom = 4.dp))
     }
 }

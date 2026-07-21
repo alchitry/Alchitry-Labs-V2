@@ -24,6 +24,7 @@ fun <T> SelectionContext<T>.TreeSection(
     title: @Composable RowScope.() -> Unit,
     indentLevel: Int,
     selectable: Selectable<T>,
+    modifier: Modifier = Modifier,
     initiallyExpanded: Boolean = true,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -34,7 +35,7 @@ fun <T> SelectionContext<T>.TreeSection(
     var focused by remember { mutableStateOf(false) }
     val isSelected by remember { isSelectedState(selectable) }
 
-    Column {
+    Column(modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
