@@ -40,6 +40,7 @@ class RegisterInterface(
     var collectingValues by mutableStateOf(false)
     private val verticalScrollState = ScrollState(0)
     var showConfig by mutableStateOf(true)
+    var showLabels by mutableStateOf(false)
 
     private var addressState by mutableStateOf(
         NumberFieldState(
@@ -228,6 +229,17 @@ class RegisterInterface(
                         }, enabled = canAddAddress && addressState.valid) { Text("Add Address") }
                     }
                     ToggleButton(
+                        active = showLabels,
+                        tooltip = { Text("Show Labels") },
+                        onClick = { showLabels = it }
+                    ) {
+                        Icon(
+                            painterResource("icons/label.svg"),
+                            contentDescription = "Label",
+                            modifier = Modifier.size(45.dp).padding(5.dp)
+                        )
+                    }
+                    ToggleButton(
                         active = showConfig,
                         tooltip = { Text("Show Configuration") },
                         onClick = { showConfig = it }
@@ -308,7 +320,12 @@ class RegisterInterface(
                                     waitForSlop = false
                                 ) { dragHandleModifier ->
                                     Column {
-                                        row.Draw(dragHandleModifier, state.connected, showConfig)
+                                        row.Draw(
+                                            dragHandleModifier = dragHandleModifier,
+                                            connected = state.connected,
+                                            showConfig = showConfig,
+                                            showLabel = showLabels
+                                        )
                                         DropZone(
                                             minimumSize = DpSize(1.dp, 1.dp),
                                             content = { HorizontalDivider() },

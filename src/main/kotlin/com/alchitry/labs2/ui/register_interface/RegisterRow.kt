@@ -30,29 +30,23 @@ import kotlin.time.Duration
 import kotlin.time.DurationUnit
 
 class RegisterRow(
-    val address: Int,
-    val parent: RegisterInterface,
-    private val requestRemoval: (RegisterRow) -> Unit
+    val address: Int, val parent: RegisterInterface, private val requestRemoval: (RegisterRow) -> Unit
 ) {
     var running by mutableStateOf(false)
     var watching by mutableStateOf(false)
     var valueState by mutableStateOf(
         NumberFieldState(
-            value = 0,
-            fractionalBits = 0,
-            signed = false,
-            radix = Radix.Decimal,
-            valid = true
+            value = 0, fractionalBits = 0, signed = false, radix = Radix.Decimal, valid = true
         )
     )
     var showGraph by mutableStateOf(false)
     val graphValues = RealtimeGraphState()
     val requests = Channel<RegisterRequest>(capacity = 10)
+    var label by mutableStateOf("")
 
     fun onNewData(data: Int, time: Duration) {
         graphValues.add(
-            data,
-            time.toDouble(DurationUnit.SECONDS)
+            data, time.toDouble(DurationUnit.SECONDS)
         )
         valueState = valueState.withNewValue(data)
     }
@@ -62,23 +56,17 @@ class RegisterRow(
     }
 
     @Composable
-    fun Draw(dragHandleModifier: Modifier, connected: Boolean, showConfig: Boolean) {
+    fun Draw(dragHandleModifier: Modifier, connected: Boolean, showConfig: Boolean, showLabel: Boolean) {
         val dragHandleWidth = 55.dp
         Box(Modifier.background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))) {
             Box(Modifier.matchParentSize()) {
                 Box(
-                    modifier = dragHandleModifier
-                        .align(Alignment.CenterStart)
-                        .fillMaxHeight()
-                        .width(dragHandleWidth)
-                        .pointerHoverIcon(PointerIcon(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)))
-                        .alpha(0.7f),
+                    modifier = dragHandleModifier.align(Alignment.CenterStart).fillMaxHeight().width(dragHandleWidth)
+                        .pointerHoverIcon(PointerIcon(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR))).alpha(0.7f),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painterResource("icons/drag_indicator.svg"),
-                        "Drag",
-                        Modifier.size(25.dp)
+                        painterResource("icons/drag_indicator.svg"), "Drag", Modifier.size(25.dp)
                     )
                 }
             }
@@ -86,9 +74,7 @@ class RegisterRow(
             Column(Modifier.padding(start = dragHandleWidth)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Row(
-                        Modifier.padding(vertical = 15.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(15.dp)
+                        Modifier.padding(vertical = 15.dp), verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -99,110 +85,111 @@ class RegisterRow(
                             Text(" 0x${address.toUInt().toHexString(HexFormat.UpperCase)}", Modifier.alpha(0.5f))
                         }
 
-                        NumberField(
-                            valueState,
-                            "Value",
-                            signSelector = true,
-                            fractionalBits = true,
-                            readOnly = running,
-                            showConfig = showConfig
-                        ) { valueState = it }
-
-                        Button({
-                            running = true
-                            if (requests.trySend(RegisterRequest.Read(address) { value ->
-                                    if (value != null)
-                                        valueState = valueState.withNewValue(value)
-                                    running = false
-                                }).isFailure) {
-                                running = false
-                            }
-
-                        }, enabled = !running && connected) {
-                            Text("Read")
-                        }
-                        Button({
-                            running = true
-                            if (requests.trySend(RegisterRequest.Write(address, valueState.value) {
-                                    running = false
-                                }).isFailure
-                            ) {
-                                running = false
-                            }
-                        }, enabled = !running && connected) {
-                            Text("Write")
+                        AnimatedVisibility(
+                            showLabel, enter = expandHorizontally() + fadeIn(), exit = shrinkHorizontally() + fadeOut()
+                        ) {
+                            TextField(
+                                value = label,
+                                onValueChange = { label = it },
+                                placeholder = { Text("Label") },
+                                singleLine = true,
+                                modifier = Modifier.padding(start = 15.dp)
+                            )
                         }
 
-                        ToggleButton(
-                            active = watching,
-                            enabled = (!running || watching),
-                            tooltip = { Text("Watch Register") },
-                            onClick = {
-                                watching = it
-                                if (it) {
-                                    parent.collectingValues = true
+                        Row(Modifier.padding(start = 15.dp), horizontalArrangement = Arrangement.spacedBy(15.dp)) {
+
+                            NumberField(
+                                valueState,
+                                "Value",
+                                signSelector = true,
+                                fractionalBits = true,
+                                readOnly = running,
+                                showConfig = showConfig
+                            ) { valueState = it }
+
+                            Button({
+                                running = true
+                                if (requests.trySend(RegisterRequest.Read(address) { value ->
+                                        if (value != null) valueState = valueState.withNewValue(value)
+                                        running = false
+                                    }).isFailure) {
+                                    running = false
                                 }
+
+                            }, enabled = !running && connected) {
+                                Text("Read")
                             }
-                        ) {
-                            Icon(
-                                painterResource("icons/glasses.svg"),
-                                contentDescription = "Watch",
-                                modifier = Modifier.size(width = 70.dp, height = 45.dp)
-                            )
-                        }
+                            Button({
+                                running = true
+                                if (requests.trySend(RegisterRequest.Write(address, valueState.value) {
+                                        running = false
+                                    }).isFailure) {
+                                    running = false
+                                }
+                            }, enabled = !running && connected) {
+                                Text("Write")
+                            }
+
+                            ToggleButton(
+                                active = watching,
+                                enabled = (!running || watching),
+                                tooltip = { Text("Watch Register") },
+                                onClick = {
+                                    watching = it
+                                    if (it) {
+                                        parent.collectingValues = true
+                                    }
+                                }) {
+                                Icon(
+                                    painterResource("icons/glasses.svg"),
+                                    contentDescription = "Watch",
+                                    modifier = Modifier.size(width = 70.dp, height = 45.dp)
+                                )
+                            }
 
 
-                        ToggleButton(
-                            active = showGraph,
-                            onClick = {
+                            ToggleButton(active = showGraph, onClick = {
                                 showGraph = it
-                            },
-                            tooltip = { Text("Show Graph") }
+                            }, tooltip = { Text("Show Graph") }) {
+                                Icon(
+                                    painterResource("icons/chart.svg"),
+                                    contentDescription = "Show Graph",
+                                    modifier = Modifier.size(width = 70.dp, height = 45.dp)
+                                )
+                            }
+                        }
+
+                        Spacer(Modifier.weight(1f).pointerInput(Unit) {
+
+                        })
+                        Box(
+                            modifier = Modifier.padding(end = 15.dp).size(35.dp).padding(2.dp).clip(CircleShape)
+                                .clickable(
+                                    onClick = { requestRemoval(this@RegisterRow) },
+                                    role = Role.Button,
+                                ), contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                painterResource("icons/chart.svg"),
-                                contentDescription = "Show Graph",
-                                modifier = Modifier.size(width = 70.dp, height = 45.dp)
+                                painterResource("icons/close.svg"),
+                                "Close",
+                                modifier = Modifier.matchParentSize().padding(4.dp)
                             )
                         }
-                    }
-
-                    Spacer(Modifier.weight(1f).pointerInput(Unit) {
-
-                    })
-                    Box(
-                        modifier = Modifier
-                            .padding(end = 15.dp)
-                            .size(35.dp)
-                            .padding(2.dp)
-                            .clip(CircleShape)
-                            .clickable(
-                                onClick = { requestRemoval(this@RegisterRow) },
-                                role = Role.Button,
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painterResource("icons/close.svg"),
-                            "Close",
-                            modifier = Modifier.matchParentSize().padding(4.dp)
-                        )
                     }
                 }
                 AnimatedVisibility(
-                    showGraph,
-                    enter = fadeIn() + expandVertically(),
-                    exit = fadeOut() + shrinkVertically()
+                    showGraph, enter = fadeIn() + expandVertically(), exit = fadeOut() + shrinkVertically()
                 ) {
                     RealtimeGraph(graphValues, link = parent.graphLinkState, valueFormatter = {
                         buildString {
                             if (valueState.radix != Radix.Decimal) {
                                 append(valueState.radix.prefix)
                             }
-                            if (valueState.signed)
-                                append(it.y.roundToInt().toString(valueState.radix.radix).uppercase())
-                            else
-                                append(it.y.roundToInt().toUInt().toString(valueState.radix.radix).uppercase())
+                            if (valueState.signed) append(
+                                it.y.roundToInt().toString(valueState.radix.radix).uppercase()
+                            )
+                            else append(it.y.roundToInt().toUInt().toString(valueState.radix.radix).uppercase())
                         }
                     })
                 }
