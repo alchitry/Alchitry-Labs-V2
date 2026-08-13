@@ -1,10 +1,7 @@
 package com.alchitry.labs2.ui.register_interface
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -191,18 +188,14 @@ fun NumberField(
         }
     }
 
-    Row(
-        modifier.width(IntrinsicSize.Max),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         AnimatedVisibility(
             showConfig,
             enter = expandHorizontally() + fadeIn(),
             exit = shrinkHorizontally() + fadeOut()
         ) {
             Row(
-                modifier.width(IntrinsicSize.Max),
+                modifier.width(IntrinsicSize.Max).padding(end = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
@@ -271,7 +264,7 @@ fun NumberField(
             enabled = enabled,
             isError = !state.valid,//state.text != state.valueString,
             readOnly = readOnly,
-            modifier = Modifier.weight(1f).onFocusChanged { focusState ->
+            modifier = Modifier.onFocusChanged { focusState ->
                 if (focusState.isFocused) {
                     valueFieldFocused = true
                 } else if (valueFieldFocused) {

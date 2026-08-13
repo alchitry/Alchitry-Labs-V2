@@ -39,6 +39,7 @@ class RegisterInterface(
     val timeOffset = TimeSource.Monotonic.markNow()
     var collectingValues by mutableStateOf(false)
     private val verticalScrollState = ScrollState(0)
+    var showConfig by mutableStateOf(true)
 
     private var addressState by mutableStateOf(
         NumberFieldState(
@@ -226,6 +227,17 @@ class RegisterInterface(
                             rows.add(RegisterRow(addressState.value, this@RegisterInterface) { rows.remove(it) })
                         }, enabled = canAddAddress && addressState.valid) { Text("Add Address") }
                     }
+                    ToggleButton(
+                        active = showConfig,
+                        tooltip = { Text("Show Configuration") },
+                        onClick = { showConfig = it }
+                    ) {
+                        Icon(
+                            painterResource("icons/gear.svg"),
+                            contentDescription = "Configuration",
+                            modifier = Modifier.size(45.dp).padding(5.dp)
+                        )
+                    }
                     AnimatedVisibility(
                         rows.any { it.watching },
                         enter = fadeIn() + expandHorizontally(),
@@ -296,7 +308,7 @@ class RegisterInterface(
                                     waitForSlop = false
                                 ) { dragHandleModifier ->
                                     Column {
-                                        row.Draw(dragHandleModifier, state.connected, true)
+                                        row.Draw(dragHandleModifier, state.connected, showConfig)
                                         DropZone(
                                             minimumSize = DpSize(1.dp, 1.dp),
                                             content = { HorizontalDivider() },
