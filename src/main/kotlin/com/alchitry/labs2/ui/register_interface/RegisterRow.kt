@@ -37,8 +37,9 @@ class RegisterRow(
     var running by mutableStateOf(false)
     var watching by mutableStateOf(false)
     var valueState by mutableStateOf(
-        IntTextFieldState(
+        NumberFieldState(
             value = 0,
+            fractionalBits = 0,
             signed = false,
             radix = Radix.Decimal,
             valid = true
@@ -61,7 +62,7 @@ class RegisterRow(
     }
 
     @Composable
-    fun Draw(dragHandleModifier: Modifier, connected: Boolean) {
+    fun Draw(dragHandleModifier: Modifier, connected: Boolean, showConfig: Boolean) {
         val dragHandleWidth = 55.dp
         Box(Modifier.background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))) {
             Box(Modifier.matchParentSize()) {
@@ -98,7 +99,14 @@ class RegisterRow(
                             Text(" 0x${address.toUInt().toHexString(HexFormat.UpperCase)}", Modifier.alpha(0.5f))
                         }
 
-                        IntTextField(valueState, "Value", signSelector = true, readOnly = running) { valueState = it }
+                        NumberField(
+                            valueState,
+                            "Value",
+                            signSelector = true,
+                            fractionalBits = true,
+                            readOnly = running,
+                            showConfig = showConfig
+                        ) { valueState = it }
 
                         Button({
                             running = true

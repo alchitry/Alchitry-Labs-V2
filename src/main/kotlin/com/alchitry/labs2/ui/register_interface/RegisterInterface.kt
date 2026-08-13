@@ -41,8 +41,9 @@ class RegisterInterface(
     private val verticalScrollState = ScrollState(0)
 
     private var addressState by mutableStateOf(
-        IntTextFieldState(
+        NumberFieldState(
             text = "0",
+            fractionalBits = 0,
             value = 0,
             signed = false,
             radix = Radix.Decimal,
@@ -209,7 +210,7 @@ class RegisterInterface(
                         monitorRegisters(device)
                     }
 
-                    IntTextField(
+                    NumberField(
                         addressState,
                         "Address",
                         signSelector = false
@@ -295,7 +296,7 @@ class RegisterInterface(
                                     waitForSlop = false
                                 ) { dragHandleModifier ->
                                     Column {
-                                        row.Draw(dragHandleModifier, state.connected)
+                                        row.Draw(dragHandleModifier, state.connected, true)
                                         DropZone(
                                             minimumSize = DpSize(1.dp, 1.dp),
                                             content = { HorizontalDivider() },
