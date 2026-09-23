@@ -87,14 +87,19 @@ data object IceStormBuilder : ProjectBuilder() {
         val verilogSource = sourceFiles.map { it.parentFile.resolve("${it.nameWithoutExtension}.v") }
 
         val cmdFile = project.buildDirectory.resolve("yosys.cmd")
-        cmdFile.toFile().writeText("synth_ice40 -json \"${jsonFile.absolutePathString()}\" -top $topModuleName")
+        val scriptContent = buildString {
+            verilogSource.forEach { file ->
+                appendLine("read_verilog \"${file.absolutePath}\"")
+            }
+            appendLine("synth_ice40 -json \"${jsonFile.absolutePathString()}\" -top $topModuleName")
+        }
+        cmdFile.toFile().writeText(scriptContent)
 
         val yosysCmd = mutableListOf(
             yosys,
             "-s",
             cmdFile.absolutePathString(),
         )
-        yosysCmd.addAll(verilogSource.map { it.absolutePath })
 
         Log.println("Starting yosys...", AlchitryColors.current.Info)
         val yosysStatus = runProcess(
