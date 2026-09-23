@@ -56,7 +56,7 @@ module pipeline #(
         pipe.d[0] = in
 
         // out is the end of the pipe
-        out = pipe.q[$width(pipe.q)-1]
+        out = pipe.q[-1]
 
         // for each intermediate state
         repeat (i, DEPTH-1) {
