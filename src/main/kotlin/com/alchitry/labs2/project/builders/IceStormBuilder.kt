@@ -6,9 +6,13 @@ import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.Locations
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.ui.theme.AlchitryColors
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import java.io.File
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.exists
+import kotlin.io.path.readText
 
 
 data class ClockConstraint(
@@ -151,10 +155,13 @@ data object IceStormBuilder : ProjectBuilder() {
             "--asc",
             ascFile.absolutePathString(),
             "--opt-timing",
-            "--tmg-ripup"
+            "--tmg-ripup",
+            "--timing-allow-fail",
+            "--report",
+            project.buildDirectory.resolve("alchitry.rpt").absolutePathString()
         )
 
-        Log.println("Starting nextpnr...", AlchitryColors.current.Info)
+        Log.println("Starting nextpnr... ${nextpnrCmd.joinToString(" ")}", AlchitryColors.current.Info)
         val nextpnrStatus =
             runProcess(
                 nextpnrCmd,
@@ -193,12 +200,70 @@ data object IceStormBuilder : ProjectBuilder() {
         Log.println("")
 
         if (project.binFile.exists()) {
-            Log.println("Project built successfully.", AlchitryColors.current.Success)
+            val timingReport = parseTimingReport(project)
+            when (timingReport?.constraintsMet) {
+                true -> Log.success("Project built successfully.")
+                false -> Log.warn("Project built but failed to meet timing.")
+                null -> Log.warn("Project built but timing was unchecked.")
+            }
+            if (timingReport?.constraintsMet != true) {
+                timingReport?.let {
+                    Log.println()
+                    printTimingDetails(it)
+                }
+            }
         } else {
-            Log.println(
-                "Bin file (${project.binFile.absolutePath}) could not be found! The build likely failed.",
-                AlchitryColors.current.Error
+            Log.error(
+                "Bin file (${project.binFile.absolutePath}) could not be found! The build likely failed."
             )
+        }
+    }
+
+    private suspend fun parseTimingReport(
+        project: Project
+    ): IceStormTimingReportParser.TimingReport? = withContext(Dispatchers.IO) {
+        val timingReport = project.buildDirectory.resolve("alchitry.rpt")
+        if (!timingReport.exists()) {
+            Log.warn("The timing report could not be located! Checked: $timingReport")
+            return@withContext null
+        }
+
+        return@withContext IceStormTimingReportParser.parse(timingReport.readText())
+    }
+
+    private fun printTimingDetails(report: IceStormTimingReportParser.TimingReport) {
+        report.clocks.forEach { clock ->
+            val passed = clock in report.passingClocks
+            val message =
+                "Clock ${clock.name} (${clock.frequency} MHz): ${if (passed) "passed" else "FAILED"} (${clock.achievedFrequency}MHz max)"
+            if (passed) Log.success(message) else Log.error(message)
+        }
+
+        val failingPaths = report.failingPaths
+        if (failingPaths.isNotEmpty()) {
+            Log.println()
+            Log.warn("Worst failing paths:")
+            failingPaths.take(5).forEach { path ->
+                Log.warn(
+                    "  Slack ${path.slack}ns: ${path.source} -> ${path.destination}" +
+                            (path.pathType?.let { " ($it)" } ?: "")
+                )
+            }
+            report.summary?.let { summary ->
+                Log.println()
+                if (summary.setupFailingEndpoints != null && summary.setupFailingEndpoints > 0) {
+                    Log.warn(
+                        "Setup: ${summary.setupFailingEndpoints} failing endpoints, " +
+                                "WNS ${summary.worstNegativeSlack}ns, TNS ${summary.totalNegativeSlack}ns"
+                    )
+                }
+                if (summary.holdFailingEndpoints != null && summary.holdFailingEndpoints > 0) {
+                    Log.warn(
+                        "Hold: ${summary.holdFailingEndpoints} failing endpoints, " +
+                                "WHS ${summary.worstHoldSlack}ns, THS ${summary.totalHoldSlack}ns"
+                    )
+                }
+            }
         }
     }
 }

@@ -1,0 +1,838 @@
+#Build: Synplify Pro L-2016.09L+ice40, Build 077R, Dec  2 2016
+#install: /opt/lattice/iCEcube2.2020.12/synpbase
+#OS: Linux 
+#Hostname: justin-desktop
+
+# Fri Sep 25 14:16:00 2026
+
+#Implementation: alchitry_imp
+
+Synopsys HDL Compiler, version comp2016q3p1, Build 141R, built Dec  5 2016
+@N|Running in 64-bit mode
+Copyright (C) 1994-2016 Synopsys, Inc. All rights reserved. This Synopsys software and all associated documentation are proprietary to Synopsys, Inc. and may only be used pursuant to the terms and conditions of a written license agreement with Synopsys, Inc. All other use, reproduction, modification, or distribution of the Synopsys software or the associated documentation is strictly prohibited.
+
+Synopsys Verilog Compiler, version comp2016q3p1, Build 141R, built Dec  5 2016
+@N|Running in 64-bit mode
+Copyright (C) 1994-2016 Synopsys, Inc. All rights reserved. This Synopsys software and all associated documentation are proprietary to Synopsys, Inc. and may only be used pursuant to the terms and conditions of a written license agreement with Synopsys, Inc. All other use, reproduction, modification, or distribution of the Synopsys software or the associated documentation is strictly prohibited.
+
+Running on host :justin-desktop
+@I::"/opt/lattice/iCEcube2.2020.12/synpbase/lib/generic/sb_ice40.v" (library work)
+@I::"/opt/lattice/iCEcube2.2020.12/synpbase/lib/vlog/hypermods.v" (library __hyper__lib__)
+@I::"/opt/lattice/iCEcube2.2020.12/synpbase/lib/vlog/umr_capim.v" (library snps_haps)
+@I::"/opt/lattice/iCEcube2.2020.12/synpbase/lib/vlog/scemi_objects.v" (library snps_haps)
+@I::"/opt/lattice/iCEcube2.2020.12/synpbase/lib/vlog/scemi_pipes.svh" (library snps_haps)
+@I::"/tmp/tutorial CPU/build/source/lucid_globals.sv" (library work)
+@I::"/tmp/tutorial CPU/build/source/instRom.sv" (library work)
+@I::"/tmp/tutorial CPU/build/source/cpu.sv" (library work)
+@I::"/tmp/tutorial CPU/build/source/reset_conditioner.sv" (library work)
+@I::"/tmp/tutorial CPU/build/source/alchitry_top.sv" (library work)
+Verilog syntax check successful!
+@N: CG364 :"/tmp/tutorial CPU/build/source/lucid_globals.sv":6:8:6:19|Synthesizing module LucidGlobals in library work.
+
+Selecting top level module alchitry_top
+@N: CG364 :"/tmp/tutorial CPU/build/source/reset_conditioner.sv":7:7:7:23|Synthesizing module reset_conditioner in library work.
+
+	STAGES=3'b100
+   Generated name = reset_conditioner_4
+
+@N: CG364 :"/tmp/tutorial CPU/build/source/instRom.sv":7:7:7:13|Synthesizing module instRom in library work.
+
+@N: CG364 :"/tmp/tutorial CPU/build/source/cpu.sv":7:7:7:9|Synthesizing module cpu in library work.
+
+@N: CG364 :"/tmp/tutorial CPU/build/source/alchitry_top.sv":7:7:7:18|Synthesizing module alchitry_top in library work.
+
+
+At c_ver Exit (Real Time elapsed 0h:00m:01s; CPU Time elapsed 0h:00m:01s; Memory used current: 99MB peak: 123MB)
+
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+
+Process completed successfully.
+# Fri Sep 25 14:16:01 2026
+
+###########################################################]
+Synopsys Netlist Linker, version comp2016q3p1, Build 141R, built Dec  5 2016
+@N|Running in 64-bit mode
+@N: NF107 :"/tmp/tutorial CPU/build/source/alchitry_top.sv":7:7:7:18|Selected library: work cell: alchitry_top view verilog as top level
+@N: NF107 :"/tmp/tutorial CPU/build/source/alchitry_top.sv":7:7:7:18|Selected library: work cell: alchitry_top view verilog as top level
+
+At syn_nfilter Exit (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 68MB peak: 69MB)
+
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+
+Process completed successfully.
+# Fri Sep 25 14:16:01 2026
+
+###########################################################]
+@END
+
+At c_hdl Exit (Real Time elapsed 0h:00m:01s; CPU Time elapsed 0h:00m:01s; Memory used current: 3MB peak: 4MB)
+
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+
+Process completed successfully.
+# Fri Sep 25 14:16:01 2026
+
+###########################################################]
+Synopsys Netlist Linker, version comp2016q3p1, Build 141R, built Dec  5 2016
+@N|Running in 64-bit mode
+@N: NF107 :"/tmp/tutorial CPU/build/source/alchitry_top.sv":7:7:7:18|Selected library: work cell: alchitry_top view verilog as top level
+@N: NF107 :"/tmp/tutorial CPU/build/source/alchitry_top.sv":7:7:7:18|Selected library: work cell: alchitry_top view verilog as top level
+
+At syn_nfilter Exit (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 68MB peak: 69MB)
+
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+
+Process completed successfully.
+# Fri Sep 25 14:16:02 2026
+
+###########################################################]
+Pre-mapping Report
+
+# Fri Sep 25 14:16:02 2026
+
+Synopsys Lattice Technology Pre-mapping, Version maplat, Build 1612R, Built Dec  5 2016 09:30:53
+Copyright (C) 1994-2016 Synopsys, Inc. All rights reserved. This Synopsys software and all associated documentation are proprietary to Synopsys, Inc. and may only be used pursuant to the terms and conditions of a written license agreement with Synopsys, Inc. All other use, reproduction, modification, or distribution of the Synopsys software or the associated documentation is strictly prohibited.
+Product Version L-2016.09L+ice40
+
+Mapper Startup Complete (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 99MB peak: 99MB)
+
+Reading constraint file: /tmp/tutorial CPU/build/constraint/merged_constraints.sdc
+@L: /tmp/tutorial CPU/build/alchitry_imp/alchitry_top_scck.rpt 
+Printing clock  summary report in "/tmp/tutorial CPU/build/alchitry_imp/alchitry_top_scck.rpt" file 
+@N: MF248 |Running in 64-bit mode.
+@N: MF666 |Clock conversion enabled. (Command "set_option -fix_gated_and_generated_clocks 1" in the project file.)
+
+Design Input Complete (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 101MB peak: 103MB)
+
+
+Mapper Initialization Complete (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 101MB peak: 103MB)
+
+
+Start loading timing files (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 102MB peak: 103MB)
+
+
+Finished loading timing files (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 102MB peak: 104MB)
+
+
+ICG Latch Removal Summary:
+Number of ICG latches removed:	0
+Number of ICG latches not removed:	0
+syn_allowed_resources : blockrams=32  set on top level netlist alchitry_top
+
+Finished netlist restructuring (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 132MB peak: 134MB)
+
+
+
+Clock Summary
+*****************
+
+Start     Requested     Requested     Clock        Clock                Clock
+Clock     Frequency     Period        Type         Group                Load 
+-----------------------------------------------------------------------------
+clk_0     100.0 MHz     10.000        declared     default_clkgroup     140  
+=============================================================================
+
+Finished Pre Mapping Phase.
+@N: BN225 |Writing default property annotation file /tmp/tutorial CPU/build/alchitry_imp/alchitry_top.sap.
+
+Starting constraint checker (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 132MB peak: 134MB)
+
+None
+None
+
+Finished constraint checker (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 133MB peak: 134MB)
+
+Pre-mapping successful!
+
+At Mapper Exit (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 48MB peak: 134MB)
+
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+# Fri Sep 25 14:16:02 2026
+
+###########################################################]
+Map & Optimize Report
+
+# Fri Sep 25 14:16:02 2026
+
+Synopsys Lattice Technology Mapper, Version maplat, Build 1612R, Built Dec  5 2016 09:30:53
+Copyright (C) 1994-2016 Synopsys, Inc. All rights reserved. This Synopsys software and all associated documentation are proprietary to Synopsys, Inc. and may only be used pursuant to the terms and conditions of a written license agreement with Synopsys, Inc. All other use, reproduction, modification, or distribution of the Synopsys software or the associated documentation is strictly prohibited.
+Product Version L-2016.09L+ice40
+
+Mapper Startup Complete (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 99MB peak: 99MB)
+
+@N: MF248 |Running in 64-bit mode.
+@N: MF666 |Clock conversion enabled. (Command "set_option -fix_gated_and_generated_clocks 1" in the project file.)
+
+Design Input Complete (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 99MB peak: 100MB)
+
+
+Mapper Initialization Complete (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 99MB peak: 100MB)
+
+
+Start loading timing files (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 100MB peak: 100MB)
+
+
+Finished loading timing files (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 100MB peak: 102MB)
+
+
+
+Starting Optimization and Mapping (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 132MB peak: 134MB)
+
+
+Available hyper_sources - for debug and ip models
+	None Found
+
+@N: MT204 |Auto Constrain mode is disabled because clocks are defined in the SDC file
+
+            clk_0
+
+@W: FA239 :"/tmp/tutorial CPU/build/source/instRom.sv":14:8:14:11|ROM instRom.inst_1[15:0] (in view: work.cpu(verilog)) mapped in logic. To map to a technology ROM, apply attribute syn_romstyle on this instance.
+@N: MO106 :"/tmp/tutorial CPU/build/source/instRom.sv":14:8:14:11|Found ROM .delname. (in view: work.cpu(verilog)) with 22 words by 16 bits.
+@W: FX1039 :"/tmp/tutorial CPU/build/source/cpu.sv":104:4:104:9|User-specified initial value defined for instance cpu.D_reg_q_0_[7:0] is being ignored. 
+@W: FX1039 :"/tmp/tutorial CPU/build/source/cpu.sv":104:4:104:9|User-specified initial value defined for instance cpu.D_reg_q_15_[7:0] is being ignored. 
+@W: FX1039 :"/tmp/tutorial CPU/build/source/cpu.sv":104:4:104:9|User-specified initial value defined for instance cpu.D_reg_q_14_[7:0] is being ignored. 
+@W: FX1039 :"/tmp/tutorial CPU/build/source/cpu.sv":104:4:104:9|User-specified initial value defined for instance cpu.D_reg_q_13_[7:0] is being ignored. 
+@W: FX1039 :"/tmp/tutorial CPU/build/source/cpu.sv":104:4:104:9|User-specified initial value defined for instance cpu.D_reg_q_12_[7:0] is being ignored. 
+@W: FX1039 :"/tmp/tutorial CPU/build/source/cpu.sv":104:4:104:9|User-specified initial value defined for instance cpu.D_reg_q_11_[7:0] is being ignored. 
+@W: FX1039 :"/tmp/tutorial CPU/build/source/cpu.sv":104:4:104:9|User-specified initial value defined for instance cpu.D_reg_q_10_[7:0] is being ignored. 
+@W: FX1039 :"/tmp/tutorial CPU/build/source/cpu.sv":104:4:104:9|User-specified initial value defined for instance cpu.D_reg_q_9_[7:0] is being ignored. 
+@W: FX1039 :"/tmp/tutorial CPU/build/source/cpu.sv":104:4:104:9|User-specified initial value defined for instance cpu.D_reg_q_8_[7:0] is being ignored. 
+@W: FX1039 :"/tmp/tutorial CPU/build/source/cpu.sv":104:4:104:9|User-specified initial value defined for instance cpu.D_reg_q_7_[7:0] is being ignored. 
+@W: FX1039 :"/tmp/tutorial CPU/build/source/cpu.sv":104:4:104:9|User-specified initial value defined for instance cpu.D_reg_q_6_[7:0] is being ignored. 
+@W: FX1039 :"/tmp/tutorial CPU/build/source/cpu.sv":104:4:104:9|User-specified initial value defined for instance cpu.D_reg_q_5_[7:0] is being ignored. 
+@W: FX1039 :"/tmp/tutorial CPU/build/source/cpu.sv":104:4:104:9|User-specified initial value defined for instance cpu.D_reg_q_4_[7:0] is being ignored. 
+@W: FX1039 :"/tmp/tutorial CPU/build/source/cpu.sv":104:4:104:9|User-specified initial value defined for instance cpu.D_reg_q_3_[7:0] is being ignored. 
+@W: FX1039 :"/tmp/tutorial CPU/build/source/cpu.sv":104:4:104:9|User-specified initial value defined for instance cpu.D_reg_q_2_[7:0] is being ignored. 
+@W: FX1039 :"/tmp/tutorial CPU/build/source/cpu.sv":104:4:104:9|User-specified initial value defined for instance cpu.D_reg_q_1_[7:0] is being ignored. 
+@W: FX1039 :"/tmp/tutorial CPU/build/source/alchitry_top.sv":65:4:65:9|User-specified initial value defined for instance D_led_reg_q[7:0] is being ignored. 
+@W: FX1039 :"/tmp/tutorial CPU/build/source/reset_conditioner.sv":23:4:23:9|User-specified initial value defined for instance reset_cond.D_stage_q[3:0] is being ignored. 
+
+Finished RTL optimizations (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 133MB peak: 134MB)
+
+
+Starting factoring (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 139MB peak: 143MB)
+
+
+Finished factoring (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 140MB peak: 143MB)
+
+
+Finished gated-clock and generated-clock conversion (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 140MB peak: 143MB)
+
+
+Finished generic timing optimizations - Pass 1 (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 144MB peak: 146MB)
+
+
+Starting Early Timing Optimization (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 145MB peak: 146MB)
+
+
+Finished Early Timing Optimization (Real Time elapsed 0h:00m:04s; CPU Time elapsed 0h:00m:04s; Memory used current: 188MB peak: 188MB)
+
+
+Finished generic timing optimizations - Pass 2 (Real Time elapsed 0h:00m:04s; CPU Time elapsed 0h:00m:04s; Memory used current: 187MB peak: 188MB)
+
+
+Finished preparing to map (Real Time elapsed 0h:00m:04s; CPU Time elapsed 0h:00m:04s; Memory used current: 187MB peak: 188MB)
+
+
+Finished technology mapping (Real Time elapsed 0h:00m:05s; CPU Time elapsed 0h:00m:05s; Memory used current: 199MB peak: 201MB)
+
+Pass		 CPU time		Worst Slack		Luts / Registers
+------------------------------------------------------------
+   1		0h:00m:05s		   -12.67ns		1450 /       140
+   2		0h:00m:05s		   -12.67ns		1265 /       140
+   3		0h:00m:05s		   -11.27ns		1266 /       140
+   4		0h:00m:05s		   -11.27ns		1283 /       140
+
+   5		0h:00m:06s		    -9.87ns		1316 /       140
+   6		0h:00m:07s		    -9.87ns		1344 /       140
+   7		0h:00m:07s		    -9.87ns		1345 /       140
+
+
+   8		0h:00m:08s		    -8.47ns		1301 /       140
+   9		0h:00m:08s		    -8.47ns		1301 /       140
+@A: BN291 :"/tmp/tutorial CPU/build/source/alchitry_top.sv":65:4:65:9|Boundary register D_led_reg_q[7] (in view: work.alchitry_top(verilog)) is packed into a complex cell. To disable register packing, set syn_keep=1 on the net between the register and the complex cell. 
+@A: BN291 :"/tmp/tutorial CPU/build/source/alchitry_top.sv":65:4:65:9|Boundary register D_led_reg_q[6] (in view: work.alchitry_top(verilog)) is packed into a complex cell. To disable register packing, set syn_keep=1 on the net between the register and the complex cell. 
+@A: BN291 :"/tmp/tutorial CPU/build/source/alchitry_top.sv":65:4:65:9|Boundary register D_led_reg_q[5] (in view: work.alchitry_top(verilog)) is packed into a complex cell. To disable register packing, set syn_keep=1 on the net between the register and the complex cell. 
+@A: BN291 :"/tmp/tutorial CPU/build/source/alchitry_top.sv":65:4:65:9|Boundary register D_led_reg_q[4] (in view: work.alchitry_top(verilog)) is packed into a complex cell. To disable register packing, set syn_keep=1 on the net between the register and the complex cell. 
+@A: BN291 :"/tmp/tutorial CPU/build/source/alchitry_top.sv":65:4:65:9|Boundary register D_led_reg_q[3] (in view: work.alchitry_top(verilog)) is packed into a complex cell. To disable register packing, set syn_keep=1 on the net between the register and the complex cell. 
+@A: BN291 :"/tmp/tutorial CPU/build/source/alchitry_top.sv":65:4:65:9|Boundary register D_led_reg_q[2] (in view: work.alchitry_top(verilog)) is packed into a complex cell. To disable register packing, set syn_keep=1 on the net between the register and the complex cell. 
+@A: BN291 :"/tmp/tutorial CPU/build/source/alchitry_top.sv":65:4:65:9|Boundary register D_led_reg_q[1] (in view: work.alchitry_top(verilog)) is packed into a complex cell. To disable register packing, set syn_keep=1 on the net between the register and the complex cell. 
+@A: BN291 :"/tmp/tutorial CPU/build/source/alchitry_top.sv":65:4:65:9|Boundary register D_led_reg_q[0] (in view: work.alchitry_top(verilog)) is packed into a complex cell. To disable register packing, set syn_keep=1 on the net between the register and the complex cell. 
+@N: FX1016 :"/tmp/tutorial CPU/build/source/alchitry_top.sv":8:19:8:21|SB_GB_IO inserted on the port clk.
+@N: FX1017 :"/tmp/tutorial CPU/build/source/reset_conditioner.sv":23:4:23:9|SB_GB inserted on the net M_reset_cond_out.
+
+Finished technology timing optimizations and critical path resynthesis (Real Time elapsed 0h:00m:08s; CPU Time elapsed 0h:00m:08s; Memory used current: 191MB peak: 229MB)
+
+
+Finished restoring hierarchy (Real Time elapsed 0h:00m:08s; CPU Time elapsed 0h:00m:08s; Memory used current: 191MB peak: 229MB)
+
+
+
+@S |Clock Optimization Summary
+
+
+#### START OF CLOCK OPTIMIZATION REPORT #####[
+
+1 non-gated/non-generated clock tree(s) driving 140 clock pin(s) of sequential element(s)
+0 gated/generated clock tree(s) driving 0 clock pin(s) of sequential element(s)
+0 instances converted, 0 sequential instances remain driven by gated/generated clocks
+
+============================= Non-Gated/Non-Generated Clocks =============================
+Clock Tree ID     Driving Element     Drive Element Type     Fanout     Sample Instance   
+------------------------------------------------------------------------------------------
+@K:CKID0001       clk_ibuf_gb_io      SB_GB_IO               140        D_led_reg_q_esr[0]
+==========================================================================================
+
+
+##### END OF CLOCK OPTIMIZATION REPORT ######]
+
+
+Start Writing Netlists (Real Time elapsed 0h:00m:08s; CPU Time elapsed 0h:00m:08s; Memory used current: 158MB peak: 229MB)
+
+Writing Analyst data base /tmp/tutorial CPU/build/alchitry_imp/synwork/alchitry_top_m.srm
+
+Finished Writing Netlist Databases (Real Time elapsed 0h:00m:08s; CPU Time elapsed 0h:00m:08s; Memory used current: 184MB peak: 229MB)
+
+Writing EDIF Netlist and constraint files
+@N: BW103 |The default time unit for the Synopsys Constraint File (SDC or FDC) is 1ns.
+@N: BW107 |Synopsys Constraint File capacitance units using default value of 1pF 
+@N: FX1056 |Writing EDF file: /tmp/tutorial CPU/build/alchitry_imp/alchitry_top.edf
+L-2016.09L+ice40
+
+Finished Writing EDIF Netlist and constraint files (Real Time elapsed 0h:00m:08s; CPU Time elapsed 0h:00m:08s; Memory used current: 185MB peak: 229MB)
+
+
+Start final timing analysis (Real Time elapsed 0h:00m:08s; CPU Time elapsed 0h:00m:08s; Memory used current: 182MB peak: 229MB)
+
+@N: MT615 |Found clock clk_0 with period 10.00ns 
+
+
+##### START OF TIMING REPORT #####[
+# Timing Report written on Fri Sep 25 14:16:11 2026
+#
+
+
+Top view:               alchitry_top
+Requested Frequency:    100.0 MHz
+Wire load mode:         top
+Paths requested:        5
+Constraint File(s):    /tmp/tutorial CPU/build/constraint/merged_constraints.sdc
+                       
+@N: MT320 |This timing report is an estimate of place and route data. For final timing results, use the FPGA vendor place and route report.
+
+@N: MT322 |Clock constraints include only register-to-register paths associated with each individual clock.
+
+
+
+Performance Summary
+*******************
+
+
+Worst slack in design: -20.635
+
+                   Requested     Estimated     Requested     Estimated                 Clock        Clock           
+Starting Clock     Frequency     Frequency     Period        Period        Slack       Type         Group           
+--------------------------------------------------------------------------------------------------------------------
+clk_0              100.0 MHz     32.6 MHz      10.000        30.635        -20.635     declared     default_clkgroup
+====================================================================================================================
+
+
+
+
+
+Clock Relationships
+*******************
+
+Clocks            |    rise  to  rise     |    fall  to  fall   |    rise  to  fall   |    fall  to  rise 
+----------------------------------------------------------------------------------------------------------
+Starting  Ending  |  constraint  slack    |  constraint  slack  |  constraint  slack  |  constraint  slack
+----------------------------------------------------------------------------------------------------------
+clk_0     clk_0   |  10.000      -20.635  |  No paths    -      |  No paths    -      |  No paths    -    
+==========================================================================================================
+ Note: 'No paths' indicates there are no paths in the design for that pair of clock edges.
+       'Diff grp' indicates that paths exist but the starting clock and ending clock are in different clock groups.
+
+
+
+Interface Information 
+*********************
+
+No IO constraint found
+
+
+
+====================================
+Detailed Report for Clock: clk_0
+====================================
+
+
+
+Starting Points with Worst Slack
+********************************
+
+                      Starting                                             Arrival            
+Instance              Reference     Type         Pin     Net               Time        Slack  
+                      Clock                                                                   
+----------------------------------------------------------------------------------------------
+cpu.D_reg_q_0_[4]     clk_0         SB_DFFSR     Q       D_reg_q_0_[4]     0.540       -20.635
+cpu.D_reg_q_0_[5]     clk_0         SB_DFFSR     Q       D_reg_q_0_[5]     0.540       -20.585
+cpu.D_reg_q_0_[1]     clk_0         SB_DFFSR     Q       D_reg_q_0_[1]     0.540       -20.565
+cpu.D_reg_q_0_[3]     clk_0         SB_DFFSR     Q       D_reg_q_0_[3]     0.540       -20.515
+cpu.D_reg_q_0_[6]     clk_0         SB_DFFSR     Q       D_reg_q_0_[6]     0.540       -20.494
+cpu.D_reg_q_0_[7]     clk_0         SB_DFFSR     Q       D_reg_q_0_[7]     0.540       -20.431
+cpu.D_reg_q_0_[0]     clk_0         SB_DFFSR     Q       D_reg_q_0_[0]     0.540       -17.205
+cpu.D_reg_q_0_[2]     clk_0         SB_DFFSR     Q       D_reg_q_0_[2]     0.540       -17.156
+cpu.D_reg_q_4_[1]     clk_0         SB_DFFSR     Q       N_5974_mux        0.540       -15.154
+cpu.D_reg_q_2_[2]     clk_0         SB_DFFSR     Q       D_reg_q_2_[2]     0.540       -13.685
+==============================================================================================
+
+
+Ending Points with Worst Slack
+******************************
+
+                       Starting                                              Required            
+Instance               Reference     Type         Pin     Net                Time         Slack  
+                       Clock                                                                     
+-------------------------------------------------------------------------------------------------
+cpu.D_reg_q_0_[2]      clk_0         SB_DFFSR     D       D_reg_d_0_[2]      9.895        -20.635
+cpu.D_reg_q_0_[3]      clk_0         SB_DFFSR     D       D_reg_d_0_[3]      9.895        -19.231
+cpu.D_reg_q_0_[0]      clk_0         SB_DFFSR     D       D_reg_d_0_[0]      9.895        -18.941
+cpu.D_reg_q_11_[0]     clk_0         SB_DFFSR     D       D_reg_d_11_[0]     9.895        -18.920
+cpu.D_reg_q_0_[5]      clk_0         SB_DFFSR     D       D_reg_d_0_[5]      9.895        -18.885
+cpu.D_reg_q_2_[0]      clk_0         SB_DFFSR     D       D_reg_d_2_[0]      9.895        -18.885
+cpu.D_reg_q_12_[0]     clk_0         SB_DFFSR     D       D_reg_d_12_[0]     9.895        -18.885
+cpu.D_reg_q_13_[0]     clk_0         SB_DFFSR     D       D_reg_d_13_[0]     9.895        -18.850
+cpu.D_reg_q_1_[0]      clk_0         SB_DFFSR     D       D_reg_d_1_[0]      9.895        -18.590
+cpu.D_reg_q_0_[6]      clk_0         SB_DFFSR     D       D_reg_d_0_[6]      9.895        -17.205
+=================================================================================================
+
+
+
+Worst Path Information
+***********************
+
+
+Path information for path number 1: 
+      Requested Period:                      10.000
+    - Setup time:                            0.105
+    + Clock delay at ending point:           0.000 (ideal)
+    = Required time:                         9.895
+
+    - Propagation time:                      30.529
+    - Clock delay at starting point:         0.000 (ideal)
+    = Slack (critical) :                     -20.635
+
+    Number of logic level(s):                16
+    Starting point:                          cpu.D_reg_q_0_[4] / Q
+    Ending point:                            cpu.D_reg_q_0_[2] / D
+    The start point is clocked by            clk_0 [rising] on pin C
+    The end   point is clocked by            clk_0 [rising] on pin C
+
+Instance / Net                                        Pin      Pin               Arrival     No. of    
+Name                                     Type         Name     Dir     Delay     Time        Fan Out(s)
+-------------------------------------------------------------------------------------------------------
+cpu.D_reg_q_0_[4]                        SB_DFFSR     Q        Out     0.540     0.540       -         
+D_reg_q_0_[4]                            Net          -        -       1.599     -           30        
+cpu.D_reg_q_0__RNI3NSK[5]                SB_LUT4      I0       In      -         2.139       -         
+cpu.D_reg_q_0__RNI3NSK[5]                SB_LUT4      O        Out     0.449     2.588       -         
+m1_0                                     Net          -        -       1.371     -           2         
+cpu.D_reg_q_0__RNI84MU1_1[7]             SB_LUT4      I0       In      -         3.959       -         
+cpu.D_reg_q_0__RNI84MU1_1[7]             SB_LUT4      O        Out     0.449     4.408       -         
+N_20_0                                   Net          -        -       1.371     -           8         
+cpu.D_reg_q_0__RNICO8I4_0[2]             SB_LUT4      I2       In      -         5.779       -         
+cpu.D_reg_q_0__RNICO8I4_0[2]             SB_LUT4      O        Out     0.379     6.157       -         
+D_reg_q_0__RNICO8I4_0[2]                 Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNI0L73B[2]               SB_LUT4      I1       In      -         7.528       -         
+cpu.D_reg_q_0__RNI0L73B[2]               SB_LUT4      O        Out     0.400     7.928       -         
+M_instRom_inst[3]                        Net          -        -       1.371     -           39        
+cpu.D_reg_q_6__RNI6N7TD[0]               SB_LUT4      I3       In      -         9.299       -         
+cpu.D_reg_q_6__RNI6N7TD[0]               SB_LUT4      O        Out     0.316     9.615       -         
+un62_D_reg_d_6_ns_1[0]                   Net          -        -       1.371     -           1         
+cpu.D_reg_q_10__RNI63O8P[0]              SB_LUT4      I3       In      -         10.986      -         
+cpu.D_reg_q_10__RNI63O8P[0]              SB_LUT4      O        Out     0.316     11.301      -         
+N_3954                                   Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIUJ9D21[0]              SB_LUT4      I2       In      -         12.672      -         
+cpu.D_reg_q_0__RNIUJ9D21[0]              SB_LUT4      O        Out     0.379     13.051      -         
+N_3962                                   Net          -        -       1.371     -           7         
+cpu.D_reg_q_0__RNI69DVL2[0]              SB_LUT4      I1       In      -         14.422      -         
+cpu.D_reg_q_0__RNI69DVL2[0]              SB_LUT4      O        Out     0.400     14.822      -         
+un63_D_reg_d_0                           Net          -        -       1.371     -           37        
+cpu.D_reg_q_0__RNIG1F9D7[2]              SB_LUT4      I2       In      -         16.193      -         
+cpu.D_reg_q_0__RNIG1F9D7[2]              SB_LUT4      O        Out     0.379     16.571      -         
+N_98                                     Net          -        -       1.371     -           2         
+cpu.D_reg_q_0__RNII6M7TN_0[0]            SB_LUT4      I0       In      -         17.942      -         
+cpu.D_reg_q_0__RNII6M7TN_0[0]            SB_LUT4      O        Out     0.449     18.391      -         
+D_reg_q_0__RNII6M7TN_0[0]                Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIKGTO7N1[0]             SB_LUT4      I1       In      -         19.762      -         
+cpu.D_reg_q_0__RNIKGTO7N1[0]             SB_LUT4      O        Out     0.400     20.162      -         
+N_3                                      Net          -        -       1.371     -           7         
+cpu.un144_D_reg_d_cry_1_c_RNIVLO84D2     SB_LUT4      I2       In      -         21.533      -         
+cpu.un144_D_reg_d_cry_1_c_RNIVLO84D2     SB_LUT4      O        Out     0.379     21.912      -         
+un144_D_reg_d_cry_1_c_RNIVLO84D2         Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIJMC51S2[0]             SB_LUT4      I1       In      -         23.283      -         
+cpu.D_reg_q_0__RNIJMC51S2[0]             SB_LUT4      O        Out     0.400     23.682      -         
+D_reg_q_0__RNIJMC51S2[0]                 Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIK3V2HB[0]              SB_LUT4      I0       In      -         25.053      -         
+cpu.D_reg_q_0__RNIK3V2HB[0]              SB_LUT4      O        Out     0.449     25.502      -         
+D_reg_q_0__RNIK3V2HB[0]                  Net          -        -       1.371     -           2         
+cpu.D_reg_q_0__RNO_1[2]                  SB_LUT4      I2       In      -         26.873      -         
+cpu.D_reg_q_0__RNO_1[2]                  SB_LUT4      O        Out     0.379     27.252      -         
+D_reg_q_0__RNO_1[2]                      Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNO[2]                    SB_LUT4      I1       In      -         28.623      -         
+cpu.D_reg_q_0__RNO[2]                    SB_LUT4      O        Out     0.400     29.022      -         
+D_reg_d_0_[2]                            Net          -        -       1.507     -           1         
+cpu.D_reg_q_0_[2]                        SB_DFFSR     D        In      -         30.529      -         
+=======================================================================================================
+Total path delay (propagation time + setup) of 30.635 is 6.964(22.7%) logic and 23.671(77.3%) route.
+Path delay compensated for clock skew. Clock skew is added to clock-to-out value, and is subtracted from setup time value
+
+
+Path information for path number 2: 
+      Requested Period:                      10.000
+    - Setup time:                            0.105
+    + Clock delay at ending point:           0.000 (ideal)
+    = Required time:                         9.895
+
+    - Propagation time:                      30.508
+    - Clock delay at starting point:         0.000 (ideal)
+    = Slack (non-critical) :                 -20.614
+
+    Number of logic level(s):                16
+    Starting point:                          cpu.D_reg_q_0_[4] / Q
+    Ending point:                            cpu.D_reg_q_0_[2] / D
+    The start point is clocked by            clk_0 [rising] on pin C
+    The end   point is clocked by            clk_0 [rising] on pin C
+
+Instance / Net                                        Pin      Pin               Arrival     No. of    
+Name                                     Type         Name     Dir     Delay     Time        Fan Out(s)
+-------------------------------------------------------------------------------------------------------
+cpu.D_reg_q_0_[4]                        SB_DFFSR     Q        Out     0.540     0.540       -         
+D_reg_q_0_[4]                            Net          -        -       1.599     -           30        
+cpu.D_reg_q_0__RNI3NSK[5]                SB_LUT4      I0       In      -         2.139       -         
+cpu.D_reg_q_0__RNI3NSK[5]                SB_LUT4      O        Out     0.449     2.588       -         
+m1_0                                     Net          -        -       1.371     -           2         
+cpu.D_reg_q_0__RNI84MU1_1[7]             SB_LUT4      I0       In      -         3.959       -         
+cpu.D_reg_q_0__RNI84MU1_1[7]             SB_LUT4      O        Out     0.449     4.408       -         
+N_20_0                                   Net          -        -       1.371     -           8         
+cpu.D_reg_q_0__RNICO8I4[2]               SB_LUT4      I2       In      -         5.779       -         
+cpu.D_reg_q_0__RNICO8I4[2]               SB_LUT4      O        Out     0.379     6.157       -         
+D_reg_q_0__RNICO8I4[2]                   Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNI0L73B[2]               SB_LUT4      I2       In      -         7.528       -         
+cpu.D_reg_q_0__RNI0L73B[2]               SB_LUT4      O        Out     0.379     7.907       -         
+M_instRom_inst[3]                        Net          -        -       1.371     -           39        
+cpu.D_reg_q_6__RNI6N7TD[0]               SB_LUT4      I3       In      -         9.278       -         
+cpu.D_reg_q_6__RNI6N7TD[0]               SB_LUT4      O        Out     0.316     9.594       -         
+un62_D_reg_d_6_ns_1[0]                   Net          -        -       1.371     -           1         
+cpu.D_reg_q_10__RNI63O8P[0]              SB_LUT4      I3       In      -         10.965      -         
+cpu.D_reg_q_10__RNI63O8P[0]              SB_LUT4      O        Out     0.316     11.280      -         
+N_3954                                   Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIUJ9D21[0]              SB_LUT4      I2       In      -         12.651      -         
+cpu.D_reg_q_0__RNIUJ9D21[0]              SB_LUT4      O        Out     0.379     13.030      -         
+N_3962                                   Net          -        -       1.371     -           7         
+cpu.D_reg_q_0__RNI69DVL2[0]              SB_LUT4      I1       In      -         14.401      -         
+cpu.D_reg_q_0__RNI69DVL2[0]              SB_LUT4      O        Out     0.400     14.801      -         
+un63_D_reg_d_0                           Net          -        -       1.371     -           37        
+cpu.D_reg_q_0__RNIG1F9D7[2]              SB_LUT4      I2       In      -         16.172      -         
+cpu.D_reg_q_0__RNIG1F9D7[2]              SB_LUT4      O        Out     0.379     16.550      -         
+N_98                                     Net          -        -       1.371     -           2         
+cpu.D_reg_q_0__RNII6M7TN_0[0]            SB_LUT4      I0       In      -         17.921      -         
+cpu.D_reg_q_0__RNII6M7TN_0[0]            SB_LUT4      O        Out     0.449     18.370      -         
+D_reg_q_0__RNII6M7TN_0[0]                Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIKGTO7N1[0]             SB_LUT4      I1       In      -         19.741      -         
+cpu.D_reg_q_0__RNIKGTO7N1[0]             SB_LUT4      O        Out     0.400     20.141      -         
+N_3                                      Net          -        -       1.371     -           7         
+cpu.un144_D_reg_d_cry_1_c_RNIVLO84D2     SB_LUT4      I2       In      -         21.512      -         
+cpu.un144_D_reg_d_cry_1_c_RNIVLO84D2     SB_LUT4      O        Out     0.379     21.890      -         
+un144_D_reg_d_cry_1_c_RNIVLO84D2         Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIJMC51S2[0]             SB_LUT4      I1       In      -         23.262      -         
+cpu.D_reg_q_0__RNIJMC51S2[0]             SB_LUT4      O        Out     0.400     23.661      -         
+D_reg_q_0__RNIJMC51S2[0]                 Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIK3V2HB[0]              SB_LUT4      I0       In      -         25.032      -         
+cpu.D_reg_q_0__RNIK3V2HB[0]              SB_LUT4      O        Out     0.449     25.481      -         
+D_reg_q_0__RNIK3V2HB[0]                  Net          -        -       1.371     -           2         
+cpu.D_reg_q_0__RNO_1[2]                  SB_LUT4      I2       In      -         26.852      -         
+cpu.D_reg_q_0__RNO_1[2]                  SB_LUT4      O        Out     0.379     27.231      -         
+D_reg_q_0__RNO_1[2]                      Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNO[2]                    SB_LUT4      I1       In      -         28.602      -         
+cpu.D_reg_q_0__RNO[2]                    SB_LUT4      O        Out     0.400     29.001      -         
+D_reg_d_0_[2]                            Net          -        -       1.507     -           1         
+cpu.D_reg_q_0_[2]                        SB_DFFSR     D        In      -         30.508      -         
+=======================================================================================================
+Total path delay (propagation time + setup) of 30.614 is 6.943(22.7%) logic and 23.671(77.3%) route.
+Path delay compensated for clock skew. Clock skew is added to clock-to-out value, and is subtracted from setup time value
+
+
+Path information for path number 3: 
+      Requested Period:                      10.000
+    - Setup time:                            0.105
+    + Clock delay at ending point:           0.000 (ideal)
+    = Required time:                         9.895
+
+    - Propagation time:                      30.508
+    - Clock delay at starting point:         0.000 (ideal)
+    = Slack (non-critical) :                 -20.614
+
+    Number of logic level(s):                16
+    Starting point:                          cpu.D_reg_q_0_[4] / Q
+    Ending point:                            cpu.D_reg_q_0_[2] / D
+    The start point is clocked by            clk_0 [rising] on pin C
+    The end   point is clocked by            clk_0 [rising] on pin C
+
+Instance / Net                                        Pin      Pin               Arrival     No. of    
+Name                                     Type         Name     Dir     Delay     Time        Fan Out(s)
+-------------------------------------------------------------------------------------------------------
+cpu.D_reg_q_0_[4]                        SB_DFFSR     Q        Out     0.540     0.540       -         
+D_reg_q_0_[4]                            Net          -        -       1.599     -           30        
+cpu.D_reg_q_0__RNI3NSK[5]                SB_LUT4      I0       In      -         2.139       -         
+cpu.D_reg_q_0__RNI3NSK[5]                SB_LUT4      O        Out     0.449     2.588       -         
+m1_0                                     Net          -        -       1.371     -           2         
+cpu.D_reg_q_0__RNI84MU1_1[7]             SB_LUT4      I0       In      -         3.959       -         
+cpu.D_reg_q_0__RNI84MU1_1[7]             SB_LUT4      O        Out     0.449     4.408       -         
+N_20_0                                   Net          -        -       1.371     -           8         
+cpu.D_reg_q_0__RNICO8I4_0[2]             SB_LUT4      I2       In      -         5.779       -         
+cpu.D_reg_q_0__RNICO8I4_0[2]             SB_LUT4      O        Out     0.379     6.157       -         
+D_reg_q_0__RNICO8I4_0[2]                 Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNI0L73B[2]               SB_LUT4      I1       In      -         7.528       -         
+cpu.D_reg_q_0__RNI0L73B[2]               SB_LUT4      O        Out     0.400     7.928       -         
+M_instRom_inst[3]                        Net          -        -       1.371     -           39        
+cpu.D_reg_q_6__RNI6N7TD[0]               SB_LUT4      I3       In      -         9.299       -         
+cpu.D_reg_q_6__RNI6N7TD[0]               SB_LUT4      O        Out     0.316     9.615       -         
+un62_D_reg_d_6_ns_1[0]                   Net          -        -       1.371     -           1         
+cpu.D_reg_q_10__RNI63O8P[0]              SB_LUT4      I3       In      -         10.986      -         
+cpu.D_reg_q_10__RNI63O8P[0]              SB_LUT4      O        Out     0.316     11.301      -         
+N_3954                                   Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIUJ9D21[0]              SB_LUT4      I2       In      -         12.672      -         
+cpu.D_reg_q_0__RNIUJ9D21[0]              SB_LUT4      O        Out     0.379     13.051      -         
+N_3962                                   Net          -        -       1.371     -           7         
+cpu.D_reg_q_0__RNI69DVL2[0]              SB_LUT4      I1       In      -         14.422      -         
+cpu.D_reg_q_0__RNI69DVL2[0]              SB_LUT4      O        Out     0.400     14.822      -         
+un63_D_reg_d_0                           Net          -        -       1.371     -           37        
+cpu.D_reg_q_0__RNIG1F9D7[2]              SB_LUT4      I2       In      -         16.193      -         
+cpu.D_reg_q_0__RNIG1F9D7[2]              SB_LUT4      O        Out     0.379     16.571      -         
+N_98                                     Net          -        -       1.371     -           2         
+cpu.D_reg_q_0__RNII6M7TN[0]              SB_LUT4      I0       In      -         17.942      -         
+cpu.D_reg_q_0__RNII6M7TN[0]              SB_LUT4      O        Out     0.449     18.391      -         
+D_reg_q_0__RNII6M7TN[0]                  Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIKGTO7N1[0]             SB_LUT4      I2       In      -         19.762      -         
+cpu.D_reg_q_0__RNIKGTO7N1[0]             SB_LUT4      O        Out     0.379     20.141      -         
+N_3                                      Net          -        -       1.371     -           7         
+cpu.un144_D_reg_d_cry_1_c_RNIVLO84D2     SB_LUT4      I2       In      -         21.512      -         
+cpu.un144_D_reg_d_cry_1_c_RNIVLO84D2     SB_LUT4      O        Out     0.379     21.890      -         
+un144_D_reg_d_cry_1_c_RNIVLO84D2         Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIJMC51S2[0]             SB_LUT4      I1       In      -         23.262      -         
+cpu.D_reg_q_0__RNIJMC51S2[0]             SB_LUT4      O        Out     0.400     23.661      -         
+D_reg_q_0__RNIJMC51S2[0]                 Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIK3V2HB[0]              SB_LUT4      I0       In      -         25.032      -         
+cpu.D_reg_q_0__RNIK3V2HB[0]              SB_LUT4      O        Out     0.449     25.481      -         
+D_reg_q_0__RNIK3V2HB[0]                  Net          -        -       1.371     -           2         
+cpu.D_reg_q_0__RNO_1[2]                  SB_LUT4      I2       In      -         26.852      -         
+cpu.D_reg_q_0__RNO_1[2]                  SB_LUT4      O        Out     0.379     27.231      -         
+D_reg_q_0__RNO_1[2]                      Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNO[2]                    SB_LUT4      I1       In      -         28.602      -         
+cpu.D_reg_q_0__RNO[2]                    SB_LUT4      O        Out     0.400     29.001      -         
+D_reg_d_0_[2]                            Net          -        -       1.507     -           1         
+cpu.D_reg_q_0_[2]                        SB_DFFSR     D        In      -         30.508      -         
+=======================================================================================================
+Total path delay (propagation time + setup) of 30.614 is 6.943(22.7%) logic and 23.671(77.3%) route.
+Path delay compensated for clock skew. Clock skew is added to clock-to-out value, and is subtracted from setup time value
+
+
+Path information for path number 4: 
+      Requested Period:                      10.000
+    - Setup time:                            0.105
+    + Clock delay at ending point:           0.000 (ideal)
+    = Required time:                         9.895
+
+    - Propagation time:                      30.508
+    - Clock delay at starting point:         0.000 (ideal)
+    = Slack (non-critical) :                 -20.614
+
+    Number of logic level(s):                16
+    Starting point:                          cpu.D_reg_q_0_[4] / Q
+    Ending point:                            cpu.D_reg_q_0_[2] / D
+    The start point is clocked by            clk_0 [rising] on pin C
+    The end   point is clocked by            clk_0 [rising] on pin C
+
+Instance / Net                                        Pin      Pin               Arrival     No. of    
+Name                                     Type         Name     Dir     Delay     Time        Fan Out(s)
+-------------------------------------------------------------------------------------------------------
+cpu.D_reg_q_0_[4]                        SB_DFFSR     Q        Out     0.540     0.540       -         
+D_reg_q_0_[4]                            Net          -        -       1.599     -           30        
+cpu.D_reg_q_0__RNI3NSK[5]                SB_LUT4      I0       In      -         2.139       -         
+cpu.D_reg_q_0__RNI3NSK[5]                SB_LUT4      O        Out     0.449     2.588       -         
+m1_0                                     Net          -        -       1.371     -           2         
+cpu.D_reg_q_0__RNI84MU1_1[7]             SB_LUT4      I0       In      -         3.959       -         
+cpu.D_reg_q_0__RNI84MU1_1[7]             SB_LUT4      O        Out     0.449     4.408       -         
+N_20_0                                   Net          -        -       1.371     -           8         
+cpu.D_reg_q_0__RNICO8I4_0[2]             SB_LUT4      I2       In      -         5.779       -         
+cpu.D_reg_q_0__RNICO8I4_0[2]             SB_LUT4      O        Out     0.379     6.157       -         
+D_reg_q_0__RNICO8I4_0[2]                 Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNI0L73B[2]               SB_LUT4      I1       In      -         7.528       -         
+cpu.D_reg_q_0__RNI0L73B[2]               SB_LUT4      O        Out     0.400     7.928       -         
+M_instRom_inst[3]                        Net          -        -       1.371     -           39        
+cpu.D_reg_q_6__RNI6N7TD[0]               SB_LUT4      I3       In      -         9.299       -         
+cpu.D_reg_q_6__RNI6N7TD[0]               SB_LUT4      O        Out     0.316     9.615       -         
+un62_D_reg_d_6_ns_1[0]                   Net          -        -       1.371     -           1         
+cpu.D_reg_q_10__RNI63O8P[0]              SB_LUT4      I3       In      -         10.986      -         
+cpu.D_reg_q_10__RNI63O8P[0]              SB_LUT4      O        Out     0.316     11.301      -         
+N_3954                                   Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIUJ9D21[0]              SB_LUT4      I2       In      -         12.672      -         
+cpu.D_reg_q_0__RNIUJ9D21[0]              SB_LUT4      O        Out     0.379     13.051      -         
+N_3962                                   Net          -        -       1.371     -           7         
+cpu.D_reg_q_0__RNI69DVL2[0]              SB_LUT4      I1       In      -         14.422      -         
+cpu.D_reg_q_0__RNI69DVL2[0]              SB_LUT4      O        Out     0.400     14.822      -         
+un63_D_reg_d_0                           Net          -        -       1.371     -           37        
+cpu.D_reg_q_0__RNIG1F9D7[2]              SB_LUT4      I2       In      -         16.193      -         
+cpu.D_reg_q_0__RNIG1F9D7[2]              SB_LUT4      O        Out     0.379     16.571      -         
+N_98                                     Net          -        -       1.371     -           2         
+cpu.D_reg_q_0__RNII6M7TN_0[0]            SB_LUT4      I0       In      -         17.942      -         
+cpu.D_reg_q_0__RNII6M7TN_0[0]            SB_LUT4      O        Out     0.449     18.391      -         
+D_reg_q_0__RNII6M7TN_0[0]                Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIKGTO7N1[0]             SB_LUT4      I1       In      -         19.762      -         
+cpu.D_reg_q_0__RNIKGTO7N1[0]             SB_LUT4      O        Out     0.400     20.162      -         
+N_3                                      Net          -        -       1.371     -           7         
+cpu.un144_D_reg_d_cry_1_c_RNIVLO84D2     SB_LUT4      I2       In      -         21.533      -         
+cpu.un144_D_reg_d_cry_1_c_RNIVLO84D2     SB_LUT4      O        Out     0.379     21.912      -         
+un144_D_reg_d_cry_1_c_RNIVLO84D2         Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIJMC51S2[0]             SB_LUT4      I1       In      -         23.283      -         
+cpu.D_reg_q_0__RNIJMC51S2[0]             SB_LUT4      O        Out     0.400     23.682      -         
+D_reg_q_0__RNIJMC51S2[0]                 Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIK3V2HB[0]              SB_LUT4      I0       In      -         25.053      -         
+cpu.D_reg_q_0__RNIK3V2HB[0]              SB_LUT4      O        Out     0.449     25.502      -         
+D_reg_q_0__RNIK3V2HB[0]                  Net          -        -       1.371     -           2         
+cpu.D_reg_q_0__RNO_2[2]                  SB_LUT4      I2       In      -         26.873      -         
+cpu.D_reg_q_0__RNO_2[2]                  SB_LUT4      O        Out     0.379     27.252      -         
+D_reg_q_0__RNO_2[2]                      Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNO[2]                    SB_LUT4      I2       In      -         28.623      -         
+cpu.D_reg_q_0__RNO[2]                    SB_LUT4      O        Out     0.379     29.001      -         
+D_reg_d_0_[2]                            Net          -        -       1.507     -           1         
+cpu.D_reg_q_0_[2]                        SB_DFFSR     D        In      -         30.508      -         
+=======================================================================================================
+Total path delay (propagation time + setup) of 30.614 is 6.943(22.7%) logic and 23.671(77.3%) route.
+Path delay compensated for clock skew. Clock skew is added to clock-to-out value, and is subtracted from setup time value
+
+
+Path information for path number 5: 
+      Requested Period:                      10.000
+    - Setup time:                            0.105
+    + Clock delay at ending point:           0.000 (ideal)
+    = Required time:                         9.895
+
+    - Propagation time:                      30.487
+    - Clock delay at starting point:         0.000 (ideal)
+    = Slack (non-critical) :                 -20.593
+
+    Number of logic level(s):                16
+    Starting point:                          cpu.D_reg_q_0_[4] / Q
+    Ending point:                            cpu.D_reg_q_0_[2] / D
+    The start point is clocked by            clk_0 [rising] on pin C
+    The end   point is clocked by            clk_0 [rising] on pin C
+
+Instance / Net                                        Pin      Pin               Arrival     No. of    
+Name                                     Type         Name     Dir     Delay     Time        Fan Out(s)
+-------------------------------------------------------------------------------------------------------
+cpu.D_reg_q_0_[4]                        SB_DFFSR     Q        Out     0.540     0.540       -         
+D_reg_q_0_[4]                            Net          -        -       1.599     -           30        
+cpu.D_reg_q_0__RNI3NSK[5]                SB_LUT4      I0       In      -         2.139       -         
+cpu.D_reg_q_0__RNI3NSK[5]                SB_LUT4      O        Out     0.449     2.588       -         
+m1_0                                     Net          -        -       1.371     -           2         
+cpu.D_reg_q_0__RNI84MU1_1[7]             SB_LUT4      I0       In      -         3.959       -         
+cpu.D_reg_q_0__RNI84MU1_1[7]             SB_LUT4      O        Out     0.449     4.408       -         
+N_20_0                                   Net          -        -       1.371     -           8         
+cpu.D_reg_q_0__RNICO8I4[2]               SB_LUT4      I2       In      -         5.779       -         
+cpu.D_reg_q_0__RNICO8I4[2]               SB_LUT4      O        Out     0.379     6.157       -         
+D_reg_q_0__RNICO8I4[2]                   Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNI0L73B[2]               SB_LUT4      I2       In      -         7.528       -         
+cpu.D_reg_q_0__RNI0L73B[2]               SB_LUT4      O        Out     0.379     7.907       -         
+M_instRom_inst[3]                        Net          -        -       1.371     -           39        
+cpu.D_reg_q_6__RNI6N7TD[0]               SB_LUT4      I3       In      -         9.278       -         
+cpu.D_reg_q_6__RNI6N7TD[0]               SB_LUT4      O        Out     0.316     9.594       -         
+un62_D_reg_d_6_ns_1[0]                   Net          -        -       1.371     -           1         
+cpu.D_reg_q_10__RNI63O8P[0]              SB_LUT4      I3       In      -         10.965      -         
+cpu.D_reg_q_10__RNI63O8P[0]              SB_LUT4      O        Out     0.316     11.280      -         
+N_3954                                   Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIUJ9D21[0]              SB_LUT4      I2       In      -         12.651      -         
+cpu.D_reg_q_0__RNIUJ9D21[0]              SB_LUT4      O        Out     0.379     13.030      -         
+N_3962                                   Net          -        -       1.371     -           7         
+cpu.D_reg_q_0__RNI69DVL2[0]              SB_LUT4      I1       In      -         14.401      -         
+cpu.D_reg_q_0__RNI69DVL2[0]              SB_LUT4      O        Out     0.400     14.801      -         
+un63_D_reg_d_0                           Net          -        -       1.371     -           37        
+cpu.D_reg_q_0__RNIG1F9D7[2]              SB_LUT4      I2       In      -         16.172      -         
+cpu.D_reg_q_0__RNIG1F9D7[2]              SB_LUT4      O        Out     0.379     16.550      -         
+N_98                                     Net          -        -       1.371     -           2         
+cpu.D_reg_q_0__RNII6M7TN[0]              SB_LUT4      I0       In      -         17.921      -         
+cpu.D_reg_q_0__RNII6M7TN[0]              SB_LUT4      O        Out     0.449     18.370      -         
+D_reg_q_0__RNII6M7TN[0]                  Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIKGTO7N1[0]             SB_LUT4      I2       In      -         19.741      -         
+cpu.D_reg_q_0__RNIKGTO7N1[0]             SB_LUT4      O        Out     0.379     20.120      -         
+N_3                                      Net          -        -       1.371     -           7         
+cpu.un144_D_reg_d_cry_1_c_RNIVLO84D2     SB_LUT4      I2       In      -         21.491      -         
+cpu.un144_D_reg_d_cry_1_c_RNIVLO84D2     SB_LUT4      O        Out     0.379     21.870      -         
+un144_D_reg_d_cry_1_c_RNIVLO84D2         Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIJMC51S2[0]             SB_LUT4      I1       In      -         23.241      -         
+cpu.D_reg_q_0__RNIJMC51S2[0]             SB_LUT4      O        Out     0.400     23.640      -         
+D_reg_q_0__RNIJMC51S2[0]                 Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNIK3V2HB[0]              SB_LUT4      I0       In      -         25.011      -         
+cpu.D_reg_q_0__RNIK3V2HB[0]              SB_LUT4      O        Out     0.449     25.460      -         
+D_reg_q_0__RNIK3V2HB[0]                  Net          -        -       1.371     -           2         
+cpu.D_reg_q_0__RNO_1[2]                  SB_LUT4      I2       In      -         26.831      -         
+cpu.D_reg_q_0__RNO_1[2]                  SB_LUT4      O        Out     0.379     27.210      -         
+D_reg_q_0__RNO_1[2]                      Net          -        -       1.371     -           1         
+cpu.D_reg_q_0__RNO[2]                    SB_LUT4      I1       In      -         28.581      -         
+cpu.D_reg_q_0__RNO[2]                    SB_LUT4      O        Out     0.400     28.980      -         
+D_reg_d_0_[2]                            Net          -        -       1.507     -           1         
+cpu.D_reg_q_0_[2]                        SB_DFFSR     D        In      -         30.487      -         
+=======================================================================================================
+Total path delay (propagation time + setup) of 30.593 is 6.922(22.6%) logic and 23.671(77.4%) route.
+Path delay compensated for clock skew. Clock skew is added to clock-to-out value, and is subtracted from setup time value
+
+
+
+##### END OF TIMING REPORT #####]
+
+Timing exceptions that could not be applied
+None
+
+Finished final timing analysis (Real Time elapsed 0h:00m:08s; CPU Time elapsed 0h:00m:08s; Memory used current: 183MB peak: 229MB)
+
+
+Finished timing report (Real Time elapsed 0h:00m:08s; CPU Time elapsed 0h:00m:08s; Memory used current: 183MB peak: 229MB)
+
+---------------------------------------
+Resource Usage Report for alchitry_top 
+
+Mapping to part: ice40hx8kcb132
+Cell usage:
+GND             3 uses
+SB_CARRY        29 uses
+SB_DFFESR       8 uses
+SB_DFFS         4 uses
+SB_DFFSR        128 uses
+SB_GB           1 use
+VCC             3 uses
+SB_LUT4         1295 uses
+
+I/O ports: 12
+I/O primitives: 12
+SB_GB_IO       1 use
+SB_IO          11 uses
+
+I/O Register bits:                  0
+Register bits not including I/Os:   140 (1%)
+Total load per clock:
+   clk_0: 1
+
+@S |Mapping Summary:
+Total  LUTs: 1295 (16%)
+
+Distribution of All Consumed LUTs = LUT4 
+Distribution of All Consumed Luts 1295 = 1295 
+
+Mapper successful!
+
+At Mapper Exit (Real Time elapsed 0h:00m:08s; CPU Time elapsed 0h:00m:08s; Memory used current: 32MB peak: 229MB)
+
+Process took 0h:00m:08s realtime, 0h:00m:08s cputime
+# Fri Sep 25 14:16:11 2026
+
+###########################################################]

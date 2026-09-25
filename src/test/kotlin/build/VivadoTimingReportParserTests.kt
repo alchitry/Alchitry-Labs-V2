@@ -42,6 +42,36 @@ class VivadoTimingReportParserTests {
         assertEquals(8.0, clk125.period)
         assertEquals(125.0, clk125.frequency)
         assertEquals("0.000 4.000", clk125.waveform)
+        assertEquals(-0.990, clk125.slack)
+        assertEquals(8.990, clk125.achievedPeriod)
+        assertEquals(111.235, clk125.achievedFrequency)
+        assertEquals(111.235, clk125.maxFrequency)
+
+        val clk0 = report.clocks.first { it.name == "clk_0" }
+        assertEquals(10.0, clk0.period)
+        assertEquals(100.0, clk0.frequency)
+        assertEquals(null, clk0.slack)
+        assertEquals(null, clk0.achievedFrequency)
+    }
+
+    @Test
+    fun testFailedReportAchievedFrequency() {
+        val text = VivadoTimingReportParserTests::class.java
+            .getResourceAsStream("/timing/fc_testing_timing_summary_routed.rpt")!!
+            .bufferedReader().readText()
+        val parsed = VivadoTimingReportParser.parse(text)
+        assertEquals(false, parsed.constraintsMet)
+
+        val clk125 = parsed.clocks.first { it.name == "clk_out_125_clk_wiz_0_1" }
+        assertEquals(8.0, clk125.period)
+        assertEquals(125.0, clk125.frequency)
+        assertEquals(-0.065, clk125.slack)
+        assertEquals(8.065, clk125.achievedPeriod)
+        assertEquals(123.993, clk125.achievedFrequency)
+        assertEquals(123.993, clk125.maxFrequency)
+
+        val failingClocks = parsed.failingClocks
+        assertEquals(listOf("clk_out_125_clk_wiz_0_1"), failingClocks.map { it.name })
     }
 
     @Test

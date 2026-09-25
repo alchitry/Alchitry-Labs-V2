@@ -122,8 +122,9 @@ data object VivadoBuilder : ProjectBuilder() {
     private fun printTimingDetails(report: VivadoTimingReportParser.TimingReport) {
         report.clocks.forEach { clock ->
             val passed = clock in report.passingClocks
+            val maxFreqStr = clock.achievedFrequency?.let { " (${it}MHz max)" } ?: ""
             val message =
-                "Clock ${clock.name} (${clock.frequency} MHz): ${if (passed) "passed" else "FAILED"}"
+                "Clock ${clock.name} (${clock.frequency} MHz): ${if (passed) "passed" else "FAILED"}$maxFreqStr"
             if (passed) Log.success(message) else Log.error(message)
         }
 

@@ -42,8 +42,16 @@ object VivadoTimingReportParser {
         val name: String,
         val waveform: String,
         val period: Double,
-        val frequency: Double
-    )
+        val frequency: Double,
+        val slack: Double? = null,
+        val achievedPeriod: Double? = null,
+        val achievedFrequency: Double? = null
+    ) {
+        val maxFrequency: Double? get() = achievedFrequency
+        val estimatedFrequency: Double? get() = achievedFrequency
+        val maxPeriod: Double? get() = achievedPeriod
+        val estimatedPeriod: Double? get() = achievedPeriod
+    }
 
     /** Setup/hold/pulse width results for a from-clock/to-clock pair from the "Timing Details" section. */
     data class ClockPairSummary(
@@ -127,6 +135,8 @@ object VivadoTimingReportParser {
         else -> trim().toIntOrNull()
     }
 
+    private fun round3(value: Double): Double = kotlin.math.round(value * 1000.0) / 1000.0
+
     /** Parses the contents of a Vivado timing summary report. */
     fun parse(report: String): TimingReport {
         val lines = report.lines()
@@ -137,13 +147,86 @@ object VivadoTimingReportParser {
             else -> null
         }
 
+        val summary = parseDesignSummary(lines)
+        val rawClocks = parseClockSummary(lines)
+        val clockPairs = parseClockPairs(lines)
+        val intraClockWns = parseIntraClockTableWns(lines)
+        val paths = parsePaths(lines)
+
+        val clocks = rawClocks.map { clock ->
+            val intraPair = clockPairs.firstOrNull { it.fromClock == clock.name && it.toClock == clock.name }
+            val pairSlack = intraPair?.setup?.worstSlack
+            val intraTableSlack = intraClockWns[clock.name]
+            val anyPairSlack = if (pairSlack == null && intraTableSlack == null) {
+                clockPairs.filter { it.fromClock == clock.name || it.toClock == clock.name }
+                    .mapNotNull { it.setup.worstSlack }
+                    .minOrNull()
+            } else null
+
+            val slack = pairSlack ?: intraTableSlack ?: anyPairSlack
+            val achievedPeriod = if (slack != null) round3(clock.period - slack) else null
+            val achievedFrequency =
+                if (achievedPeriod != null && achievedPeriod > 0.0) round3(1000.0 / achievedPeriod) else null
+
+            clock.copy(
+                slack = slack?.let { round3(it) },
+                achievedPeriod = achievedPeriod,
+                achievedFrequency = achievedFrequency
+            )
+        }
+
         return TimingReport(
             constraintsMet = constraintsMet,
-            summary = parseDesignSummary(lines),
-            clocks = parseClockSummary(lines),
-            clockPairs = parseClockPairs(lines),
-            paths = parsePaths(lines)
+            summary = summary,
+            clocks = clocks,
+            clockPairs = clockPairs,
+            paths = paths
         )
+    }
+
+    private fun parseIntraClockTableWns(lines: List<String>): Map<String, Double> {
+        val section = sectionLines(lines, "Intra Clock Table")
+        val headerIndex = section.indexOfFirst { it.contains("Clock") && it.contains("WNS(ns)") }
+        if (headerIndex < 0 || headerIndex + 1 >= section.size) return emptyMap()
+
+        val divider = section[headerIndex + 1]
+        val colStarts = mutableListOf<Int>()
+        var inCol = false
+        for (idx in divider.indices) {
+            val c = divider[idx]
+            if (c == '-' && !inCol) {
+                colStarts.add(idx)
+                inCol = true
+            } else if (c != '-') {
+                inCol = false
+            }
+        }
+        if (colStarts.size < 2) return emptyMap()
+
+        val nameStart = colStarts[0]
+        val nameEnd = colStarts[1]
+        val wnsStart = colStarts[1]
+        val wnsEnd = if (colStarts.size > 2) colStarts[2] else divider.length
+
+        val result = mutableMapOf<String, Double>()
+        for (i in (headerIndex + 2) until section.size) {
+            val line = section[i]
+            if (line.isBlank() || line.trim().startsWith("-") || line.trim().startsWith("|")) continue
+            val name = if (line.length > nameStart) {
+                val end = if (line.length > nameEnd) nameEnd else line.length
+                line.substring(nameStart, end).trim()
+            } else ""
+            if (name.isEmpty()) continue
+
+            val wnsStr = if (line.length > wnsStart) {
+                val end = if (line.length > wnsEnd) wnsEnd else line.length
+                line.substring(wnsStart, end).trim()
+            } else ""
+            wnsStr.toDoubleOrNullNa()?.let {
+                result[name] = it
+            }
+        }
+        return result
     }
 
     private fun sectionLines(lines: List<String>, header: String): List<String> {

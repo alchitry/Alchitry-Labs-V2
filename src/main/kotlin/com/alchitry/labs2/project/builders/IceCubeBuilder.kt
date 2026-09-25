@@ -78,29 +78,75 @@ data object IceCubeBuilder : ProjectBuilder() {
                 .resolve("$IMP_DIR/sbt/outputs/bitmap/${topModuleName}_bitmap.bin").toFile()
         if (binFile.exists()) {
             binFile.copyTo(project.binFile)
-            when (didTimingPass(project, topModuleName)) {
+
+            val timingReport = parseTimingReport(project, topModuleName)
+            when (timingReport?.constraintsMet) {
                 true -> Log.success("Project built successfully.")
                 false -> Log.warn("Project built but failed to meet timing.")
                 null -> Log.warn("Project built but timing was unchecked.")
             }
+            if (timingReport?.constraintsMet != true) {
+                timingReport?.let {
+                    Log.println()
+                    printTimingDetails(it)
+                }
+            }
         } else {
-            Log.println(
-                "Bin file (${binFile.absolutePath}) could not be found! The build likely failed.",
-                AlchitryColors.current.Error
+            Log.error(
+                "Bin file (${binFile.absolutePath}) could not be found! The build likely failed."
             )
         }
     }
 
-    private suspend fun didTimingPass(project: Project, topModuleName: String): Boolean? = withContext(Dispatchers.IO) {
+    private suspend fun parseTimingReport(
+        project: Project,
+        topModuleName: String
+    ): IceCubeTimingReportParser.TimingReport? = withContext(Dispatchers.IO) {
         val timingReport = project.buildDirectory
             .resolve(IMP_DIR)
-            .resolve("${topModuleName}_cck.rpt")
+            .resolve("$topModuleName.srr")
         if (!timingReport.exists()) {
             Log.warn("The timing report could not be located! Checked: $timingReport")
             return@withContext null
         }
 
-        return@withContext timingReport.readText().contains("Found 0 issues in 0 out of")
+        return@withContext IceCubeTimingReportParser.parse(timingReport.readText())
+    }
+
+    private fun printTimingDetails(report: IceCubeTimingReportParser.TimingReport) {
+        report.clocks.forEach { clock ->
+            val passed = clock in report.passingClocks
+            val message =
+                "Clock ${clock.name} (${clock.frequency} MHz): ${if (passed) "passed" else "FAILED"} (${clock.estimatedFrequency}MHz max)"
+            if (passed) Log.success(message) else Log.error(message)
+        }
+
+        val failingPaths = report.failingPaths
+        if (failingPaths.isNotEmpty()) {
+            Log.println()
+            Log.warn("Worst failing paths:")
+            failingPaths.take(5).forEach { path ->
+                Log.warn(
+                    "  Slack ${path.slack}ns: ${path.source} -> ${path.destination}" +
+                            (path.pathType?.let { " ($it)" } ?: "")
+                )
+            }
+            report.summary?.let { summary ->
+                Log.println()
+                if (summary.setupFailingEndpoints != null && summary.setupFailingEndpoints > 0) {
+                    Log.warn(
+                        "Setup: ${summary.setupFailingEndpoints} failing endpoints, " +
+                                "WNS ${summary.worstNegativeSlack}ns, TNS ${summary.totalNegativeSlack}ns"
+                    )
+                }
+                if (summary.holdFailingEndpoints != null && summary.holdFailingEndpoints > 0) {
+                    Log.warn(
+                        "Hold: ${summary.holdFailingEndpoints} failing endpoints, " +
+                                "WHS ${summary.worstHoldSlack}ns, THS ${summary.totalHoldSlack}ns"
+                    )
+                }
+            }
+        }
     }
 
     private fun getEnvVars(iceCube: File, license: File, synpwrapDir: File): Map<String, String> {
