@@ -13,21 +13,23 @@ suspend fun openFileDialog(
     allowMultiSelection: Boolean = true,
     startingDirectory: File? = null
 ): Set<File>? {
+    val dialogSettings = FileKitDialogSettings(
+        title = title,
+        parent = FileKitDialogParent.awt(window)
+    )
     return if (allowMultiSelection) {
         FileKit.openFilePicker(
             type = FileKitType.File(allowedExtensions),
             mode = FileKitMode.Multiple(),
-            title = title,
             directory = startingDirectory?.let { PlatformFile(it) },
-            dialogSettings = FileKitDialogSettings(parentWindow = window)
+            dialogSettings = dialogSettings
         )?.map { it.file }?.toSet()
     } else {
         FileKit.openFilePicker(
             type = FileKitType.File(allowedExtensions),
             mode = FileKitMode.Single,
-            title = title,
             directory = startingDirectory?.let { PlatformFile(it) },
-            dialogSettings = FileKitDialogSettings(parentWindow = window)
+            dialogSettings = dialogSettings
         )?.let { result ->
             setOf(result.file)
         }
@@ -40,8 +42,10 @@ suspend fun openDirectoryDialog(
     startingDirectory: File? = null
 ): File? {
     return FileKit.openDirectoryPicker(
-        title = title,
         directory = startingDirectory?.let { PlatformFile(it) },
-        dialogSettings = FileKitDialogSettings(parentWindow = window)
-    ).let { it?.file }
+        dialogSettings = FileKitDialogSettings(
+            title = title,
+            parent = FileKitDialogParent.awt(window)
+        )
+    )?.file
 }

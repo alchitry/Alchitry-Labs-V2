@@ -18,10 +18,10 @@ buildscript {
 val antlrKotlinVersion = extra.get("antlrKotlinVersion") as String
 
 plugins {
-    kotlin("jvm") version "2.3.21"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.3.21"
-    kotlin("plugin.serialization") version "2.3.21"
-    id("org.jetbrains.compose") version "1.9.3"
+    kotlin("jvm") version "2.4.21"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.4.21"
+    kotlin("plugin.serialization") version "2.4.21"
+    id("org.jetbrains.compose") version "1.12.1"
     id("dev.hydraulic.conveyor") version "1.13"
     id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
 }
@@ -41,20 +41,20 @@ repositories {
 
 dependencies {
     implementation("com.github.alchitry.antlr-kotlin:antlr-kotlin-runtime:$antlrKotlinVersion")
-    implementation("org.apache.commons:commons-text:1.14.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+    implementation("org.apache.commons:commons-text:1.15.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.5.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
 
     implementation(kotlin("reflect"))
     implementation("org.jdom:jdom2:2.0.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.6")
-    implementation("me.tongfei:progressbar:0.10.1")
-    implementation("org.jline:jline:3.30.6")
-    implementation("org.fusesource.jansi:jansi:2.4.2")
-    implementation("io.github.vinceglb:filekit-dialogs:0.12.0")
-    implementation("org.slf4j:slf4j-nop:2.0.17")
+    implementation("me.tongfei:progressbar:0.10.2")
+    implementation("org.jline:jline:4.4.8")
+    implementation("org.fusesource.jansi:jansi:2.4.3")
+    implementation("io.github.vinceglb:filekit-dialogs:0.16.0")
+    implementation("org.slf4j:slf4j-nop:2.0.20")
 
     implementation("com.github.alchitry:Alchitry-Interface:e943b12057")
 
