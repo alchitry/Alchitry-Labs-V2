@@ -4,10 +4,7 @@ import com.alchitry.labs2.parsers.hdl.ExprType
 import com.alchitry.labs2.parsers.hdl.lucid.toVerilog
 import com.alchitry.labs2.parsers.hdl.types.Signal
 import com.alchitry.labs2.parsers.hdl.types.SignalDirection
-import com.alchitry.labs2.parsers.hdl.values.ArrayValue
-import com.alchitry.labs2.parsers.hdl.values.BitListValue
-import com.alchitry.labs2.parsers.hdl.values.BitValue
-import com.alchitry.labs2.parsers.hdl.values.Value
+import com.alchitry.labs2.parsers.hdl.values.*
 import helpers.SimpleLucidTester
 import helpers.TestSignalResolver
 import helpers.convertLucidExprToVerilog
@@ -715,34 +712,6 @@ class LucidVerilogExprTests {
 
     @Test
     fun testALUOperations() {
-        val opAdd = Signal(
-            "opAdd",
-            SignalDirection.Both,
-            null,
-            BitListValue("00", 2, width = 2, signed = false),
-            ExprType.Dynamic
-        )
-        val opSub = Signal(
-            "opSub",
-            SignalDirection.Both,
-            null,
-            BitListValue("01", 2, width = 2, signed = false),
-            ExprType.Dynamic
-        )
-        val opAnd = Signal(
-            "opAnd",
-            SignalDirection.Both,
-            null,
-            BitListValue("10", 2, width = 2, signed = false),
-            ExprType.Dynamic
-        )
-        val opOr = Signal(
-            "opOr",
-            SignalDirection.Both,
-            null,
-            BitListValue("11", 2, width = 2, signed = false),
-            ExprType.Dynamic
-        )
         val op =
             Signal("op", SignalDirection.Both, null, BitListValue("00", 2, width = 2, signed = false), ExprType.Dynamic)
 
@@ -773,5 +742,210 @@ class LucidVerilogExprTests {
 
         val aluMixedExpr = "op == 2b00 ? (a + b4) : (op == 2b01 ? (a - b4) : (op == 2b10 ? (a & b4) : (a | b4)))"
         assertLucidMatchesVerilog(aluMixedExpr, op, a, b4)
+    }
+
+    private fun assertKnownExprWidthMatchesVerilog(
+        lucidExpr: String,
+        vararg signals: Signal,
+        extraVerilogContext: String = ""
+    ) = runBlocking {
+        val concreteResolver = if (signals.isEmpty()) null else TestSignalResolver(*signals)
+        val expectedTester = SimpleLucidTester(lucidExpr, localSignalResolver = concreteResolver)
+        val expectedExprCtx = expectedTester.parser.expr()
+
+        if (expectedTester.parser.tokenStream.LA(1) != com.alchitry.labs2.parsers.grammar.LucidParser.Tokens.EOF) {
+            error("Errors resolving expected Lucid expression \"$lucidExpr\":\nUnparsed trailing tokens remaining")
+        }
+
+        expectedTester.context.walk(expectedExprCtx)
+
+        if (expectedTester.context.notationCollector.hasErrors) {
+            val errors =
+                expectedTester.context.notationCollector.getAllErrors()
+                    .joinToString("\n") { it.message ?: it.toString() }
+            error("Errors resolving expected Lucid expression \"$lucidExpr\":\n$errors")
+        }
+
+        val expectedLucidValue = expectedTester.context.expr.resolve(expectedExprCtx)?.value
+            ?: error("No value resolved for expected Lucid expression \"$lucidExpr\"")
+
+        val expectedWidth = expectedLucidValue.width.bitCount
+            ?: error("Expected Lucid value for \"$lucidExpr\" has no bit count: $expectedLucidValue")
+
+        val unknownSignals = signals.map { sig ->
+            Signal(
+                sig.name,
+                sig.direction,
+                null,
+                UndefinedValue(UndefinedSimpleWidth()),
+                ExprType.Known
+            )
+        }.toTypedArray()
+
+        val widthLucidExpr = $$"$width($$lucidExpr)"
+        val resolver = if (unknownSignals.isEmpty()) null else TestSignalResolver(*unknownSignals)
+        val tester = SimpleLucidTester(widthLucidExpr, localSignalResolver = resolver)
+        val exprCtx = tester.parser.expr()
+
+        if (tester.parser.tokenStream.LA(1) != com.alchitry.labs2.parsers.grammar.LucidParser.Tokens.EOF) {
+            error("Errors resolving Lucid expression \"$widthLucidExpr\":\nUnparsed trailing tokens remaining")
+        }
+
+        tester.context.walk(exprCtx)
+
+        if (tester.context.notationCollector.hasErrors) {
+            val errors =
+                tester.context.notationCollector.getAllErrors().joinToString("\n") { it.message ?: it.toString() }
+            error("Errors resolving Lucid expression \"$widthLucidExpr\":\n$errors")
+        }
+
+        val lucidValue = tester.context.expr.resolve(exprCtx)?.value
+            ?: error("No value resolved for Lucid expression \"$widthLucidExpr\"")
+
+        when (lucidValue) {
+            is UndefinedValue -> assertEquals(
+                UndefinedSimpleWidth(),
+                lucidValue.width,
+                "Expected UndefinedValue with UndefinedSimpleWidth for Lucid expression \"$widthLucidExpr\""
+            )
+
+            is SimpleValue -> assertEquals(
+                expectedWidth,
+                lucidValue.toBigInt()?.toInt(),
+                "Lucid value mismatch for Lucid expression \"$widthLucidExpr\""
+            )
+
+            else -> error("Unexpected Lucid value type: $lucidValue")
+        }
+
+        val verilogExpr = convertLucidExprToVerilog(widthLucidExpr, resolver)
+
+        val svContext = buildString {
+            if (extraVerilogContext.isNotBlank()) {
+                appendLine(extraVerilogContext)
+            }
+            for (sig in signals) {
+                val sigVal = sig.read(null)
+                val isSigned = (sigVal as? BitListValue)?.signed == true
+                val width: Int = sig.width.bitCount ?: 1
+                val signedStr = if (isSigned) "signed " else ""
+                val verilogVal = sigVal.toVerilog()
+                appendLine("    localparam $signedStr[${width - 1}:0] ${sig.name} = $verilogVal;")
+            }
+        }
+
+        val verilogValue = evalVerilogExpr(verilogExpr, svContext)
+
+        val actualWidth = (verilogValue as? SimpleValue)?.toBigInt()?.toInt()
+            ?: error("Verilog expression \"$verilogExpr\" did not evaluate to a simple numeric value, got: $verilogValue")
+
+        assertEquals(
+            expectedWidth,
+            actualWidth,
+            "Width mismatch for Lucid expr: \"$widthLucidExpr\" -> Verilog: \"$verilogExpr\""
+        )
+    }
+
+    @Test
+    fun testUndefinedWidthKnownExpressions() {
+        val paramA = Signal(
+            "PARAM_A",
+            SignalDirection.Both,
+            null,
+            BitListValue("10100101", 2, width = 8, signed = false),
+            ExprType.Constant
+        )
+        val paramB = Signal(
+            "PARAM_B",
+            SignalDirection.Both,
+            null,
+            BitListValue("0011", 2, width = 4, signed = false),
+            ExprType.Constant
+        )
+        val paramC = Signal(
+            "PARAM_C",
+            SignalDirection.Both,
+            null,
+            BitListValue("0010", 2, width = 4, signed = false),
+            ExprType.Constant
+        )
+
+        // Single parameter widths
+        assertKnownExprWidthMatchesVerilog("PARAM_A", paramA)
+        assertKnownExprWidthMatchesVerilog("PARAM_B", paramB)
+
+        // Arithmetic operations
+        assertKnownExprWidthMatchesVerilog("PARAM_A + PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A + PARAM_A", paramA)
+        assertKnownExprWidthMatchesVerilog("PARAM_A + 8h12", paramA)
+        assertKnownExprWidthMatchesVerilog("PARAM_A + 4h5", paramA)
+        assertKnownExprWidthMatchesVerilog("PARAM_B + 8h12", paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A - PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A - 8h10", paramA)
+        assertKnownExprWidthMatchesVerilog("PARAM_A * PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A * PARAM_A", paramA)
+        assertKnownExprWidthMatchesVerilog("PARAM_A * 4h2", paramA)
+        assertKnownExprWidthMatchesVerilog("PARAM_A / PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A / 4h2", paramA)
+        assertKnownExprWidthMatchesVerilog("-PARAM_A", paramA)
+
+        // Bitwise operations
+        assertKnownExprWidthMatchesVerilog("~PARAM_A", paramA)
+        assertKnownExprWidthMatchesVerilog("PARAM_A & PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A | PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A ^ PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A ^~ PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A & 8h0F", paramA)
+        assertKnownExprWidthMatchesVerilog("PARAM_A | 8hF0", paramA)
+        assertKnownExprWidthMatchesVerilog("PARAM_A ^ 8hAA", paramA)
+        assertKnownExprWidthMatchesVerilog("PARAM_B ^ 4hF", paramB)
+        assertKnownExprWidthMatchesVerilog("~(PARAM_A & ~PARAM_B)", paramA, paramB)
+
+        // Shifts
+        assertKnownExprWidthMatchesVerilog("PARAM_A << 2", paramA)
+        assertKnownExprWidthMatchesVerilog("PARAM_A << 4", paramA)
+        assertKnownExprWidthMatchesVerilog("PARAM_A >> 2", paramA)
+        assertKnownExprWidthMatchesVerilog("PARAM_A >> 4", paramA)
+        assertKnownExprWidthMatchesVerilog("PARAM_A >> PARAM_B", paramA, paramB)
+
+        // Concatenation and Duplication
+        assertKnownExprWidthMatchesVerilog("c{PARAM_A, PARAM_B}", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("c{PARAM_A, 4hF, PARAM_B}", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("c{PARAM_A, 8hAA}", paramA)
+        assertKnownExprWidthMatchesVerilog("2x{PARAM_A}", paramA)
+        assertKnownExprWidthMatchesVerilog("3x{PARAM_B}", paramB)
+
+        // Ternary
+        assertKnownExprWidthMatchesVerilog("PARAM_A ? PARAM_A : PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_B ? PARAM_A : 8h55", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A == 8h00 ? PARAM_A : PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A > PARAM_B ? PARAM_A : 8h00", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_B > 0 ? PARAM_B : 4h0", paramB)
+
+        // Logical, Relational, and Reduction
+        assertKnownExprWidthMatchesVerilog("PARAM_A == PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A != PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A < PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A > PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A <= PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A >= PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A && PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("PARAM_A || PARAM_B", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("!PARAM_A", paramA)
+        assertKnownExprWidthMatchesVerilog("&PARAM_A", paramA)
+        assertKnownExprWidthMatchesVerilog("|PARAM_A", paramA)
+        assertKnownExprWidthMatchesVerilog("^PARAM_A", paramA)
+
+        // Functions
+        assertKnownExprWidthMatchesVerilog($$"$signed(PARAM_A)", paramA)
+        assertKnownExprWidthMatchesVerilog($$"$unsigned(PARAM_A)", paramA)
+        assertKnownExprWidthMatchesVerilog($$"$flatten(PARAM_A)", paramA)
+        assertKnownExprWidthMatchesVerilog($$"$resize(PARAM_A, 16)", paramA)
+        assertKnownExprWidthMatchesVerilog($$"$resize(PARAM_B, 32)", paramB)
+
+        // Complex expressions
+        assertKnownExprWidthMatchesVerilog("((PARAM_A & 8h0F) << 4) | ((PARAM_A & 8hF0) >> 4)", paramA)
+        assertKnownExprWidthMatchesVerilog("(PARAM_A + PARAM_B) ^ 9h1FF", paramA, paramB)
+        assertKnownExprWidthMatchesVerilog("(PARAM_A + PARAM_B) * PARAM_C", paramA, paramB, paramC)
     }
 }
