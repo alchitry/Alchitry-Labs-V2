@@ -81,6 +81,18 @@ configurations.configureEach {
 }
 
 tasks.test {
+    exclude("**/full_build/**")
+    useJUnitPlatform()
+}
+
+tasks.register<Test>("buildTest") {
+    description = "Runs build tests."
+    group = "verification"
+
+    testClassesDirs = sourceSets.test.get().output.classesDirs
+    classpath = sourceSets.test.get().runtimeClasspath
+
+    include("**/full_build/**")
     useJUnitPlatform()
 }
 

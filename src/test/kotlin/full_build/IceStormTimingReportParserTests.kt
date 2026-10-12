@@ -1,4 +1,4 @@
-package build
+package full_build
 
 import com.alchitry.labs2.project.builders.IceStormTimingReportParser
 import org.junit.jupiter.api.Assertions.assertEquals

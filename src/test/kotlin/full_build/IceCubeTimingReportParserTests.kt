@@ -1,4 +1,4 @@
-package build
+package full_build
 
 import com.alchitry.labs2.project.builders.IceCubeTimingReportParser
 import org.junit.jupiter.api.Assertions.assertEquals
