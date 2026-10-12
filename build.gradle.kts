@@ -26,7 +26,7 @@ plugins {
     id("at.stnwtr.gradle-secrets-plugin") version "1.0.1"
 }
 
-val versionText = "2.0.59"
+val versionText = "2.0.60"
 
 group = "com.alchitry"
 version = versionText
