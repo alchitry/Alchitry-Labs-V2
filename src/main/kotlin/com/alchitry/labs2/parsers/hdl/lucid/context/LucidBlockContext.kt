@@ -242,8 +242,6 @@ class LucidBlockContext(
     override fun resolve(constDecContext: ConstDecContext) = constant.resolve(constDecContext)
     override fun resolve(bitSelectionContext: BitSelectionContext) = bitSelection.resolve(bitSelectionContext)
 
-    fun resolveWidthContext(exprCtx: ExprContext) = expr.resolveWidthContext(exprCtx)
-
     /**
      * Searches all SignalParsers to resolve a signal name.
      */

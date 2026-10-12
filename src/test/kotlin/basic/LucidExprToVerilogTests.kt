@@ -32,9 +32,9 @@ class LucidExprToVerilogTests {
         val sigB = Signal("b", SignalDirection.Both, null, BitListValue("0000", 2, signed = false), ExprType.Dynamic)
 
         assertEquals("a", lucidExprToVerilog("a", sigA))
-        assertEquals("((\$bits(a))'(~a))", lucidExprToVerilog("~a", sigA))
+        assertEquals("4'(~a)", lucidExprToVerilog("~a", sigA))
         assertEquals(
-            "((\$bits(a) > \$bits(b) ? \$bits(a) : \$bits(b)) + 1)'(a + b)",
+            "5'(a + b)",
             lucidExprToVerilog("a + b", sigA, sigB)
         )
     }

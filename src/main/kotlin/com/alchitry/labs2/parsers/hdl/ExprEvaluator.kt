@@ -32,28 +32,12 @@ enum class ExprEvalMode {
     val testing get() = this == Testing
 }
 
-data class ExprWidthContext(
-    val idealWidth: Int,
-    var contextWidth: Int,
-    var assignWidth: Int? = null,
-    var isFixed: Boolean = false
-) {
-    val width
-        get() =
-            if (!isFixed) {
-                idealWidth.coerceAtLeast(contextWidth)
-            } else {
-                idealWidth
-            }
-}
-
 data class ExprEvaluator<T : ParserRuleContext>(
     private val context: ExprEvaluatorContext<T>,
     private val exprs: MutableMap<ParseTree, Expr> = mutableMapOf(),
     private val dependencies: MutableMap<ParseTree, Set<Signal>> = mutableMapOf(),
     private val deadBlocks: MutableMap<RuleContext, Boolean> = mutableMapOf(),
     private val inactiveBlocks: MutableMap<RuleContext, Boolean> = mutableMapOf(),
-    private val widthContexts: MutableMap<ParseTree, ExprWidthContext> = mutableMapOf()
 ) {
     fun withContext(context: ExprEvaluatorContext<T>) = copy(context = context)
 
@@ -105,37 +89,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
         else -> ContextState.ACTIVE
     }
 
-    private fun updateWidthContextChildrenAssignee(ctx: ParseTree, assignWidth: Int?) {
-        (0..ctx.childCount).forEach {
-            val child = ctx.getChild(it) ?: return@forEach
-            val widthContext = widthContexts[child] ?: return@forEach
-            if (!widthContext.isFixed) {
-                widthContext.assignWidth = assignWidth
-                updateWidthContextChildrenAssignee(child, assignWidth)
-            }
-        }
-    }
-
-    private fun updateWidthContextsChildrenContext(ctx: ParseTree, contextWidth: Int) {
-        (0..ctx.childCount).forEach {
-            val child = ctx.getChild(it) ?: return@forEach
-            val widthContext = widthContexts[child] ?: return@forEach
-            if (!widthContext.isFixed) {
-                widthContext.contextWidth = contextWidth
-                updateWidthContextsChildrenContext(child, contextWidth)
-            }
-        }
-    }
-
-    fun setAssigneeWidth(ctx: ParseTree, assignWidth: Int) {
-        val current = widthContexts[ctx] ?: return
-        val contextWidth = assignWidth.coerceAtLeast(current.contextWidth)
-        current.contextWidth = contextWidth
-        current.assignWidth = assignWidth
-        updateWidthContextsChildrenContext(ctx, contextWidth)
-        updateWidthContextChildrenAssignee(ctx, assignWidth)
-    }
-
     /**
      * Returns true if the value at this node doesn't need to be recalculated
      */
@@ -166,19 +119,11 @@ data class ExprEvaluator<T : ParserRuleContext>(
     }
 
     fun setExpr(ctx: ParseTree, expr: Expr) {
-        if (expr.value is SimpleValue) {
-            val bits = expr.value.size
-            val width = widthContexts.getOrPut(ctx) {
-                ExprWidthContext(bits, bits)
-            }
-        }
-
         exprs[ctx] = expr
     }
 
     fun copyExpr(ctx: ParseTree, child: ParseTree?) {
         exprs[ctx] = exprs[child ?: return] ?: return
-        widthContexts[ctx] = widthContexts[child] ?: return
     }
 
     fun passThrough(ctx: ParseTree, child: ParseTree?) {
@@ -234,12 +179,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
         }
 
         if (error) return
-
-        if (baseSigWidth.isSimple()) {
-            widthContexts.getOrPut(ctx) {
-                ExprWidthContext(dimSize, dimSize, isFixed = true)
-            }
-        }
 
         if (operands.any { it.first is UndefinedValue }) {
             val width = if (definedWidth) {
@@ -359,10 +298,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
             }
             exprs[ctx] = ArrayValue(elements).asExpr(type)
         } else if (dupValueExpr.value is SimpleValue) {
-            widthContexts.getOrPut(ctx) {
-                val idealWidth = dupTimes * dupValueExpr.value.size
-                ExprWidthContext(idealWidth, idealWidth, isFixed = true)
-            }
             val bits = mutableListOf<Bit>()
             repeat(dupTimes) {
                 bits.addAll(dupValueExpr.value.bits)
@@ -435,12 +370,8 @@ data class ExprEvaluator<T : ParserRuleContext>(
         assert(expr.value is SimpleValue) { "Expression assumed to be SimpleValue" }
         expr.value as SimpleValue
 
-        val widthContext = widthContexts.getOrPut(ctx) {
-            ExprWidthContext(expr.value.size, expr.value.size)
-        }
-
         if (!expr.value.isNumber()) {
-            exprs[ctx] = BitListValue(size = widthContext.width, signed = true) { Bit.Bx }.asExpr(expr.type)
+            exprs[ctx] = BitListValue(size = expr.value.size, signed = true) { Bit.Bx }.asExpr(expr.type)
             return
         }
 
@@ -465,45 +396,15 @@ data class ExprEvaluator<T : ParserRuleContext>(
         copyDependencies(ctx, child)
 
         exprs[ctx] = if (operator == "!") {
-            widthContexts.getOrPut(ctx) {
-                ExprWidthContext(1, 1, isFixed = true)
-            }
             if (expr.value is UndefinedValue)
                 UndefinedValue(BitWidth).asExpr(expr.type)
             else
                 expr.value.isTrue().not().asExpr(expr.type)
         } else { // ~ operator
-            if (expr.value.width.isSimple()) {
-                expr.value.width.bitCount?.let {
-                    widthContexts.getOrPut(ctx) {
-                        ExprWidthContext(it, it)
-                    }
-                }
-            }
             expr.value.invert().asExpr(expr.type)
         }
     }
 
-    private fun setIdealAsMax(ctx: ParseTree, children: List<ParseTree>) {
-        if (widthContexts.contains(ctx))
-            return
-
-        val op1WidthContext = widthContexts[children[0]] ?: return
-        val op2WidthContext = widthContexts[children[1]] ?: return
-        val idealWidth = op1WidthContext.idealWidth.coerceAtLeast(op2WidthContext.idealWidth)
-        val contextWidth = op1WidthContext.contextWidth.coerceAtLeast(op2WidthContext.contextWidth)
-        updateWidthContextsChildrenContext(ctx, contextWidth)
-        widthContexts[ctx] = ExprWidthContext(idealWidth, contextWidth)
-
-    }
-
-    private fun propagateMaxContext(ctx: ParseTree, children: List<ParseTree>): Int? {
-        val op1ContextWidth = widthContexts[children[0]]?.contextWidth ?: return null
-        val op2ContextWidth = widthContexts[children[1]]?.contextWidth ?: return null
-        val contextWidth = op1ContextWidth.coerceAtLeast(op2ContextWidth)
-        updateWidthContextsChildrenContext(ctx, contextWidth)
-        return contextWidth
-    }
 
     fun addOrSubtract(ctx: T, children: List<T>, operator: String) {
         if (canSkip(ctx)) return
@@ -544,28 +445,24 @@ data class ExprEvaluator<T : ParserRuleContext>(
 
         val width = op1.bits.size.coerceAtLeast(op2.bits.size) + 1
 
-        val widthContext = widthContexts.getOrPut(ctx) {
-            ExprWidthContext(width, propagateMaxContext(ctx, children) ?: width)
-        }
-
         val signed = op1.signed && op2.signed
 
         exprs[ctx] = when {
             !op1.isNumber() || !op2.isNumber() -> BitListValue(
-                size = widthContext.width,
+                size = width,
                 signed = signed
             ) { Bit.Bx }.asExpr(type)
 
             operator == "+" -> BitListValue(
                 bigInt = op1.toBigInt()!!.add(op2.toBigInt()),
                 signed = signed,
-                width = widthContext.width
+                width = width
             ).asExpr(type)
 
             else -> BitListValue(
                 bigInt = op1.toBigInt()!!.subtract(op2.toBigInt()),
                 signed = signed,
-                width = widthContext.width
+                width = width
             ).asExpr(type)
         }
     }
@@ -616,10 +513,7 @@ data class ExprEvaluator<T : ParserRuleContext>(
         op2Width as DefinedSimpleWidth
 
         exprs[ctx] = (if (multOp) {
-            val idealWidth = op1Width.size + op2Width.size
-            val width = widthContexts.getOrPut(ctx) {
-                ExprWidthContext(idealWidth, propagateMaxContext(ctx, children) ?: idealWidth)
-            }.width
+            val width = op1Width.size + op2Width.size
             if (!op1.isNumber() || !op2.isNumber())
                 BitListValue(size = width, signed = signed) { Bit.Bx }
             else
@@ -635,10 +529,7 @@ data class ExprEvaluator<T : ParserRuleContext>(
                 context.reportWarning(children[1], WarningStrings.DIVIDE_NOT_POW_2)
             }
 
-            val idealWidth = op1.size
-            val width = widthContexts.getOrPut(ctx) {
-                ExprWidthContext(idealWidth, propagateMaxContext(ctx, children) ?: idealWidth)
-            }.width
+            val width = op1.size
             if (!op1.isNumber() || !op2.isNumber() || op2BigInt == BigInteger.ZERO) {
                 BitListValue(size = width, signed = signed) { Bit.Bx }
             } else {
@@ -666,6 +557,8 @@ data class ExprEvaluator<T : ParserRuleContext>(
         if (!context.checkSimpleWidth(children) {
                 context.reportError(it, ErrorStrings.SHIFT_MULTI_DIM)
             }) return
+
+        val valueWidth = value.width as SimpleWidth
 
         if (shift is UndefinedValue) {
             exprs[ctx] = UndefinedValue(UndefinedSimpleWidth()).asExpr(type)
@@ -715,16 +608,12 @@ data class ExprEvaluator<T : ParserRuleContext>(
             }
         }
 
-        val width = widthContexts.getOrPut(ctx) {
-            val valueWidth = widthContexts[children[0]] ?: error("Missing width for shift value!")
-            val contextWidth = valueWidth.contextWidth
-            val idealWidth = when (operator) {
-                ">>", ">>>" -> valueWidth.idealWidth - shiftAmount
-                "<<", "<<<" -> valueWidth.idealWidth + shiftAmount
-                else -> error("Invalid operator")
-            }
-            ExprWidthContext(idealWidth, contextWidth)
-        }.width
+        val valueWidthBits = (valueWidth as DefinedSimpleWidth).size
+        val width = when (operator) {
+            ">>", ">>>" -> valueWidthBits
+            "<<", "<<<" -> valueWidthBits + shiftAmount
+            else -> error("Invalid operator")
+        }
 
         exprs[ctx] = when (operator) {
             ">>" -> value ushr shiftAmount
@@ -757,8 +646,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
             return
         }
 
-        setIdealAsMax(ctx, children)
-
         exprs[ctx] = when (operator) {
             "&" -> op1 and op2
             "|" -> op1 or op2
@@ -777,10 +664,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
 
         val expr = exprs[child ?: return] ?: return
         val value = expr.value
-
-        val width = widthContexts.getOrPut(ctx) {
-            ExprWidthContext(1, 1, isFixed = true)
-        }
 
         if (value is UndefinedValue) {
             exprs[ctx] = UndefinedValue(BitWidth).asExpr(expr.type)
@@ -818,10 +701,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
 
         val op1 = exprs[children[0]]?.value ?: return
         val op2 = exprs[children[1]]?.value ?: return
-
-        val width = widthContexts.getOrPut(ctx) {
-            ExprWidthContext(1, 1, isFixed = true)
-        }
 
         when (operator) {
             "<", ">", "<=", ">=" -> {
@@ -879,10 +758,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
         val op1 = exprs[children[0]]?.value ?: return
         val op2 = exprs[children[1]]?.value ?: return
 
-        val width = widthContexts.getOrPut(ctx) {
-            ExprWidthContext(1, 1, isFixed = true)
-        }
-
         if (op1 is UndefinedValue || op2 is UndefinedValue) {
             exprs[ctx] = UndefinedValue(BitWidth).asExpr(type)
             return
@@ -923,12 +798,6 @@ data class ExprEvaluator<T : ParserRuleContext>(
             }) return
 
         val width = op1Width.mergeWith(op2Width)
-
-        widthContexts[children[0]]?.apply {
-            isFixed = true
-        }
-
-        setIdealAsMax(ctx, children.subList(1, 3))
 
         if (cond is UndefinedValue) {
             exprs[ctx] = UndefinedValue(width).asExpr(type)
@@ -975,9 +844,5 @@ data class ExprEvaluator<T : ParserRuleContext>(
                 else -> error("[BUG] Impossible case if compatible!")
             }
         }
-    }
-
-    fun resolveWidthContext(exprCtx: T): ExprWidthContext? {
-        return widthContexts[exprCtx]
     }
 }

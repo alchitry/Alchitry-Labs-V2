@@ -37,17 +37,8 @@ class ExprParser(
     fun withContext(context: LucidExprContext) = ExprParser(context, evaluator)
 
     fun resolve(ctx: ExprContext): Expr? = evaluator.resolve(ctx)
-    fun resolveWidthContext(exprCtx: ExprContext): ExprWidthContext? = evaluator.resolveWidthContext(exprCtx)
     fun resolveDependencies(ctx: ExprContext): Set<Signal>? = evaluator.resolveDependencies(ctx)
     fun getContextState(ctx: RuleContext): ContextState = evaluator.getContextState(ctx)
-
-    override suspend fun exitAlwaysAssign(ctx: AlwaysAssignContext) {
-        val signalCtx = ctx.assignStat()?.signal() ?: return
-        val assigneeWidth = context.resolve(signalCtx)?.width ?: return
-        if (assigneeWidth.isSimple()) {
-            evaluator.setAssigneeWidth(ctx.assignStat()?.expr() ?: return, assigneeWidth.bitCount ?: return)
-        }
-    }
 
     override suspend fun enterBlock(ctx: BlockContext) {
         when (val parent = ctx.getParent()) {

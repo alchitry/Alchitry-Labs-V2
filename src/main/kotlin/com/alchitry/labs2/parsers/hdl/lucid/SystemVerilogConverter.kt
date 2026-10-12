@@ -1160,16 +1160,22 @@ class SystemVerilogConverter(
             return
         val operator = ctx.getChild(0).requireNotNull(ctx).text
         val expr = ctx.expr().requireNotNull(ctx)
+        val exprWidth = context.resolve(ctx)?.value?.width
         ctx.verilog = buildString {
             if (operator == "~") {
-                append($$"(($bits(")
-                append(expr.verilog)
-                append("))'(")
+                if (exprWidth is DefinedSimpleWidth) {
+                    append(exprWidth.size)
+                    append("'(")
+                } else {
+                    append($$"$bits(")
+                    append(expr.verilog)
+                    append(")'(")
+                }
             }
             append(operator)
             append(expr.verilog)
             if (operator == "~") {
-                append("))")
+                append(")")
             }
         }
     }
@@ -1239,8 +1245,12 @@ class SystemVerilogConverter(
     override fun exitExprShift(ctx: LucidParser.ExprShiftContext) {
         val op = ExprParser.getOperator(ctx)
         val expr = ctx.expr()
+        val exprWidth = context.resolve(ctx)?.value?.width
+
         val width = if (op == "<<" || op == "<<<") {
-            buildString {
+            if (exprWidth is DefinedSimpleWidth) {
+                exprWidth.size.toString()
+            } else buildString {
                 append($$"($bits(")
                 append(expr[0].verilog)
                 append(")+")
@@ -1258,18 +1268,16 @@ class SystemVerilogConverter(
     }
 
     override fun exitExprAddSub(ctx: LucidParser.ExprAddSubContext) {
-        val expr = ctx.expr()
-
-        val width = buildString {
-            append($$"(($bits(")
-            append(expr[0].verilog)
-            append($$") > $bits(")
-            append(expr[1].verilog)
-            append($$") ? $bits(")
-            append(expr[0].verilog)
-            append($$") : $bits(")
-            append(expr[1].verilog)
-            append(")) + 1)")
+        val exprWidth = context.resolve(ctx)?.value?.width
+        val width = if (exprWidth is DefinedSimpleWidth) {
+            exprWidth.size.toString()
+        } else {
+            val expr = ctx.expr()
+            val w0 = context.resolve(expr[0])?.value?.width
+            val w1 = context.resolve(expr[1])?.value?.width
+            val s0 = if (w0?.isResolvable() == true) w0.verilogBits() else $$"$bits($${expr[0].verilog})"
+            val s1 = if (w1?.isResolvable() == true) w1.verilogBits() else $$"$bits($${expr[1].verilog})"
+            "(($s0 > $s1 ? $s0 : $s1) + 1)"
         }
         basic2OpExpr(ctx, ctx.expr(), width)
     }

@@ -1308,4 +1308,18 @@ internal class ExprParserTests {
             value
         )
     }
+
+    @Test
+    fun testNegateConstMatchesInt() = runBlocking {
+        val test = SimpleLucidTester("-9")
+        val expr = test.parser.expr().also { test.context.walk(it) }
+
+        assert(test.hasNoIssues)
+
+        val value = test.context.resolve(expr)
+        assertEquals(
+            -9,
+            (value?.value as? SimpleValue)?.toBigInt()?.toInt()
+        )
+    }
 }

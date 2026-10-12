@@ -313,6 +313,7 @@ class LucidVerilogExprTests {
         assertLucidMatchesVerilog("a + b", sigA, sigB)
         assertLucidMatchesVerilog("a + a4", sigA, sigA4)
         assertLucidMatchesVerilog("a4 + a", sigA4, sigA)
+        assertLucidMatchesVerilog("a4 + b4", sigA4, sigB4)
         assertLucidMatchesVerilog("a - b", sigA, sigB)
         assertLucidMatchesVerilog("a - a4", sigA, sigA4)
         assertLucidMatchesVerilog("a * b", sigA, sigB)
