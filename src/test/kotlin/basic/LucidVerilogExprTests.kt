@@ -1,6 +1,9 @@
 package basic
 
+import com.alchitry.labs2.parsers.ParseTreeMultiWalker
 import com.alchitry.labs2.parsers.hdl.ExprType
+import com.alchitry.labs2.parsers.hdl.lucid.SystemVerilogConverter
+import com.alchitry.labs2.parsers.hdl.lucid.parsers.ParseStage
 import com.alchitry.labs2.parsers.hdl.lucid.toVerilog
 import com.alchitry.labs2.parsers.hdl.types.Signal
 import com.alchitry.labs2.parsers.hdl.types.SignalDirection
@@ -749,12 +752,13 @@ class LucidVerilogExprTests {
         vararg signals: Signal,
         extraVerilogContext: String = ""
     ) = runBlocking {
+        val lucidWidthExprString = $$"$width($$lucidExpr)"
         val concreteResolver = if (signals.isEmpty()) null else TestSignalResolver(*signals)
-        val expectedTester = SimpleLucidTester(lucidExpr, localSignalResolver = concreteResolver)
+        val expectedTester = SimpleLucidTester(lucidWidthExprString, localSignalResolver = concreteResolver)
         val expectedExprCtx = expectedTester.parser.expr()
 
         if (expectedTester.parser.tokenStream.LA(1) != com.alchitry.labs2.parsers.grammar.LucidParser.Tokens.EOF) {
-            error("Errors resolving expected Lucid expression \"$lucidExpr\":\nUnparsed trailing tokens remaining")
+            error("Errors resolving expected Lucid expression \"$lucidWidthExprString\":\nUnparsed trailing tokens remaining")
         }
 
         expectedTester.context.walk(expectedExprCtx)
@@ -763,14 +767,11 @@ class LucidVerilogExprTests {
             val errors =
                 expectedTester.context.notationCollector.getAllErrors()
                     .joinToString("\n") { it.message ?: it.toString() }
-            error("Errors resolving expected Lucid expression \"$lucidExpr\":\n$errors")
+            error("Errors resolving expected Lucid expression \"$lucidWidthExprString\":\n$errors")
         }
 
         val expectedLucidValue = expectedTester.context.expr.resolve(expectedExprCtx)?.value
-            ?: error("No value resolved for expected Lucid expression \"$lucidExpr\"")
-
-        val expectedWidth = expectedLucidValue.width.bitCount
-            ?: error("Expected Lucid value for \"$lucidExpr\" has no bit count: $expectedLucidValue")
+            ?: error("No value resolved for expected Lucid expression \"$lucidWidthExprString\"")
 
         val unknownSignals = signals.map { sig ->
             Signal(
@@ -782,13 +783,12 @@ class LucidVerilogExprTests {
             )
         }.toTypedArray()
 
-        val widthLucidExpr = $$"$width($$lucidExpr)"
         val resolver = if (unknownSignals.isEmpty()) null else TestSignalResolver(*unknownSignals)
-        val tester = SimpleLucidTester(widthLucidExpr, localSignalResolver = resolver)
+        val tester = SimpleLucidTester(lucidWidthExprString, localSignalResolver = resolver)
         val exprCtx = tester.parser.expr()
 
         if (tester.parser.tokenStream.LA(1) != com.alchitry.labs2.parsers.grammar.LucidParser.Tokens.EOF) {
-            error("Errors resolving Lucid expression \"$widthLucidExpr\":\nUnparsed trailing tokens remaining")
+            error("Errors resolving Lucid expression \"$lucidWidthExprString\":\nUnparsed trailing tokens remaining")
         }
 
         tester.context.walk(exprCtx)
@@ -796,29 +796,13 @@ class LucidVerilogExprTests {
         if (tester.context.notationCollector.hasErrors) {
             val errors =
                 tester.context.notationCollector.getAllErrors().joinToString("\n") { it.message ?: it.toString() }
-            error("Errors resolving Lucid expression \"$widthLucidExpr\":\n$errors")
+            error("Errors resolving Lucid expression \"$lucidWidthExprString\":\n$errors")
         }
 
         val lucidValue = tester.context.expr.resolve(exprCtx)?.value
-            ?: error("No value resolved for Lucid expression \"$widthLucidExpr\"")
+            ?: error("No value resolved for Lucid expression \"$lucidWidthExprString\"")
 
-        when (lucidValue) {
-            is UndefinedValue -> assertEquals(
-                UndefinedSimpleWidth(),
-                lucidValue.width,
-                "Expected UndefinedValue with UndefinedSimpleWidth for Lucid expression \"$widthLucidExpr\""
-            )
-
-            is SimpleValue -> assertEquals(
-                expectedWidth,
-                lucidValue.toBigInt()?.toInt(),
-                "Lucid value mismatch for Lucid expression \"$widthLucidExpr\""
-            )
-
-            else -> error("Unexpected Lucid value type: $lucidValue")
-        }
-
-        val verilogExpr = convertLucidExprToVerilog(widthLucidExpr, resolver)
+        val verilogExpr = convertLucidExprToVerilog(lucidWidthExprString, resolver)
 
         val svContext = buildString {
             if (extraVerilogContext.isNotBlank()) {
@@ -836,13 +820,10 @@ class LucidVerilogExprTests {
 
         val verilogValue = evalVerilogExpr(verilogExpr, svContext)
 
-        val actualWidth = (verilogValue as? SimpleValue)?.toBigInt()?.toInt()
-            ?: error("Verilog expression \"$verilogExpr\" did not evaluate to a simple numeric value, got: $verilogValue")
-
         assertEquals(
-            expectedWidth,
-            actualWidth,
-            "Width mismatch for Lucid expr: \"$widthLucidExpr\" -> Verilog: \"$verilogExpr\""
+            normalizeValue(expectedLucidValue),
+            normalizeValue(verilogValue),
+            "Width mismatch for Lucid expr: \"$lucidWidthExprString\" -> Verilog: \"$verilogExpr\""
         )
     }
 
@@ -947,5 +928,230 @@ class LucidVerilogExprTests {
         assertKnownExprWidthMatchesVerilog("((PARAM_A & 8h0F) << 4) | ((PARAM_A & 8hF0) >> 4)", paramA)
         assertKnownExprWidthMatchesVerilog("(PARAM_A + PARAM_B) ^ 9h1FF", paramA, paramB)
         assertKnownExprWidthMatchesVerilog("(PARAM_A + PARAM_B) * PARAM_C", paramA, paramB, paramC)
+    }
+
+    private fun assertResolvableExprWidthMatchesVerilog(
+        paramExpr: String,
+        paramSignals: List<Signal>,
+        signalName: String = "PARAM_SIG",
+        extraVerilogContext: String = ""
+    ) = runBlocking {
+        val lucidWidthExprString = "\$width($signalName)"
+
+        // 1. Create and resolve parameter expression context
+        val paramResolver = if (paramSignals.isEmpty()) null else TestSignalResolver(*paramSignals.toTypedArray())
+        val paramTester = SimpleLucidTester(paramExpr, localSignalResolver = paramResolver)
+        val paramCtx = paramTester.parser.expr()
+
+        if (paramTester.parser.tokenStream.LA(1) != com.alchitry.labs2.parsers.grammar.LucidParser.Tokens.EOF) {
+            error("Errors resolving parameter expression \"$paramExpr\":\nUnparsed trailing tokens remaining")
+        }
+
+        paramTester.context.walk(paramCtx)
+
+        if (paramTester.context.notationCollector.hasErrors) {
+            val errors =
+                paramTester.context.notationCollector.getAllErrors().joinToString("\n") { it.message ?: it.toString() }
+            error("Errors resolving parameter expression \"$paramExpr\":\n$errors")
+        }
+
+        val expectedWidthValue = paramTester.context.expr.resolve(paramCtx)?.value
+            ?: error("No value resolved for parameter expression \"$paramExpr\"")
+        val expectedWidthInt = (expectedWidthValue as SimpleValue).toBigInt()?.toInt()
+            ?: error("Parameter value is not a number: $expectedWidthValue")
+        val expectedValue = BitListValue(expectedWidthInt, signed = false)
+
+        val paramConverter = SystemVerilogConverter(paramTester.context)
+        ParseTreeMultiWalker.walk(
+            listOf(paramTester.context.expr, paramTester.context.signal, paramConverter),
+            paramCtx,
+            ParseStage.Convert.filter,
+            ignoreSkip = true
+        )
+        val paramVerilog = paramConverter.verilog[paramCtx]
+            ?: error("Failed to generate Verilog for parameter context \"$paramExpr\"")
+
+        // 2. Set up resolvable signal with ResolvableSimpleWidth
+        val resolvableWidth = ResolvableSimpleWidth(paramCtx)
+        val resolvableSignal = Signal(
+            signalName,
+            SignalDirection.Both,
+            null,
+            UndefinedValue(resolvableWidth),
+            ExprType.Fixed
+        )
+
+        val resolver = TestSignalResolver(resolvableSignal, *paramSignals.toTypedArray())
+        val tester = SimpleLucidTester(lucidWidthExprString, localSignalResolver = resolver)
+        val exprCtx = tester.parser.expr()
+
+        if (tester.parser.tokenStream.LA(1) != com.alchitry.labs2.parsers.grammar.LucidParser.Tokens.EOF) {
+            error("Errors resolving Lucid expression \"$lucidWidthExprString\":\nUnparsed trailing tokens remaining")
+        }
+
+        tester.context.walk(exprCtx)
+
+        if (tester.context.notationCollector.hasErrors) {
+            val errors =
+                tester.context.notationCollector.getAllErrors().joinToString("\n") { it.message ?: it.toString() }
+            error("Errors resolving Lucid expression \"$lucidWidthExprString\":\n$errors")
+        }
+
+        // Convert to SystemVerilog
+        val converter = SystemVerilogConverter(tester.context)
+        converter.verilog[paramCtx] = paramVerilog
+
+        ParseTreeMultiWalker.walk(
+            listOf(tester.context.expr, tester.context.signal, converter),
+            exprCtx,
+            ParseStage.Convert.filter,
+            ignoreSkip = true
+        )
+
+        val verilogExpr = converter.verilog[exprCtx]
+            ?: error("Failed to generate Verilog for Lucid expression \"$lucidWidthExprString\"")
+
+        // Assert that the generated Verilog used the resolvable parameter width rather than fallback $bits
+        assert(verilogExpr.contains("($paramVerilog)")) {
+            "Expected verilog expression \"$verilogExpr\" to contain resolvable width \"($paramVerilog)\""
+        }
+
+        val svContext = buildString {
+            if (extraVerilogContext.isNotBlank()) {
+                appendLine(extraVerilogContext)
+            }
+            for (sig in paramSignals) {
+                val sigVal = sig.read(null)
+                val isSigned = (sigVal as? BitListValue)?.signed == true
+                val width: Int = sig.width.bitCount ?: 1
+                val signedStr = if (isSigned) "signed " else ""
+                val verilogVal = sigVal.toVerilog()
+                appendLine("    localparam $signedStr[${width - 1}:0] ${sig.name} = $verilogVal;")
+            }
+            appendLine("    localparam [$paramVerilog - 1:0] $signalName = '0;")
+        }
+
+        val verilogValue = evalVerilogExpr(verilogExpr, svContext)
+
+        assertEquals(
+            normalizeValue(expectedValue),
+            normalizeValue(verilogValue),
+            "Width mismatch for Lucid expr: \"$lucidWidthExprString\" -> Verilog: \"$verilogExpr\""
+        )
+    }
+
+    private fun assertDefinedExprWidthMatchesVerilog(
+        width: Int,
+        signalName: String = "DEFINED_SIG",
+        extraVerilogContext: String = ""
+    ) = runBlocking {
+        val lucidWidthExprString = "\$width($signalName)"
+
+        val definedWidth = DefinedSimpleWidth(width)
+        val definedSignal = Signal(
+            signalName,
+            SignalDirection.Both,
+            null,
+            UndefinedValue(definedWidth),
+            ExprType.Fixed
+        )
+
+        val resolver = TestSignalResolver(definedSignal)
+        val tester = SimpleLucidTester(lucidWidthExprString, localSignalResolver = resolver)
+        val exprCtx = tester.parser.expr()
+
+        if (tester.parser.tokenStream.LA(1) != com.alchitry.labs2.parsers.grammar.LucidParser.Tokens.EOF) {
+            error("Errors resolving Lucid expression \"$lucidWidthExprString\":\nUnparsed trailing tokens remaining")
+        }
+
+        tester.context.walk(exprCtx)
+
+        if (tester.context.notationCollector.hasErrors) {
+            val errors =
+                tester.context.notationCollector.getAllErrors().joinToString("\n") { it.message ?: it.toString() }
+            error("Errors resolving Lucid expression \"$lucidWidthExprString\":\n$errors")
+        }
+
+        val converter = SystemVerilogConverter(tester.context)
+        ParseTreeMultiWalker.walk(
+            listOf(tester.context.expr, tester.context.signal, converter),
+            exprCtx,
+            ParseStage.Convert.filter,
+            ignoreSkip = true
+        )
+
+        val verilogExpr = converter.verilog[exprCtx]
+            ?: error("Failed to generate Verilog for Lucid expression \"$lucidWidthExprString\"")
+
+        val expectedVerilog = BitListValue(width, signed = false).toVerilog()
+        assertEquals(
+            expectedVerilog,
+            verilogExpr,
+            "Expected literal '$expectedVerilog' for defined signal width but got: $verilogExpr"
+        )
+
+        val svContext = buildString {
+            if (extraVerilogContext.isNotBlank()) {
+                appendLine(extraVerilogContext)
+            }
+            appendLine("    localparam [${width - 1}:0] $signalName = '0;")
+        }
+
+        val verilogValue = evalVerilogExpr(verilogExpr, svContext)
+        val expectedValue = BitListValue(width, signed = false)
+
+        assertEquals(
+            normalizeValue(expectedValue),
+            normalizeValue(verilogValue),
+            "Width mismatch for Lucid expr: \"$lucidWidthExprString\" -> Verilog: \"$verilogExpr\""
+        )
+    }
+
+    @Test
+    fun testResolvableWidthExpressions() {
+        val paramA = Signal(
+            "PARAM_A",
+            SignalDirection.Both,
+            null,
+            BitListValue("1000", 2, width = 4, signed = false), // 8
+            ExprType.Constant
+        )
+        val paramB = Signal(
+            "PARAM_B",
+            SignalDirection.Both,
+            null,
+            BitListValue("0100", 2, width = 4, signed = false), // 4
+            ExprType.Constant
+        )
+        val paramC = Signal(
+            "PARAM_C",
+            SignalDirection.Both,
+            null,
+            BitListValue("0010", 2, width = 4, signed = false), // 2
+            ExprType.Constant
+        )
+
+        // Single parameter widths
+        assertResolvableExprWidthMatchesVerilog("PARAM_A", listOf(paramA))
+        assertResolvableExprWidthMatchesVerilog("PARAM_B", listOf(paramB))
+        assertResolvableExprWidthMatchesVerilog("PARAM_C", listOf(paramC))
+
+        // Arithmetic parameter expressions
+        assertResolvableExprWidthMatchesVerilog("PARAM_A + PARAM_B", listOf(paramA, paramB))
+        assertResolvableExprWidthMatchesVerilog("PARAM_A - PARAM_B", listOf(paramA, paramB))
+        assertResolvableExprWidthMatchesVerilog("PARAM_A * PARAM_C", listOf(paramA, paramC))
+        assertResolvableExprWidthMatchesVerilog("PARAM_A / PARAM_C", listOf(paramA, paramC))
+        assertResolvableExprWidthMatchesVerilog("(PARAM_A + PARAM_B) * PARAM_C", listOf(paramA, paramB, paramC))
+    }
+
+    @Test
+    fun testDefinedWidthExpressions() {
+        assertDefinedExprWidthMatchesVerilog(1)
+        assertDefinedExprWidthMatchesVerilog(4)
+        assertDefinedExprWidthMatchesVerilog(8)
+        assertDefinedExprWidthMatchesVerilog(12)
+        assertDefinedExprWidthMatchesVerilog(16)
+        assertDefinedExprWidthMatchesVerilog(32)
+        assertDefinedExprWidthMatchesVerilog(64)
     }
 }

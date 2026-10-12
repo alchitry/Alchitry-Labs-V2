@@ -961,7 +961,7 @@ class SystemVerilogConverter(
 
         val sigVerilog = "$writePrefix$verilogName${selection?.selection ?: ""}"
 
-        return if (signed && !write) "\$signed($sigVerilog)" else sigVerilog
+        return if (signed && !write) $$"$signed($$sigVerilog)" else sigVerilog
     }
 
     override fun exitSignal(ctx: LucidParser.SignalContext) {
@@ -1241,13 +1241,13 @@ class SystemVerilogConverter(
         val expr = ctx.expr()
         val width = if (op == "<<" || op == "<<<") {
             buildString {
-                append("(\$bits(")
+                append($$"($bits(")
                 append(expr[0].verilog)
                 append(")+")
                 if (context.resolve(expr[1])?.type?.fixed == true) {
                     append(expr[1].verilog)
                 } else {
-                    append("(2**\$bits(")
+                    append($$"(2**$bits(")
                     append(expr[1].verilog)
                     append(")-1)")
                 }
@@ -1261,13 +1261,13 @@ class SystemVerilogConverter(
         val expr = ctx.expr()
 
         val width = buildString {
-            append("((\$bits(")
+            append($$"(($bits(")
             append(expr[0].verilog)
-            append(") > \$bits(")
+            append($$") > $bits(")
             append(expr[1].verilog)
-            append(") ? \$bits(")
+            append($$") ? $bits(")
             append(expr[0].verilog)
-            append(") : \$bits(")
+            append($$") : $bits(")
             append(expr[1].verilog)
             append(")) + 1)")
         }
@@ -1330,13 +1330,19 @@ class SystemVerilogConverter(
                 functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
 
             Function.SIGNED ->
-                "\$signed(${
-                    functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
+                $$"$signed($${
+                    functionCtx.functionExpr(0)?.expr()?.verilog ?: error(
+                        ctx,
+                        "Missing value for ${function.label}!"
+                    )
                 })"
 
             Function.UNSIGNED ->
-                "\$unsigned(${
-                    functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
+                $$"$unsigned($${
+                    functionCtx.functionExpr(0)?.expr()?.verilog ?: error(
+                        ctx,
+                        "Missing value for ${function.label}!"
+                    )
                 })"
 
             Function.POWER -> {
@@ -1364,8 +1370,11 @@ class SystemVerilogConverter(
             }
 
             Function.CLOG2 -> {
-                "\$clog2(${
-                    functionCtx.functionExpr(0)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
+                $$"$clog2($${
+                    functionCtx.functionExpr(0)?.expr()?.verilog ?: error(
+                        ctx,
+                        "Missing value for ${function.label}!"
+                    )
                 })"
             }
 
@@ -1381,8 +1390,8 @@ class SystemVerilogConverter(
                     functionCtx.functionExpr(2)?.expr()?.verilog ?: error(ctx, "Missing value for ${function.label}!")
                 when (function) {
                     Function.FIXEDPOINT -> "($width)'(int'(($real) * (2 ** ($fractional))))"
-                    Function.CFIXEDPOINT -> "($width)'(int'(\$ceil(($real) * (2 ** ($fractional)))))"
-                    Function.FFIXEDPOINT -> "($width)'(\$rtoi(($real) * (2 ** ($fractional))))"
+                    Function.CFIXEDPOINT -> $$"($$width)'(int'($ceil(($$real) * (2 ** ($$fractional)))))"
+                    Function.FFIXEDPOINT -> $$"($$width)'($rtoi(($$real) * (2 ** ($$fractional))))"
                     else -> error("Impossible case!")
                 }
             }
@@ -1401,7 +1410,7 @@ class SystemVerilogConverter(
                                     is DefinedArrayWidth -> width.size
                                     is BitListWidth -> width.size
                                     BitWidth -> 1
-                                    else -> error(ctx, "\$reverse() used on a non-array signal!")
+                                    else -> error(ctx, $$"$reverse() used on a non-array signal!")
                                 } - 1
                                 listOf(SignalSelector.Bits(0..msb, SelectionContext.Constant))
                             }
@@ -1410,7 +1419,7 @@ class SystemVerilogConverter(
                         }
                         val lastSelector = selection.last()
                         if (lastSelector !is SignalSelector.Bits)
-                            error(ctx, "\$reverse() used on a non-array signal!")
+                            error(ctx, $$"$reverse() used on a non-array signal!")
 
                         lastSelector.range.joinToString(separator = ", ", prefix = "{", postfix = "}") { index ->
                             val newSelector = selection.toMutableList().apply {
@@ -1447,7 +1456,7 @@ class SystemVerilogConverter(
                 }
                 val expr = functionCtx.functionExpr(0)?.expr()?.let { context.resolve(it) }
                 val width = expr?.value?.width
-                    ?: error("Failed to get width of value passed to \$width().")
+                    ?: error($$"Failed to get width of value passed to $width().")
                 val exprCtx = functionCtx.functionExpr(0)?.expr()
                 val exprVerilog = exprCtx?.verilog ?: error(ctx, "Missing value for ${function.label}!")
                 when (width) {
@@ -1471,14 +1480,14 @@ class SystemVerilogConverter(
                                             append(currentWidth.context.verilog)
                                         }
 
-                                        else -> error("Unsupported type $currentWidth in evaluation of \$width()!")
+                                        else -> error($$"Unsupported type $$currentWidth in evaluation of $width()!")
                                     }
                                     break
                                 }
                                 when (currentWidth) {
                                     is SimpleWidth -> break
                                     is ArrayWidth -> currentWidth = currentWidth.next
-                                    else -> error("Unsupported type $currentWidth in evaluation of \$width()!")
+                                    else -> error($$"Unsupported type $$currentWidth in evaluation of $width()!")
                                 }
                                 currentDim++
                             }
@@ -1493,9 +1502,12 @@ class SystemVerilogConverter(
                             val signal = context.resolve(exprCtx.signal() ?: error("Missing signal context!"))
                             val signalWidth = signal?.width
                             when {
-                                expr.type != ExprType.Constant -> fallbackString
-                                signalWidth?.isDefined() == true -> "${signalWidth.bitCount!!}"
-                                signalWidth?.isResolvable() == true -> signalWidth.verilogBits()
+                                signalWidth?.isDefined() == true -> BitListValue(
+                                    signalWidth.bitCount!!,
+                                    signed = false
+                                ).toVerilog()
+
+                                signalWidth?.isResolvable() == true -> $$"$unsigned(($clog2($bits($$exprVerilog)+1))'($${signalWidth.verilogBits()}))"
                                 else -> fallbackString
                             }
                         } else {
@@ -1503,7 +1515,7 @@ class SystemVerilogConverter(
                         }
                     }
 
-                    is StructWidth -> error("\$width() used on a struct!")
+                    is StructWidth -> error($$"$width() used on a struct!")
                 }
 
             }
@@ -1543,9 +1555,9 @@ class SystemVerilogConverter(
         val expr = ctx.expr()
         val width = if (op == "*") {
             buildString {
-                append("(\$bits(")
+                append($$"($bits(")
                 append(expr[0].verilog)
-                append(")+\$bits(")
+                append($$")+$bits(")
                 append(expr[1].verilog)
                 append("))")
             }
