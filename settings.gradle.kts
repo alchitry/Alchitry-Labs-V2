@@ -15,5 +15,11 @@ pluginManagement {
 //    }
 //}
 
+sourceControl {
+    gitRepository(java.net.URI.create("https://github.com/alchitry/Alchitry-Interface.git")) {
+        producesModule("com.alchitry:Alchitry-Interface")
+    }
+}
+
 rootProject.name = "Alchitry Labs V2"
 

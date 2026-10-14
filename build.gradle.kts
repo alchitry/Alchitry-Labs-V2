@@ -39,6 +39,33 @@ repositories {
     maven("https://jitpack.io")
 }
 
+val platformConfigs = setOf("linuxAmd64", "linuxAarch64", "macAmd64", "macAarch64", "windowsAmd64", "windowsAarch64")
+
+// Lazily resolve runtimeClasspath once and map every resolved module (group:name) to its chosen version
+val resolvedRuntimeVersions by lazy {
+    configurations["runtimeClasspath"]
+        .resolvedConfiguration
+        .resolvedArtifacts
+        .associate { artifact ->
+            val id = artifact.moduleVersion.id
+            "${id.group}:${id.name}" to id.version
+        }
+}
+
+configurations.matching { it.name in platformConfigs }.configureEach {
+    resolutionStrategy {
+        eachDependency {
+            val key = "${requested.group}:${requested.name}"
+            val runtimeVersion = resolvedRuntimeVersions[key]
+
+            if (runtimeVersion != null) {
+                useVersion(runtimeVersion)
+                because("Automatically align with runtimeClasspath version")
+            }
+        }
+    }
+}
+
 dependencies {
     implementation("com.github.alchitry.antlr-kotlin:antlr-kotlin-runtime:$antlrKotlinVersion")
     implementation("org.apache.commons:commons-text:1.15.0")
@@ -56,17 +83,17 @@ dependencies {
     implementation("io.github.vinceglb:filekit-dialogs:0.16.0")
     implementation("org.slf4j:slf4j-nop:2.0.20")
 
-    implementation("com.github.alchitry:Alchitry-Interface:1b9356720d")
+    implementation("com.alchitry:Alchitry-Interface:1.0.0")
 
-    linuxAmd64(compose.desktop.linux_x64)
-    linuxAarch64(compose.desktop.linux_arm64)
-    macAmd64(compose.desktop.macos_x64)
-    macAarch64(compose.desktop.macos_arm64)
-    windowsAmd64(compose.desktop.windows_x64)
-    windowsAarch64(compose.desktop.windows_arm64)
+    linuxAmd64("org.jetbrains.compose.desktop:desktop-jvm-linux-x64:1.12.1")
+    linuxAarch64("org.jetbrains.compose.desktop:desktop-jvm-linux-arm64:1.12.1")
+    macAmd64("org.jetbrains.compose.desktop:desktop-jvm-macos-x64:1.12.1")
+    macAarch64("org.jetbrains.compose.desktop:desktop-jvm-macos-arm64:1.12.1")
+    windowsAmd64("org.jetbrains.compose.desktop:desktop-jvm-windows-x64:1.12.1")
+    windowsAarch64("org.jetbrains.compose.desktop:desktop-jvm-windows-arm64:1.12.1")
 
     implementation("org.jetbrains.compose.material3:material3-desktop:1.9.0")
-    implementation(compose.components.resources)
+    implementation("org.jetbrains.compose.components:components-resources:1.12.1")
 
 
     testImplementation(kotlin("test"))
