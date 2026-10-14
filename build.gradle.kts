@@ -39,34 +39,29 @@ repositories {
     maven("https://jitpack.io")
 }
 
-val platformConfigs = setOf("linuxAmd64", "linuxAarch64", "macAmd64", "macAarch64", "windowsAmd64", "windowsAarch64")
-
-// Lazily resolve runtimeClasspath once and map every resolved module (group:name) to its chosen version
-val resolvedRuntimeVersions by lazy {
-    configurations["runtimeClasspath"]
-        .resolvedConfiguration
-        .resolvedArtifacts
-        .associate { artifact ->
-            val id = artifact.moduleVersion.id
-            "${id.group}:${id.name}" to id.version
-        }
-}
-
-configurations.matching { it.name in platformConfigs }.configureEach {
-    resolutionStrategy {
-        eachDependency {
-            val key = "${requested.group}:${requested.name}"
-            val runtimeVersion = resolvedRuntimeVersions[key]
-
-            if (runtimeVersion != null) {
-                useVersion(runtimeVersion)
-                because("Automatically align with runtimeClasspath version")
-            }
+configurations.configureEach {
+    if (isCanBeResolved || isCanBeConsumed) {
+        attributes {
+            attribute(Attribute.of("ui", String::class.java), "awt")
         }
     }
 }
 
 dependencies {
+    val serializationBom = enforcedPlatform("org.jetbrains.kotlinx:kotlinx-serialization-bom:1.11.0")
+    val coroutinesBom = enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.11.0")
+    val kotlinBom = enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:2.4.21")
+
+    implementation(serializationBom)
+    implementation(coroutinesBom)
+    implementation(kotlinBom)
+
+    listOf("linuxAmd64", "linuxAarch64", "macAmd64", "macAarch64", "windowsAmd64", "windowsAarch64").forEach { name ->
+        add(name, serializationBom)
+        add(name, coroutinesBom)
+        add(name, kotlinBom)
+    }
+
     implementation("com.github.alchitry.antlr-kotlin:antlr-kotlin-runtime:$antlrKotlinVersion")
     implementation("org.apache.commons:commons-text:1.15.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
@@ -97,14 +92,6 @@ dependencies {
 
 
     testImplementation(kotlin("test"))
-}
-
-configurations.configureEach {
-    if (isCanBeResolved || isCanBeConsumed) {
-        attributes {
-            attribute(Attribute.of("ui", String::class.java), "awt")
-        }
-    }
 }
 
 tasks.test {
