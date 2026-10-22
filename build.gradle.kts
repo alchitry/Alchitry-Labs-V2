@@ -39,7 +39,13 @@ repositories {
     maven("https://jitpack.io")
 }
 
+val platforms = listOf("linuxAmd64", "linuxAarch64", "macAmd64", "macAarch64", "windowsAmd64", "windowsAarch64")
+
 configurations.configureEach {
+    if (name in platforms) {
+        shouldResolveConsistentlyWith(configurations.named("runtimeClasspath").get())
+    }
+
     if (isCanBeResolved || isCanBeConsumed) {
         attributes {
             attribute(Attribute.of("ui", String::class.java), "awt")
@@ -48,18 +54,19 @@ configurations.configureEach {
 }
 
 dependencies {
-    val serializationBom = enforcedPlatform("org.jetbrains.kotlinx:kotlinx-serialization-bom:1.11.0")
-    val coroutinesBom = enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.11.0")
-    val kotlinBom = enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:2.4.21")
+    // This is required to make Conveyor use these specific versions during the build
+    val requiredVersions = listOf(
+        "org.jetbrains.kotlinx:kotlinx-serialization-bom:1.11.0",
+        "org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.11.0",
+        "org.jetbrains.kotlin:kotlin-bom:2.4.21"
+    ).map { enforcedPlatform(it) }
 
-    implementation(serializationBom)
-    implementation(coroutinesBom)
-    implementation(kotlinBom)
+    requiredVersions.forEach {
+        implementation(it)
 
-    listOf("linuxAmd64", "linuxAarch64", "macAmd64", "macAarch64", "windowsAmd64", "windowsAarch64").forEach { name ->
-        add(name, serializationBom)
-        add(name, coroutinesBom)
-        add(name, kotlinBom)
+        platforms.forEach { name ->
+            add(name, it)
+        }
     }
 
     implementation("com.github.alchitry.antlr-kotlin:antlr-kotlin-runtime:$antlrKotlinVersion")
