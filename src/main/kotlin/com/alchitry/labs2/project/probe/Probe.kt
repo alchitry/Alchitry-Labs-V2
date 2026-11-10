@@ -103,7 +103,7 @@ class Probe(private val project: Project) {
         val debugModules = mutableListOf<Pair<SourceFile, LucidParser.SourceContext>>()
 
         val probeComponentName = when (project.data.board) {
-            Board.AlchitryAu, Board.AlchitryAuPlus, Board.AlchitryAuV2, Board.AlchitryPtV2 -> "xilinx_probe"
+            Board.AlchitryAu, Board.AlchitryAuPlus, Board.AlchitryAuV2T35, Board.AlchitryAuV2T50, Board.AlchitryPtV2T100, Board.AlchitryPtV2T200 -> "xilinx_probe"
             Board.AlchitryCu, Board.AlchitryCuV2 -> error("Cu is currently unsupported!")
         }
 

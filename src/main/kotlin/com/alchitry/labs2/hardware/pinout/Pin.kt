@@ -15,10 +15,11 @@ enum class BoardSide {
 val Board.pinConverters: List<PinConverter>
     get() = when (this) {
         Board.AlchitryAu, Board.AlchitryAuPlus -> listOf(AuPin)
-        Board.AlchitryAuV2 -> listOf(AuV2Pin, AuV2toV1Pin)
+        Board.AlchitryAuV2T35, Board.AlchitryAuV2T50 -> listOf(AuV2Pin, AuV2toV1Pin)
         Board.AlchitryCu -> listOf(CuPin)
         Board.AlchitryCuV2 -> listOf(CuV2Pin, CuV2toV1Pin)
-        Board.AlchitryPtV2 -> listOf(PtV2TopPin, PtV2BottomPin, PtV2AlphaTopPin)
+        Board.AlchitryPtV2T100 -> listOf(PtV2TopPin, PtV2BottomPin, PtV2AlphaTopPin)
+        Board.AlchitryPtV2T200 -> listOf(PtV2TopPin, PtV2BottomPin)
     }
 
 interface PinConverter {

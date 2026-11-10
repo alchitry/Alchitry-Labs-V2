@@ -13,15 +13,13 @@ import com.alchitry.labs2.project.builders.projectBuilder
 import com.alchitry.labs2.project.files.ConstraintFile
 
 data class NativeConstraint(
-    val name: String,
-    val language: ConstraintLang,
-    val contents: String
+    val name: String, val language: ConstraintLang, val contents: String
 )
 
 
 val Board.acfConverter: AcfConverter
     get() = when (this) {
-        Board.AlchitryAu, Board.AlchitryAuPlus, Board.AlchitryAuV2, Board.AlchitryPtV2 -> XilinxConverter
+        Board.AlchitryAu, Board.AlchitryAuPlus, Board.AlchitryAuV2T35, Board.AlchitryAuV2T50, Board.AlchitryPtV2T100, Board.AlchitryPtV2T200 -> XilinxConverter
         Board.AlchitryCu, Board.AlchitryCuV2 -> LatticeConverter
     }
 
@@ -39,9 +37,7 @@ sealed interface AcfConverter {
     }
 
     suspend fun convert(
-        name: String,
-        board: Board,
-        constraints: List<Constraint>
+        name: String, board: Board, constraints: List<Constraint>
     ): List<NativeConstraint>
 }
 

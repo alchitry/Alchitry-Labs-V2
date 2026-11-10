@@ -48,7 +48,7 @@ object ComponentLibrary {
 
             notationManager.assertNoErrors()
 
-            val projectContext = ProjectContext(notationManager, Board.AlchitryAuV2)
+            val projectContext = ProjectContext(notationManager, Board.AlchitryAuV2T35)
 
             trees.forEach {
                 when (it.first.language) {

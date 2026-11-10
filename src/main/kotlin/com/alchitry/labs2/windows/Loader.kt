@@ -26,10 +26,7 @@ import com.alchitry.labs2.ui.components.WindowDecoration
 import com.alchitry.labs2.ui.dialogs.openFileDialog
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.ui.toolbars.LoaderToolbar
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.serialization.json.JsonPrimitive
 import me.tongfei.progressbar.ProgressBarConsumer
 import me.tongfei.progressbar.ProgressBarRenderer
@@ -155,6 +152,9 @@ fun ApplicationScope.loaderWindow() {
                                         }
                                     } catch (e: Exception) {
                                         Log.println(e.message, AlchitryColors.current.Error)
+                                        if (e is CancellationException) {
+                                            ensureActive()
+                                        }
                                     } finally {
                                         busy = false
                                     }

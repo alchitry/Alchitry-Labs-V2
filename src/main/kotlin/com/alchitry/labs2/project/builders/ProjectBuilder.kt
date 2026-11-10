@@ -21,7 +21,7 @@ import kotlin.time.Duration.Companion.seconds
 
 val Board.projectBuilder: ProjectBuilder
     get() = when (this) {
-        Board.AlchitryAu, Board.AlchitryAuPlus, Board.AlchitryAuV2, Board.AlchitryPtV2 -> VivadoBuilder
+        Board.AlchitryAu, Board.AlchitryAuPlus, Board.AlchitryAuV2T35, Board.AlchitryAuV2T50, Board.AlchitryPtV2T100, Board.AlchitryPtV2T200 -> VivadoBuilder
         Board.AlchitryCu, Board.AlchitryCuV2 -> if (Settings.useIceCube) IceCubeBuilder else IceStormBuilder
     }
 

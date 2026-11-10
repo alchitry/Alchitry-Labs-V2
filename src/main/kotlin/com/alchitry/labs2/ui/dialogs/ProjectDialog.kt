@@ -95,7 +95,9 @@ fun NewProjectDialog(visible: Boolean, onClose: () -> Unit) {
 
         var projectName by remember { mutableStateOf("") }
         var workspace by remember { mutableStateOf(Locations.workspace) }
-        var board by remember { mutableStateOf(Settings.boardType?.let { Board.fromName(it) } ?: Board.AlchitryAuV2) }
+        var board by remember {
+            mutableStateOf(Settings.boardType?.let { Board.fromName(it) } ?: Board.AlchitryAuV2T35)
+        }
         var template by remember { mutableStateOf<ProjectTemplate?>(null) }
         val workspaceFile by derivedStateOf { File(workspace) }
         val scope = rememberCoroutineScope()

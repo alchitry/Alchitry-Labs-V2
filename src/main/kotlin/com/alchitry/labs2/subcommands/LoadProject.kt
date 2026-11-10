@@ -11,6 +11,8 @@ import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.Subcommand
 import kotlinx.cli.default
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.JsonPrimitive
 import java.io.File
@@ -32,7 +34,7 @@ class LoadProject : Subcommand("load", "Load a project or .bin file") {
         ArgType.Choice(
             Board.All,
             toVariant = { Board.fromName(it) ?: error("Unknown board name $it!") },
-            variantToString = { it.alias }
+            variantToString = { it.alias.first() }
         ),
         "board",
         "b",
@@ -89,6 +91,9 @@ class LoadProject : Subcommand("load", "Load a project or .bin file") {
                         Log.printlnError("No board of type ${boardType.name} found!")
                     }
                 } catch (e: Exception) {
+                    if (e is CancellationException) {
+                        ensureActive()
+                    }
                     Log.printlnError("Error: ${e.message}")
                 }
             }
@@ -119,6 +124,9 @@ class LoadProject : Subcommand("load", "Load a project or .bin file") {
                         Log.printlnError("No board of type ${boardType.name} found!")
                     }
                 } catch (e: Exception) {
+                    if (e is CancellationException) {
+                        ensureActive()
+                    }
                     Log.printlnError("Error: ${e.message}")
                 }
             }
