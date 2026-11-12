@@ -80,8 +80,8 @@ dependencies {
     implementation("org.jdom:jdom2:2.0.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.6")
     implementation("me.tongfei:progressbar:0.10.2")
-    implementation("org.jline:jline:4.4.8")
-    implementation("org.fusesource.jansi:jansi:2.4.3")
+    implementation("org.jline:jline:4.6.0")
+    implementation("org.jline:jansi:4.6.0")
     implementation("io.github.vinceglb:filekit-dialogs:0.16.0")
     implementation("org.slf4j:slf4j-nop:2.0.20")
 

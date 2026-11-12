@@ -16,8 +16,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.serialization.json.JsonPrimitive
 import me.tongfei.progressbar.*
-import org.fusesource.jansi.Ansi.ansi
-import org.fusesource.jansi.AnsiConsole
+import org.jline.jansi.Ansi.ansi
+import org.jline.jansi.AnsiConsole
 import java.io.FileDescriptor
 import java.io.FileOutputStream
 import java.io.PrintStream
