@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -149,7 +149,7 @@ class Console(onKeyEvent: (KeyEvent) -> Boolean = { false }) {
     @Composable
     fun show() {
         state.subscribe()
-        state.clipboardManager = LocalClipboardManager.current
+        state.clipboard = LocalClipboard.current
 
         Column {
             state.searchAndReplaceState.drawBar()

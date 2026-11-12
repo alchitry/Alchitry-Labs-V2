@@ -20,7 +20,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.MeasureResult
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
@@ -37,7 +37,7 @@ import java.awt.Cursor
 fun CodeEditor(
     state: CodeEditorState
 ) {
-    state.textFieldState.clipboardManager = LocalClipboardManager.current
+    state.textFieldState.clipboard = LocalClipboard.current
 
     CopyReadOnlyDialog(state.showReadOnlyDialog, state.file) { state.showReadOnlyDialog = false }
 

@@ -5,6 +5,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -17,9 +18,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFontFamilyResolver
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.LineHeightStyle
@@ -46,15 +45,18 @@ import com.alchitry.labs2.ui.isAwtTypedEvent
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.ui.theme.AlchitryTypography
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 import org.antlr.v4.kotlinruntime.tree.TerminalNode
 import java.awt.EventQueue
+import java.awt.datatransfer.DataFlavor
+import java.awt.datatransfer.StringSelection
+import java.awt.datatransfer.UnsupportedFlavorException
+import java.io.IOException
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
@@ -141,7 +143,8 @@ class AlchitryTextFieldState(
     private val undoManager = UndoManager(this, selectionManager)
 
     val styler = CodeStyler(this)
-    var clipboardManager: ClipboardManager? = null
+    var clipboard: Clipboard? = null
+    private val clipboardMutex = Mutex()
     private val pendingText = Channel<AnnotatedString>(Channel.UNLIMITED)
 
     init {
@@ -783,22 +786,53 @@ class AlchitryTextFieldState(
         return TextPosition(line + 1, 0)
     }
 
+    @OptIn(ExperimentalComposeUiApi::class)
     fun copy() {
         if (!selectionManager.hasSelection) {
             selectionManager.selectCurrentLine()
         }
-        clipboardManager?.setText(selectionManager.getSelectedText())
+        val selectedText = selectionManager.getSelectedText().text
+        val clipboard = clipboard ?: return
+        (uiScope ?: scope).launch {
+            clipboardMutex.withLock {
+                clipboard.setClipEntry(ClipEntry(StringSelection(selectedText)))
+            }
+        }
     }
 
     fun paste() {
-        clipboardManager?.getText()?.let {
-            replaceText(it.text)
+        val clipboard = clipboard ?: return
+        (uiScope ?: scope).launch {
+            clipboardMutex.withLock {
+                readClipboardText(clipboard)?.let(::replaceText)
+            }
         }
     }
 
     fun cut() {
         copy()
         deleteIfSelectedOr { }
+    }
+
+    @OptIn(ExperimentalComposeUiApi::class)
+    private suspend fun readClipboardText(clipboard: Clipboard): String? {
+        return try {
+            val transferable = clipboard.getClipEntry()?.asAwtTransferable ?: return null
+            if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                withContext(Dispatchers.IO) {
+                    transferable.getTransferData(DataFlavor.stringFlavor)
+                } as? String
+            } else {
+                null
+            }
+        } catch (_: UnsupportedFlavorException) {
+            null
+        } catch (_: IllegalStateException) {
+            currentCoroutineContext().ensureActive()
+            null
+        } catch (_: IOException) {
+            null
+        }
     }
 
     fun adjustIndents() {

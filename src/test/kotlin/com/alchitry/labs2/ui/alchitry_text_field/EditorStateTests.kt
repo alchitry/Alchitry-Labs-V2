@@ -1,6 +1,10 @@
 package com.alchitry.labs2.ui.alchitry_text_field
 
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.Clipboard
+import androidx.compose.ui.platform.asAwtTransferable
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
@@ -9,7 +13,14 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import java.awt.EventQueue
+import java.awt.datatransfer.DataFlavor
+import java.awt.datatransfer.StringSelection
+import java.awt.datatransfer.Transferable
+import java.awt.datatransfer.UnsupportedFlavorException
 import kotlin.test.*
 
 internal class EditorStateTests {
@@ -60,9 +71,58 @@ internal class EditorStateTests {
         scrollState.updateBounds(maxValue = 120, viewportSize = 60)
         val adapter = EditorScrollbarAdapter(scrollState)
 
-        assertEquals(120f, adapter.maxScrollOffset(containerSize = 60))
-        adapter.scrollTo(containerSize = 60, scrollOffset = 120f)
+        assertEquals(0.0, adapter.scrollOffset)
+        assertEquals(180.0, adapter.contentSize)
+        assertEquals(60.0, adapter.viewportSize)
+        adapter.scrollTo(120.0)
         assertEquals(120, scrollState.value)
+        assertEquals(120.0, adapter.scrollOffset)
+
+        scrollState.updateBounds(maxValue = Int.MAX_VALUE, viewportSize = Int.MAX_VALUE)
+        assertEquals(Int.MAX_VALUE.toDouble() * 2.0, adapter.contentSize)
+        assertEquals(Int.MAX_VALUE.toDouble(), adapter.viewportSize)
+    }
+
+    @Test
+    fun clipboardCopyAndCutKeepTheSelectedText() {
+        val state = AlchitryTextFieldState()
+        val clipboard = TestClipboard()
+        state.clipboard = clipboard
+        state.uiScope = CoroutineScope(Dispatchers.Unconfined)
+
+        EventQueue.invokeAndWait {
+            state.setText("hello")
+            state.selectionManager.selectRange(TextPosition(0, 1)..<TextPosition(0, 4))
+            state.copy()
+
+            assertEquals("ell", clipboard.text())
+            state.cut()
+            assertEquals("hlo", state.getText())
+            assertEquals("ell", clipboard.text())
+        }
+    }
+
+    @Test
+    fun clipboardPasteUsesTextAndIgnoresEmptyClipboard() {
+        val state = AlchitryTextFieldState()
+        val clipboard = TestClipboard()
+        state.clipboard = clipboard
+        state.uiScope = CoroutineScope(Dispatchers.Unconfined)
+
+        EventQueue.invokeAndWait {
+            state.setText("abc")
+            state.selectionManager.selectRange(TextPosition(0, 1)..<TextPosition(0, 2))
+            state.paste()
+            assertEquals("abc", state.getText())
+
+            clipboard.setNonText()
+            state.paste()
+            assertEquals("abc", state.getText())
+
+            clipboard.setText("X")
+            state.paste()
+            assertEquals("aXc", state.getText())
+        }
     }
 
     @Test
@@ -107,4 +167,31 @@ internal class EditorStateTests {
         meta: Boolean = false,
         isMac: Boolean = false
     ) = EditorKeyMapping.map(key, ctrl, alt, shift, meta, isMac)
+
+    @OptIn(ExperimentalComposeUiApi::class)
+    private class TestClipboard : Clipboard {
+        private var entry: ClipEntry? = null
+
+        override suspend fun getClipEntry(): ClipEntry? = entry
+
+        override suspend fun setClipEntry(clipEntry: ClipEntry?) {
+            entry = clipEntry
+        }
+
+        fun setText(text: String) {
+            entry = ClipEntry(StringSelection(text))
+        }
+
+        fun setNonText() {
+            entry = ClipEntry(object : Transferable {
+                override fun getTransferDataFlavors() = emptyArray<DataFlavor>()
+
+                override fun isDataFlavorSupported(flavor: DataFlavor?) = false
+
+                override fun getTransferData(flavor: DataFlavor?): Any = throw UnsupportedFlavorException(flavor)
+            })
+        }
+
+        fun text(): String? = entry?.asAwtTransferable?.getTransferData(DataFlavor.stringFlavor) as? String
+    }
 }

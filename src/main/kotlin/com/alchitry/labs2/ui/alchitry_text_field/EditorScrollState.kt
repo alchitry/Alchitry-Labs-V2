@@ -1,10 +1,10 @@
 package com.alchitry.labs2.ui.alchitry_text_field
 
 import androidx.compose.foundation.MutatePriority
-import androidx.compose.foundation.ScrollbarAdapter
 import androidx.compose.foundation.gestures.ScrollScope
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.v2.ScrollbarAdapter
 import androidx.compose.runtime.*
 import kotlin.math.roundToInt
 
@@ -52,12 +52,16 @@ class EditorScrollState(initialValue: Int = 0) : ScrollableState {
 internal class EditorScrollbarAdapter(
     private val scrollState: EditorScrollState
 ) : ScrollbarAdapter {
-    override val scrollOffset: Float
-        get() = scrollState.value.toFloat()
+    override val scrollOffset: Double
+        get() = scrollState.value.toDouble()
 
-    override fun maxScrollOffset(containerSize: Int): Float = scrollState.maxValue.toFloat()
+    override val contentSize: Double
+        get() = scrollState.viewportSize.toDouble() + scrollState.maxValue.toDouble()
 
-    override suspend fun scrollTo(containerSize: Int, scrollOffset: Float) {
+    override val viewportSize: Double
+        get() = scrollState.viewportSize.toDouble()
+
+    override suspend fun scrollTo(scrollOffset: Double) {
         scrollState.scrollTo(scrollOffset.roundToInt())
     }
 }
