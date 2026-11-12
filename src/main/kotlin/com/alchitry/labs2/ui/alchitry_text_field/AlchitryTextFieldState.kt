@@ -1,11 +1,6 @@
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-
 package com.alchitry.labs2.ui.alchitry_text_field
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.text.TextDelegate
-import androidx.compose.foundation.text.platformDefaultKeyMapping
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.*
@@ -25,9 +20,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextPainter
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.*
@@ -112,6 +105,7 @@ class AlchitryTextFieldState(
                 refreshStyling()
             }
         }
+    private var textMeasurer: TextMeasurer? = null
     var uiScope: CoroutineScope? = null
     override val scope = CoroutineScope(Dispatchers.Main)
 
@@ -123,8 +117,8 @@ class AlchitryTextFieldState(
     val searchAndReplaceState = SearchAndReplaceState(this)
     val focusRequester = FocusRequester()
     val lines = SnapshotStateList<AlchitryLineState>()
-    val verticalScrollState = ScrollState(0)
-    val horizontalScrollState = ScrollState(0)
+    val verticalScrollState = EditorScrollState()
+    val horizontalScrollState = EditorScrollState()
     var softWrap by Delegates.observable(false) { _, _, _ -> invalidate() }
     private var invalidator: (() -> Unit)? = null
     val redrawTriggerStates = mutableStateOf(false, neverEqualPolicy())
@@ -287,16 +281,18 @@ class AlchitryTextFieldState(
     @Composable
     internal fun subscribe() {
         val style = rememberAlchitryTextFieldStyle()
+        val textMeasurer = rememberTextMeasurer()
+        this.textMeasurer = textMeasurer
         this.style = style
         this.uiScope = rememberCoroutineScope()
 
-        lineTopOffset = remember(style) {
-            TextDelegate(
+        lineTopOffset = remember(style, textMeasurer) {
+            textMeasurer.measure(
                 text = AnnotatedString("123"),
                 style = style.style,
-                density = style.density,
-                fontFamilyResolver = style.fontFamilyResolver
-            ).layout(Constraints(), LayoutDirection.Ltr, null).size.height * -0.07f
+                constraints = Constraints(),
+                layoutDirection = LayoutDirection.Ltr
+            ).size.height * -0.07f
         }
 
         LaunchedEffect(verticalScrollState.value, horizontalScrollState.value) {
@@ -375,7 +371,7 @@ class AlchitryTextFieldState(
     }
 
     internal fun newLineState(text: AnnotatedString) =
-        AlchitryLineState(text, style?.density, style?.fontFamilyResolver, style?.style).also {
+        AlchitryLineState(text, textMeasurer, style?.style).also {
             it.layout(layoutConstraints)
         }
 
@@ -648,31 +644,24 @@ class AlchitryTextFieldState(
             drawSelection()
         }
         searchAndReplaceState.drawHighlights()
-        drawIntoCanvas { canvas ->
-            canvas.save()
-            var currentY = -verticalScrollState.value
-            val currentX = -horizontalScrollState.value
-            canvas.translate(dx = currentX.toFloat(), dy = currentY.toFloat())
-            var wasVisible = false
-            var lineNumber = 0
-            for (line in lines) {
-                val layout = line.layoutResult ?: continue
-                val margin = lineTopOffset
-                val nextY = currentY + (line.lineHeight ?: 0)
-                val visible = nextY > 0 && currentY < size.height
-                if (visible) {
-                    wasVisible = true
-                    canvas.translate(dx = 0f, dy = margin)
-                    TextPainter.paint(canvas, layout)
-                    canvas.translate(dx = 0f, dy = (line.lineHeight ?: 0).toFloat() - margin)
-                } else {
-                    canvas.translate(dx = 0f, dy = (line.lineHeight ?: 0).toFloat())
-                    if (wasVisible) break
-                }
-                currentY = nextY
-                lineNumber += 1
+        var currentY = -verticalScrollState.value
+        val currentX = -horizontalScrollState.value.toFloat()
+        var wasVisible = false
+        for (line in lines) {
+            val layout = line.layoutResult ?: continue
+            val lineHeight = line.lineHeight ?: 0
+            val nextY = currentY + lineHeight
+            val visible = nextY > 0 && currentY < size.height
+            if (visible) {
+                wasVisible = true
+                drawText(
+                    textLayoutResult = layout,
+                    topLeft = Offset(currentX, currentY + lineTopOffset)
+                )
+            } else if (wasVisible) {
+                break
             }
-            canvas.restore()
+            currentY = nextY
         }
 
         if (!searchAndReplaceState.hasFocus())
@@ -703,15 +692,11 @@ class AlchitryTextFieldState(
         longestLine =
             (lines.maxOfOrNull { it.layoutResult?.size?.width ?: 0 } ?: 0) + with(density) { 20.dp.roundToPx() }
 
-        @Suppress("INVISIBLE_SETTER")
-        verticalScrollState.maxValue =
-            (totalHeight - height + with(density) { EXTRA_VERT_PADDING.roundToPx() }).coerceAtLeast(0)
-        @Suppress("INVISIBLE_SETTER")
-        verticalScrollState.viewportSize = height.coerceAtLeast(0)
-        @Suppress("INVISIBLE_SETTER")
-        horizontalScrollState.maxValue = (longestLine - editorWidth).coerceAtLeast(0)
-        @Suppress("INVISIBLE_SETTER")
-        horizontalScrollState.viewportSize = editorWidth
+        verticalScrollState.updateBounds(
+            (totalHeight - height + with(density) { EXTRA_VERT_PADDING.roundToPx() }).coerceAtLeast(0),
+            height
+        )
+        horizontalScrollState.updateBounds((longestLine - editorWidth).coerceAtLeast(0), editorWidth)
 
         scrollTarget?.let { startScrollToPosition(it) }
         scrollTarget = null
@@ -942,16 +927,12 @@ class AlchitryTextFieldState(
             }
         }
 
-        val commandName = platformDefaultKeyMapping.map(event)?.name
-
         // compose ignores the number-pad enter key so check for it here
-        val command: KeyCommand = commandName?.let { KeyCommand.valueOf(it) } ?: when (event.key.nativeKeyCode) {
-            java.awt.event.KeyEvent.VK_ENTER -> KeyCommand.NEW_LINE
-            java.awt.event.KeyEvent.VK_HOME if event.isCtrlPressed -> KeyCommand.HOME
-            java.awt.event.KeyEvent.VK_END if event.isCtrlPressed -> KeyCommand.END
-            java.awt.event.KeyEvent.VK_BACK_SPACE if event.isShiftPressed -> KeyCommand.DELETE_PREV_CHAR
-            else -> return false
-        }
+        val command = EditorKeyMapping.map(event) ?: EditorKeyMapping.mapNativeFallback(
+            event.key.nativeKeyCode,
+            event.isCtrlPressed,
+            event.isShiftPressed
+        ) ?: return false
         var consumed = true
         var resetAutocomplete = true
         when (command) {

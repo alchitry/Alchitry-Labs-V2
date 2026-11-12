@@ -207,7 +207,7 @@ class Console(onKeyEvent: (KeyEvent) -> Boolean = { false }) {
 
                     }
                     HorizontalScrollbar(
-                        rememberScrollbarAdapter(state.horizontalScrollState),
+                        rememberEditorScrollbarAdapter(state.horizontalScrollState),
                         Modifier.Companion.align(Alignment.Companion.BottomStart).fillMaxWidth()
                             .padding(
                                 bottom = 8.dp,
@@ -217,7 +217,7 @@ class Console(onKeyEvent: (KeyEvent) -> Boolean = { false }) {
                     )
                     if (Settings.consoleScrollBarStyle == Settings.ScrollBarStyle.Minimal) {
                         VerticalScrollbar(
-                            rememberScrollbarAdapter(state.verticalScrollState),
+                            rememberEditorScrollbarAdapter(state.verticalScrollState),
                             Modifier.Companion.align(Alignment.Companion.CenterEnd).fillMaxHeight()
                                 .padding(end = 8.dp, top = 8.dp, bottom = 8.dp)
                         )

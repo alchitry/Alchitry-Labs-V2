@@ -1,6 +1,5 @@
 package com.alchitry.labs2.ui.alchitry_text_field
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -27,8 +26,8 @@ val MINI_TEXT_SCALE = 0.08f
 
 @Composable
 fun ScrollStateMiniScrollBar(
-    verticalScrollState: ScrollState,
-    horizontalScrollState: ScrollState,
+    verticalScrollState: EditorScrollState,
+    horizontalScrollState: EditorScrollState,
     scale: Float,
     lines: SnapshotStateList<AlchitryLineState>,
     modifier: Modifier = Modifier
@@ -62,7 +61,7 @@ fun ScrollStateMiniScrollBar(
 
 @Composable
 fun MiniScrollBar(
-    horizontalScrollState: ScrollState,
+    horizontalScrollState: EditorScrollState,
     scale: Float,
     startPercent: Float,
     visiblePercent: Float,

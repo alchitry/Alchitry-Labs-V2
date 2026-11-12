@@ -230,7 +230,7 @@ fun CodeEditor(
                             }
                         }
                         HorizontalScrollbar(
-                            rememberScrollbarAdapter(state.textFieldState.horizontalScrollState),
+                            rememberEditorScrollbarAdapter(state.textFieldState.horizontalScrollState),
                             Modifier.align(Alignment.BottomStart).fillMaxWidth()
                                 .padding(
                                     bottom = 8.dp,
@@ -241,7 +241,7 @@ fun CodeEditor(
 
                         if (Settings.editorScrollBarStyle == Settings.ScrollBarStyle.Minimal) {
                             VerticalScrollbar(
-                                rememberScrollbarAdapter(state.textFieldState.verticalScrollState),
+                                rememberEditorScrollbarAdapter(state.textFieldState.verticalScrollState),
                                 Modifier.align(Alignment.CenterEnd).fillMaxHeight()
                                     .padding(end = 8.dp, top = 8.dp, bottom = 8.dp)
                             )
