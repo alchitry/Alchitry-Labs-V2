@@ -125,7 +125,6 @@ tasks.withType<KotlinCompile> {
         freeCompilerArgs.add("-opt-in=kotlinx.serialization.ExperimentalSerializationApi")
         freeCompilerArgs.add("-opt-in=androidx.compose.foundation.ExperimentalFoundationApi")
         freeCompilerArgs.add("-opt-in=androidx.compose.material3.ExperimentalMaterial3Api")
-        freeCompilerArgs.add("-Xcontext-parameters")
     }
 }
 
