@@ -55,12 +55,13 @@ import com.alchitry.labs2.ui.theme.AlchitryTypography
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 import org.antlr.v4.kotlinruntime.tree.TerminalNode
 import java.awt.EventQueue
-import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
@@ -147,7 +148,7 @@ class AlchitryTextFieldState(
 
     val styler = CodeStyler(this)
     var clipboardManager: ClipboardManager? = null
-    private val pendingText = ConcurrentLinkedQueue<AnnotatedString>()
+    private val pendingText = Channel<AnnotatedString>(Channel.UNLIMITED)
 
     init {
         lines.add(newLineState(AnnotatedString("")))
@@ -304,13 +305,15 @@ class AlchitryTextFieldState(
         }
 
         LaunchedEffect(Unit) {
-            while (true) {
-                withFrameNanos { // 60Hz or display refresh rate sync
+            while (isActive) {
+                val firstItem = pendingText.receive()
+                withFrameNanos {
                     val builder = AnnotatedString.Builder()
-                    var item = pendingText.poll()
+                    builder.append(firstItem)
+                    var item = pendingText.tryReceive().getOrNull()
                     while (item != null) {
                         builder.append(item)
-                        item = pendingText.poll()
+                        item = pendingText.tryReceive().getOrNull()
                     }
                     if (builder.length != 0) {
                         appendText(builder.toAnnotatedString(), updateCaret = false)
@@ -397,7 +400,7 @@ class AlchitryTextFieldState(
     fun queueAppendText(
         newText: AnnotatedString
     ) {
-        pendingText.add(newText)
+        pendingText.trySend(newText)
     }
 
     fun appendText(newText: AnnotatedString, updateCaret: Boolean = true) {
