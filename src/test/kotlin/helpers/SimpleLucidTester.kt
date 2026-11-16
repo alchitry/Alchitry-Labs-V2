@@ -24,7 +24,7 @@ class SimpleLucidTester(text: String, localSignalResolver: SignalResolver? = nul
             ).also { it.removeErrorListeners() })
     )
 
-    val project = ProjectContext(NotationManager(), Board.AlchitryAuV2)
+    val project = ProjectContext(NotationManager(), Board.AlchitryAuV2T35)
     val sourceFile = SourceFile(FileProvider.DiskFile("test.luc"), true)
     val context = LucidBlockContext(
         project,

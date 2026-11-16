@@ -22,7 +22,7 @@ import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 class ProjectTester(vararg val files: SourceFile) {
     val notationManager = NotationManager()
-    val project = ProjectContext(notationManager, Board.AlchitryAuV2)
+    val project = ProjectContext(notationManager, Board.AlchitryAuV2T35)
 
     suspend fun parseText() = Project.parseAll(files.toList(), notationManager)
         ?: error("Failed to parse all files: ${notationManager.getReport()}")

@@ -40,7 +40,7 @@ class FullBuildTests {
 
     @Test
     fun buildAllAuV2Projects() = runBlocking {
-        buildAllProjectsForBoard(Board.AlchitryAuV2)
+        buildAllProjectsForBoard(Board.AlchitryAuV2T35)
     }
 
     @Test
