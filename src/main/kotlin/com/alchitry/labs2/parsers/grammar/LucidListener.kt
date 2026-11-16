@@ -1323,6 +1323,7 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterGlobalStat(ctx: LucidParser.GlobalStatContext) =
             this@LucidListener.enterGlobalStat(ctx)
+
         override suspend fun exitGlobalStat(ctx: LucidParser.GlobalStatContext) = this@LucidListener.exitGlobalStat(ctx)
 
         override suspend fun enterModule(ctx: LucidParser.ModuleContext) = this@LucidListener.enterModule(ctx)
@@ -1372,6 +1373,7 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterStructType(ctx: LucidParser.StructTypeContext) =
             this@LucidListener.enterStructType(ctx)
+
         override suspend fun exitStructType(ctx: LucidParser.StructTypeContext) = this@LucidListener.exitStructType(ctx)
 
         override suspend fun enterStructMemberConst(ctx: LucidParser.StructMemberConstContext) =
@@ -1388,6 +1390,7 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterModuleBody(ctx: LucidParser.ModuleBodyContext) =
             this@LucidListener.enterModuleBody(ctx)
+
         override suspend fun exitModuleBody(ctx: LucidParser.ModuleBodyContext) = this@LucidListener.exitModuleBody(ctx)
 
         override suspend fun enterStatConst(ctx: LucidParser.StatConstContext) = this@LucidListener.enterStatConst(ctx)
@@ -1410,14 +1413,17 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterStatAssign(ctx: LucidParser.StatAssignContext) =
             this@LucidListener.enterStatAssign(ctx)
+
         override suspend fun exitStatAssign(ctx: LucidParser.StatAssignContext) = this@LucidListener.exitStatAssign(ctx)
 
         override suspend fun enterStatAlways(ctx: LucidParser.StatAlwaysContext) =
             this@LucidListener.enterStatAlways(ctx)
+
         override suspend fun exitStatAlways(ctx: LucidParser.StatAlwaysContext) = this@LucidListener.exitStatAlways(ctx)
 
         override suspend fun enterStatStruct(ctx: LucidParser.StatStructContext) =
             this@LucidListener.enterStatStruct(ctx)
+
         override suspend fun exitStatStruct(ctx: LucidParser.StatStructContext) = this@LucidListener.exitStatStruct(ctx)
 
         override suspend fun enterStatTest(ctx: LucidParser.StatTestContext) = this@LucidListener.enterStatTest(ctx)
@@ -1455,6 +1461,7 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterModuleInst(ctx: LucidParser.ModuleInstContext) =
             this@LucidListener.enterModuleInst(ctx)
+
         override suspend fun exitModuleInst(ctx: LucidParser.ModuleInstContext) = this@LucidListener.exitModuleInst(ctx)
 
         override suspend fun enterInstCons(ctx: LucidParser.InstConsContext) = this@LucidListener.enterInstCons(ctx)
@@ -1465,6 +1472,7 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterConnection(ctx: LucidParser.ConnectionContext) =
             this@LucidListener.enterConnection(ctx)
+
         override suspend fun exitConnection(ctx: LucidParser.ConnectionContext) = this@LucidListener.exitConnection(ctx)
 
         override suspend fun enterStructMember(ctx: LucidParser.StructMemberContext) =
@@ -1511,6 +1519,7 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterAlwaysCase(ctx: LucidParser.AlwaysCaseContext) =
             this@LucidListener.enterAlwaysCase(ctx)
+
         override suspend fun exitAlwaysCase(ctx: LucidParser.AlwaysCaseContext) = this@LucidListener.exitAlwaysCase(ctx)
 
         override suspend fun enterAlwaysIf(ctx: LucidParser.AlwaysIfContext) = this@LucidListener.enterAlwaysIf(ctx)
@@ -1539,10 +1548,12 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterAssignStat(ctx: LucidParser.AssignStatContext) =
             this@LucidListener.enterAssignStat(ctx)
+
         override suspend fun exitAssignStat(ctx: LucidParser.AssignStatContext) = this@LucidListener.exitAssignStat(ctx)
 
         override suspend fun enterArrayIndex(ctx: LucidParser.ArrayIndexContext) =
             this@LucidListener.enterArrayIndex(ctx)
+
         override suspend fun exitArrayIndex(ctx: LucidParser.ArrayIndexContext) = this@LucidListener.exitArrayIndex(ctx)
 
         override suspend fun enterBitSelectorConst(ctx: LucidParser.BitSelectorConstContext) =
@@ -1586,6 +1597,7 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterRepeatStat(ctx: LucidParser.RepeatStatContext) =
             this@LucidListener.enterRepeatStat(ctx)
+
         override suspend fun exitRepeatStat(ctx: LucidParser.RepeatStatContext) = this@LucidListener.exitRepeatStat(ctx)
 
         override suspend fun enterRepeatBlock(ctx: LucidParser.RepeatBlockContext) =
@@ -1617,6 +1629,7 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterExprConcat(ctx: LucidParser.ExprConcatContext) =
             this@LucidListener.enterExprConcat(ctx)
+
         override suspend fun exitExprConcat(ctx: LucidParser.ExprConcatContext) = this@LucidListener.exitExprConcat(ctx)
 
         override suspend fun enterExprReduction(ctx: LucidParser.ExprReductionContext) =
@@ -1633,6 +1646,7 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterExprInvert(ctx: LucidParser.ExprInvertContext) =
             this@LucidListener.enterExprInvert(ctx)
+
         override suspend fun exitExprInvert(ctx: LucidParser.ExprInvertContext) = this@LucidListener.exitExprInvert(ctx)
 
         override suspend fun enterExprLogicalOr(ctx: LucidParser.ExprLogicalOrContext) =
@@ -1643,6 +1657,7 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterExprStruct(ctx: LucidParser.ExprStructContext) =
             this@LucidListener.enterExprStruct(ctx)
+
         override suspend fun exitExprStruct(ctx: LucidParser.ExprStructContext) = this@LucidListener.exitExprStruct(ctx)
 
         override suspend fun enterExprArray(ctx: LucidParser.ExprArrayContext) = this@LucidListener.enterExprArray(ctx)
@@ -1653,10 +1668,12 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterExprAddSub(ctx: LucidParser.ExprAddSubContext) =
             this@LucidListener.enterExprAddSub(ctx)
+
         override suspend fun exitExprAddSub(ctx: LucidParser.ExprAddSubContext) = this@LucidListener.exitExprAddSub(ctx)
 
         override suspend fun enterExprNegate(ctx: LucidParser.ExprNegateContext) =
             this@LucidListener.enterExprNegate(ctx)
+
         override suspend fun exitExprNegate(ctx: LucidParser.ExprNegateContext) = this@LucidListener.exitExprNegate(ctx)
 
         override suspend fun enterExprGroup(ctx: LucidParser.ExprGroupContext) = this@LucidListener.enterExprGroup(ctx)
@@ -1691,6 +1708,7 @@ public interface LucidListener : ParseTreeListener {
 
         override suspend fun enterExprSignal(ctx: LucidParser.ExprSignalContext) =
             this@LucidListener.enterExprSignal(ctx)
+
         override suspend fun exitExprSignal(ctx: LucidParser.ExprSignalContext) = this@LucidListener.exitExprSignal(ctx)
 
         override suspend fun enterExprBitwiseXor(ctx: LucidParser.ExprBitwiseXorContext) =
