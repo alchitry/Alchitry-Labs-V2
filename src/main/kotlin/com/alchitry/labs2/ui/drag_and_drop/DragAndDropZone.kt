@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -279,11 +280,6 @@ private fun <T : Any> DragContent(
         if (dragContent != null)
             Box(
                 Modifier
-                    .fillMaxSize()
-                    .graphicsLayer {
-                        alpha = dragAlpha.value
-                        clip = true
-                    }
                     .offset {
                         (dragPosition.value - position).let {
                             IntOffset(it.x.roundToInt(), it.y.roundToInt()) - (dragSize / 2).let { intSize ->
@@ -293,6 +289,10 @@ private fun <T : Any> DragContent(
                                 )
                             } - IntOffset(dragAnchorOffset.x.roundToInt(), dragAnchorOffset.y.roundToInt())
                         }
+                    }
+                    .zIndex(100f)
+                    .graphicsLayer {
+                        alpha = dragAlpha.value
                     }
             ) {
                 Box(

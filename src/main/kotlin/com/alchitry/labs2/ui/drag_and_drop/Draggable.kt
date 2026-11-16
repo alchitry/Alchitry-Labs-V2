@@ -25,7 +25,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -110,7 +109,6 @@ fun <T> DragAndDropContext<T>.Draggable(
 
     Box(
         Modifier
-            .zIndex(1f)
             .onGloballyPositioned {
                 size = it.size
                 position = it.positionInRoot()
