@@ -2,7 +2,7 @@
     "template": {
         "name": "Hello RAM",
         "description": "Asks for your name and greets you over UART",
-        "boards": ["Au", "Au+", "Cu", "AuV2", "CuV2", "PtV2"],
+        "boards": ["All"],
         "priority": 4
     },
     "project": {

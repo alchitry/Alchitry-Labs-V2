@@ -173,7 +173,9 @@ fun NewProjectDialog(visible: Boolean, onClose: () -> Unit) {
                                 }
                             }
                         },
-                        enabled = projectName.isNotBlank() && workspaceFile.isDirectory && template != null
+                        enabled = projectName.isNotBlank() && workspaceFile.isDirectory && template?.boards?.contains(
+                            board
+                        ) == true
                     ) {
                         Text("Create Project")
                     }
@@ -251,7 +253,7 @@ private fun TemplateSelector(
             value = template?.let { "${it.name} - ${it.description}" } ?: "",
             onValueChange = {},
             label = { Text("Template") },
-            isError = templates.isEmpty(),
+            isError = templates.isEmpty() || template?.boards?.contains(board) != true,
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded)
             },

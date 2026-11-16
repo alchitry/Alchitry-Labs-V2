@@ -2,7 +2,7 @@
     "template": {
         "name": "Base Project",
         "description": "Minimum boilerplate project for Alchitry boards",
-        "boards": ["PtV2", "Au", "Au+", "Cu", "AuV2", "CuV2"],
+        "boards": ["All"],
         "priority": 0
     },
     "project": {

@@ -5,14 +5,89 @@ import com.alchitry.labs2.JarUtils
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.project.library.VivadoIP
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import java.io.File
 import kotlin.io.path.absolutePathString
 
-@Serializable
+object ProjectTemplateSerializer : KSerializer<ProjectTemplate> {
+    @Serializable
+    @SerialName("Template")
+    private data class ProjectTemplateSurrogate(
+        val name: String,
+        val description: String,
+        val boards: List<String>,
+        val priority: Int,
+        val requiresMig: Boolean = false
+    )
+
+    override val descriptor: SerialDescriptor = ProjectTemplateSurrogate.serializer().descriptor
+
+    override fun serialize(encoder: Encoder, value: ProjectTemplate) {
+        val surrogate = ProjectTemplateSurrogate(
+            name = value.name,
+            description = value.description,
+            boards = value.boards.map { it.name },
+            priority = value.priority,
+            requiresMig = value.requiresMig
+        )
+        encoder.encodeSerializableValue(ProjectTemplateSurrogate.serializer(), surrogate)
+    }
+
+    override fun deserialize(decoder: Decoder): ProjectTemplate {
+        val surrogate = decoder.decodeSerializableValue(ProjectTemplateSurrogate.serializer())
+        val boards = surrogate.boards.flatMap { boardName ->
+            when (boardName) {
+                "All" -> Board.All
+                "V2" -> listOf(
+                    Board.AlchitryCuV2,
+                    Board.AlchitryAuV2T35,
+                    Board.AlchitryAuV2T50,
+                    Board.AlchitryPtV2T100,
+                    Board.AlchitryPtV2T200
+                )
+
+                "AuV2" -> listOf(
+                    Board.AlchitryAuV2T35,
+                    Board.AlchitryAuV2T50
+                )
+
+                "PtV2" -> listOf(
+                    Board.AlchitryPtV2T100,
+                    Board.AlchitryPtV2T200
+                )
+
+                "Xilinx" -> listOf(
+                    Board.AlchitryAu,
+                    Board.AlchitryAuPlus,
+                    Board.AlchitryAuV2T35,
+                    Board.AlchitryAuV2T50,
+                    Board.AlchitryPtV2T100,
+                    Board.AlchitryPtV2T200
+                )
+
+                else -> listOf(Board.fromName(boardName) ?: error("Unknown board \"$boardName\""))
+            }
+        }.distinct()
+
+        return ProjectTemplate(
+            name = surrogate.name,
+            description = surrogate.description,
+            boards = boards,
+            priority = surrogate.priority,
+            requiresMig = surrogate.requiresMig
+        )
+    }
+}
+
+@Serializable(with = ProjectTemplateSerializer::class)
 @SerialName("Template")
 data class ProjectTemplate(
     val name: String,
@@ -34,12 +109,14 @@ data class ProjectTemplate(
                             VivadoIP.generateMigCore(Project.current!!)
                         } catch (e: Exception) {
                             Log.error("Failed to add required MIG IP core!", e)
+                            this@launch.ensureActive()
                         }
                     }
                     try {
                         Project.current!!.runInitialTclScript()
                     } catch (e: Exception) {
                         Log.error("Failed to run required TCL scripts!", e)
+                        this@launch.ensureActive()
                     }
                 }
             }
