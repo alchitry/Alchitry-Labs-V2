@@ -51,7 +51,7 @@ internal class EditorStateTests {
     @Test
     fun editorScrollStateClampsOffsetsAndShrinkingContent() {
         val scrollState = EditorScrollState()
-        scrollState.updateBounds(maxValue = 100, viewportSize = 40)
+        scrollState.updateBounds(maxValue = 60, viewportSize = 40)
 
         assertEquals(60f, scrollState.dispatchRawDelta(60f))
         assertEquals(60, scrollState.value)
@@ -97,7 +97,7 @@ internal class EditorStateTests {
 
             assertEquals("ell", clipboard.text())
             state.cut()
-            assertEquals("hlo", state.getText())
+            assertEquals("ho", state.getText())
             assertEquals("ell", clipboard.text())
         }
     }

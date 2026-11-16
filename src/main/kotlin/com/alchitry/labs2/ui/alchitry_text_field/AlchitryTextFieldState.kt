@@ -819,9 +819,7 @@ class AlchitryTextFieldState(
         return try {
             val transferable = clipboard.getClipEntry()?.asAwtTransferable ?: return null
             if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                withContext(Dispatchers.IO) {
-                    transferable.getTransferData(DataFlavor.stringFlavor)
-                } as? String
+                transferable.getTransferData(DataFlavor.stringFlavor) as? String
             } else {
                 null
             }
