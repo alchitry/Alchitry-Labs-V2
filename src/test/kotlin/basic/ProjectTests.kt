@@ -267,4 +267,46 @@ class ProjectTests {
         Project.close()
         tempDir.deleteRecursively()
     }
+
+    @OptIn(ExperimentalPathApi::class)
+    @Test
+    fun diskFileModificationDetection() {
+        val tempDir = Files.createTempDirectory("testDiskFileMod")
+        val filePath = tempDir.resolve("test.luc")
+        filePath.writeText("initial content")
+
+        val diskFile = FileProvider.DiskFile(tempDir.relativize(filePath))
+        val sourceFile = SourceFile(diskFile)
+        val projData = ProjectData1V3(
+            projectName = "TestProj",
+            board = Board.AlchitryAu,
+            sourceFiles = setOf(sourceFile),
+            constraintFiles = emptySet(),
+            ipCores = emptySet()
+        )
+        val project = Project(tempDir, projData)
+        Project.open(project)
+
+        // Initial read
+        assertEquals("initial content", diskFile.readText())
+        assertFalse(diskFile.wasModifiedOnDisk())
+
+        // Writing via diskFile should update cache and not trigger wasModifiedOnDisk
+        diskFile.writeText("updated content")
+        assertFalse(diskFile.wasModifiedOnDisk())
+        assertEquals("updated content", diskFile.readText())
+
+        // External file modification should trigger wasModifiedOnDisk
+        filePath.writeText("externally modified content")
+        // Force timestamp change if on fast filesystem
+        filePath.toFile().setLastModified(System.currentTimeMillis() + 5000)
+        assertTrue(diskFile.wasModifiedOnDisk())
+
+        // Reading the modified content updates the cache and clears wasModifiedOnDisk
+        assertEquals("externally modified content", diskFile.readText())
+        assertFalse(diskFile.wasModifiedOnDisk())
+
+        Project.close()
+        tempDir.deleteRecursively()
+    }
 }

@@ -11,12 +11,14 @@ import com.alchitry.labs2.parsers.notations.LineAction
 import com.alchitry.labs2.parsers.notations.NotationCollector
 import com.alchitry.labs2.project.Languages
 import com.alchitry.labs2.project.Project
-import com.alchitry.labs2.project.files.FileProvider
 import com.alchitry.labs2.project.files.ProjectFile
 import com.alchitry.labs2.ui.alchitry_text_field.autocomplete.Autocomplete
 import com.alchitry.labs2.ui.alchitry_text_field.styles.CodeFormatter
 import com.alchitry.labs2.ui.dialogs.ModifiedOnDiskDialog
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.log10
 import kotlin.time.Duration.Companion.milliseconds
@@ -76,13 +78,16 @@ class CodeEditorState(val file: ProjectFile) {
     }
 
     private suspend fun checkFileModified(): Boolean {
-        val diskFile = file.file as? FileProvider.DiskFile
-        if (diskFile?.wasModifiedOnDisk() == true) {
+        if (file.wasModifiedOnDisk()) {
+            val diskText = file.readText()
+            if (diskText == textFieldState.getText()) {
+                return false
+            }
             val deferred = CompletableDeferred<Boolean?>()
             modifiedDialogDeferred = deferred
             showModifiedOnDiskDialog = true
             if (deferred.await() == true) {
-                textFieldState.setText(file.readText())
+                textFieldState.setText(diskText)
             } else {
                 file.writeText(textFieldState.getText())
             }
@@ -98,22 +103,17 @@ class CodeEditorState(val file: ProjectFile) {
         }
     }
 
-    private fun CoroutineScope.launchSaveJob() {
-        saveJob = launch {
-            delay(100.milliseconds)
-            if (checkFileModified())
-                return@launch
-
-            file.writeText(textFieldState.getText())
-            Project.current?.queueNotationsUpdate()
-        }
-    }
-
     private fun onTextChanged() {
-        if (!file.isReadOnly) scope.launch {
-            file.textTokenizer
-            saveJob?.cancelAndJoin()
-            launchSaveJob()
+        if (!file.isReadOnly) {
+            saveJob?.cancel()
+            saveJob = scope.launch {
+                delay(100.milliseconds)
+                if (checkFileModified())
+                    return@launch
+
+                file.writeText(textFieldState.getText())
+                Project.current?.queueNotationsUpdate()
+            }
         }
     }
 

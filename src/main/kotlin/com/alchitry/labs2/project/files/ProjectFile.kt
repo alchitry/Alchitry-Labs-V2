@@ -35,6 +35,12 @@ sealed class ProjectFile(val file: FileProvider) {
         }
     }
 
+    suspend fun wasModifiedOnDisk(): Boolean = lock.withLock {
+        withContext(Dispatchers.IO) {
+            (file as? FileProvider.DiskFile)?.wasModifiedOnDisk() == true
+        }
+    }
+
     suspend fun toCharStream(): CharStream = CharStreams.fromString(readText(), name)
 
     override fun equals(other: Any?): Boolean {

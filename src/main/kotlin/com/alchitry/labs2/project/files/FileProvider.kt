@@ -63,7 +63,7 @@ sealed class FileProvider {
         private var cachedContents: String? = null
         private var readTime: Long = 0
 
-        override fun readText(): String {
+        override fun readText(): String = synchronized(this) {
             val file = file
             cachedContents?.let {
                 if (readTime == file.lastModified())
@@ -73,11 +73,21 @@ sealed class FileProvider {
             return file.readText().also { cachedContents = it }
         }
 
-        fun wasModifiedOnDisk(): Boolean {
-            return readTime != file.lastModified() && cachedContents != file.readText()
+        fun wasModifiedOnDisk(): Boolean = synchronized(this) {
+            val currentReadTime = readTime
+            val cached = cachedContents ?: return false
+            val currentMtime = file.lastModified()
+            if (currentReadTime == currentMtime) return false
+
+            val diskContent = file.readText()
+            if (cached == diskContent) {
+                readTime = currentMtime
+                return false
+            }
+            return true
         }
 
-        override fun writeText(text: String) {
+        override fun writeText(text: String) = synchronized(this) {
             val file = file
             if (text == cachedContents && readTime == file.lastModified())
                 return
