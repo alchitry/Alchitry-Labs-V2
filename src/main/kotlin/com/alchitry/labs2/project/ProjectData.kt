@@ -27,7 +27,7 @@ sealed interface ProjectData {
             }
 
     companion object {
-        val latestVersion = ProjectData1V3.version
+        val latestVersion get() = ProjectData1V3.version
     }
 }
 

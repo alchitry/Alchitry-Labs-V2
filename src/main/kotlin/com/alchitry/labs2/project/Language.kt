@@ -1,6 +1,5 @@
 package com.alchitry.labs2.project
 
-import com.alchitry.labs2.allSealedObjects
 import com.alchitry.labs2.ui.alchitry_text_field.styles.TextTokenizer
 import com.alchitry.labs2.ui.alchitry_text_field.styles.acf.AcfTokenizer
 import com.alchitry.labs2.ui.alchitry_text_field.styles.lucid.LucidTokenizer
@@ -12,7 +11,16 @@ sealed class Language {
     abstract val tokenizer: TextTokenizer
 
     companion object {
-        val all by lazy { Language::class.allSealedObjects() }
+        val all by lazy {
+            listOf(
+                Languages.Verilog,
+                Languages.Lucid,
+                Languages.ACF,
+                Languages.XDC,
+                Languages.SDC,
+                Languages.PCF
+            )
+        }
         fun fromName(name: String) = all.firstOrNull { it.name == name }
         fun fromExt(ext: String) = all.firstOrNull { it.extension == ext }
     }
@@ -20,7 +28,7 @@ sealed class Language {
 
 sealed class HDL : Language() {
     companion object {
-        val all by lazy { HDL::class.allSealedObjects() }
+        val all by lazy { listOf(Languages.Verilog, Languages.Lucid) }
         fun fromName(name: String) = all.firstOrNull { it.name == name }
         fun fromExt(ext: String) = all.firstOrNull { it.extension == ext }
     }
@@ -28,7 +36,7 @@ sealed class HDL : Language() {
 
 sealed class ConstraintLang : Language() {
     companion object {
-        val all by lazy { ConstraintLang::class.allSealedObjects() }
+        val all by lazy { listOf(Languages.ACF, Languages.XDC, Languages.SDC, Languages.PCF) }
         fun fromName(name: String) = all.firstOrNull { it.name == name }
         fun fromExt(ext: String) = all.firstOrNull { it.extension == ext }
     }

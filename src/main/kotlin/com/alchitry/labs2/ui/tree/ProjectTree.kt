@@ -15,13 +15,11 @@ import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.files.FileProvider
 import com.alchitry.labs2.project.files.IPCore
 import com.alchitry.labs2.project.files.ProjectFile
+import com.alchitry.labs2.project.files.SourceFile
 import com.alchitry.labs2.project.library.VivadoIP
 import com.alchitry.labs2.project.removeFile
 import com.alchitry.labs2.ui.components.ScrollableBox
-import com.alchitry.labs2.ui.dialogs.AcfFileDialog
-import com.alchitry.labs2.ui.dialogs.DeleteCoreDialog
-import com.alchitry.labs2.ui.dialogs.DeleteFileDialog
-import com.alchitry.labs2.ui.dialogs.LucidFileDialog
+import com.alchitry.labs2.ui.dialogs.*
 import com.alchitry.labs2.ui.selection.Selectable
 import com.alchitry.labs2.ui.selection.SingleSelectionContext
 import com.alchitry.labs2.ui.tabs.Workspace
@@ -38,6 +36,9 @@ fun ProjectTree() {
         ScrollableBox {
             var fileToDelete by remember { mutableStateOf<ProjectFile?>(null) }
             DeleteFileDialog(fileToDelete) { fileToDelete = null }
+
+            var fileToRename by remember { mutableStateOf<SourceFile?>(null) }
+            RenameFileDialog(fileToRename) { fileToRename = null }
 
             var coreToDelete by remember { mutableStateOf<IPCore?>(null) }
             DeleteCoreDialog(coreToDelete, scope) { coreToDelete = null }
@@ -84,7 +85,16 @@ fun ProjectTree() {
                                         items = {
                                             when {
                                                 Project.building -> emptyList()
-                                                project.top == file -> emptyList()
+                                                project.top == file -> when {
+                                                    file.file is FileProvider.DiskFile && !file.isReadOnly && !file.isLibFile -> listOf(
+                                                        ContextMenuItem("Rename ${file.name}") {
+                                                            fileToRename = file
+                                                        }
+                                                    )
+
+                                                    else -> emptyList()
+                                                }
+
                                                 file.isLibFile || file.isReadOnly -> listOf(
                                                     ContextMenuItem("Remove ${file.name}") {
                                                         project.removeFile(file, false)
@@ -92,6 +102,9 @@ fun ProjectTree() {
                                                 )
 
                                                 file.file is FileProvider.DiskFile -> listOf(
+                                                    ContextMenuItem("Rename ${file.name}") {
+                                                        fileToRename = file
+                                                    },
                                                     ContextMenuItem("Delete ${file.name}") {
                                                         fileToDelete = file
                                                     }

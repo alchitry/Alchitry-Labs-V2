@@ -21,6 +21,15 @@ import com.alchitry.labs2.ui.tabs.Workspace
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+fun sourceNameValidator(name: String, extension: String): Boolean {
+    return name.matches(Regex("[a-z][a-zA-Z0-9_]*")) &&
+            !Lucid.RESERVED_WORDS.contains(name) &&
+            Project.current?.data?.sourceFiles?.none { f -> f.name == "$name.${extension}" } == true
+}
+
+fun lucidNameValidator(name: String): Boolean = sourceNameValidator(name, Languages.Lucid.extension)
+fun verilogNameValidator(name: String): Boolean = sourceNameValidator(name, Languages.Verilog.extension)
+
 @Composable
 fun LucidFileDialog(visible: Boolean, onClose: () -> Unit) {
     val project by Project.currentFlow.collectAsState()
@@ -29,11 +38,7 @@ fun LucidFileDialog(visible: Boolean, onClose: () -> Unit) {
         onClose,
         "New Lucid Module",
         "Module Name",
-        {
-            it.matches(Regex("[a-z][a-zA-Z0-9_]*")) &&
-                    !Lucid.RESERVED_WORDS.contains(it) &&
-                    project?.data?.sourceFiles?.none { f -> f.name == "$it.${Languages.Lucid.extension}" } == true
-        },
+        ::lucidNameValidator,
         { name ->
             project?.addLucidModule(name)?.also {
                 Workspace.openFile(it)
@@ -50,11 +55,7 @@ fun LucidTestBenchDialog(visible: Boolean, onClose: () -> Unit) {
         onClose,
         "New Lucid Test Bench",
         "Test Bench Name",
-        {
-            it.matches(Regex("[a-z][a-zA-Z0-9_]*")) &&
-                    !Lucid.RESERVED_WORDS.contains(it) &&
-                    project?.data?.sourceFiles?.none { f -> f.name == "$it.${Languages.Lucid.extension}" } == true
-        },
+        ::lucidNameValidator,
         { name ->
             project?.addLucidTestBench(name)?.also {
                 Workspace.openFile(it)
@@ -91,11 +92,7 @@ fun VerilogFileDialog(visible: Boolean, onClose: () -> Unit) {
         onClose,
         "New Verilog Module",
         "Module Name",
-        {
-            it.matches(Regex("[a-z][a-zA-Z0-9_]*")) &&
-                    !Lucid.RESERVED_WORDS.contains(it) &&
-                    project?.data?.sourceFiles?.none { f -> f.name == "$it.${Languages.Verilog.extension}" } == true
-        },
+        ::verilogNameValidator,
         { name ->
             project?.addVerilogModule(name)?.also {
                 Workspace.openFile(it)

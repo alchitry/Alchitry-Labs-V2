@@ -1,8 +1,17 @@
 package com.alchitry.labs2.project
 
 import com.alchitry.labs2.Log
+import com.alchitry.labs2.parsers.basicOffsetProvider
+import com.alchitry.labs2.parsers.grammar.LucidLexer
+import com.alchitry.labs2.parsers.grammar.LucidParser
+import com.alchitry.labs2.parsers.grammar.VerilogLexer
+import com.alchitry.labs2.parsers.grammar.VerilogParser
 import com.alchitry.labs2.project.files.*
+import com.alchitry.labs2.ui.tabs.FileTab
 import com.alchitry.labs2.ui.tabs.Workspace
+import org.antlr.v4.kotlinruntime.CharStreams
+import org.antlr.v4.kotlinruntime.CommonTokenStream
+import java.io.File
 import kotlin.io.path.createParentDirectories
 
 fun Project.removeFile(file: ProjectFile, delete: Boolean) {
@@ -15,6 +24,147 @@ fun Project.removeFile(file: ProjectFile, delete: Boolean) {
     val newProj = copy(data = data.copy(sourceFiles = newSourceFiles, constraintFiles = newConstraintFiles))
     newProj.save()
     Project.open(newProj)
+}
+
+fun Project.renameModule(file: SourceFile, newName: String): SourceFile? {
+    try {
+        val diskFile = file.file as? FileProvider.DiskFile ?: run {
+            Log.error("Cannot rename non-disk file ${file.name}")
+            return null
+        }
+        val oldFile = path.resolve(diskFile.path).toFile()
+        if (!oldFile.exists()) {
+            Log.error("File does not exist: ${oldFile.path}")
+            return null
+        }
+
+        val wasOpen = Workspace.getTabs().any { it is FileTab && it.file == file }
+        Workspace.closeFile(file, save = true)
+
+        val oldContent = oldFile.readText()
+        val newContent = renameModuleInContent(oldContent, newName, file.language, oldFile.nameWithoutExtension)
+
+        val extension = oldFile.extension
+        val newFileName = "$newName.$extension"
+        val newFile = File(oldFile.parentFile, newFileName)
+
+        if (newFile.exists() && newFile.canonicalPath != oldFile.canonicalPath) {
+            Log.error("File ${newFile.name} already exists!")
+            return null
+        }
+
+        newFile.writeText(newContent)
+        if (newFile.canonicalPath != oldFile.canonicalPath) {
+            oldFile.delete()
+        }
+
+        val newRelativePath = path.relativize(newFile.toPath())
+        val newSourceFile = SourceFile(FileProvider.DiskFile(newRelativePath), top = file.top)
+        val newSourceFiles = data.sourceFiles.toMutableSet().apply {
+            remove(file)
+            add(newSourceFile)
+        }
+        val newProj = copy(data = data.copy(sourceFiles = newSourceFiles))
+        newProj.save()
+        Project.open(newProj)
+
+        if (wasOpen) {
+            Workspace.openFile(newSourceFile)
+        }
+
+        return newSourceFile
+    } catch (e: Exception) {
+        Log.showError("Failed to rename module!", e)
+    }
+    return null
+}
+
+fun renameModuleInContent(
+    content: String,
+    newName: String,
+    language: Language,
+    oldModuleName: String? = null
+): String {
+    return when (language) {
+        Languages.Lucid -> renameLucidModuleInContent(content, newName, oldModuleName)
+        Languages.Verilog -> renameVerilogModuleInContent(content, newName, oldModuleName)
+        else -> content
+    }
+}
+
+private fun renameLucidModuleInContent(content: String, newName: String, oldModuleName: String?): String {
+    try {
+        val lexer = LucidLexer(CharStreams.fromString(content, "rename_module")).apply {
+            removeErrorListeners()
+        }
+        val tokenStream = CommonTokenStream(lexer)
+        val parser = LucidParser(tokenStream).apply {
+            removeErrorListeners()
+        }
+        val source = parser.source()
+        val moduleCtx = if (oldModuleName != null) {
+            source.module().firstOrNull { it.name()?.text == oldModuleName } ?: source.module().firstOrNull()
+        } else {
+            source.module().firstOrNull()
+        }
+        val testBenchCtx = if (oldModuleName != null) {
+            source.testBench().firstOrNull { it.name()?.text == oldModuleName } ?: source.testBench().firstOrNull()
+        } else {
+            source.testBench().firstOrNull()
+        }
+        val nameCtx = moduleCtx?.name() ?: testBenchCtx?.name()
+        if (nameCtx != null) {
+            val range = basicOffsetProvider(nameCtx, tokenStream)
+            if (range != null) {
+                return content.replaceRange(range, newName)
+            }
+        }
+    } catch (_: Exception) {
+    }
+
+    val regex = if (oldModuleName != null) {
+        Regex("""\b(module|testbench)\s+($oldModuleName|\w+)""")
+    } else {
+        Regex("""\b(module|testbench)\s+([a-zA-Z0-9_]+)""")
+    }
+    val match = regex.find(content) ?: return content
+    return content.replaceRange(match.range, "${match.groupValues[1]} $newName")
+}
+
+private fun renameVerilogModuleInContent(content: String, newName: String, oldModuleName: String?): String {
+    try {
+        val lexer = VerilogLexer(CharStreams.fromString(content, "rename_module")).apply {
+            removeErrorListeners()
+        }
+        val tokenStream = CommonTokenStream(lexer)
+        val parser = VerilogParser(tokenStream).apply {
+            removeErrorListeners()
+        }
+        val source = parser.source_text()
+        val moduleDeclarations = source.description().mapNotNull { it.module_declaration() }
+        val moduleDecl = if (oldModuleName != null) {
+            moduleDeclarations.firstOrNull { it.module_identifier()?.text == oldModuleName }
+                ?: moduleDeclarations.firstOrNull()
+        } else {
+            moduleDeclarations.firstOrNull()
+        }
+        val idCtx = moduleDecl?.module_identifier()
+        if (idCtx != null) {
+            val range = basicOffsetProvider(idCtx, tokenStream)
+            if (range != null) {
+                return content.replaceRange(range, newName)
+            }
+        }
+    } catch (_: Exception) {
+    }
+
+    val regex = if (oldModuleName != null) {
+        Regex("""\b(module)\s+($oldModuleName|\w+)""")
+    } else {
+        Regex("""\b(module)\s+([a-zA-Z0-9_]+)""")
+    }
+    val match = regex.find(content) ?: return content
+    return content.replaceRange(match.range, "${match.groupValues[1]} $newName")
 }
 
 fun Project.addLucidModule(moduleName: String) = addSourceFile(
