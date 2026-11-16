@@ -131,7 +131,7 @@ data class SignalParser(
             if (children[usedChildren] is BitSelectionContext) {
                 context.reportError(
                     children[usedChildren] as ParserRuleContext,
-                    "${nameCtx.getOrNull(usedChildren)?.text} is not an array."
+                    "${nameCtx.getOrNull(usedChildren - 1)?.text} is not an array."
                 )
                 return
             }
