@@ -152,7 +152,14 @@ fun CodeEditor(
 
                                     val result = if (nextY >= 0 && y < constraints.maxHeight) {
                                         val measured =
-                                            measure(lineNum, Constraints.fixed(state.gutterWidth, lineHeight))
+                                            compose(lineNum).map {
+                                                it.measure(
+                                                    Constraints.fixed(
+                                                        state.gutterWidth,
+                                                        lineHeight
+                                                    )
+                                                )
+                                            }
                                         val yOffset = y + (lineHeight - (measured.maxOfOrNull { it.height } ?: 0)) / 2
                                         yOffset to measured
                                     } else null

@@ -178,7 +178,7 @@ class CodeEditorState(val file: ProjectFile) {
         }
 
         val maxDigits = textFieldState.lines.size.length()
-        val placeables = measure(-maxDigits - 1, Constraints(maxHeight = lineHeight))
+        val placeables = compose(-maxDigits - 1).map { it.measure(Constraints(maxHeight = lineHeight)) }
         gutterWidth = placeables.maxOf { it.width }
         gutterDigits = maxDigits
     }

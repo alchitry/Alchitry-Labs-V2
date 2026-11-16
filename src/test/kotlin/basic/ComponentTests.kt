@@ -58,6 +58,20 @@ class ComponentTests {
             ),
             xilinxProbe.supportedBoards
         )
+
+        val startupe2 = ComponentLibrary.findByPath("Primitives/startupe2.v")
+        assertNotNull(startupe2)
+        assertEquals(
+            setOf(
+                Board.AlchitryAu,
+                Board.AlchitryAuPlus,
+                Board.AlchitryAuV2T35,
+                Board.AlchitryAuV2T50,
+                Board.AlchitryPtV2T100,
+                Board.AlchitryPtV2T200
+            ),
+            startupe2.supportedBoards
+        )
     }
 
     @Test
