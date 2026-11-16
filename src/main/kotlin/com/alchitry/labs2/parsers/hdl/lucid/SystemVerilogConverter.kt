@@ -482,18 +482,15 @@ class SystemVerilogConverter(
                 }
 
                 is VerilogParser.Module_declarationContext -> {
-                    moduleContext.module_parameter_port_list()?.parameter_declaration()
-                        ?.flatMap { it.list_of_param_assignments()?.param_assignment() ?: emptyList() }
-                        ?.forEach inner@{ paramAssignmentContext ->
-                            val name = paramAssignmentContext.parameter_identifier()?.text ?: return@inner
-                            addLocalParam(name) {
-                                var value =
-                                    paramAssignmentContext.constant_mintypmax_expression()?.constant_expression(0)?.text
-                                        ?: error("Failed to get text for parameter expression!")
-                                parameterNameMap.forEach { (name, newName) -> value = value.replace(name, newName) }
-                                value
-                            }
+                    instance.module.parameters.values.forEach { parameter ->
+                        addLocalParam(parameter.name) {
+                            var value = parameter.defaultExpr?.text
+                                ?: parameter.default?.toVerilog()
+                                ?: error("Failed to get text for parameter expression!")
+                            parameterNameMap.forEach { (name, newName) -> value = value.replace(name, newName) }
+                            value
                         }
+                    }
 
                     instance.external.values.forEach { signal ->
                         val width = signal.width
@@ -564,7 +561,9 @@ class SystemVerilogConverter(
                         append(".")
                         append(param.name.sanitize())
                         append("(")
-                        append(parameterNameMap[param.name]!!)
+                        append(
+                            parameterNameMap[param.name] ?: error("Missing parameter \"${param.name}\" from name map!")
+                        )
                         if (instance.paramAssignments[param.name]?.local == true)
                             dim?.forEach { append("[$it]") }
                         append(")")

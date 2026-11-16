@@ -2,6 +2,7 @@ package helpers
 
 import com.alchitry.hardware.Board
 import com.alchitry.labs2.parsers.ProjectContext
+import com.alchitry.labs2.parsers.grammar.LucidParser
 import com.alchitry.labs2.parsers.hdl.ExprEvalMode
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidGlobalContext
 import com.alchitry.labs2.parsers.hdl.lucid.context.LucidModuleTypeContext
@@ -211,7 +212,11 @@ class ProjectTester(vararg val files: SourceFile) {
         add(topInstance)
         return usedModules.mapValues {
             assert(project.notationManager.hasNoErrors) { project.notationManager.getReport() }
-            it.value.module.convertToVerilog(project) ?: error("Missing verilog for ${it.key}")
+            if (it.value.module.context is LucidParser.ModuleContext) {
+                it.value.module.convertToVerilog(project) ?: error("Missing verilog for ${it.key}")
+            } else {
+                it.value.module.sourceFile.readText()
+            }
         }.also { assert(project.notationManager.hasNoErrors) { project.notationManager.getReport() } }
     }
 

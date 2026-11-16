@@ -278,4 +278,35 @@ internal class LucidToVerilogTests {
         val verilog = tester.getVerilog(allowWarnings = true)
         println(verilog)
     }
+
+    @Test
+    fun verilogNonAnsiParameterInstTest() = runBlocking {
+        val tester = ProjectTester(
+            """
+                module alchitry_top (
+                    input clk,
+                    output out[8]
+                ) {
+                    verilog_mod vmod(#WIDTH(8), .clk(clk));
+                    always {
+                        out = vmod.out;
+                    }
+                }
+            """.trimIndent().toSourceFile("alchitry_top.luc"),
+            """
+                module verilog_mod(
+                    clk,
+                    out
+                );
+                    parameter WIDTH = 8;
+                    input clk;
+                    output [WIDTH-1:0] out;
+                endmodule
+            """.trimIndent().toSourceFile("verilog_mod.v")
+        )
+
+        val verilog = tester.getVerilog().getValue("alchitry_top")
+        assert(verilog.contains("localparam _MP_WIDTH_")) { "Expected localparam for WIDTH parameter, got:\n$verilog" }
+        assert(verilog.contains(".WIDTH(_MP_WIDTH_")) { "Expected .WIDTH parameter assignment in instantiation, got:\n$verilog" }
+    }
 }
