@@ -152,7 +152,7 @@ internal fun DropdownMenuContent(
 
 
 @Immutable
-private data class DesktopDropdownMenuPositionProvider(
+internal data class DesktopDropdownMenuPositionProvider(
     val contentOffset: DpOffset,
     val density: Density,
     val direction: DropDirection

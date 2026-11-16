@@ -20,6 +20,7 @@ import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.ProjectCreator
 import com.alchitry.labs2.project.ProjectTemplate
 import com.alchitry.labs2.switchActiveWindow
+import com.alchitry.labs2.ui.components.ScrollableExposedDropdownMenu
 import com.alchitry.labs2.ui.theme.AlchitryColors
 import com.alchitry.labs2.windows.mainWindow
 import kotlinx.coroutines.CompletableDeferred
@@ -201,7 +202,7 @@ private fun BoardSelector(
             },
             modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable).fillMaxWidth()
         )
-        ExposedDropdownMenu(
+        ScrollableExposedDropdownMenu(
             expanded,
             onDismissRequest = { expanded = false },
             Modifier.background(MaterialTheme.colorScheme.surfaceColorAtElevation(1000.dp))
@@ -262,7 +263,7 @@ private fun TemplateSelector(
                 expanded = false
         }
         if (validTemplates.isNotEmpty())
-            ExposedDropdownMenu(
+            ScrollableExposedDropdownMenu(
                 expanded,
                 onDismissRequest = { expanded = false },
                 Modifier.background(MaterialTheme.colorScheme.surfaceColorAtElevation(1000.dp))
