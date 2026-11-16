@@ -4,6 +4,7 @@ import com.alchitry.hardware.Board
 import com.alchitry.labs2.JarUtils
 import com.alchitry.labs2.Log
 import com.alchitry.labs2.project.library.VivadoIP
+import com.alchitry.labs2.resolveAliases
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
@@ -43,39 +44,7 @@ object ProjectTemplateSerializer : KSerializer<ProjectTemplate> {
 
     override fun deserialize(decoder: Decoder): ProjectTemplate {
         val surrogate = decoder.decodeSerializableValue(ProjectTemplateSurrogate.serializer())
-        val boards = surrogate.boards.flatMap { boardName ->
-            when (boardName) {
-                "All" -> Board.All
-                "V2" -> listOf(
-                    Board.AlchitryCuV2,
-                    Board.AlchitryAuV2T35,
-                    Board.AlchitryAuV2T50,
-                    Board.AlchitryPtV2T100,
-                    Board.AlchitryPtV2T200
-                )
-
-                "AuV2" -> listOf(
-                    Board.AlchitryAuV2T35,
-                    Board.AlchitryAuV2T50
-                )
-
-                "PtV2" -> listOf(
-                    Board.AlchitryPtV2T100,
-                    Board.AlchitryPtV2T200
-                )
-
-                "Xilinx" -> listOf(
-                    Board.AlchitryAu,
-                    Board.AlchitryAuPlus,
-                    Board.AlchitryAuV2T35,
-                    Board.AlchitryAuV2T50,
-                    Board.AlchitryPtV2T100,
-                    Board.AlchitryPtV2T200
-                )
-
-                else -> listOf(Board.fromName(boardName) ?: error("Unknown board \"$boardName\""))
-            }
-        }.distinct()
+        val boards = Board.resolveAliases(surrogate.boards)
 
         return ProjectTemplate(
             name = surrogate.name,

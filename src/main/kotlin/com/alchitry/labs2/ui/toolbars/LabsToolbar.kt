@@ -21,6 +21,7 @@ import com.alchitry.labs2.*
 import com.alchitry.labs2.parsers.ProjectMode
 import com.alchitry.labs2.project.Project
 import com.alchitry.labs2.project.library.VivadoIP
+import com.alchitry.labs2.project.setBoard
 import com.alchitry.labs2.ui.components.AlchitryToolbarIcon
 import com.alchitry.labs2.ui.components.ToolbarButton
 import com.alchitry.labs2.ui.dialogs.*
@@ -79,6 +80,18 @@ fun LabsToolbar() {
             MenuItem({ Text("Save Project As...") }, !running) {
                 showSaveProjectAsDialog = true
             }
+
+            RadioMenuItem(
+                label = { Text("Board") },
+                items = Board.All,
+                labeler = { Text(it.name) },
+                selected = project?.data?.board,
+                enabled = project != null && !running,
+                itemEnabled = { project?.canSwitchTo(it) == true }
+            ) {
+                project?.setBoard(it)
+            }
+
             MenuParent(label = { Text("Settings") }) {
                 MenuItem({ Text("Set Vivado Location") }) {
                     scope.launch {

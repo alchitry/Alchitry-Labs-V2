@@ -1,7 +1,7 @@
 /**
     "name": "Xilinx Probe"
     "description": "Xilinx probe that uses JTAG to send captured signals."
-    "supportedBoards" : ["Au", "Au+", "AuV2", "PtV2"]
+    "supportedBoards" : ["Xilinx"]
 **/
 
 module xilinx_probe #(

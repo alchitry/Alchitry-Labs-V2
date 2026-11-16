@@ -1,16 +1,13 @@
 package basic
 
 import com.alchitry.hardware.Board
+import com.alchitry.labs2.Settings
 import com.alchitry.labs2.project.*
-import com.alchitry.labs2.project.files.ConstraintFile
-import com.alchitry.labs2.project.files.FileProvider
-import com.alchitry.labs2.project.files.ProjectFile
+import com.alchitry.labs2.project.files.*
 import kotlinx.serialization.json.Json
 import java.nio.file.Files
 import kotlin.io.path.*
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 class ProjectTests {
     @BeforeTest
@@ -167,5 +164,107 @@ class ProjectTests {
         //println(encoded)
 
         projectDir.deleteRecursively()
+    }
+
+    @OptIn(ExperimentalPathApi::class)
+    @Test
+    fun compatibleBoardsWithoutIpCoresOrRestrictedComponents() {
+        val tempDir = Files.createTempDirectory("testProjCompat1")
+        val projData = ProjectData1V3(
+            projectName = "TestProj",
+            board = Board.AlchitryAu,
+            sourceFiles = emptySet(),
+            constraintFiles = emptySet(),
+            ipCores = emptySet()
+        )
+        val project = Project(tempDir, projData)
+        assertEquals(Board.All, project.compatibleBoards())
+        Board.All.forEach { board ->
+            assertTrue(project.canSwitchTo(board))
+        }
+        tempDir.deleteRecursively()
+    }
+
+    @OptIn(ExperimentalPathApi::class)
+    @Test
+    fun compatibleBoardsWithIpCoresReturnsEmpty() {
+        val tempDir = Files.createTempDirectory("testProjCompat2")
+        val ipCore = IPCore(name = "mig_7series_0", stub = null, files = emptySet())
+        val projData = ProjectData1V3(
+            projectName = "TestProj",
+            board = Board.AlchitryAu,
+            sourceFiles = emptySet(),
+            constraintFiles = emptySet(),
+            ipCores = setOf(ipCore)
+        )
+        val project = Project(tempDir, projData)
+        assertEquals(emptyList(), project.compatibleBoards())
+        Board.All.forEach { board ->
+            assertFalse(project.canSwitchTo(board))
+        }
+        tempDir.deleteRecursively()
+    }
+
+    @OptIn(ExperimentalPathApi::class)
+    @Test
+    fun compatibleBoardsWithComponentsChecksSupportedBoards() {
+        val tempDir = Files.createTempDirectory("testProjCompat3")
+        val comp1 = Component(
+            name = "comp1.luc",
+            componentName = "Comp1",
+            description = "Test component 1",
+            supportedBoards = setOf(Board.AlchitryAu, Board.AlchitryAuPlus, Board.AlchitryCu),
+            categories = listOf("Test"),
+            content = "module comp1 () {}"
+        )
+        val comp2 = Component(
+            name = "comp2.luc",
+            componentName = "Comp2",
+            description = "Test component 2",
+            supportedBoards = setOf(Board.AlchitryAu, Board.AlchitryPtV2T100),
+            categories = listOf("Test"),
+            content = "module comp2 () {}"
+        )
+        val projData = ProjectData1V3(
+            projectName = "TestProj",
+            board = Board.AlchitryAu,
+            sourceFiles = setOf(SourceFile(comp1), SourceFile(comp2)),
+            constraintFiles = emptySet(),
+            ipCores = emptySet()
+        )
+        val project = Project(tempDir, projData)
+        assertEquals(listOf(Board.AlchitryAu), project.compatibleBoards())
+        assertTrue(project.canSwitchTo(Board.AlchitryAu))
+        assertFalse(project.canSwitchTo(Board.AlchitryAuPlus))
+        assertFalse(project.canSwitchTo(Board.AlchitryCu))
+        assertFalse(project.canSwitchTo(Board.AlchitryPtV2T100))
+        tempDir.deleteRecursively()
+    }
+
+    @OptIn(ExperimentalPathApi::class)
+    @Test
+    fun setBoardUpdatesProjectDataAndSaves() {
+        val tempDir = Files.createTempDirectory("testProjSetBoard")
+        val alpFile = tempDir.resolve("TestProj.alp").toFile()
+        val projData = ProjectData1V3(
+            projectName = "TestProj",
+            board = Board.AlchitryAu,
+            sourceFiles = emptySet(),
+            constraintFiles = emptySet(),
+            ipCores = emptySet()
+        )
+        val project = Project(tempDir, projData)
+        project.save()
+
+        project.setBoard(Board.AlchitryCu)
+
+        assertEquals(Board.AlchitryCu, Project.current?.data?.board)
+        assertEquals(Board.AlchitryCu.name, Settings.boardType)
+
+        val reloaded = Project.load(alpFile)
+        assertEquals(Board.AlchitryCu, reloaded.data.board)
+
+        Project.close()
+        tempDir.deleteRecursively()
     }
 }

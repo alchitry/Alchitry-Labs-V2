@@ -1,6 +1,7 @@
 /**
     "name" : "Ft V2",
-    "description" : "Pin constraints for the Ft V2 element."
+    "description" : "Pin constraints for the Ft V2 element.",
+    "supportedBoards" : ["V2"]
 **/
 STANDARD(LVCMOS33), PINOUT(V2), SIDE(TOP) { // standard 3.3V IO standard
     pin ft_clk A41 FREQUENCY(100MHz)

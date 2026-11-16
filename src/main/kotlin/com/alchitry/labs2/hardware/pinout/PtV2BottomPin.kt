@@ -124,12 +124,6 @@ enum class PtV2BottomPin(override val fpgaPin: String, override val bank: Int) :
         override val standards = Artix7IoStandard.entries
         override fun acfToPin(name: String): PtV2BottomPin? = entries.firstOrNull { it.name == name }
 
-        override fun bankToVcco(bank: Int): List<String> = when (bank) {
-            0, 116 -> emptyList()
-            15 -> listOf("1.35")
-            14, 16, 34, 35 -> listOf("3.3")
-            13 -> listOf("3.3", "2.5", "1.8")
-            else -> error("Unknown bank: $bank")
-        }
+        override fun bankToVcco(bank: Int): List<String> = PtV2TopPin.bankToVcco(bank)
     }
 }

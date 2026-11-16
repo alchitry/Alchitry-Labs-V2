@@ -3,6 +3,7 @@ package com.alchitry.labs2.project
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.alchitry.hardware.Board
 import com.alchitry.hardware.Board.XilinxBoard
 import com.alchitry.labs2.Analytics
 import com.alchitry.labs2.Log
@@ -116,6 +117,15 @@ data class Project(
 
     fun currentNotationCollectorForFile(projectFile: ProjectFile): NotationCollector? =
         notationManagerFlow.value?.getCollector(projectFile)
+
+    fun compatibleBoards(): List<Board> {
+        if (data.ipCores.isNotEmpty()) return emptyList()
+        return Board.All.filter { board ->
+            components.all { it.supportedBoards == null || it.supportedBoards.contains(board) }
+        }
+    }
+
+    fun canSwitchTo(board: Board): Boolean = compatibleBoards().contains(board)
 
     fun save() = saveAs(projectFile)
 

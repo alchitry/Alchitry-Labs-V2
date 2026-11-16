@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusTarget
@@ -225,11 +224,11 @@ fun MenuBarContext.MenuParent(
                     label()
                     Spacer(Modifier.weight(1f))
                     Image(
-                        painter = painterResource("icons/arrow.svg"),
+                        painter = painterResource("icons/chevron-right.svg"),
                         colorFilter = ColorFilter.tint(LocalContentColor.current),
                         contentDescription = null,
                         contentScale = ContentScale.Fit,
-                        modifier = Modifier.size(20.dp).rotate(-90f)
+                        modifier = Modifier.size(20.dp)
                     )
                 }
             }
@@ -287,15 +286,26 @@ fun <T> MenuBarContext.RadioMenuItem(
     items: Collection<T>,
     labeler: @Composable (T) -> Unit,
     selected: T?,
+    enabled: Boolean = true,
+    itemEnabled: (T) -> Boolean = { true },
     onSelected: (T) -> Unit
 ) {
     val item = remember { MenuBarItem() }
-    val active = focused.value === item && isActive.value
-    CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
+    val active = focused.value === item && isActive.value && enabled
+    CompositionLocalProvider(
+        LocalContentColor provides if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(
+            alpha = 0.5f
+        )
+    ) {
         Box {
             Box(
                 Modifier
-                    .menuHoverFocus(item, active = active, interactionSource = remember { MutableInteractionSource() })
+                    .menuHoverFocus(
+                        item,
+                        active = active,
+                        enabled = enabled && isActive.value,
+                        interactionSource = remember { MutableInteractionSource() }
+                    )
                     .padding(8.dp)
                     .fillMaxWidth()
             ) {
@@ -315,28 +325,37 @@ fun <T> MenuBarContext.RadioMenuItem(
                     )
                 }
             }
-            MenuBarDropdown(
-                expanded = active,
-                focusable = false,
-                dropDirection = DropDirection.RIGHT,
-                onDismissRequest = { dismiss() }) {
-                items.forEach {
-                    Box(
-                        Modifier
-                            .clickable(onClick = { onSelected(it) })
-                            .padding(8.dp)
-                            .fillMaxWidth()
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (enabled) {
+                MenuBarDropdown(
+                    expanded = active,
+                    focusable = false,
+                    dropDirection = DropDirection.RIGHT,
+                    onDismissRequest = { dismiss() }) {
+                    items.forEach {
+                        val isItemEnabled = itemEnabled(it)
+                        CompositionLocalProvider(
+                            LocalContentColor provides if (isItemEnabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(
+                                alpha = 0.5f
+                            )
+                        ) {
                             Box(
                                 Modifier
-                                    .padding(end = 8.dp).padding(horizontal = 4.dp)
-                                    .size(8.dp)
-                                    .clip(CircleShape)
-                                    .alpha(if (selected == it) 1f else 0.1f)
-                                    .background(if (selected == it) MaterialTheme.colorScheme.primary else LocalContentColor.current)
-                            )
-                            labeler(it)
+                                    .clickable(enabled = isItemEnabled, onClick = { onSelected(it) })
+                                    .padding(8.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Box(
+                                        Modifier
+                                            .padding(end = 8.dp).padding(horizontal = 4.dp)
+                                            .size(8.dp)
+                                            .clip(CircleShape)
+                                            .alpha(if (selected == it) 1f else 0.1f)
+                                            .background(if (selected == it) MaterialTheme.colorScheme.primary else LocalContentColor.current)
+                                    )
+                                    labeler(it)
+                                }
+                            }
                         }
                     }
                 }

@@ -5,6 +5,7 @@ import com.alchitry.labs2.camelToSnakeCase
 import com.alchitry.labs2.project.Language
 import com.alchitry.labs2.project.Locations
 import com.alchitry.labs2.project.library.ComponentLibrary
+import com.alchitry.labs2.resolveAliases
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -18,7 +19,42 @@ import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
 import kotlinx.serialization.json.Json
 
-@Serializable
+private object ComponentDescriptorSerializer : KSerializer<ComponentDescriptor> {
+    @Serializable
+    @SerialName("ComponentDescriptor")
+    private data class ComponentDescriptorSurrogate(
+        val name: String,
+        val description: String,
+        val supportedBoards: List<String>? = null,
+        val skipDependencyCheck: Boolean = false,
+    )
+
+    override val descriptor: SerialDescriptor = ComponentDescriptorSurrogate.serializer().descriptor
+
+    override fun serialize(encoder: Encoder, value: ComponentDescriptor) {
+        val surrogate = ComponentDescriptorSurrogate(
+            name = value.name,
+            description = value.description,
+            supportedBoards = value.supportedBoards?.map { it.name },
+            skipDependencyCheck = value.skipDependencyCheck
+        )
+        encoder.encodeSerializableValue(ComponentDescriptorSurrogate.serializer(), surrogate)
+    }
+
+    override fun deserialize(decoder: Decoder): ComponentDescriptor {
+        val surrogate = decoder.decodeSerializableValue(ComponentDescriptorSurrogate.serializer())
+        val supportedBoards = surrogate.supportedBoards?.let { Board.resolveAliases(it).toSet() }
+
+        return ComponentDescriptor(
+            name = surrogate.name,
+            description = surrogate.description,
+            supportedBoards = supportedBoards,
+            skipDependencyCheck = surrogate.skipDependencyCheck
+        )
+    }
+}
+
+@Serializable(with = ComponentDescriptorSerializer::class)
 @SerialName("ComponentDescriptor")
 private data class ComponentDescriptor(
     val name: String,

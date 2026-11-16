@@ -1,7 +1,7 @@
 /**
     "name": "BSCANE2"
     "description": "Xilinx JTAG Boundary Scan Primitive."
-    "supportedBoards" : ["Au", "Au+", "AuV2", "PtV2"]
+    "supportedBoards" : ["Xilinx"]
 **/
 /******************************************************************************
 

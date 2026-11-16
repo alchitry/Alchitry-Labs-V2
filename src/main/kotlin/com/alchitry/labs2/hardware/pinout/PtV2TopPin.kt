@@ -208,10 +208,10 @@ enum class PtV2TopPin(override val fpgaPin: String, override val bank: Int) : Pi
         override fun acfToPin(name: String): PtV2TopPin? = entries.firstOrNull { it.name == name }
 
         override fun bankToVcco(bank: Int): List<String> = when (bank) {
-            0 -> emptyList()
+            0, 116 -> emptyList()
             15 -> listOf("1.35")
-            14, 16, 34, 35 -> listOf("3.3")
-            13 -> listOf("3.3", "2.5", "1.8")
+            14, 34, 35 -> listOf("3.3")
+            13, 16 -> listOf("3.3", "2.5", "1.8")
             else -> error("Unknown bank: $bank")
         }
     }

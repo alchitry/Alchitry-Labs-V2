@@ -1,6 +1,8 @@
 package com.alchitry.labs2.project
 
+import com.alchitry.hardware.Board
 import com.alchitry.labs2.Log
+import com.alchitry.labs2.Settings
 import com.alchitry.labs2.parsers.basicOffsetProvider
 import com.alchitry.labs2.parsers.grammar.LucidLexer
 import com.alchitry.labs2.parsers.grammar.LucidParser
@@ -288,6 +290,14 @@ fun Project.addComponents(components: List<Component>) {
 
 fun Project.replaceIpCores(cores: Set<IPCore>) {
     val newProj = copy(data = data.copy(ipCores = cores.toSet()))
+    newProj.save()
+    Project.open(newProj)
+}
+
+fun Project.setBoard(board: Board) {
+    if (data.board == board) return
+    Settings.boardType = board.name
+    val newProj = copy(data = data.copy(board = board))
     newProj.save()
     Project.open(newProj)
 }

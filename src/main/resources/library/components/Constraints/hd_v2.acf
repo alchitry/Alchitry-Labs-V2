@@ -1,6 +1,7 @@
 /**
     "name" : "Hd V2",
-    "description" : "Pin constraints for the Hd V2 element."
+    "description" : "Pin constraints for the Hd V2 element.",
+    "supportedBoards" : ["V2"]
 **/
 PINOUT(V2), SIDE(TOP) {
     STANDARD(LVCMOS33) { // standard 3.3V IO standard
