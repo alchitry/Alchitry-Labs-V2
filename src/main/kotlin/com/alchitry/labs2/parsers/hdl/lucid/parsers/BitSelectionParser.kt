@@ -72,7 +72,7 @@ data class BitSelectionParser(
             }) return
 
         if (min.value is UndefinedValue || max.value is UndefinedValue) {
-            bounds[ctx] = BitSelection(0..0, ctx, SelectionContext.Fixed(minCtx, maxCtx), false)
+            bounds[ctx] = BitSelection(0..0, ctx, SelectionContext.Fixed(minCtx, maxCtx), true)
             return
         }
 
@@ -169,7 +169,7 @@ data class BitSelectionParser(
                 return
             }
         } else {
-            0
+            if (isUpTo) 0 else widthInt - 1
         }
 
         val selection = if (isUpTo)

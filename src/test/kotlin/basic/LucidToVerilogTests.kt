@@ -309,4 +309,14 @@ internal class LucidToVerilogTests {
         assert(verilog.contains("localparam _MP_WIDTH_")) { "Expected localparam for WIDTH parameter, got:\n$verilog" }
         assert(verilog.contains(".WIDTH(_MP_WIDTH_")) { "Expected .WIDTH parameter assignment in instantiation, got:\n$verilog" }
     }
+
+    @Test
+    fun waveComponentTest(): Unit = runBlocking {
+        System.setProperty("app.dir", "../")
+        val waveSource = ComponentLibrary.findByPath("LED Effects/wave.luc")!!.content.toSourceFile("wave.luc")
+        val tester = ProjectTester(waveSource)
+        val verilog = tester.getVerilog().getValue("wave")
+        assert(verilog.contains("acmp = result[RES] ? \$bits(result[")) { "Expected \$bits cast on acmp assignment, got:\n$verilog" }
+        assert(!verilog.contains("1'(~result")) { "Did not expect 1-bit resize on ~result, got:\n$verilog" }
+    }
 }

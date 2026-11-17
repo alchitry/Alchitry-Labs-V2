@@ -303,7 +303,7 @@ sealed class SignalWidth {
                 is ArrayWidth -> if (selector.single) next else {
                     val count = if (this is DefinedArrayWidth) selector.count(size) else selector.count()
                     if (count != null) {
-                        DefinedArrayWidth(selector.count(count), next)
+                        DefinedArrayWidth(count, next)
                     } else {
                         UndefinedArrayWidth(next)
                     }

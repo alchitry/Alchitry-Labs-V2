@@ -44,8 +44,9 @@ data class UndefinedValue(
         return when (width) {
             is BitWidth -> throw SignalSelectionException(selection, "BitWidth can't be selected!")
             is SimpleWidth -> {
+                if (selection.single) return UndefinedValue(BitWidth)
                 val count = if (width is DefinedSimpleWidth) {
-                    if (!(selection.range.first <= width.size && selection.range.last <= width.size)) {
+                    if (!selection.undefined && !(selection.range.first <= width.size && selection.range.last <= width.size)) {
                         throw SignalSelectionException(
                             selection,
                             "Selection of ${selection.range} is out of range of the value's width of ${width.size}!"
@@ -65,8 +66,9 @@ data class UndefinedValue(
             is StructWidth -> throw SignalSelectionException(selection, "Bit selector used on StructWidth!")
 
             is ArrayWidth -> {
+                if (selection.single) return UndefinedValue(width.next)
                 val count = if (width is DefinedArrayWidth) {
-                    if (!(selection.range.first <= width.size && selection.range.last <= width.size)) {
+                    if (!selection.undefined && !(selection.range.first <= width.size && selection.range.last <= width.size)) {
                         throw SignalSelectionException(
                             selection,
                             "Selection of ${selection.range} is out of range of the value's width of ${width.size}!"
@@ -77,7 +79,6 @@ data class UndefinedValue(
                     selection.count()
                 }
                 when (count) {
-                    1 -> UndefinedValue(width.next)
                     null -> UndefinedValue(UndefinedArrayWidth(width.next))
                     else -> UndefinedValue(DefinedArrayWidth(count, width.next))
                 }

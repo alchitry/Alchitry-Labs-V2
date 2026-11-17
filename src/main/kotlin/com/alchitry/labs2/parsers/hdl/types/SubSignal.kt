@@ -98,7 +98,8 @@ data class SubSignal(
                             is DefinedSimpleWidth -> currentWidth.size
                             else -> error("Impossible width type!")
                         }
-                        selectedBits = s.count(size) * elementSize
+                        val count = s.count(size) ?: error("Selection count was null in flatSelectionData!")
+                        selectedBits = count * elementSize
                         currentWidth = if (currentWidth is DefinedArrayWidth)
                             when (s.context) {
                                 is SelectionContext.Constant,

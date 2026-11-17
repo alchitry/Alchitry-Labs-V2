@@ -630,4 +630,16 @@ class UndefinedValueTests {
         assertIs<UndefinedSimpleWidth>(result.width)
         assert(test.hasNoIssues)
     }
+
+    @Test
+    fun undefinedBitSelectionRange() = runBlocking {
+        val sig = undefinedSignal("result", UndefinedSimpleWidth())
+        val res = undefinedSignal("RES", UndefinedSimpleWidth())
+        val test = testExprWithLocalValues("~result[RES-1:0]", sig, res)
+        val tree = test.parser.expr().also { test.context.walk(it) }
+        val result = test.context.expr.resolve(tree)?.value
+        assertIs<UndefinedValue>(result)
+        assertIs<UndefinedSimpleWidth>(result.width)
+        assert(test.hasNoIssues)
+    }
 }

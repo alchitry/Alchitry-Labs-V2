@@ -41,7 +41,19 @@ sealed class SignalSelector {
          * Requires totalWidth in the case of a negative range.
          * Use count() if the width isn't known.
          */
-        fun count(totalWidth: Int): Int {
+        fun count(totalWidth: Int): Int? {
+            if (single) return 1
+            if (undefined) {
+                when (context) {
+                    is SelectionContext.Fixed -> return null
+                    is SelectionContext.DownTo, is SelectionContext.UpTo -> {
+                        if (range == 0..0) return null
+                    }
+
+                    is SelectionContext.Single -> return 1
+                    is SelectionContext.Constant -> {}
+                }
+            }
             val last = if (range.last >= 0) range.last else totalWidth + range.last
             val first = if (range.first >= 0) range.first else totalWidth + range.first
             return last - first + 1
@@ -53,6 +65,18 @@ sealed class SignalSelector {
          * Use count(totalWidth) for a guaranteed resolve.
          */
         fun count(): Int? {
+            if (single) return 1
+            if (undefined) {
+                when (context) {
+                    is SelectionContext.Fixed -> return null
+                    is SelectionContext.DownTo, is SelectionContext.UpTo -> {
+                        if (range == 0..0) return null
+                    }
+
+                    is SelectionContext.Single -> return 1
+                    is SelectionContext.Constant -> {}
+                }
+            }
             if (range.last.sign != range.first.sign) return null
             return range.last - range.first + 1
         }
