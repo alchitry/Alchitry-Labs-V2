@@ -42,7 +42,7 @@ fun AlchitryDialog(
                     content = {
                         Column {
                             WindowDecoration { onClose() }
-                            Surface(Modifier.fillMaxSize(), tonalElevation = 20.dp) {
+                            Surface(Modifier.fillMaxSize(), tonalElevation = 50.dp) {
                                 content()
                             }
                         }

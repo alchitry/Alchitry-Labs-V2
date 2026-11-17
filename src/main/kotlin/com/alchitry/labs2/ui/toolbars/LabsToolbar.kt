@@ -59,6 +59,14 @@ fun LabsToolbar() {
         lockedDialogDeferred = null
     }
 
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var errorDialogDeferred by remember { mutableStateOf<CompletableDeferred<Unit>?>(null) }
+    ErrorDialog(errorMessage) {
+        errorMessage = null
+        errorDialogDeferred?.complete(Unit)
+        errorDialogDeferred = null
+    }
+
     var runningJob by remember { mutableStateOf<Job?>(null) }
 
     Row {
@@ -69,12 +77,20 @@ fun LabsToolbar() {
             }
             MenuItem({ Text("Open Project...") }, !running) {
                 scope.launch {
-                    openProjectDialog {
-                        val deferred = CompletableDeferred<Boolean?>()
-                        lockedDialogDeferred = deferred
-                        showLockedDialog = true
-                        deferred.await()
-                    }
+                    openProjectDialog(
+                        showLockedDialog = {
+                            val deferred = CompletableDeferred<Boolean?>()
+                            lockedDialogDeferred = deferred
+                            showLockedDialog = true
+                            deferred.await()
+                        },
+                        showErrorDialog = {
+                            val deferred = CompletableDeferred<Unit>()
+                            errorDialogDeferred = deferred
+                            errorMessage = it
+                            deferred.await()
+                        }
+                    )
                 }
             }
             MenuItem({ Text("Save Project As...") }, !running) {

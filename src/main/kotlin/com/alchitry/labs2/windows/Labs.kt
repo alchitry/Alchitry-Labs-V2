@@ -27,6 +27,7 @@ import com.alchitry.labs2.ui.components.Sash
 import com.alchitry.labs2.ui.components.WindowDecoration
 import com.alchitry.labs2.ui.components.rememberSashData
 import com.alchitry.labs2.ui.dialogs.AnalyticsDialog
+import com.alchitry.labs2.ui.dialogs.ErrorDialog
 import com.alchitry.labs2.ui.dialogs.ProjectDialog
 import com.alchitry.labs2.ui.dialogs.ProjectLockedDialog
 import com.alchitry.labs2.ui.tabs.Workspace
@@ -35,7 +36,6 @@ import com.alchitry.labs2.ui.tree.ProjectTree
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.JsonPrimitive
-import org.jline.utils.Log
 import java.io.File
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -99,6 +99,14 @@ fun ApplicationScope.labsWindow(projectPath: String?) {
             lockedDialogDeferred = null
         }
 
+        var errorMessage by remember { mutableStateOf<String?>(null) }
+        var errorDialogDeferred by remember { mutableStateOf<CompletableDeferred<Unit>?>(null) }
+        ErrorDialog(errorMessage) {
+            errorMessage = null
+            errorDialogDeferred?.complete(Unit)
+            errorDialogDeferred = null
+        }
+
         LaunchedEffect(Unit) {
             Env.mode = Env.Mode.Labs
             (projectPath ?: Settings.openProject)?.let {
@@ -116,8 +124,10 @@ fun ApplicationScope.labsWindow(projectPath: String?) {
                         }
                     } catch (e: Exception) {
                         if (projectPath != null) {
-                            Log.error("Failed to open project file $it")
-                            Log.error(e.message ?: "")
+                            val deferred = CompletableDeferred<Unit>()
+                            errorDialogDeferred = deferred
+                            errorMessage = "Failed to open project: ${e.message}"
+                            deferred.await()
                         }
                     }
                 }

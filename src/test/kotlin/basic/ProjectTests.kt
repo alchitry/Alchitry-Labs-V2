@@ -309,4 +309,16 @@ class ProjectTests {
         Project.close()
         tempDir.deleteRecursively()
     }
+
+    @OptIn(ExperimentalPathApi::class)
+    @Test
+    fun projectLoadInvalidFileThrowsException() {
+        val tempDir = Files.createTempDirectory("testInvalidProj")
+        val invalidAlpFile = tempDir.resolve("Corrupt.alp").toFile()
+        invalidAlpFile.writeText("{ not valid json }")
+        assertFailsWith<Exception> {
+            Project.load(invalidAlpFile)
+        }
+        tempDir.deleteRecursively()
+    }
 }

@@ -1,6 +1,5 @@
 package com.alchitry.labs2.ui.dialogs
 
-import com.alchitry.labs2.Log
 import com.alchitry.labs2.Settings
 import com.alchitry.labs2.project.Locations
 import com.alchitry.labs2.project.Project
@@ -8,7 +7,10 @@ import com.alchitry.labs2.project.ProjectAlreadyOpenException
 import com.alchitry.labs2.windows.mainWindow
 import java.io.File
 
-suspend fun openProjectDialog(showLockedDialog: suspend () -> Boolean?): Project? {
+suspend fun openProjectDialog(
+    showLockedDialog: suspend () -> Boolean?,
+    showErrorDialog: suspend (String) -> Unit
+): Project? {
     try {
         val projectFile =
             openFileDialog(
@@ -31,7 +33,7 @@ suspend fun openProjectDialog(showLockedDialog: suspend () -> Boolean?): Project
         projectFile.parentFile?.parent?.let { Settings.workspace = it }
         return project
     } catch (e: Exception) {
-        Log.showError("Failed to open project: ${e.message}")
+        showErrorDialog("Failed to open project: ${e.message}")
         return null
     }
 }

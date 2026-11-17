@@ -44,6 +44,13 @@ fun ProjectDialog(mainContent: @Composable BoxScope.() -> Unit) {
                 lockedDialogDeferred?.complete(result)
                 lockedDialogDeferred = null
             }
+            var errorMessage by remember { mutableStateOf<String?>(null) }
+            var errorDialogDeferred by remember { mutableStateOf<CompletableDeferred<Unit>?>(null) }
+            ErrorDialog(errorMessage) {
+                errorMessage = null
+                errorDialogDeferred?.complete(Unit)
+                errorDialogDeferred = null
+            }
             Box(
                 Modifier.background(Color.Black.copy(alpha = 0.7f)).matchParentSize(),
                 contentAlignment = Alignment.Center
@@ -58,12 +65,20 @@ fun ProjectDialog(mainContent: @Composable BoxScope.() -> Unit) {
                                 "Open Project"
                             ) {
                                 scope.launch {
-                                    openProjectDialog {
-                                        val deferred = CompletableDeferred<Boolean?>()
-                                        lockedDialogDeferred = deferred
-                                        showLockedDialog = true
-                                        deferred.await()
-                                    }
+                                    openProjectDialog(
+                                        showLockedDialog = {
+                                            val deferred = CompletableDeferred<Boolean?>()
+                                            lockedDialogDeferred = deferred
+                                            showLockedDialog = true
+                                            deferred.await()
+                                        },
+                                        showErrorDialog = {
+                                            val deferred = CompletableDeferred<Unit>()
+                                            errorDialogDeferred = deferred
+                                            errorMessage = it
+                                            deferred.await()
+                                        }
+                                    )
                                 }
                             }
                             DialogButton(
