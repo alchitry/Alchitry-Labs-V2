@@ -6,6 +6,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.DialogWindowScope
 import com.alchitry.labs2.ui.components.WindowDecoration
@@ -41,7 +42,7 @@ fun AlchitryDialog(
                     content = {
                         Column {
                             WindowDecoration { onClose() }
-                            Surface(Modifier.fillMaxSize()) {
+                            Surface(Modifier.fillMaxSize(), tonalElevation = 20.dp) {
                                 content()
                             }
                         }
