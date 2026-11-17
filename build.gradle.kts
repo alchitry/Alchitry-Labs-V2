@@ -85,7 +85,7 @@ dependencies {
     implementation("io.github.vinceglb:filekit-dialogs:0.16.0")
     implementation("org.slf4j:slf4j-nop:2.0.20")
 
-    implementation("com.alchitry:Alchitry-Interface:1.0.0")
+    implementation("com.alchitry:Alchitry-Interface:1.0.2")
 
     linuxAmd64("org.jetbrains.compose.desktop:desktop-jvm-linux-x64:1.12.1")
     linuxAarch64("org.jetbrains.compose.desktop:desktop-jvm-linux-arm64:1.12.1")
