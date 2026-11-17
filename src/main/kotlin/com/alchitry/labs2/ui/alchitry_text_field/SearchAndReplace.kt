@@ -49,8 +49,8 @@ class SearchAndReplaceState(private val editor: AlchitryTextFieldState) {
     private var caseSensitive by mutableStateOf(false)
     private var regex by mutableStateOf(false)
     private var wholeWord by mutableStateOf(false)
-    val searchHighlights = mutableListOf<HighlightAnnotation>()
-    var activeIndex: Int? = null
+    val searchHighlights = mutableStateListOf<HighlightAnnotation>()
+    var activeIndex by mutableStateOf<Int?>(null)
     var grabFocus by mutableStateOf(false)
     var hasFocus by mutableStateOf(false)
 

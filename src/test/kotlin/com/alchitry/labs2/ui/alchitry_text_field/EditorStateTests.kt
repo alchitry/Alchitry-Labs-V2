@@ -159,6 +159,38 @@ internal class EditorStateTests {
         assertEquals(KeyCommand.PREV_PARAGRAPH, map(Key.DirectionUp, alt = true, isMac = true))
     }
 
+    @Test
+    fun searchAndReplaceUpdatesActiveIndexOnNextAndPrevious() {
+        EventQueue.invokeAndWait {
+            val state = AlchitryTextFieldState()
+            state.setText("alpha beta alpha gamma alpha")
+
+            val search = state.searchAndReplaceState
+            search.showSearch("alpha")
+
+            assertEquals(3, search.searchHighlights.size)
+            assertEquals(0, search.activeIndex)
+
+            search.nextMatch()
+            assertEquals(1, search.activeIndex)
+
+            search.nextMatch()
+            assertEquals(2, search.activeIndex)
+
+            search.nextMatch()
+            assertEquals(0, search.activeIndex)
+
+            search.previousMatch()
+            assertEquals(2, search.activeIndex)
+
+            search.previousMatch()
+            assertEquals(1, search.activeIndex)
+
+            search.previousMatch()
+            assertEquals(0, search.activeIndex)
+        }
+    }
+
     private fun map(
         key: Key,
         ctrl: Boolean = false,
