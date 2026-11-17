@@ -68,7 +68,7 @@ data class Project(
     val path: Path,
     val data: ProjectData1V3
 ) {
-    val top: SourceFile get() = data.sourceFiles.firstOrNull { it.top } ?: throw Exception("Missing top module!")
+    val top: SourceFile? get() = data.sourceFiles.firstOrNull { it.top }
     val projectFile: File = path.resolve("${data.projectName}.alp").toFile()
     val buildDirectory: Path = path.resolve("build")
     val sourceDirectory: Path = path.resolve("source")
@@ -576,11 +576,14 @@ data class Project(
             if (notationManager.hasErrors)
                 return null
 
-            val topModule = modules.firstOrNull { it.first.top }?.second
+            val topFile = top ?: return null
+            val topModule = modules.firstOrNull { it.first == topFile }?.second
 
             if (topModule == null) {
-                notationManager.getCollector(top)
-                    .reportError(trees.first { it.first == top }.second, "Top file does not contain a module!")
+                trees.firstOrNull { it.first == topFile }?.let {
+                    notationManager.getCollector(topFile)
+                        .reportError(it.second, "Top file does not contain a module!")
+                }
                 return null
             }
 
@@ -596,11 +599,13 @@ data class Project(
                         mapOf()
                     )
                 } catch (e: Exception) {
-                    notationManager.getCollector(top)
-                        .reportError(
-                            trees.first { it.first == top }.second,
-                            "Failed to instantiate top module: ${e.message}"
-                        )
+                    trees.firstOrNull { it.first == topFile }?.let {
+                        notationManager.getCollector(topFile)
+                            .reportError(
+                                it.second,
+                                "Failed to instantiate top module: ${e.message}"
+                            )
+                    }
                     return null
                 }
 

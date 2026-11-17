@@ -321,4 +321,24 @@ class ProjectTests {
         }
         tempDir.deleteRecursively()
     }
+
+    @OptIn(ExperimentalPathApi::class)
+    @Test
+    fun projectWithoutTopFileReturnsNullTopAndContext() = kotlinx.coroutines.runBlocking {
+        val tempDir = Files.createTempDirectory("testNoTopProj")
+        val projData = ProjectData1V3(
+            projectName = "TestProj",
+            board = Board.AlchitryAu,
+            sourceFiles = emptySet(),
+            constraintFiles = emptySet(),
+            ipCores = emptySet()
+        )
+        val project = Project(tempDir, projData)
+        assertNull(project.top)
+        val notationManager = com.alchitry.labs2.parsers.notations.NotationManager()
+        val context = project.buildContext(notationManager)
+        assertNull(context)
+        assertFalse(notationManager.hasErrors)
+        tempDir.deleteRecursively()
+    }
 }

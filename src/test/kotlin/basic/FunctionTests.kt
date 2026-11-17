@@ -90,7 +90,7 @@ class FunctionTests {
         )
         val test2 = ProjectTester(*test.files)
         val verilog = test2.getVerilog(false)
-        println(verilog)
+        //println(verilog)
         assert(verilog.isNotEmpty())
     }
 

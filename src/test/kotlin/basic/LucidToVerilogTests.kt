@@ -96,7 +96,7 @@ internal class LucidToVerilogTests {
         )
 
         runBlocking {
-            println(tester.getVerilog())
+            //println(tester.getVerilog())
         }
     }
 
@@ -276,7 +276,7 @@ internal class LucidToVerilogTests {
         )
 
         val verilog = tester.getVerilog(allowWarnings = true)
-        println(verilog)
+        //println(verilog)
     }
 
     @Test
