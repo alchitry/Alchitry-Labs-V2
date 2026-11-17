@@ -626,7 +626,7 @@ class TypesParser(
                     return
                 }
 
-                if (width.willTruncate(exprValue.width)) {
+                if (width.willTruncate(exprValue.width) && width.bitCount == 1) {
                     context.reportWarning(
                         ctx.expr()!!,
                         "The width of this expression is wider than the signal \"$name\" and will be truncated."

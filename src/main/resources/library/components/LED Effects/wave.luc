@@ -47,9 +47,6 @@ module wave #(
     // counter
     dff ctr[CTR_LEN](.clk(clk),.rst(rst));
 
-    sig acmp[RES]   // intermediate value
-    sig result[RES+1] // intermediate value
-
     always {
         // increment the counter
         ctr.d = ctr.q + 1
@@ -59,10 +56,10 @@ module wave #(
         repeat (i, 8) {
             // take the top bits of the counter and
             // offset differently them for each output
-            result = ctr.q[CTR_LEN-1-:RES+1] + i * $pow(2,RES) / 4
+            sig result[RES+1] = ctr.q[-1-:RES+1] + (i << (RES - 2))
 
             // invert the result to count down
-            acmp = result[RES]? ~result[RES-1:0] : result[RES-1:0]
+            sig acmp[RES] = result[-1] ? ~result[-2:0] : result[-2:0]
 
             // PWM output
             out[i] = acmp > ctr.q[RES-1:0]
